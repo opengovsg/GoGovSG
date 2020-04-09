@@ -183,4 +183,5 @@ QRCode.propTypes = {
 
 QRCode.defaultProps = {
   size: 128,
+  logo: undefined,
 }
