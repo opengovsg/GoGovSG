@@ -77,6 +77,10 @@ export default class QRCode extends React.Component {
       canvas.toBlob((blob) => {
         FileSaver.saveAs(blob, `${filename}.png`, 'image/png')
       })
+
+      // Reset width and height attributes of svg,
+      svg.removeAttribute('width', svg.clientWidth)
+      svg.removeAttribute('height', svg.clientHeight)
     }
     loader.src = `data:image/svg+xml,${encodeURIComponent(svgAsXML)}`
   }
