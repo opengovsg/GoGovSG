@@ -5,8 +5,6 @@ import FileSaver from 'file-saver'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 
-import getDOMNode from './dom'
-
 const XML_NS = 'http://www.w3.org/2000/xmlns/'
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const XLINK_NS = 'http://www.w3.org/1999/xlink'
@@ -17,6 +15,12 @@ export default class QRCode extends React.Component {
     super(props)
     this.downloadSvg = this.downloadSvg.bind(this)
     this.downloadPng = this.downloadPng.bind(this)
+
+    // Accessing refs via callbacks.
+    this.canvasRef = null
+    this.svgContainerRef = null
+    this.setCanvasRef = (element) => { this.canvasRef = element }
+    this.setSvgContainerRef = (element) => { this.svgContainerRef = element }
   }
 
   componentDidMount() {
@@ -37,9 +41,7 @@ export default class QRCode extends React.Component {
   /* Triggers SVG download of QR code */
   downloadSvg() {
     const { value: filename } = this.props
-    const { svgContainer: svgContainerRef } = this.refs
-    const svgContainer = getDOMNode(svgContainerRef)
-    const blob = new Blob([svgContainer.innerHTML], { type: 'text/plain;charset=utf-8' })
+    const blob = new Blob([this.svgContainerRef.innerHTML], { type: 'text/plain;charset=utf-8' })
     FileSaver.saveAs(blob, `${filename}.svg`)
   }
 
@@ -49,8 +51,7 @@ export default class QRCode extends React.Component {
     const { value: filename } = this.props
 
     // Get source SVG
-    const { svgContainer } = this.refs
-    const svg = getDOMNode(svgContainer).firstChild
+    const svg = this.svgContainerRef.firstChild
 
     // Set width and height attributes of svg,
     // required to draw image on canvas on FireFox.
@@ -85,8 +86,8 @@ export default class QRCode extends React.Component {
 
   update() {
     const self = this
-    const svgContainer = getDOMNode(self.refs.svgContainer)
-    const ctx = getDOMNode(self.refs.canvas)
+    const svgContainer = this.svgContainerRef
+    const ctx = this.canvasRef
 
     qr.toString(self.props.value, QR_OPTIONS, (err, svgString) => {
       if (!err) {
@@ -165,9 +166,9 @@ export default class QRCode extends React.Component {
           style={{ height: '100%', width: '100%', display: 'none' }}
           height={self.props.size}
           width={self.props.size}
-          ref="canvas"
+          ref={this.setCanvasRef}
         />
-        <div ref="svgContainer" />
+        <div ref={this.setSvgContainerRef} />
       </React.Fragment>
     )
   }
