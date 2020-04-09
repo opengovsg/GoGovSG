@@ -117,8 +117,13 @@ const baseLayoutStyle = theme => ({
     },
   },
   footer: {
+    display: 'flex',
+    justifyContent: 'space-between',
     backgroundColor: theme.palette.secondary.dark,
     padding: theme.spacing(4, 10),
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
     [theme.breakpoints.down('xs')]: {
       padding: theme.spacing(4, 4),
     },
@@ -132,19 +137,27 @@ const baseLayoutStyle = theme => ({
     },
   },
   subfooter: {
-    marginTop: `${theme.spacing(1)}px`,
-    borderTop: `1px solid ${theme.palette.dividerLight}`,
+    paddingTop: theme.spacing(1),
     [theme.breakpoints.down('xs')]: {
-      borderTop: 'none',
+      paddingLeft: theme.spacing(1),
     },
   },
-  copyright: {
-    marginLeft: 'auto',
+  footerItem: {
     [theme.breakpoints.down('xs')]: {
-      marginTop: theme.spacing(1),
-      borderTop: `1px solid ${theme.palette.dividerLight}`,
-      marginLeft: 0,
+      padding: '8px 13px 8px 0 !important',
     },
+  },
+  footerLink: {
+    fontWeight: '500',
+  },
+  builtByLink: {
+    [theme.breakpoints.down('sm')]: {
+      margin: theme.spacing(5, 0, 1),
+    },
+  },
+  builtByImg: {
+    height: '55px',
+    userDrag: 'none',
   },
 })
 
