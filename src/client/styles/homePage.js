@@ -24,12 +24,13 @@ const homePageStyle = theme => ({
   mainText: {
     marginRight: theme.spacing(-9),
     paddingLeft: theme.spacing(10),
+    paddingBottom: theme.spacing(4),
     [theme.breakpoints.up('xl')]: {
       marginRight: theme.spacing(-15),
     },
     [theme.breakpoints.down('xs')]: {
       marginRight: '0',
-      padding: theme.spacing(0, 4),
+      padding: theme.spacing(0, 4, 4, 4),
     },
   },
   mainTitle: {
