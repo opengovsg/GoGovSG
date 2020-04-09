@@ -100,7 +100,7 @@ Finally, start the production server by running `npm start`.
 We have yet to setup travis to automate these steps:
 
 - Update package version
-- Update credits (datagovsg/credits-generator)
+- Update credits [opengovsg/credits-generator](https://github.com/opengovsg/credits-generator)
 - Upload pdf to S3 bucket
 
 ## Documentation
