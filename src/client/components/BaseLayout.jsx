@@ -15,8 +15,9 @@ import i18next from 'i18next'
 import { Trans } from 'react-i18next'
 import baseLayoutStyle from '~/styles/baseLayout'
 import loginActions from '~/actions/login'
-import GoLogo from '~/assets/go-main-logo.png'
 import Masthead from '~/components/Masthead'
+import GoLogo from '~/assets/go-main-logo.png'
+import BuiltByImg from '~/assets/built-by.png'
 
 const mapStateToProps = state => ({
   isLoggedIn: state.login.isLoggedIn,
@@ -107,26 +108,43 @@ const BaseLayout = ({
       <main className={classes.layout}>{children}</main>
       {/* Footer */}
       <footer className={classes.footer}>
-        <Typography variant="body2" color="textPrimary" className={classes.footerTitle}>
-          <strong>{i18next.t('general.appTitle')}</strong>
-        </Typography>
-        <Typography variant="body1" display="inline" color="textPrimary">
-          <Trans>general.appCatchphrase.noStyle</Trans>
-        </Typography>
-        <Grid container spacing={2} className={classes.subfooter}>
-          {footers.map(footer => (
-            <Grid item key={footer.text}>
-              <Typography variant="caption" gutterBottom>
-                <Link color="textPrimary" target="_blank" href={footer.link}>{footer.text}</Link>
-              </Typography>
-            </Grid>
-          ))}
-          <Grid item className={classes.copyright}>
-            <Typography variant="caption" color="textPrimary" gutterBottom>
-              {i18next.t('general.copyright')}
-            </Typography>
+        <div>
+          <Typography variant="body2" color="textPrimary" className={classes.footerTitle}>
+            <strong>{i18next.t('general.appTitle')}</strong>
+          </Typography>
+          <Typography variant="body1" display="inline" color="textPrimary">
+            <Trans>general.appCatchphrase.noStyle</Trans>
+          </Typography>
+          <Grid container spacing={2} className={classes.subfooter}>
+            <Hidden smDown>
+              <Grid item>
+                <Typography variant="caption" color="textPrimary" gutterBottom>
+                  {i18next.t('general.copyright')}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="caption" color="textPrimary" gutterBottom>
+               |
+                </Typography>
+              </Grid>
+            </Hidden>
+            {footers.map(footer => (
+              <Grid item key={footer.text} className={classes.footerItem}>
+                <Typography variant="caption" gutterBottom>
+                  <Link className={classes.footerLink} color="primary" target="_blank" href={footer.link}>{footer.text}</Link>
+                </Typography>
+              </Grid>
+            ))}
           </Grid>
-        </Grid>
+        </div>
+        <Link className={classes.builtByLink} href={i18next.t('general.links.builtBy')} target="_blank">
+          <img src={BuiltByImg} className={classes.builtByImg} alt={i18next.t('general.builtBy')} />
+        </Link>
+        <Hidden mdUp>
+          <Typography variant="caption" color="textSecondary" gutterBottom>
+            {i18next.t('general.copyright')}
+          </Typography>
+        </Hidden>
       </footer>
       {/* End footer */}
     </React.Fragment>
