@@ -39,7 +39,7 @@ Start by cloning the repository and installing dependencies.
 
 ```bash
 # Clone the repository
-git clone git@github.com:datagovsg/GoGovSG.git gogovsg
+git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 
 # Go inside the directory
 cd gogovsg
