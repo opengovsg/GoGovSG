@@ -20,6 +20,7 @@ The official Singapore government link shortener.
     - [Express](#express)
     - [Concurrently](#concurrently)
     - [VSCode + ESLint](#vscode--eslint)
+  - [Contributing to GoGovSG](https://github.com/opengovsg/GoGovSG/blob/master/README.md)
 
 ## Introduction
 
