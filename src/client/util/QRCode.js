@@ -27,12 +27,14 @@ export default class QRCode extends React.Component {
     this.update()
   }
 
+  /* eslint-disable react/forbid-foreign-prop-types */
   shouldComponentUpdate(nextProps) {
     const self = this
     return Object
       .keys(QRCode.propTypes)
       .some(k => self.props[k] !== nextProps[k])
   }
+  /* eslint-enable react/forbid-foreign-prop-types */
 
   componentDidUpdate() {
     this.update()
