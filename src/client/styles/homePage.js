@@ -5,7 +5,7 @@ const homePageStyle = theme => ({
     [theme.breakpoints.up('md')]: {
       // Fill whole screen
       height: `calc(100vh - ${theme.spacing(12)}px)`,
-      maxHeight: '60vw', // Upper bound for large portrait devices 
+      maxHeight: '60vw', // Upper bound for large portrait devices
     },
     minHeight: '500px',
   },
