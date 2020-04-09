@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8">
+    <title>Go.gov.sg: Page not found</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            background-color: #456682;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            font-family: 'IBM Plex Sans', sans-serif;
+            margin: 16px 16px;
+            color: white;
+            overflow-wrap: break-word;
+        }
+
+        .content {
+            display: block;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+        }
+
+        @media only screen and (min-height: 500px) {
+            .content {
+                transform: translate(0, 40%);
+            }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 0.50em;
+        }
+
+        p {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: 0.009em;
+        }
+
+        .divider {
+            width: 130px;
+            margin: 30px auto;
+            border-top: 1px solid white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h2>How odd.</h2>
+        <p>
+            There's nothing to be found here.
+        </p>
+        <p>
+            Are you sure <b>go.gov.sg/<%= shortUrl _%> </b> is a valid <b>Go.gov.sg</b> link?
+        </p>
+        <div class="divider"></div>
+        <p>
+            For further assistance, please contact the agency that gave you this link.
+        </p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      args:
+      - BUILD_MODE=development
+    command: npm run docker-dev
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "3000:3000" # Webpack dev server
+      - "8080:8080" # Express
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      # postgres://user:pass@hostname:port/database
+      - DB_URI=postgres://postgres:postgres@postgres:5432/postgres
+      # redis://[CLUSTER-PUBLIC-IP]:[PORT]
+      - REDIS_OTP_URI=redis://redis:6379/0
+      - REDIS_SESSION_URI=redis://redis:6379/1
+      - REDIS_REDIRECT_URI=redis://redis:6379/2
+      - REDIS_STAT_URI=redis://redis:6379/3
+      - SESSION_SECRET=thiscouldbeanything
+      - GA_TRACKING_ID=UA-139330318-1
+      - OG_URL=https://go.gov.sg
+      - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
+      - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
+    volumes:
+      - ./public:/usr/src/gogovsg/public
+      - ./src:/usr/src/gogovsg/src
+
+  postgres:
+    image: postgres:11.1-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432" # Postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:5.0.3-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

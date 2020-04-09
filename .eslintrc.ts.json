@@ -1,0 +1,19 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": ["airbnb", "plugin:import/typescript"],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["jsdoc"],
+  "rules": {
+    "comma-dangle": ["error", "always-multiline"],
+    "import/first": "off",
+    "newline-per-chained-call": ["error"],
+    "no-console": "off",
+    "no-unused-vars": "off",
+    "semi": [2, "never"],
+    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "jsdoc/require-description-complete-sentence": "error"
+  }
+}

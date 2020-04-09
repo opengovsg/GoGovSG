@@ -1,0 +1,49 @@
+language: node_js
+
+node_js:
+  - 10
+
+services:
+  - docker
+
+cache:
+  directories:
+    - 'node_modules'
+
+notifications:
+  email:
+    recipients:
+      - $EMAIL_RECIPIENT
+    on_success: always
+    on_failure: always
+
+install:
+  - npm install
+
+script:
+  - npm run lint
+  - npm run build
+#TODO: test
+
+# Directly rely on presence of Dockerfile to deploy
+deploy:
+  - provider: elasticbeanstalk
+    skip_cleanup: true
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    region: $AWS_EB_REGION
+    app: $AWS_EB_APP_STAGING
+    env: $AWS_EB_ENV_STAGING
+    bucket_name: $AWS_EB_BUCKET_STAGING
+    on:
+      branch: $STAGING_BRANCH
+  - provider: elasticbeanstalk
+    skip_cleanup: true
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    region: $AWS_EB_REGION
+    app: $AWS_EB_APP_PRODUCTION
+    env: $AWS_EB_ENV_PRODUCTION
+    bucket_name: $AWS_EB_BUCKET_PRODUCTION
+    on:
+      branch: $PRODUCTION_BRANCH

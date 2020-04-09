@@ -1,0 +1,37 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "plugins": ["jsdoc"],
+  "rules": {
+    "no-console": "off",
+    "comma-dangle": ["error", "always-multiline"],
+    "import/no-unresolved": "warn",
+    "newline-per-chained-call": ["error"],
+    "react/jsx-filename-extension": "off",
+    "react/require-default-props": "warn",
+    "react/forbid-prop-types": "warn",
+    "react/prop-types": "off",
+    "no-unused-vars": ["error"],
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "semi": [2, "never"],
+    "react/no-string-refs": "warn",
+    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "jsdoc/require-description-complete-sentence": "error"
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["^~", "./src/client"],
+          ["^\\$components", "./src/client/scss/components"]
+        ],
+        "extensions": [".jsx", ".js", ".scss", ".css"]
+      }
+    }
+  }
+}
