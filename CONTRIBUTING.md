@@ -1,6 +1,6 @@
-# Contributing to GogovSG
+# Contributing to GoGovSG
 
-The following is a set of guidelines for contributing GogovSG. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in an issue.
+The following is a set of guidelines for contributing GoGovSG. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in an issue.
 
 # Contributor License Agreement
 
@@ -13,7 +13,7 @@ You generally only need to submit a CLA once, so if you've already submitted one
 
 When contributing to this repository, **please first discuss the change you wish to make via issue**, email, or any other method with the owners of this repository before making a change. 
 
-This section guides you through submitting a bug reports or feature requests for GogovSG. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
+This section guides you through submitting a bug reports or feature requests for GoGovSG. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
 
 Before submitting bug reports or feature request, please check [existing or past issues](https://go.gov.sg/go-issues) and [existing or past pull requests](https://go.gov.sg/go-pr).
 You might find out that you don't need to create one. 
