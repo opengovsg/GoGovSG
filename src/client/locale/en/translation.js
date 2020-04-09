@@ -18,7 +18,7 @@ const translationEn = {
       },
     },
     appSignInPrompt: 'Are you a public officer with a gov.sg email?',
-    copyright: '© 2020 Government Technology Agency',
+    copyright: '© 2020 Open Government Products',
     placeholders: {
       email: 'john@moe.gov.sg',
     },
@@ -28,7 +28,9 @@ const translationEn = {
       privacy: 'https://guide.go.gov.sg/privacy.html',
       terms: 'https://guide.go.gov.sg/termsofuse.html',
       contact: 'https://form.gov.sg/forms/govtech/5c5295edb3d80b0017ac7c81',
+      builtBy: 'https://open.gov.sg',
     },
+    builtBy: 'Built by Open Government Products',
   },
   homePage: {
     features: {

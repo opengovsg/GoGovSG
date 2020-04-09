@@ -126,7 +126,7 @@ export default class QRCode extends React.Component {
             svg.appendChild(image)
 
             // Display the svg
-            svgContainer.innerHTML = svg.outerHTML
+            svgContainer.innerHTML = new XMLSerializer().serializeToString(svg)
           }
         }
       }
