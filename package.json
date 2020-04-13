@@ -19,6 +19,7 @@
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@sentry/browser": "^5.15.4",
+    "@sentry/webpack-plugin": "^1.10.0",
     "@types/node": "^10.14.5",
     "@types/react-redux": "^7.1.7",
     "@types/request": "^2.48.1",

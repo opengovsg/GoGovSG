@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Provider } from 'react-redux'
 import { HashRouter, Route, Switch } from 'react-router-dom'
-
 import { MuiThemeProvider } from '@material-ui/core/styles'
+import { Button } from '@material-ui/core'
+
 import BaseLayout from '~/components/BaseLayout'
 import PrivateRoute from '~/components/PrivateRoute'
 import HomePage from '~/components/HomePage'
@@ -18,7 +19,6 @@ import '~/assets/favicon/android-chrome-512x512.png'
 import '~/assets/favicon/apple-touch-icon.png'
 import '~/assets/favicon/favicon-16x16.png'
 import '~/assets/favicon/favicon-32x32.png'
-
 
 import {
   HOME_PAGE,
@@ -38,6 +38,9 @@ const Root = ({ store }) => (
       <BaseLayout>
         <HashRouter>
           <div>
+            {/* eslint-disable no-undef */}
+            <Button style={{ alignSelf: 'center', width: 50 }} onClick={() => testtestthatdoesnotexist()}>Hello</Button>
+            {/* eslint-enable no-undef */}
             <Switch>
               <Route exact path={HOME_PAGE} component={HomePage} />
               <Route path={LOGIN_PAGE} component={LoginPage} />

@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const SentryCliPlugin = require('@sentry/webpack-plugin')
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client')
@@ -49,6 +50,7 @@ module.exports = () => {
       },
       historyApiFallback: true,
     },
+    devtool: 'source-map',
     plugins: [
       new CleanWebpackPlugin([outputDirectory]),
       new HtmlWebpackPlugin({
@@ -62,6 +64,11 @@ module.exports = () => {
           'og:description': 'The official Singapore government link shortener',
           'og:image': 'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
         },
+      }),
+      new SentryCliPlugin({
+        include: '.',
+        ignoreFile: '.gitignore',
+        ignore: ['node_modules', 'webpack.config.js'],
       }),
     ],
   }

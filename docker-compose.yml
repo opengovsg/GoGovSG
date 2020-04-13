@@ -28,6 +28,12 @@ services:
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
+      # Sentry credentials for local testing.
+      - SENTRY_DNS=https://935f3f4f730142c3860b425b25b076a1@o372043.ingest.sentry.io/5198837
+      - SENTRY_AUTH_TOKEN=
+      - SENTRY_URL=https://sentry.io/
+      - SENTRY_ORG=gogovsg
+      - SENTRY_PROJECT=gogovsg-test
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
