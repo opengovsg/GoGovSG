@@ -55,6 +55,12 @@ initDb()
     // Initialise nodemailer
     initMailer()
 
+    // Site-wide cache control
+    app.use((_, res, next) => {
+      res.header('Cache-Control', 'no-store')
+      next()
+    })
+
     // To serve from build
     app.use(express.static('dist'))
 
@@ -87,7 +93,6 @@ initDb()
     // API configuration
     app.use((_, res, next) => {
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH')
-      res.header('Cache-Control', 'no-store')
       next()
     })
     app.use(bodyParser.urlencoded({ extended: false })) // application/x-www-form-urlencoded
