@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 import winston, { createLogger, format, transports } from 'winston'
 import minimatch from 'minimatch'
 import { parse } from 'url'
-import { OtpFunction, generateOTP } from './util/otp'
+import generateOTP, { OtpFunction } from './util/otp'
 
 // Check environment
 const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
