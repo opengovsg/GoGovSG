@@ -3,7 +3,7 @@ import crypto from 'crypto'
 
 export type OtpFunction = () => string
 
-export const generateOTP: OtpFunction = () => {
+const generateOTP: OtpFunction = () => {
   const length: number = 6
   const chars: string = '0123456789'
   // Generates cryptographically strong pseudo-random data.
@@ -16,3 +16,5 @@ export const generateOTP: OtpFunction = () => {
   }
   return value.join('')
 }
+
+export default generateOTP

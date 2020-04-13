@@ -20,6 +20,7 @@ The official Singapore government link shortener.
     - [Express](#express)
     - [Concurrently](#concurrently)
     - [VSCode + ESLint](#vscode--eslint)
+  - [Contributing to GoGovSG](https://github.com/opengovsg/GoGovSG/blob/master/CONTRIBUTING.md)
 
 ## Introduction
 
@@ -39,7 +40,7 @@ Start by cloning the repository and installing dependencies.
 
 ```bash
 # Clone the repository
-git clone git@github.com:datagovsg/GoGovSG.git gogovsg
+git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 
 # Go inside the directory
 cd gogovsg
@@ -100,7 +101,7 @@ Finally, start the production server by running `npm start`.
 We have yet to setup travis to automate these steps:
 
 - Update package version
-- Update credits (datagovsg/credits-generator)
+- Update credits [opengovsg/credits-generator](https://github.com/opengovsg/credits-generator)
 - Upload pdf to S3 bucket
 
 ## Documentation
