@@ -6,7 +6,15 @@ const SentryCliPlugin = require('@sentry/webpack-plugin')
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client')
 
-module.exports = (env) => {
+const requiredSentryEnvVar = [
+  process.env.SENTRY_AUTH_TOKEN,
+  process.env.SENTRY_DNS,
+  process.env.SENTRY_ORG,
+  process.env.SENTRY_PROJECT,
+  process.env.SENTRY_URL,
+]
+
+module.exports = () => {
   const jsBundle = {
     entry: ['babel-polyfill', path.join(srcDirectory, 'index.js')],
     output: {
@@ -67,16 +75,15 @@ module.exports = (env) => {
       }),
     ],
   }
-  const requiredSentryEnvVar = [env.SENTRY_DNS, env.SENTRY_ORG, env.SENTRY_PROJECT, env.SENTRY_URL]
   if (requiredSentryEnvVar.reduce((x, y) => x && y)) {
-    console.log('Build will include upload of sourcemaps to Sentry.')
+    console.log('\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m')
     jsBundle.plugins.push(new SentryCliPlugin({
       include: '.',
       ignoreFile: '.gitignore',
       ignore: ['node_modules', 'webpack.config.js'],
     }))
   } else {
-    console.log('Skipping upload of sourcemaps to Sentry because of missing env vars')
+    console.log('\x1b[33m[webpack-sentry-sourcemaps] Skipping upload of sourcemaps to Sentry because of missing env vars. Ignore this if it was intended.\x1b[0m')
   }
   return [jsBundle]
 }
