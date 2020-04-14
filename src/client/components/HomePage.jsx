@@ -120,12 +120,7 @@ const HomePage = (props) => {
           <Button
             className={classes.learnMoreBtn}
             color="primary"
-            /* eslint-disable no-undef */
-            onClick={() => testtestthatdoesnotexist()}
-            /* eslint-enable no-undef */
-            /* eslint-disable max-len */
-            // onClick={() => (document.getElementById('landing-bottom').scrollIntoView({ behavior: 'smooth' }))}
-            /* eslint-enable max-len */
+            onClick={() => (document.getElementById('landing-bottom').scrollIntoView({ behavior: 'smooth' }))}
             size="large"
             variant="outlined"
           >
