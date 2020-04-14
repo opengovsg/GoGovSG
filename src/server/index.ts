@@ -55,6 +55,12 @@ initDb()
     // Initialise nodemailer
     initMailer()
 
+    // Site-wide cache control
+    app.use((_, res, next) => {
+      res.header('Cache-Control', 'no-store')
+      next()
+    })
+
     // To serve from build
     app.use(express.static('dist'))
 

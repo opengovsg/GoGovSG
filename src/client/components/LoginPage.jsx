@@ -205,10 +205,10 @@ const LoginPage = ({
                 <img src={GoLogo} className={classes.logo} alt="GoGovSG logo" />
               </a>
               <Typography className={classes.signInText} variant="h2" color="textPrimary" gutterBottom>
-              Sign in
+                Sign in
               </Typography>
               <Typography align="center" variant="body1">
-              Only available for use by public officers with a
+                Only available for use by public officers with a
                 {' '}
                 <strong>
                   {i18next.t('general.emailDomain')}
@@ -251,8 +251,12 @@ LoginPage.propTypes = {
   setEmail: PropTypes.func.isRequired,
   setOTP: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
-  emailValidator: PropTypes.instanceOf(Minimatch),
+  emailValidator: PropTypes.instanceOf(Minimatch).isRequired,
   variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
+}
+
+LoginPage.defaultProps = {
+  location: undefined,
 }
 
 export default withStyles(loginPageStyle)(

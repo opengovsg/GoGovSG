@@ -1,7 +1,7 @@
 import express from 'express'
 import uuidv4 from 'uuid/v4'
 import request from 'request'
-import { gaTrackingId, ogUrl, logger } from '../config'
+import { gaTrackingId, logger, ogUrl } from '../config'
 import getIp from './request'
 
 type CookieData = {
