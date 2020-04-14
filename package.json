@@ -19,7 +19,6 @@
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@sentry/browser": "^5.15.4",
-    "@sentry/webpack-plugin": "^1.10.0",
     "@types/node": "^10.14.5",
     "@types/react-redux": "^7.1.7",
     "@types/request": "^2.48.1",
@@ -69,6 +68,7 @@
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
+    "@sentry/webpack-plugin": "^1.10.0",
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.26",
     "@types/connect-redis": "0.0.10",
