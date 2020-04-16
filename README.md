@@ -89,7 +89,11 @@ After these have been set up, set the environment variables according to the tab
 |SESSION_SECRET|Yes|For hashing browser sessions, e.g. `change-this`|
 |VALID_EMAIL_GLOB_EXPRESSION|Yes|The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com`|
 |GA_TRACKING_ID|No|The Google Analytics tracking ID, e.g. `UA-12345678-9`|
+|SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps.|
 |SENTRY_DNS|No|The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`|
+|SENTRY_ORG|No|Our Sentry organisation name, e.g. `example-org`|
+|SENTRY_PROJECT|No|The relevant Sentry project. e.g. `project-prod`|
+|SENTRY_URL|No|The Sentry url. e.g. `https://sentry.io/`|
 |LOGIN_MESSAGE|No|A text message that will be displayed on the login page as a snackbar.|
 
 Trigger the typescript compilation and webpack bundling process by calling `npm run build`.

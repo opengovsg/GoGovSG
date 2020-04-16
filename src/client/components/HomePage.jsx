@@ -27,7 +27,6 @@ import trustedByLogo7 from '~/assets/trusted-by-logos/7.png'
 import trustedByLogo8 from '~/assets/trusted-by-logos/8.png'
 import 'boxicons'
 
-
 const mapDispatchToProps = dispatch => ({
   loadStats: () => dispatch(homeActions.loadStats()),
   getIsLoggedIn: () => dispatch(loginActions.isLoggedIn()),
@@ -41,16 +40,16 @@ const mapStateToProps = (state, ownProps) => ({
   isLoggedIn: state.login.isLoggedIn,
 })
 
-const generateStatsString = ({ statistics: { userCount, linkCount, clickCount } }) => {
+const generateStatsString = ({
+  statistics: { userCount, linkCount, clickCount },
+}) => {
   let statsStringBuilder = ''
-  if (
-    userCount !== null
-    && clickCount !== null
-    && linkCount !== null
-  ) {
+  if (userCount !== null && clickCount !== null && linkCount !== null) {
     statsStringBuilder = `, with ${numberFormatter.format(userCount)} users`
     statsStringBuilder += `, ${numberFormatter.format(linkCount)} links`
-    statsStringBuilder += `, and ${numberFormatter.format(clickCount)} total clicks`
+    statsStringBuilder += `, and ${numberFormatter.format(
+      clickCount
+    )} total clicks`
   }
   return statsStringBuilder
 }
@@ -59,20 +58,17 @@ const cards = [
   {
     icon: 'lock',
     title: 'Anti-phishing',
-    description:
-  <Trans>homePage.features.antiPhishing.description</Trans>,
+    description: <Trans>homePage.features.antiPhishing.description</Trans>,
   },
   {
     icon: 'customize',
     title: 'Customised',
-    description:
-  <Trans>homePage.features.customised.description</Trans>,
+    description: <Trans>homePage.features.customised.description</Trans>,
   },
   {
     icon: 'line-chart',
     title: 'Analytics',
-    description:
-  <Trans>homePage.features.analytics.description</Trans>,
+    description: <Trans>homePage.features.analytics.description</Trans>,
   },
 ]
 
@@ -130,10 +126,7 @@ const HomePage = (props) => {
           >
             Learn more
           </Button>
-          <Typography
-            className={classes.signInText}
-            variant="body2"
-          >
+          <Typography className={classes.signInText} variant="body2">
             <Trans>general.appSignInPrompt</Trans>
             {' '}
             <Link href="/#/login" color="inherit" underline="always">
@@ -153,24 +146,52 @@ const HomePage = (props) => {
         </Typography>
         <div className={classes.trustedByContainer}>
           <div className={classes.trustedByGroup}>
-            <img className={classes.trustedLogo} src={trustedByLogo1} alt="MOM" />
-            <img className={classes.trustedLogo} src={trustedByLogo2} alt="LTA" />
-            <img className={classes.trustedLogo} src={trustedByLogo3} alt="MOH" />
-            <img className={classes.trustedLogo} src={trustedByLogo4} alt="MSF" />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo1}
+              alt="MOM"
+            />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo2}
+              alt="LTA"
+            />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo3}
+              alt="MOH"
+            />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo4}
+              alt="MSF"
+            />
           </div>
           <div className={classes.trustedByGroup}>
-            <img className={classes.trustedLogo} src={trustedByLogo5} alt="SPF" />
-            <img className={classes.trustedLogo} src={trustedByLogo6} alt="IRAS" />
-            <img className={classes.trustedLogo} src={trustedByLogo7} alt="MOE" />
-            <img className={classes.trustedLogo} src={trustedByLogo8} alt="MHA" />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo5}
+              alt="SPF"
+            />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo6}
+              alt="IRAS"
+            />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo7}
+              alt="MOE"
+            />
+            <img
+              className={classes.trustedLogo}
+              src={trustedByLogo8}
+              alt="MHA"
+            />
           </div>
         </div>
         <div className={classes.divider} />
-        <Typography
-          variant="h2"
-          color="textPrimary"
-          gutterBottom
-        >
+        <Typography variant="h2" color="textPrimary" gutterBottom>
           <strong>
             Why use
             {' '}
@@ -185,7 +206,7 @@ const HomePage = (props) => {
         >
           <Trans>general.appDescription.stats</Trans>
           {generateStatsString(props)}
-            .
+          .
         </Typography>
         <Grid container justify="center" className={classes.grid}>
           {cards.map(card => (
@@ -193,16 +214,10 @@ const HomePage = (props) => {
               <Card className={classes.card}>
                 <box-icon name={card.icon} size="sm" />
                 <CardContent>
-                  <Typography
-                    color="primary"
-                    variant="h3"
-                    gutterBottom
-                  >
+                  <Typography color="primary" variant="h3" gutterBottom>
                     <strong>{card.title}</strong>
                   </Typography>
-                  <Typography
-                    color="textPrimary"
-                  >
+                  <Typography color="textPrimary">
                     {card.description}
                   </Typography>
                 </CardContent>
@@ -223,10 +238,5 @@ HomePage.propTypes = {
 }
 
 export default withStyles(homePageStyle)(
-  withRouter(
-    connect(
-      mapStateToProps,
-      mapDispatchToProps,
-    )(HomePage)
-  )
+  withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage))
 )
