@@ -193,7 +193,8 @@ const HomePage = (props) => {
         <div className={classes.divider} />
         <Typography variant="h2" color="textPrimary" gutterBottom>
           <strong>
-Why use
+            Why use
+            {' '}
             {i18next.t('general.appTitle')}
           </strong>
         </Typography>
@@ -205,7 +206,7 @@ Why use
         >
           <Trans>general.appDescription.stats</Trans>
           {generateStatsString(props)}
-.
+          .
         </Typography>
         <Grid container justify="center" className={classes.grid}>
           {cards.map(card => (
