@@ -1,9 +1,18 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const SentryCliPlugin = require('@sentry/webpack-plugin')
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client')
+
+const requiredSentryEnvVar = [
+  process.env.SENTRY_AUTH_TOKEN,
+  process.env.SENTRY_DNS,
+  process.env.SENTRY_ORG,
+  process.env.SENTRY_PROJECT,
+  process.env.SENTRY_URL,
+]
 
 module.exports = () => {
   const jsBundle = {
@@ -49,6 +58,7 @@ module.exports = () => {
       },
       historyApiFallback: true,
     },
+    devtool: 'source-map',
     plugins: [
       new CleanWebpackPlugin([outputDirectory]),
       new HtmlWebpackPlugin({
@@ -64,6 +74,16 @@ module.exports = () => {
         },
       }),
     ],
+  }
+  if (requiredSentryEnvVar.reduce((x, y) => x && y)) {
+    console.log('\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m')
+    jsBundle.plugins.push(new SentryCliPlugin({
+      include: '.',
+      ignoreFile: '.gitignore',
+      ignore: ['node_modules', 'webpack.config.js'],
+    }))
+  } else {
+    console.log('\x1b[33m[webpack-sentry-sourcemaps] Skipping upload of sourcemaps to Sentry because of missing env vars. Ignore this if it was intended.\x1b[0m')
   }
   return [jsBundle]
 }
