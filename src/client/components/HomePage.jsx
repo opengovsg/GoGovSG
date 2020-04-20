@@ -27,7 +27,7 @@ import trustedByLogo7 from '~/assets/trusted-by-logos/7.png'
 import trustedByLogo8 from '~/assets/trusted-by-logos/8.png'
 import 'boxicons'
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   loadStats: () => dispatch(homeActions.loadStats()),
   getIsLoggedIn: () => dispatch(loginActions.isLoggedIn()),
 })
@@ -48,7 +48,7 @@ const generateStatsString = ({
     statsStringBuilder = `, with ${numberFormatter.format(userCount)} users`
     statsStringBuilder += `, ${numberFormatter.format(linkCount)} links`
     statsStringBuilder += `, and ${numberFormatter.format(
-      clickCount
+      clickCount,
     )} total clicks`
   }
   return statsStringBuilder
@@ -92,7 +92,7 @@ const HomePage = (props) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.landingTop}>
         <div className={classes.heroContent}>
           <div className={classes.mainText}>
@@ -120,15 +120,18 @@ const HomePage = (props) => {
           <Button
             className={classes.learnMoreBtn}
             color="primary"
-            onClick={() => (document.getElementById('landing-bottom').scrollIntoView({ behavior: 'smooth' }))}
+            onClick={() =>
+              document
+                .getElementById('landing-bottom')
+                .scrollIntoView({ behavior: 'smooth' })
+            }
             size="large"
             variant="outlined"
           >
             Learn more
           </Button>
           <Typography className={classes.signInText} variant="body2">
-            <Trans>general.appSignInPrompt</Trans>
-            {' '}
+            <Trans>general.appSignInPrompt</Trans>{' '}
             <Link href="/#/login" color="inherit" underline="always">
               Sign in
             </Link>
@@ -194,7 +197,6 @@ const HomePage = (props) => {
         <Typography variant="h2" color="textPrimary" gutterBottom>
           <strong>
             Why use
-            {' '}
             {i18next.t('general.appTitle')}
           </strong>
         </Typography>
@@ -205,11 +207,10 @@ const HomePage = (props) => {
           paragraph
         >
           <Trans>general.appDescription.stats</Trans>
-          {generateStatsString(props)}
-          .
+          {generateStatsString(props)}.
         </Typography>
         <Grid container justify="center" className={classes.grid}>
-          {cards.map(card => (
+          {cards.map((card) => (
             <Grid item key={card.title}>
               <Card className={classes.card}>
                 <box-icon name={card.icon} size="sm" />
@@ -226,7 +227,7 @@ const HomePage = (props) => {
           ))}
         </Grid>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 
@@ -238,5 +239,5 @@ HomePage.propTypes = {
 }
 
 export default withStyles(homePageStyle)(
-  withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage))
+  withRouter(connect(mapStateToProps, mapDispatchToProps)(HomePage)),
 )

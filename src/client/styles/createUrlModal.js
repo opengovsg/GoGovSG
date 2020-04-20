@@ -1,4 +1,4 @@
-const createUrlStyle = theme => ({
+const createUrlStyle = (theme) => ({
   createUrlModal: {
     outline: 'none',
     top: 'calc(50% - 180px)',

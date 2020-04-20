@@ -41,7 +41,7 @@ export const logger: winston.Logger = createLogger({
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    format.json()
+    format.json(),
   ),
   transports: [
     new transports.Console({
@@ -49,8 +49,8 @@ export const logger: winston.Logger = createLogger({
       format: format.combine(
         format.colorize(),
         format.printf(
-          (info: any) => `${info.timestamp} ${info.level}: ${info.message}`
-        )
+          (info: any) => `${info.timestamp} ${info.level}: ${info.message}`,
+        ),
       ),
     }),
   ],
@@ -63,7 +63,7 @@ const exitIfAnyMissing = (vars: string[]) => {
   }, [] as string[])
   if (err.length > 0) {
     logger.error(
-      `ERROR: Cannot deploy app. These environment variables are missing\t: ${err.join(', ')}`
+      `ERROR: Cannot deploy app. These environment variables are missing\t: ${err.join(', ')}`,
     )
     process.exit(1)
   }
@@ -129,7 +129,7 @@ export const emailValidator = new minimatch.Minimatch(
     noglobstar: true,
     nobrace: true,
     nonegate: true,
-  }
+  },
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
 export const s3Bucket = process.env.AWS_S3_BUCKET as string

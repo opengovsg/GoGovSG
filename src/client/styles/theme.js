@@ -46,7 +46,8 @@ const theme = createMuiTheme({
     subtitle1: {
       lineHeight: '135%',
     },
-    body1: { // MUI v4 body1 == body2
+    body1: {
+      // MUI v4 body1 == body2
       fontSize: '0.875rem',
     },
     body2: {
@@ -72,7 +73,8 @@ const theme = createMuiTheme({
     },
     MuiCssBaseline: {
       '@global': {
-        '@font-face': [ // Used for crest symbol in government masthead
+        '@font-face': [
+          // Used for crest symbol in government masthead
           {
             fontFamily: 'sgds-icons',
             fontStyle: 'normal',
@@ -82,8 +84,7 @@ const theme = createMuiTheme({
               url(${sgdsIconsWoff}) format("woff"),
               url(${sgdsIconsSvg}?#sgds-icons) format("svg");
             `,
-            unicodeRange:
-            'U+e948',
+            unicodeRange: 'U+e948',
           },
         ],
       },

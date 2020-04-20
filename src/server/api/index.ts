@@ -15,7 +15,7 @@ router.use('/sentry', require('./sentry'))
 function userGuard(
   req: Express.Request,
   res: Express.Response,
-  next: Express.NextFunction
+  next: Express.NextFunction,
 ) {
   if (!req.session || !req.session.user || !req.session.user.id) {
     res.unauthorized(jsonMessage('Unauthorized'))
@@ -31,7 +31,7 @@ function userGuard(
 function preprocess(
   req: Express.Request,
   _: Express.Response,
-  next: Express.NextFunction
+  next: Express.NextFunction,
 ) {
   if (req.body.email) {
     req.body.email = req.body.email.trim().toLowerCase()

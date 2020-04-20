@@ -19,7 +19,7 @@ import userActions from '~/actions/user'
 import rootActions from '~/actions/root'
 import { defaultEmailValidationGlobExpression } from '~/reducers/login'
 
-const isGetOTPSuccess = email => ({
+const isGetOTPSuccess = (email) => ({
   type: GET_OTP_EMAIL_SUCCESS,
   payload: email,
 })
@@ -28,16 +28,16 @@ const isGetOTPPending = () => ({
   type: GET_OTP_EMAIL_PENDING,
 })
 
-const isGetOTPError = errorMessage => ({
+const isGetOTPError = (errorMessage) => ({
   type: GET_OTP_EMAIL_ERROR,
   payload: errorMessage,
 })
 
-const setEmail = payload => ({ type: SET_EMAIL, payload })
+const setEmail = (payload) => ({ type: SET_EMAIL, payload })
 
-const setEmailValidator = payload => ({ type: SET_EMAIL_VALIDATOR, payload })
+const setEmailValidator = (payload) => ({ type: SET_EMAIL_VALIDATOR, payload })
 
-const setOTP = payload => ({ type: SET_OTP, payload })
+const setOTP = (payload) => ({ type: SET_OTP, payload })
 
 const isVerifyOTPError = () => ({
   type: VERIFY_OTP_ERROR,
@@ -55,12 +55,12 @@ const isResendOTPPending = () => ({
 
 const isResendOTPError = isVerifyOTPError
 
-const isResendOTPDisabled = errorMessage => ({
+const isResendOTPDisabled = (errorMessage) => ({
   type: RESEND_OTP_DISABLED,
   payload: errorMessage,
 })
 
-const isLoggedInSuccess = user => ({
+const isLoggedInSuccess = (user) => ({
   type: IS_LOGGED_IN_SUCCESS,
   payload: user,
 })
@@ -73,15 +73,12 @@ const getEmailValidationGlobExpression = () => (dispatch, getState) => {
   get('/api/login/emaildomains').then((response) => {
     if (response.ok) {
       response.text().then((expression) => {
-        const validator = new Minimatch(
-          expression,
-          {
-            noext: true,
-            noglobstar: true,
-            nobrace: true,
-            nonegate: true,
-          }
-        )
+        const validator = new Minimatch(expression, {
+          noext: true,
+          noglobstar: true,
+          nobrace: true,
+          nonegate: true,
+        })
         dispatch(setEmailValidator(validator))
       })
     }
@@ -139,18 +136,19 @@ const getOTPEmail = () => (dispatch, getState) => {
 }
 
 // Checks if there is an existing session.
-const isLoggedIn = () => dispatch => get('/api/login/isLoggedIn').then((response) => {
-  const isOk = response.ok
-  return response.json().then((json) => {
-    if (isOk) {
-      const { user } = json
-      dispatch(isLoggedInSuccess(user))
-    } else {
-      const { message } = json
-      dispatch(isLoggedOut(message))
-    }
+const isLoggedIn = () => (dispatch) =>
+  get('/api/login/isLoggedIn').then((response) => {
+    const isOk = response.ok
+    return response.json().then((json) => {
+      if (isOk) {
+        const { user } = json
+        dispatch(isLoggedInSuccess(user))
+      } else {
+        const { message } = json
+        dispatch(isLoggedOut(message))
+      }
+    })
   })
-})
 
 /**
  * Called when user enters OTP and submits for verification.
@@ -177,16 +175,17 @@ const verifyOTP = () => (dispatch, getState) => {
   })
 }
 
-const logout = () => dispatch => get('/api/logout').then((response) => {
-  if (response.ok) {
-    dispatch(isLoggedOut())
+const logout = () => (dispatch) =>
+  get('/api/logout').then((response) => {
+    if (response.ok) {
+      dispatch(isLoggedOut())
 
-    // Clear the shortUrl and longUrl on logout
-    dispatch(userActions.resetUserState())
-  } else {
-    console.error(response)
-  }
-})
+      // Clear the shortUrl and longUrl on logout
+      dispatch(userActions.resetUserState())
+    } else {
+      console.error(response)
+    }
+  })
 
 export default {
   getEmailValidationGlobExpression,

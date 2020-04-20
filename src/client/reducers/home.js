@@ -20,7 +20,7 @@ const home = (state = initialState, action) => {
     default:
       return state
   }
-  return Object.assign({}, state, nextState)
+  return { ...state, ...nextState }
 }
 
 export default home

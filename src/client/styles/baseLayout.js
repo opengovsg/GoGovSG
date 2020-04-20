@@ -6,7 +6,7 @@ const takeUpVerticalSpace = {
   ...flexColumn,
   flexGrow: 1 /* grow to occupy all available space */,
 }
-const baseLayoutStyle = theme => ({
+const baseLayoutStyle = (theme) => ({
   '@global': {
     body: {
       /* Make body take up the entire screen */

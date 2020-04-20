@@ -19,17 +19,15 @@ import Masthead from '~/components/Masthead'
 import GoLogo from '~/assets/go-main-logo.png'
 import BuiltByImg from '~/assets/built-by.png'
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isLoggedIn: state.login.isLoggedIn,
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   logout: () => dispatch(loginActions.logout()),
 })
 
-const BaseLayout = ({
-  classes, children, isLoggedIn, logout,
-}) => {
+const BaseLayout = ({ classes, children, isLoggedIn, logout }) => {
   const headers = [
     {
       text: 'Contribute',
@@ -38,7 +36,10 @@ const BaseLayout = ({
       xsHidden: false,
     },
     {
-      text: 'FAQ', link: i18next.t('general.links.faq'), public: false, xsHidden: true,
+      text: 'FAQ',
+      link: i18next.t('general.links.faq'),
+      public: false,
+      xsHidden: true,
     },
     {
       text: 'Help us improve',
@@ -75,33 +76,40 @@ const BaseLayout = ({
       variant="contained"
       className={classes.appBarSignInBtn}
     >
-        Sign in
+      Sign in
     </Button>
   )
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Masthead />
-      <AppBar position="static" color={isLoggedIn ? 'primary' : 'transparent'} className={classes.appBar}>
+      <AppBar
+        position="static"
+        color={isLoggedIn ? 'primary' : 'transparent'}
+        className={classes.appBar}
+      >
         <Toolbar className={classes.toolbar}>
           <a href="/#" className={classes.toolbarLogo}>
             <img src={GoLogo} className={classes.logo} alt="GoGovSG Logo" />
           </a>
           <span className={classes.rowSpace} />
-          {headers.map(header => ((header.public ? !isLoggedIn : isLoggedIn) && (
-            <Hidden xsDown={header.xsHidden} key={header.text}>
-              <Button
-                href={header.link}
-                target="_blank"
-                color="primary"
-                size="large"
-                variant="text"
-              >
-                {header.text}
-              </Button>
-            </Hidden>
-          )))}
+          {headers.map(
+            (header) =>
+              (header.public ? !isLoggedIn : isLoggedIn) && (
+                <Hidden xsDown={header.xsHidden} key={header.text}>
+                  <Button
+                    href={header.link}
+                    target="_blank"
+                    color="primary"
+                    size="large"
+                    variant="text"
+                  >
+                    {header.text}
+                  </Button>
+                </Hidden>
+              ),
+          )}
           {appBarBtn}
         </Toolbar>
       </AppBar>
@@ -109,7 +117,11 @@ const BaseLayout = ({
       {/* Footer */}
       <footer className={classes.footer}>
         <div>
-          <Typography variant="body2" color="textPrimary" className={classes.footerTitle}>
+          <Typography
+            variant="body2"
+            color="textPrimary"
+            className={classes.footerTitle}
+          >
             <strong>{i18next.t('general.appTitle')}</strong>
           </Typography>
           <Typography variant="body1" display="inline" color="textPrimary">
@@ -124,21 +136,36 @@ const BaseLayout = ({
               </Grid>
               <Grid item>
                 <Typography variant="caption" color="textPrimary" gutterBottom>
-               |
+                  |
                 </Typography>
               </Grid>
             </Hidden>
-            {footers.map(footer => (
+            {footers.map((footer) => (
               <Grid item key={footer.text} className={classes.footerItem}>
                 <Typography variant="caption" gutterBottom>
-                  <Link className={classes.footerLink} color="primary" target="_blank" href={footer.link}>{footer.text}</Link>
+                  <Link
+                    className={classes.footerLink}
+                    color="primary"
+                    target="_blank"
+                    href={footer.link}
+                  >
+                    {footer.text}
+                  </Link>
                 </Typography>
               </Grid>
             ))}
           </Grid>
         </div>
-        <Link className={classes.builtByLink} href={i18next.t('general.links.builtBy')} target="_blank">
-          <img src={BuiltByImg} className={classes.builtByImg} alt={i18next.t('general.builtBy')} />
+        <Link
+          className={classes.builtByLink}
+          href={i18next.t('general.links.builtBy')}
+          target="_blank"
+        >
+          <img
+            src={BuiltByImg}
+            className={classes.builtByImg}
+            alt={i18next.t('general.builtBy')}
+          />
         </Link>
         <Hidden mdUp>
           <Typography variant="caption" color="textSecondary" gutterBottom>
@@ -147,7 +174,7 @@ const BaseLayout = ({
         </Hidden>
       </footer>
       {/* End footer */}
-    </React.Fragment>
+    </>
   )
 }
 
@@ -159,8 +186,5 @@ BaseLayout.propTypes = {
 }
 
 export default withStyles(baseLayoutStyle)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(BaseLayout)
+  connect(mapStateToProps, mapDispatchToProps)(BaseLayout),
 )

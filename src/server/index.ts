@@ -84,7 +84,7 @@ initDb()
           ...cookieSettings,
         },
         ...sessionSettings,
-      } as session.SessionOptions)
+      } as session.SessionOptions),
     )
 
     // Log http requests

@@ -6,7 +6,8 @@ const translationEn = {
     // of index.html, 404.error.ejs, and 500.error.ejs.
     appTitle: 'Go.gov.sg',
     appCatchphrase: {
-      styled: 'Trusted short links from <strong><i>public officers</i></strong>',
+      styled:
+        'Trusted short links from <strong><i>public officers</i></strong>',
       noStyle: 'Trusted short links from public officers',
     },
     appDescription: {

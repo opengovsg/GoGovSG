@@ -28,14 +28,16 @@ import EnhancedTableBody from './EnhancedTableBody'
 import urlTableTheme from '~/styles/tableTheme'
 import userPageStyle from '~/styles/userPage'
 
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   urlCount: state.user.urlCount,
   tableConfig: state.user.tableConfig,
 })
 
 const mapDispatchToProps = (dispatch) => {
-  const debouncedUpdateSearchText = debounce(() => dispatch(userActions.getUrlsForUser()), 500)
+  const debouncedUpdateSearchText = debounce(
+    () => dispatch(userActions.getUrlsForUser()),
+    500,
+  )
   return {
     updateUrlTableConfig: (config) => {
       dispatch(userActions.setUrlTableConfig(config))
@@ -55,14 +57,13 @@ const mapDispatchToProps = (dispatch) => {
  * Prevents re-render if search input did not change.
  */
 // eslint-disable-next-line max-len
-const searchInputIsEqual = (prev, next) => prev.tableConfig.searchText === next.tableConfig.searchText
+const searchInputIsEqual = (prev, next) =>
+  prev.tableConfig.searchText === next.tableConfig.searchText
 
 /**
  * Search Input field.
  */
-const SearchInput = React.memo(({
-  classes, tableConfig, searchIfChanged,
-}) => {
+const SearchInput = React.memo(({ classes, tableConfig, searchIfChanged }) => {
   const changeSearchTextHandler = (event) => {
     searchIfChanged(event.target.value)
   }
@@ -93,7 +94,8 @@ const SearchInput = React.memo(({
       }}
       placeholder="Search…"
       inputProps={{ 'aria-label': 'search' }}
-      InputProps={{ // eslint-disable-line react/jsx-no-duplicate-props
+      // eslint-disable-next-line react/jsx-no-duplicate-props
+      InputProps={{
         startAdornment: (
           <InputAdornment position="start">
             <box-icon name="search" />
@@ -112,51 +114,56 @@ const SearchInput = React.memo(({
 /**
  * Prevents re-render if pagination did not change.
  */
-// eslint-disable-next-line max-len
-const paginationInputIsEqual = (prev, next) => prev.tableConfig.numberOfRows === next.tableConfig.numberOfRows
-  && prev.tableConfig.pageNumber === next.tableConfig.pageNumber && prev.urlCount === next.urlCount
+const paginationInputIsEqual = (prev, next) =>
+  prev.tableConfig.numberOfRows === next.tableConfig.numberOfRows &&
+  prev.tableConfig.pageNumber === next.tableConfig.pageNumber &&
+  prev.urlCount === next.urlCount
 
-const MemoTablePagination = React.memo((
-  {
-    urlCount, tableConfig, updateUrlTableConfig,
-  }
-) => {
-  const updateTableIfChanged = (newConfig) => {
-    if (!isMatch(tableConfig, newConfig)) {
-      updateUrlTableConfig(newConfig)
+const MemoTablePagination = React.memo(
+  ({ urlCount, tableConfig, updateUrlTableConfig }) => {
+    const updateTableIfChanged = (newConfig) => {
+      if (!isMatch(tableConfig, newConfig)) {
+        updateUrlTableConfig(newConfig)
+      }
     }
-  }
-  const changePageHandler = (_, pageNumber) => {
-    updateTableIfChanged({ pageNumber })
-  }
-  const changeRowsPerPageHandler = (event) => {
-    updateTableIfChanged({ numberOfRows: event.target.value, pageNumber: 0 })
-  }
+    const changePageHandler = (_, pageNumber) => {
+      updateTableIfChanged({ pageNumber })
+    }
+    const changeRowsPerPageHandler = (event) => {
+      updateTableIfChanged({ numberOfRows: event.target.value, pageNumber: 0 })
+    }
 
-  return (
-    <TablePagination
-      rowsPerPageOptions={[10, 25, 100]}
-      component="div"
-      count={urlCount}
-      rowsPerPage={tableConfig.numberOfRows}
-      page={tableConfig.pageNumber}
-      backIconButtonProps={{
-        'aria-label': 'previous page',
-      }}
-      nextIconButtonProps={{
-        'aria-label': 'next page',
-      }}
-      onChangePage={changePageHandler}
-      onChangeRowsPerPage={changeRowsPerPageHandler}
-    />
-  )
-}, paginationInputIsEqual)
+    return (
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={urlCount}
+        rowsPerPage={tableConfig.numberOfRows}
+        page={tableConfig.pageNumber}
+        backIconButtonProps={{
+          'aria-label': 'previous page',
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'next page',
+        }}
+        onChangePage={changePageHandler}
+        onChangeRowsPerPage={changeRowsPerPageHandler}
+      />
+    )
+  },
+  paginationInputIsEqual,
+)
 
 /**
  * Display URLs in a table.
  */
 const UrlTable = ({
-  classes, urlCount, tableConfig, updateUrlTableConfig, updateSearchText, openCreateUrlModal,
+  classes,
+  urlCount,
+  tableConfig,
+  updateUrlTableConfig,
+  updateSearchText,
+  openCreateUrlModal,
 }) => {
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {
@@ -223,7 +230,14 @@ SearchInput.propTypes = {
     numberOfRows: PropTypes.number,
     pageNumber: PropTypes.number,
     sortDirection: PropTypes.oneOf(['asc', 'desc', 'none']),
-    orderBy: PropTypes.oneOf(['createdAt', 'shortUrl', 'longUrl', 'updatedAt', 'clicks', 'state']),
+    orderBy: PropTypes.oneOf([
+      'createdAt',
+      'shortUrl',
+      'longUrl',
+      'updatedAt',
+      'clicks',
+      'state',
+    ]),
     searchText: PropTypes.string,
   }).isRequired,
   searchIfChanged: PropTypes.func.isRequired,
@@ -235,7 +249,14 @@ MemoTablePagination.propTypes = {
     numberOfRows: PropTypes.number,
     pageNumber: PropTypes.number,
     sortDirection: PropTypes.oneOf(['asc', 'desc', 'none']),
-    orderBy: PropTypes.oneOf(['createdAt', 'shortUrl', 'longUrl', 'updatedAt', 'clicks', 'state']),
+    orderBy: PropTypes.oneOf([
+      'createdAt',
+      'shortUrl',
+      'longUrl',
+      'updatedAt',
+      'clicks',
+      'state',
+    ]),
     searchText: PropTypes.string,
   }).isRequired,
   updateUrlTableConfig: PropTypes.func.isRequired,
@@ -248,7 +269,14 @@ UrlTable.propTypes = {
     numberOfRows: PropTypes.number,
     pageNumber: PropTypes.number,
     sortDirection: PropTypes.oneOf(['asc', 'desc', 'none']),
-    orderBy: PropTypes.oneOf(['createdAt', 'shortUrl', 'longUrl', 'updatedAt', 'clicks', 'state']),
+    orderBy: PropTypes.oneOf([
+      'createdAt',
+      'shortUrl',
+      'longUrl',
+      'updatedAt',
+      'clicks',
+      'state',
+    ]),
     searchText: PropTypes.string,
   }).isRequired,
   updateUrlTableConfig: PropTypes.func.isRequired,
@@ -256,4 +284,6 @@ UrlTable.propTypes = {
   openCreateUrlModal: PropTypes.func.isRequired,
 }
 
-export default withStyles(userPageStyle)(connect(mapStateToProps, mapDispatchToProps)(UrlTable))
+export default withStyles(userPageStyle)(
+  connect(mapStateToProps, mapDispatchToProps)(UrlTable),
+)

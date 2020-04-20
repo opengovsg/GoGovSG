@@ -8,23 +8,19 @@ const NotFoundPage = ({ classes, match }) => {
   const { params } = match
   const { shortUrl } = params
   const message = shortUrl ? (
-    <React.Fragment>
-      Are you sure
-      {' '}
+    <>
+      Are you sure{' '}
       <strong>
-        {document.location.host}
-/
-        {shortUrl}
-      </strong>
-      {' '}
+        {document.location.host}/{shortUrl}
+      </strong>{' '}
       was a valid GoGovSg link?
-    </React.Fragment>
+    </>
   ) : (
     <span>Are you sure you used a valid GoGovSg link?</span>
   )
 
   return (
-    <React.Fragment>
+    <>
       <div className={classes.heroContent}>
         <Typography
           variant="h2"
@@ -42,15 +38,11 @@ const NotFoundPage = ({ classes, match }) => {
         >
           There&#39;s nothing to be found here.
         </Typography>
-        <Typography
-          align="center"
-          color="textPrimary"
-          gutterBottom
-        >
+        <Typography align="center" color="textPrimary" gutterBottom>
           {message}
         </Typography>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

@@ -3,7 +3,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import {
-  TableCell, TableHead, TableRow, TableSortLabel,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableSortLabel,
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 
@@ -11,26 +14,33 @@ import userActions from '~/actions/user'
 
 import userPageStyle from '~/styles/userPage'
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   tableConfig: state.user.tableConfig,
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   updateOrderAndDirection: (title, direction) => {
-    dispatch(userActions.setUrlTableConfig(
-      {
+    dispatch(
+      userActions.setUrlTableConfig({
         orderBy: title,
         sortDirection: direction,
-      }
-    ))
+      }),
+    )
     dispatch(userActions.getUrlsForUser())
   },
 })
 
-const EnhancedTableHead = ({ classes, updateOrderAndDirection, tableConfig }) => {
+const EnhancedTableHead = ({
+  classes,
+  updateOrderAndDirection,
+  tableConfig,
+}) => {
   const columnTitles = [
     {
-      name: 'Owner', sortable: false, center: true, className: classes.leftCell,
+      name: 'Owner',
+      sortable: false,
+      center: true,
+      className: classes.leftCell,
     },
     { name: 'Original URL', sortable: true, center: false },
     { name: 'Short URL', sortable: true, center: false },
@@ -64,7 +74,7 @@ const EnhancedTableHead = ({ classes, updateOrderAndDirection, tableConfig }) =>
   return (
     <TableHead className={classes.tableHeadResponsive}>
       <TableRow>
-        {columnTitles.map(title => (
+        {columnTitles.map((title) => (
           <TableCell
             className={title.className ? title.className : ''}
             key={title.name}
@@ -74,14 +84,16 @@ const EnhancedTableHead = ({ classes, updateOrderAndDirection, tableConfig }) =>
               <TableSortLabel
                 active={tableConfig.orderBy === title.name}
                 direction={tableConfig.sortDirection}
-                onClick={changeSortHandler(title.name, tableConfig.sortDirection)}
+                onClick={changeSortHandler(
+                  title.name,
+                  tableConfig.sortDirection,
+                )}
               >
                 {title.name}
               </TableSortLabel>
-            )
-              : title.name
-            }
-
+            ) : (
+              title.name
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -95,12 +107,19 @@ EnhancedTableHead.propTypes = {
     numberOfRows: PropTypes.number,
     pageNumber: PropTypes.number,
     sortDirection: PropTypes.oneOf(['asc', 'desc', 'none']),
-    orderBy: PropTypes.oneOf(['createdAt', 'shortUrl', 'longUrl', 'updatedAt', 'clicks', 'state']),
+    orderBy: PropTypes.oneOf([
+      'createdAt',
+      'shortUrl',
+      'longUrl',
+      'updatedAt',
+      'clicks',
+      'state',
+    ]),
     searchText: PropTypes.string,
   }).isRequired,
   classes: PropTypes.shape({}).isRequired,
 }
 
 export default withStyles(userPageStyle)(
-  connect(mapStateToProps, mapDispatchToProps)(EnhancedTableHead)
+  connect(mapStateToProps, mapDispatchToProps)(EnhancedTableHead),
 )

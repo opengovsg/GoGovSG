@@ -1,4 +1,4 @@
-const homePageStyle = theme => ({
+const homePageStyle = (theme) => ({
   landingTop: {
     display: 'flex',
     flexDirection: 'column',

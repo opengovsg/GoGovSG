@@ -20,13 +20,15 @@ import EditableTextField from './EditableTextField'
 import { removeHttpsProtocol } from '~/util/url'
 import userPageStyle from '~/styles/userPage'
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   urls: state.user.urls,
 })
 
-const mapDispatchToProps = dispatch => ({
-  openOwnershipModal: shortUrl => dispatch(userActions.openOwnershipModal(shortUrl)),
-  toggleUrlState: (shortUrl, state) => dispatch(userActions.toggleUrlState(shortUrl, state)),
+const mapDispatchToProps = (dispatch) => ({
+  openOwnershipModal: (shortUrl) =>
+    dispatch(userActions.openOwnershipModal(shortUrl)),
+  toggleUrlState: (shortUrl, state) =>
+    dispatch(userActions.toggleUrlState(shortUrl, state)),
   onSaveUrl: (shortUrl, longUrl, editedLongUrl) => {
     if (removeHttpsProtocol(longUrl) === editedLongUrl) {
       dispatch(userActions.cancelEditLongUrl())
@@ -37,7 +39,7 @@ const mapDispatchToProps = dispatch => ({
   setEditedLongUrl: (shortUrl, editedLongUrl) => {
     dispatch(userActions.setEditedLongUrl(shortUrl, editedLongUrl))
   },
-  openQrCode: shortUrl => dispatch(userActions.openQrCode(shortUrl)),
+  openQrCode: (shortUrl) => dispatch(userActions.openQrCode(shortUrl)),
 })
 
 const EnhancedTableBody = ({
@@ -63,15 +65,11 @@ const EnhancedTableBody = ({
     // If user has existing links, show the user's list of stored links.
     return (
       <TableBody>
-        {urls.map(row => (
+        {urls.map((row) => (
           <TableRow key={row.shortUrl} className={classes.hoverRow}>
             <TableCell className={classes.tableBodyTitle}>Owner</TableCell>
             <TableCell align="center" className={classes.leftCell}>
-              <Tooltip
-                title={transferIconDesc}
-                arrow
-                placement="top"
-              >
+              <Tooltip title={transferIconDesc} arrow placement="top">
                 <IconButton
                   className={classes.iconButton}
                   color="inherit"
@@ -112,7 +110,9 @@ const EnhancedTableBody = ({
                   classes={{ label: classes.shortBtnLabel }}
                   color="primary"
                   onClick={() => {
-                    copy(`${document.location.protocol}//${document.location.host}/${row.shortUrl}`)
+                    copy(
+                      `${document.location.protocol}//${document.location.host}/${row.shortUrl}`,
+                    )
                     // Sets the link as copied. Changes tooltip accordingly.
                     setCopied(true)
                   }}
@@ -123,11 +123,7 @@ const EnhancedTableBody = ({
             </TableCell>
             <TableCell className={classes.tableBodyTitle}>QR</TableCell>
             <TableCell>
-              <Tooltip
-                title={qrCodeIconDesc}
-                arrow
-                placement="top"
-              >
+              <Tooltip title={qrCodeIconDesc} arrow placement="top">
                 <IconButton
                   className={classes.iconButton}
                   color="secondary"
@@ -156,8 +152,7 @@ const EnhancedTableBody = ({
               />
             </TableCell>
           </TableRow>
-        ))
-        }
+        ))}
       </TableBody>
     )
   }
@@ -188,5 +183,5 @@ EnhancedTableBody.propTypes = {
 }
 
 export default withStyles(userPageStyle)(
-  connect(mapStateToProps, mapDispatchToProps)(EnhancedTableBody)
+  connect(mapStateToProps, mapDispatchToProps)(EnhancedTableBody),
 )

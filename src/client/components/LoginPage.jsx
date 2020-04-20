@@ -18,13 +18,15 @@ import loginPageStyle from '~/styles/loginPage'
 import GoLogo from '~/assets/go-main-logo.png'
 import { get } from '../util/requests'
 
-const mapDispatchToProps = dispatch => ({
-  getOTPEmail: value => dispatch(loginActions.getOTPEmail(value)),
+const mapDispatchToProps = (dispatch) => ({
+  getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
   verifyOTP: () => dispatch(loginActions.verifyOTP()),
-  setOTP: otp => dispatch(loginActions.setOTP(otp)),
-  setEmail: email => dispatch(loginActions.setEmail(email)),
-  getEmailValidator: () => dispatch(loginActions.getEmailValidationGlobExpression()),
-  setLoginInfoMessage: message => dispatch(rootActions.setInfoMessage(message)),
+  setOTP: (otp) => dispatch(loginActions.setOTP(otp)),
+  setEmail: (email) => dispatch(loginActions.setEmail(email)),
+  getEmailValidator: () =>
+    dispatch(loginActions.getEmailValidationGlobExpression()),
+  setLoginInfoMessage: (message) =>
+    dispatch(rootActions.setInfoMessage(message)),
 })
 
 const mapStateToProps = (state, ownProps) => ({
@@ -68,7 +70,7 @@ const LoginForm = ({
         variant="outlined"
         label={titleMessage}
         placeholder={placeholder}
-        onChange={event => onChange(event.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         InputProps={{
           classes: {
             input: classes.loginInputText,
@@ -153,10 +155,12 @@ const LoginPage = ({
       placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
       buttonMessage: 'Sign in',
       textError: emailError,
-      textErrorMessage: () => (emailError()
-        ? `This doesn't look like a valid ${i18next.t('general.emailDomain')} email.`
-        : ''
-      ),
+      textErrorMessage: () =>
+        emailError()
+          ? `This doesn't look like a valid ${i18next.t(
+              'general.emailDomain',
+            )} email.`
+          : '',
       hidden: !isEmailView,
       onChange: setEmail,
       variant,
@@ -208,17 +212,17 @@ const LoginPage = ({
               <a href="/#" className={classes.logoLink}>
                 <img src={GoLogo} className={classes.logo} alt="GoGovSG logo" />
               </a>
-              <Typography className={classes.signInText} variant="h2" color="textPrimary" gutterBottom>
+              <Typography
+                className={classes.signInText}
+                variant="h2"
+                color="textPrimary"
+                gutterBottom
+              >
                 Sign in
               </Typography>
               <Typography align="center" variant="body1">
-                Only available for use by public officers with a
-                {' '}
-                <strong>
-                  {i18next.t('general.emailDomain')}
-                </strong>
-                {' '}
-                email.
+                Only available for use by public officers with a{' '}
+                <strong>{i18next.t('general.emailDomain')}</strong> email.
               </Typography>
             </div>
             {emailForm}
@@ -264,8 +268,5 @@ LoginPage.defaultProps = {
 }
 
 export default withStyles(loginPageStyle)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(LoginPage)
+  connect(mapStateToProps, mapDispatchToProps)(LoginPage),
 )

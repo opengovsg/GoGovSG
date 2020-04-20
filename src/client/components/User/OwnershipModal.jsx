@@ -30,10 +30,7 @@ const OwnershipModal = ({
   >
     <Paper className={classes.ownershipModal}>
       <div className={classes.ownershipModalHeader}>
-        <Typography
-          className={classes.ownershipModalTitle}
-          variant="h3"
-        >
+        <Typography className={classes.ownershipModalTitle} variant="h3">
           {`/${ownershipModal}`}
         </Typography>
         <IconButton
@@ -56,15 +53,15 @@ const OwnershipModal = ({
           id="newOwner"
           variant="outlined"
           value={newOwner}
-          onChange={(e) => { setNewOwner(e.target.value) }}
+          onChange={(e) => {
+            setNewOwner(e.target.value)
+          }}
           InputProps={{
             classes: { input: classes.transferOwnershipInput },
           }}
           placeholder="Enter an existing user's email"
         />
-        <Typography
-          className={classes.transferOwnershipHint}
-        >
+        <Typography className={classes.transferOwnershipHint}>
           This link will be removed from your account once you transfer
           ownership to another user (must be an existing user).
         </Typography>
@@ -77,7 +74,7 @@ const OwnershipModal = ({
             color="primary"
             onClick={() => transferOwnership(ownershipModal, newOwner)}
           >
-          Transfer
+            Transfer
           </Button>
           <Button
             className={classes.transferOwnershipCancelBtn}
@@ -85,7 +82,7 @@ const OwnershipModal = ({
             size="large"
             onClick={() => closeOwnershipModal()}
           >
-          Cancel
+            Cancel
           </Button>
         </div>
       </div>

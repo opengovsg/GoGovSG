@@ -1,4 +1,4 @@
-const loginPageStyle = theme => ({
+const loginPageStyle = (theme) => ({
   loginWrapper: {
     flexGrow: '1',
     display: 'flex',

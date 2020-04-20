@@ -28,7 +28,7 @@ import {
 } from '~/util/types'
 import theme from '~/styles/theme'
 
-const snackbars = Object.values(snackbarVariants).map(variant => (
+const snackbars = Object.values(snackbarVariants).map((variant) => (
   <MessageSnackbar key={variant} variant={variant} />
 )) // eslint-disable-line max-len
 const Root = ({ store }) => (
@@ -46,7 +46,7 @@ const Root = ({ store }) => (
             </Switch>
           </div>
         </HashRouter>
-        <React.Fragment>{snackbars}</React.Fragment>
+        <>{snackbars}</>
       </BaseLayout>
     </MuiThemeProvider>
   </Provider>

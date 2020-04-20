@@ -16,14 +16,14 @@ import { isValidLongUrl, isValidShortUrl } from '~/../shared/util/validation'
 import userActions from '~/actions/user'
 import createUrlStyle from '~/styles/createUrlModal'
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   shortUrl: state.user.shortUrl,
   longUrl: state.user.longUrl,
 })
 
-const mapDispatchToProps = dispatch => ({
-  setShortUrl: shortUrl => dispatch(userActions.setShortUrl(shortUrl)),
-  setLongUrl: longUrl => dispatch(userActions.setLongUrl(longUrl)),
+const mapDispatchToProps = (dispatch) => ({
+  setShortUrl: (shortUrl) => dispatch(userActions.setShortUrl(shortUrl)),
+  setLongUrl: (longUrl) => dispatch(userActions.setLongUrl(longUrl)),
   setRandomShortUrl: () => dispatch(userActions.setRandomShortUrl()),
 })
 
@@ -49,11 +49,7 @@ const CreateUrlModal = (props) => {
     >
       <Paper className={classes.createUrlModal}>
         <div className={classes.header}>
-          <Typography
-            variant="h3"
-          >
-          Create new link
-          </Typography>
+          <Typography variant="h3">Create new link</Typography>
           <IconButton
             className={classes.closeIcon}
             onClick={closeCreateUrlModal}
@@ -74,8 +70,7 @@ const CreateUrlModal = (props) => {
             variant="caption"
             gutterBottom
           >
-          Enter your original link
-            {' '}
+            Enter your original link
             <strong>(https only)</strong>
           </Typography>
           <TextField
@@ -84,37 +79,34 @@ const CreateUrlModal = (props) => {
               className: classes.outlinedInput,
               classes: { input: classes.input },
               startAdornment: (
-                <InputAdornment className={classes.startAdorment} position="start">
-                    https://
+                <InputAdornment
+                  className={classes.startAdorment}
+                  position="start"
+                >
+                  https://
                 </InputAdornment>
               ),
             }}
             required
             variant="outlined"
             placeholder="Enter URL here"
-            onChange={event => setLongUrl(event.target.value)}
+            onChange={(event) => setLongUrl(event.target.value)}
             value={longUrl}
             helperText={
-                isValidLongUrl(longUrl, true)
-                  ? ''
-                  : "This doesn't look like a valid URL."
-              }
+              isValidLongUrl(longUrl, true)
+                ? ''
+                : "This doesn't look like a valid URL."
+            }
           />
           <Typography
             className={classes.labelText}
             variant="caption"
             gutterBottom
           >
-            Customise link
-            {' '}
+            Customise link{' '}
             <i>
-              (links are unique and
-              {' '}
-              <strong>
-                cannot be deleted
-                {' '}
-              </strong>
-              after creation)
+              (links are unique and <strong>cannot be deleted</strong> after
+              creation)
             </i>
           </Typography>
           <TextField
@@ -124,7 +116,10 @@ const CreateUrlModal = (props) => {
               className: classes.outlinedInput,
               classes: { input: classes.input },
               startAdornment: (
-                <InputAdornment className={classes.startAdorment} position="start">
+                <InputAdornment
+                  className={classes.startAdorment}
+                  position="start"
+                >
                   {i18next.t('general.shortUrlPrefix')}
                 </InputAdornment>
               ),
@@ -142,13 +137,13 @@ const CreateUrlModal = (props) => {
             }}
             required
             variant="outlined"
-            onChange={event => setShortUrl(event.target.value)}
+            onChange={(event) => setShortUrl(event.target.value)}
             value={shortUrl}
             helperText={
-                isValidShortUrl(shortUrl, true)
-                  ? ''
-                  : 'Short links should only consist of lowercase letters, numbers and hyphens.'
-              }
+              isValidShortUrl(shortUrl, true)
+                ? ''
+                : 'Short links should only consist of lowercase letters, numbers and hyphens.'
+            }
           />
           <Button
             className={classes.button}
@@ -156,18 +151,20 @@ const CreateUrlModal = (props) => {
             size="large"
             variant="contained"
             color="primary"
-              // Both short and long url needs to be valid for the create button to be enabled.
-              // In this case, blank url is not a valid short or long url.
-            disabled={!isValidShortUrl(shortUrl, false) || !isValidLongUrl(longUrl, false)}
+            // Both short and long url needs to be valid for the create button to be enabled.
+            // In this case, blank url is not a valid short or long url.
+            disabled={
+              !isValidShortUrl(shortUrl, false) ||
+              !isValidLongUrl(longUrl, false)
+            }
           >
-              Create link
+            Create link
           </Button>
         </form>
       </Paper>
     </Modal>
   )
 }
-
 
 CreateUrlModal.propTypes = {
   classes: PropTypes.shape({}).isRequired,
@@ -180,8 +177,5 @@ CreateUrlModal.propTypes = {
 }
 
 export default withStyles(createUrlStyle)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(CreateUrlModal)
+  connect(mapStateToProps, mapDispatchToProps)(CreateUrlModal),
 )

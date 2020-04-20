@@ -8,22 +8,25 @@ import loginActions from '~/actions/login'
 const PrivateRoute = (props) => {
   const { component: ChildComponent, ...args } = props
   const dispatch = useDispatch()
-  const isLoggedIn = useSelector(state => state.login.isLoggedIn)
-  useEffect(() => { dispatch(loginActions.isLoggedIn()) }, [])
+  const isLoggedIn = useSelector((state) => state.login.isLoggedIn)
+  useEffect(() => {
+    dispatch(loginActions.isLoggedIn())
+  }, [])
 
   return (
     <Route
       {...args}
-      render={routeProps => (isLoggedIn ? (
-        <ChildComponent {...routeProps} />
-      ) : (
-        <Redirect
-          to={{
-            pathname: LOGIN_PAGE,
-          }}
-        />
-      ))
-    }
+      render={(routeProps) =>
+        isLoggedIn ? (
+          <ChildComponent {...routeProps} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: LOGIN_PAGE,
+            }}
+          />
+        )
+      }
     />
   )
 }

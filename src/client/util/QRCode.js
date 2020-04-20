@@ -19,8 +19,12 @@ export default class QRCode extends React.Component {
     // Accessing refs via callbacks.
     this.canvasRef = null
     this.svgContainerRef = null
-    this.setCanvasRef = (element) => { this.canvasRef = element }
-    this.setSvgContainerRef = (element) => { this.svgContainerRef = element }
+    this.setCanvasRef = (element) => {
+      this.canvasRef = element
+    }
+    this.setSvgContainerRef = (element) => {
+      this.svgContainerRef = element
+    }
   }
 
   componentDidMount() {
@@ -30,9 +34,9 @@ export default class QRCode extends React.Component {
   /* eslint-disable react/forbid-foreign-prop-types */
   shouldComponentUpdate(nextProps) {
     const self = this
-    return Object
-      .keys(QRCode.propTypes)
-      .some(k => self.props[k] !== nextProps[k])
+    return Object.keys(QRCode.propTypes).some(
+      (k) => self.props[k] !== nextProps[k],
+    )
   }
   /* eslint-enable react/forbid-foreign-prop-types */
 
@@ -43,7 +47,9 @@ export default class QRCode extends React.Component {
   /* Triggers SVG download of QR code */
   downloadSvg() {
     const { value: filename } = this.props
-    const blob = new Blob([this.svgContainerRef.innerHTML], { type: 'text/plain;charset=utf-8' })
+    const blob = new Blob([this.svgContainerRef.innerHTML], {
+      type: 'text/plain;charset=utf-8',
+    })
     FileSaver.saveAs(blob, `${filename}.svg`)
   }
 
@@ -68,7 +74,7 @@ export default class QRCode extends React.Component {
     const ctx = canvas.getContext('2d')
     const loader = new Image(self.props.size, self.props.size)
 
-    const svgAsXML = (new XMLSerializer()).serializeToString(svg)
+    const svgAsXML = new XMLSerializer().serializeToString(svg)
 
     // Configure sizes
     // eslint-disable-next-line func-names
@@ -100,7 +106,9 @@ export default class QRCode extends React.Component {
 
         if (svg && self.props.logo) {
           // eslint-disable-next-line no-unused-vars
-          const [_posX, _posY, width, height] = svg.getAttribute('viewBox').split(' ')
+          const [_posX, _posY, width, height] = svg
+            .getAttribute('viewBox')
+            .split(' ')
 
           // Embedded logo
           const logoImg = document.createElement('img')
@@ -109,7 +117,9 @@ export default class QRCode extends React.Component {
           // eslint-disable-next-line func-names
           logoImg.onload = function () {
             // Draw the logo on the canvas to get a data uri
-            ctx.getContext('2d').drawImage(logoImg, 0, 0, self.props.size, self.props.size)
+            ctx
+              .getContext('2d')
+              .drawImage(logoImg, 0, 0, self.props.size, self.props.size)
 
             // Create the image element for logo
             const image = document.createElementNS(SVG_NS, 'image')
@@ -125,7 +135,11 @@ export default class QRCode extends React.Component {
             image.setAttributeNS(null, 'y', Math.floor((height - dh) / 2))
 
             // Insert logo from canvas
-            image.setAttributeNS(XLINK_NS, 'xlink:href', ctx.toDataURL('image/png'))
+            image.setAttributeNS(
+              XLINK_NS,
+              'xlink:href',
+              ctx.toDataURL('image/png'),
+            )
 
             svg.setAttributeNS(XML_NS, 'xmlns:xlink', XLINK_NS)
             svg.appendChild(image)
@@ -141,7 +155,7 @@ export default class QRCode extends React.Component {
   render() {
     const self = this
     return (
-      <React.Fragment>
+      <>
         <ButtonGroup
           size="medium"
           color="primary"
@@ -171,7 +185,7 @@ export default class QRCode extends React.Component {
           ref={this.setCanvasRef}
         />
         <div ref={this.setSvgContainerRef} />
-      </React.Fragment>
+      </>
     )
   }
 }

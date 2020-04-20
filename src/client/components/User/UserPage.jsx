@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect, useSelector } from 'react-redux'
 import { CssBaseline } from '@material-ui/core'
@@ -17,7 +17,7 @@ import userPageStyle from '~/styles/userPage'
  * List URLs belonging to the user in a table.
  */
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isLoggedIn: state.login.isLoggedIn,
   qrCode: state.user.qrCode,
   createUrlModal: state.user.createUrlModal,
@@ -25,16 +25,18 @@ const mapStateToProps = state => ({
   newOwner: state.user.newOwner,
 })
 
-const mapDispatchToProps = dispatch => ({
-  onCreateUrl: history => dispatch(userActions.createUrlOrRedirect(history)),
-  openCreateUrlModal: shortUrl => dispatch(userActions.openCreateUrlModal(shortUrl)),
+const mapDispatchToProps = (dispatch) => ({
+  onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
+  openCreateUrlModal: (shortUrl) =>
+    dispatch(userActions.openCreateUrlModal(shortUrl)),
   closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
   onCancelEditUrl: () => dispatch(userActions.cancelEditLongUrl()),
-  openQrCode: shortUrl => dispatch(userActions.openQrCode(shortUrl)),
+  openQrCode: (shortUrl) => dispatch(userActions.openQrCode(shortUrl)),
   closeQrCode: () => dispatch(userActions.closeQrCode()),
-  openOwnershipModal: shortUrl => dispatch(userActions.openOwnershipModal(shortUrl)),
+  openOwnershipModal: (shortUrl) =>
+    dispatch(userActions.openOwnershipModal(shortUrl)),
   closeOwnershipModal: () => dispatch(userActions.closeOwnershipModal()),
-  setNewOwner: newOwner => dispatch(userActions.setNewOwner(newOwner)),
+  setNewOwner: (newOwner) => dispatch(userActions.setNewOwner(newOwner)),
   transferOwnership: (shortUrl, newOwner) => {
     dispatch(userActions.transferOwnership(shortUrl, newOwner))
   },
@@ -64,10 +66,12 @@ const UserPage = ({
   getUrlsForUser,
 }) => {
   if (isLoggedIn) {
-    const urls = useSelector(state => state.urls)
-    useEffect(() => { getUrlsForUser() }, [])
+    const urls = useSelector((state) => state.urls)
+    useEffect(() => {
+      getUrlsForUser()
+    }, [])
     return (
-      <Fragment>
+      <>
         <CssBaseline />
         <div>
           <main>
@@ -102,7 +106,7 @@ const UserPage = ({
             transferOwnership={transferOwnership}
           />
         </div>
-      </Fragment>
+      </>
     )
   }
 
@@ -133,9 +137,6 @@ UserPage.propTypes = {
 
 export default withRouter(
   withStyles(userPageStyle)(
-    connect(
-      mapStateToProps,
-      mapDispatchToProps
-    )(UserPage)
-  )
+    connect(mapStateToProps, mapDispatchToProps)(UserPage),
+  ),
 )
