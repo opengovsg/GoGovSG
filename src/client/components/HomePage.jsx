@@ -195,10 +195,7 @@ const HomePage = (props) => {
         </div>
         <div className={classes.divider} />
         <Typography variant="h2" color="textPrimary" gutterBottom>
-          <strong>
-            Why use
-            {i18next.t('general.appTitle')}
-          </strong>
+          <strong>Why use {i18next.t('general.appTitle')}</strong>
         </Typography>
         <Typography
           variant="body2"
