@@ -11,6 +11,7 @@ import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
+import { generatePresignedUrl } from '../util/aws'
 
 const router = Express.Router()
 
@@ -106,6 +107,23 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
 }
 
 /**
+ * Make sure all parameters needed for the pre-signed url request are present.
+ */
+function validatePresignedUrlRequest(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
+  if (!req.body.fileType || !req.body.key) {
+    res.badRequest(
+      jsonMessage('Some or all required arguments are missing: fileType, key.')
+    )
+    return
+  }
+  next()
+}
+
+/**
  * Endpoint for a user to create a short URL.
  */
 router.post('/url', validateUrls, async (req, res) => {
@@ -137,6 +155,20 @@ router.post('/url', validateUrls, async (req, res) => {
   } catch (error) {
     logger.error(`Error creating short URL:\t${error}`)
     res.badRequest(jsonMessage('Invalid URL.'))
+  }
+})
+
+/**
+ * Creates a pre-signed link.
+ */
+router.post('/upload', validatePresignedUrlRequest, async (req, res) => {
+  const { fileType, key } = req.body
+  try {
+    const url = await generatePresignedUrl(key, fileType)
+    return res.created({ url })
+  } catch (error) {
+    logger.error(`Error creating pre-signed url: \t${error}`)
+    return res.serverError('Could not generate pre-signed url.')
   }
 })
 
