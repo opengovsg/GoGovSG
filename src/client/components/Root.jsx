@@ -8,7 +8,7 @@ import BaseLayout from '~/components/BaseLayout'
 import PrivateRoute from '~/components/PrivateRoute'
 import HomePage from '~/components/HomePage'
 import LoginPage from '~/components/LoginPage'
-import UserPage from '~/components/User/UserPage'
+import UserPage from '~/components/User'
 import NotFoundPage from '~/components/NotFoundPage'
 import MessageSnackbar from '~/components/MessageSnackbar'
 
