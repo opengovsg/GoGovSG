@@ -129,61 +129,9 @@ const homePageStyle = (theme) => ({
     },
   },
   landingBottom: {
-    padding: theme.spacing(9, 2),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-  },
-  trustedByText: {
-    paddingBottom: theme.spacing(2),
-  },
-  trustedByContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-evenly',
-    [theme.breakpoints.up('md')]: {
-      flexDirection: 'column',
-    },
-  },
-  trustedByGroup: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-evenly',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-    },
-  },
-  trustedLogo: {
-    userDrag: 'none',
-    userSelect: 'none',
-    objectFit: 'contain',
-    width: '180px',
-    maxHeight: '110px',
-    padding: theme.spacing(2),
-    [theme.breakpoints.down('xs')]: {
-      width: '140px',
-      maxHeight: '80px',
-      padding: theme.spacing(1),
-    },
-  },
-  divider: {
-    width: '50vw',
-    borderTop: `1px solid ${theme.palette.divider}`,
-    margin: theme.spacing(5, 0, 9),
-  },
-  grid: {
-    paddingTop: theme.spacing(4),
-  },
-  card: {
-    boxShadow: 'none',
-    height: '100%',
-    maxWidth: '270px',
-    margin: theme.spacing(2, 4),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    fill: theme.palette.primary.main,
   },
   '@media screen\\0': {
     // Styles for Internet Explorer compatibility
@@ -193,12 +141,6 @@ const homePageStyle = (theme) => ({
     },
     learnMoreBtn: {
       alignSelf: 'flex-start',
-    },
-    trustedByGroup: {
-      justifyContent: 'space-around',
-    },
-    trustedLogo: {
-      width: 'auto',
     },
   },
 })

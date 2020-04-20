@@ -39,6 +39,7 @@ const theme = createMuiTheme({
     },
     h2: {
       fontSize: '1.5rem',
+      fontWeight: '600',
     },
     h3: {
       fontSize: '1.2rem',
@@ -60,6 +61,12 @@ const theme = createMuiTheme({
     },
   },
   overrides: {
+    MuiDivider: {
+      root: {
+        width: '50vw',
+        margin: '16px 0px',
+      },
+    },
     MuiButton: {
       root: {
         borderRadius: '30px',
@@ -72,8 +79,8 @@ const theme = createMuiTheme({
     },
     MuiCssBaseline: {
       '@global': {
+        // Used for crest symbol in government masthead.
         '@font-face': [
-          // Used for crest symbol in government masthead
           {
             fontFamily: 'sgds-icons',
             fontStyle: 'normal',
@@ -91,11 +98,13 @@ const theme = createMuiTheme({
     MuiOutlinedInput: {
       input: {
         '&:-webkit-autofill': {
-          boxShadow: '0 0 0 100px #ffffff inset', // Override autofill background
+          // Override autofill background.
+          boxShadow: '0 0 0 100px #ffffff inset',
         },
       },
       notchedOutline: {
-        fontSize: '16px', // Must be same as InputLabel
+        // Must be same as InputLabel.
+        fontSize: '16px',
       },
     },
     MuiInputLabel: {
