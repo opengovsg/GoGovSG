@@ -1,6 +1,5 @@
 import React from 'react'
 import { Trans } from 'react-i18next'
-import i18next from 'i18next'
 import {
   Card,
   CardContent,
@@ -15,21 +14,18 @@ const useStyles = makeStyles((theme) =>
     container: {
       padding: theme.spacing(8, 4),
     },
-    header: {
-      textAlign: 'center',
-    },
     card: {
       boxShadow: 'none',
       height: '100%',
       maxWidth: '270px',
       marginTop: theme.spacing(6),
-      marginLeft: theme.spacing(4),
-      marginRight: theme.spacing(4),
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      textAlign: 'center',
       fill: theme.palette.primary.main,
+    },
+    cardContent: {
+      paddingLeft: theme.spacing(0),
+      paddingRight: theme.spacing(0),
     },
   }),
 )
@@ -56,20 +52,15 @@ const AppBuiltForWho = () => {
   const classes = useStyles()
   return (
     <main className={classes.container}>
-      <header className={classes.header}>
-        <Typography variant="h2" color="textPrimary" gutterBottom>
-          Created for public officers
-        </Typography>
-        <Typography variant="caption" color="textPrimary" gutterBottom>
-          (with {i18next.t('general.emailDomain')} emails)
-        </Typography>
-      </header>
-      <Grid container justify="center">
+      <Typography variant="h2" color="textPrimary" gutterBottom>
+        The official link shortener for the Singapore government
+      </Typography>
+      <Grid container>
         {cards.map((card) => (
           <Grid item key={card.title}>
             <Card className={classes.card}>
               <box-icon name={card.icon} size="sm" />
-              <CardContent>
+              <CardContent className={classes.cardContent}>
                 <Typography color="primary" variant="h3" gutterBottom>
                   <strong>{card.title}</strong>
                 </Typography>
