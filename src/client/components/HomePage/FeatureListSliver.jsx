@@ -8,6 +8,9 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
+import antiPhisingIcon from '~/assets/icons/anti-phishing-icon.svg'
+import customisedIcon from '~/assets/icons/customised-icon.svg'
+import analyticsIcon from '~/assets/icons/analytics-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -21,7 +24,13 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(6),
       display: 'flex',
       flexDirection: 'column',
+      alignItems: 'flex-start',
       fill: theme.palette.primary.main,
+    },
+    cardVectorIcon: {
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      minHeight: '70px',
     },
     cardContent: {
       paddingLeft: theme.spacing(0),
@@ -32,23 +41,23 @@ const useStyles = makeStyles((theme) =>
 
 const cards = [
   {
-    icon: 'lock',
+    icon: antiPhisingIcon,
     title: 'Anti-phishing',
     description: <Trans>homePage.features.antiPhishing.description</Trans>,
   },
   {
-    icon: 'customize',
+    icon: customisedIcon,
     title: 'Customised',
     description: <Trans>homePage.features.customised.description</Trans>,
   },
   {
-    icon: 'line-chart',
+    icon: analyticsIcon,
     title: 'Analytics',
     description: <Trans>homePage.features.analytics.description</Trans>,
   },
 ]
 
-const AppBuiltForWho = () => {
+const FeatureListSliver = () => {
   const classes = useStyles()
   return (
     <main className={classes.container}>
@@ -59,7 +68,11 @@ const AppBuiltForWho = () => {
         {cards.map((card) => (
           <Grid item key={card.title}>
             <Card className={classes.card}>
-              <box-icon name={card.icon} size="sm" />
+              <img
+                className={classes.cardVectorIcon}
+                src={card.icon}
+                alt={card.title}
+              />
               <CardContent className={classes.cardContent}>
                 <Typography color="primary" variant="h3" gutterBottom>
                   <strong>{card.title}</strong>
@@ -74,4 +87,4 @@ const AppBuiltForWho = () => {
   )
 }
 
-export default AppBuiltForWho
+export default FeatureListSliver

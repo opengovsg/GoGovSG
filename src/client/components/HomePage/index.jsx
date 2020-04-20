@@ -3,8 +3,8 @@ import { Trans } from 'react-i18next'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect, withRouter } from 'react-router-dom'
-import 'boxicons'
 import { Button, Link, Typography, withStyles } from '@material-ui/core'
+import 'boxicons'
 
 import homePageStyle from '~/styles/homePage'
 import loginActions from '~/actions/login'
@@ -12,7 +12,7 @@ import { USER_PAGE } from '~/util/types'
 import mainImage from '~/assets/landing-page-graphics/landing-main.png'
 import TrustedBySliver from './TrustedBySliver'
 import FaqSliver from './FaqSliver'
-import DescriptionSliver from './DescriptionSliver'
+import DescriptionSliver from './FeatureListSliver'
 
 const mapDispatchToProps = (dispatch) => ({
   getIsLoggedIn: () => dispatch(loginActions.isLoggedIn()),
@@ -102,7 +102,6 @@ const HomePage = (props) => {
 HomePage.propTypes = {
   classes: PropTypes.shape({}).isRequired,
   history: PropTypes.shape({}).isRequired,
-  statistics: PropTypes.shape({}).isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
 }
 
