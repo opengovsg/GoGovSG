@@ -47,7 +47,6 @@ const theme = createMuiTheme({
       lineHeight: '135%',
     },
     body1: {
-      // MUI v4 body1 == body2
       fontSize: '0.875rem',
     },
     body2: {

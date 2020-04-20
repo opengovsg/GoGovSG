@@ -15,46 +15,67 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     footer: {
       display: 'flex',
+      flexDirection: 'column',
       justifyContent: 'space-between',
       backgroundColor: theme.palette.secondary.dark,
-      padding: theme.spacing(4, 10),
-      [theme.breakpoints.down('sm')]: {
-        flexDirection: 'column',
-      },
-      [theme.breakpoints.down('xs')]: {
-        padding: theme.spacing(4, 4),
+      padding: theme.spacing(6, 4),
+      [theme.breakpoints.up('md')]: {
+        flexDirection: 'row',
+        padding: theme.spacing(6, 10),
       },
     },
-    footerTitle: {
-      display: 'inline',
+    textContentWrapper: {
+      [theme.breakpoints.up('md')]: {
+        alignSelf: 'center',
+      },
+    },
+    appDescriptionWrapper: {
+      margin: theme.spacing(2, 0),
+    },
+    appTitle: {
+      display: 'block',
       fontSize: '1.15rem',
       marginRight: theme.spacing(1),
-      [theme.breakpoints.down('xs')]: {
-        display: 'block',
+      [theme.breakpoints.up('sm')]: {
+        display: 'inline',
       },
     },
-    subfooter: {
-      paddingTop: theme.spacing(1),
-      [theme.breakpoints.down('xs')]: {
-        paddingLeft: theme.spacing(1),
+    secondaryFooterWrapper: {
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
       },
     },
-    footerItem: {
-      [theme.breakpoints.down('xs')]: {
-        padding: '8px 13px 8px 0 !important',
+    navLinksWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      [theme.breakpoints.up('md')]: {
+        flexDirection: 'row',
+        alignItems: 'center',
       },
     },
-    footerLink: {
+    navLinkWrapper: {
+      margin: theme.spacing(2, 0, 0, 1),
+      [theme.breakpoints.up('md')]: {
+        margin: theme.spacing(1, 2),
+      },
+    },
+    navLink: {
+      color: '#384A51',
       fontWeight: '500',
     },
     builtByLink: {
-      [theme.breakpoints.down('sm')]: {
-        margin: theme.spacing(5, 0, 1),
+      marginTop: theme.spacing(4),
+      marginBottom: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
+        margin: theme.spacing(0),
       },
     },
     builtByImg: {
       height: '55px',
-      userDrag: 'none',
+      pointerEvents: 'none',
     },
   }),
 )
@@ -73,18 +94,20 @@ const BaseLayoutFooter = () => {
   const classes = useStyles()
   return (
     <footer className={classes.footer}>
-      <div>
-        <Typography
-          variant="body2"
-          color="textPrimary"
-          className={classes.footerTitle}
-        >
-          <strong>{i18next.t('general.appTitle')}</strong>
-        </Typography>
-        <Typography variant="body1" display="inline" color="textPrimary">
-          <Trans>general.appCatchphrase.noStyle</Trans>
-        </Typography>
-        <Grid container spacing={2} className={classes.subfooter}>
+      <div className={classes.textContentWrapper}>
+        <span className={classes.appDescriptionWrapper}>
+          <Typography
+            className={classes.appTitle}
+            variant="body2"
+            color="textPrimary"
+          >
+            <strong>{i18next.t('general.appTitle')}</strong>
+          </Typography>
+          <Typography variant="body1" display="inline" color="textPrimary">
+            <Trans>general.appCatchphrase.noStyle</Trans>
+          </Typography>
+        </span>
+        <Grid className={classes.secondaryFooterWrapper} container spacing={2}>
           <Hidden smDown>
             <Grid item>
               <Typography variant="caption" color="textPrimary" gutterBottom>
@@ -97,20 +120,22 @@ const BaseLayoutFooter = () => {
               </Typography>
             </Grid>
           </Hidden>
-          {footers.map((footer) => (
-            <Grid item key={footer.text} className={classes.footerItem}>
-              <Typography variant="caption" gutterBottom>
-                <Link
-                  className={classes.footerLink}
-                  color="primary"
-                  target="_blank"
-                  href={footer.link}
-                >
-                  {footer.text}
-                </Link>
-              </Typography>
-            </Grid>
-          ))}
+          <span className={classes.navLinksWrapper}>
+            {footers.map((footer) => (
+              <Grid item key={footer.text} className={classes.navLinkWrapper}>
+                <Typography variant="caption" gutterBottom>
+                  <Link
+                    className={classes.navLink}
+                    color="primary"
+                    target="_blank"
+                    href={footer.link}
+                  >
+                    {footer.text}
+                  </Link>
+                </Typography>
+              </Grid>
+            ))}
+          </span>
         </Grid>
       </div>
       <Link
