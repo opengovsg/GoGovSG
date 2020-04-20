@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
     },
     trustedByText: {
-      paddingBottom: theme.spacing(2),
+      paddingBottom: theme.spacing(1),
     },
     trustedByLogoGroup: {
       width: '100%',
@@ -28,14 +28,17 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('sm')]: {
         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
       },
+      [theme.breakpoints.up('sm')]: {
+        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+      },
     },
     trustedLogo: {
       userDrag: 'none',
       userSelect: 'none',
       objectFit: 'contain',
-      width: '180px',
+      maxWidth: '180px',
       maxHeight: '110px',
-      padding: theme.spacing(4),
+      padding: theme.spacing(4, 2),
       [theme.breakpoints.up('sm')]: {
         width: '200px',
         maxHeight: '150px',
