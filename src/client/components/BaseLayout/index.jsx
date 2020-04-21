@@ -55,25 +55,33 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const BaseLayout = ({ children }) => {
+const BaseLayout = ({ withHeader, withFooter, children }) => {
   const classes = useStyles()
   return (
     <>
       <CssBaseline />
       <Masthead />
       <main className={classes.appWideMargins}>
-        <BaseLayoutHeader />
+        {withHeader && <BaseLayoutHeader />}
         <main className={classes.layout}>{children}</main>
-        <SectionBackground backgroundType="dark">
-          <BaseLayoutFooter />
-        </SectionBackground>
+        {withFooter && (
+          <SectionBackground backgroundType="dark">
+            <BaseLayoutFooter />
+          </SectionBackground>
+        )}
       </main>
     </>
   )
 }
 
 BaseLayout.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  withHeader: PropTypes.bool,
+  withFooter: PropTypes.bool,
+}
+
+BaseLayout.defaultProps = {
+  withHeader: true,
+  withFooter: true,
 }
 
 export default BaseLayout

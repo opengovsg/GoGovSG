@@ -11,6 +11,7 @@ import FaqSliver from './FaqSliver'
 import DescriptionSliver from './FeatureListSliver'
 import SectionBackground from '../SectionBackground'
 import LandingGraphicSliver from './LandingGraphicSliver'
+import BaseLayout from '../BaseLayout'
 
 const mapDispatchToProps = (dispatch) => ({
   getIsLoggedIn: () => dispatch(loginActions.isLoggedIn()),
@@ -41,7 +42,7 @@ const HomePage = (props) => {
   }
 
   return (
-    <>
+    <BaseLayout>
       <LandingGraphicSliver />
       <SectionBackground backgroundType="light">
         <TrustedBySliver />
@@ -52,7 +53,7 @@ const HomePage = (props) => {
       <SectionBackground backgroundType="light">
         <FaqSliver {...props} />
       </SectionBackground>
-    </>
+    </BaseLayout>
   )
 }
 

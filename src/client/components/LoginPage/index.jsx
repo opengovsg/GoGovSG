@@ -2,21 +2,25 @@ import React, { useEffect } from 'react'
 import i18next from 'i18next'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import Button from '@material-ui/core/Button'
-import FormControl from '@material-ui/core/FormControl'
-import TextField from '@material-ui/core/TextField'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import {
+  Button,
+  FormControl,
+  LinearProgress,
+  Link,
+  Typography,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core'
 import { Minimatch } from 'minimatch'
 import { Redirect } from 'react-router-dom'
-import { withStyles } from '@material-ui/core/styles'
 import loginActions from '~/actions/login'
 import rootActions from '~/actions/root'
 import { USER_PAGE, loginFormVariants } from '~/util/types'
-import loginPageStyle from '~/styles/loginPage'
 import GoLogo from '~/assets/go-main-logo.png'
-import { get } from '../util/requests'
+import { get } from '../../util/requests'
+import LoginForm from './LoginForm'
+import SectionBackground from '../SectionBackground'
+import BaseLayout from '../BaseLayout'
 
 const mapDispatchToProps = (dispatch) => ({
   getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
@@ -37,85 +41,37 @@ const mapStateToProps = (state, ownProps) => ({
   emailValidator: state.login.emailValidator,
 })
 
-// Form object to request for user's email or OTP
-const LoginForm = ({
-  classes,
-  id,
-  placeholder,
-  submit,
-  onChange,
-  titleMessage,
-  buttonMessage,
-  textError,
-  textErrorMessage,
-  hidden,
-  variant,
-  autoComplete,
-}) => {
-  const variantMap = loginFormVariants.map[variant]
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        submit()
-      }}
-      hidden={hidden}
-      autoComplete={autoComplete}
-    >
-      <TextField
-        autoFocus
-        required
-        fullWidth
-        variant="outlined"
-        label={titleMessage}
-        placeholder={placeholder}
-        onChange={(event) => onChange(event.target.value)}
-        InputProps={{
-          classes: {
-            input: classes.loginInputText,
-          },
-        }}
-        className={classes.loginField}
-        margin="normal"
-        id={id}
-        name={id}
-        disabled={!variantMap.inputEnabled}
-        error={textError()}
-        helperText={textErrorMessage()}
-      />
-      <FormControl margin="normal" fullWidth>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={!variantMap.submitEnabled}
-          size="large"
-        >
-          {buttonMessage}
-        </Button>
-      </FormControl>
-    </form>
-  )
-}
-
-LoginForm.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
-  id: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  submit: PropTypes.func.isRequired,
-  titleMessage: PropTypes.string.isRequired,
-  buttonMessage: PropTypes.string.isRequired,
-  textError: PropTypes.func.isRequired,
-  textErrorMessage: PropTypes.func.isRequired,
-  hidden: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired,
-  variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
-  autoComplete: PropTypes.string.isRequired,
-}
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    loginWrapper: {
+      display: 'grid',
+      gridGap: theme.spacing(4),
+    },
+    headerGroup: {
+      gridRow: 1,
+    },
+    logo: {
+      width: '40%',
+      marginBottom: theme.spacing(1),
+    },
+    textInputGroup: {
+      gridRow: 2,
+    },
+    resendOTPBtn: {
+      '&:disabled': {
+        color: theme.palette.grey[300],
+      },
+    },
+    '@media screen\\0': {
+      // Styles for Internet Explorer compatibility
+      logoLink: {
+        marginBottom: '0',
+      },
+    },
+  }),
+)
 
 const LoginPage = ({
-  classes,
   location,
   isLoggedIn,
   getOTPEmail,
@@ -145,6 +101,7 @@ const LoginPage = ({
   }, [])
 
   if (!isLoggedIn) {
+    const classes = useStyles()
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
     const emailError = () => !!email && !emailValidator.match(email)
@@ -204,34 +161,28 @@ const LoginPage = ({
     )
 
     return (
-      <div className={classes.loginWrapper}>
-        <div className={classes.headerOverlay} />
-        <div className={classes.login}>
-          <Paper className={classes.paper}>
-            <div className={classes.loginHeader}>
-              <a href="/#" className={classes.logoLink}>
-                <img src={GoLogo} className={classes.logo} alt="GoGovSG logo" />
-              </a>
-              <Typography
-                className={classes.signInText}
-                variant="h2"
-                color="textPrimary"
-                gutterBottom
-              >
-                Sign in
-              </Typography>
-              <Typography align="center" variant="body1">
+      <BaseLayout withHeader={false}>
+        <SectionBackground>
+          <main className={classes.loginWrapper}>
+            <section className={classes.headerGroup}>
+              <Link href="/#/">
+                <img className={classes.logo} src={GoLogo} alt="GoGovSG logo" />
+              </Link>
+              <Typography variant="body1">
                 Only available for use by public officers with a{' '}
                 <strong>{i18next.t('general.emailDomain')}</strong> email.
               </Typography>
-            </div>
-            {emailForm}
-            {otpForm}
-            {resendOTPBtn}
-            {progressBar}
-          </Paper>
-        </div>
-      </div>
+            </section>
+            <section className={classes.textInputGroup}>
+              <Typography variant="body2">Email</Typography>
+              {emailForm}
+              {progressBar}
+              {otpForm}
+              {resendOTPBtn}
+            </section>
+          </main>
+        </SectionBackground>
+      </BaseLayout>
     )
   }
 
@@ -250,7 +201,6 @@ const LoginPage = ({
 }
 
 LoginPage.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
   getOTPEmail: PropTypes.func.isRequired,
   getEmailValidator: PropTypes.func.isRequired,
@@ -267,6 +217,4 @@ LoginPage.defaultProps = {
   location: undefined,
 }
 
-export default withStyles(loginPageStyle)(
-  connect(mapStateToProps, mapDispatchToProps)(LoginPage),
-)
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)

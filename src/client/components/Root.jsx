@@ -34,20 +34,18 @@ const snackbars = Object.values(snackbarVariants).map((variant) => (
 const Root = ({ store }) => (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
-      <BaseLayout>
-        <HashRouter>
-          <div>
-            <Switch>
-              <Route exact path={HOME_PAGE} component={HomePage} />
-              <Route path={LOGIN_PAGE} component={LoginPage} />
-              <PrivateRoute path={USER_PAGE} component={UserPage} />
-              <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
-              <Route component={NotFoundPage} />
-            </Switch>
-          </div>
-        </HashRouter>
-        <>{snackbars}</>
-      </BaseLayout>
+      <HashRouter>
+        <div>
+          <Switch>
+            <Route exact path={HOME_PAGE} component={HomePage} />
+            <Route path={LOGIN_PAGE} component={LoginPage} />
+            <PrivateRoute path={USER_PAGE} component={UserPage} />
+            <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </div>
+      </HashRouter>
+      <>{snackbars}</>
     </MuiThemeProvider>
   </Provider>
 )
