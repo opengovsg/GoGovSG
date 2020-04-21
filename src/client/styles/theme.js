@@ -8,6 +8,7 @@ const theme = responsiveFontSizes(
     breakpoints: {
       values: {
         xs: 0,
+        qs: 360,
         sm: 600,
         md: 960,
         lg: 1280,

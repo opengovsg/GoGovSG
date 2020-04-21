@@ -105,7 +105,7 @@ const headers = [
     text: 'Contribute',
     link: i18next.t('general.links.contribute'),
     public: true,
-    xsHidden: false,
+    xsHidden: true,
   },
   {
     text: 'FAQ',
@@ -154,7 +154,7 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
       className={classes.appBar}
     >
       <Toolbar className={classes.toolbar}>
-        <a href="/#" className={classes.toolbarLogo}>
+        <a href="/#/" className={classes.toolbarLogo}>
           <img src={GoLogo} className={classes.logo} alt="GoGovSG Logo" />
         </a>
         <span className={classes.rowSpace} />
