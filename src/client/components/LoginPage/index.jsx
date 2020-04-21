@@ -85,6 +85,7 @@ const LoginPage = ({
   variant,
   setLoginInfoMessage,
 }) => {
+  const classes = useStyles()
   // Display a login message from the server
   useEffect(() => {
     let cancelled = false
@@ -102,7 +103,6 @@ const LoginPage = ({
   }, [])
 
   if (!isLoggedIn) {
-    const classes = useStyles()
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
     const emailError = () => !!email && !emailValidator.match(email)
@@ -188,16 +188,9 @@ const LoginPage = ({
 
   // User is logged in, redirect if available
   if (location) {
-    return (
-      <Redirect
-        to={{
-          pathname: USER_PAGE,
-          state: { from: location },
-        }}
-      />
-    )
+    return <Redirect to={{ pathname: USER_PAGE, state: { from: location } }} />
   }
-  return null
+  return <Redirect to={{ pathname: USER_PAGE }} />
 }
 
 LoginPage.propTypes = {
