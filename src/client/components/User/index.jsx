@@ -12,6 +12,7 @@ import UrlTable from './UrlTable'
 
 import userActions from '~/actions/user'
 import userPageStyle from '~/styles/userPage'
+import BaseLayout from '../BaseLayout'
 
 /**
  * List URLs belonging to the user in a table.
@@ -71,7 +72,7 @@ const UserPage = ({
       getUrlsForUser()
     }, [])
     return (
-      <>
+      <BaseLayout>
         <CssBaseline />
         <div>
           <main>
@@ -106,7 +107,7 @@ const UserPage = ({
             transferOwnership={transferOwnership}
           />
         </div>
-      </>
+      </BaseLayout>
     )
   }
 

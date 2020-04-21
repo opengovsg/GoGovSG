@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) =>
       gridRow: 1,
     },
     logo: {
+      maxWidth: '130px',
       width: '40%',
       marginBottom: theme.spacing(1),
     },
@@ -108,7 +109,6 @@ const LoginPage = ({
     const emailFormAttr = {
       id: 'email',
       submit: getOTPEmail,
-      titleMessage: `${i18next.t('general.emailDomain')} email address`,
       placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
       buttonMessage: 'Sign in',
       textError: emailError,

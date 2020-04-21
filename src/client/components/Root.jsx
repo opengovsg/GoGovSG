@@ -4,7 +4,6 @@ import { Provider } from 'react-redux'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
-import BaseLayout from '~/components/BaseLayout'
 import PrivateRoute from '~/components/PrivateRoute'
 import HomePage from '~/components/HomePage'
 import LoginPage from '~/components/LoginPage'

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
 import { withStyles } from '@material-ui/core/styles'
 import textPageStyle from '~/styles/textPage'
+import BaseLayout from './BaseLayout'
 
 const NotFoundPage = ({ classes, match }) => {
   const { params } = match
@@ -20,7 +21,7 @@ const NotFoundPage = ({ classes, match }) => {
   )
 
   return (
-    <>
+    <BaseLayout>
       <div className={classes.heroContent}>
         <Typography
           variant="h2"
@@ -42,7 +43,7 @@ const NotFoundPage = ({ classes, match }) => {
           {message}
         </Typography>
       </div>
-    </>
+    </BaseLayout>
   )
 }
 

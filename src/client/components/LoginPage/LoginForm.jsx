@@ -1,12 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-  Button,
-  FormControl,
-  TextField,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import i18next from 'i18next'
+import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { loginFormVariants } from '~/util/types'
 
 const useStyles = makeStyles((theme) =>
@@ -17,6 +12,28 @@ const useStyles = makeStyles((theme) =>
     loginInputText: {
       color: theme.palette.grey[800],
     },
+    buttonRow: {
+      display: 'grid',
+      gridGap: theme.spacing(4),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(1),
+    },
+    signInButton: {
+      gridColumn: 2,
+      width: '100%',
+      maxWidth: '200px',
+      minWidth: '120px',
+      justifySelf: 'right',
+    },
+    helpButton: {
+      gridColumn: 1,
+      width: '100%',
+      maxWidth: '200px',
+      minWidth: '120px',
+      justifySelf: 'left',
+      color: theme.palette.text.secondary,
+      fontWeight: 400,
+    },
   }),
 )
 
@@ -26,7 +43,6 @@ const LoginForm = ({
   placeholder,
   submit,
   onChange,
-  titleMessage,
   buttonMessage,
   textError,
   textErrorMessage,
@@ -50,7 +66,6 @@ const LoginForm = ({
         required
         fullWidth
         variant="outlined"
-        label={titleMessage}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
         InputProps={{
@@ -66,8 +81,18 @@ const LoginForm = ({
         error={textError()}
         helperText={textErrorMessage()}
       />
-      <FormControl margin="normal" fullWidth>
+      <section className={classes.buttonRow}>
         <Button
+          className={classes.helpButton}
+          href={i18next.t('general.links.faq')}
+          target="_blank"
+          variant="outlined"
+          size="large"
+        >
+          Need help?
+        </Button>
+        <Button
+          className={classes.signInButton}
           type="submit"
           variant="contained"
           color="primary"
@@ -76,7 +101,7 @@ const LoginForm = ({
         >
           {buttonMessage}
         </Button>
-      </FormControl>
+      </section>
     </form>
   )
 }
@@ -85,7 +110,6 @@ LoginForm.propTypes = {
   id: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   submit: PropTypes.func.isRequired,
-  titleMessage: PropTypes.string.isRequired,
   buttonMessage: PropTypes.string.isRequired,
   textError: PropTypes.func.isRequired,
   textErrorMessage: PropTypes.func.isRequired,

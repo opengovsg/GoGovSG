@@ -78,7 +78,8 @@ const useStyles = makeStyles((theme) =>
       minWidth: '90px',
     },
     toolbarLogo: {
-      width: '130px',
+      maxWidth: '130px',
+      width: '40%',
       marginBottom: theme.spacing(2),
       [theme.breakpoints.down('xs')]: {
         marginBottom: theme.spacing(1),

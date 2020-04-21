@@ -11,9 +11,6 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     '@global': {
       body: {
-        position: 'absolute',
-        minWidth: '100%',
-        minHeight: '100vh',
         backgroundColor: '#fff',
         '& #root': {
           display: 'flex',
@@ -26,7 +23,10 @@ const useStyles = makeStyles((theme) =>
         textDecoration: 'none',
       },
     },
-    appWideMargins: {
+    appContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: 'calc(100vh - 28px)',
       marginLeft: theme.spacing(4),
       marginRight: theme.spacing(4),
       [theme.breakpoints.up('sm')]: {
@@ -43,14 +43,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     layout: {
-      display: 'flex',
-      flexDirection: 'column',
       flexGrow: 1,
-      '&>div': {
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1,
-      },
     },
   }),
 )
@@ -61,15 +54,15 @@ const BaseLayout = ({ withHeader, withFooter, children }) => {
     <>
       <CssBaseline />
       <Masthead />
-      <main className={classes.appWideMargins}>
+      <section className={classes.appContainer}>
         {withHeader && <BaseLayoutHeader />}
-        <main className={classes.layout}>{children}</main>
+        <span className={classes.layout}>{children}</span>
         {withFooter && (
           <SectionBackground backgroundType="dark">
             <BaseLayoutFooter />
           </SectionBackground>
         )}
-      </main>
+      </section>
     </>
   )
 }

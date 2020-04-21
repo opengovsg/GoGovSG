@@ -32,6 +32,7 @@ const theme = responsiveFontSizes(
       },
       text: {
         primary: '#000',
+        secondary: '#767676',
       },
     },
     typography: {

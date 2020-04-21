@@ -18,7 +18,7 @@ const translationEn = {
     appSignInPrompt: 'Are you a public officer?',
     copyright: '© 2020 Open Government Products',
     placeholders: {
-      email: 'john@moe.gov.sg',
+      email: 'jane@data.gov.sg',
     },
     links: {
       contribute: 'https://go.gov.sg/go-opensource',
