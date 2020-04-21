@@ -66,6 +66,8 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-around',
+      paddingLeft: theme.spacing(4),
+      paddingRight: theme.spacing(4),
     },
     rowSpace: {
       flexGrow: 0.85,

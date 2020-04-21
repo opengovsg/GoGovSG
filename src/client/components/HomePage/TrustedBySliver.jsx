@@ -22,30 +22,31 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       display: 'grid',
       alignItems: 'center',
-      gridTemplateColumns: 'repeat(2, 1fr)',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
       justifyContent: 'space-between',
       marginTop: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
         gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
       },
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up('md')]: {
         gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
       },
     },
     trustedLogo: {
       userDrag: 'none',
-      userSelect: 'none',
+      pointerEvents: 'none',
+      justifySelf: 'center',
       objectFit: 'contain',
-      maxWidth: '180px',
       maxHeight: '110px',
+      maxWidth: '150px',
       padding: theme.spacing(4, 2),
       [theme.breakpoints.up('sm')]: {
-        width: '200px',
-        maxHeight: '150px',
+        maxHeight: '130px',
+        maxWidth: '170px',
       },
       [theme.breakpoints.up('md')]: {
-        width: '220px',
         maxHeight: '160px',
+        maxWidth: '200px',
       },
     },
     '@media screen\\0': {

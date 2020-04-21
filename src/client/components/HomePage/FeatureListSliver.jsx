@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme) =>
     card: {
       boxShadow: 'none',
       height: '100%',
-      maxWidth: '270px',
       marginTop: theme.spacing(6),
       display: 'flex',
       flexDirection: 'column',
