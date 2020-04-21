@@ -14,11 +14,8 @@ const translationEn = {
       get subtitle() {
         return `<strong>${translationEn.general.appTitle}</strong> short links can only be created by public officers, so you can be sure they are from a trustworthy source.`
       },
-      get stats() {
-        return `${translationEn.general.appTitle} is the official link shortener for the Singapore government`
-      },
     },
-    appSignInPrompt: 'Are you a public officer with a gov.sg email?',
+    appSignInPrompt: 'Are you a public officer?',
     copyright: '© 2020 Open Government Products',
     placeholders: {
       email: 'john@moe.gov.sg',

@@ -11,10 +11,6 @@ import trustedByMha from '~/assets/trusted-by-logos/8.png'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    container: {
-      padding: theme.spacing(8, 4),
-      width: '100%',
-    },
     trustedByText: {
       paddingBottom: theme.spacing(1),
     },
@@ -22,31 +18,31 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       display: 'grid',
       alignItems: 'center',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+      gridTemplateColumns: 'repeat(3, minmax(75px, 1fr))',
       justifyContent: 'space-between',
+      gridGap: theme.spacing(4),
       marginTop: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(3, minmax(120px, 1fr))',
       },
       [theme.breakpoints.up('md')]: {
-        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+        gridTemplateColumns: 'repeat(4, minmax(200px, 1fr))',
       },
     },
     trustedLogo: {
       userDrag: 'none',
       pointerEvents: 'none',
-      justifySelf: 'center',
+      justifySelf: 'flex-start',
       objectFit: 'contain',
-      maxHeight: '110px',
-      maxWidth: '150px',
-      padding: theme.spacing(4, 2),
+      maxHeight: '50px',
+      maxWidth: '90px',
       [theme.breakpoints.up('sm')]: {
-        maxHeight: '130px',
-        maxWidth: '170px',
+        maxHeight: '90px',
+        maxWidth: '120px',
       },
       [theme.breakpoints.up('md')]: {
-        maxHeight: '160px',
-        maxWidth: '200px',
+        maxHeight: '120px',
+        maxWidth: '180px',
       },
     },
     '@media screen\\0': {
@@ -60,7 +56,7 @@ const useStyles = makeStyles((theme) =>
 const TrustedBySection = () => {
   const classes = useStyles()
   return (
-    <main className={classes.container}>
+    <>
       <Typography
         className={classes.trustedByText}
         variant="h2"
@@ -79,7 +75,7 @@ const TrustedBySection = () => {
         <img className={classes.trustedLogo} src={trustedByMoe} alt="MOE" />
         <img className={classes.trustedLogo} src={trustedByMha} alt="MHA" />
       </div>
-    </main>
+    </>
   )
 }
 

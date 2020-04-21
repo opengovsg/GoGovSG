@@ -17,11 +17,8 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
-      backgroundColor: theme.palette.secondary.dark,
-      padding: theme.spacing(6, 4),
       [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
-        padding: theme.spacing(6, 10),
       },
     },
     textContentWrapper: {

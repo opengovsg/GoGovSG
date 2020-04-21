@@ -57,17 +57,15 @@ const useStyles = makeStyles((theme) =>
       position: 'relative',
       boxShadow: 'none',
       flexShrink: 1,
-      padding: theme.spacing(2, 6, 1),
-      [theme.breakpoints.down('xs')]: {
-        padding: theme.spacing(2, 0, 1),
-      },
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
     toolbar: {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-around',
-      paddingLeft: theme.spacing(4),
-      paddingRight: theme.spacing(4),
+      paddingLeft: theme.spacing(0),
+      paddingRight: theme.spacing(0),
     },
     rowSpace: {
       flexGrow: 0.85,

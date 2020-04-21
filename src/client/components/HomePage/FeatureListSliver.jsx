@@ -14,8 +14,13 @@ import analyticsIcon from '~/assets/icons/analytics-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    container: {
-      padding: theme.spacing(8, 4),
+    cardGrid: {
+      justifyContent: 'space-between',
+      [theme.breakpoints.up('md')]: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, auto)',
+        gridGap: theme.spacing(4),
+      },
     },
     card: {
       boxShadow: 'none',
@@ -23,17 +28,28 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(6),
       display: 'flex',
       flexDirection: 'column',
+      backgroundColor: 'transparent',
       alignItems: 'flex-start',
-      fill: theme.palette.primary.main,
+      [theme.breakpoints.up('md')]: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+      },
     },
     cardVectorIcon: {
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
       minHeight: '70px',
+      [theme.breakpoints.up('md')]: {
+        marginRight: theme.spacing(4),
+      },
     },
     cardContent: {
+      paddingTop: theme.spacing(4),
       paddingLeft: theme.spacing(0),
       paddingRight: theme.spacing(0),
+      '&:last-child': {
+        paddingBottom: 0,
+      },
     },
   }),
 )
@@ -59,11 +75,11 @@ const cards = [
 const FeatureListSliver = () => {
   const classes = useStyles()
   return (
-    <main className={classes.container}>
+    <>
       <Typography variant="h2" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
-      <Grid container>
+      <Grid container className={classes.cardGrid}>
         {cards.map((card) => (
           <Grid item key={card.title}>
             <Card className={classes.card}>
@@ -82,7 +98,7 @@ const FeatureListSliver = () => {
           </Grid>
         ))}
       </Grid>
-    </main>
+    </>
   )
 }
 
