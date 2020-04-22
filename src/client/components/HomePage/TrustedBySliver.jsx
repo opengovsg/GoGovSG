@@ -18,15 +18,14 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       display: 'grid',
       alignItems: 'center',
-      gridTemplateColumns: 'repeat(3, minmax(75px, 1fr))',
-      justifyContent: 'space-between',
-      gridGap: theme.spacing(4),
+      gridTemplateColumns: 'repeat(auto-fill, 75px)',
       marginTop: theme.spacing(2),
+      gridRowGap: theme.spacing(4),
+      gridColumnGap: theme.spacing(6),
       [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(3, minmax(120px, 1fr))',
-      },
-      [theme.breakpoints.up('md')]: {
-        gridTemplateColumns: 'repeat(4, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, 120px)',
+        gridRowGap: theme.spacing(6),
+        gridColumnGap: theme.spacing(8),
       },
     },
     trustedLogo: {
@@ -39,10 +38,6 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('sm')]: {
         maxHeight: '90px',
         maxWidth: '120px',
-      },
-      [theme.breakpoints.up('md')]: {
-        maxHeight: '120px',
-        maxWidth: '180px',
       },
     },
     '@media screen\\0': {

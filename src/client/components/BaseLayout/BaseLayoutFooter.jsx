@@ -1,142 +1,90 @@
 import React from 'react'
-import {
-  Grid,
-  Hidden,
-  Link,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
-import { Trans } from 'react-i18next'
+import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import BuiltByImg from '~/assets/built-by.png'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     footer: {
+      display: 'grid',
+      maxWidth: '100%',
+      gridGap: theme.spacing(2),
+    },
+    appHeaderGroup: {
+      gridRow: 1,
       display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
-      },
-    },
-    textContentWrapper: {
-      [theme.breakpoints.up('md')]: {
-        alignSelf: 'center',
-      },
-    },
-    appDescriptionWrapper: {
-      margin: theme.spacing(2, 0),
+      alignItems: 'flex-end',
+      flexWrap: 'wrap',
     },
     appTitle: {
-      display: 'block',
-      fontSize: '1.15rem',
-      marginRight: theme.spacing(1),
-      [theme.breakpoints.up('sm')]: {
-        display: 'inline',
-      },
+      marginRight: theme.spacing(2),
     },
-    secondaryFooterWrapper: {
+    navLinkGroup: {
+      gridRow: 2,
+      display: 'grid',
+      gridGap: theme.spacing(2),
+      gridAutoFlow: 'row',
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
-      [theme.breakpoints.up('md')]: {
-        marginTop: theme.spacing(1),
-        marginBottom: theme.spacing(1),
-      },
     },
-    navLinksWrapper: {
-      display: 'flex',
-      flexDirection: 'column',
-      [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
-        alignItems: 'center',
-      },
-    },
-    navLinkWrapper: {
-      margin: theme.spacing(2, 0, 0, 1),
-      [theme.breakpoints.up('md')]: {
-        margin: theme.spacing(1, 2),
-      },
-    },
-    navLink: {
-      color: '#384A51',
-      fontWeight: '500',
-    },
-    builtByLink: {
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(2),
-      [theme.breakpoints.up('md')]: {
-        margin: theme.spacing(0),
-      },
+    builtByLinkGroup: {
+      gridRow: 3,
     },
     builtByImg: {
       height: '55px',
       pointerEvents: 'none',
     },
+    copyright: {
+      gridRow: 4,
+    },
   }),
 )
 
-const footers = [
-  { text: 'FAQ', link: i18next.t('general.links.faq') },
-  {
-    text: 'Help us improve',
-    link: i18next.t('general.links.contact'),
-  },
-  { text: 'Privacy', link: i18next.t('general.links.privacy') },
-  { text: 'Terms of Use', link: i18next.t('general.links.terms') },
-]
-
 const BaseLayoutFooter = () => {
   const classes = useStyles()
+
+  const footers = [
+    { text: 'FAQ', link: i18next.t('general.links.faq') },
+    {
+      text: 'Help us improve',
+      link: i18next.t('general.links.contact'),
+    },
+    { text: 'Privacy', link: i18next.t('general.links.privacy') },
+    { text: 'Terms of Use', link: i18next.t('general.links.terms') },
+  ]
+
   return (
     <footer className={classes.footer}>
-      <div className={classes.textContentWrapper}>
-        <span className={classes.appDescriptionWrapper}>
-          <Typography
-            className={classes.appTitle}
-            variant="body2"
-            color="textPrimary"
-          >
-            <strong>{i18next.t('general.appTitle')}</strong>
+      <span className={classes.appHeaderGroup}>
+        <Typography
+          className={classes.appTitle}
+          variant="h3"
+          color="textPrimary"
+        >
+          <strong>{i18next.t('general.appTitle')}</strong>
+        </Typography>
+        <Typography variant="body1" color="textPrimary" noWrap>
+          {i18next.t('general.appCatchphrase.noStyle')}
+        </Typography>
+      </span>
+      <Typography
+        className={classes.copyright}
+        variant="caption"
+        color="textPrimary"
+      >
+        {i18next.t('general.copyright')}
+      </Typography>
+      <span className={classes.navLinkGroup}>
+        {footers.map((footer) => (
+          <Typography key={footer.text} variant="caption">
+            <Link color="primary" target="_blank" href={footer.link}>
+              {footer.text}
+            </Link>
           </Typography>
-          <Typography variant="body1" display="inline" color="textPrimary">
-            <Trans>general.appCatchphrase.noStyle</Trans>
-          </Typography>
-        </span>
-        <Grid className={classes.secondaryFooterWrapper} container spacing={2}>
-          <Hidden smDown>
-            <Grid item>
-              <Typography variant="caption" color="textPrimary" gutterBottom>
-                {i18next.t('general.copyright')}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography variant="caption" color="textPrimary" gutterBottom>
-                |
-              </Typography>
-            </Grid>
-          </Hidden>
-          <span className={classes.navLinksWrapper}>
-            {footers.map((footer) => (
-              <Grid item key={footer.text} className={classes.navLinkWrapper}>
-                <Typography variant="caption" gutterBottom>
-                  <Link
-                    className={classes.navLink}
-                    color="primary"
-                    target="_blank"
-                    href={footer.link}
-                  >
-                    {footer.text}
-                  </Link>
-                </Typography>
-              </Grid>
-            ))}
-          </span>
-        </Grid>
-      </div>
+        ))}
+      </span>
       <Link
-        className={classes.builtByLink}
+        className={classes.builtByLinkGroup}
         href={i18next.t('general.links.builtBy')}
         target="_blank"
       >
@@ -146,11 +94,6 @@ const BaseLayoutFooter = () => {
           alt={i18next.t('general.builtBy')}
         />
       </Link>
-      <Hidden mdUp>
-        <Typography variant="caption" color="textSecondary" gutterBottom>
-          {i18next.t('general.copyright')}
-        </Typography>
-      </Hidden>
     </footer>
   )
 }

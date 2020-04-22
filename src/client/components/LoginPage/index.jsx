@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import {
   Button,
   FormControl,
+  Hidden,
   LinearProgress,
   Link,
   Typography,
@@ -43,9 +44,21 @@ const mapStateToProps = (state, ownProps) => ({
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    container: {
+      display: 'grid',
+      [theme.breakpoints.up('lg')]: {
+        gridTemplateColumns: '1fr 1fr',
+      },
+    },
+    loginContainer: {
+      [theme.breakpoints.up('lg')]: {
+        gridColumn: 2,
+      },
+    },
     loginWrapper: {
       display: 'grid',
       gridGap: theme.spacing(4),
+      marginBottom: theme.spacing(4),
     },
     headerGroup: {
       gridRow: 1,
@@ -53,7 +66,9 @@ const useStyles = makeStyles((theme) =>
     logo: {
       maxWidth: '130px',
       width: '40%',
-      marginBottom: theme.spacing(1),
+    },
+    loginHeader: {
+      marginTop: theme.spacing(1),
     },
     textInputGroup: {
       gridRow: 2,
@@ -62,6 +77,12 @@ const useStyles = makeStyles((theme) =>
       '&:disabled': {
         color: theme.palette.grey[300],
       },
+    },
+    rightDisplayGraphic: {
+      gridColumn: 1,
+    },
+    emptyMeaninglessVeryPlaceholderImage: {
+      backgroundColor: '#8CA6AD',
     },
     '@media screen\\0': {
       // Styles for Internet Explorer compatibility
@@ -161,28 +182,39 @@ const LoginPage = ({
     )
 
     return (
-      <BaseLayout withHeader={false}>
-        <SectionBackground>
-          <main className={classes.loginWrapper}>
-            <section className={classes.headerGroup}>
-              <Link href="/#/">
-                <img className={classes.logo} src={GoLogo} alt="GoGovSG logo" />
-              </Link>
-              <Typography variant="body1">
-                Only available for use by public officers with a{' '}
-                <strong>{i18next.t('general.emailDomain')}</strong> email.
-              </Typography>
-            </section>
-            <section className={classes.textInputGroup}>
-              <Typography variant="body2">Email</Typography>
-              {emailForm}
-              {progressBar}
-              {otpForm}
-              {resendOTPBtn}
-            </section>
-          </main>
-        </SectionBackground>
-      </BaseLayout>
+      <main className={classes.container}>
+        <Hidden className={classes.rightDisplayGraphic} mdDown>
+          <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
+        </Hidden>
+        <section className={classes.loginContainer}>
+          <BaseLayout withHeader={false} withFooter>
+            <SectionBackground>
+              <section className={classes.loginWrapper}>
+                <span className={classes.headerGroup}>
+                  <Link href="/#/">
+                    <img
+                      className={classes.logo}
+                      src={GoLogo}
+                      alt="GoGovSG logo"
+                    />
+                  </Link>
+                  <Typography className={classes.loginHeader} variant="body1">
+                    Only available for use by public officers with a{' '}
+                    <strong>{i18next.t('general.emailDomain')}</strong> email.
+                  </Typography>
+                </span>
+                <span className={classes.textInputGroup}>
+                  <Typography variant="body2">Email</Typography>
+                  {emailForm}
+                  {progressBar}
+                  {otpForm}
+                  {resendOTPBtn}
+                </span>
+              </section>
+            </SectionBackground>
+          </BaseLayout>
+        </section>
+      </main>
     )
   }
 

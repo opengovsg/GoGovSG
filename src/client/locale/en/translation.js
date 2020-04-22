@@ -8,7 +8,7 @@ const translationEn = {
     appCatchphrase: {
       styled:
         'Trusted short links from <strong><i>public officers</i></strong>',
-      noStyle: 'Trusted short links from public officers',
+      noStyle: 'Trusted links from public officers',
     },
     appDescription: {
       get subtitle() {

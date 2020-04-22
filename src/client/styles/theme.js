@@ -8,7 +8,6 @@ const theme = responsiveFontSizes(
     breakpoints: {
       values: {
         xs: 0,
-        qs: 360,
         sm: 600,
         md: 960,
         lg: 1280,
@@ -114,6 +113,12 @@ const theme = responsiveFontSizes(
       MuiInputLabel: {
         root: {
           fontSize: '16px',
+        },
+      },
+      MuiLink: {
+        root: {
+          color: '#384A51',
+          fontWeight: '500',
         },
       },
     },

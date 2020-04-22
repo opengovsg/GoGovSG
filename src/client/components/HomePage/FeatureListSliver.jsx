@@ -15,19 +15,21 @@ import analyticsIcon from '~/assets/icons/analytics-icon.svg'
 const useStyles = makeStyles((theme) =>
   createStyles({
     cardGrid: {
-      justifyContent: 'space-between',
+      display: 'grid',
+      gridTemplateRows: 'repeat(3, 1fr)',
+      gridGap: theme.spacing(6),
+      marginTop: theme.spacing(6),
       [theme.breakpoints.up('md')]: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, auto)',
-        gridGap: theme.spacing(4),
+        gridTemplateRows: 'repeat(1, 1fr)',
+        gridTemplateColumns: 'repeat(auto-fit, 320px)',
+        gridGap: theme.spacing(8),
       },
     },
     card: {
-      boxShadow: 'none',
-      height: '100%',
-      marginTop: theme.spacing(6),
       display: 'flex',
       flexDirection: 'column',
+      boxShadow: 'none',
+      height: '100%',
       backgroundColor: 'transparent',
       alignItems: 'flex-start',
       [theme.breakpoints.up('md')]: {
@@ -38,8 +40,8 @@ const useStyles = makeStyles((theme) =>
     cardVectorIcon: {
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
-      minHeight: '70px',
-      [theme.breakpoints.up('md')]: {
+      minWidth: '50px',
+      [theme.breakpoints.up('sm')]: {
         marginRight: theme.spacing(4),
       },
     },
@@ -49,6 +51,9 @@ const useStyles = makeStyles((theme) =>
       paddingRight: theme.spacing(0),
       '&:last-child': {
         paddingBottom: 0,
+      },
+      [theme.breakpoints.up('md')]: {
+        paddingTop: theme.spacing(0),
       },
     },
   }),

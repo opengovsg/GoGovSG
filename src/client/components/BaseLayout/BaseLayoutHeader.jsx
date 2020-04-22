@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) =>
     toolbar: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'space-between',
       paddingLeft: theme.spacing(0),
       paddingRight: theme.spacing(0),
     },
