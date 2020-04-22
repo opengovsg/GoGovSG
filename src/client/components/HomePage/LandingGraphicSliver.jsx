@@ -1,6 +1,6 @@
 import React from 'react'
 import { Trans } from 'react-i18next'
-import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import mainImage from '~/assets/landing-page-graphics/landing-main.svg'
 import SectionBackground from '../SectionBackground'
@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme) =>
     container: {
       display: 'grid',
       gridTemplateRows: 'repeat(2, auto)',
-      marginTop: theme.spacing(6),
     },
     titleTextContainer: {
       gridRow: 1,
@@ -23,8 +22,8 @@ const useStyles = makeStyles((theme) =>
       gridRow: 2,
       gridColumn: 1,
       maxWidth: '100%',
-      marginBottom: theme.spacing(12),
       marginLeft: 'auto',
+      // Negative margins are used for graphic to ignore app wide margins.
       marginRight: theme.spacing(-4),
       [theme.breakpoints.up('sm')]: {
         marginRight: theme.spacing(-6),
@@ -55,23 +54,24 @@ const useStyles = makeStyles((theme) =>
 const LandingGraphicSliver = () => {
   const classes = useStyles()
   return (
-    <main className={classes.container}>
-      <section>
-        <span className={classes.titleTextContainer}>
-          <Typography variant="h1" color="textPrimary" gutterBottom>
-            <Trans>general.appCatchphrase.styled</Trans>
-          </Typography>
-          <Typography variant="subtitle1" color="textPrimary">
-            <Trans>general.appDescription.subtitle</Trans>
-          </Typography>
-        </span>
-      </section>
-      <img
-        className={classes.heroContainer}
-        src={mainImage}
-        alt={i18next.t('general.appTitle')}
-      />
-      <span className={classes.colorFillLayer}>
+    <SectionBackground backgroundType="dark">
+      <main className={classes.container}>
+        <section>
+          <span className={classes.titleTextContainer}>
+            <Typography variant="h1" color="textPrimary" gutterBottom>
+              <Trans>general.appCatchphrase.styled</Trans>
+            </Typography>
+            <Typography variant="subtitle1" color="textPrimary">
+              <Trans>general.appDescription.subtitle</Trans>
+            </Typography>
+          </span>
+        </section>
+        <img
+          className={classes.heroContainer}
+          src={mainImage}
+          alt={i18next.t('general.appTitle')}
+        />
+        {/* <span className={classes.colorFillLayer}>
         <SectionBackground backgroundType="primaryDark" isSliver={false}>
           <span className={classes.signInPrompt}>
             <Typography variant="body2" color="secondary">
@@ -82,8 +82,9 @@ const LandingGraphicSliver = () => {
             </Typography>
           </span>
         </SectionBackground>
-      </span>
-    </main>
+      </span> */}
+      </main>
+    </SectionBackground>
   )
 }
 
