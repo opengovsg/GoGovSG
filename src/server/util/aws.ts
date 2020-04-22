@@ -1,5 +1,6 @@
 import { parse } from 'url'
 import { S3 } from 'aws-sdk'
+import { s3Bucket } from '../config'
 
 export const s3 = new S3()
 
@@ -20,7 +21,7 @@ const reformatPresignedUrl = (url: string) => {
 
 export const generatePresignedUrl = async (fileName: string, fileType: string) => {
   const params = {
-    Bucket: 'file-staging.go.gov.sg',
+    Bucket: s3Bucket,
     Key: fileName,
     ContentType: fileType,
     Expires: 60, // 60 seconds.
