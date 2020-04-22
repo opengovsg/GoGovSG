@@ -15,8 +15,7 @@ const OTP_EXPIRY: number = Number(process.env.OTP_EXPIRY) || 5 * 60
 // in seconds, for URL cache expiry
 const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
 // in seconds, for statistics cache expiry
-const STATISTICS_EXPIRY: number =
-  Number(process.env.STATISTICS_EXPIRY) || 5 * 60
+const STATISTICS_EXPIRY: number = Number(process.env.STATISTICS_EXPIRY) || 5 * 60
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
