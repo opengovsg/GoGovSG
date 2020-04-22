@@ -44,7 +44,6 @@ before_deploy:
       # Edit Dockerrun from Travis environment variables
       sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
       sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-      cat Dockerrun.aws.json
       zip -r "$TAG.zip" Dockerrun.aws.json
     fi
   - export ELASTIC_BEANSTALK_LABEL="$TAG-$(env TZ=Asia/Singapore date "+%Y%m%d%H%M%S")"
