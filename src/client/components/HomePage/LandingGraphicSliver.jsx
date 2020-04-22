@@ -1,9 +1,15 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { Trans } from 'react-i18next'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import mainImage from '~/assets/landing-page-graphics/landing-main.svg'
 import SectionBackground from '../SectionBackground'
+import useRotatingLinks from './hooks/useRotatingLinks'
+
+const mapStateToProps = (state) => ({
+  linksToRotate: state.home.linksToRotate,
+})
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -42,17 +48,37 @@ const useStyles = makeStyles((theme) =>
       height: theme.spacing(12),
       marginTop: theme.spacing(4),
     },
-    colorFillLayer: {
+    // colorFillLayer: {
+    //   gridRow: 2,
+    //   gridColumn: 1,
+    //   zIndex: -1,
+    //   alignSelf: 'flex-end',
+    // },
+    rotatingLinksContainer: {
+      // Alignments to align with graphic.
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
       gridRow: 2,
       gridColumn: 1,
-      zIndex: -1,
-      alignSelf: 'flex-end',
+      marginTop: 'auto',
+      height: '23.3923445%',
+    },
+    rotatingLinks: {
+      fontSize: 'min(3.25vw, 26px)',
+      fontWeight: 400,
+      color: theme.palette.secondary.contrastText,
+      opacity: 0.7,
     },
   }),
 )
 
-const LandingGraphicSliver = () => {
+const LandingGraphicSliver = ({ linksToRotate }) => {
   const classes = useStyles()
+  const rotatingLinks = useRotatingLinks({
+    linksToRotate: linksToRotate || ['go.gov.sg/whatsapp'],
+    timeInternalInMs: 2500,
+  })
   return (
     <SectionBackground backgroundType="dark">
       <main className={classes.container}>
@@ -71,6 +97,15 @@ const LandingGraphicSliver = () => {
           src={mainImage}
           alt={i18next.t('general.appTitle')}
         />
+        <section className={classes.rotatingLinksContainer}>
+          <Link
+            className={classes.rotatingLinks}
+            href={rotatingLinks}
+            underline="none"
+          >
+            {rotatingLinks}
+          </Link>
+        </section>
         {/* <span className={classes.colorFillLayer}>
         <SectionBackground backgroundType="primaryDark" isSliver={false}>
           <span className={classes.signInPrompt}>
@@ -88,4 +123,4 @@ const LandingGraphicSliver = () => {
   )
 }
 
-export default LandingGraphicSliver
+export default connect(mapStateToProps, null)(LandingGraphicSliver)

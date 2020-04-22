@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Redirect, withRouter } from 'react-router-dom'
 import 'boxicons'
 
+import homeActions from '~/actions/home'
 import loginActions from '~/actions/login'
 import { USER_PAGE } from '~/util/types'
 import TrustedBySliver from './TrustedBySliver'
@@ -14,6 +15,7 @@ import LandingGraphicSliver from './LandingGraphicSliver'
 import BaseLayout from '../BaseLayout'
 
 const mapDispatchToProps = (dispatch) => ({
+  getLinksToRotate: () => dispatch(homeActions.getLinksToRotate()),
   getIsLoggedIn: () => dispatch(loginActions.isLoggedIn()),
 })
 
@@ -21,13 +23,15 @@ const mapStateToProps = (state, ownProps) => ({
   onCreateUrl: ownProps.onCreateUrl,
   history: ownProps.history,
   isLoggedIn: state.login.isLoggedIn,
+  linksToRotate: state.home.linksToRotate,
 })
 
 const HomePage = (props) => {
   const { isLoggedIn } = props
 
   useEffect(() => {
-    const { getIsLoggedIn } = props
+    const { getLinksToRotate, getIsLoggedIn } = props
+    getLinksToRotate()
     getIsLoggedIn()
   })
 

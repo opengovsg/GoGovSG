@@ -15,7 +15,8 @@ const OTP_EXPIRY: number = Number(process.env.OTP_EXPIRY) || 5 * 60
 // in seconds, for URL cache expiry
 const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
 // in seconds, for statistics cache expiry
-const STATISTICS_EXPIRY: number = Number(process.env.STATISTICS_EXPIRY) || 5 * 60
+const STATISTICS_EXPIRY: number =
+  Number(process.env.STATISTICS_EXPIRY) || 5 * 60
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
@@ -63,7 +64,9 @@ const exitIfAnyMissing = (vars: string[]) => {
   }, [] as string[])
   if (err.length > 0) {
     logger.error(
-      `ERROR: Cannot deploy app. These environment variables are missing\t: ${err.join(', ')}`,
+      `ERROR: Cannot deploy app. These environment variables are missing\t: ${err.join(
+        ', ',
+      )}`,
     )
     process.exit(1)
   }
@@ -121,7 +124,8 @@ export interface SessionSettings {
   secret: string
 }
 
-export const validEmailDomainGlobExpression = process.env.VALID_EMAIL_GLOB_EXPRESSION as string
+export const validEmailDomainGlobExpression = process.env
+  .VALID_EMAIL_GLOB_EXPRESSION as string
 export const emailValidator = new minimatch.Minimatch(
   validEmailDomainGlobExpression,
   {
@@ -133,6 +137,7 @@ export const emailValidator = new minimatch.Minimatch(
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
+export const linksToRotate = process.env.ROTATED_LINKS
 
 export const databaseUri = process.env.DB_URI as string
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
@@ -150,6 +155,9 @@ export const saltRounds = SALT_ROUNDS
 export const otpExpiry = OTP_EXPIRY
 export const redirectExpiry = REDIRECT_EXPIRY
 export const statisticsExpiry = STATISTICS_EXPIRY
-export const sessionSettings: SessionSettings = { secret: process.env.SESSION_SECRET as string, name: 'gogovsg' }
+export const sessionSettings: SessionSettings = {
+  secret: process.env.SESSION_SECRET as string,
+  name: 'gogovsg',
+}
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS

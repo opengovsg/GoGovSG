@@ -8,6 +8,7 @@ router.use('/logout', require('./logout'))
 router.use('/login', require('./login'))
 router.use('/stats', require('./statistics'))
 router.use('/sentry', require('./sentry'))
+router.use('/links', require('./links'))
 
 /**
  * To protect private user routes.
