@@ -3,8 +3,6 @@ import i18next from 'i18next'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {
-  Button,
-  FormControl,
   Hidden,
   LinearProgress,
   Link,
@@ -73,11 +71,6 @@ const useStyles = makeStyles((theme) =>
     textInputGroup: {
       gridRow: 2,
     },
-    resendOTPBtn: {
-      '&:disabled': {
-        color: theme.palette.grey[300],
-      },
-    },
     rightDisplayGraphic: {
       gridColumn: 1,
     },
@@ -127,6 +120,7 @@ const LoginPage = ({
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
     const emailError = () => !!email && !emailValidator.match(email)
+
     const emailFormAttr = {
       id: 'email',
       submit: getOTPEmail,
@@ -144,7 +138,6 @@ const LoginPage = ({
       variant,
       autoComplete: 'on',
     }
-    const emailForm = <LoginForm classes={classes} {...emailFormAttr} />
 
     const otpFormAttr = {
       id: 'otp',
@@ -158,28 +151,15 @@ const LoginPage = ({
       onChange: setOTP,
       variant,
       autoComplete: 'off',
+      isEmailView,
     }
+
+    const emailForm = <LoginForm classes={classes} {...emailFormAttr} />
     const otpForm = <LoginForm classes={classes} {...otpFormAttr} />
 
     const progressBar = variantMap.progressBarShown ? (
       <LinearProgress className={classes.progressBar} />
     ) : null
-
-    const resendOTPBtn = isEmailView ? null : (
-      <FormControl margin="normal" fullWidth>
-        <Button
-          type="button"
-          variant="text"
-          color="primary"
-          disabled={!variantMap.resendEnabled}
-          className={classes.resendOTPBtn}
-          onClick={getOTPEmail}
-          size="large"
-        >
-          Resend OTP
-        </Button>
-      </FormControl>
-    )
 
     return (
       <main className={classes.container}>
@@ -204,11 +184,12 @@ const LoginPage = ({
                   </Typography>
                 </span>
                 <span className={classes.textInputGroup}>
-                  <Typography variant="body2">Email</Typography>
+                  <Typography variant="body2">
+                    {isEmailView ? 'Email' : 'One-time password'}
+                  </Typography>
                   {emailForm}
-                  {progressBar}
                   {otpForm}
-                  {resendOTPBtn}
+                  {progressBar}
                 </span>
               </section>
             </SectionBackground>

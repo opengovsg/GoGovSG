@@ -1,8 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
+import { connect } from 'react-redux'
 import i18next from 'i18next'
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { loginFormVariants } from '~/util/types'
+import loginActions from '~/actions/login'
+
+const mapDispatchToProps = (dispatch) => ({
+  getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
+})
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -25,14 +32,22 @@ const useStyles = makeStyles((theme) =>
       minWidth: '120px',
       justifySelf: 'right',
     },
-    helpButton: {
+    secondaryButton: {
       gridColumn: 1,
       width: '100%',
       maxWidth: '200px',
       minWidth: '120px',
-      justifySelf: 'left',
-      color: theme.palette.text.secondary,
       fontWeight: 400,
+      justifySelf: 'left',
+    },
+    resendOTPBtn: {
+      color: theme.palette.text.secondary,
+      '&:disabled': {
+        opacity: 0.5,
+      },
+    },
+    helpButton: {
+      color: theme.palette.text.secondary,
     },
   }),
 )
@@ -49,6 +64,8 @@ const LoginForm = ({
   hidden,
   variant,
   autoComplete,
+  isEmailView,
+  getOTPEmail,
 }) => {
   const classes = useStyles()
   const variantMap = loginFormVariants.map[variant]
@@ -82,15 +99,30 @@ const LoginForm = ({
         helperText={textErrorMessage()}
       />
       <section className={classes.buttonRow}>
-        <Button
-          className={classes.helpButton}
-          href={i18next.t('general.links.faq')}
-          target="_blank"
-          variant="outlined"
-          size="large"
-        >
-          Need help?
-        </Button>
+        {!isEmailView ? (
+          <Button
+            className={classNames(
+              classes.secondaryButton,
+              classes.resendOTPBtn,
+            )}
+            variant="outlined"
+            disabled={!variantMap.resendEnabled}
+            onClick={getOTPEmail}
+            size="large"
+          >
+            Resend OTP
+          </Button>
+        ) : (
+          <Button
+            className={classNames(classes.secondaryButton, classes.helpButton)}
+            href={i18next.t('general.links.faq')}
+            target="_blank"
+            variant="outlined"
+            size="large"
+          >
+            Need help?
+          </Button>
+        )}
         <Button
           className={classes.signInButton}
           type="submit"
@@ -117,6 +149,11 @@ LoginForm.propTypes = {
   onChange: PropTypes.func.isRequired,
   variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
   autoComplete: PropTypes.string.isRequired,
+  isEmailView: PropTypes.bool,
 }
 
-export default LoginForm
+LoginForm.defaultProps = {
+  isEmailView: true,
+}
+
+export default connect(null, mapDispatchToProps)(LoginForm)

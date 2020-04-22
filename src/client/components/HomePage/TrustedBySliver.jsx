@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       display: 'grid',
       alignItems: 'center',
-      gridTemplateColumns: 'repeat(auto-fill, 75px)',
+      gridTemplateColumns: 'repeat(auto-fill, 70px)',
       marginTop: theme.spacing(2),
       gridRowGap: theme.spacing(4),
       gridColumnGap: theme.spacing(6),
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) =>
       justifySelf: 'flex-start',
       objectFit: 'contain',
       maxHeight: '50px',
-      maxWidth: '90px',
+      maxWidth: '70px',
       [theme.breakpoints.up('sm')]: {
         maxHeight: '90px',
         maxWidth: '120px',

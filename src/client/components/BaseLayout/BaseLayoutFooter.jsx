@@ -27,12 +27,15 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
     },
+    footerLink: {
+      color: theme.palette.primary.dark,
+    },
     builtByLinkGroup: {
       gridRow: 3,
     },
     builtByImg: {
       height: '55px',
-      pointerEvents: 'none',
+      userDrag: 'none',
     },
     copyright: {
       gridRow: 4,
@@ -77,23 +80,29 @@ const BaseLayoutFooter = () => {
       <span className={classes.navLinkGroup}>
         {footers.map((footer) => (
           <Typography key={footer.text} variant="caption">
-            <Link color="primary" target="_blank" href={footer.link}>
+            <Link
+              className={classes.footerLink}
+              target="_blank"
+              href={footer.link}
+            >
               {footer.text}
             </Link>
           </Typography>
         ))}
       </span>
-      <Link
-        className={classes.builtByLinkGroup}
-        href={i18next.t('general.links.builtBy')}
-        target="_blank"
-      >
-        <img
-          src={BuiltByImg}
-          className={classes.builtByImg}
-          alt={i18next.t('general.builtBy')}
-        />
-      </Link>
+      <span className={classes.builtByLinkGroup}>
+        <Link
+          href={i18next.t('general.links.builtBy')}
+          target="_blank"
+          style={{ height: '100%' }}
+        >
+          <img
+            src={BuiltByImg}
+            className={classes.builtByImg}
+            alt={i18next.t('general.builtBy')}
+          />
+        </Link>
+      </span>
     </footer>
   )
 }

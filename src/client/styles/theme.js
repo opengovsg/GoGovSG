@@ -117,7 +117,6 @@ const theme = responsiveFontSizes(
       },
       MuiLink: {
         root: {
-          color: '#384A51',
           fontWeight: '500',
         },
       },

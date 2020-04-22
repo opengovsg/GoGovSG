@@ -107,6 +107,7 @@ const FaqSliver = (props) => {
       <Hidden smUp>
         <Button
           className={classes.getStartedButton}
+          href="/#/login"
           size="medium"
           color="primary"
           variant="contained"

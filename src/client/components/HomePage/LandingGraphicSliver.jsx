@@ -76,7 +76,7 @@ const LandingGraphicSliver = () => {
           <span className={classes.signInPrompt}>
             <Typography variant="body2" color="secondary">
               <Trans>general.appSignInPrompt</Trans>{' '}
-              <Link href="/#/login" color="inherit" underline="always">
+              <Link href="/#/login" color="secondary" underline="always">
                 Sign in
               </Link>
             </Typography>
