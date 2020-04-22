@@ -19,6 +19,7 @@
   "dependencies": {
     "@material-ui/core": "^4.9.7",
     "@sentry/browser": "^5.15.4",
+    "@types/classnames": "^2.2.10",
     "@types/node": "^10.14.5",
     "@types/react-redux": "^7.1.7",
     "@types/react-router-dom": "^5.1.4",
