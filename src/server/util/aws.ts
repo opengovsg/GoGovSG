@@ -13,10 +13,15 @@ export const s3 = new S3()
  * Broadly speaking, we need to change https://s3.amazonaws.com/file.go.gov.sg/link?search
  * to https://file.go.gov.sg.s3.amazonaws.com/link?search.
  */
-const reformatPresignedUrl = (url: string) => {
+const reformatPresignedUrl = (url: string, fileName: string) => {
   const urlObj = parse(url)
-  const { pathname, protocol, search } = urlObj
-  return `${protocol}//${pathname?.substring(1)}${search}`
+  const {
+    host,
+    pathname,
+    protocol,
+    search,
+  } = urlObj
+  return `${protocol}//${pathname?.split('/')[1]}.${host}/${fileName}${search}`
 }
 
 export const generatePresignedUrl = async (fileName: string, fileType: string) => {
@@ -27,5 +32,5 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
     Expires: 60, // 60 seconds.
   }
   const presignedUrl = await s3.getSignedUrlPromise('putObject', params)
-  return reformatPresignedUrl(presignedUrl)
+  return reformatPresignedUrl(presignedUrl, fileName)
 }
