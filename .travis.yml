@@ -25,7 +25,30 @@ script:
   - npm run build
 #TODO: test
 
-# Directly rely on presence of Dockerfile to deploy
+before_deploy:
+  # Workaround to run before_deploy only once
+  - >
+    if ! [ "$TAG" ]; then
+      pip install --user awscli
+
+      # Put AWS in path
+      export PATH=$PATH:$HOME/.local/bin
+
+      # Login to AWS ECR, credentials defined in $AWS_ACCESS_KEY_ID and $AWS_SECRET_ACCESS_KEY
+      $(aws ecr get-login --no-include-email --region ap-southeast-1)
+      export TAG=travis-$TRAVIS_COMMIT-$TRAVIS_BUILD_NUMBER
+      docker build -f Dockerfile -t $REPO:$TAG .
+      docker tag $REPO:$TAG $REPO:$TRAVIS_BRANCH
+      docker push $REPO
+
+      # Edit Dockerrun from Travis environment variables
+      sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+      sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+      cat Dockerrun.aws.json
+      zip -r "$TAG.zip" Dockerrun.aws.json
+    fi
+  - export ELASTIC_BEANSTALK_LABEL="$TAG-$(env TZ=Asia/Singapore date "+%Y%m%d%H%M%S")"
+
 deploy:
   - provider: elasticbeanstalk
     skip_cleanup: true
@@ -35,8 +58,10 @@ deploy:
     app: $AWS_EB_APP_STAGING
     env: $AWS_EB_ENV_STAGING
     bucket_name: $AWS_EB_BUCKET_STAGING
+    zip_file: "$TAG.zip"
     on:
       branch: $STAGING_BRANCH
+
   - provider: elasticbeanstalk
     skip_cleanup: true
     access_key_id: $AWS_ACCESS_KEY_ID
@@ -45,5 +70,6 @@ deploy:
     app: $AWS_EB_APP_PRODUCTION
     env: $AWS_EB_ENV_PRODUCTION
     bucket_name: $AWS_EB_BUCKET_PRODUCTION
+    zip_file: "$TAG.zip"
     on:
       branch: $PRODUCTION_BRANCH
