@@ -6,6 +6,7 @@ import i18next from 'i18next'
 import mainImage from '~/assets/landing-page-graphics/landing-main.svg'
 import SectionBackground from '../SectionBackground'
 import RotatingLinks from './RotatingLinks'
+import { IgnoreAppMargins } from '../BaseLayout'
 
 const mapStateToProps = (state) => ({
   linksToRotate: state.home.linksToRotate,
@@ -15,7 +16,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
       display: 'grid',
-      gridTemplateRows: 'repeat(2, auto)',
+      gridTemplateRows: 'min-content min-content',
     },
     titleTextContainer: {
       gridRow: 1,
@@ -27,19 +28,11 @@ const useStyles = makeStyles((theme) =>
     heroContainer: {
       gridRow: 2,
       gridColumn: 1,
-      maxWidth: '100%',
       marginLeft: 'auto',
-      // Negative margins are used for graphic to ignore app wide margins.
-      marginRight: theme.spacing(-4),
-      [theme.breakpoints.up('sm')]: {
-        marginRight: theme.spacing(-6),
-      },
-      [theme.breakpoints.up('md')]: {
-        marginRight: theme.spacing(-8),
-      },
-      [theme.breakpoints.up('lg')]: {
-        marginRight: theme.spacing(-12),
-      },
+    },
+    heroImage: {
+      maxWidth: '100%',
+      verticalAlign: 'top',
     },
     signInPrompt: {
       display: 'flex',
@@ -48,12 +41,6 @@ const useStyles = makeStyles((theme) =>
       height: theme.spacing(12),
       marginTop: theme.spacing(4),
     },
-    // colorFillLayer: {
-    //   gridRow: 2,
-    //   gridColumn: 1,
-    //   zIndex: -1,
-    //   alignSelf: 'flex-end',
-    // },
     rotatingLinksContainer: {
       // Alignments to align with graphic.
       display: 'flex',
@@ -104,11 +91,13 @@ const LandingGraphicSliver = ({ linksToRotate }) => {
             </Typography>
           </span>
         </section>
-        <img
-          className={classes.heroContainer}
-          src={mainImage}
-          alt={i18next.t('general.appTitle')}
-        />
+        <IgnoreAppMargins className={classes.heroContainer}>
+          <img
+            className={classes.heroImage}
+            src={mainImage}
+            alt={i18next.t('general.appTitle')}
+          />
+        </IgnoreAppMargins>
         <section className={classes.rotatingLinksContainer}>
           <RotatingLinks
             className={classes.rotatingLinks}
@@ -116,18 +105,6 @@ const LandingGraphicSliver = ({ linksToRotate }) => {
             strings={linksToRotate || ['whatsapp']}
           />
         </section>
-        {/* <span className={classes.colorFillLayer}>
-        <SectionBackground backgroundType="primaryDark" isSliver={false}>
-          <span className={classes.signInPrompt}>
-            <Typography variant="body2" color="secondary">
-              <Trans>general.appSignInPrompt</Trans>{' '}
-              <Link href="/#/login" color="secondary" underline="always">
-                Sign in
-              </Link>
-            </Typography>
-          </span>
-        </SectionBackground>
-      </span> */}
       </main>
     </SectionBackground>
   )

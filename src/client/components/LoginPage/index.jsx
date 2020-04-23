@@ -162,12 +162,12 @@ const LoginPage = ({
     ) : null
 
     return (
-      <main className={classes.container}>
-        <Hidden className={classes.rightDisplayGraphic} mdDown>
-          <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
-        </Hidden>
-        <section className={classes.loginContainer}>
-          <BaseLayout withHeader={false} withFooter>
+      <BaseLayout withHeader={false} withFooter>
+        <main className={classes.container}>
+          <Hidden className={classes.rightDisplayGraphic} mdDown>
+            <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
+          </Hidden>
+          <section className={classes.loginContainer}>
             <SectionBackground>
               <section className={classes.loginWrapper}>
                 <span className={classes.headerGroup}>
@@ -193,9 +193,9 @@ const LoginPage = ({
                 </span>
               </section>
             </SectionBackground>
-          </BaseLayout>
-        </section>
-      </main>
+          </section>
+        </main>
+      </BaseLayout>
     )
   }
 
