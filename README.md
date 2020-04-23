@@ -9,6 +9,7 @@ The official Singapore government link shortener.
   - [Getting Started](#getting-started)
     - [Running Locally](#running-locally)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
+    - [Deploying](#deploying)
   - [Pre-release](#pre-release)
   - [Documentation](#documentation)
     - [Folder Structure](#folder-structure)
@@ -20,7 +21,6 @@ The official Singapore government link shortener.
     - [Express](#express)
     - [Concurrently](#concurrently)
     - [VSCode + ESLint](#vscode--eslint)
-  - [Contributing to GoGovSG](https://github.com/opengovsg/GoGovSG/blob/master/CONTRIBUTING.md)
 
 ## Introduction
 
@@ -99,6 +99,26 @@ After these have been set up, set the environment variables according to the tab
 Trigger the typescript compilation and webpack bundling process by calling `npm run build`.
 
 Finally, start the production server by running `npm start`.
+
+### Deploying
+
+GoGovSG uses Travis to deploy to AWS Elastic Beanstalk. We also use Sentry.io to track client-side errors.
+
+|Environment Variable|Required|Description/Value|
+|:---:|:---:|:---|
+|AWS_ACCESS_KEY_ID|Yes|AWS credential ID used to deploy to Elastic Beanstalk|
+|AWS_SECRET_ACCESS_KEY|Yes|AWS credential secret used to deploy to Elastic Beanstalk|
+|AWS_EB_ENV_PRODUCTION, AWS_EB_ENV_STAGING|Yes|Elastic Beanstalk environment name|
+|AWS_EB_APP_PRODUCTION, AWS_EB_APP_STAGING|Yes|Elastic Beanstalk application name|
+|AWS_EB_BUCKET_PRODUCTION, AWS_EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|
+|AWS_EB_REGION|Yes|AWS region to deploy to, e.g. `ap-southeast-1`|
+|EMAIL_RECIPIENT|Yes|Email for Travis notifications|
+|PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
+|REPO|Yes|Docker container registry URI to push built images to|
+|SENTRY_ORG|No|Sentry.io organisation name|
+|SENTRY_PROJECT|No|Sentry.io project name|
+|SENTRY_URL|No|Sentry.io URL e.g. `https://sentry.io/`|
+|SENTRY_DNS|No|Sentry.io endpoint to post client-side errors to|
 
 ## Pre-release
 
