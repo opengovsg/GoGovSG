@@ -1,11 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Trans } from 'react-i18next'
-import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import mainImage from '~/assets/landing-page-graphics/landing-main.svg'
 import SectionBackground from '../SectionBackground'
-import useRotatingLinks from './hooks/useRotatingLinks'
+import RotatingLinks from './RotatingLinks'
 
 const mapStateToProps = (state) => ({
   linksToRotate: state.home.linksToRotate,
@@ -90,10 +90,7 @@ const useStyles = makeStyles((theme) =>
 
 const LandingGraphicSliver = ({ linksToRotate }) => {
   const classes = useStyles()
-  const rotatingLinks = useRotatingLinks({
-    linksToRotate: linksToRotate || ['go.gov.sg/whatsapp'],
-    timeInternalInMs: 2500,
-  })
+
   return (
     <SectionBackground backgroundType="dark">
       <main className={classes.container}>
@@ -113,13 +110,11 @@ const LandingGraphicSliver = ({ linksToRotate }) => {
           alt={i18next.t('general.appTitle')}
         />
         <section className={classes.rotatingLinksContainer}>
-          <Link
+          <RotatingLinks
             className={classes.rotatingLinks}
-            href={rotatingLinks}
-            underline="none"
-          >
-            {rotatingLinks}
-          </Link>
+            prefix={i18next.t('general.shortUrlPrefix')}
+            strings={linksToRotate || ['whatsapp']}
+          />
         </section>
         {/* <span className={classes.colorFillLayer}>
         <SectionBackground backgroundType="primaryDark" isSliver={false}>
