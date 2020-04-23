@@ -12,6 +12,7 @@ import {
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.png'
 import loginActions from '~/actions/login'
+import SectionBackground from '../SectionBackground'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -149,35 +150,37 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
   )
 
   return (
-    <AppBar
-      position="static"
-      color={isLoggedIn ? 'primary' : 'transparent'}
-      className={classes.appBar}
-    >
-      <Toolbar className={classes.toolbar}>
-        <a href="/#/" className={classes.toolbarLogo}>
-          <img src={GoLogo} className={classes.logo} alt="GoGovSG Logo" />
-        </a>
-        <span className={classes.rowSpace} />
-        {headers.map(
-          (header) =>
-            (header.public ? !isLoggedIn : isLoggedIn) && (
-              <Hidden xsDown={header.xsHidden} key={header.text}>
-                <Button
-                  href={header.link}
-                  target="_blank"
-                  color="primary"
-                  size="large"
-                  variant="text"
-                >
-                  {header.text}
-                </Button>
-              </Hidden>
-            ),
-        )}
-        {appBarBtn}
-      </Toolbar>
-    </AppBar>
+    <SectionBackground isSliver={false} backgroundType="dark">
+      <AppBar
+        position="static"
+        color={isLoggedIn ? 'primary' : 'transparent'}
+        className={classes.appBar}
+      >
+        <Toolbar className={classes.toolbar}>
+          <a href="/#/" className={classes.toolbarLogo}>
+            <img src={GoLogo} className={classes.logo} alt="GoGovSG Logo" />
+          </a>
+          <span className={classes.rowSpace} />
+          {headers.map(
+            (header) =>
+              (header.public ? !isLoggedIn : isLoggedIn) && (
+                <Hidden xsDown={header.xsHidden} key={header.text}>
+                  <Button
+                    href={header.link}
+                    target="_blank"
+                    color="primary"
+                    size="large"
+                    variant="text"
+                  >
+                    {header.text}
+                  </Button>
+                </Hidden>
+              ),
+          )}
+          {appBarBtn}
+        </Toolbar>
+      </AppBar>
+    </SectionBackground>
   )
 }
 

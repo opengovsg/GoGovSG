@@ -47,7 +47,12 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const SectionBackground = ({ children, backgroundType, isSliver }) => {
+const SectionBackground = ({
+  children,
+  backgroundType,
+  isSliver,
+  ignoreAppMargins,
+}) => {
   const classes = useStyles()
   const getBackgroundType = () => {
     switch (backgroundType) {
@@ -61,12 +66,13 @@ const SectionBackground = ({ children, backgroundType, isSliver }) => {
         return classes.backgroundLight
     }
   }
+  const negativeMargins = ignoreAppMargins ? classes.ignoreAppMargins : ''
   const backgroundColor = getBackgroundType()
   const childrenPadding = isSliver ? classes.childrenPadding : ''
   return (
     <section className={classes.container}>
       <span
-        className={classNames(classes.ignoreAppMargins, backgroundColor)}
+        className={classNames(negativeMargins, backgroundColor)}
         style={{ backgroundColor }}
       />
       <span className={classNames(classes.children, childrenPadding)}>
@@ -79,11 +85,13 @@ const SectionBackground = ({ children, backgroundType, isSliver }) => {
 SectionBackground.propTypes = {
   backgroundType: PropTypes.string,
   isSliver: PropTypes.bool,
+  ignoreAppMargins: PropTypes.bool,
 }
 
 SectionBackground.defaultProps = {
   backgroundType: 'light',
   isSliver: true,
+  ignoreAppMargins: true,
 }
 
 export default SectionBackground

@@ -53,18 +53,16 @@ const BaseLayout = ({ withHeader, withFooter, children }) => {
   return (
     <>
       <CssBaseline />
-      <SectionBackground isSliver={false} backgroundType="dark">
-        <Masthead />
-        <section className={classes.appContainer}>
-          {withHeader && <BaseLayoutHeader />}
-          <span className={classes.layout}>{children}</span>
-          {withFooter && (
-            <SectionBackground backgroundType="dark">
-              <BaseLayoutFooter />
-            </SectionBackground>
-          )}
-        </section>
-      </SectionBackground>
+      <Masthead />
+      <section className={classes.appContainer}>
+        {withHeader && <BaseLayoutHeader />}
+        <span className={classes.layout}>{children}</span>
+        {withFooter && (
+          <SectionBackground backgroundType="dark">
+            <BaseLayoutFooter />
+          </SectionBackground>
+        )}
+      </section>
     </>
   )
 }
