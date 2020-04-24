@@ -5,7 +5,7 @@ import { s3Bucket } from '../config'
 export const s3 = new S3()
 
 /**
- * Reformat the pre-signed url to to one that will be accepted by S3.
+ * Reformat the pre-signed url to one that will be accepted by S3.
  *
  * This is necessary because we used a gov.sg CNAME and configured S3
  * to only accept requests that have that gov.sg CNAME as the path.
