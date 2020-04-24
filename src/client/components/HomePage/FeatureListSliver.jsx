@@ -12,18 +12,25 @@ import antiPhisingIcon from '~/assets/icons/anti-phishing-icon.svg'
 import customisedIcon from '~/assets/icons/customised-icon.svg'
 import analyticsIcon from '~/assets/icons/analytics-icon.svg'
 
+// Grid configurations used by FeatureListSliver.
+// To be used by other components which are aligning to it.
+export const featureCardGridConfiguration = (theme) => {
+  return {
+    display: 'grid',
+    gridTemplateRows: 'repeat(3, 1fr)',
+    gridGap: theme.spacing(6),
+    marginTop: theme.spacing(6),
+    [theme.breakpoints.up('md')]: {
+      gridTemplateColumns: 'repeat(auto-fit, 320px)',
+      gridGap: theme.spacing(8),
+    },
+  }
+}
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     cardGrid: {
-      display: 'grid',
-      gridTemplateRows: 'repeat(3, 1fr)',
-      gridGap: theme.spacing(6),
-      marginTop: theme.spacing(6),
-      [theme.breakpoints.up('md')]: {
-        gridTemplateRows: 'repeat(1, 1fr)',
-        gridTemplateColumns: 'repeat(auto-fit, 320px)',
-        gridGap: theme.spacing(8),
-      },
+      ...featureCardGridConfiguration,
     },
     card: {
       display: 'flex',
