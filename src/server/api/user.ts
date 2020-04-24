@@ -115,10 +115,9 @@ function validatePresignedUrlRequest(
   next: Express.NextFunction,
 ) {
   if (!req.body.fileType || !req.body.key) {
-    res.badRequest(
+    return res.badRequest(
       jsonMessage('Some or all required arguments are missing: fileType, key.')
     )
-    return
   }
   next()
 }
