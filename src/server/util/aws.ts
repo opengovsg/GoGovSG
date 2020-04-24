@@ -1,4 +1,4 @@
-import { parse } from 'url'
+import { parse, URL } from 'url'
 import { S3 } from 'aws-sdk'
 import { s3Bucket } from '../config'
 
@@ -21,7 +21,12 @@ const reformatPresignedUrl = (url: string, fileName: string) => {
     protocol,
     search,
   } = urlObj
-  return `${protocol}//${pathname?.split('/')[1]}.${host}/${fileName}${search}`
+  const newUrl = new URL('https://lorem-ipsum.com')
+  newUrl.protocol = protocol as string
+  newUrl.host = `${pathname?.split('/')[1]}.${host}`
+  newUrl.pathname = fileName
+  newUrl.search = search as string
+  return newUrl.href
 }
 
 export const generatePresignedUrl = async (fileName: string, fileType: string) => {
