@@ -71,7 +71,6 @@ const useStyles = makeStyles((theme) =>
     },
     appBar: {
       zIndex: '1',
-      position: 'relative',
       boxShadow: 'none',
       flexShrink: 1,
       paddingTop: theme.spacing(2),
