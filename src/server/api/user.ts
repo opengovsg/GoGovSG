@@ -108,6 +108,13 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
 
 /**
  * Make sure all parameters needed for the pre-signed url request are present.
+ *
+ * @param {string} fileType - File type of the file that is being uploaded.
+ * This must be declared here so that subsequent PUT requests to the pre-signed URL
+ * will pass header checks.
+ * @param {string} key - Name of the entry to be inserted to the S3 bucket. Ensure
+ * that the key does not collide with other files before declaring it here. Otherwise,
+ * it will cause an existing file of the same key to be overridden.
  */
 function validatePresignedUrlRequest(
   req: Express.Request,
