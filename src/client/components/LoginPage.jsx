@@ -128,14 +128,18 @@ const LoginPage = ({
 }) => {
   // Display a login message from the server
   useEffect(() => {
+    let cancelled = false
+
     getEmailValidator()
     get('/api/login/message').then((response) => {
       if (response.ok) {
         response.text().then((text) => {
-          if (text) setLoginInfoMessage(text)
+          if (text && !cancelled) setLoginInfoMessage(text)
         })
       }
     })
+
+    return (() => { cancelled = true })
   }, [])
 
   if (!isLoggedIn) {
