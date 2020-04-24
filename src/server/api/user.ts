@@ -119,7 +119,7 @@ function validatePresignedUrlRequest(
       jsonMessage('Some or all required arguments are missing: fileType, key.')
     )
   }
-  next()
+  return next()
 }
 
 /**
