@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  Hidden,
   Typography,
   createStyles,
   makeStyles,
@@ -28,7 +27,7 @@ const useStyles = makeStyles((theme) =>
     cardGroup: {
       display: 'flex',
       flexDirection: 'column',
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
       },
     },
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: theme.spacing(1),
       width: '100%',
       [theme.breakpoints.up('sm')]: {
-        visibility: 'hidden',
+        width: '150px',
       },
     },
   }),
@@ -104,17 +103,15 @@ const FaqSliver = (props) => {
           </CardContent>
         </Card>
       </section>
-      <Hidden smUp>
-        <Button
-          className={classes.getStartedButton}
-          href="/#/login"
-          size="medium"
-          color="primary"
-          variant="contained"
-        >
-          Get started
-        </Button>
-      </Hidden>
+      <Button
+        className={classes.getStartedButton}
+        href="/#/login"
+        size="medium"
+        color="primary"
+        variant="contained"
+      >
+        Get started
+      </Button>
     </>
   )
 }

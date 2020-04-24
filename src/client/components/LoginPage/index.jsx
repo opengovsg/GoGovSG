@@ -18,7 +18,7 @@ import { USER_PAGE, loginFormVariants } from '~/util/types'
 import GoLogo from '~/assets/go-main-logo.png'
 import { get } from '../../util/requests'
 import LoginForm from './LoginForm'
-import SectionBackground from '../SectionBackground'
+import Section from '../Section'
 import BaseLayout from '../BaseLayout'
 
 const mapDispatchToProps = (dispatch) => ({
@@ -43,23 +43,18 @@ const mapStateToProps = (state, ownProps) => ({
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      display: 'grid',
-      [theme.breakpoints.up('lg')]: {
-        gridTemplateColumns: '1fr 1fr',
-      },
+      display: 'flex',
+      height: '100%',
+      width: '100%',
     },
     loginContainer: {
-      [theme.breakpoints.up('lg')]: {
-        gridColumn: 2,
-      },
+      flex: 1,
     },
     loginWrapper: {
-      display: 'grid',
-      gridGap: theme.spacing(4),
-      marginBottom: theme.spacing(4),
+      display: 'block',
     },
     headerGroup: {
-      gridRow: 1,
+      marginBottom: theme.spacing(4),
     },
     logo: {
       maxWidth: '130px',
@@ -67,14 +62,13 @@ const useStyles = makeStyles((theme) =>
     },
     loginHeader: {
       marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(4),
     },
     textInputGroup: {
-      gridRow: 2,
-    },
-    rightDisplayGraphic: {
-      gridColumn: 1,
+      marginBottom: theme.spacing(4),
     },
     emptyMeaninglessVeryPlaceholderImage: {
+      flex: 1,
       backgroundColor: '#8CA6AD',
     },
     '@media screen\\0': {
@@ -163,12 +157,12 @@ const LoginPage = ({
 
     return (
       <div className={classes.container}>
-        <Hidden className={classes.rightDisplayGraphic} mdDown>
+        <Hidden mdDown>
           <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
         </Hidden>
         <section className={classes.loginContainer}>
           <BaseLayout withHeader={false} withFooter>
-            <SectionBackground>
+            <Section>
               <section className={classes.loginWrapper}>
                 <span className={classes.headerGroup}>
                   <Link href="/#/">
@@ -192,7 +186,7 @@ const LoginPage = ({
                   {progressBar}
                 </span>
               </section>
-            </SectionBackground>
+            </Section>
           </BaseLayout>
         </section>
       </div>

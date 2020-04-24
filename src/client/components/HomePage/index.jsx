@@ -10,7 +10,7 @@ import { USER_PAGE } from '~/util/types'
 import TrustedBySliver from './TrustedBySliver'
 import FaqSliver from './FaqSliver'
 import DescriptionSliver from './FeatureListSliver'
-import SectionBackground from '../SectionBackground'
+import Section from '../Section'
 import LandingGraphicSliver from './LandingGraphicSliver'
 import BaseLayout from '../BaseLayout'
 
@@ -48,15 +48,15 @@ const HomePage = (props) => {
   return (
     <BaseLayout>
       <LandingGraphicSliver />
-      <SectionBackground backgroundType="light">
+      <Section backgroundType="light">
         <TrustedBySliver />
-      </SectionBackground>
-      <SectionBackground backgroundType="dark">
+      </Section>
+      <Section backgroundType="dark">
         <DescriptionSliver />
-      </SectionBackground>
-      <SectionBackground backgroundType="light">
+      </Section>
+      <Section backgroundType="light">
         <FaqSliver {...props} />
-      </SectionBackground>
+      </Section>
     </BaseLayout>
   )
 }

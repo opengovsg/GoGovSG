@@ -20,25 +20,21 @@ const useStyles = makeStyles((theme) =>
       color: theme.palette.grey[800],
     },
     buttonRow: {
-      display: 'grid',
-      gridGap: theme.spacing(4),
+      display: 'flex',
+      justifyContent: 'space-between',
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(1),
     },
     signInButton: {
-      gridColumn: 2,
       width: '100%',
       maxWidth: '200px',
       minWidth: '120px',
-      justifySelf: 'right',
     },
     secondaryButton: {
-      gridColumn: 1,
       width: '100%',
       maxWidth: '200px',
       minWidth: '120px',
       fontWeight: 400,
-      justifySelf: 'left',
     },
     resendOTPBtn: {
       color: theme.palette.text.secondary,

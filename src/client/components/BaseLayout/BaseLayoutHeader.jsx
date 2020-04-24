@@ -12,7 +12,7 @@ import {
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.png'
 import loginActions from '~/actions/login'
-import SectionBackground from '../SectionBackground'
+import Section from '../Section'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -53,13 +53,29 @@ const useStyles = makeStyles((theme) =>
         color: '#db0000',
       },
     },
+    container: {
+      marginLeft: theme.spacing(4),
+      marginRight: theme.spacing(4),
+      [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(6),
+        marginRight: theme.spacing(6),
+      },
+      [theme.breakpoints.up('md')]: {
+        marginLeft: theme.spacing(8),
+        marginRight: theme.spacing(8),
+      },
+      [theme.breakpoints.up('lg')]: {
+        marginLeft: theme.spacing(12),
+        marginRight: theme.spacing(12),
+      },
+    },
     appBar: {
       zIndex: '1',
       position: 'relative',
       boxShadow: 'none',
       flexShrink: 1,
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(2),
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
     },
     toolbar: {
       display: 'flex',
@@ -150,12 +166,9 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
   )
 
   return (
-    <SectionBackground isSliver={false} backgroundType="dark">
-      <AppBar
-        position="static"
-        color={isLoggedIn ? 'primary' : 'transparent'}
-        className={classes.appBar}
-      >
+    <Section backgroundType="dark" isSliver={false}>
+      {/* <section className={classes.container}> */}
+      <AppBar position="static" color="transparent" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <a href="/#/" className={classes.toolbarLogo}>
             <img src={GoLogo} className={classes.logo} alt="GoGovSG Logo" />
@@ -180,7 +193,8 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
           {appBarBtn}
         </Toolbar>
       </AppBar>
-    </SectionBackground>
+      {/* </section> */}
+    </Section>
   )
 }
 

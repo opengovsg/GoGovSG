@@ -1,12 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import classNames from 'classnames'
 import 'boxicons'
 import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
 import Masthead from '~/components/Masthead'
 import BaseLayoutHeader from './BaseLayoutHeader'
 import BaseLayoutFooter from './BaseLayoutFooter'
-import SectionBackground from '../SectionBackground'
 
 export const fetchAppMargins = (theme, multiplier = 1) => {
   return {
@@ -27,12 +25,15 @@ export const fetchAppMargins = (theme, multiplier = 1) => {
   }
 }
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     '@global': {
       body: {
+        display: 'flex',
         backgroundColor: '#fff',
         '& #root': {
+          flexGrow: 1,
+          '-ms-flex': '1 1 auto',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -43,59 +44,34 @@ const useStyles = makeStyles((theme) =>
         textDecoration: 'none',
       },
     },
-    appContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: 'calc(100vh - 28px)',
-      ...fetchAppMargins(theme),
-    },
-    ignoreAppMarginsContainer: {
-      ...fetchAppMargins(theme, -1),
-    },
     layout: {
       flexGrow: 1,
+      '-ms-flex': '1 1 auto',
     },
   }),
 )
 
-const BaseLayout = ({ withAppMargins, withHeader, withFooter, children }) => {
+const BaseLayout = ({ withHeader, withFooter, children }) => {
   const classes = useStyles()
   return (
     <>
       <CssBaseline />
       <Masthead />
-      <section className={withAppMargins ? classes.appContainer : ''}>
-        {withHeader && <BaseLayoutHeader />}
-        <span className={classes.layout}>{children}</span>
-        {withFooter && (
-          <SectionBackground backgroundType="dark">
-            <BaseLayoutFooter />
-          </SectionBackground>
-        )}
-      </section>
+      {withHeader && <BaseLayoutHeader />}
+      <div className={classes.layout}>{children}</div>
+      {withFooter && <BaseLayoutFooter />}
     </>
   )
 }
 
 BaseLayout.propTypes = {
-  withAppMargins: PropTypes.bool,
   withHeader: PropTypes.bool,
   withFooter: PropTypes.bool,
 }
 
 BaseLayout.defaultProps = {
-  withAppMargins: true,
   withHeader: true,
   withFooter: true,
-}
-
-export const IgnoreAppMargins = ({ className, children }) => {
-  const classes = useStyles()
-  return (
-    <span className={classNames(className, classes.ignoreAppMarginsContainer)}>
-      {children}
-    </span>
-  )
 }
 
 export default BaseLayout

@@ -17,7 +17,6 @@ import analyticsIcon from '~/assets/icons/analytics-icon.svg'
 export const featureCardGridConfiguration = (theme) => {
   return {
     display: 'grid',
-    gridTemplateRows: 'repeat(3, 1fr)',
     gridGap: theme.spacing(6),
     marginTop: theme.spacing(6),
     [theme.breakpoints.up('md')]: {
@@ -30,7 +29,7 @@ export const featureCardGridConfiguration = (theme) => {
 const useStyles = makeStyles((theme) =>
   createStyles({
     cardGrid: {
-      ...featureCardGridConfiguration,
+      ...featureCardGridConfiguration(theme),
     },
     card: {
       display: 'flex',

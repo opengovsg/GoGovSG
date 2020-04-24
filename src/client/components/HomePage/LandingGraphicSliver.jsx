@@ -4,9 +4,9 @@ import { Trans } from 'react-i18next'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import mainImage from '~/assets/landing-page-graphics/landing-main.svg'
-import SectionBackground from '../SectionBackground'
+import Section from '../Section'
 import RotatingLinks from './RotatingLinks'
-import { IgnoreAppMargins } from '../BaseLayout'
+import { IgnoreAppMargins } from '../AppMargins'
 
 const mapStateToProps = (state) => ({
   linksToRotate: state.home.linksToRotate,
@@ -79,7 +79,7 @@ const LandingGraphicSliver = ({ linksToRotate }) => {
   const classes = useStyles()
 
   return (
-    <SectionBackground backgroundType="dark">
+    <Section backgroundType="dark">
       <main className={classes.container}>
         <section>
           <span className={classes.titleTextContainer}>
@@ -106,7 +106,7 @@ const LandingGraphicSliver = ({ linksToRotate }) => {
           />
         </section>
       </main>
-    </SectionBackground>
+    </Section>
   )
 }
 

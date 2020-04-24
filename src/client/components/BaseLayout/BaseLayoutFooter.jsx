@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import BuiltByImg from '~/assets/built-by.png'
+import Section from '../Section'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -57,53 +58,55 @@ const BaseLayoutFooter = () => {
   ]
 
   return (
-    <footer className={classes.footer}>
-      <span className={classes.appHeaderGroup}>
+    <Section backgroundType="dark">
+      <footer className={classes.footer}>
+        <span className={classes.appHeaderGroup}>
+          <Typography
+            className={classes.appTitle}
+            variant="h3"
+            color="textPrimary"
+          >
+            <strong>{i18next.t('general.appTitle')}</strong>
+          </Typography>
+          <Typography variant="body1" color="textPrimary" noWrap>
+            {i18next.t('general.appCatchphrase.noStyle')}
+          </Typography>
+        </span>
         <Typography
-          className={classes.appTitle}
-          variant="h3"
+          className={classes.copyright}
+          variant="caption"
           color="textPrimary"
         >
-          <strong>{i18next.t('general.appTitle')}</strong>
+          {i18next.t('general.copyright')}
         </Typography>
-        <Typography variant="body1" color="textPrimary" noWrap>
-          {i18next.t('general.appCatchphrase.noStyle')}
-        </Typography>
-      </span>
-      <Typography
-        className={classes.copyright}
-        variant="caption"
-        color="textPrimary"
-      >
-        {i18next.t('general.copyright')}
-      </Typography>
-      <span className={classes.navLinkGroup}>
-        {footers.map((footer) => (
-          <Typography key={footer.text} variant="caption">
-            <Link
-              className={classes.footerLink}
-              target="_blank"
-              href={footer.link}
-            >
-              {footer.text}
-            </Link>
-          </Typography>
-        ))}
-      </span>
-      <span className={classes.builtByLinkGroup}>
-        <Link
-          href={i18next.t('general.links.builtBy')}
-          target="_blank"
-          style={{ height: '100%' }}
-        >
-          <img
-            src={BuiltByImg}
-            className={classes.builtByImg}
-            alt={i18next.t('general.builtBy')}
-          />
-        </Link>
-      </span>
-    </footer>
+        <span className={classes.navLinkGroup}>
+          {footers.map((footer) => (
+            <Typography key={footer.text} variant="caption">
+              <Link
+                className={classes.footerLink}
+                target="_blank"
+                href={footer.link}
+              >
+                {footer.text}
+              </Link>
+            </Typography>
+          ))}
+        </span>
+        <span className={classes.builtByLinkGroup}>
+          <Link
+            href={i18next.t('general.links.builtBy')}
+            target="_blank"
+            style={{ height: '100%' }}
+          >
+            <img
+              src={BuiltByImg}
+              className={classes.builtByImg}
+              alt={i18next.t('general.builtBy')}
+            />
+          </Link>
+        </span>
+      </footer>
+    </Section>
   )
 }
 
