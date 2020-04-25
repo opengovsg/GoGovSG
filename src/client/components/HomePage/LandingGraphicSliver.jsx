@@ -10,13 +10,19 @@ const useStyles = makeStyles((theme) =>
     container: {
       display: 'flex',
       flexDirection: 'column',
+      [theme.breakpoints.up('lg')]: {
+        flexDirection: 'row',
+      },
     },
     titleTextContainer: {
-      gridRow: 1,
-      gridColumn: 1,
-      display: 'grid',
+      display: 'flex',
+      flexDirection: 'column',
+      maxWidth: '532px',
       gridGap: theme.spacing(3),
       marginBottom: theme.spacing(8),
+    },
+    rotatingLinksGraphic: {
+      marginLeft: 'auto',
     },
   }),
 )
@@ -27,17 +33,15 @@ const LandingGraphicSliver = () => {
   return (
     <Section backgroundType="dark">
       <main className={classes.container}>
-        <section>
-          <span className={classes.titleTextContainer}>
-            <Typography variant="h1" color="textPrimary" gutterBottom>
-              <Trans>general.appCatchphrase.styled</Trans>
-            </Typography>
-            <Typography variant="subtitle1" color="textPrimary">
-              <Trans>general.appDescription.subtitle</Trans>
-            </Typography>
-          </span>
-        </section>
-        <IgnoreAppRightMargins>
+        <div className={classes.titleTextContainer}>
+          <Typography variant="h1" color="textPrimary" gutterBottom>
+            <Trans>general.appCatchphrase.styled</Trans>
+          </Typography>
+          <Typography variant="subtitle1" color="textPrimary">
+            <Trans>general.appDescription.subtitle</Trans>
+          </Typography>
+        </div>
+        <IgnoreAppRightMargins className={classes.rotatingLinksGraphic}>
           <RotatingLinksGraphic />
         </IgnoreAppRightMargins>
       </main>
