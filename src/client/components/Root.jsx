@@ -7,7 +7,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles'
 import PrivateRoute from '~/components/PrivateRoute'
 import HomePage from '~/components/HomePage'
 import LoginPage from '~/components/LoginPage'
-import UserPage from '~/components/User'
+import UserPage from '~/components/UserPage'
 import NotFoundPage from '~/components/NotFoundPage'
 import MessageSnackbar from '~/components/MessageSnackbar'
 
