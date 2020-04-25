@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect, useSelector } from 'react-redux'
-import { CssBaseline } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from 'react-router-dom'
 
@@ -73,7 +72,6 @@ const UserPage = ({
     }, [])
     return (
       <BaseLayout>
-        <CssBaseline />
         <div>
           <main>
             {/* List of URLs in the table */}

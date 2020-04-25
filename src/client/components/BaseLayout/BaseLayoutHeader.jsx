@@ -57,8 +57,8 @@ const useStyles = makeStyles((theme) =>
       zIndex: '1',
       boxShadow: 'none',
       flexShrink: 1,
-      paddingTop: theme.spacing(2),
-      paddingBottom: theme.spacing(2),
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
     },
     toolbar: {
       display: 'flex',
@@ -80,10 +80,6 @@ const useStyles = makeStyles((theme) =>
     toolbarLogo: {
       maxWidth: '130px',
       width: '40%',
-      marginBottom: theme.spacing(2),
-      [theme.breakpoints.down('xs')]: {
-        marginBottom: theme.spacing(1),
-      },
     },
     logo: {
       display: 'flex',
@@ -122,7 +118,7 @@ const headers = [
   },
 ]
 
-const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
+const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
   const classes = useStyles()
 
   const appBarBtn = isLoggedIn ? (
@@ -149,7 +145,7 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
   )
 
   return (
-    <Section backgroundType="dark" verticalMultiplier={0}>
+    <Section backgroundType={backgroundType} verticalMultiplier={0}>
       <AppBar position="static" color="transparent" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <a href="/#/" className={classes.toolbarLogo}>
@@ -180,6 +176,7 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
 }
 
 BaseLayoutHeader.propTypes = {
+  backgroundType: PropTypes.string.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
 }

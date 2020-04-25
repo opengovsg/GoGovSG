@@ -53,13 +53,18 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-const BaseLayout = ({ withHeader, withFooter, children }) => {
+const BaseLayout = ({
+  withHeader,
+  headerBackgroundType,
+  withFooter,
+  children,
+}) => {
   const classes = useStyles()
   return (
     <>
       <CssBaseline />
       <Masthead />
-      {withHeader && <BaseLayoutHeader />}
+      {withHeader && <BaseLayoutHeader backgroundType={headerBackgroundType} />}
       <div className={classes.layout}>{children}</div>
       {withFooter && <BaseLayoutFooter />}
     </>
@@ -68,11 +73,13 @@ const BaseLayout = ({ withHeader, withFooter, children }) => {
 
 BaseLayout.propTypes = {
   withHeader: PropTypes.bool,
+  headerBackgroundType: PropTypes.string,
   withFooter: PropTypes.bool,
 }
 
 BaseLayout.defaultProps = {
   withHeader: true,
+  headerBackgroundType: 'dark',
   withFooter: true,
 }
 
