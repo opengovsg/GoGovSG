@@ -18,14 +18,14 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
     },
     childrenPadding: {
-      paddingTop: theme.spacing(8),
-      paddingBottom: theme.spacing(8),
+      paddingTop: (props) => theme.spacing(8 * props.verticalMultiplier),
+      paddingBottom: (props) => theme.spacing(8 * props.verticalMultiplier),
     },
   }),
 )
 
-const Section = ({ children, backgroundType, isSliver }) => {
-  const classes = useStyles()
+const Section = ({ children, backgroundType, verticalMultiplier = 1 }) => {
+  const classes = useStyles({ verticalMultiplier })
   const getBackgroundType = () => {
     switch (backgroundType) {
       case 'light':
@@ -38,11 +38,10 @@ const Section = ({ children, backgroundType, isSliver }) => {
         return classes.backgroundLight
     }
   }
-  const childrenPadding = isSliver ? classes.childrenPadding : ''
   return (
     <div className={getBackgroundType()}>
       <ApplyAppMargins>
-        <div className={childrenPadding}>{children}</div>
+        <div className={classes.childrenPadding}>{children}</div>
       </ApplyAppMargins>
     </div>
   )
@@ -50,12 +49,12 @@ const Section = ({ children, backgroundType, isSliver }) => {
 
 Section.propTypes = {
   backgroundType: PropTypes.string,
-  isSliver: PropTypes.bool,
+  verticalMultiplier: PropTypes.number,
 }
 
 Section.defaultProps = {
   backgroundType: 'light',
-  isSliver: true,
+  verticalMultiplier: 1,
 }
 
 export default Section

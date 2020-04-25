@@ -53,22 +53,6 @@ const useStyles = makeStyles((theme) =>
         color: '#db0000',
       },
     },
-    container: {
-      marginLeft: theme.spacing(4),
-      marginRight: theme.spacing(4),
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(6),
-        marginRight: theme.spacing(6),
-      },
-      [theme.breakpoints.up('md')]: {
-        marginLeft: theme.spacing(8),
-        marginRight: theme.spacing(8),
-      },
-      [theme.breakpoints.up('lg')]: {
-        marginLeft: theme.spacing(12),
-        marginRight: theme.spacing(12),
-      },
-    },
     appBar: {
       zIndex: '1',
       boxShadow: 'none',
@@ -165,8 +149,7 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
   )
 
   return (
-    <Section backgroundType="dark" isSliver={false}>
-      {/* <section className={classes.container}> */}
+    <Section backgroundType="dark" verticalMultiplier={0}>
       <AppBar position="static" color="transparent" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <a href="/#/" className={classes.toolbarLogo}>
@@ -192,7 +175,6 @@ const BaseLayoutHeader = ({ isLoggedIn, logout }) => {
           {appBarBtn}
         </Toolbar>
       </AppBar>
-      {/* </section> */}
     </Section>
   )
 }
