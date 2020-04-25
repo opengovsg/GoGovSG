@@ -45,6 +45,8 @@ const useStyles = makeStyles(() =>
       },
     },
     layout: {
+      display: 'flex',
+      flexDirection: 'column',
       flexGrow: 1,
       '-ms-flex': '1 1 auto',
     },

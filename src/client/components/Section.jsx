@@ -5,17 +5,12 @@ import { ApplyAppMargins } from './AppMargins'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    backgroundLight: {
+    backgroundType: {
       width: '100%',
-      backgroundColor: theme.palette.secondary.light,
-    },
-    backgroundDark: {
-      width: '100%',
-      backgroundColor: theme.palette.secondary.dark,
-    },
-    backgroundPrimaryDark: {
-      width: '100%',
-      backgroundColor: theme.palette.primary.dark,
+      backgroundColor: (props) =>
+        props.backgroundType === 'light'
+          ? theme.palette.secondary.light
+          : theme.palette.secondary.dark,
     },
     childrenPadding: {
       paddingTop: (props) => theme.spacing(8 * props.verticalMultiplier),
@@ -25,21 +20,9 @@ const useStyles = makeStyles((theme) =>
 )
 
 const Section = ({ children, backgroundType, verticalMultiplier = 1 }) => {
-  const classes = useStyles({ verticalMultiplier })
-  const getBackgroundType = () => {
-    switch (backgroundType) {
-      case 'light':
-        return classes.backgroundLight
-      case 'dark':
-        return classes.backgroundDark
-      case 'primaryDark':
-        return classes.backgroundPrimaryDark
-      default:
-        return classes.backgroundLight
-    }
-  }
+  const classes = useStyles({ backgroundType, verticalMultiplier })
   return (
-    <div className={getBackgroundType()}>
+    <div className={classes.backgroundType}>
       <ApplyAppMargins>
         <div className={classes.childrenPadding}>{children}</div>
       </ApplyAppMargins>

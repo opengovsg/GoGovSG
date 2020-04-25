@@ -43,13 +43,15 @@ const mapStateToProps = (state, ownProps) => ({
 const useStyles = makeStyles((theme) =>
   createStyles({
     container: {
-      display: 'grid',
+      display: 'flex',
       flexGrow: 1,
-      gridTemplateColumns: '1fr 1fr',
-      '-ms-grid-columns': '1fr 1fr',
+      '-ms-flex': '1 1 auto',
     },
     loginContainer: {
-      gridColumn: 2,
+      width: '100%',
+      [theme.breakpoints.up('lg')]: {
+        width: '50%',
+      },
     },
     loginWrapper: {
       display: 'block',
@@ -69,7 +71,8 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(4),
     },
     emptyMeaninglessVeryPlaceholderImage: {
-      gridColumn: 1,
+      width: '50vw',
+      height: '100%',
       backgroundColor: '#8CA6AD',
     },
     '@media screen\\0': {
@@ -159,10 +162,12 @@ const LoginPage = ({
     return (
       <BaseLayout withHeader={false} withFooter>
         <div className={classes.container}>
-          <Hidden mdDown>
-            <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
-          </Hidden>
-          <section className={classes.loginContainer}>
+          <div>
+            <Hidden mdDown>
+              <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
+            </Hidden>
+          </div>
+          <div className={classes.loginContainer}>
             <Section>
               <section className={classes.loginWrapper}>
                 <span className={classes.headerGroup}>
@@ -188,7 +193,7 @@ const LoginPage = ({
                 </span>
               </section>
             </Section>
-          </section>
+          </div>
         </div>
       </BaseLayout>
     )
