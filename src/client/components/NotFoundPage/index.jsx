@@ -1,11 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
-import { withStyles } from '@material-ui/core/styles'
-import textPageStyle from '~/styles/textPage'
-import BaseLayout from './BaseLayout'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
+import BaseLayout from '../BaseLayout'
 
-const NotFoundPage = ({ classes, match }) => {
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    heroContent: {
+      margin: '0 auto',
+      padding: theme.spacing(8, 2, 6),
+    },
+  }),
+)
+
+const NotFoundPage = ({ match }) => {
+  const classes = useStyles()
   const { params } = match
   const { shortUrl } = params
   const message = shortUrl ? (
@@ -51,4 +60,4 @@ NotFoundPage.propTypes = {
   classes: PropTypes.shape({}).isRequired,
   match: PropTypes.shape({}).isRequired,
 }
-export default withStyles(textPageStyle)(NotFoundPage)
+export default NotFoundPage
