@@ -7,29 +7,20 @@ import {
   Typography,
   createStyles,
   makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 import antiPhisingIcon from '~/assets/icons/anti-phishing-icon.svg'
 import customisedIcon from '~/assets/icons/customised-icon.svg'
 import analyticsIcon from '~/assets/icons/analytics-icon.svg'
 
-// Grid configurations used by FeatureListSliver.
-// To be used by other components which are aligning to it.
-export const featureCardGridConfiguration = (theme) => {
-  return {
-    display: 'grid',
-    gridGap: theme.spacing(6),
-    marginTop: theme.spacing(6),
-    [theme.breakpoints.up('md')]: {
-      gridTemplateColumns: 'repeat(auto-fit, 320px)',
-      gridGap: theme.spacing(8),
-    },
-  }
-}
-
 const useStyles = makeStyles((theme) =>
   createStyles({
-    cardGrid: {
-      ...featureCardGridConfiguration(theme),
+    grid: {
+      marginTop: theme.spacing(2),
+      [theme.breakpoints.up('lg')]: {
+        marginTop: theme.spacing(4),
+      },
     },
     card: {
       display: 'flex',
@@ -38,16 +29,18 @@ const useStyles = makeStyles((theme) =>
       height: '100%',
       backgroundColor: 'transparent',
       alignItems: 'flex-start',
-      [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
+      maxWidth: 'min(400px, 80%)',
+      [theme.breakpoints.up('lg')]: {
         alignItems: 'flex-start',
+        flexDirection: 'row',
+        maxWidth: '320px',
       },
     },
     cardVectorIcon: {
-      marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(1),
       minWidth: '50px',
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up('lg')]: {
+        minWidth: 'auto',
+        minHeight: '60px',
         marginRight: theme.spacing(4),
       },
     },
@@ -58,7 +51,7 @@ const useStyles = makeStyles((theme) =>
       '&:last-child': {
         paddingBottom: 0,
       },
-      [theme.breakpoints.up('md')]: {
+      [theme.breakpoints.up('lg')]: {
         paddingTop: theme.spacing(0),
       },
     },
@@ -85,12 +78,20 @@ const cards = [
 
 const FeatureListSliver = () => {
   const classes = useStyles()
+  // Used to change the direction of the grid between mobile and desktop views.
+  const theme = useTheme()
+  const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
   return (
     <>
       <Typography variant="h2" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
-      <Grid container className={classes.cardGrid}>
+      <Grid
+        container
+        className={classes.grid}
+        spacing={!isDesktopWidth ? 6 : 8}
+        direction={!isDesktopWidth ? 'column' : 'row'}
+      >
         {cards.map((card) => (
           <Grid item key={card.title}>
             <Card className={classes.card}>

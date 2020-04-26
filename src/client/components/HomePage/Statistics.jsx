@@ -4,9 +4,12 @@ import {
   Button,
   Card,
   CardContent,
+  Grid,
   Typography,
   createStyles,
   makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 
 import homeActions from '~/actions/home'
@@ -24,31 +27,41 @@ const mapStateToProps = (state, ownProps) => ({
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    cardGroup: {
-      display: 'flex',
-      flexDirection: 'column',
-      [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
-      },
-    },
-    cardContent: {
-      paddingTop: theme.spacing(4),
-      paddingLeft: theme.spacing(0),
-      paddingRight: theme.spacing(0),
-      [theme.breakpoints.up('sm')]: {
-        paddingRight: theme.spacing(8),
-      },
-      '&:last-child': {
-        paddingBottom: 0,
+    grid: {
+      marginTop: theme.spacing(2),
+      [theme.breakpoints.up('lg')]: {
+        marginTop: theme.spacing(4),
       },
     },
     card: {
-      boxShadow: 'none',
-      height: '100%',
       display: 'flex',
       flexDirection: 'column',
+      boxShadow: 'none',
+      height: '100%',
       backgroundColor: 'transparent',
       alignItems: 'flex-start',
+      maxWidth: '400px',
+      [theme.breakpoints.up('md')]: {
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        width: '600px',
+      },
+      [theme.breakpoints.up('lg')]: {
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        width: '320px',
+      },
+    },
+    cardContent: {
+      paddingTop: theme.spacing(0),
+      paddingLeft: theme.spacing(0),
+      paddingRight: theme.spacing(0),
+      '&:last-child': {
+        paddingBottom: 0,
+      },
+      [theme.breakpoints.up('md')]: {
+        paddingTop: theme.spacing(0),
+      },
     },
     getStartedButton: {
       marginTop: theme.spacing(6),
@@ -64,6 +77,9 @@ const useStyles = makeStyles((theme) =>
 
 const FaqSliver = (props) => {
   const classes = useStyles()
+  // Used to change the direction of the grid between mobile and desktop views.
+  const theme = useTheme()
+  const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
   const { statistics } = props
   const { userCount, linkCount, clickCount } = statistics
 
@@ -77,32 +93,45 @@ const FaqSliver = (props) => {
       <Typography variant="h2" color="textPrimary" gutterBottom>
         Used by public officers
       </Typography>
-      <section className={classes.cardGroup}>
-        <Card className={classes.card}>
-          <CardContent className={classes.cardContent}>
-            <Typography color="primary" variant="h3" gutterBottom>
-              <strong>{numberFormatter.format(userCount)}</strong>
-            </Typography>
-            <Typography color="textPrimary">PUBLIC OFFICERS ONBOARD</Typography>
-          </CardContent>
-        </Card>
-        <Card className={classes.card}>
-          <CardContent className={classes.cardContent}>
-            <Typography color="primary" variant="h3" gutterBottom>
-              <strong>{numberFormatter.format(linkCount)}</strong>
-            </Typography>
-            <Typography color="textPrimary">SHORT LINKS CREATED</Typography>
-          </CardContent>
-        </Card>
-        <Card className={classes.card}>
-          <CardContent className={classes.cardContent}>
-            <Typography color="primary" variant="h3" gutterBottom>
-              <strong>{numberFormatter.format(clickCount)}</strong>
-            </Typography>
-            <Typography color="textPrimary">CLICKS</Typography>
-          </CardContent>
-        </Card>
-      </section>
+      <Grid
+        container
+        className={classes.grid}
+        spacing={!isDesktopWidth ? 6 : 8}
+        direction={!isDesktopWidth ? 'column' : 'row'}
+      >
+        <Grid item>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography color="primary" variant="h3" gutterBottom>
+                <strong>{numberFormatter.format(userCount)}</strong>
+              </Typography>
+              <Typography color="textPrimary">
+                PUBLIC OFFICERS ONBOARD
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography color="primary" variant="h3" gutterBottom>
+                <strong>{numberFormatter.format(linkCount)}</strong>
+              </Typography>
+              <Typography color="textPrimary">SHORT LINKS CREATED</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item>
+          <Card className={classes.card}>
+            <CardContent className={classes.cardContent}>
+              <Typography color="primary" variant="h3" gutterBottom>
+                <strong>{numberFormatter.format(clickCount)}</strong>
+              </Typography>
+              <Typography color="textPrimary">CLICKS</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
       <Button
         className={classes.getStartedButton}
         href="/#/login"
