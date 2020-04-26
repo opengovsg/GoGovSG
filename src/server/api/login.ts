@@ -12,6 +12,7 @@ import {
   loginMessage,
   otpExpiry,
   saltRounds,
+  validEmailBaseDomain,
   validEmailDomainGlobExpression,
 } from '../config'
 
@@ -84,7 +85,7 @@ router.post('/otp', (req: Express.Request, res: Express.Response) => {
     })
   } else {
     res.badRequest(
-      jsonMessage('Invalid email provided.')
+      jsonMessage(`Invalid email provided. Please enter a valid ${validEmailBaseDomain} email.`)
     )
   }
 })

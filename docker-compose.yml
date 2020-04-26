@@ -26,7 +26,7 @@ services:
       - SESSION_SECRET=thiscouldbeanything
       - GA_TRACKING_ID=UA-139330318-1
       - OG_URL=https://go.gov.sg
-      - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
+      - VALID_EMAIL_BASE_DOMAIN=gov.sg
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
     volumes:
       - ./public:/usr/src/gogovsg/public

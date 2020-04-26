@@ -26,7 +26,7 @@ const requiredVars: string[] = [
   'REDIS_REDIRECT_URI', // Cache for short links
   'REDIS_STAT_URI', // Cache for statistics (user, link, and click counts)
   'SESSION_SECRET',
-  'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
+  'VALID_EMAIL_BASE_DOMAIN'
 ]
 
 // AWS Simple Email Service
@@ -55,6 +55,8 @@ export const logger: winston.Logger = createLogger({
   ],
 })
 
+// Utility functions
+
 const exitIfAnyMissing = (vars: string[]) => {
   const err = vars.reduce((res, e) => {
     if (!process.env[e]) res.push(e)
@@ -66,6 +68,10 @@ const exitIfAnyMissing = (vars: string[]) => {
     )
     process.exit(1)
   }
+}
+
+const generateValidEmailGlob = (validEmailDomain: string): string => {
+  return `*.${validEmailDomain}`;
 }
 
 // Exit if any required env var are missing
@@ -120,7 +126,8 @@ export interface SessionSettings {
   secret: string
 }
 
-export const validEmailDomainGlobExpression = process.env.VALID_EMAIL_GLOB_EXPRESSION as string
+export const validEmailBaseDomain = process.env.VALID_EMAIL_BASE_DOMAIN as string
+export const validEmailDomainGlobExpression = generateValidEmailGlob(validEmailBaseDomain)
 export const emailValidator = new minimatch.Minimatch(
   validEmailDomainGlobExpression,
   {
