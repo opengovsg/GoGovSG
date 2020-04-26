@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Grid, Typography, createStyles, makeStyles } from '@material-ui/core'
 import trustedByMom from '~/assets/trusted-by-logos/1.png'
 import trustedByLta from '~/assets/trusted-by-logos/2.png'
 import trustedByMoh from '~/assets/trusted-by-logos/3.png'
@@ -12,33 +12,19 @@ import trustedByMha from '~/assets/trusted-by-logos/8.png'
 const useStyles = makeStyles((theme) =>
   createStyles({
     trustedByText: {
-      paddingBottom: theme.spacing(1),
+      paddingBottom: theme.spacing(4),
     },
-    trustedByLogoGroup: {
-      width: '100%',
-      display: 'grid',
+    trustedLogoGrid: {
+      display: 'flex',
+      userDrag: 'none',
       alignItems: 'center',
-      gridTemplateColumns: 'repeat(auto-fill, 70px)',
-      marginTop: theme.spacing(2),
-      gridRowGap: theme.spacing(4),
-      gridColumnGap: theme.spacing(6),
-      [theme.breakpoints.up('sm')]: {
-        gridTemplateColumns: 'repeat(auto-fill, 120px)',
-        gridRowGap: theme.spacing(6),
-        gridColumnGap: theme.spacing(8),
-      },
     },
     trustedLogo: {
+      display: 'flex',
       userDrag: 'none',
-      pointerEvents: 'none',
-      justifySelf: 'flex-start',
       objectFit: 'contain',
-      maxHeight: '50px',
-      maxWidth: '70px',
-      [theme.breakpoints.up('sm')]: {
-        maxHeight: '90px',
-        maxWidth: '120px',
-      },
+      maxWidth: 'min(100%, 120px)',
+      maxHeight: '80%',
     },
     '@media screen\\0': {
       trustedLogo: {
@@ -48,7 +34,18 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const TrustedBySection = () => {
+const trustedLogos = [
+  { name: 'MOM', icon: trustedByMom },
+  { name: 'LTA', icon: trustedByLta },
+  { name: 'MOH', icon: trustedByMoh },
+  { name: 'MSF', icon: trustedByMsf },
+  { name: 'SPF', icon: trustedBySpf },
+  { name: 'IRAS', icon: trustedByIras },
+  { name: 'MOE', icon: trustedByMoe },
+  { name: 'MHA', icon: trustedByMha },
+]
+
+const TrustedBySliver = () => {
   const classes = useStyles()
   return (
     <>
@@ -60,18 +57,25 @@ const TrustedBySection = () => {
       >
         Trusted by these agencies
       </Typography>
-      <div className={classes.trustedByLogoGroup}>
-        <img className={classes.trustedLogo} src={trustedByMom} alt="MOM" />
-        <img className={classes.trustedLogo} src={trustedByLta} alt="LTA" />
-        <img className={classes.trustedLogo} src={trustedByMoh} alt="MOH" />
-        <img className={classes.trustedLogo} src={trustedByMsf} alt="MSF" />
-        <img className={classes.trustedLogo} src={trustedBySpf} alt="SPF" />
-        <img className={classes.trustedLogo} src={trustedByIras} alt="IRAS" />
-        <img className={classes.trustedLogo} src={trustedByMoe} alt="MOE" />
-        <img className={classes.trustedLogo} src={trustedByMha} alt="MHA" />
-      </div>
+      <Grid container spacing={4}>
+        {trustedLogos.map((trustedLogo) => (
+          <Grid
+            item
+            className={classes.trustedLogoGrid}
+            key={trustedLogo.name}
+            xs={4}
+            md={3}
+          >
+            <img
+              className={classes.trustedLogo}
+              src={trustedLogo.icon}
+              alt={trustedLogo.name}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </>
   )
 }
 
-export default TrustedBySection
+export default TrustedBySliver

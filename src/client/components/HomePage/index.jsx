@@ -8,7 +8,7 @@ import homeActions from '~/actions/home'
 import loginActions from '~/actions/login'
 import { USER_PAGE } from '~/util/types'
 import TrustedBySliver from './TrustedBySliver'
-import FaqSliver from './Statistics'
+import StatisticsSliver from './StatisticsSliver'
 import DescriptionSliver from './FeatureListSliver'
 import Section from '../Section'
 import LandingGraphicSliver from './LandingGraphicSliver'
@@ -55,7 +55,7 @@ const HomePage = (props) => {
         <DescriptionSliver />
       </Section>
       <Section backgroundType="light">
-        <FaqSliver {...props} />
+        <StatisticsSliver {...props} />
       </Section>
     </BaseLayout>
   )

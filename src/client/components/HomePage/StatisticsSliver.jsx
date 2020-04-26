@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const FaqSliver = (props) => {
+const StatisticsSliver = (props) => {
   const classes = useStyles()
   // Used to change the direction of the grid between mobile and desktop views.
   const theme = useTheme()
@@ -145,4 +145,4 @@ const FaqSliver = (props) => {
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FaqSliver)
+export default connect(mapStateToProps, mapDispatchToProps)(StatisticsSliver)
