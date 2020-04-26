@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme) =>
           props.rotatingLinkLeftMarginToLinkBox *
           100
         }vw`,
+      '@media screen\\0': {
+        fontSize: '26px',
+      },
     },
   }),
 )

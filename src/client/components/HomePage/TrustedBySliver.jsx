@@ -30,6 +30,18 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('lg')]: {
         maxWidth: 'min(100%, 180px)',
       },
+      '@media screen\\0': {
+        maxWidth: '120px',
+        maxHeight: 'calc(0.7px * 120)',
+        [theme.breakpoints.up('md')]: {
+          maxWidth: '150px',
+          maxHeight: 'calc(0.7px * 150)',
+        },
+        [theme.breakpoints.up('lg')]: {
+          maxWidth: '180px',
+          maxHeight: 'calc(0.7px * 180)',
+        },
+      },
     },
   }),
 )

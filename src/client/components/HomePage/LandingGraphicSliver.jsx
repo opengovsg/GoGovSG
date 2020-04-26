@@ -18,8 +18,10 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       maxWidth: '532px',
-      gridGap: theme.spacing(3),
       marginBottom: theme.spacing(8),
+      '@media screen\\0': {
+        display: 'inline',
+      },
     },
     rotatingLinksGraphic: {
       marginLeft: 'auto',
