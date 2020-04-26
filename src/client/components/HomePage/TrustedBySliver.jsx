@@ -20,15 +20,15 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
     },
     trustedLogo: {
-      display: 'flex',
       userDrag: 'none',
       objectFit: 'contain',
       maxWidth: 'min(100%, 120px)',
-      maxHeight: '80%',
-    },
-    '@media screen\\0': {
-      trustedLogo: {
-        width: 'auto',
+      maxHeight: '70%',
+      [theme.breakpoints.up('md')]: {
+        maxWidth: 'min(100%, 150px)',
+      },
+      [theme.breakpoints.up('lg')]: {
+        maxWidth: 'min(100%, 180px)',
       },
     },
   }),
