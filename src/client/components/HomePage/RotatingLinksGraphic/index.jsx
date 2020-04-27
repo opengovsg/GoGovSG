@@ -25,9 +25,15 @@ const useStyles = makeStyles((theme) =>
       position: 'relative',
       marginLeft: 'auto',
       marginBottom: (props) =>
-        `max(${
-          props.linkBoxHeightToImageWidth * -50
-        }vw, calc(-98.0139235px / 2))`,
+        `max(${props.linkBoxHeightToImageWidth * -50}vw, calc((${
+          -1 * props.linkBoxHeightToImageWidth * props.targetImageWidthPx
+        }px / 2)))`,
+      '@media screen\\0': {
+        marginBottom: (props) =>
+          `calc((${
+            -1 * props.linkBoxHeightToImageWidth * props.targetImageWidthPx
+          }px / 2))`,
+      },
     },
     heroImage: {
       width: '100vw',
