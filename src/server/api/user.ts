@@ -123,7 +123,7 @@ function validatePresignedUrlRequest(
 ) {
   if (!req.body.fileType || !req.body.key) {
     return res.badRequest(
-      jsonMessage('Some or all required arguments are missing: fileType, key.')
+      jsonMessage('Some or all required arguments are missing: fileType, key.'),
     )
   }
   return next()

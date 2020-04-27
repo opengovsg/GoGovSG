@@ -111,7 +111,9 @@ const LoginPage = ({
       }
     })
 
-    return (() => { cancelled = true })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   if (!isLoggedIn) {

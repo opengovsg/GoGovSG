@@ -1,4 +1,4 @@
-import { parse, URL } from 'url'
+import { URL, parse } from 'url'
 import { S3 } from 'aws-sdk'
 import { s3Bucket } from '../config'
 
