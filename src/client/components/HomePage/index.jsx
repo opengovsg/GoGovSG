@@ -48,9 +48,11 @@ const HomePage = (props) => {
   return (
     <BaseLayout>
       <LandingGraphicSliver />
-      <Section backgroundType="light">
-        <TrustedBySliver />
-      </Section>
+      <div id="landing-bottom">
+        <Section backgroundType="light">
+          <TrustedBySliver />
+        </Section>
+      </div>
       <Section backgroundType="dark">
         <DescriptionSliver />
       </Section>
