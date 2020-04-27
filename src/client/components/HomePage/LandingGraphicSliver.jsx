@@ -3,6 +3,7 @@ import { Trans } from 'react-i18next'
 import {
   Button,
   Hidden,
+  Link,
   Typography,
   createStyles,
   makeStyles,
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       flexGrow: '1',
       backgroundColor: theme.palette.primary.dark,
-      minHeight: '150px',
+      minHeight: '200px',
     },
     learnMoreButton: {
       height: '44px',
@@ -69,6 +70,22 @@ const useStyles = makeStyles((theme) =>
       '&:hover': {
         backgroundColor: theme.palette.secondary.main,
       },
+    },
+    signInTextContainer: {
+      display: 'flex',
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      [theme.breakpoints.up('md')]: {
+        justifyContent: 'flex-start',
+      },
+      [theme.breakpoints.up('lg')]: {
+        alignItems: 'flex-start',
+      },
+    },
+    signInText: {
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
   }),
 )
@@ -114,8 +131,8 @@ const LandingGraphicSliver = () => {
         </div>
       </Section>
       <div className={classes.fillColor}>
-        <ApplyAppMargins>
-          <Hidden mdDown>
+        <Hidden mdDown>
+          <ApplyAppMargins>
             <Button
               className={classes.learnMoreButton}
               variant="outlined"
@@ -129,8 +146,22 @@ const LandingGraphicSliver = () => {
             >
               Learn more
             </Button>
-          </Hidden>
-        </ApplyAppMargins>
+          </ApplyAppMargins>
+        </Hidden>
+        <div className={classes.signInTextContainer}>
+          <ApplyAppMargins>
+            <Typography
+              className={classes.signInText}
+              variant="subtitle1"
+              color="secondary"
+            >
+              <Trans>general.appSignInPrompt</Trans>{' '}
+              <Link href="/#/login" color="inherit" underline="always">
+                Sign in
+              </Link>
+            </Typography>
+          </ApplyAppMargins>
+        </div>
       </div>
     </div>
   )
