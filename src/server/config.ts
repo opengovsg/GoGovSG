@@ -27,6 +27,7 @@ const requiredVars: string[] = [
   'REDIS_STAT_URI', // Cache for statistics (user, link, and click counts)
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
+  'AWS_S3_BUCKET', // For file.go.gov.sg uploads
 ]
 
 // AWS Simple Email Service
@@ -131,7 +132,7 @@ export const emailValidator = new minimatch.Minimatch(
   }
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
-
+export const s3Bucket = process.env.AWS_S3_BUCKET as string
 
 export const databaseUri = process.env.DB_URI as string
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
