@@ -78,7 +78,6 @@ const cards = [
 
 const FeatureListSliver = () => {
   const classes = useStyles()
-  // Used to change the direction of the grid between mobile and desktop views.
   const theme = useTheme()
   const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
   return (

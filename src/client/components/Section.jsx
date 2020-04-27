@@ -13,14 +13,27 @@ const useStyles = makeStyles((theme) =>
           : theme.palette.secondary.dark,
     },
     childrenPadding: {
-      paddingTop: (props) => theme.spacing(8 * props.verticalMultiplier),
-      paddingBottom: (props) => theme.spacing(8 * props.verticalMultiplier),
+      paddingTop: (props) =>
+        theme.spacing(8 * props.verticalMultiplier * props.topMultiplier),
+      paddingBottom: (props) =>
+        theme.spacing(8 * props.verticalMultiplier * props.bottomMultiplier),
     },
   }),
 )
 
-const Section = ({ children, backgroundType, verticalMultiplier = 1 }) => {
-  const classes = useStyles({ backgroundType, verticalMultiplier })
+const Section = ({
+  children,
+  backgroundType,
+  verticalMultiplier = 1,
+  topMultiplier = 1,
+  bottomMultiplier = 1,
+}) => {
+  const classes = useStyles({
+    backgroundType,
+    verticalMultiplier,
+    topMultiplier,
+    bottomMultiplier,
+  })
   return (
     <div className={classes.backgroundType}>
       <ApplyAppMargins>
@@ -33,11 +46,15 @@ const Section = ({ children, backgroundType, verticalMultiplier = 1 }) => {
 Section.propTypes = {
   backgroundType: PropTypes.string,
   verticalMultiplier: PropTypes.number,
+  topMultiplier: PropTypes.number,
+  bottomMultiplier: PropTypes.number,
 }
 
 Section.defaultProps = {
   backgroundType: 'light',
   verticalMultiplier: 1,
+  topMultiplier: 1,
+  bottomMultiplier: 1,
 }
 
 export default Section
