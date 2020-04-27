@@ -29,12 +29,14 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       maxWidth: '200px',
       minWidth: '120px',
+      marginLeft: theme.spacing(2),
     },
     secondaryButton: {
       width: '100%',
       maxWidth: '200px',
       minWidth: '120px',
       fontWeight: 400,
+      marginRight: theme.spacing(2),
     },
     resendOTPBtn: {
       color: theme.palette.text.secondary,
