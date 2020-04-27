@@ -116,6 +116,7 @@ GoGovSG uses Travis to deploy to AWS Elastic Beanstalk. We also use Sentry.io to
 |EMAIL_RECIPIENT|Yes|Email for Travis notifications|
 |PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
 |REPO|Yes|Docker container registry URI to push built images to|
+|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
 |SENTRY_ORG|No|Sentry.io organisation name|
 |SENTRY_PROJECT|No|Sentry.io project name|
 |SENTRY_URL|No|Sentry.io URL e.g. `https://sentry.io/`|
