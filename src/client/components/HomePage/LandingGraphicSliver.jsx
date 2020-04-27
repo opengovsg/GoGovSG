@@ -31,9 +31,9 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       maxWidth: '532px',
-      marginBottom: theme.spacing(8),
+      marginBottom: theme.spacing(2),
       [theme.breakpoints.up('lg')]: {
-        maxWidth: '37.5%',
+        maxWidth: '40%',
       },
       '@media screen\\0': {
         display: 'inline',
@@ -48,7 +48,11 @@ const useStyles = makeStyles((theme) =>
       },
     },
     rotatingLinksGraphic: {
+      marginTop: theme.spacing(8),
       marginLeft: 'auto',
+      [theme.breakpoints.up('xl')]: {
+        marginTop: theme.spacing(0),
+      },
     },
     fillColor: {
       display: 'flex',
