@@ -22,6 +22,12 @@ const useStyles = makeStyles((theme) =>
       flexShrink: 1,
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
+      [theme.breakpoints.up('sm')]: {
+        paddingTop: theme.spacing(4),
+      },
+      [theme.breakpoints.up('lg')]: {
+        paddingTop: theme.spacing(6),
+      },
     },
     toolbar: {
       display: 'flex',

@@ -12,7 +12,7 @@ const translationEn = {
     },
     appDescription: {
       get subtitle() {
-        return `<strong>${translationEn.general.appTitle}</strong> short links can only be created by public officers, so you can be sure they are from a trustworthy source.`
+        return `<strong>${translationEn.general.appTitle}</strong> short links can only be created by public officers, so you can be sure it’s from a trustworthy source.`
       },
     },
     appSignInPrompt: 'Are you a public officer?',

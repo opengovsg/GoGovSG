@@ -33,16 +33,16 @@ const useStyles = makeStyles((theme) =>
     titleTextContainer: {
       display: 'flex',
       flexDirection: 'column',
-      maxWidth: '460px',
+      maxWidth: '485px',
       marginBottom: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
-        minWidth: '460px',
+        minWidth: '485px',
       },
       '@media screen\\0': {
         display: 'inline',
       },
     },
-    subtitleTextContainer: {
+    subtitleText: {
       marginTop: theme.spacing(2),
       maxWidth: '404px',
       [theme.breakpoints.up('lg')]: {
@@ -52,9 +52,6 @@ const useStyles = makeStyles((theme) =>
     rotatingLinksGraphic: {
       marginTop: theme.spacing(8),
       marginLeft: 'auto',
-      [theme.breakpoints.up('xl')]: {
-        marginTop: theme.spacing(0),
-      },
     },
     fillColor: {
       display: 'flex',
@@ -121,7 +118,7 @@ const LandingGraphicSliver = () => {
               <Trans>general.appCatchphrase.styled</Trans>
             </Typography>
             <Typography
-              className={classes.subtitleTextContainer}
+              className={classes.subtitleText}
               variant="subtitle1"
               color="textPrimary"
             >

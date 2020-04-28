@@ -1,11 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import {
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import mainImage from '~/assets/landing-page-graphics/landing-main.svg'
 import RotatingLinks from './RotatingLinks'
@@ -17,12 +12,12 @@ const mapStateToProps = (state) => ({
 const useStyles = makeStyles((theme) =>
   createStyles({
     heroContainer: {
+      position: 'relative',
       width: '100vw',
       maxWidth: (props) => `${props.targetImageWidthPx}px`,
       height: (props) => `${props.heightToWidthRatio * 100}vw`,
       maxHeight: (props) =>
         `${props.targetImageWidthPx * props.heightToWidthRatio}px`,
-      position: 'relative',
       marginLeft: 'auto',
       marginBottom: (props) =>
         `max(${props.linkBoxHeightToImageWidth * -50}vw, calc((${
@@ -36,17 +31,18 @@ const useStyles = makeStyles((theme) =>
       },
     },
     heroImage: {
+      position: 'absolute',
       width: '100vw',
       maxWidth: (props) => `${props.targetImageWidthPx}px`,
       height: (props) => `${props.heightToWidthRatio * 100}vw`,
       maxHeight: (props) =>
         `${props.targetImageWidthPx * props.heightToWidthRatio}px`,
       verticalAlign: 'top',
-      position: 'absolute',
       left: 0,
       bottom: 0,
     },
     rotatingLinks: {
+      position: 'absolute',
       width: (props) => `${props.linkBoxWidthToImageWidth * 100}vw`,
       maxWidth: (props) =>
         `${props.linkBoxWidthToImageWidth * props.targetImageWidthPx}px`,
@@ -57,7 +53,6 @@ const useStyles = makeStyles((theme) =>
       fontWeight: 400,
       color: theme.palette.secondary.contrastText,
       opacity: 0.7,
-      position: 'absolute',
       right: 0,
       bottom: 0,
       display: 'flex',
@@ -68,9 +63,6 @@ const useStyles = makeStyles((theme) =>
           props.rotatingLinkLeftMarginToLinkBox *
           100
         }vw`,
-      [theme.breakpoints.up('xl')]: {
-        fontSize: 'min(3.25vw, 32px)',
-      },
       '@media screen\\0': {
         fontSize: '26px',
       },
@@ -79,21 +71,14 @@ const useStyles = makeStyles((theme) =>
 )
 
 const RotatingLinksGraphic = ({ linksToRotate }) => {
-  const targetImageWidthPx = () => {
-    const theme = useTheme()
-    const isXLWidth = useMediaQuery(theme.breakpoints.up('xl'))
-    if (isXLWidth) {
-      return 900
-    }
-    return 765
-  }
+  const targetImageWidthPx = 765
   const classes = useStyles({
     heightToWidthRatio: 419 / 765,
     linkBoxWidthToImageWidth: 662.01 / 765,
     linkBoxHeightToImageWidth: 98.0139235 / 765,
     rotatingLinkLeftMarginToLinkBox: 3.5 / 100,
     // Specifies max width of the graphic in px.
-    targetImageWidthPx: targetImageWidthPx(),
+    targetImageWidthPx,
   })
   return (
     <div className={classes.heroContainer}>

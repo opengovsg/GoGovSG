@@ -37,7 +37,7 @@ const theme = responsiveFontSizes(
     typography: {
       fontFamily: "'IBM Plex Sans', sans-serif",
       h1: {
-        fontSize: '3.15rem',
+        fontSize: '3.25rem',
         fontWeight: '600',
       },
       h2: {
