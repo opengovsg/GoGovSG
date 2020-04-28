@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme) =>
     pageHeightContainer: {
       display: 'flex',
       flexDirection: 'column',
-      minHeight: `calc(100vh - 99px)`,
+      [theme.breakpoints.up('sm')]: {
+        minHeight: `calc(100vh - 99px)`,
+      },
     },
     container: {
       display: 'flex',
@@ -59,11 +61,13 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       flexGrow: '1',
       backgroundColor: theme.palette.primary.dark,
-      minHeight: '200px',
+      maxHeight: '50vw',
+      minHeight: '150px',
     },
     learnMoreButton: {
       height: '44px',
       width: '150px',
+      // Creates the half in colour-fill, half outside it effect.
       marginTop: 'calc(-44px / 2)',
       backgroundColor: theme.palette.secondary.main,
       '&:hover': {
