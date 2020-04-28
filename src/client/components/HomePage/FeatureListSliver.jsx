@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('lg')]: {
         alignItems: 'flex-start',
         flexDirection: 'row',
-        maxWidth: '320px',
+        maxWidth: '350px',
       },
     },
     cardVectorIcon: {

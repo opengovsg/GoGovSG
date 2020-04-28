@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('lg')]: {
         alignItems: 'flex-start',
         flexDirection: 'row',
-        width: '320px',
+        width: '350px',
       },
     },
     cardContent: {

@@ -18,6 +18,8 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       userDrag: 'none',
       alignItems: 'center',
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
     trustedLogo: {
       userDrag: 'none',
@@ -69,7 +71,7 @@ const TrustedBySliver = () => {
       >
         Trusted by these agencies
       </Typography>
-      <Grid container spacing={4}>
+      <Grid container spacing={2}>
         {trustedLogos.map((trustedLogo) => (
           <Grid
             item
