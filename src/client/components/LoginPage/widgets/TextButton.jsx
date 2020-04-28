@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) =>
@@ -42,6 +43,22 @@ const TextButton = ({
       {children}
     </Button>
   )
+}
+
+TextButton.propTypes = {
+  className: PropTypes.string,
+  href: PropTypes.string,
+  target: PropTypes.string,
+  disabled: PropTypes.bool,
+  onClick: PropTypes.func,
+}
+
+TextButton.defaultProps = {
+  className: '',
+  href: undefined,
+  target: undefined,
+  disabled: undefined,
+  onClick: undefined,
 }
 
 export default TextButton
