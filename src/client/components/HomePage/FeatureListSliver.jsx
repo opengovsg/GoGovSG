@@ -82,8 +82,21 @@ const FeatureListSliver = () => {
   const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
   return (
     <>
-      <Typography variant="h2" color="textPrimary" gutterBottom>
-        The official link shortener for the Singapore government
+      <Typography
+        variant="h2"
+        color="textPrimary"
+        display="inline"
+        gutterBottom
+      >
+        Created for public officers{' '}
+      </Typography>
+      <Typography
+        variant="body1"
+        color="textPrimary"
+        display="inline"
+        gutterBottom
+      >
+        (with a gov.sg email)
       </Typography>
       <Grid
         container

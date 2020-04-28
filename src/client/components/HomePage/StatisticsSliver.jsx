@@ -29,9 +29,6 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     grid: {
       marginTop: theme.spacing(2),
-      [theme.breakpoints.up('lg')]: {
-        marginTop: theme.spacing(4),
-      },
     },
     card: {
       display: 'flex',
@@ -63,6 +60,9 @@ const useStyles = makeStyles((theme) =>
         paddingTop: theme.spacing(0),
       },
     },
+    statsLabel: {
+      marginTop: theme.spacing(2),
+    },
     getStartedButton: {
       marginTop: theme.spacing(6),
       paddingTop: theme.spacing(1),
@@ -90,7 +90,7 @@ const StatisticsSliver = (props) => {
   return (
     <>
       <Typography variant="h2" color="textPrimary" gutterBottom>
-        Used by public officers
+        The official link shortener for the Singapore government
       </Typography>
       <Grid
         container
@@ -101,10 +101,10 @@ const StatisticsSliver = (props) => {
         <Grid item>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3" gutterBottom>
+              <Typography color="primary" variant="h3">
                 <strong>{numberFormatter.format(userCount)}</strong>
               </Typography>
-              <Typography color="textPrimary">
+              <Typography className={classes.statsLabel} color="textPrimary">
                 PUBLIC OFFICERS ONBOARD
               </Typography>
             </CardContent>
@@ -113,20 +113,24 @@ const StatisticsSliver = (props) => {
         <Grid item>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3" gutterBottom>
+              <Typography color="primary" variant="h3">
                 <strong>{numberFormatter.format(linkCount)}</strong>
               </Typography>
-              <Typography color="textPrimary">SHORT LINKS CREATED</Typography>
+              <Typography className={classes.statsLabel} color="textPrimary">
+                SHORT LINKS CREATED
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
         <Grid item>
           <Card className={classes.card}>
             <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3" gutterBottom>
+              <Typography color="primary" variant="h3">
                 <strong>{numberFormatter.format(clickCount)}</strong>
               </Typography>
-              <Typography color="textPrimary">CLICKS</Typography>
+              <Typography className={classes.statsLabel} color="textPrimary">
+                CLICKS
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
