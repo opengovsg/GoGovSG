@@ -31,10 +31,10 @@ const useStyles = makeStyles((theme) =>
     titleTextContainer: {
       display: 'flex',
       flexDirection: 'column',
-      maxWidth: '532px',
+      maxWidth: '460px',
       marginBottom: theme.spacing(2),
-      [theme.breakpoints.up('lg')]: {
-        maxWidth: '40%',
+      [theme.breakpoints.up('sm')]: {
+        minWidth: '460px',
       },
       '@media screen\\0': {
         display: 'inline',
@@ -45,7 +45,6 @@ const useStyles = makeStyles((theme) =>
       maxWidth: '404px',
       [theme.breakpoints.up('lg')]: {
         marginTop: theme.spacing(0),
-        maxWidth: '70%',
       },
     },
     rotatingLinksGraphic: {

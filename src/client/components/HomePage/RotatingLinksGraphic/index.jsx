@@ -68,6 +68,9 @@ const useStyles = makeStyles((theme) =>
           props.rotatingLinkLeftMarginToLinkBox *
           100
         }vw`,
+      [theme.breakpoints.up('xl')]: {
+        fontSize: 'min(3.25vw, 32px)',
+      },
       '@media screen\\0': {
         fontSize: '26px',
       },
