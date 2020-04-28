@@ -6,6 +6,7 @@ import i18next from 'i18next'
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { loginFormVariants } from '~/util/types'
 import loginActions from '~/actions/login'
+import TextButton from './widgets/TextButton'
 
 const mapDispatchToProps = (dispatch) => ({
   getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
@@ -29,23 +30,17 @@ const useStyles = makeStyles((theme) =>
       width: '100%',
       maxWidth: '200px',
       minWidth: '120px',
-      marginLeft: theme.spacing(2),
-    },
-    secondaryButton: {
-      width: '100%',
-      maxWidth: '200px',
-      minWidth: '120px',
-      fontWeight: 400,
       marginRight: theme.spacing(2),
     },
+    secondaryButton: {
+      fontWeight: 400,
+      marginLeft: theme.spacing(2),
+    },
     resendOTPBtn: {
-      color: theme.palette.text.secondary,
+      marginRight: 'auto',
       '&:disabled': {
         opacity: 0.5,
       },
-    },
-    helpButton: {
-      color: theme.palette.text.secondary,
     },
   }),
 )
@@ -97,30 +92,6 @@ const LoginForm = ({
         helperText={textErrorMessage()}
       />
       <section className={classes.buttonRow}>
-        {!isEmailView ? (
-          <Button
-            className={classNames(
-              classes.secondaryButton,
-              classes.resendOTPBtn,
-            )}
-            variant="outlined"
-            disabled={!variantMap.resendEnabled}
-            onClick={getOTPEmail}
-            size="large"
-          >
-            Resend OTP
-          </Button>
-        ) : (
-          <Button
-            className={classNames(classes.secondaryButton, classes.helpButton)}
-            href={i18next.t('general.links.faq')}
-            target="_blank"
-            variant="outlined"
-            size="large"
-          >
-            Need help?
-          </Button>
-        )}
         <Button
           className={classes.signInButton}
           type="submit"
@@ -131,6 +102,26 @@ const LoginForm = ({
         >
           {buttonMessage}
         </Button>
+        {!isEmailView ? (
+          <TextButton
+            className={classNames(
+              classes.secondaryButton,
+              classes.resendOTPBtn,
+            )}
+            disabled={!variantMap.resendEnabled}
+            onClick={getOTPEmail}
+          >
+            Resend OTP
+          </TextButton>
+        ) : (
+          <TextButton
+            className={classes.secondaryButton}
+            href={i18next.t('general.links.faq')}
+            target="_blank"
+          >
+            Need help?
+          </TextButton>
+        )}
       </section>
     </form>
   )
