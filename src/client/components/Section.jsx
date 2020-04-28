@@ -11,6 +11,9 @@ const useStyles = makeStyles((theme) =>
         props.backgroundType === 'light'
           ? theme.palette.secondary.light
           : theme.palette.secondary.dark,
+      '@media screen\\0': {
+        minHeight: '1px',
+      },
     },
     childrenPadding: {
       paddingTop: (props) =>
