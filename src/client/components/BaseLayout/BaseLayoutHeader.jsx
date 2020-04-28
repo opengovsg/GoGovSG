@@ -97,29 +97,29 @@ const mapDispatchToProps = (dispatch) => ({
   logout: () => dispatch(loginActions.logout()),
 })
 
-const headers = [
-  {
-    text: 'Contribute',
-    link: i18next.t('general.links.contribute'),
-    public: true,
-    xsHidden: true,
-  },
-  {
-    text: 'FAQ',
-    link: i18next.t('general.links.faq'),
-    public: false,
-    xsHidden: true,
-  },
-  {
-    text: 'Help us improve',
-    link: i18next.t('general.links.contact'),
-    public: false,
-    xsHidden: true,
-  },
-]
-
 const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
   const classes = useStyles()
+
+  const headers = [
+    {
+      text: 'Contribute',
+      link: i18next.t('general.links.contribute'),
+      public: true,
+      xsHidden: true,
+    },
+    {
+      text: 'FAQ',
+      link: i18next.t('general.links.faq'),
+      public: false,
+      xsHidden: true,
+    },
+    {
+      text: 'Help us improve',
+      link: i18next.t('general.links.contact'),
+      public: false,
+      xsHidden: true,
+    },
+  ]
 
   const appBarBtn = isLoggedIn ? (
     <Button
