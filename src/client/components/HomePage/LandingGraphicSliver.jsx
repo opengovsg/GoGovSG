@@ -19,8 +19,11 @@ const useStyles = makeStyles((theme) =>
     pageHeightContainer: {
       display: 'flex',
       flexDirection: 'column',
-      [theme.breakpoints.up('sm')]: {
-        minHeight: `calc(100vh - 99px)`,
+      [theme.breakpoints.up('md')]: {
+        minHeight: `calc(100vh - ${theme.spacing(4) + 108}px)`,
+      },
+      [theme.breakpoints.up('lg')]: {
+        minHeight: `calc(100vh - ${theme.spacing(6) + 108}px)`,
       },
     },
     container: {
@@ -58,8 +61,11 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       flexGrow: '1',
       backgroundColor: theme.palette.primary.dark,
-      maxHeight: '50vw',
+      maxHeight: '30vw',
       minHeight: '150px',
+      [theme.breakpoints.up('sm')]: {
+        minHeight: '200px',
+      },
     },
     learnMoreButton: {
       height: '44px',

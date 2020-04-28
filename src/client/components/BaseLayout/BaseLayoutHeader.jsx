@@ -20,9 +20,9 @@ const useStyles = makeStyles((theme) =>
       zIndex: '1',
       boxShadow: 'none',
       flexShrink: 1,
-      paddingTop: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
-      [theme.breakpoints.up('sm')]: {
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
         paddingTop: theme.spacing(4),
       },
       [theme.breakpoints.up('lg')]: {

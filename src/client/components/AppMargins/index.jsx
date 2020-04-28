@@ -7,16 +7,16 @@ function fetchAppMargins(theme, leftMultiplier, rightMultiplier) {
     marginLeft: theme.spacing(4 * leftMultiplier),
     marginRight: theme.spacing(4 * rightMultiplier),
     [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(6 * leftMultiplier),
-      marginRight: theme.spacing(6 * rightMultiplier),
-    },
-    [theme.breakpoints.up('md')]: {
       marginLeft: theme.spacing(8 * leftMultiplier),
       marginRight: theme.spacing(8 * rightMultiplier),
     },
-    [theme.breakpoints.up('lg')]: {
+    [theme.breakpoints.up('md')]: {
       marginLeft: theme.spacing(12 * leftMultiplier),
       marginRight: theme.spacing(12 * rightMultiplier),
+    },
+    [theme.breakpoints.up('lg')]: {
+      marginLeft: theme.spacing(16 * leftMultiplier),
+      marginRight: theme.spacing(16 * rightMultiplier),
     },
   }
 }
