@@ -27,8 +27,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(1),
     },
     signInButton: {
-      width: '100%',
-      maxWidth: '200px',
+      width: '140px',
       minWidth: '120px',
       marginRight: theme.spacing(2),
     },

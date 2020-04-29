@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) =>
       fill: theme.palette.primary.main,
     },
     appBarSignInBtn: {
-      flexGrow: '0.05',
+      width: '140px',
       minWidth: '90px',
     },
     toolbarLogo: {

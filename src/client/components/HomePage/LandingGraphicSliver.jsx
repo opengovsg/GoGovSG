@@ -53,8 +53,11 @@ const useStyles = makeStyles((theme) =>
       },
     },
     rotatingLinksGraphic: {
-      marginTop: theme.spacing(8),
+      marginTop: theme.spacing(4),
       marginLeft: 'auto',
+      [theme.breakpoints.up('lg')]: {
+        marginTop: theme.spacing(0),
+      },
     },
     fillColor: {
       display: 'flex',
