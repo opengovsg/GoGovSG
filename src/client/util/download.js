@@ -5,7 +5,14 @@ import userActions from '~/actions/user'
 export const downloadUrls = async (urlCount, tableConfig) => {
   const urlsArr = []
   // set headers to csv
-  urlsArr.push(['Short URL', 'Original URL', 'Status', 'Visits', 'Created At', 'Last Modified\n'])
+  urlsArr.push([
+    'Short URL',
+    'Original URL',
+    'Status',
+    'Visits',
+    'Created At',
+    'Last Modified\n',
+  ])
 
   const limit = 100
   // gets 100 urls at a time
@@ -30,11 +37,16 @@ export const downloadUrls = async (urlCount, tableConfig) => {
       if (isOk) {
         const { urls } = json
         urls.forEach((url) => {
-          const {
-            shortUrl, longUrl, state, clicks, createdAt, updatedAt,
-          } = url
+          const { shortUrl, longUrl, state, clicks, createdAt, updatedAt } = url
           //  eslint-disable-next-line prefer-template
-          urlsArr.push([shortUrl, longUrl, state, clicks, createdAt, updatedAt + '\n'])
+          urlsArr.push([
+            shortUrl,
+            longUrl,
+            state,
+            clicks,
+            createdAt,
+            `${updatedAt}\n`,
+          ])
         })
       } else if (!isOk && json) {
         rootActions.setErrorMessage(json.message)

@@ -27,6 +27,7 @@ const requiredVars: string[] = [
   'REDIS_STAT_URI', // Cache for statistics (user, link, and click counts)
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
+  'AWS_S3_BUCKET', // For file.go.gov.sg uploads
 ]
 
 // AWS Simple Email Service
@@ -40,7 +41,7 @@ export const logger: winston.Logger = createLogger({
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    format.json()
+    format.json(),
   ),
   transports: [
     new transports.Console({
@@ -48,8 +49,8 @@ export const logger: winston.Logger = createLogger({
       format: format.combine(
         format.colorize(),
         format.printf(
-          (info: any) => `${info.timestamp} ${info.level}: ${info.message}`
-        )
+          (info: any) => `${info.timestamp} ${info.level}: ${info.message}`,
+        ),
       ),
     }),
   ],
@@ -62,7 +63,9 @@ const exitIfAnyMissing = (vars: string[]) => {
   }, [] as string[])
   if (err.length > 0) {
     logger.error(
-      `ERROR: Cannot deploy app. These environment variables are missing\t: ${err.join(', ')}`
+      `ERROR: Cannot deploy app. These environment variables are missing\t: ${err.join(
+        ', ',
+      )}`,
     )
     process.exit(1)
   }
@@ -120,7 +123,8 @@ export interface SessionSettings {
   secret: string
 }
 
-export const validEmailDomainGlobExpression = process.env.VALID_EMAIL_GLOB_EXPRESSION as string
+export const validEmailDomainGlobExpression = process.env
+  .VALID_EMAIL_GLOB_EXPRESSION as string
 export const emailValidator = new minimatch.Minimatch(
   validEmailDomainGlobExpression,
   {
@@ -128,10 +132,11 @@ export const emailValidator = new minimatch.Minimatch(
     noglobstar: true,
     nobrace: true,
     nonegate: true,
-  }
+  },
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
-
+export const s3Bucket = process.env.AWS_S3_BUCKET as string
+export const linksToRotate = process.env.ROTATED_LINKS
 
 export const databaseUri = process.env.DB_URI as string
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
@@ -149,6 +154,9 @@ export const saltRounds = SALT_ROUNDS
 export const otpExpiry = OTP_EXPIRY
 export const redirectExpiry = REDIRECT_EXPIRY
 export const statisticsExpiry = STATISTICS_EXPIRY
-export const sessionSettings: SessionSettings = { secret: process.env.SESSION_SECRET as string, name: 'gogovsg' }
+export const sessionSettings: SessionSettings = {
+  secret: process.env.SESSION_SECRET as string,
+  name: 'gogovsg',
+}
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS

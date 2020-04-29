@@ -9,6 +9,7 @@
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
     "import/first": "off",
+    "import/extensions": "off",
     "newline-per-chained-call": ["error"],
     "no-console": "off",
     "no-unused-vars": "off",

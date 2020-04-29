@@ -39,9 +39,7 @@ function isValidUrl(url) {
  * @return {Boolean}
  */
 function isValidShortUrl(url, allowBlank = false) {
-  return allowBlank
-    ? /^[a-z0-9-]*$/.test(url)
-    : /^[a-z0-9-]+$/.test(url)
+  return allowBlank ? /^[a-z0-9-]*$/.test(url) : /^[a-z0-9-]+$/.test(url)
 }
 
 /**

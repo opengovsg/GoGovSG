@@ -1,4 +1,4 @@
-import { LOAD_STATS } from '~/actions/types'
+import { LOAD_STATS, SET_LINKS_TO_ROTATE } from '~/actions/types'
 
 const initialState = {
   statistics: {
@@ -12,6 +12,11 @@ const home = (state = initialState, action) => {
   const { payload } = action
 
   switch (action.type) {
+    case SET_LINKS_TO_ROTATE:
+      nextState = {
+        linksToRotate: payload,
+      }
+      break
     case LOAD_STATS:
       nextState = {
         statistics: payload,
@@ -20,7 +25,7 @@ const home = (state = initialState, action) => {
     default:
       return state
   }
-  return Object.assign({}, state, nextState)
+  return { ...state, ...nextState }
 }
 
 export default home

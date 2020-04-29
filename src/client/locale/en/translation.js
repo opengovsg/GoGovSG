@@ -6,21 +6,19 @@ const translationEn = {
     // of index.html, 404.error.ejs, and 500.error.ejs.
     appTitle: 'Go.gov.sg',
     appCatchphrase: {
-      styled: 'Trusted short links from <strong><i>public officers</i></strong>',
-      noStyle: 'Trusted short links from public officers',
+      styled:
+        'Trusted short links from <strong><i>public officers</i></strong>',
+      noStyle: 'Trusted links from public officers',
     },
     appDescription: {
       get subtitle() {
-        return `<strong>${translationEn.general.appTitle}</strong> short links can only be created by public officers, so you can be sure they are from a trustworthy source.`
-      },
-      get stats() {
-        return `${translationEn.general.appTitle} is the official link shortener for the Singapore government`
+        return `<strong>${translationEn.general.appTitle}</strong> short links can only be created by public officers, so you can be sure it’s from a trustworthy source.`
       },
     },
-    appSignInPrompt: 'Are you a public officer with a gov.sg email?',
+    appSignInPrompt: 'Are you a public officer?',
     copyright: '© 2020 Open Government Products',
     placeholders: {
-      email: 'john@moe.gov.sg',
+      email: 'jane@data.gov.sg',
     },
     links: {
       contribute: 'https://go.gov.sg/go-opensource',

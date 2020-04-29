@@ -1,17 +1,23 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier",
+    "prettier/react"
+  ],
   "env": {
     "browser": true,
     "node": true
   },
-  "plugins": ["jsdoc"],
+  "plugins": ["jsdoc", "prettier"],
   "rules": {
     "no-console": "off",
     "comma-dangle": ["error", "always-multiline"],
     "import/no-unresolved": "warn",
     "newline-per-chained-call": ["error"],
     "react/jsx-filename-extension": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "warn",
     "react/forbid-prop-types": "warn",
     "react/prop-types": "off",
@@ -21,7 +27,8 @@
     "semi": [2, "never"],
     "react/no-string-refs": "warn",
     "sort-imports": ["error", { "ignoreDeclarationSort": true }],
-    "jsdoc/require-description-complete-sentence": "error"
+    "jsdoc/require-description-complete-sentence": "error",
+    "prettier/prettier": "error"
   },
   "settings": {
     "import/resolver": {

@@ -11,7 +11,7 @@ export const initMailer = () => {
     transporter = nodemailer.createTransport(transporterOptions)
   } else {
     logger.warn(
-      'No SES credentials detected, Using Nodemailer Direct Transport. This should NEVER be seen in production.'
+      'No SES credentials detected, Using Nodemailer Direct Transport. This should NEVER be seen in production.',
     )
     // Falls back to direct transport
     transporter = nodemailer.createTransport(directTransport())

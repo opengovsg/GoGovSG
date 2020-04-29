@@ -1,6 +1,6 @@
 import { fade } from '@material-ui/core/styles'
 
-const userPageStyle = theme => ({
+const userPageStyle = (theme) => ({
   table: {
     flexGrow: '1',
     marginTop: '5px',
