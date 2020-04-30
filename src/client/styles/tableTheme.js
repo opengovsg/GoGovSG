@@ -18,7 +18,8 @@ const urlTableTheme = createMuiTheme({
       fontSize: '1.5rem',
       fontWeight: '500',
     },
-    body1: { // MUI v4 body1 == body2
+    body1: {
+      // MUI v4 body1 == body2
       fontSize: '0.8125rem',
     },
     body2: {

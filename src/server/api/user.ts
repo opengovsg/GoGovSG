@@ -11,6 +11,7 @@ import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
+import { generatePresignedUrl } from '../util/aws'
 
 const router = Express.Router()
 
@@ -20,15 +21,15 @@ const router = Express.Router()
 function validateUrlRetrieval(
   req: Express.Request,
   res: Express.Response,
-  next: Express.NextFunction
+  next: Express.NextFunction,
 ) {
   const { userId } = req.body
 
   if (!userId) {
     res.badRequest(
       jsonMessage(
-        'Some or all required arguments missing: userId'
-      )
+        'Some or all required arguments missing: userId',
+      ),
     )
   }
 
@@ -44,8 +45,8 @@ function validateUrls(req: Express.Request, res: Express.Response, next: Express
   if (!(userId && longUrl && shortUrl)) {
     res.badRequest(
       jsonMessage(
-        'Some or all of required arguments are missing: userId, longUrl, shortUrl'
-      )
+        'Some or all of required arguments are missing: userId, longUrl, shortUrl',
+      ),
     )
     return
   }
@@ -60,16 +61,16 @@ function validateUrls(req: Express.Request, res: Express.Response, next: Express
   if (!isValidShortUrl(shortUrl)) {
     res.badRequest(
       jsonMessage(
-        'Short links should only consist of lowercase letters, numbers and hyphens.'
-      )
+        'Short links should only consist of lowercase letters, numbers and hyphens.',
+      ),
     )
     return
   }
 
   // Do not allow URLs to blacklisted sites
-  if (blacklist.some(bl => longUrl.includes(bl))) {
+  if (blacklist.some((bl) => longUrl.includes(bl))) {
     res.badRequest(
-      jsonMessage('Creation of URLs to link shortener sites prohibited.')
+      jsonMessage('Creation of URLs to link shortener sites prohibited.'),
     )
     return
   }
@@ -88,8 +89,8 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
   if (!(userId && shortUrl && state)) {
     res.badRequest(
       jsonMessage(
-        'Some or all required arguments are missing: userId, shortUrl, state.'
-      )
+        'Some or all required arguments are missing: userId, shortUrl, state.',
+      ),
     )
     return
   }
@@ -97,12 +98,35 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
   if (![ACTIVE, INACTIVE].includes(state)) {
     res.badRequest(
       jsonMessage(
-        `state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`
-      )
+        `state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`,
+      ),
     )
   }
 
   next()
+}
+
+/**
+ * Make sure all parameters needed for the pre-signed url request are present.
+ *
+ * @param {string} fileType - File type of the file that is being uploaded.
+ * This must be declared here so that subsequent PUT requests that use the
+ * `Content-Type` header will pass header checks.
+ * @param {string} key - Name of the entry to be inserted to the S3 bucket. Ensure
+ * that the key does not collide with other files before declaring it here. Otherwise,
+ * it will cause an existing file of the same key to be overridden.
+ */
+function validatePresignedUrlRequest(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
+  if (!req.body.fileType || !req.body.key) {
+    return res.badRequest(
+      jsonMessage('Some or all required arguments are missing: fileType, key.'),
+    )
+  }
+  return next()
 }
 
 /**
@@ -126,10 +150,10 @@ router.post('/url', validateUrls, async (req, res) => {
     }
 
     // Success
-    const result = await sequelize.transaction(t => (
+    const result = await sequelize.transaction((t) => (
       Url.create(
         { userId: user.id, longUrl, shortUrl },
-        { transaction: t }
+        { transaction: t },
       )
     ))
 
@@ -137,6 +161,20 @@ router.post('/url', validateUrls, async (req, res) => {
   } catch (error) {
     logger.error(`Error creating short URL:\t${error}`)
     res.badRequest(jsonMessage('Invalid URL.'))
+  }
+})
+
+/**
+ * Creates a pre-signed link.
+ */
+router.post('/upload', validatePresignedUrlRequest, async (req, res) => {
+  const { fileType, key } = req.body
+  try {
+    const url = await generatePresignedUrl(key, fileType)
+    return res.created({ url })
+  } catch (error) {
+    logger.error(`Error creating pre-signed url: \t${error}`)
+    return res.serverError('Could not generate pre-signed url.')
   }
 })
 
@@ -157,7 +195,7 @@ router.patch('/url/ownership', async (req, res) => {
 
     if (!url) {
       res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`)
+        jsonMessage(`Short link "${shortUrl}" not found for user.`),
       )
     }
 
@@ -179,10 +217,10 @@ router.patch('/url/ownership', async (req, res) => {
     }
 
     // Success
-    const result = await sequelize.transaction(t => (
+    const result = await sequelize.transaction((t) => (
       url.update(
         { userId: newUserId },
-        { transaction: t }
+        { transaction: t },
       )
     ))
     res.ok(result)
@@ -211,14 +249,14 @@ router.patch('/url/edit', validateUrls, async (req, res) => {
 
     if (!url) {
       res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`)
+        jsonMessage(`Short link "${shortUrl}" not found for user.`),
       )
     }
 
-    await sequelize.transaction(t => (
+    await sequelize.transaction((t) => (
       url.update(
         { longUrl },
-        { transaction: t }
+        { transaction: t },
       )
     ))
     res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
@@ -255,11 +293,11 @@ router.patch('/url', validateState, async (req, res) => {
 
     if (!url) {
       res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`)
+        jsonMessage(`Short link "${shortUrl}" not found for user.`),
       )
     }
 
-    await sequelize.transaction(t => (
+    await sequelize.transaction((t) => (
       url.update({ state }, { transaction: t })
     ))
     res.ok()
@@ -276,8 +314,8 @@ router.patch('/url', validateState, async (req, res) => {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
     res.badRequest(
       jsonMessage(
-        `Unable to set state to ${state} for short link "${shortUrl}"`
-      )
+        `Unable to set state to ${state} for short link "${shortUrl}"`,
+      ),
     )
   }
 })

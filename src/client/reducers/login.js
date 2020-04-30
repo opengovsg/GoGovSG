@@ -103,5 +103,5 @@ export const login = (state = initialState, action) => {
     default:
       return state
   }
-  return Object.assign({}, state, nextState)
+  return { ...state, ...nextState }
 }

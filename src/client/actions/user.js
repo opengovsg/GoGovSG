@@ -28,7 +28,7 @@ import { LOGIN_PAGE } from '~/util/types'
 
 const querystring = require('querystring')
 
-const isGetUrlsForUserSuccess = urls => ({
+const isGetUrlsForUserSuccess = (urls) => ({
   type: GET_URLS_FOR_USER_SUCCESS,
   payload: urls,
 })
@@ -39,12 +39,12 @@ const isGetUrlsForUserSuccess = urls => ({
  * key-value pairs for the tableConfig.
  * @example [ ['orderBy', 'shortUrl'], ['sortDirection', 'desc'] ]
  */
-const setUrlTableConfig = payload => ({
+const setUrlTableConfig = (payload) => ({
   type: SET_URL_TABLE_CONFIG,
   payload,
 })
 
-const updateUrlCount = urlCount => ({
+const updateUrlCount = (urlCount) => ({
   type: UPDATE_URL_COUNT,
   payload: urlCount,
 })
@@ -55,7 +55,7 @@ const getUrls = (queryObj) => {
 
   return get(`/api/user/url?${query}`).then((response) => {
     const isOk = response.ok
-    return response.json().then(json => ({ json, isOk }))
+    return response.json().then((json) => ({ json, isOk }))
   })
 }
 
@@ -111,8 +111,8 @@ const createUrl = (dispatch, user) => {
   if (!/^[a-z0-9-]/.test(shortUrl)) {
     dispatch(
       rootActions.setErrorMessage(
-        'Short links should only consist of a-z, 0-9 and hyphens.'
-      )
+        'Short links should only consist of a-z, 0-9 and hyphens.',
+      ),
     )
     return null
   }
@@ -138,7 +138,9 @@ const createUrl = (dispatch, user) => {
       if (response.status === 200) {
         dispatch(resetUserState())
         dispatch(getUrlsForUser())
-        dispatch(rootActions.setInfoMessage(`New link created: ${json.shortUrl}`))
+        dispatch(
+          rootActions.setInfoMessage(`New link created: ${json.shortUrl}`),
+        )
         return Promise.resolve()
       }
       const error = new Error(json.message)
@@ -148,7 +150,7 @@ const createUrl = (dispatch, user) => {
   })
 }
 
-const editLongUrl = shortUrl => ({
+const editLongUrl = (shortUrl) => ({
   type: EDIT_LONG_URL,
   payload: shortUrl,
 })
@@ -186,13 +188,13 @@ const updateLongUrl = (shortUrl, longUrl) => (dispatch) => {
 }
 
 // For setting short link value in the input box
-const setShortUrl = shortUrl => ({
+const setShortUrl = (shortUrl) => ({
   type: SET_SHORT_URL,
   payload: shortUrl,
 })
 
 // For setting URL value in the input box
-const setLongUrl = longUrl => ({
+const setLongUrl = (longUrl) => ({
   type: SET_LONG_URL,
   payload: removeHttpsProtocol(longUrl),
 })
@@ -203,14 +205,15 @@ const setEditedLongUrl = (shortUrl, editedLongUrl) => ({
 })
 
 // For generating a random short URL
-const setRandomShortUrl = () => dispatch => generateShortUrl().then((randomUrl) => {
-  dispatch({
-    type: SET_RANDOM_SHORT_URL,
-    payload: randomUrl,
+const setRandomShortUrl = () => (dispatch) =>
+  generateShortUrl().then((randomUrl) => {
+    dispatch({
+      type: SET_RANDOM_SHORT_URL,
+      payload: randomUrl,
+    })
   })
-})
 
-const isToggleUrlStateSuccess = payload => ({
+const isToggleUrlStateSuccess = (payload) => ({
   type: TOGGLE_URL_STATE_SUCCESS,
   payload,
 })
@@ -242,7 +245,7 @@ const closeCreateUrlModal = () => ({
 
 // If user is not logged in, the createUrl call returns unauthorized,
 // get them to login, else create the url.
-const createUrlOrRedirect = history => (dispatch, getState) => {
+const createUrlOrRedirect = (history) => (dispatch, getState) => {
   const { login, user } = getState()
   if (login.user.id) {
     return createUrl(dispatch, user)
@@ -257,7 +260,7 @@ const createUrlOrRedirect = history => (dispatch, getState) => {
           dispatch(rootActions.setErrorMessage(error.message))
         } else {
           dispatch(
-            rootActions.setErrorMessage('An unknown error has occurred.')
+            rootActions.setErrorMessage('An unknown error has occurred.'),
           )
           console.error(error)
         }
@@ -268,7 +271,7 @@ const createUrlOrRedirect = history => (dispatch, getState) => {
   return null
 }
 
-const openQrCode = shortUrl => ({
+const openQrCode = (shortUrl) => ({
   type: OPEN_QR_CODE,
   payload: shortUrl,
 })
@@ -277,7 +280,7 @@ const closeQrCode = () => ({
   type: CLOSE_QR_CODE,
 })
 
-const openOwnershipModal = shortUrl => ({
+const openOwnershipModal = (shortUrl) => ({
   type: OPEN_OWNERSHIP_MODAL,
   payload: shortUrl,
 })
@@ -286,26 +289,27 @@ const closeOwnershipModal = () => ({
   type: CLOSE_OWNERSHIP_MODAL,
 })
 
-const setNewOwner = newOwner => ({
+const setNewOwner = (newOwner) => ({
   type: SET_NEW_OWNER,
   payload: newOwner,
 })
 
-const transferOwnership = (shortUrl, newOwner) => dispatch => patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
-  (response) => {
-    if (response.ok) {
-      // On success, close the modal, update user urls, and show success toast.
-      dispatch(closeOwnershipModal())
-      dispatch(getUrlsForUser())
-      const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
-      return dispatch(rootActions.setInfoMessage(successMessage))
-    }
-    // Otherwise, show error toast with relevant error message.
-    return response.json().then((json) => {
-      dispatch(rootActions.setErrorMessage(json.message))
-    })
-  }
-)
+const transferOwnership = (shortUrl, newOwner) => (dispatch) =>
+  patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
+    (response) => {
+      if (response.ok) {
+        // On success, close the modal, update user urls, and show success toast.
+        dispatch(closeOwnershipModal())
+        dispatch(getUrlsForUser())
+        const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
+        return dispatch(rootActions.setInfoMessage(successMessage))
+      }
+      // Otherwise, show error toast with relevant error message.
+      return response.json().then((json) => {
+        dispatch(rootActions.setErrorMessage(json.message))
+      })
+    },
+  )
 
 export default {
   getUrlsForUser,

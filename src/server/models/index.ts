@@ -68,9 +68,9 @@ export const Url = <UrlTypeStatic>sequelize.define('url', {
 
       // Blacklist check
       blacklistCheck(longUrl: string) {
-        if (blacklist.some(bl => longUrl.includes(bl))) {
+        if (blacklist.some((bl) => longUrl.includes(bl))) {
           throw new Error(
-            'Database creation of URLs to link shortener sites prohibited.'
+            'Database creation of URLs to link shortener sites prohibited.',
           )
         }
       },
@@ -96,7 +96,7 @@ export const Url = <UrlTypeStatic>sequelize.define('url', {
       // eslint-disable-next-line no-use-before-define
       await writeToUrlHistory(
         url,
-        options as Sequelize.CreateOptions & { transaction: Sequelize.Transaction }
+        options as Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
       )
       return Promise.resolve()
     },
@@ -110,7 +110,7 @@ export const Url = <UrlTypeStatic>sequelize.define('url', {
       // eslint-disable-next-line no-use-before-define
       await writeToUrlHistory(
         url,
-        options as Sequelize.InstanceUpdateOptions & { transaction: Sequelize.Transaction }
+        options as Sequelize.InstanceUpdateOptions & { transaction: Sequelize.Transaction },
       )
       return Promise.resolve()
     },
@@ -265,7 +265,7 @@ UrlHistory.belongsTo(User, { foreignKey: { allowNull: false } })
  */
 const writeToUrlHistory = async (
   url: UrlType,
-  options: Sequelize.Options & { transaction: Sequelize.Transaction }
+  options: Sequelize.Options & { transaction: Sequelize.Transaction },
 ): Promise<UrlHistoryType> => {
   const urlObj = url.toJSON() as UrlType & { userId: Number }
 

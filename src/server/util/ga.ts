@@ -25,7 +25,7 @@ function parseCookies(cookie: string | undefined): CookieData {
  * Else return null.
  */
 export function generateCookie(
-  req: express.Request
+  req: express.Request,
 ): [string, string, { maxAge: number }] | null {
   // Get ga cookie from request headers cookie
   const { gaClientId } = parseCookies(req.headers.cookie)
@@ -65,7 +65,7 @@ interface GaSubmissionForm {
 export function sendPageViewHit(
   req: express.Request,
   shortUrl: string,
-  longUrl: string
+  longUrl: string,
 ) {
   // Do not submit if we don't have a GA account
   if (!gaTrackingId) return
@@ -100,9 +100,9 @@ export function sendPageViewHit(
     (err, httpResponse, body) => {
       if (err) {
         logger.error(
-          `GA tracking failure:\tError: ${err}\thttpResponse: ${httpResponse}\t body:${body}`
+          `GA tracking failure:\tError: ${err}\thttpResponse: ${httpResponse}\t body:${body}`,
         )
       }
-    }
+    },
   )
 }

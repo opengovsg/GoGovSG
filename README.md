@@ -82,6 +82,7 @@ After these have been set up, set the environment variables according to the tab
 |NODE_ENV|Yes|`production`|
 |DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 |OG_URL|Yes|The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`|
+|AWS_S3_BUCKET|Yes|The bucket name used for storing file uploads.|
 |REDIS_OTP_URI|Yes|Redis connection string, e.g. `redis://redis:6379/0`|
 |REDIS_SESSION_URI|Yes|Redis connection string, e.g. `redis://redis:6379/1`|
 |REDIS_REDIRECT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/2`|
@@ -115,6 +116,7 @@ GoGovSG uses Travis to deploy to AWS Elastic Beanstalk. We also use Sentry.io to
 |EMAIL_RECIPIENT|Yes|Email for Travis notifications|
 |PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
 |REPO|Yes|Docker container registry URI to push built images to|
+|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
 |SENTRY_ORG|No|Sentry.io organisation name|
 |SENTRY_PROJECT|No|Sentry.io project name|
 |SENTRY_URL|No|Sentry.io URL e.g. `https://sentry.io/`|

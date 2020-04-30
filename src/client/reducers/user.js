@@ -29,7 +29,11 @@ const initialState = {
   ownershipModal: '',
   newOwner: '',
   tableConfig: {
-    numberOfRows: 10, pageNumber: 0, sortDirection: 'desc', orderBy: 'createdAt', searchText: '',
+    numberOfRows: 10,
+    pageNumber: 0,
+    sortDirection: 'desc',
+    orderBy: 'createdAt',
+    searchText: '',
   },
   urlCount: 0,
 }
@@ -133,10 +137,12 @@ const user = (state = initialState, action) => {
       break
     case EDIT_LONG_URL: {
       // eslint-disable-next-line no-shadow
-      const [editedLongUrl] = state.urls.filter(url => url.shortUrl === payload)
+      const [editedLongUrl] = state.urls.filter(
+        (url) => url.shortUrl === payload,
+      )
 
       nextState = {
-        urls: state.urls.map(url => ({
+        urls: state.urls.map((url) => ({
           ...url,
           edit: url.shortUrl === payload,
         })),
@@ -146,7 +152,7 @@ const user = (state = initialState, action) => {
     }
     case CANCEL_EDIT_LONG_URL:
       nextState = {
-        urls: state.urls.map(url => ({
+        urls: state.urls.map((url) => ({
           ...url,
           edit: false,
         })),
@@ -169,7 +175,7 @@ const user = (state = initialState, action) => {
     default:
       return state
   }
-  return Object.assign({}, state, nextState)
+  return { ...state, ...nextState }
 }
 
 export default user
