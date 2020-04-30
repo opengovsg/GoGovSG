@@ -84,7 +84,7 @@ router.post('/otp', (req: Express.Request, res: Express.Response) => {
     })
   } else {
     res.badRequest(
-      jsonMessage('Invalid email provided.'),
+      jsonMessage('Invalid email provided. Email domain is not whitelisted.')
     )
   }
 })
