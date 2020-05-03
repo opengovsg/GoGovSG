@@ -15,7 +15,12 @@ const error404Path = '404.error.ejs'
  * @param {String} shortUrl Short url of link.
  * @param {String} longUrl  Long url of link.
  */
-function gaLogging(req: Express.Request, res:Express.Response, shortUrl: string, longUrl: string): void {
+function gaLogging(
+  req: Express.Request,
+  res:Express.Response,
+  shortUrl: string,
+  longUrl: string,
+): void {
   const cookie = generateCookie(req)
   if (cookie) {
     res.cookie(...cookie)
@@ -25,11 +30,11 @@ function gaLogging(req: Express.Request, res:Express.Response, shortUrl: string,
 
 /**
  * Looks up the longUrl from the cache.
- * @param {string} shortUrl 
+ * @param {string} shortUrl
  * @returns {Promise<string>}
  * @throws {NotFoundError}
  */
-function getLongUrlFromCache (shortUrl: string): Promise<string> {
+function getLongUrlFromCache(shortUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
     redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
       if (cacheError) {
@@ -46,12 +51,12 @@ function getLongUrlFromCache (shortUrl: string): Promise<string> {
 }
 
 /**
- * Looks up the longUrl from the database given a short link
+ * Looks up the longUrl from the database given a short link.
  * @param {string} shortUrl
  * @returns {Promise<string>}
  * @throws {NotFoundError}
  */
-function getLongUrlFromDatabase (shortUrl: string): Promise<string> {
+function getLongUrlFromDatabase(shortUrl: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     Url.findOne({
       where: {
@@ -69,12 +74,12 @@ function getLongUrlFromDatabase (shortUrl: string): Promise<string> {
 }
 
 /**
- * Cache a link in Redis
- * @param shortUrl The short link
- * @param longUrl The long URL
+ * Cache a link in Redis.
+ * @param shortUrl The short link.
+ * @param longUrl The long URL.
  * @throws {Error}
  */
-function cacheShortUrl (shortUrl: string, longUrl: string): Promise<void> {
+function cacheShortUrl(shortUrl: string, longUrl: string): Promise<void> {
   return new Promise((resolve, reject) => {
     redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
       if (err) reject(err)
@@ -87,11 +92,11 @@ function cacheShortUrl (shortUrl: string, longUrl: string): Promise<void> {
  * Looks up the longUrl given a shortUrl from the cache, falling back
  * to the database. The cache is re-populated if the database lookup is
  * performed successfully.
- * @param {string} shortUrl 
+ * @param {string} shortUrl
  * @returns {Promise<string>}
  * @throws {NotFoundError}
  */
-async function getLongUrlFromStore (shortUrl: string): Promise<string> {
+async function getLongUrlFromStore(shortUrl: string): Promise<string> {
   try {
     // Cache lookup
     return await getLongUrlFromCache(shortUrl)
@@ -108,10 +113,10 @@ async function getLongUrlFromStore (shortUrl: string): Promise<string> {
 }
 
 /**
- * Asynchronously increment the number of clicks in the database
- * @param shortUrl 
+ * Asynchronously increment the number of clicks in the database.
+ * @param shortUrl
  */
-function incrementClick (shortUrl: string): void {
+function incrementClick(shortUrl: string): void {
   Url.findOne({ where: { shortUrl } }).then((url) => {
     if (url) {
       url.increment('clicks')
@@ -120,7 +125,7 @@ function incrementClick (shortUrl: string): void {
 }
 
 /**
- * The redirect function
+ * The redirect function.
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  */
@@ -145,12 +150,10 @@ export default async function redirect(req: Express.Request, res: Express.Respon
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
     // Redirect
-    return res.status(302).redirect(longUrl)
+    res.status(302).redirect(longUrl)
   } catch (error) {
+    if (!(error instanceof NotFoundError)) logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
 
-    if (!(error instanceof NotFoundError))
-      logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
-
-    return res.status(404).render(error404Path, { shortUrl })
+    res.status(404).render(error404Path, { shortUrl })
   }
 }
