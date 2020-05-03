@@ -1,3 +1,5 @@
+import path from 'path'
+
 import bodyParser from 'body-parser'
 import express from 'express'
 import helmet from 'helmet'
@@ -68,6 +70,7 @@ initDb()
       app.set('trust proxy', trustProxy)
     }
 
+    app.set('views', path.resolve(__dirname, './views'))
     app.set('view engine', 'ejs')
 
     // Sessions
