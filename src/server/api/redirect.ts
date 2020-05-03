@@ -1,4 +1,6 @@
 import Express from 'express'
+import { UAParser } from 'ua-parser-js'
+
 import { redirectClient } from '../redis'
 import { Url } from '../models'
 import { ACTIVE } from '../models/types'
@@ -125,6 +127,24 @@ function incrementClick(shortUrl: string): void {
 }
 
 /**
+ * Determine if a user-agent string is likely to be a crawler's.
+ * @param ua user-agent string
+ */
+function isCrawler(ua: string): boolean {
+  const parser = new UAParser(ua)
+  const result = parser.getResult()
+  if (
+    result.browser.name &&
+    result.engine.name &&
+    result.os.name
+  ) {
+    return false
+  }
+  return true
+}
+
+
+/**
  * The redirect function.
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
@@ -149,8 +169,16 @@ export default async function redirect(req: Express.Request, res: Express.Respon
     // Google analytics
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
-    // Redirect
-    res.status(302).redirect(longUrl)
+
+    // Redirect immediately if a crawler is visiting the site
+    if (isCrawler(req.headers["user-agent"] || '')) {
+      res.status(302).redirect(longUrl)
+      return
+    } else {
+      // TODO: Serve transition page
+      res.status(302).redirect(longUrl)
+    }
+
   } catch (error) {
     if (!(error instanceof NotFoundError)) logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
 
