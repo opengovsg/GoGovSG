@@ -8,7 +8,8 @@ import { gaTrackingId, logger, redirectExpiry } from '../config'
 import { generateCookie, sendPageViewHit } from '../util/ga'
 import { NotFoundError } from '../util/error'
 
-const error404Path = '404.error.ejs'
+const ERROR_404_PATH = '404.error.ejs'
+const TRANSITION_PATH = 'transition-page.ejs'
 
 /**
  *
@@ -154,7 +155,7 @@ export default async function redirect(req: Express.Request, res: Express.Respon
 
   // Short link must consist of valid characters
   if (!shortUrl || !/^[a-zA-Z0-9-]+$/.test(shortUrl)) {
-    res.status(404).render(error404Path, { shortUrl })
+    res.status(404).render(ERROR_404_PATH, { shortUrl })
     return
   }
   shortUrl = shortUrl.toLowerCase()
@@ -169,19 +170,22 @@ export default async function redirect(req: Express.Request, res: Express.Respon
     // Google analytics
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
-
     // Redirect immediately if a crawler is visiting the site
     if (isCrawler(req.headers["user-agent"] || '')) {
       res.status(302).redirect(longUrl)
       return
     } else {
-      // TODO: Serve transition page
-      res.status(302).redirect(longUrl)
+      // Serve transition page
+      // TODO: Get/set a browser cookie so that this isn't served too frequently
+      res.status(200)
+        .render(TRANSITION_PATH, {
+          shortUrl,
+          longUrl,
+        })
     }
-
   } catch (error) {
     if (!(error instanceof NotFoundError)) logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
 
-    res.status(404).render(error404Path, { shortUrl })
+    res.status(404).render(ERROR_404_PATH, { shortUrl })
   }
 }
