@@ -31,17 +31,14 @@ function gaLogging(req: Express.Request, res:Express.Response, shortUrl: string,
  */
 function getLongUrlFromCache (shortUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    // Check if cache contains value
     redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
       if (cacheError) {
-        // Log and fallback to looking in the database
         logger.error(`Cache lookup failed unexpectedly:\t${cacheError}`)
         reject(cacheError)
       } else {
         if (!cacheLongUrl) {
           reject(new NotFoundError(`longUrl not found in cache:\tshortUrl=${shortUrl}`))
         }
-        // Cache lookup succeeded
         resolve(cacheLongUrl)
       }
     })
@@ -56,14 +53,12 @@ function getLongUrlFromCache (shortUrl: string): Promise<string> {
  */
 function getLongUrlFromDatabase (shortUrl: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
-    // Could not lookup from cache, look in database
     Url.findOne({
       where: {
         shortUrl,
         state: ACTIVE,
       },
     }).then((url) => {
-      // No such URL
       if (!url) {
         reject(new NotFoundError(`longUrl not found in database:\tshortUrl=${shortUrl}`))
       } else {
@@ -117,7 +112,6 @@ async function getLongUrlFromStore (shortUrl: string): Promise<string> {
  * @param shortUrl 
  */
 function incrementClick (shortUrl: string): void {
-  // Update clicks in database
   Url.findOne({ where: { shortUrl } }).then((url) => {
     if (url) {
       url.increment('clicks')
@@ -141,7 +135,7 @@ export default async function redirect(req: Express.Request, res: Express.Respon
   shortUrl = shortUrl.toLowerCase()
 
   try {
-    // Find longUrl and redirect
+    // Find longUrl to redirect to
     const longUrl = await getLongUrlFromStore(shortUrl)
 
     // Update clicks in database
