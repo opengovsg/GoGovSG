@@ -27,6 +27,17 @@
             #bottom-container {
                 height: 50vh;
                 background-color: #384a51;
+                text-align: center;
+                position: relative;
+            }
+
+            #bottom-container img {
+                position: absolute;
+                bottom: 0;
+                margin-bottom: 110px;
+                width: 96px;
+                height: 30px;
+                margin-left: -48px;
             }
 
             #main-message {
@@ -71,6 +82,7 @@
                 border-radius: 10px;
                 box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
                 padding: 24px 36px;
+                z-index: 1000;
             }
 
             #card h3 {
@@ -106,7 +118,7 @@
             </div>
 			<!-- loader circle -->
 			<div id="loader-circle">
-				<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACiUlEQVRoQ+2ZvY8OURTGf2+HahNR6VfWR6UlUaGybE9J4T8giK/9D7agRL2LaldFaFW+Qk8jQoVSns1OMo65M+e8c6/JvHlvO/eee57zdc95ZsLI12Tk+jMHMLQHS3ngKHANOLkD8BlwG3idG3AJAFL+JbDbKPsLOJ4bRAkAj4HlhKWfAGdzeqEEgJ8N1q90lhf2DAlgEVgCvgGvEopMC+AYsBf4AHzygox44AFwvib4HXAZeGEui4bQCWANOFiT8xC44AHhBWCVr2T/AA4Dn2uXRZJ4P/AWWGhQ1gXCA0Bh87HFGreAG+a7t4zeBK63yD7QFU4eAKooCovU2gBWPO5u2LMOnGs5q4qlypVcHgBKLtX11LoPXJoSwD3gYstZvRupYrF9zANA+5Sw9SSr33ka2JoSwClgM3H2PXCoS64XgCqFQsUm2ypwteuSju93gStmj4qDQut5l2wvAMlRxZC7jwBfAcXvtJa3eskTyqN9wBtAYVmvbL1yoMsIg36PeGBQRVOXzywAPUR6YOr9vB6s7P18wrLeh7CxjOqwau8uI/w3oDehNIhIK9IIQC/fmYRlnrb0+rlyJNQMNuWAenZr/Uo5ecFOWrkUr+SE2vGZBDD6EBp9EisWR11GcydlUXkz+xIXtVpO4REPlGyn1bLYdvqLB6gXQMmB5k7DUPR9Z6CxlM0/mLwAhhgpdacom9blATD6oX70tEpJYkszhv4jpFYWYkvCR00tVtaxIMTbiNy11EeonweayN1HhkjOxkqUpNfFwlX0ehsX+xcYTxXqqmT2e2ggiQq3+0sAiIZQLwwlAISG8l7aB8jd6D1uWiQq+H+EUF+dQudLhFBIgb6b5wD6WrDv+T+lzKIxyTtIrgAAAABJRU5ErkJggg=="/>
+				<img src="https://gosg-public.s3-ap-southeast-1.amazonaws.com/icon-loader.svg"/>
 			</div>
             <div id="card">
                 <h3>You will be redirected to your requested content in a few seconds:</h3>
@@ -115,7 +127,7 @@
 
         </div>
         <div id="bottom-container">
-
+            <img src="https://gosg-public.s3-ap-southeast-1.amazonaws.com/go-logo.svg"/>
         </div>
         <script>
             setTimeout(function() {
