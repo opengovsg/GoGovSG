@@ -283,6 +283,7 @@ const writeToUrlHistory = async (
     state: urlObj.state,
     urlShortUrl: urlObj.shortUrl,
     longUrl: urlObj.longUrl,
+    isFile: urlObj.isFile,
   }, {
     transaction: options.transaction,
   })
