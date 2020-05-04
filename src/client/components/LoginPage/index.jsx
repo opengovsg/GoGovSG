@@ -12,10 +12,12 @@ import {
 } from '@material-ui/core'
 import { Minimatch } from 'minimatch'
 import { Redirect } from 'react-router-dom'
+
 import loginActions from '~/actions/login'
 import rootActions from '~/actions/root'
 import { USER_PAGE, loginFormVariants } from '~/util/types'
-import GoLogo from '~/assets/go-main-logo.png'
+import GoLogo from '../../assets/go-main-logo.png'
+import LoginGraphics from '../../assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../../util/requests'
 import LoginForm from './LoginForm'
 import Section from '../Section'
@@ -70,10 +72,16 @@ const useStyles = makeStyles((theme) =>
     textInputGroup: {
       marginBottom: theme.spacing(4),
     },
-    emptyMeaninglessVeryPlaceholderImage: {
+    graphicColorFill: {
+      backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
-      backgroundColor: '#8CA6AD',
+      textAlign: 'center',
+      overflow: 'hidden',
+    },
+    loginGraphic: {
+      userDrag: 'none',
+      height: '100%',
     },
     '@media screen\\0': {
       // Styles for Internet Explorer compatibility
@@ -166,7 +174,13 @@ const LoginPage = ({
         <div className={classes.container}>
           <div>
             <Hidden mdDown>
-              <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
+              <div className={classes.graphicColorFill}>
+                <img
+                  className={classes.loginGraphic}
+                  src={LoginGraphics}
+                  alt="Login page graphic"
+                />
+              </div>
             </Hidden>
           </div>
           <div className={classes.loginContainer}>
