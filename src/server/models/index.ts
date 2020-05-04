@@ -32,6 +32,7 @@ interface UrlBaseType extends IdType {
   readonly shortUrl: string
   readonly longUrl: string
   readonly state: Sequelize.EnumDataType<string>
+  readonly isFile: boolean
 }
 
 interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
@@ -86,6 +87,10 @@ export const Url = <UrlTypeStatic>sequelize.define('url', {
     type: Sequelize.INTEGER,
     allowNull: false,
     defaultValue: 0,
+  },
+  isFile: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
   },
 }, {
   hooks: {
@@ -250,6 +255,10 @@ const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
   // after `Url` table.
   state: {
     type: 'enum_urls_state',
+    allowNull: false,
+  },
+  isFile: {
+    type: Sequelize.BOOLEAN,
     allowNull: false,
   },
 })
