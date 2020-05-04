@@ -1,6 +1,11 @@
 import { URL, parse } from 'url'
 import { S3 } from 'aws-sdk'
-import { s3Bucket } from '../config'
+import { logger, s3Bucket } from '../config'
+
+// Types for S3 object ACL toggling. Do not change string representations.
+export const PUBLIC = 'public-read'
+export const PRIVATE = 'private'
+type VisibilityType = 'public-read' | 'private'
 
 export const s3 = new S3()
 
@@ -38,4 +43,21 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
   }
   const presignedUrl = await s3.getSignedUrlPromise('putObject', params)
   return reformatPresignedUrl(presignedUrl, fileName)
+}
+
+export const setS3ObjectACL = (key: string, acl: VisibilityType) => {
+  const params = {
+    Bucket: s3Bucket,
+    Key: key,
+    ACL: acl,
+  }
+  return new Promise((res, rej) => {
+    s3.putObjectAcl(params, (err) => {
+      if (err) {
+        logger.error(err)
+        rej(err)
+      }
+      res()
+    })
+  })
 }
