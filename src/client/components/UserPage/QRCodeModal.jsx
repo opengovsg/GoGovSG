@@ -5,7 +5,7 @@ import { Modal, Paper, Typography } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 
 import userPageStyle from '~/styles/userPage'
-import GoLogo from '~/assets/go-qr-logo.png'
+import GoLogo from '~/assets/go-qr-logo.svg'
 import QRCode from '~/util/QRCode'
 
 // Display modal for the QR Code

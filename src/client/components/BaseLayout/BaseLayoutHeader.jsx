@@ -10,7 +10,7 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import i18next from 'i18next'
-import GoLogo from '~/assets/go-main-logo.png'
+import GoLogo from '~/assets/go-main-logo.svg'
 import loginActions from '~/actions/login'
 import Section from '../Section'
 
