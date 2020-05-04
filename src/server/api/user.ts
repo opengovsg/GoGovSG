@@ -11,7 +11,7 @@ import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { generatePresignedUrl } from '../util/aws'
+import { PRIVATE, PUBLIC, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
 
 const router = Express.Router()
 
@@ -309,6 +309,11 @@ router.patch('/url', validateState, async (req, res) => {
           logger.error(`Short URL could not be purged from cache:\t${err}`)
         }
       })
+    }
+
+    if (url.isFile) {
+      // Toggle the ACL of the S3 object
+      await setS3ObjectACL(url.shortUrl, state === ACTIVE ? PUBLIC : PRIVATE)
     }
   } catch (error) {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
