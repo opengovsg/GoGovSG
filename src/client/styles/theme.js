@@ -51,11 +51,6 @@ const theme = responsiveFontSizes(
         fontSize: '1.2rem',
         lineHeight: 1.5,
       },
-      subtitle2: {
-        fontSize: '1rem',
-        fontWeight: 400,
-        lineHeight: 1.43,
-      },
       body1: {
         fontSize: '1rem',
       },
