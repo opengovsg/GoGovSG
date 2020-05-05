@@ -299,7 +299,7 @@ router.patch('/url', validateState, async (req, res) => {
     }
 
     await sequelize.transaction(async (t) => {
-      url.update({ state }, { transaction: t })
+      await url.update({ state }, { transaction: t })
       if (url.isFile) {
         // Toggle the ACL of the S3 object
         await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
