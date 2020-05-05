@@ -2,10 +2,11 @@ import { URL, parse } from 'url'
 import { S3 } from 'aws-sdk'
 import { logger, s3Bucket } from '../config'
 
-// Types for S3 object ACL toggling. Do not change string representations.
-export const PUBLIC = 'public-read'
-export const PRIVATE = 'private'
-type VisibilityType = 'public-read' | 'private'
+// Enums for S3 object ACL toggling. Do not change string representations.
+export enum FileVisibility {
+  Public = 'public-read',
+  Private = 'private',
+}
 
 export const s3 = new S3()
 
@@ -45,7 +46,7 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
   return reformatPresignedUrl(presignedUrl, fileName)
 }
 
-export const setS3ObjectACL = (key: string, acl: VisibilityType): Promise<void> => {
+export const setS3ObjectACL = (key: string, acl: FileVisibility): Promise<void> => {
   const params = {
     Bucket: s3Bucket,
     Key: key,

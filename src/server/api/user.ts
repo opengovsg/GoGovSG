@@ -11,7 +11,8 @@ import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { PRIVATE, PUBLIC, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
+import { FileVisibility, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
+const { Public, Private } = FileVisibility
 
 const router = Express.Router()
 
@@ -313,7 +314,7 @@ router.patch('/url', validateState, async (req, res) => {
 
     if (url.isFile) {
       // Toggle the ACL of the S3 object
-      await setS3ObjectACL(url.shortUrl, state === ACTIVE ? PUBLIC : PRIVATE)
+      await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
     }
   } catch (error) {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
