@@ -11,7 +11,10 @@ import {
 } from '@material-ui/core'
 
 import useCreateLinkFormStyles from './styles/useCreateLinkFormStyles'
-import { isValidLongUrl, isValidShortUrl } from '~/../shared/util/validation'
+import {
+  isValidLongUrl,
+  isValidShortUrl,
+} from '../../../../../shared/util/validation'
 import ModalMargins from '../ModalMargins'
 
 // Height of the text field in the create link dialog.
