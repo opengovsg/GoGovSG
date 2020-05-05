@@ -12,10 +12,12 @@ import {
 } from '@material-ui/core'
 import { Minimatch } from 'minimatch'
 import { Redirect } from 'react-router-dom'
+
 import loginActions from '~/actions/login'
 import rootActions from '~/actions/root'
 import { USER_PAGE, loginFormVariants } from '~/util/types'
-import GoLogo from '~/assets/go-main-logo.png'
+import GoLogo from '../../assets/go-main-logo.svg'
+import LoginGraphics from '../../assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../../util/requests'
 import LoginForm from './LoginForm'
 import Section from '../Section'
@@ -48,13 +50,27 @@ const useStyles = makeStyles((theme) =>
       '-ms-flex': '1 1 auto',
     },
     loginContainer: {
+      display: 'flex',
       width: '100%',
       [theme.breakpoints.up('lg')]: {
         width: '50%',
       },
     },
+    verticalAlign: {
+      display: 'flex',
+      width: '100%',
+      [theme.breakpoints.up('lg')]: {
+        alignItems: 'center',
+      },
+    },
     loginWrapper: {
       display: 'block',
+      [theme.breakpoints.up('lg')]: {
+        // Gives the contents slightly more than enough height,
+        // so that validation messages do not shift the centering.
+        height: '400px',
+        maxHeight: '80vh',
+      },
     },
     headerGroup: {
       marginBottom: theme.spacing(4),
@@ -70,10 +86,16 @@ const useStyles = makeStyles((theme) =>
     textInputGroup: {
       marginBottom: theme.spacing(4),
     },
-    emptyMeaninglessVeryPlaceholderImage: {
+    graphicColorFill: {
+      backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
-      backgroundColor: '#8CA6AD',
+      textAlign: 'center',
+      overflow: 'hidden',
+    },
+    loginGraphic: {
+      userDrag: 'none',
+      height: '100%',
     },
     '@media screen\\0': {
       // Styles for Internet Explorer compatibility
@@ -101,7 +123,6 @@ const LoginPage = ({
   // Display a login message from the server
   useEffect(() => {
     let cancelled = false
-
     getEmailValidator()
     get('/api/login/message').then((response) => {
       if (response.ok) {
@@ -110,7 +131,6 @@ const LoginPage = ({
         })
       }
     })
-
     return () => {
       cancelled = true
     }
@@ -166,35 +186,43 @@ const LoginPage = ({
         <div className={classes.container}>
           <div>
             <Hidden mdDown>
-              <div className={classes.emptyMeaninglessVeryPlaceholderImage} />
+              <div className={classes.graphicColorFill}>
+                <img
+                  className={classes.loginGraphic}
+                  src={LoginGraphics}
+                  alt="Login page graphic"
+                />
+              </div>
             </Hidden>
           </div>
           <div className={classes.loginContainer}>
-            <Section>
-              <section className={classes.loginWrapper}>
-                <span className={classes.headerGroup}>
-                  <Link href="/#/">
-                    <img
-                      className={classes.logo}
-                      src={GoLogo}
-                      alt="GoGovSG logo"
-                    />
-                  </Link>
-                  <Typography className={classes.loginHeader} variant="body1">
-                    Only available for use by public officers with a{' '}
-                    <strong>{i18next.t('general.emailDomain')}</strong> email.
-                  </Typography>
-                </span>
-                <span className={classes.textInputGroup}>
-                  <Typography variant="body2">
-                    {isEmailView ? 'Email' : 'One-time password'}
-                  </Typography>
-                  {emailForm}
-                  {otpForm}
-                  {progressBar}
-                </span>
-              </section>
-            </Section>
+            <div className={classes.verticalAlign}>
+              <Section>
+                <section className={classes.loginWrapper}>
+                  <span className={classes.headerGroup}>
+                    <Link href="/#/">
+                      <img
+                        className={classes.logo}
+                        src={GoLogo}
+                        alt="GoGovSG logo"
+                      />
+                    </Link>
+                    <Typography className={classes.loginHeader} variant="body1">
+                      Only available for use by public officers with a{' '}
+                      <strong>{i18next.t('general.emailDomain')}</strong> email.
+                    </Typography>
+                  </span>
+                  <span className={classes.textInputGroup}>
+                    <Typography variant="body2">
+                      {isEmailView ? 'Email' : 'One-time password'}
+                    </Typography>
+                    {emailForm}
+                    {otpForm}
+                    {progressBar}
+                  </span>
+                </section>
+              </Section>
+            </div>
           </div>
         </div>
       </BaseLayout>

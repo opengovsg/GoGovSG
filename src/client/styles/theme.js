@@ -73,7 +73,13 @@ const theme = responsiveFontSizes(
       },
       MuiButton: {
         root: {
-          borderRadius: '30px',
+          borderRadius: '40px',
+        },
+        contained: {
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: 'none',
+          },
         },
       },
       MuiAppBar: {

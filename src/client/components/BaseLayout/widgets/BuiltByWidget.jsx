@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import classNames from 'classnames'
-import BuiltByImg from '~/assets/built-by.png'
+import BuiltByImg from '~/assets/built-by.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
