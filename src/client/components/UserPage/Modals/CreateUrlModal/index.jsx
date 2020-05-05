@@ -12,7 +12,8 @@ import 'boxicons'
 
 import userActions from '../../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'
-import { ApplyAppMargins } from '../../../AppMargins'
+import { useFullScreenDialog } from '../util/useFullScreenDialog'
+import ModalMargins from '../ModalMargins'
 
 const mapStateToProps = (state) => ({
   shortUrl: state.user.shortUrl,
@@ -31,15 +32,20 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       justifyContent: 'space-between',
       width: '100%',
-      height: '87px',
-      paddingTop: theme.spacing(2),
-      paddingBottom: theme.spacing(2),
     },
     headerText: {
       alignSelf: 'flex-end',
+      marginTop: theme.spacing(6),
+      marginBottom: theme.spacing(2),
     },
-    closeIcon: {
+    closeIconButton: {
       fill: theme.palette.primary.dark,
+      height: (props) => (props.isFullScreenDialog ? 36 : 30.8),
+      width: (props) => (props.isFullScreenDialog ? 36 : 30.8),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
+      marginLeft: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
+      marginRight: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
     },
   }),
 )
@@ -54,16 +60,19 @@ const CreateUrlModal = ({
   setLongUrl,
   setRandomShortUrl,
 }) => {
-  const classes = useStyles()
+  const isFullScreenDialog = useFullScreenDialog()
+  const classes = useStyles({ isFullScreenDialog })
   return (
     <Dialog
       aria-labelledby="createUrlModal"
       aria-describedby="create-links"
-      fullScreen
+      fullScreen={isFullScreenDialog}
+      fullWidth={!isFullScreenDialog}
+      maxWidth="sm"
       open={createUrlModal}
       onClose={closeCreateUrlModal}
     >
-      <ApplyAppMargins>
+      <ModalMargins applyRightMargin={false}>
         <div className={classes.headerDiv}>
           <Typography
             className={classes.headerText}
@@ -73,14 +82,14 @@ const CreateUrlModal = ({
             Create new link
           </Typography>
           <IconButton
-            className={classes.closeIcon}
+            className={classes.closeIconButton}
             onClick={closeCreateUrlModal}
             size="small"
           >
-            <box-icon size="md" name="x" />
+            <box-icon size={isFullScreenDialog ? 'md' : 'sm'} name="x" />
           </IconButton>
         </div>
-      </ApplyAppMargins>
+      </ModalMargins>
       {/* // TODO: Convert props drilling to redux. */}
       <CreateLinkForm
         onSubmit={onSubmit}

@@ -8,60 +8,17 @@ import {
   InputAdornment,
   TextField,
   Typography,
-  createStyles,
-  makeStyles,
 } from '@material-ui/core'
 
+import useCreateLinkFormStyles from './styles/useCreateLinkFormStyles'
 import { isValidLongUrl, isValidShortUrl } from '~/../shared/util/validation'
-import { ApplyAppMargins } from '../../../AppMargins'
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    startAdorment: {
-      minHeight: (props) => props.textFieldHeight,
-      backgroundColor: theme.palette.dividerLight,
-      borderRight: `1px solid ${theme.palette.divider}`,
-    },
-    startAdormentText: {
-      width: '87px',
-      paddingLeft: theme.spacing(2),
-    },
-    form: {
-      display: 'flex',
-      flexDirection: 'column',
-      marginBottom: theme.spacing(4),
-    },
-    labelText: {
-      marginLeft: '1px',
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(0.5),
-    },
-    outlinedInput: {
-      padding: theme.spacing(0),
-    },
-    input: {
-      flexGrow: '1',
-      height: (props) => props.textFieldHeight,
-      padding: theme.spacing(0),
-    },
-    button: {
-      width: '180px',
-      margin: theme.spacing(4, 0, 2),
-      padding: theme.spacing(1, 5),
-      alignSelf: 'center',
-    },
-    refreshIcon: {
-      marginRight: theme.spacing(1),
-      fill: theme.palette.primary.dark,
-    },
-  }),
-)
+import ModalMargins from '../ModalMargins'
 
 // Height of the text field in the create link dialog.
 const textFieldHeight = 44
 
 const FormStartAdorment = ({ children }) => {
-  const classes = useStyles({ textFieldHeight })
+  const classes = useCreateLinkFormStyles({ textFieldHeight })
   return (
     <InputAdornment className={classes.startAdorment} position="start">
       <Typography className={classes.startAdormentText} color="textSecondary">
@@ -79,11 +36,11 @@ export default function CreateLinkForm({
   setLongUrl,
   setRandomShortUrl,
 }) {
-  const classes = useStyles({ textFieldHeight })
+  const classes = useCreateLinkFormStyles({ textFieldHeight })
   return (
     <>
       <Divider />
-      <ApplyAppMargins>
+      <ModalMargins>
         <form
           className={classes.form}
           onSubmit={(e) => {
@@ -112,14 +69,16 @@ export default function CreateLinkForm({
                 : "This doesn't look like a valid URL."
             }
           />
-          <Typography className={classes.labelText}>
+          <div className={classes.labelText}>
             <Typography variant="body1">Customise your link</Typography>
-            <Typography variant="body2" fontStyle="italics" display="inline">
-              {'(Links are unique and '}
-              {/* <strong>cannot be deleted</strong> */}
-              {' after creation)'}
+            <Typography variant="caption" color="textSecondary">
+              <i>
+                {'(Links are unique and '}
+                <strong>cannot be deleted</strong>
+                {' after creation)'}
+              </i>
             </Typography>
-          </Typography>
+          </div>
           <TextField
             error={!isValidShortUrl(shortUrl, true)}
             InputProps={{
@@ -167,7 +126,7 @@ export default function CreateLinkForm({
             Create link
           </Button>
         </form>
-      </ApplyAppMargins>
+      </ModalMargins>
     </>
   )
 }

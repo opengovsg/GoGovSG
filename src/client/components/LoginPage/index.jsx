@@ -213,7 +213,7 @@ const LoginPage = ({
                     </Typography>
                   </span>
                   <span className={classes.textInputGroup}>
-                    <Typography variant="subtitle2">
+                    <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
                     {emailForm}
