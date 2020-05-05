@@ -74,6 +74,9 @@ const theme = responsiveFontSizes(
           '&:hover': {
             boxShadow: 'none',
           },
+          '&:active': {
+            boxShadow: 'none',
+          },
         },
       },
       MuiAppBar: {
