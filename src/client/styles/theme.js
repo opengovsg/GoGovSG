@@ -55,7 +55,7 @@ const theme = responsiveFontSizes(
         fontSize: '0.875rem',
       },
       body2: {
-        fontSize: '1rem',
+        fontSize: '0.7rem',
       },
       caption: {
         fontSize: '0.8rem',
@@ -65,12 +65,6 @@ const theme = responsiveFontSizes(
       },
     },
     overrides: {
-      MuiDivider: {
-        root: {
-          width: '50vw',
-          margin: '16px 0px',
-        },
-      },
       MuiButton: {
         root: {
           borderRadius: '40px',
