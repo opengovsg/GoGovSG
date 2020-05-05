@@ -36,7 +36,7 @@ const EmptyState = () => {
       <Typography
         className={classes.headerText}
         align="center"
-        variant="body2"
+        variant="body1"
         color="textPrimary"
       >
         You have not created any short links yet.
