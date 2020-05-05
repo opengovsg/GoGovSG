@@ -298,9 +298,13 @@ router.patch('/url', validateState, async (req, res) => {
       )
     }
 
-    await sequelize.transaction((t) => (
+    await sequelize.transaction(async (t) => {
       url.update({ state }, { transaction: t })
-    ))
+      if (url.isFile) {
+        // Toggle the ACL of the S3 object
+        await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
+      }
+    })
     res.ok()
 
     if (state === INACTIVE) {
@@ -310,11 +314,6 @@ router.patch('/url', validateState, async (req, res) => {
           logger.error(`Short URL could not be purged from cache:\t${err}`)
         }
       })
-    }
-
-    if (url.isFile) {
-      // Toggle the ACL of the S3 object
-      await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
     }
   } catch (error) {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
