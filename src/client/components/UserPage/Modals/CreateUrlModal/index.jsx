@@ -12,7 +12,7 @@ import 'boxicons'
 
 import userActions from '../../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'
-import { useFullScreenDialog } from '../util/useFullScreenDialog'
+import useFullScreenDialog from '../util/useFullScreenDialog'
 import ModalMargins from '../ModalMargins'
 
 const mapStateToProps = (state) => ({

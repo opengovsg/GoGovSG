@@ -6,5 +6,4 @@ const useFullScreenDialog = () => {
   return !useMediaQuery(theme.breakpoints.up('sm'))
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export { useFullScreenDialog }
+export default useFullScreenDialog
