@@ -45,7 +45,7 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
   return reformatPresignedUrl(presignedUrl, fileName)
 }
 
-export const setS3ObjectACL = (key: string, acl: VisibilityType) => {
+export const setS3ObjectACL = (key: string, acl: VisibilityType): Promise<void> => {
   const params = {
     Bucket: s3Bucket,
     Key: key,
