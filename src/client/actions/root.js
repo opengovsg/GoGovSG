@@ -5,15 +5,17 @@ import {
 } from '~/actions/types'
 
 const closeSnackbar = () => ({ type: CLOSE_SNACKBAR })
-const setErrorMessage = message => ({
+const setErrorMessage = (message) => ({
   type: SET_ERROR_MESSAGE,
   payload: message,
 })
-const setInfoMessage = message => ({
+const setInfoMessage = (message) => ({
   type: SET_INFO_MESSAGE,
   payload: message,
 })
 
 export default {
-  closeSnackbar, setErrorMessage, setInfoMessage,
+  closeSnackbar,
+  setErrorMessage,
+  setInfoMessage,
 }

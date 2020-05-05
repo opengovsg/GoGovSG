@@ -29,10 +29,7 @@ function isValidGovEmail(email: string) {
  */
 router.get('/message', (_, res: Express.Response) => res.send(loginMessage))
 
-router.get(
-  '/emaildomains',
-  (_, res: Express.Response) => res.send(validEmailDomainGlobExpression)
-)
+router.get('/emaildomains', (_, res: Express.Response) => res.send(validEmailDomainGlobExpression))
 
 /**
  * Request for an OTP to be generated.
@@ -73,18 +70,25 @@ router.post('/otp', (req: Express.Request, res: Express.Response) => {
           mailOTP(email, otp, (mailError: Error) => {
             if (!mailError) {
               res.ok(jsonMessage('OTP generated and sent.'))
+            } else if (process.env.NODE_ENV === 'development') {
+              logger.warn('Allowing user to OTP even though mail errored.')
+              logger.warn(
+                'This may be an issue with your IP. More information can be found at https://support.google.com/mail/answer/10336?hl=en)',
+              )
+              logger.warn('This message should NEVER be seen in production.')
+              res.ok(jsonMessage('Error mailing OTP.'))
             } else {
               res.serverError(
-                jsonMessage('Error mailing OTP, please try again later.')
+                jsonMessage('Error mailing OTP, please try again later.'),
               )
             }
           })
-        }
+        },
       )
     })
   } else {
     res.badRequest(
-      jsonMessage('Invalid email provided.')
+      jsonMessage('Invalid email provided. Email domain is not whitelisted.'),
     )
   }
 })
@@ -101,7 +105,7 @@ router.post('/verify', (req, res) => {
       if (redisGetError) {
         logger.error(`Error retrieving OTP:\t${redisGetError}`)
         res.serverError(
-          jsonMessage('Error retrieving OTP. Please try again later.')
+          jsonMessage('Error retrieving OTP. Please try again later.'),
         )
         return
       }
@@ -123,8 +127,8 @@ router.post('/verify', (req, res) => {
 
             res.unauthorized(
               jsonMessage(
-                `OTP hash verification failed, ${otpObject.retries} attempt(s) remaining.`
-              )
+                `OTP hash verification failed, ${otpObject.retries} attempt(s) remaining.`,
+              ),
             )
 
             if (otpObject.retries > 0) {
@@ -136,16 +140,16 @@ router.post('/verify', (req, res) => {
                 (otpRetryDecrementError) => {
                   if (otpRetryDecrementError) {
                     logger.error(
-                      `OTP retry could not be decremented:\t${otpRetryDecrementError}`
+                      `OTP retry could not be decremented:\t${otpRetryDecrementError}`,
                     )
                   }
-                }
+                },
               )
             } else {
               otpClient.del(email, (otpRetryLimitError) => {
                 if (otpRetryLimitError) {
                   logger.error(
-                    `Could not delete OTP after reaching retry limit:\t${otpRetryLimitError}`
+                    `Could not delete OTP after reaching retry limit:\t${otpRetryLimitError}`,
                   )
                 }
               })
@@ -175,14 +179,14 @@ router.post('/verify', (req, res) => {
         })
         .catch((error: Error) => {
           res.serverError(
-            jsonMessage('Error verifying OTP. Please try again later.')
+            jsonMessage('Error verifying OTP. Please try again later.'),
           )
           logger.error(`Error verifying OTP:\t${error}`)
         })
     })
   } else {
     res.badRequest(
-      jsonMessage('Some or all of required arguments are missing: email, otp')
+      jsonMessage('Some or all of required arguments are missing: email, otp'),
     )
   }
 })

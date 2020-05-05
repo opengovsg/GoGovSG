@@ -9,7 +9,7 @@ import rootActions from '~/actions/root'
 import { snackbarVariants } from '~/util/types'
 import 'boxicons'
 
-const snackbarStyle = theme => ({
+const snackbarStyle = (theme) => ({
   error: {
     backgroundColor: theme.palette.error.main,
   },
@@ -20,11 +20,11 @@ const snackbarStyle = theme => ({
     fontSize: '0.875rem',
   },
 })
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   message: state.root.snackbarMessage.message,
   variant: state.root.snackbarMessage.variant,
 })
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   closeSnackbar: (event, reason) => {
     if (reason !== 'clickaway') {
       dispatch(rootActions.closeSnackbar())
@@ -32,10 +32,9 @@ const mapDispatchToProps = dispatch => ({
   },
 })
 
-const MessageSnackbar = ({
-  classes, variant, message, closeSnackbar,
-}) => {
-  const colorClass = variant === snackbarVariants.ERROR ? classes.error : classes.info
+const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
+  const colorClass =
+    variant === snackbarVariants.ERROR ? classes.error : classes.info
 
   return (
     <Snackbar open={!!message} autoHideDuration={5000} onClose={closeSnackbar}>
@@ -66,8 +65,5 @@ MessageSnackbar.propTypes = {
 }
 
 export default withStyles(snackbarStyle)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(MessageSnackbar)
+  connect(mapStateToProps, mapDispatchToProps)(MessageSnackbar),
 )

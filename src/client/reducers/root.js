@@ -17,12 +17,13 @@ const root = (state = initialState, action) => {
 
   switch (action.type) {
     case CLOSE_SNACKBAR:
-      nextState = Object.assign({}, state, {
+      nextState = {
+        ...state,
         snackbarMessage: {
           message: '',
           variant: state.snackbarMessage.variant,
         },
-      })
+      }
       break
     case SET_ERROR_MESSAGE:
       nextState = {
@@ -44,7 +45,7 @@ const root = (state = initialState, action) => {
     default:
       return state
   }
-  return Object.assign({}, state, nextState)
+  return { ...state, ...nextState }
 }
 
 export default root

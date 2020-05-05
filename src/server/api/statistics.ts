@@ -21,7 +21,7 @@ router.get('/', async (_: Express.Request, res: Express.Response) => {
     // If the data is not in Redis, results will be [null, null, null]
     if (!cacheError && !results.includes(null)) {
       // Turn each value into an integer
-      const [userCount, linkCount, clickCount] = results.map(x => Number(x))
+      const [userCount, linkCount, clickCount] = results.map((x) => Number(x))
 
       res.json({ userCount, linkCount, clickCount })
       return

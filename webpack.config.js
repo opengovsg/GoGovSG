@@ -70,20 +70,27 @@ module.exports = () => {
           'og:title': 'Go.gov.sg',
           'og:type': 'article',
           'og:description': 'The official Singapore government link shortener',
-          'og:image': 'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
+          'og:image':
+            'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
         },
       }),
     ],
   }
   if (requiredSentryEnvVar.reduce((x, y) => x && y)) {
-    console.log('\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m')
-    jsBundle.plugins.push(new SentryCliPlugin({
-      include: '.',
-      ignoreFile: '.gitignore',
-      ignore: ['node_modules', 'webpack.config.js'],
-    }))
+    console.log(
+      '\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m',
+    )
+    jsBundle.plugins.push(
+      new SentryCliPlugin({
+        include: '.',
+        ignoreFile: '.gitignore',
+        ignore: ['node_modules', 'webpack.config.js'],
+      }),
+    )
   } else {
-    console.log('\x1b[33m[webpack-sentry-sourcemaps] Skipping upload of sourcemaps to Sentry because of missing env vars. Ignore this if it was intended.\x1b[0m')
+    console.log(
+      '\x1b[33m[webpack-sentry-sourcemaps] Skipping upload of sourcemaps to Sentry because of missing env vars. Ignore this if it was intended.\x1b[0m',
+    )
   }
   return [jsBundle]
 }
