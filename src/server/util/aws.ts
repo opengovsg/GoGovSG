@@ -1,6 +1,6 @@
 import { URL, parse } from 'url'
 import { S3 } from 'aws-sdk'
-import { logger, s3Bucket } from '../config'
+import { s3Bucket } from '../config'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
 export enum FileVisibility {
@@ -46,19 +46,11 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
   return reformatPresignedUrl(presignedUrl, fileName)
 }
 
-export const setS3ObjectACL = (key: string, acl: FileVisibility): Promise<void> => {
+export const setS3ObjectACL = (key: string, acl: FileVisibility): Promise<any> => {
   const params = {
     Bucket: s3Bucket,
     Key: key,
     ACL: acl,
   }
-  return new Promise((res, rej) => {
-    s3.putObjectAcl(params, (err) => {
-      if (err) {
-        logger.error(err)
-        rej(err)
-      }
-      res()
-    })
-  })
+  return s3.putObjectAcl(params).promise()
 }
