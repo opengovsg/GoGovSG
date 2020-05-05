@@ -29,10 +29,7 @@ function isValidGovEmail(email: string) {
  */
 router.get('/message', (_, res: Express.Response) => res.send(loginMessage))
 
-router.get(
-  '/emaildomains',
-  (_, res: Express.Response) => res.send(validEmailDomainGlobExpression),
-)
+router.get('/emaildomains', (_, res: Express.Response) => res.send(validEmailDomainGlobExpression))
 
 /**
  * Request for an OTP to be generated.
@@ -73,6 +70,13 @@ router.post('/otp', (req: Express.Request, res: Express.Response) => {
           mailOTP(email, otp, (mailError: Error) => {
             if (!mailError) {
               res.ok(jsonMessage('OTP generated and sent.'))
+            } else if (process.env.NODE_ENV === 'development') {
+              logger.warn('Allowing user to OTP even though mail errored.')
+              logger.warn(
+                'This may be an issue with your IP. More information can be found at https://support.google.com/mail/answer/10336?hl=en)',
+              )
+              logger.warn('This message should NEVER be seen in production.')
+              res.ok(jsonMessage('Error mailing OTP.'))
             } else {
               res.serverError(
                 jsonMessage('Error mailing OTP, please try again later.'),
@@ -84,7 +88,7 @@ router.post('/otp', (req: Express.Request, res: Express.Response) => {
     })
   } else {
     res.badRequest(
-      jsonMessage('Invalid email provided. Email domain is not whitelisted.')
+      jsonMessage('Invalid email provided. Email domain is not whitelisted.'),
     )
   }
 })
