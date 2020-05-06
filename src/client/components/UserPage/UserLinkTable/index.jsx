@@ -1,6 +1,6 @@
 import React from 'react'
-import SearchInput from './SearchInput'
+import ToolBar from './ToolBar'
 
 export default function UserLinkTable() {
-  return <SearchInput />
+  return <ToolBar />
 }

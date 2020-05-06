@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import userActions from '../../../../actions/user'
+import userActions from '../../../../../actions/user'
 import RoundIconButton from './RoundIconButton'
 
 export default function CreateLinkButton() {

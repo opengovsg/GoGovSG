@@ -8,8 +8,8 @@ import {
 } from '@material-ui/core'
 import debounce from 'lodash/debounce'
 
-import userActions from '../../../../actions/user'
-import CreateLinkButton from './CreateLinkButton'
+import userActions from '../../../../../actions/user'
+import CreateLinkButton from '../CreateLinkButton'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
@@ -26,12 +26,6 @@ const mapDispatchToProps = (dispatch) => {
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    searchInputBar: {
-      display: 'flex',
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(2),
-      width: '100%',
-    },
     searchInput: {
       width: '100%',
       marginRight: theme.spacing(2),
@@ -61,44 +55,41 @@ const SearchInput = React.memo(({ updateSearchText }) => {
   }
 
   return (
-    <div className={classes.searchInputBar}>
-      <TextField
-        autoFocus
-        className={classes.searchInput}
-        variant="outlined"
-        value={tableConfig.searchText}
-        onChange={changeSearchTextHandler}
-        onBlur={changeSearchTextHandler}
-        onKeyDown={(e) => {
-          switch (e.key) {
-            case 'Escape':
-              e.target.value = ''
-              clearSearchTextHandler()
-              break
-            case 'Enter':
-              break
-            default:
-              return
-          }
-          e.target.blur()
-          e.preventDefault()
-        }}
-        placeholder="Search links"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <box-icon name="search" />
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end" onClick={clearSearchTextHandler}>
-              <box-icon name="filter" />
-            </InputAdornment>
-          ),
-        }}
-      />
-      <CreateLinkButton />
-    </div>
+    <TextField
+      autoFocus
+      className={classes.searchInput}
+      variant="outlined"
+      value={tableConfig.searchText}
+      onChange={changeSearchTextHandler}
+      onBlur={changeSearchTextHandler}
+      onKeyDown={(e) => {
+        switch (e.key) {
+          case 'Escape':
+            e.target.value = ''
+            clearSearchTextHandler()
+            break
+          case 'Enter':
+            break
+          default:
+            return
+        }
+        e.target.blur()
+        e.preventDefault()
+      }}
+      placeholder="Search links"
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <box-icon name="search" />
+          </InputAdornment>
+        ),
+        endAdornment: (
+          <InputAdornment position="end" onClick={clearSearchTextHandler}>
+            <box-icon name="filter" />
+          </InputAdornment>
+        ),
+      }}
+    />
   )
 }, searchInputIsEqual)
 
