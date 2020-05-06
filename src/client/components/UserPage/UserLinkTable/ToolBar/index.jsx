@@ -1,8 +1,10 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 
-import CreateLinkButton from './CreateLinkButton'
+import LinkCountHeader from './LinkCountHeader'
 import SearchInput from './SearchInput'
+import CreateLinkButton from './Buttons/CreateLinkButton'
+import DownloadButton from './Buttons/DownloadButton'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -19,8 +21,10 @@ export default function ToolBar() {
   const classes = useStyles()
   return (
     <div className={classes.toolBar}>
+      <LinkCountHeader />
       <SearchInput />
       <CreateLinkButton />
+      <DownloadButton />
     </div>
   )
 }

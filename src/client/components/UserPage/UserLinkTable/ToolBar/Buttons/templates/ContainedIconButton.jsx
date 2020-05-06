@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { IconButton, createStyles, makeStyles } from '@material-ui/core'
 
-const useState = makeStyles((theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     roundIconButton: {
       height: '100%',
@@ -20,8 +20,8 @@ const useState = makeStyles((theme) =>
   }),
 )
 
-const RoundIconButton = ({ children, href, onClick }) => {
-  const classes = useState()
+const ContainedIconButton = ({ children, href, onClick }) => {
+  const classes = useStyles()
   return (
     <IconButton
       className={classes.roundIconButton}
@@ -33,14 +33,15 @@ const RoundIconButton = ({ children, href, onClick }) => {
   )
 }
 
-RoundIconButton.propTypes = {
+ContainedIconButton.propTypes = {
+  children: PropTypes.node.isRequired,
   href: PropTypes.string,
   onClick: PropTypes.func,
 }
 
-RoundIconButton.defaultProps = {
+ContainedIconButton.defaultProps = {
   href: undefined,
   onClick: undefined,
 }
 
-export default RoundIconButton
+export default ContainedIconButton

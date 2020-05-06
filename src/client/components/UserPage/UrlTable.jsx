@@ -1,22 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  Table,
-  TablePagination,
-  TextField,
-  Toolbar,
-  Typography,
-} from '@material-ui/core'
+import { Table, TablePagination } from '@material-ui/core'
 import debounce from 'lodash/debounce'
 import isMatch from 'lodash/isMatch'
 import 'boxicons'
 
 import userActions from '../../actions/user'
-import { downloadUrls } from '../../util/download'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableBody from './EnhancedTableBody'
 
@@ -44,62 +34,6 @@ const mapDispatchToProps = (dispatch) => {
     },
   }
 }
-
-/**
- * Prevents re-render if search input did not change.
- */
-const searchInputIsEqual = (prev, next) =>
-  prev.tableConfig.searchText === next.tableConfig.searchText
-
-/**
- * Search Input field.
- */
-const SearchInput = React.memo(({ tableConfig, searchIfChanged }) => {
-  const changeSearchTextHandler = (event) => {
-    searchIfChanged(event.target.value)
-  }
-  const clearSearchTextHandler = () => {
-    searchIfChanged('')
-  }
-
-  return (
-    <TextField
-      autoFocus
-      value={tableConfig.searchText}
-      onChange={changeSearchTextHandler}
-      onBlur={changeSearchTextHandler}
-      onKeyDown={(e) => {
-        switch (e.key) {
-          case 'Escape':
-            e.target.value = ''
-            clearSearchTextHandler()
-            break
-          case 'Enter':
-            break
-          default:
-            return
-        }
-        e.target.blur()
-        e.preventDefault()
-      }}
-      placeholder="Search…"
-      inputProps={{ 'aria-label': 'search' }}
-      // eslint-disable-next-line react/jsx-no-duplicate-props
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <box-icon name="search" />
-          </InputAdornment>
-        ),
-        endAdornment: (
-          <InputAdornment position="end" onClick={clearSearchTextHandler}>
-            <box-icon name="x" />
-          </InputAdornment>
-        ),
-      }}
-    />
-  )
-}, searchInputIsEqual)
 
 /**
  * Prevents re-render if pagination did not change.
@@ -147,48 +81,9 @@ const MemoTablePagination = React.memo(
 /**
  * Display URLs in a table.
  */
-const UrlTable = ({
-  urlCount,
-  tableConfig,
-  updateUrlTableConfig,
-  updateSearchText,
-  openCreateUrlModal,
-}) => {
-  const searchIfChanged = (text) => {
-    if (tableConfig.searchText !== text) {
-      updateSearchText(text)
-    }
-  }
+const UrlTable = ({ urlCount, tableConfig, updateUrlTableConfig }) => {
   return (
     <>
-      <Toolbar>
-        <Typography variant="h1" align="left" gutterBottom>
-          Your Links
-        </Typography>
-        <div>
-          <IconButton
-            variant="contained"
-            size="small"
-            onClick={() => downloadUrls(urlCount, tableConfig)}
-          >
-            <box-icon name="download" />
-          </IconButton>
-        </div>
-        <SearchInput
-          tableConfig={tableConfig}
-          searchIfChanged={searchIfChanged}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={() => {
-            openCreateUrlModal()
-          }}
-        >
-          Create link
-        </Button>
-      </Toolbar>
       <Table aria-label="table with urls">
         <EnhancedTableHead />
         <EnhancedTableBody />
@@ -200,24 +95,6 @@ const UrlTable = ({
       />
     </>
   )
-}
-
-SearchInput.propTypes = {
-  tableConfig: PropTypes.shape({
-    numberOfRows: PropTypes.number,
-    pageNumber: PropTypes.number,
-    sortDirection: PropTypes.oneOf(['asc', 'desc', 'none']),
-    orderBy: PropTypes.oneOf([
-      'createdAt',
-      'shortUrl',
-      'longUrl',
-      'updatedAt',
-      'clicks',
-      'state',
-    ]),
-    searchText: PropTypes.string,
-  }).isRequired,
-  searchIfChanged: PropTypes.func.isRequired,
 }
 
 MemoTablePagination.propTypes = {
@@ -256,8 +133,6 @@ UrlTable.propTypes = {
     searchText: PropTypes.string,
   }).isRequired,
   updateUrlTableConfig: PropTypes.func.isRequired,
-  updateSearchText: PropTypes.func.isRequired,
-  openCreateUrlModal: PropTypes.func.isRequired,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UrlTable)

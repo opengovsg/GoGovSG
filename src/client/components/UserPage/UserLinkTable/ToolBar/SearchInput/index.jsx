@@ -9,7 +9,7 @@ import {
 import debounce from 'lodash/debounce'
 
 import userActions from '../../../../../actions/user'
-import CreateLinkButton from '../CreateLinkButton'
+import useMinifiedActions from '../util/useMinifiedActions'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
@@ -27,11 +27,22 @@ const mapDispatchToProps = (dispatch) => {
 const useStyles = makeStyles((theme) =>
   createStyles({
     searchInput: {
-      width: '100%',
-      marginRight: theme.spacing(2),
+      display: 'flex',
+      flex: (props) => (props.fillWidth ? 1 : 'unset'),
+      width: (props) => (props.fillWidth ? 'unset' : 445),
+    },
+    input: {
+      flexGrow: '1',
+      height: '100%',
+      minHeight: (props) => props.textFieldHeight,
+      padding: theme.spacing(0),
+      lineHeight: 1.5,
     },
   }),
 )
+
+// Height of the text field in the search input.
+const textFieldHeight = 48
 
 // Prevents re-render if search input did not change.
 const searchInputIsEqual = (prev, next) => {
@@ -41,7 +52,8 @@ const searchInputIsEqual = (prev, next) => {
 // Search Input field.
 const SearchInput = React.memo(({ updateSearchText }) => {
   const tableConfig = useSelector((state) => state.user.tableConfig)
-  const classes = useStyles()
+  const fillWidth = useMinifiedActions()
+  const classes = useStyles({ fillWidth, textFieldHeight })
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {
       updateSearchText(text)
@@ -78,6 +90,7 @@ const SearchInput = React.memo(({ updateSearchText }) => {
       }}
       placeholder="Search links"
       InputProps={{
+        classes: { input: classes.input },
         startAdornment: (
           <InputAdornment position="start">
             <box-icon name="search" />
