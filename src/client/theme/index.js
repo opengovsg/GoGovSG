@@ -3,18 +3,22 @@ import sgdsIconsTtf from '~/assets/fonts/sgds-icons.ttf'
 import sgdsIconsWoff from '~/assets/fonts/sgds-icons.woff'
 import sgdsIconsSvg from '~/assets/fonts/sgds-icons.svg'
 
-const theme = responsiveFontSizes(
-  createMuiTheme({
-    breakpoints: {
-      values: {
-        xs: 0,
-        sm: 600,
-        md: 960,
-        lg: 1280,
-        // Only this is different from default
-        xl: 1440,
-      },
+// Provides theme spacing, breakpoint values for the main theme to consume.
+const basicTheme = createMuiTheme({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1440,
     },
+  },
+})
+
+export default responsiveFontSizes(
+  createMuiTheme({
+    breakpoints: basicTheme.breakpoints,
     palette: {
       type: 'light',
       dividerLight: '#f0f0f0',
@@ -124,8 +128,85 @@ const theme = responsiveFontSizes(
           fontWeight: '500',
         },
       },
+      MuiTooltip: {
+        tooltip: {
+          backgroundColor: '#384A51',
+          fontSize: '0.8125rem',
+        },
+        arrow: {
+          color: '#384A51',
+        },
+      },
+      MuiTable: {
+        root: {
+          overflowX: 'auto',
+          overflow: 'auto',
+          [basicTheme.breakpoints.down('sm')]: {
+            overflowX: 'hidden',
+            overflow: 'hidden',
+            display: 'block',
+          },
+        },
+      },
+      MuiTableCell: {
+        root: {
+          [basicTheme.breakpoints.down('sm')]: {
+            padding: '0px 4px',
+          },
+        },
+        body: {
+          wordBreak: 'break-all',
+          [basicTheme.breakpoints.only('sm')]: {
+            paddingRight: '80px',
+          },
+          [basicTheme.breakpoints.down('sm')]: {
+            margin: 'auto 0',
+            fontSize: '16px',
+            borderBottom: 'none',
+            paddingBottom: '4px',
+            width: '70%',
+          },
+        },
+      },
+      MuiTableBody: {
+        root: {
+          [basicTheme.breakpoints.down('sm')]: {
+            display: 'block',
+          },
+        },
+      },
+      MuiTableRow: {
+        root: {
+          [basicTheme.breakpoints.down('sm')]: {
+            display: 'flex',
+            flexFlow: 'row wrap',
+            height: '352px',
+            padding: '5px 5px 0px',
+            border: 'solid 1px rgba(0, 0, 0, 0.15)',
+          },
+        },
+      },
+      MuiTablePagination: {
+        toolbar: {
+          paddingRight: '80px',
+          [basicTheme.breakpoints.down('sm')]: {
+            padding: '0',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-evenly',
+          },
+        },
+        selectRoot: {
+          [basicTheme.breakpoints.down('sm')]: {
+            margin: '0',
+          },
+        },
+        actions: {
+          [basicTheme.breakpoints.down('sm')]: {
+            margin: '0',
+          },
+        },
+      },
     },
   }),
 )
-
-export default theme

@@ -12,6 +12,8 @@ import UrlTable from './UrlTable'
 import userActions from '~/actions/user'
 import userPageStyle from '~/styles/userPage'
 import BaseLayout from '../BaseLayout'
+import UserLinkTable from './UserLinkTable'
+import { ApplyAppMargins } from '../AppMargins'
 
 /**
  * List URLs belonging to the user in a table.
@@ -72,16 +74,14 @@ const UserPage = ({
     }, [])
     return (
       <BaseLayout>
-        <div>
-          <main>
-            {/* List of URLs in the table */}
-            <UrlTable
-              urls={urls}
-              openCreateUrlModal={openCreateUrlModal}
-              openQrCode={openQrCode}
-              openOwnershipModal={openOwnershipModal}
-            />
-          </main>
+        <ApplyAppMargins>
+          <UserLinkTable />
+          <UrlTable
+            urls={urls}
+            openCreateUrlModal={openCreateUrlModal}
+            openQrCode={openQrCode}
+            openOwnershipModal={openOwnershipModal}
+          />
           <CreateUrlModal
             createUrlModal={createUrlModal}
             closeCreateUrlModal={closeCreateUrlModal}
@@ -104,7 +104,7 @@ const UserPage = ({
             setNewOwner={setNewOwner}
             transferOwnership={transferOwnership}
           />
-        </div>
+        </ApplyAppMargins>
       </BaseLayout>
     )
   }

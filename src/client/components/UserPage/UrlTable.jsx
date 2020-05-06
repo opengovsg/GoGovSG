@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-
 import {
   Button,
   IconButton,
@@ -12,21 +11,14 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core'
-
-import { MuiThemeProvider, withStyles } from '@material-ui/core/styles'
-
-import 'boxicons'
-
 import debounce from 'lodash/debounce'
 import isMatch from 'lodash/isMatch'
-import userActions from '~/actions/user'
-import { downloadUrls } from '~/util/download'
+import 'boxicons'
 
+import userActions from '../../actions/user'
+import { downloadUrls } from '../../util/download'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableBody from './EnhancedTableBody'
-
-import urlTableTheme from '~/styles/tableTheme'
-import userPageStyle from '~/styles/userPage'
 
 const mapStateToProps = (state) => ({
   urlCount: state.user.urlCount,
@@ -56,14 +48,13 @@ const mapDispatchToProps = (dispatch) => {
 /**
  * Prevents re-render if search input did not change.
  */
-// eslint-disable-next-line max-len
 const searchInputIsEqual = (prev, next) =>
   prev.tableConfig.searchText === next.tableConfig.searchText
 
 /**
  * Search Input field.
  */
-const SearchInput = React.memo(({ classes, tableConfig, searchIfChanged }) => {
+const SearchInput = React.memo(({ tableConfig, searchIfChanged }) => {
   const changeSearchTextHandler = (event) => {
     searchIfChanged(event.target.value)
   }
@@ -74,7 +65,6 @@ const SearchInput = React.memo(({ classes, tableConfig, searchIfChanged }) => {
   return (
     <TextField
       autoFocus
-      className={classes.searchInput}
       value={tableConfig.searchText}
       onChange={changeSearchTextHandler}
       onBlur={changeSearchTextHandler}
@@ -158,7 +148,6 @@ const MemoTablePagination = React.memo(
  * Display URLs in a table.
  */
 const UrlTable = ({
-  classes,
   urlCount,
   tableConfig,
   updateUrlTableConfig,
@@ -171,61 +160,49 @@ const UrlTable = ({
     }
   }
   return (
-    <MuiThemeProvider theme={urlTableTheme}>
-      <div className={classes.table}>
-        <Toolbar className={classes.toolbar}>
-          <Typography
-            variant="h1"
-            align="left"
-            className={classes.toolbarTitle}
-            gutterBottom
+    <>
+      <Toolbar>
+        <Typography variant="h1" align="left" gutterBottom>
+          Your Links
+        </Typography>
+        <div>
+          <IconButton
+            variant="contained"
+            size="small"
+            onClick={() => downloadUrls(urlCount, tableConfig)}
           >
-            Your Links
-          </Typography>
-          <div className={classes.toolbarActions}>
-            <div>
-              <IconButton
-                variant="contained"
-                size="small"
-                onClick={() => downloadUrls(urlCount, tableConfig)}
-              >
-                <box-icon name="download" />
-              </IconButton>
-            </div>
-            <SearchInput
-              classes={classes}
-              tableConfig={tableConfig}
-              searchIfChanged={searchIfChanged}
-            />
-            <Button
-              className={classes.createUrlBtn}
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => {
-                openCreateUrlModal()
-              }}
-            >
-              Create link
-            </Button>
-          </div>
-        </Toolbar>
-        <Table aria-label="table with urls">
-          <EnhancedTableHead />
-          <EnhancedTableBody />
-        </Table>
-        <MemoTablePagination
-          urlCount={urlCount}
+            <box-icon name="download" />
+          </IconButton>
+        </div>
+        <SearchInput
           tableConfig={tableConfig}
-          updateUrlTableConfig={updateUrlTableConfig}
+          searchIfChanged={searchIfChanged}
         />
-      </div>
-    </MuiThemeProvider>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={() => {
+            openCreateUrlModal()
+          }}
+        >
+          Create link
+        </Button>
+      </Toolbar>
+      <Table aria-label="table with urls">
+        <EnhancedTableHead />
+        <EnhancedTableBody />
+      </Table>
+      <MemoTablePagination
+        urlCount={urlCount}
+        tableConfig={tableConfig}
+        updateUrlTableConfig={updateUrlTableConfig}
+      />
+    </>
   )
 }
 
 SearchInput.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
   tableConfig: PropTypes.shape({
     numberOfRows: PropTypes.number,
     pageNumber: PropTypes.number,
@@ -263,7 +240,6 @@ MemoTablePagination.propTypes = {
 }
 
 UrlTable.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
   urlCount: PropTypes.number.isRequired,
   tableConfig: PropTypes.shape({
     numberOfRows: PropTypes.number,
@@ -284,6 +260,4 @@ UrlTable.propTypes = {
   openCreateUrlModal: PropTypes.func.isRequired,
 }
 
-export default withStyles(userPageStyle)(
-  connect(mapStateToProps, mapDispatchToProps)(UrlTable),
-)
+export default connect(mapStateToProps, mapDispatchToProps)(UrlTable)

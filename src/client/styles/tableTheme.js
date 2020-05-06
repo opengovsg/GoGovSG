@@ -1,55 +1,9 @@
 import { createMuiTheme } from '@material-ui/core/styles'
 
-import theme from '~/styles/theme'
+import theme from '../theme'
 
 const urlTableTheme = createMuiTheme({
-  palette: {
-    type: 'light',
-    primary: {
-      main: '#456682',
-    },
-    secondary: {
-      main: '#6d9067',
-    },
-  },
-  typography: {
-    fontFamily: "'IBM Plex Sans', sans-serif",
-    h1: {
-      fontSize: '1.5rem',
-      fontWeight: '500',
-    },
-    body1: {
-      // MUI v4 body1 == body2
-      fontSize: '0.8125rem',
-    },
-    body2: {
-      fontSize: '0.8125rem',
-    },
-    button: {
-      textTransform: 'none',
-    },
-  },
   overrides: {
-    MuiButton: {
-      root: {
-        fontSize: '0.875rem',
-        borderRadius: '30px',
-      },
-    },
-    MuiTooltip: {
-      tooltip: {
-        backgroundColor: '#384A51',
-        fontSize: '0.8125rem',
-      },
-      arrow: {
-        color: '#384A51',
-      },
-    },
-    MuiPaper: {
-      root: {
-        margin: '-50px 20px 30px',
-      },
-    },
     MuiTable: {
       root: {
         overflowX: 'auto',
