@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { createStyles, makeStyles } from '@material-ui/core'
 
-function fetchAppMargins(theme, leftMultiplier, rightMultiplier) {
+export function fetchAppMargins(theme, leftMultiplier, rightMultiplier) {
   return {
     marginLeft: theme.spacing(4 * leftMultiplier),
     marginRight: theme.spacing(4 * rightMultiplier),

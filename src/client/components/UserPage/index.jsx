@@ -1,19 +1,16 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { connect, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from 'react-router-dom'
 
 import { CreateUrlModal } from './Modals'
 import QRCodeModal from './QRCodeModal'
 import OwnershipModal from './OwnershipModal'
-import UrlTable from './UrlTable'
-
 import userActions from '~/actions/user'
 import userPageStyle from '~/styles/userPage'
 import BaseLayout from '../BaseLayout'
 import UserLinkTable from './UserLinkTable'
-import { ApplyAppMargins } from '../AppMargins'
 
 /**
  * List URLs belonging to the user in a table.
@@ -53,12 +50,10 @@ const UserPage = ({
   isLoggedIn,
   onCreateUrl,
   createUrlModal,
-  openCreateUrlModal,
   closeCreateUrlModal,
   history,
   openQrCode,
   closeQrCode,
-  openOwnershipModal,
   closeOwnershipModal,
   qrCode,
   ownershipModal,
@@ -68,43 +63,34 @@ const UserPage = ({
   getUrlsForUser,
 }) => {
   if (isLoggedIn) {
-    const urls = useSelector((state) => state.urls)
     useEffect(() => {
       getUrlsForUser()
     }, [])
     return (
       <BaseLayout>
-        <ApplyAppMargins>
-          <UserLinkTable />
-          <UrlTable
-            urls={urls}
-            openCreateUrlModal={openCreateUrlModal}
-            openQrCode={openQrCode}
-            openOwnershipModal={openOwnershipModal}
-          />
-          <CreateUrlModal
-            createUrlModal={createUrlModal}
-            closeCreateUrlModal={closeCreateUrlModal}
-            onSubmit={() => onCreateUrl(history)}
-          />
-          {/* QR code modal */}
-          <QRCodeModal
-            id="qrCodeModal"
-            classes={classes}
-            qrCode={qrCode}
-            openQrCode={openQrCode}
-            closeQrCode={closeQrCode}
-          />
-          <OwnershipModal
-            id="ownershipModal"
-            classes={classes}
-            ownershipModal={ownershipModal}
-            closeOwnershipModal={closeOwnershipModal}
-            newOwner={newOwner}
-            setNewOwner={setNewOwner}
-            transferOwnership={transferOwnership}
-          />
-        </ApplyAppMargins>
+        <UserLinkTable />
+        <CreateUrlModal
+          createUrlModal={createUrlModal}
+          closeCreateUrlModal={closeCreateUrlModal}
+          onSubmit={() => onCreateUrl(history)}
+        />
+        {/* QR code modal */}
+        <QRCodeModal
+          id="qrCodeModal"
+          classes={classes}
+          qrCode={qrCode}
+          openQrCode={openQrCode}
+          closeQrCode={closeQrCode}
+        />
+        <OwnershipModal
+          id="ownershipModal"
+          classes={classes}
+          ownershipModal={ownershipModal}
+          closeOwnershipModal={closeOwnershipModal}
+          newOwner={newOwner}
+          setNewOwner={setNewOwner}
+          transferOwnership={transferOwnership}
+        />
       </BaseLayout>
     )
   }
@@ -122,12 +108,10 @@ UserPage.propTypes = {
   ownershipModal: PropTypes.string.isRequired,
   newOwner: PropTypes.string.isRequired,
   // User actions
-  openCreateUrlModal: PropTypes.func.isRequired,
   closeCreateUrlModal: PropTypes.func.isRequired,
   onCreateUrl: PropTypes.func.isRequired,
   openQrCode: PropTypes.func.isRequired,
   closeQrCode: PropTypes.func.isRequired,
-  openOwnershipModal: PropTypes.func.isRequired,
   closeOwnershipModal: PropTypes.func.isRequired,
   setNewOwner: PropTypes.func.isRequired,
   transferOwnership: PropTypes.func.isRequired,

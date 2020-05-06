@@ -150,9 +150,10 @@ export default responsiveFontSizes(
       },
       MuiTableCell: {
         root: {
-          [basicTheme.breakpoints.down('sm')]: {
-            padding: '0px 4px',
-          },
+          paddingTop: basicTheme.spacing(2),
+          paddingBottom: basicTheme.spacing(2),
+          paddingLeft: 0,
+          paddingRight: basicTheme.spacing(4),
         },
         body: {
           wordBreak: 'break-all',
