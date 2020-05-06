@@ -9,8 +9,8 @@ export default function UserLinkTable() {
     <>
       <ApplyAppMargins>
         <ToolBar />
-        <UrlTable />
       </ApplyAppMargins>
+      <UrlTable />
     </>
   )
 }

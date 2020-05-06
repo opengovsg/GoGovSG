@@ -6,25 +6,6 @@ import Masthead from './Masthead'
 import BaseLayoutHeader from './BaseLayoutHeader'
 import BaseLayoutFooter from './BaseLayoutFooter'
 
-export const fetchAppMargins = (theme, multiplier = 1) => {
-  return {
-    marginLeft: theme.spacing(4 * multiplier),
-    marginRight: theme.spacing(4 * multiplier),
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(6 * multiplier),
-      marginRight: theme.spacing(6 * multiplier),
-    },
-    [theme.breakpoints.up('md')]: {
-      marginLeft: theme.spacing(8 * multiplier),
-      marginRight: theme.spacing(8 * multiplier),
-    },
-    [theme.breakpoints.up('lg')]: {
-      marginLeft: theme.spacing(12 * multiplier),
-      marginRight: theme.spacing(12 * multiplier),
-    },
-  }
-}
-
 const useStyles = makeStyles(() =>
   createStyles({
     '@global': {

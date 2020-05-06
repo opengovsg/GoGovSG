@@ -9,7 +9,8 @@ import {
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
-import userActions from '~/actions/user'
+import userActions from '../../../../../actions/user'
+import useAppMargins from '../../../../AppMargins/useAppMargins'
 
 const mapStateToProps = (state) => ({
   tableConfig: state.user.tableConfig,
@@ -31,10 +32,11 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     leftCell: {
       textAlign: 'left',
+      paddingLeft: (props) => props.appMargins,
     },
     rightCell: {
       textAlign: 'right',
-      paddingRight: 0,
+      paddingRight: (props) => props.appMargins,
     },
     tableHeadResponsive: {
       [theme.breakpoints.down('sm')]: {
@@ -45,7 +47,8 @@ const useStyles = makeStyles((theme) =>
 )
 
 const EnhancedTableHead = ({ updateOrderAndDirection, tableConfig }) => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
 
   const columnTitles = [
     {

@@ -2,35 +2,21 @@ import React from 'react'
 import classNames from 'classnames'
 import { createStyles, makeStyles } from '@material-ui/core'
 
-export function fetchAppMargins(theme, leftMultiplier, rightMultiplier) {
-  return {
-    marginLeft: theme.spacing(4 * leftMultiplier),
-    marginRight: theme.spacing(4 * rightMultiplier),
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(8 * leftMultiplier),
-      marginRight: theme.spacing(8 * rightMultiplier),
-    },
-    [theme.breakpoints.up('md')]: {
-      marginLeft: theme.spacing(12 * leftMultiplier),
-      marginRight: theme.spacing(12 * rightMultiplier),
-    },
-    [theme.breakpoints.up('lg')]: {
-      marginLeft: theme.spacing(16 * leftMultiplier),
-      marginRight: theme.spacing(16 * rightMultiplier),
-    },
-  }
-}
+import useAppMargins from './useAppMargins'
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     applyAppMarginsContainer: {
-      ...fetchAppMargins(theme, 1, 1),
+      marginLeft: (props) => props.appMargins,
+      marginRight: (props) => props.appMargins,
     },
     ignoreAppMarginsContainer: {
-      ...fetchAppMargins(theme, -1, -1),
+      marginLeft: (props) => -props.appMargins,
+      marginRight: (props) => -props.appMargins,
     },
     ignoreAppRightMarginsContainer: {
-      ...fetchAppMargins(theme, 0, -1),
+      marginLeft: 0,
+      marginRight: (props) => -props.appMargins,
     },
     layout: {
       flexGrow: 1,
@@ -39,7 +25,8 @@ const useStyles = makeStyles((theme) =>
 )
 
 export const ApplyAppMargins = ({ className, children }) => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
   return (
     <div className={classNames(className, classes.applyAppMarginsContainer)}>
       {children}
@@ -48,7 +35,8 @@ export const ApplyAppMargins = ({ className, children }) => {
 }
 
 export const IgnoreAppMargins = ({ className, children }) => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
   return (
     <div className={classNames(className, classes.ignoreAppMarginsContainer)}>
       {children}
@@ -57,7 +45,8 @@ export const IgnoreAppMargins = ({ className, children }) => {
 }
 
 export const IgnoreAppRightMargins = ({ className, children }) => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
   return (
     <div
       className={classNames(className, classes.ignoreAppRightMarginsContainer)}

@@ -18,7 +18,7 @@ import GoTooltip from './templates/GoTooltip'
 import userActions from '../../../../../actions/user'
 import EditableTextField from './EditableTextField'
 import { removeHttpsProtocol } from '../../../../../util/url'
-import { fetchAppMargins } from '../../../../BaseLayout'
+import useAppMargins from '../../../../AppMargins/useAppMargins'
 
 const mapDispatchToProps = (dispatch) => ({
   openOwnershipModal: (shortUrl) =>
@@ -39,17 +39,17 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const useStyles = makeStyles((theme) => {
-  const appMargins = fetchAppMargins(theme, -1)
   return createStyles({
     bar: {
       backgroundColor: theme.palette.grey[500],
     },
     leftCell: {
       textAlign: 'left',
+      paddingLeft: (props) => props.appMargins,
     },
     rightCell: {
       textAlign: 'right',
-      paddingRight: 0,
+      paddingRight: (props) => props.appMargins,
     },
     iconButton: {
       padding: '0px',
@@ -79,7 +79,6 @@ const useStyles = makeStyles((theme) => {
       },
     },
     hoverRow: {
-      ...appMargins,
       '&:hover': {
         backgroundColor: fade(theme.palette.common.black, 0.1),
       },
@@ -95,7 +94,8 @@ const EnhancedTableBody = ({
   openQrCode,
 }) => {
   const urls = useSelector((state) => state.user.urls)
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
 
   // Used to manage tooltip descriptions for our short url anchor button.
   const [isCopied, setCopied] = useState(false)
