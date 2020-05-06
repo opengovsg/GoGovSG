@@ -39,7 +39,8 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(2),
     },
     closeIconButton: {
-      fill: theme.palette.primary.dark,
+      fill: (props) =>
+        props.isFullScreenDialog ? '#BBBBBB' : theme.palette.primary.dark,
       height: (props) => (props.isFullScreenDialog ? 44 : 30.8),
       width: (props) => (props.isFullScreenDialog ? 44 : 30.8),
       marginTop: theme.spacing(2),
