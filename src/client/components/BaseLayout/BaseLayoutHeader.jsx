@@ -23,10 +23,12 @@ const useStyles = makeStyles((theme) =>
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
       [theme.breakpoints.up('md')]: {
-        paddingTop: theme.spacing(4),
+        paddingTop: (props) =>
+          props.isLoggedIn ? theme.spacing(2) : theme.spacing(4),
       },
       [theme.breakpoints.up('lg')]: {
-        paddingTop: theme.spacing(6),
+        paddingTop: (props) =>
+          props.isLoggedIn ? theme.spacing(2) : theme.spacing(6),
       },
     },
     toolbar: {
@@ -67,7 +69,7 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
-  const classes = useStyles()
+  const classes = useStyles({ isLoggedIn })
 
   const headers = [
     {
