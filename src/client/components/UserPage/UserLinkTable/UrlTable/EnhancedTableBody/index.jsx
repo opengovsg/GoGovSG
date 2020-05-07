@@ -44,12 +44,16 @@ const useStyles = makeStyles((theme) => {
       backgroundColor: theme.palette.grey[500],
     },
     leftCell: {
-      textAlign: 'left',
-      paddingLeft: (props) => props.appMargins,
+      [theme.breakpoints.up('md')]: {
+        textAlign: 'left',
+        paddingLeft: (props) => props.appMargins,
+      },
     },
     rightCell: {
-      textAlign: 'right',
-      paddingRight: (props) => props.appMargins,
+      [theme.breakpoints.up('md')]: {
+        textAlign: 'right',
+        paddingRight: (props) => props.appMargins,
+      },
     },
     iconButton: {
       padding: '0px',
@@ -114,7 +118,7 @@ const EnhancedTableBody = ({
         {urls.map((row) => (
           <TableRow key={row.shortUrl} className={classes.hoverRow}>
             <TableCell className={classes.tableBodyTitle}>Owner</TableCell>
-            <TableCell align="center" className={classes.leftCell}>
+            <TableCell className={classes.leftCell}>
               <GoTooltip title={transferIconDesc}>
                 <IconButton
                   className={classes.iconButton}
