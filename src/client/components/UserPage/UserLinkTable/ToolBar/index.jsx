@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     toolBar: {
       display: 'flex',
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(3),
       marginBottom: theme.spacing(2),
       width: '100%',
     },

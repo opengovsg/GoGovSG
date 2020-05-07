@@ -154,6 +154,7 @@ export default responsiveFontSizes(
           paddingBottom: basicTheme.spacing(2),
           paddingLeft: 0,
           paddingRight: basicTheme.spacing(4),
+          borderBottom: '1px solid #d8d8d860',
         },
         body: {
           wordBreak: 'break-all',
