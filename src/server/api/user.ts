@@ -11,7 +11,8 @@ import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { generatePresignedUrl } from '../util/aws'
+import { FileVisibility, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
+const { Public, Private } = FileVisibility
 
 const router = Express.Router()
 
@@ -133,7 +134,7 @@ function validatePresignedUrlRequest(
  * Endpoint for a user to create a short URL.
  */
 router.post('/url', validateUrls, async (req, res) => {
-  const { userId, longUrl, shortUrl } = req.body
+  const { isFile, userId, longUrl, shortUrl } = req.body
 
   try {
     const user = await User.findByPk(userId)
@@ -152,7 +153,7 @@ router.post('/url', validateUrls, async (req, res) => {
     // Success
     const result = await sequelize.transaction((t) => (
       Url.create(
-        { userId: user.id, longUrl, shortUrl },
+        { userId: user.id, longUrl, shortUrl, isFile: !!isFile },
         { transaction: t },
       )
     ))
@@ -297,9 +298,13 @@ router.patch('/url', validateState, async (req, res) => {
       )
     }
 
-    await sequelize.transaction((t) => (
-      url.update({ state }, { transaction: t })
-    ))
+    await sequelize.transaction(async (t) => {
+      await url.update({ state }, { transaction: t })
+      if (url.isFile) {
+        // Toggle the ACL of the S3 object
+        await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
+      }
+    })
     res.ok()
 
     if (state === INACTIVE) {
