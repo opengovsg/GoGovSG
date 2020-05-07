@@ -177,8 +177,15 @@ export default async function redirect(
     // Google analytics
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
+    // Reassure typescript that the session object exists.
+    if (!req.session) {
+      throw new Error('Session object does not exist')
+    }
+
     // Redirect immediately if a crawler is visiting the site
-    if (isCrawler(req.headers['user-agent'] || '')) {
+    const redirectImmediately = isCrawler(req.headers['user-agent'] || '') ||
+      req.session.visits?.[shortUrl]
+    if (redirectImmediately) {
       res.status(302).redirect(longUrl)
       return
     }
@@ -186,12 +193,17 @@ export default async function redirect(
     // Extract root domain from long url.
     const rootDomain: string = parseDomain(longUrl)
 
-    // Serve transition page
-    // TODO: Get/set a browser cookie so that this isn't served too frequently
-    res.status(200).render(TRANSITION_PATH, {
-      longUrl,
-      rootDomain,
-    })
+    // It's the user's first time accessing this shortUrl.
+    // Store this info in session to prevent transition page from showing up twice.
+    req.session.visits = {
+      ...req.session.visits,
+      [shortUrl]: true,
+    }
+    res.status(200)
+      .render(TRANSITION_PATH, {
+        longUrl,
+        rootDomain,
+      })
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
       logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
