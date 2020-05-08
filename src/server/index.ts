@@ -5,6 +5,7 @@ import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import session from 'express-session'
+import cookieSession from 'cookie-session'
 import connectRedis from 'connect-redis'
 
 // Routes
@@ -95,6 +96,14 @@ initDb()
       bodyParser.json(),
     ]
 
+    const redirectSpecificMiddleware = [
+      cookieSession({
+        name: 'visits',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+        secret: sessionSettings.secret,
+      }),
+    ]
+
     // Log http requests
     app.use(morgan(MORGAN_LOG_FORMAT))
 
@@ -104,7 +113,7 @@ initDb()
       next()
     })
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
-    app.use('/:shortUrl([a-zA-Z0-9-]+)', redirect) // The Redirect Endpoint
+    app.use('/:shortUrl([a-zA-Z0-9-]+)', ...redirectSpecificMiddleware, redirect) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
       res.status(404).render('404.error.ejs', { shortUrl })
