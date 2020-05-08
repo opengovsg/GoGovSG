@@ -74,8 +74,8 @@ initDb()
     app.set('views', path.resolve(__dirname, './views'))
     app.set('view engine', 'ejs')
 
-    // Sessions
-    app.use(
+    const apiSpecificMiddleware = [
+      // Sessions
       session({
         store: new SessionStore({
           client: sessionClient, // ttl defaults to session.cookie.maxAge
@@ -89,7 +89,11 @@ initDb()
         },
         ...sessionSettings,
       } as session.SessionOptions),
-    )
+      // application/x-www-form-urlencoded
+      bodyParser.urlencoded({ extended: false }),
+      // application/json
+      bodyParser.json(),
+    ]
 
     // Log http requests
     app.use(morgan(MORGAN_LOG_FORMAT))
@@ -99,9 +103,7 @@ initDb()
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH')
       next()
     })
-    app.use(bodyParser.urlencoded({ extended: false })) // application/x-www-form-urlencoded
-    app.use(bodyParser.json()) // application/json
-    app.use('/api', api) // Attach all API endpoints
+    app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
     app.use('/:shortUrl([a-zA-Z0-9-]+)', redirect) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
