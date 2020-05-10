@@ -96,11 +96,6 @@ const SearchInput = React.memo(({ updateSearchText }) => {
             <box-icon name="search" />
           </InputAdornment>
         ),
-        endAdornment: (
-          <InputAdornment position="end" onClick={clearSearchTextHandler}>
-            <box-icon name="filter" />
-          </InputAdornment>
-        ),
       }}
     />
   )
