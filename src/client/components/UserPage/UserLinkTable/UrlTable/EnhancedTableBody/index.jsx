@@ -210,6 +210,12 @@ const EnhancedTableBody = ({
     <TableBody>
       <TableRow>
         <TableCell className={classes.leftCell}>No links found</TableCell>
+        <TableCell />
+        <TableCell />
+        <TableCell />
+        <TableCell />
+        <TableCell />
+        <TableCell className={classes.rightCell} />
       </TableRow>
     </TableBody>
   )
