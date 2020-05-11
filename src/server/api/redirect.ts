@@ -17,6 +17,10 @@ const TRANSITION_PATH = 'transition-page.ejs'
 // limited by max cookie size of 4096 bytes
 const MAX_SHORTURL_COUNT = 100
 
+interface epochToShortUrlMapping {
+  [epoch: number]: string
+}
+
 /**
  *
  * @param {Object} req Express request object.
@@ -197,16 +201,24 @@ export default async function redirect(
       // This is the first time visiting a/the shortlink.
       req.session.visits = {
         ...req.session.visits,
-        [shortUrl]: Math.floor(Date.now()), // Epoch in seconds
+        [shortUrl]: Math.floor(Date.now()),
       }
 
       // Avoid exceeding cookie size limit by pruning
       // old entries.
       if (_.size(req.session.visits) > MAX_SHORTURL_COUNT) {
-        // TODO: Do the pruning.
         // Build inverse dictionary
-        // Do sorting to get the oldest
-        // Update the dict
+        const epochList: number[] = []
+        const lookupTable: epochToShortUrlMapping = {}
+        Object.keys(req.session.visits).forEach((url) => {
+          const epoch = req.session!.visits[url]
+          lookupTable[epoch] = url
+          epochList.push(epoch)
+        })
+
+        const earliestEpoch = epochList.sort()[0]
+        const earliestShortUrl = lookupTable[earliestEpoch]
+        delete req.session.visits[earliestShortUrl]
       }
 
       // Extract root domain from long url.
