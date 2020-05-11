@@ -1,5 +1,6 @@
 import Express from 'express'
 import { UAParser } from 'ua-parser-js'
+import _ from 'lodash'
 
 import { redirectClient } from '../redis'
 import { Url } from '../models'
@@ -11,6 +12,10 @@ import parseDomain from '../util/domain'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
+
+// Maximum number of shortUrls to track,
+// limited by max cookie size of 4096 bytes
+const MAX_SHORTURL_COUNT = 100
 
 /**
  *
@@ -177,33 +182,48 @@ export default async function redirect(
     // Google analytics
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
+    // Redirect immediately if a crawler is visiting the site
+    if (isCrawler(req.headers['user-agent'] || '')) {
+      res.status(302).redirect(longUrl)
+      return
+    }
+
     // Reassure typescript that the session object exists.
     if (!req.session) {
       throw new Error('Session object does not exist')
     }
 
-    // Redirect immediately if a crawler is visiting the site
-    const redirectImmediately = isCrawler(req.headers['user-agent'] || '')
-      || req.session.visits?.[shortUrl]
-    if (redirectImmediately) {
-      res.status(302).redirect(longUrl)
+    if (!req.session.visits || !req.session.visits[shortUrl]) {
+      // This is the first time visiting a/the shortlink.
+      req.session.visits = {
+        ...req.session.visits,
+        [shortUrl]: Math.floor(Date.now()), // Epoch in seconds
+      }
+
+      // Avoid exceeding cookie size limit by pruning
+      // old entries.
+      if (_.size(req.session.visits) > MAX_SHORTURL_COUNT) {
+        // TODO: Do the pruning.
+        // Build inverse dictionary
+        // Do sorting to get the oldest
+        // Update the dict
+      }
+
+      // Extract root domain from long url.
+      const rootDomain: string = parseDomain(longUrl)
+
+      res.status(200)
+        .render(TRANSITION_PATH, {
+          longUrl,
+          rootDomain,
+        })
       return
     }
 
-    // Extract root domain from long url.
-    const rootDomain: string = parseDomain(longUrl)
-
-    // It's the user's first time accessing this shortUrl.
-    // Store this info in session to prevent transition page from showing up twice.
-    req.session.visits = {
-      ...req.session.visits,
-      [shortUrl]: true,
-    }
-    res.status(200)
-      .render(TRANSITION_PATH, {
-        longUrl,
-        rootDomain,
-      })
+    // User has visited this shortlink before.
+    // Update LRU cache and redirect.
+    req.session.visits[shortUrl] = Math.floor(Date.now())
+    res.status(302).redirect(longUrl)
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
       logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
