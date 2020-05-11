@@ -1,139 +1,54 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta name="viewport".card="width=device-width, initial-scale=1.0">
-        <meta http-equiv=.card-Language".card="en">
-        <meta http-equiv="X-UA-Compatible".card="ie=edge">
-        <meta charset="UTF-8">
-        <title>Go.gov.sg</title>
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-        <style>
-            body {
-                position: relative;
-                -webkit-font-smoothing: antialiased;
-                font-family: 'IBM Plex Sans', sans-serif;
-                color: black;
-                overflow-wrap: break-word;
-            }
+<head>
+    <meta name="viewport" .card="width=device-width, initial-scale=1.0">
+    <meta http-equiv=.card-Language".card="en">
+    <meta http-equiv="X-UA-Compatible" .card="ie=edge">
+    <meta charset="UTF-8">
+    <title>Go.gov.sg</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="./assets/transition-page/styles/transition-page.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+</head>
 
-            #top-container {
-                height: 50vh;
-                background-color: #f9f9f9;
-                text-align: center;
-            }
-
-            #bottom-container {
-                height: 50vh;
-                background-color: #384a51;
-                text-align: center;
-                position: relative;
-            }
-
-            #bottom-container img {
-                position: absolute;
-                bottom: 0;
-                margin-bottom: 110px;
-                width: 96px;
-                height: 30px;
-                margin-left: -48px;
-            }
-
-            #main-message {
-                display: inline-block;
-                margin-top: 15vh;
-                height: auto;
-                width: 400px;
-            }
-
-            #main-message p {
-                line-height: 20px;
-                font-size: 16px;
-            }
-
-            #main-message h2 {
-                font-weight: 500;
-                line-height: 20px;
-                font-size: 28px;
-            }
-
-			#loader-circle {
-				margin: 42px 0px;
-			}
-
-			#loader-circle img {
-				animation: rotation 3s linear infinite;
-				width: 24px;
-				height: 24px;
-			}
-
-            #card {
-                display: block;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-left: -286px;
-                margin-top: -60px;
-                width: 500px;
-                height: 120px;
-                text-align: center;
-                background-color: white;
-                border-radius: 10px;
-                box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-                padding: 24px 36px;
-                z-index: 1000;
-            }
-
-            #card h3 {
-                font-size: 12px;
-                line-height: 1.5;
-                color: #384a51;
-            }
-
-            #card p {
-                font-size: 14px;
-                line-height: 1.43;
-                font-weight: 200;
-            }
-
-			@keyframes rotation {
-				from {
-					transform: rotate(0deg);
-				}
-
-				to {
-					transform: rotate(359deg);
-				}
-			}
-
-        </style>
-    </head>
-
-    <body>
-        <div id="top-container">
-            <div id="main-message">
-                <p>Check your browser to make sure you're visiting</p>
-                <h2><b>go.gov.sg/<%= shortUrl _%></b></h2>
-            </div>
-			<!-- loader circle -->
-			<div id="loader-circle">
-				<img src="https://gosg-public.s3-ap-southeast-1.amazonaws.com/icon-loader.svg"/>
-			</div>
-            <div id="card">
-                <h3>You will be redirected to your requested content in a few seconds:</h3>
-                <p><%= longUrl _%></p>
-            </div>
-
+<body>
+    <div id="page-banner">
+        <div id="page-banner-content">
+            <!-- banner info icon -->
+            <img src="./assets/transition-page/icons/icon-info.svg" />
+            <p>You will only be shown this page the first time you access this short link.</p>
         </div>
-        <div id="bottom-container">
-            <img src="https://gosg-public.s3-ap-southeast-1.amazonaws.com/go-logo.svg"/>
+    </div>
+    <main id="main-container">
+        <div id="main-message">
+            <!-- go logo -->
+            <img src="./assets/transition-page/icons/go-logo.svg" />
+            <div class="divider"></div>
+            <div class="inline-text">
+                <h3>Check your browser to make sure you’re accessing a&nbsp;</h3>
+                <h3 class="emphasize-text-color">gov.sg</h3>
+                <h3>&nbsp;link.</h3>
+            </div>
+            <div class="inline-text">
+                <p>You are visiting a page at&nbsp;</p>
+                <p class="semi-bold-text"><%= longUrl _%></p>
+                <p>.</p>
+            </div>
+            <button onclick="proceedToDestination()">
+                <div id="main-button-content">
+                    <p>Proceed to your page</p>
+                    <!-- button right arrow icon -->
+                    <img src="./assets/transition-page/icons/icon-arrow-right.svg" />
+                </div>
+            </button>
         </div>
-        <script>
-            setTimeout(function() {
-                window.location = '<%- longUrl %>'
-            }, 3000)
-        </script>
-    </body>
+    </main>
+    <script>
+        function proceedToDestination() {
+            window.location = '<%- longUrl %>'
+        }
+    </script>
+</body>
+
 </html>
-

@@ -1,0 +1,126 @@
+:root {
+  --text-color: #384a51;
+  --text-emphasize-color: #456682;
+  --banner-color: #f9f9f9;
+  --button-text-color: #ffffff;
+  --button-pine-color: #456682;
+  --button-seaweed-color: #384a51;
+  --divider-grey-color: #e8e8e8;
+}
+
+body {
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: var(--text-color);
+  overflow-wrap: break-word;
+  /* Do not use default window margins. */
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.emphasize-text-color {
+  color: var(--text-emphasize-color) !important;
+}
+
+.semi-bold-text {
+  font-weight: 500 !important;
+}
+
+.inline-text {
+  display: flex;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--divider-grey-color);
+  margin-top: 20.8px;
+  margin-bottom: 30px;
+}
+
+#page-banner {
+  display: flex;
+  justify-content: center;
+  height: 61px;
+  background-color: var(--banner-color);
+}
+
+#page-banner-content {
+  display: flex;
+  align-items: center;
+}
+
+#page-banner-content img {
+  fill: var(--text-color);
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
+}
+
+#page-banner-content p {
+  font-size: 13px;
+  padding: 0;
+  margin: 0;
+}
+
+#main-container {
+  display: flex;
+  justify-content: center;
+}
+
+#main-message {
+  margin-top: 113px;
+  justify-self: center;
+}
+
+#main-message h3 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.36;
+  color: var(--button-seaweed-color);
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+#main-message p {
+  margin-bottom: 30px;
+}
+
+#main-message button {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 211px;
+  height: 44px;
+  border-radius: 40px;
+  border: solid 1px var(--button-pine-color);
+  background-color: var(--button-pine-color);
+  cursor: pointer;
+  /* Similar transition used by MUI contained buttons. */
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+#main-message button:hover {
+  background-color: var(--button-seaweed-color);
+}
+
+#main-button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#main-button-content p,
+img {
+  fill: var(--button-text-color);
+  color: var(--button-text-color);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+}
+
+#main-button-content img {
+  width: 20px;
+  height: 20px;
+}
