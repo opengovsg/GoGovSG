@@ -95,9 +95,10 @@ body {
   border-radius: 40px;
   border: solid 1px var(--button-pine-color);
   background-color: var(--button-pine-color);
-  cursor: pointer;
-  /* Similar transition used by MUI contained buttons. */
+  /* Styles adopted by MUI contained buttons. */
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  cursor: pointer;
+  outline: 0;
 }
 
 #main-message button:hover {
