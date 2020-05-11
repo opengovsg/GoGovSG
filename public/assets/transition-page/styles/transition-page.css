@@ -107,8 +107,6 @@ body {
 
 #main-button-content {
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 #main-button-content p,
