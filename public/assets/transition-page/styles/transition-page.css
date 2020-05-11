@@ -19,6 +19,10 @@ body {
   padding: 0 !important;
 }
 
+button {
+  font-family: inherit;
+}
+
 .emphasize-text-color {
   color: var(--text-emphasize-color) !important;
 }
@@ -79,17 +83,15 @@ body {
   line-height: 1.36;
   color: var(--button-seaweed-color);
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 #main-message p {
+  margin-top: 15px;
   margin-bottom: 30px;
 }
 
 #main-message button {
-  display: flex;
-  align-content: center;
-  justify-content: center;
   width: 211px;
   height: 44px;
   border-radius: 40px;
@@ -107,6 +109,8 @@ body {
 
 #main-button-content {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #main-button-content p,
@@ -122,4 +126,5 @@ img {
 #main-button-content img {
   width: 20px;
   height: 20px;
+  margin-left: 5px;
 }
