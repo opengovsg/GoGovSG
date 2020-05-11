@@ -183,8 +183,8 @@ export default async function redirect(
     }
 
     // Redirect immediately if a crawler is visiting the site
-    const redirectImmediately = isCrawler(req.headers['user-agent'] || '') ||
-      req.session.visits?.[shortUrl]
+    const redirectImmediately = isCrawler(req.headers['user-agent'] || '')
+      || req.session.visits?.[shortUrl]
     if (redirectImmediately) {
       res.status(302).redirect(longUrl)
       return
