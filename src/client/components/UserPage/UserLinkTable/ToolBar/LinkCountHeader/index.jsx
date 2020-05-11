@@ -4,11 +4,13 @@ import { Typography, createStyles, makeStyles } from '@material-ui/core'
 
 import useMinifiedActions from '../util/useMinifiedActions'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     linkCountHeader: {
       flex: 1,
       alignSelf: 'center',
+      marginRight: theme.spacing(2),
+      whiteSpace: 'nowrap',
     },
   }),
 )
