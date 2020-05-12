@@ -42,6 +42,7 @@ button {
   position: fixed;
   bottom: 0;
   display: flex;
+  align-items: center;
   justify-content: center;
   height: 61px;
   width: 100%;
@@ -50,16 +51,16 @@ button {
 
 #page-banner-content {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding-left: 30px;
   padding-right: 30px;
 }
 
 #page-banner-content img {
   fill: var(--text-color);
-  width: 18px;
-  height: 18px;
-  margin-right: 5px;
+  min-width: 18px;
+  min-height: 18px;
+  margin-right: 5.3px;
 }
 
 #page-banner-content p {
@@ -144,5 +145,9 @@ img {
 
   #page-banner {
     top: 0;
+  }
+
+  #page-banner-content {
+    align-items: center;
   }
 }
