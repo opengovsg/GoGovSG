@@ -18,10 +18,12 @@ import {
 import ModalMargins from '../ModalMargins'
 
 // Height of the text field in the create link dialog.
-const textFieldHeight = 44
+const TEXT_FIELD_HEIGHT = 44
 
 const FormStartAdorment = ({ children }) => {
-  const classes = useCreateLinkFormStyles({ textFieldHeight })
+  const classes = useCreateLinkFormStyles({
+    textFieldHeight: TEXT_FIELD_HEIGHT,
+  })
   return (
     <InputAdornment className={classes.startAdorment} position="start">
       <Typography className={classes.startAdormentText} color="textSecondary">
@@ -39,7 +41,9 @@ export default function CreateLinkForm({
   setLongUrl,
   setRandomShortUrl,
 }) {
-  const classes = useCreateLinkFormStyles({ textFieldHeight })
+  const classes = useCreateLinkFormStyles({
+    textFieldHeight: TEXT_FIELD_HEIGHT,
+  })
   return (
     <>
       <Divider />
