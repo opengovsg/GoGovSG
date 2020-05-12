@@ -17,7 +17,7 @@ const TRANSITION_PATH = 'transition-page.ejs'
 // limited by max cookie size of 4096 bytes
 const MAX_SHORTURL_COUNT = 100
 
-interface epochToShortUrlMapping {
+interface EpochToShortUrlMapping {
   [epoch: number]: string
 }
 
@@ -209,7 +209,7 @@ export default async function redirect(
       if (_.size(req.session.visits) > MAX_SHORTURL_COUNT) {
         // Build inverse dictionary
         const epochList: number[] = []
-        const lookupTable: epochToShortUrlMapping = {}
+        const lookupTable: EpochToShortUrlMapping = {}
         Object.keys(req.session.visits).forEach((url) => {
           const epoch = req.session!.visits[url]
           lookupTable[epoch] = url
