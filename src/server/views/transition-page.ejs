@@ -2,9 +2,9 @@
 <html>
 
 <head>
-    <meta name="viewport" .card="width=device-width, initial-scale=1.0">
-    <meta http-equiv=.card-Language".card="en">
-    <meta http-equiv="X-UA-Compatible" .card="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Language" content="en">
     <meta charset="UTF-8">
     <title>Go.gov.sg</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,13 +13,6 @@
 </head>
 
 <body>
-    <div id="page-banner">
-        <div id="page-banner-content">
-            <!-- banner info icon -->
-            <img src="./assets/transition-page/icons/icon-info.svg" draggable="false" />
-            <p>You will only be shown this page the first time you access this short link.</p>
-        </div>
-    </div>
     <main id="main-container">
         <div id="main-message">
             <a href="/">
@@ -27,16 +20,10 @@
                 <img src="./assets/transition-page/icons/go-logo.svg" draggable="false" />
             </a>
             <div class="divider"></div>
-            <div class="inline-text">
-                <h3>Check your browser to make sure you’re accessing a&nbsp;</h3>
-                <h3 class="emphasize-text-color">gov.sg</h3>
-                <h3>&nbsp;link.</h3>
-            </div>
-            <div class="inline-text">
-                <p>You are visiting a page at&nbsp;</p>
-                <p class="semi-bold-text"><%= longUrl _%></p>
-                <p>.</p>
-            </div>
+            <h3>Check your browser to make sure you’re accessing a&nbsp;<span
+                    class="emphasize-text-color">gov.sg</span>&nbsp;link.
+            </h3>
+            <p>You are visiting a page at&nbsp;<span class="semi-bold-text"><%= longUrl _%></span>.</p>
             <button onclick="proceedToDestination()">
                 <div id="main-button-content">
                     <p>Proceed to your page</p>
@@ -46,6 +33,13 @@
             </button>
         </div>
     </main>
+    <div id="page-banner">
+        <div id="page-banner-content">
+            <!-- banner info icon -->
+            <img src="./assets/transition-page/icons/icon-info.svg" draggable="false" />
+            <p>You will only be shown this page the first time you access this short link.</p>
+        </div>
+    </div>
     <script>
         function proceedToDestination() {
             window.location = '<%- longUrl %>'

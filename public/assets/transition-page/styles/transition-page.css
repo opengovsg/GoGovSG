@@ -31,10 +31,6 @@ button {
   font-weight: 500 !important;
 }
 
-.inline-text {
-  display: flex;
-}
-
 .divider {
   height: 1px;
   background-color: var(--divider-grey-color);
@@ -43,15 +39,20 @@ button {
 }
 
 #page-banner {
+  position: fixed;
+  bottom: 0;
   display: flex;
   justify-content: center;
   height: 61px;
+  width: 100%;
   background-color: var(--banner-color);
 }
 
 #page-banner-content {
   display: flex;
   align-items: center;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
 #page-banner-content img {
@@ -68,17 +69,15 @@ button {
 }
 
 #main-container {
+  margin-top: 106px;
   display: flex;
   justify-content: center;
-}
-
-#main-message {
-  margin-top: 113px;
-  justify-self: center;
+  margin-left: 57px;
+  margin-right: 57px;
 }
 
 #main-message h3 {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.36;
   color: var(--button-seaweed-color);
@@ -127,4 +126,23 @@ img {
   width: 20px;
   height: 20px;
   margin-left: 5px;
+}
+
+@media only screen and (min-width: 600px) {
+  body {
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+
+  #main-message h3 {
+    font-size: 22px;
+  }
+
+  #main-container {
+    margin-top: 174px;
+  }
+
+  #page-banner {
+    top: 0;
+  }
 }
