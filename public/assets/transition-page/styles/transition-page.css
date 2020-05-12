@@ -69,7 +69,7 @@ button {
 }
 
 #main-container {
-  margin-top: 106px;
+  margin-top: min(106px, 12vh);
   display: flex;
   justify-content: center;
   margin-left: 57px;
