@@ -193,7 +193,9 @@ export default async function redirect(
       rootDomain,
     })
   } catch (error) {
-    if (!(error instanceof NotFoundError)) logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
+    if (!(error instanceof NotFoundError)) {
+      logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
+    }
 
     res.status(404).render(ERROR_404_PATH, { shortUrl })
   }
