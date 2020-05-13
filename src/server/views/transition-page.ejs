@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta charset="UTF-8">
+    <title>Go.gov.sg</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="./assets/transition-page/styles/transition-page.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <main id="main-container">
+        <div id="main-message">
+            <a href="/">
+                <!-- go logo -->
+                <img src="./assets/transition-page/icons/go-logo.svg" draggable="false" />
+            </a>
+            <div class="divider"></div>
+            <h3>Check your browser to make sure you’re accessing a <span
+                    class="emphasize-text-color">gov.sg</span> link.
+            </h3>
+            <p>You are visiting a page at <span class="semi-bold-text"><%= rootDomain _%></span>.</p>
+            <button onclick="proceedToDestination()">
+                <div id="main-button-content">
+                    <p>Proceed to your page</p>
+                    <!-- button right arrow icon -->
+                    <img src="./assets/transition-page/icons/icon-arrow-right.svg" draggable="false" />
+                </div>
+            </button>
+        </div>
+    </main>
+    <div id="page-banner">
+        <div id="page-banner-content">
+            <!-- banner info icon -->
+            <img src="./assets/transition-page/icons/icon-info.svg" draggable="false" />
+            <p>You will only be shown this page the first time you access this short link.</p>
+        </div>
+    </div>
+    <script>
+        function proceedToDestination() {
+            window.location = '<%- longUrl %>'
+        }
+    </script>
+</body>
+
+</html>

@@ -1,12 +1,17 @@
 import Express from 'express'
+import { UAParser } from 'ua-parser-js'
+
 import { redirectClient } from '../redis'
 import { Url } from '../models'
 import { ACTIVE } from '../models/types'
 import { gaTrackingId, logger, redirectExpiry } from '../config'
 import { generateCookie, sendPageViewHit } from '../util/ga'
 import { NotFoundError } from '../util/error'
+import LRUCache from '../util/lrucache'
+import parseDomain from '../util/domain'
 
-const error404Path = '404.error.ejs'
+const ERROR_404_PATH = '404.error.ejs'
+const TRANSITION_PATH = 'transition-page.ejs'
 
 /**
  *
@@ -17,7 +22,7 @@ const error404Path = '404.error.ejs'
  */
 function gaLogging(
   req: Express.Request,
-  res:Express.Response,
+  res: Express.Response,
   shortUrl: string,
   longUrl: string,
 ): void {
@@ -42,7 +47,11 @@ function getLongUrlFromCache(shortUrl: string): Promise<string> {
         reject(cacheError)
       } else {
         if (!cacheLongUrl) {
-          reject(new NotFoundError(`longUrl not found in cache:\tshortUrl=${shortUrl}`))
+          reject(
+            new NotFoundError(
+              `longUrl not found in cache:\tshortUrl=${shortUrl}`,
+            ),
+          )
         }
         resolve(cacheLongUrl)
       }
@@ -65,7 +74,11 @@ function getLongUrlFromDatabase(shortUrl: string): Promise<string> {
       },
     }).then((url) => {
       if (!url) {
-        reject(new NotFoundError(`longUrl not found in database:\tshortUrl=${shortUrl}`))
+        reject(
+          new NotFoundError(
+            `longUrl not found in database:\tshortUrl=${shortUrl}`,
+          ),
+        )
       } else {
         resolve(url.longUrl)
       }
@@ -125,16 +138,32 @@ function incrementClick(shortUrl: string): void {
 }
 
 /**
+ * Determine if a user-agent string is likely to be a crawler's.
+ * @param ua User-agent string.
+ */
+function isCrawler(ua: string): boolean {
+  const parser = new UAParser(ua)
+  const result = parser.getResult()
+  if (result.browser.name && result.engine.name && result.os.name) {
+    return false
+  }
+  return true
+}
+
+/**
  * The redirect function.
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
  */
-export default async function redirect(req: Express.Request, res: Express.Response) {
+export default async function redirect(
+  req: Express.Request,
+  res: Express.Response,
+) {
   let { shortUrl } = req.params
 
   // Short link must consist of valid characters
   if (!shortUrl || !/^[a-zA-Z0-9-]+$/.test(shortUrl)) {
-    res.status(404).render(error404Path, { shortUrl })
+    res.status(404).render(ERROR_404_PATH, { shortUrl })
     return
   }
   shortUrl = shortUrl.toLowerCase()
@@ -149,11 +178,39 @@ export default async function redirect(req: Express.Request, res: Express.Respon
     // Google analytics
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
-    // Redirect
+    // Redirect immediately if a crawler is visiting the site
+    if (isCrawler(req.get('user-agent') || '')) {
+      res.status(302).redirect(longUrl)
+      return
+    }
+
+    const cache = new LRUCache(req.session!.visits)
+    if (cache.isEmpty() || !cache.isEntryInCache(shortUrl)) {
+      // This is the first time visiting a/the shortlink.
+      cache.appendEntry(shortUrl)
+      req.session!.visits = cache.getData()
+
+      // Extract root domain from long url.
+      const rootDomain: string = parseDomain(longUrl)
+
+      res.status(200)
+        .render(TRANSITION_PATH, {
+          longUrl,
+          rootDomain,
+        })
+      return
+    }
+
+    // User has visited this shortlink before.
+    // Update LRU cache and redirect.
+    cache.updateEntry(shortUrl)
+    req.session!.visits = cache.getData()
     res.status(302).redirect(longUrl)
   } catch (error) {
-    if (!(error instanceof NotFoundError)) logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
+    if (!(error instanceof NotFoundError)) {
+      logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
+    }
 
-    res.status(404).render(error404Path, { shortUrl })
+    res.status(404).render(ERROR_404_PATH, { shortUrl })
   }
 }

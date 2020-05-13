@@ -1,8 +1,11 @@
+import path from 'path'
+
 import bodyParser from 'body-parser'
 import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import session from 'express-session'
+import cookieSession from 'cookie-session'
 import connectRedis from 'connect-redis'
 
 // Routes
@@ -63,15 +66,17 @@ initDb()
 
     // To serve from build
     app.use(express.static('dist'))
+    app.use(express.static('public'))
 
     if (trustProxy) {
       app.set('trust proxy', trustProxy)
     }
 
+    app.set('views', path.resolve(__dirname, './views'))
     app.set('view engine', 'ejs')
 
-    // Sessions
-    app.use(
+    const apiSpecificMiddleware = [
+      // Sessions
       session({
         store: new SessionStore({
           client: sessionClient, // ttl defaults to session.cookie.maxAge
@@ -85,7 +90,19 @@ initDb()
         },
         ...sessionSettings,
       } as session.SessionOptions),
-    )
+      // application/x-www-form-urlencoded
+      bodyParser.urlencoded({ extended: false }),
+      // application/json
+      bodyParser.json(),
+    ]
+
+    const redirectSpecificMiddleware = [
+      cookieSession({
+        name: 'visits',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+        secret: sessionSettings.secret,
+      }),
+    ]
 
     // Log http requests
     app.use(morgan(MORGAN_LOG_FORMAT))
@@ -95,10 +112,8 @@ initDb()
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH')
       next()
     })
-    app.use(bodyParser.urlencoded({ extended: false })) // application/x-www-form-urlencoded
-    app.use(bodyParser.json()) // application/json
-    app.use('/api', api) // Attach all API endpoints
-    app.use('/:shortUrl([a-zA-Z0-9-]+)', redirect) // The Redirect Endpoint
+    app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
+    app.use('/:shortUrl([a-zA-Z0-9-]+)', ...redirectSpecificMiddleware, redirect) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
       res.status(404).render('404.error.ejs', { shortUrl })
