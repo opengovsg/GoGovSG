@@ -8,18 +8,11 @@ import { ACTIVE } from '../models/types'
 import { gaTrackingId, logger, redirectExpiry } from '../config'
 import { generateCookie, sendPageViewHit } from '../util/ga'
 import { NotFoundError } from '../util/error'
+import LRUCache from '../util/lrucache'
 import parseDomain from '../util/domain'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
-
-// Maximum number of shortUrls to track,
-// limited by max cookie size of 4096 bytes
-const MAX_SHORTURL_COUNT = 100
-
-interface EpochToShortUrlMapping {
-  [epoch: number]: string
-}
 
 /**
  *
@@ -192,29 +185,11 @@ export default async function redirect(
       return
     }
 
-    if (!req.session!.visits || !req.session!.visits[shortUrl]) {
+    const cache = new LRUCache(req.session!.visits)
+    if (!req.session!.visits || cache.isEntryInCache(shortUrl)) {
       // This is the first time visiting a/the shortlink.
-      req.session!.visits = {
-        ...req.session!.visits,
-        [shortUrl]: Math.floor(Date.now()),
-      }
-
-      // Avoid exceeding cookie size limit by pruning
-      // old entries.
-      if (_.size(req.session!.visits) > MAX_SHORTURL_COUNT) {
-        // Build inverse dictionary
-        const epochList: number[] = []
-        const lookupTable: EpochToShortUrlMapping = {}
-        Object.keys(req.session!.visits).forEach((url) => {
-          const epoch = req.session!.visits[url]
-          lookupTable[epoch] = url
-          epochList.push(epoch)
-        })
-
-        const earliestEpoch = epochList.sort()[0]
-        const earliestShortUrl = lookupTable[earliestEpoch]
-        delete req.session!.visits[earliestShortUrl]
-      }
+      cache.appendEntry(shortUrl)
+      req.session!.visits = cache.getData()
 
       // Extract root domain from long url.
       const rootDomain: string = parseDomain(longUrl)
@@ -229,7 +204,8 @@ export default async function redirect(
 
     // User has visited this shortlink before.
     // Update LRU cache and redirect.
-    req.session!.visits[shortUrl] = Math.floor(Date.now())
+    cache.updateEntry(shortUrl)
+    req.session!.visits = cache.getData()
     res.status(302).redirect(longUrl)
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
