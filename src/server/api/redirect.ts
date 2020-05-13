@@ -1,6 +1,5 @@
 import Express from 'express'
 import { UAParser } from 'ua-parser-js'
-import _ from 'lodash'
 
 import { redirectClient } from '../redis'
 import { Url } from '../models'
