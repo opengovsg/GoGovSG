@@ -17,8 +17,8 @@ export default class LRUCache {
 
   timestamps: number[] = []
 
-  constructor(data: CookieData) {
-    this.data = data
+  constructor(data: CookieData | null) {
+    this.data = data || {}
   }
 
   // Getters/Setters
