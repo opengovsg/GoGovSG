@@ -12,6 +12,7 @@ import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
 import { FileVisibility, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
+
 const { Public, Private } = FileVisibility
 
 const router = Express.Router()
@@ -134,7 +135,9 @@ function validatePresignedUrlRequest(
  * Endpoint for a user to create a short URL.
  */
 router.post('/url', validateUrls, async (req, res) => {
-  const { isFile, userId, longUrl, shortUrl } = req.body
+  const {
+    isFile, userId, longUrl, shortUrl,
+  } = req.body
 
   try {
     const user = await User.findByPk(userId)
@@ -153,7 +156,9 @@ router.post('/url', validateUrls, async (req, res) => {
     // Success
     const result = await sequelize.transaction((t) => (
       Url.create(
-        { userId: user.id, longUrl, shortUrl, isFile: !!isFile },
+        {
+          userId: user.id, longUrl, shortUrl, isFile: !!isFile,
+        },
         { transaction: t },
       )
     ))
