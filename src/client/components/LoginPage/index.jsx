@@ -90,6 +90,7 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
+      maxHeight: 'calc(100vh - 28px)',
       textAlign: 'center',
       overflow: 'hidden',
     },
