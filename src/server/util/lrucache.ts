@@ -27,6 +27,10 @@ export default class LRUCache {
     return this.data
   }
 
+  isEmpty() {
+    return _.isEmpty(this.data)
+  }
+
   /**
    * Predicate that checks if the shortUrl exists in the cache.
    * @param {string} shortUrl The shortUrl to check.

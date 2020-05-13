@@ -185,7 +185,7 @@ export default async function redirect(
     }
 
     const cache = new LRUCache(req.session!.visits)
-    if (!req.session!.visits || cache.isEntryInCache(shortUrl)) {
+    if (cache.isEmpty() || !cache.isEntryInCache(shortUrl)) {
       // This is the first time visiting a/the shortlink.
       cache.appendEntry(shortUrl)
       req.session!.visits = cache.getData()
