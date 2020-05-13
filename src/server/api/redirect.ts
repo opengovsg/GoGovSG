@@ -192,25 +192,20 @@ export default async function redirect(
       return
     }
 
-    // Reassure typescript that the session object exists.
-    if (!req.session) {
-      throw new Error('Session object does not exist')
-    }
-
-    if (!req.session.visits || !req.session.visits[shortUrl]) {
+    if (!req.session!.visits || !req.session!.visits[shortUrl]) {
       // This is the first time visiting a/the shortlink.
-      req.session.visits = {
-        ...req.session.visits,
+      req.session!.visits = {
+        ...req.session!.visits,
         [shortUrl]: Math.floor(Date.now()),
       }
 
       // Avoid exceeding cookie size limit by pruning
       // old entries.
-      if (_.size(req.session.visits) > MAX_SHORTURL_COUNT) {
+      if (_.size(req.session!.visits) > MAX_SHORTURL_COUNT) {
         // Build inverse dictionary
         const epochList: number[] = []
         const lookupTable: EpochToShortUrlMapping = {}
-        Object.keys(req.session.visits).forEach((url) => {
+        Object.keys(req.session!.visits).forEach((url) => {
           const epoch = req.session!.visits[url]
           lookupTable[epoch] = url
           epochList.push(epoch)
@@ -218,7 +213,7 @@ export default async function redirect(
 
         const earliestEpoch = epochList.sort()[0]
         const earliestShortUrl = lookupTable[earliestEpoch]
-        delete req.session.visits[earliestShortUrl]
+        delete req.session!.visits[earliestShortUrl]
       }
 
       // Extract root domain from long url.
@@ -234,7 +229,7 @@ export default async function redirect(
 
     // User has visited this shortlink before.
     // Update LRU cache and redirect.
-    req.session.visits[shortUrl] = Math.floor(Date.now())
+    req.session!.visits[shortUrl] = Math.floor(Date.now())
     res.status(302).redirect(longUrl)
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
