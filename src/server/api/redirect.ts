@@ -7,6 +7,7 @@ import { ACTIVE } from '../models/types'
 import { gaTrackingId, logger, redirectExpiry } from '../config'
 import { generateCookie, sendPageViewHit } from '../util/ga'
 import { NotFoundError } from '../util/error'
+import LRUCache from '../util/lrucache'
 import parseDomain from '../util/domain'
 
 const ERROR_404_PATH = '404.error.ejs'
@@ -178,20 +179,33 @@ export default async function redirect(
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
     // Redirect immediately if a crawler is visiting the site
-    if (isCrawler(req.headers['user-agent'] || '')) {
+    if (isCrawler(req.get('user-agent') || '')) {
       res.status(302).redirect(longUrl)
       return
     }
 
-    // Extract root domain from long url.
-    const rootDomain: string = parseDomain(longUrl)
+    const cache = new LRUCache(req.session!.visits)
+    if (cache.isEmpty() || !cache.isEntryInCache(shortUrl)) {
+      // This is the first time visiting a/the shortlink.
+      cache.appendEntry(shortUrl)
+      req.session!.visits = cache.getData()
 
-    // Serve transition page
-    // TODO: Get/set a browser cookie so that this isn't served too frequently
-    res.status(200).render(TRANSITION_PATH, {
-      longUrl,
-      rootDomain,
-    })
+      // Extract root domain from long url.
+      const rootDomain: string = parseDomain(longUrl)
+
+      res.status(200)
+        .render(TRANSITION_PATH, {
+          longUrl,
+          rootDomain,
+        })
+      return
+    }
+
+    // User has visited this shortlink before.
+    // Update LRU cache and redirect.
+    cache.updateEntry(shortUrl)
+    req.session!.visits = cache.getData()
+    res.status(302).redirect(longUrl)
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
       logger.error(`Redirect error: ${error} ${error instanceof NotFoundError}`)
