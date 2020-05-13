@@ -65,6 +65,7 @@ initDb()
 
     // To serve from build
     app.use(express.static('dist'))
+    app.use(express.static('public'))
 
     if (trustProxy) {
       app.set('trust proxy', trustProxy)
