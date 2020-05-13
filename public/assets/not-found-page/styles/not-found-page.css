@@ -1,0 +1,148 @@
+:root {
+  --text-color: #384a51;
+  --text-emphasize-color: #456682;
+  --banner-color: #f9f9f9;
+  --button-text-color: #ffffff;
+  --button-pine-color: #456682;
+  --button-seaweed-color: #384a51;
+  --divider-grey-color: #e8e8e8;
+}
+
+body {
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: var(--text-color);
+  overflow-wrap: break-word;
+  /* Do not use default window margins. */
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+button {
+  font-family: inherit;
+}
+
+img {
+  /* Prevents long press to save the image */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
+#main-container {
+  margin-top: 10vh;
+  margin-bottom: 10vh;
+}
+
+#main-message-container {
+  display: flex;
+  justify-content: center;
+  margin-left: 56px;
+  margin-right: 56px;
+}
+
+#main-message h3 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.36;
+  color: var(--button-seaweed-color);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#main-message p {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 246px;
+}
+
+#button-div {
+  display: flex;
+  justify-content: center;
+}
+
+#button-div button {
+  width: 188px;
+  height: 44px;
+  border-radius: 40px;
+  border: solid 1px var(--button-pine-color);
+  background-color: var(--button-pine-color);
+  /* Styles adopted by MUI contained buttons. */
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  cursor: pointer;
+  outline: 0;
+}
+
+#button-div button:hover {
+  background-color: var(--button-seaweed-color);
+}
+
+#main-button-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#main-button-content p,
+img {
+  fill: var(--button-text-color);
+  color: var(--button-text-color);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+}
+
+#main-button-content img {
+  width: 20px;
+  height: 20px;
+  margin-left: 5px;
+}
+
+#graphics-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60px;
+}
+
+#graphic-div {
+  display: flex;
+  justify-content: center;
+  width: 292.5px;
+}
+
+#go-logo-div {
+  margin-top: 35.1px;
+  display: flex;
+  justify-content: center;
+}
+
+@media only screen and (min-width: 600px) {
+  body {
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+
+  #main-container {
+    margin-top: 150px;
+  }
+
+  #main-message h3 {
+    font-size: 28px;
+  }
+
+  #main-message p {
+    font-size: 16px;
+    width: 295px;
+  }
+
+  #button-div button {
+    width: 211px;
+  }
+}
