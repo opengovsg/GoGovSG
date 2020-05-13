@@ -187,7 +187,7 @@ export default async function redirect(
     if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
 
     // Redirect immediately if a crawler is visiting the site
-    if (isCrawler(req.headers['user-agent'] || '')) {
+    if (isCrawler(req.get('user-agent') || '')) {
       res.status(302).redirect(longUrl)
       return
     }
