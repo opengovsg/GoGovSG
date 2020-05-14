@@ -26,6 +26,7 @@ export default () => {
     container
       .bind<CookieReducer>(DependencyIds.cookieReducer)
       .to(CookieArrayReducer)
+  }
   if (!container.isBound(DependencyIds.otpCache)) {
     container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheRedis)
   }

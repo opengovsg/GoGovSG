@@ -138,7 +138,9 @@ function validatePresignedUrlRequest(
  * Endpoint for a user to create a short URL.
  */
 router.post('/url', validateUrls, async (req, res) => {
-  const { isFile, userId, longUrl, shortUrl } = req.body
+  const {
+    isFile, userId, longUrl, shortUrl,
+  } = req.body
 
   try {
     const user = await User.findByPk(userId)
@@ -155,17 +157,15 @@ router.post('/url', validateUrls, async (req, res) => {
     }
 
     // Success
-    const result = await transaction((t) =>
-      Url.create(
-        {
-          userId: user.id,
-          longUrl,
-          shortUrl,
-          isFile: !!isFile,
-        },
-        { transaction: t },
-      ),
-    )
+    const result = await transaction((t) => Url.create(
+      {
+        userId: user.id,
+        longUrl,
+        shortUrl,
+        isFile: !!isFile,
+      },
+      { transaction: t },
+    ))
 
     res.ok(result)
   } catch (error) {
@@ -227,9 +227,7 @@ router.patch('/url/ownership', async (req, res) => {
     }
 
     // Success
-    const result = await transaction((t) =>
-      url.update({ userId: newUserId }, { transaction: t }),
-    )
+    const result = await transaction((t) => url.update({ userId: newUserId }, { transaction: t }))
     res.ok(result)
   } catch (error) {
     logger.error(`Error transferring ownership of short URL:\t${error}`)
