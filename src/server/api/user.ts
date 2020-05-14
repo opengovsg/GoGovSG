@@ -1,17 +1,14 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
-import {
-  Url,
-  User,
-  UserType,
-  sequelize,
-} from '../models'
+import { User, UserType } from '../models/user'
+import { Url } from '../models/url'
 import { ACTIVE, INACTIVE } from '../models/types'
 import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
 import { FileVisibility, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
+import { transaction } from '../util/sequelize'
 
 const { Public, Private } = FileVisibility
 
@@ -29,9 +26,7 @@ function validateUrlRetrieval(
 
   if (!userId) {
     res.badRequest(
-      jsonMessage(
-        'Some or all required arguments missing: userId',
-      ),
+      jsonMessage('Some or all required arguments missing: userId'),
     )
   }
 
@@ -41,7 +36,11 @@ function validateUrlRetrieval(
 /**
  * Make sure all parameters needed for the URL creation/edit API are present.
  */
-function validateUrls(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+function validateUrls(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
   const { userId, longUrl, shortUrl } = req.body
 
   if (!(userId && longUrl && shortUrl)) {
@@ -83,10 +82,12 @@ function validateUrls(req: Express.Request, res: Express.Response, next: Express
 /**
  * Make sure all parameters needed for the URL state toggling API are present.
  */
-function validateState(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
-  const {
-    userId, shortUrl, state,
-  } = req.body
+function validateState(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
+  const { userId, shortUrl, state } = req.body
 
   if (!(userId && shortUrl && state)) {
     res.badRequest(
@@ -99,9 +100,7 @@ function validateState(req: Express.Request, res: Express.Response, next: Expres
 
   if (![ACTIVE, INACTIVE].includes(state)) {
     res.badRequest(
-      jsonMessage(
-        `state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`,
-      ),
+      jsonMessage(`state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`),
     )
   }
 
@@ -154,7 +153,7 @@ router.post('/url', validateUrls, async (req, res) => {
     }
 
     // Success
-    const result = await sequelize.transaction((t) => (
+    const result = await transaction((t) => (
       Url.create(
         {
           userId: user.id, longUrl, shortUrl, isFile: !!isFile,
@@ -188,7 +187,9 @@ router.patch('/url/ownership', async (req, res) => {
   const { userId, shortUrl, newUserEmail } = req.body
   try {
     // Test current user really owns the shortlink
-    const user = await User.scope({ method: ['includeShortUrl', shortUrl] }).findOne({
+    const user = await User.scope({
+      method: ['includeShortUrl', shortUrl],
+    }).findOne({
       where: { id: userId },
     })
 
@@ -200,9 +201,7 @@ router.patch('/url/ownership', async (req, res) => {
     const [url] = (user.get() as UserType).Urls
 
     if (!url) {
-      res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`),
-      )
+      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
     }
 
     // Check that the new user exists
@@ -223,12 +222,7 @@ router.patch('/url/ownership', async (req, res) => {
     }
 
     // Success
-    const result = await sequelize.transaction((t) => (
-      url.update(
-        { userId: newUserId },
-        { transaction: t },
-      )
-    ))
+    const result = await transaction((t) => url.update({ userId: newUserId }, { transaction: t }))
     res.ok(result)
   } catch (error) {
     logger.error(`Error transferring ownership of short URL:\t${error}`)
@@ -242,7 +236,9 @@ router.patch('/url/ownership', async (req, res) => {
 router.patch('/url/edit', validateUrls, async (req, res) => {
   const { userId, longUrl, shortUrl } = req.body
   try {
-    const user = await User.scope({ method: ['includeShortUrl', shortUrl] }).findOne({
+    const user = await User.scope({
+      method: ['includeShortUrl', shortUrl],
+    }).findOne({
       where: { id: userId },
     })
 
@@ -254,17 +250,10 @@ router.patch('/url/edit', validateUrls, async (req, res) => {
     const [url] = (user.get() as UserType).Urls
 
     if (!url) {
-      res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`),
-      )
+      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
     }
 
-    await sequelize.transaction((t) => (
-      url.update(
-        { longUrl },
-        { transaction: t },
-      )
-    ))
+    await transaction((t) => url.update({ longUrl }, { transaction: t }))
     res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
 
     // Expire the Redis cache
@@ -286,7 +275,9 @@ router.patch('/url', validateState, async (req, res) => {
   const { userId, shortUrl, state } = req.body
 
   try {
-    const user = await User.scope({ method: ['includeShortUrl', shortUrl] }).findOne({
+    const user = await User.scope({
+      method: ['includeShortUrl', shortUrl],
+    }).findOne({
       where: { id: userId },
     })
 
@@ -298,12 +289,10 @@ router.patch('/url', validateState, async (req, res) => {
     const [url] = (user.get() as UserType).Urls
 
     if (!url) {
-      res.notFound(
-        jsonMessage(`Short link "${shortUrl}" not found for user.`),
-      )
+      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
     }
 
-    await sequelize.transaction(async (t) => {
+    await transaction(async (t) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
         // Toggle the ACL of the S3 object
@@ -338,14 +327,25 @@ router.get('/url', validateUrlRetrieval, async (req, res) => {
   let { limit = 10000, searchText = '' } = req.query
   limit = Math.min(10000, limit)
   searchText = searchText.toLowerCase()
-  const { offset = 0, orderBy = 'updatedAt', sortDirection = 'desc' } = req.query
+  const {
+    offset = 0,
+    orderBy = 'updatedAt',
+    sortDirection = 'desc',
+  } = req.query
   const queryConditions = {
-    limit, offset, orderBy, sortDirection, searchText, userId,
+    limit,
+    offset,
+    orderBy,
+    sortDirection,
+    searchText,
+    userId,
   }
 
   try {
     // Find user and paginated urls
-    const userCountAndArray = await User.scope({ method: ['urlsWithQueryConditions', queryConditions] }).findAndCountAll({
+    const userCountAndArray = await User.scope({
+      method: ['urlsWithQueryConditions', queryConditions],
+    }).findAndCountAll({
       subQuery: false, // set limit and offset at end of main query instead of subquery
     })
 
