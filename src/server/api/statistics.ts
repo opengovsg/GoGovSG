@@ -1,6 +1,7 @@
 import Express from 'express'
 import { statClient } from '../redis'
-import { Url, User } from '../models'
+import { User } from '../models/user'
+import { Url } from '../models/url'
 import { logger, statisticsExpiry } from '../config'
 
 const router = Express.Router()

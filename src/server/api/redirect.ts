@@ -1,105 +1,17 @@
 import Express from 'express'
 import { UAParser } from 'ua-parser-js'
-
-import { redirectClient } from '../redis'
-import { Url } from '../models'
-import { ACTIVE } from '../models/types'
-import { gaTrackingId, logger, redirectExpiry } from '../config'
-import { generateCookie, sendPageViewHit } from '../util/ga'
+import { logger } from '../config'
 import { NotFoundError } from '../util/error'
 import LRUCache from '../util/lrucache'
 import parseDomain from '../util/domain'
+import { container } from '../util/inversify'
+import { UrlCache } from './cache/url'
+import { UrlRepository } from './repositories/url'
+import { DependencyIds } from '../constants'
+import { AnalyticsLogger } from './analytics/analyticsLogger'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
-
-/**
- *
- * @param {Object} req Express request object.
- * @param {Object} res Express response object.
- * @param {String} shortUrl Short url of link.
- * @param {String} longUrl  Long url of link.
- */
-function gaLogging(
-  req: Express.Request,
-  res: Express.Response,
-  shortUrl: string,
-  longUrl: string,
-): void {
-  const cookie = generateCookie(req)
-  if (cookie) {
-    res.cookie(...cookie)
-  }
-  sendPageViewHit(req, shortUrl, longUrl)
-}
-
-/**
- * Looks up the longUrl from the cache.
- * @param {string} shortUrl
- * @returns {Promise<string>}
- * @throws {NotFoundError}
- */
-function getLongUrlFromCache(shortUrl: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
-      if (cacheError) {
-        logger.error(`Cache lookup failed unexpectedly:\t${cacheError}`)
-        reject(cacheError)
-      } else {
-        if (!cacheLongUrl) {
-          reject(
-            new NotFoundError(
-              `longUrl not found in cache:\tshortUrl=${shortUrl}`,
-            ),
-          )
-        }
-        resolve(cacheLongUrl)
-      }
-    })
-  })
-}
-
-/**
- * Looks up the longUrl from the database given a short link.
- * @param {string} shortUrl
- * @returns {Promise<string>}
- * @throws {NotFoundError}
- */
-function getLongUrlFromDatabase(shortUrl: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
-    Url.findOne({
-      where: {
-        shortUrl,
-        state: ACTIVE,
-      },
-    }).then((url) => {
-      if (!url) {
-        reject(
-          new NotFoundError(
-            `longUrl not found in database:\tshortUrl=${shortUrl}`,
-          ),
-        )
-      } else {
-        resolve(url.longUrl)
-      }
-    })
-  })
-}
-
-/**
- * Cache a link in Redis.
- * @param shortUrl The short link.
- * @param longUrl The long URL.
- * @throws {Error}
- */
-function cacheShortUrl(shortUrl: string, longUrl: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
-      if (err) reject(err)
-      else resolve()
-    })
-  })
-}
 
 /**
  * Looks up the longUrl given a shortUrl from the cache, falling back
@@ -110,6 +22,13 @@ function cacheShortUrl(shortUrl: string, longUrl: string): Promise<void> {
  * @throws {NotFoundError}
  */
 async function getLongUrlFromStore(shortUrl: string): Promise<string> {
+  const { getLongUrlFromCache, cacheShortUrl } = container.get<UrlCache>(
+    DependencyIds.urlCache,
+  )
+  const { getLongUrlFromDatabase } = container.get<UrlRepository>(
+    DependencyIds.urlRepository,
+  )
+
   try {
     // Cache lookup
     return await getLongUrlFromCache(shortUrl)
@@ -126,15 +45,12 @@ async function getLongUrlFromStore(shortUrl: string): Promise<string> {
 }
 
 /**
- * Asynchronously increment the number of clicks in the database.
- * @param shortUrl
+ * Checks whether the input short url is valid.
+ * @param {string} shortUrl
+ * @returns {boolean}
  */
-function incrementClick(shortUrl: string): void {
-  Url.findOne({ where: { shortUrl } }).then((url) => {
-    if (url) {
-      url.increment('clicks')
-    }
-  })
+function isValidShortUrl(shortUrl: string): boolean {
+  return !shortUrl || !/^[a-zA-Z0-9-]+$/.test(shortUrl)
 }
 
 /**
@@ -159,10 +75,17 @@ export default async function redirect(
   req: Express.Request,
   res: Express.Response,
 ) {
+  const { incrementClick } = container.get<UrlRepository>(
+    DependencyIds.urlRepository,
+  )
+  const { logRedirectAnalytics } = container.get<AnalyticsLogger>(
+    DependencyIds.analyticsLogging,
+  )
+
   let { shortUrl } = req.params
 
   // Short link must consist of valid characters
-  if (!shortUrl || !/^[a-zA-Z0-9-]+$/.test(shortUrl)) {
+  if (isValidShortUrl(shortUrl)) {
     res.status(404).render(ERROR_404_PATH, { shortUrl })
     return
   }
@@ -176,7 +99,7 @@ export default async function redirect(
     incrementClick(shortUrl)
 
     // Google analytics
-    if (gaTrackingId) gaLogging(req, res, shortUrl, longUrl)
+    logRedirectAnalytics(req, res, shortUrl, longUrl)
 
     // Redirect immediately if a crawler is visiting the site
     if (isCrawler(req.get('user-agent') || '')) {

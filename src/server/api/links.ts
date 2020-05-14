@@ -6,8 +6,6 @@ const router = Express.Router()
 /**
  * Requests for the array of links to rotate.
  */
-router.get('/', (_, res) => {
-  return res.send(linksToRotate)
-})
+router.get('/', (_, res) => res.send(linksToRotate))
 
 module.exports = router
