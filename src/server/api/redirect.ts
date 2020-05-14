@@ -2,13 +2,13 @@ import Express from 'express'
 import { UAParser } from 'ua-parser-js'
 import { logger } from '../config'
 import { NotFoundError } from '../util/error'
-import LRUCache from '../util/lrucache'
 import parseDomain from '../util/domain'
 import { container } from '../util/inversify'
 import { UrlCache } from './cache/url'
 import { UrlRepository } from './repositories/url'
 import { DependencyIds } from '../constants'
 import { AnalyticsLogger } from './analytics/analyticsLogger'
+import { CookieReducer } from '../util/transitionPage'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
@@ -81,6 +81,10 @@ export default async function redirect(
   const { logRedirectAnalytics } = container.get<AnalyticsLogger>(
     DependencyIds.analyticsLogging,
   )
+  const {
+    userHasVisitedShortlink,
+    writeShortlinkToCookie,
+  } = container.get<CookieReducer>(DependencyIds.cookieReducer)
 
   let { shortUrl } = req.params
 
@@ -107,11 +111,11 @@ export default async function redirect(
       return
     }
 
-    const cache = new LRUCache(req.session!.visits)
-    if (cache.isEmpty() || !cache.isEntryInCache(shortUrl)) {
-      // This is the first time visiting a/the shortlink.
-      cache.appendEntry(shortUrl)
-      req.session!.visits = cache.getData()
+    if (!userHasVisitedShortlink(req.session!.visits, shortUrl)) {
+      req.session!.visits = writeShortlinkToCookie(
+        req.session!.visits,
+        shortUrl,
+      )
 
       // Extract root domain from long url.
       const rootDomain: string = parseDomain(longUrl)
@@ -125,9 +129,10 @@ export default async function redirect(
     }
 
     // User has visited this shortlink before.
-    // Update LRU cache and redirect.
-    cache.updateEntry(shortUrl)
-    req.session!.visits = cache.getData()
+    req.session!.visits = writeShortlinkToCookie(
+      req.session!.visits,
+      shortUrl,
+    )
     res.status(302).redirect(longUrl)
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
