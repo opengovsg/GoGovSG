@@ -47,7 +47,7 @@ export class CookieArrayReducer implements CookieReducer {
     shortUrl: string,
   ): string[] {
     if (!cookie) return [shortUrl]
-    if (this.userHasVisitedShortlink(cookie, shortUrl)) {
+    if (cookie.includes(shortUrl)) {
       return _.without(cookie, shortUrl).concat(shortUrl)
     }
     let newCookie = _.concat(cookie, shortUrl)
