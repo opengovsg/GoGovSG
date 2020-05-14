@@ -90,6 +90,7 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
+      maxHeight: 'calc(100vh - 28px)',
       textAlign: 'center',
       overflow: 'hidden',
     },
@@ -213,7 +214,7 @@ const LoginPage = ({
                     </Typography>
                   </span>
                   <span className={classes.textInputGroup}>
-                    <Typography variant="body2">
+                    <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
                     {emailForm}

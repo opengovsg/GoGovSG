@@ -2,6 +2,12 @@ import { URL, parse } from 'url'
 import { S3 } from 'aws-sdk'
 import { s3Bucket } from '../config'
 
+// Enums for S3 object ACL toggling. Do not change string representations.
+export enum FileVisibility {
+  Public = 'public-read',
+  Private = 'private',
+}
+
 export const s3 = new S3()
 
 /**
@@ -38,4 +44,13 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
   }
   const presignedUrl = await s3.getSignedUrlPromise('putObject', params)
   return reformatPresignedUrl(presignedUrl, fileName)
+}
+
+export const setS3ObjectACL = (key: string, acl: FileVisibility): Promise<any> => {
+  const params = {
+    Bucket: s3Bucket,
+    Key: key,
+    ACL: acl,
+  }
+  return s3.putObjectAcl(params).promise()
 }

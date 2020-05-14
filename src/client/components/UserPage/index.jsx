@@ -4,7 +4,7 @@ import { connect, useSelector } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from 'react-router-dom'
 
-import CreateUrlModal from './CreateUrlModal'
+import { CreateUrlModal } from './Modals'
 import QRCodeModal from './QRCodeModal'
 import OwnershipModal from './OwnershipModal'
 import UrlTable from './UrlTable'

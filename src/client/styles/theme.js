@@ -52,10 +52,10 @@ const theme = responsiveFontSizes(
         lineHeight: 1.5,
       },
       body1: {
-        fontSize: '0.875rem',
+        fontSize: '1rem',
       },
       body2: {
-        fontSize: '1rem',
+        fontSize: '0.875rem',
       },
       caption: {
         fontSize: '0.8rem',
@@ -65,12 +65,6 @@ const theme = responsiveFontSizes(
       },
     },
     overrides: {
-      MuiDivider: {
-        root: {
-          width: '50vw',
-          margin: '16px 0px',
-        },
-      },
       MuiButton: {
         root: {
           borderRadius: '40px',
@@ -78,6 +72,9 @@ const theme = responsiveFontSizes(
         contained: {
           boxShadow: 'none',
           '&:hover': {
+            boxShadow: 'none',
+          },
+          '&:active': {
             boxShadow: 'none',
           },
         },

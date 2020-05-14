@@ -36,6 +36,8 @@ const createUrlStyle = (theme) => ({
     flexGrow: '1',
     width: '100px', // Override default
     padding: theme.spacing(0),
+    height: '100%',
+    lineHeight: '1.5',
   },
   startAdorment: {
     height: '100%',
