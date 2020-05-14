@@ -71,6 +71,7 @@ button {
 
 #main-container {
   margin-top: min(106px, 12vh);
+  margin-bottom: min(106px, calc(12vh + 61px));
   display: flex;
   justify-content: center;
   margin-left: 57px;
@@ -129,7 +130,7 @@ img {
   margin-left: 5px;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 960px) {
   body {
     flex-direction: column-reverse;
     justify-content: flex-end;
@@ -141,6 +142,7 @@ img {
 
   #main-container {
     margin-top: 174px;
+    margin-bottom: 113px;
   }
 
   #page-banner {
