@@ -111,12 +111,16 @@ export default async function redirect(
       return
     }
 
-    if (!userHasVisitedShortlink(req.session!.visits, shortUrl)) {
-      req.session!.visits = writeShortlinkToCookie(
-        req.session!.visits,
-        shortUrl,
-      )
+    const renderTransitionPage = !userHasVisitedShortlink(
+      req.session!.visits,
+      shortUrl,
+    )
+    req.session!.visits = writeShortlinkToCookie(
+      req.session!.visits,
+      shortUrl,
+    )
 
+    if (renderTransitionPage) {
       // Extract root domain from long url.
       const rootDomain: string = parseDomain(longUrl)
 
@@ -127,12 +131,6 @@ export default async function redirect(
         })
       return
     }
-
-    // User has visited this shortlink before.
-    req.session!.visits = writeShortlinkToCookie(
-      req.session!.visits,
-      shortUrl,
-    )
     res.status(302).redirect(longUrl)
   } catch (error) {
     if (!(error instanceof NotFoundError)) {
