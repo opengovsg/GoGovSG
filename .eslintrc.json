@@ -10,7 +10,7 @@
     "browser": true,
     "node": true
   },
-  "plugins": ["jsdoc", "prettier"],
+  "plugins": ["jsdoc", "prettier", "jest"],
   "rules": {
     "no-console": "off",
     "comma-dangle": ["error", "always-multiline"],

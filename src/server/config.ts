@@ -5,7 +5,7 @@ import { parse } from 'url'
 import generateOTP, { OtpFunction } from './util/otp'
 
 // Check environment
-const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
+export const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
 
 // Constants for export
 // For bcrypt hash

@@ -4,6 +4,11 @@ import { UrlRepository, UrlRepositorySequelize } from './api/repositories/url'
 import { AnalyticsLogger, GaLogger } from './api/analytics/analyticsLogger'
 import { DependencyIds } from './constants'
 import { CookieArrayReducer, CookieReducer } from './util/transitionPage'
+import { OtpCache, OtpCacheRedis } from './api/cache/otp'
+import {
+  UserRepository,
+  UserRepositorySequelize,
+} from './api/repositories/user'
 
 export default () => {
   if (!container.isBound(DependencyIds.urlCache)) {
@@ -21,5 +26,12 @@ export default () => {
     container
       .bind<CookieReducer>(DependencyIds.cookieReducer)
       .to(CookieArrayReducer)
+  if (!container.isBound(DependencyIds.otpCache)) {
+    container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheRedis)
+  }
+  if (!container.isBound(DependencyIds.userRepository)) {
+    container
+      .bind<UserRepository>(DependencyIds.userRepository)
+      .to(UserRepositorySequelize)
   }
 }
