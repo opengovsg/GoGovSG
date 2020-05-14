@@ -52,6 +52,12 @@ export class UrlRepositorySequelize implements UrlRepository {
             .increment('clicks')
             .then(() => resolve())
             .catch((error) => reject(error))
+        } else {
+          reject(
+            new NotFoundError(
+              `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+            ),
+          )
         }
       })
     })

@@ -2,7 +2,6 @@ import Express from 'express'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
 import jsonMessage from '../../util/json'
-import { User } from '../../models/user'
 import { mailOTP } from '../../util/email'
 import {
   DEV_ENV,

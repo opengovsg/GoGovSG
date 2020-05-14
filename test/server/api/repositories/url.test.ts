@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { spy } from 'sinon'
+import { fake } from 'sinon'
 import { urlModelMock } from '../util'
 import { NotFoundError } from '../../../../src/server/util/error'
 import { logger } from '../../config'
@@ -14,7 +14,7 @@ jest.mock('../../../../src/server/config', () => ({
 }))
 
 const urlRepo = new UrlRepositorySequelize()
-const incrementSpy = spy()
+const incrementFake = fake.returns(Promise.resolve())
 
 /**
  * A mock of sequelize models' findOne method. If the short url is 'a',
@@ -25,7 +25,7 @@ const incrementSpy = spy()
 async function mockFindOne(params: any): Promise<any> {
   if (params.where.shortUrl === 'a') {
     return Promise.resolve({
-      increment: incrementSpy,
+      increment: incrementFake,
     })
   }
   return Promise.resolve(null)
@@ -33,7 +33,7 @@ async function mockFindOne(params: any): Promise<any> {
 
 describe('url repository sequelize implementation tests', () => {
   beforeEach(() => {
-    incrementSpy.resetHistory()
+    incrementFake.resetHistory()
   })
 
   test('get existing short url', async () => {
@@ -52,12 +52,12 @@ describe('url repository sequelize implementation tests', () => {
   test('increment clicks on existing url', async () => {
     jest.spyOn(urlModelMock, 'findOne').mockImplementationOnce(mockFindOne)
     await urlRepo.incrementClick('a')
-    expect(incrementSpy.calledOnceWithExactly('clicks')).toBeTruthy()
+    expect(incrementFake.calledOnceWithExactly('clicks')).toBeTruthy()
   })
 
   test('increment clicks on non-existant url', async () => {
     jest.spyOn(urlModelMock, 'findOne').mockImplementationOnce(mockFindOne)
-    await urlRepo.incrementClick('aa')
-    expect(incrementSpy.notCalled).toBeTruthy()
+    expect(urlRepo.incrementClick('aa')).rejects.toThrow(NotFoundError)
+    expect(incrementFake.called).toBeFalsy()
   })
 })

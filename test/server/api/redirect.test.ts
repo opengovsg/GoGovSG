@@ -25,12 +25,20 @@ import {
 } from './util'
 import { logger } from '../config'
 import redirect from '../../../src/server/api/redirect'
+import { CookieReducer } from '../../../src/server/util/transitionPage'
+import { CookieArrayReducerMock } from './mocks/transitionPage'
 
 jest.mock('../../../src/server/config', () => ({
   logger,
 }))
 
 describe('redirect API tests', () => {
+  beforeEach(() => {
+    container
+      .bind<CookieReducer>(DependencyIds.cookieReducer)
+      .to(CookieArrayReducerMock)
+  })
+
   afterEach(() => {
     container.unbindAll()
   })
