@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
-import { CookieReducer } from '../../../../src/server/util/transitionPage'
 import { injectable } from 'inversify'
+import { CookieReducer } from '../../../../src/server/util/transitionPage'
 
 @injectable()
 export class CookieArrayReducerMock implements CookieReducer {
@@ -12,3 +12,5 @@ export class CookieArrayReducerMock implements CookieReducer {
     return []
   }
 }
+
+export default CookieArrayReducerMock

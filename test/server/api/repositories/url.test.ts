@@ -57,7 +57,7 @@ describe('url repository sequelize implementation tests', () => {
 
   test('increment clicks on non-existant url', async () => {
     jest.spyOn(urlModelMock, 'findOne').mockImplementationOnce(mockFindOne)
-    expect(urlRepo.incrementClick('aa')).rejects.toThrow(NotFoundError)
+    await expect(urlRepo.incrementClick('aa')).rejects.toThrow(NotFoundError)
     expect(incrementFake.called).toBeFalsy()
   })
 })
