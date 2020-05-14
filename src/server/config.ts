@@ -147,6 +147,7 @@ export const getOTP: OtpFunction = otpFunction
 export const transporterOptions: nodemailer.TransporterOptions | null = transporterOpts
 export const trustProxy: boolean = proxy
 export const cookieSettings: CookieSettings = cookieConfig
+export const cookieSessionMaxSizeBytes = Number(process.env.COOKIE_SESSION_MAX_SIZE_BYTES) || 2000
 export const ogUrl = process.env.OG_URL as string
 export const ogHostname = parse(ogUrl).hostname
 export const gaTrackingId: string | undefined = process.env.GA_TRACKING_ID

@@ -1,12 +1,11 @@
 import _ from 'lodash'
 import { injectable } from 'inversify'
+import { cookieSessionMaxSizeBytes } from '../config'
 
 /**
  * Herein contains utility functions pertaining to
  * the functionality of the transition page.
  */
-
-const MAX_SIZE_BYTES = 2000
 
 /**
  * Utility functions to store and read a user's visit
@@ -51,7 +50,7 @@ export class CookieArrayReducer implements CookieReducer {
       return _.without(cookie, shortUrl).concat(shortUrl)
     }
     let newCookie = _.concat(cookie, shortUrl)
-    while (newCookie.toString().length > MAX_SIZE_BYTES) {
+    while (newCookie.toString().length > cookieSessionMaxSizeBytes) {
       newCookie = _.drop(newCookie)
     }
     return newCookie
