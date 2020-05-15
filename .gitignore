@@ -4,3 +4,4 @@ dist
 *.log
 yarn.lock
 build
+coverage

@@ -16,7 +16,7 @@ export interface UrlRepository {
    * Asynchronously increment the number of clicks in the database.
    * @param shortUrl
    */
-  incrementClick: (shortUrl: string) => void
+  incrementClick: (shortUrl: string) => Promise<void>
 }
 
 @injectable()
@@ -44,11 +44,22 @@ export class UrlRepositorySequelize implements UrlRepository {
     })
   }
 
-  incrementClick(shortUrl: string): void {
-    Url.findOne({ where: { shortUrl } }).then((url) => {
-      if (url) {
-        url.increment('clicks')
-      }
+  incrementClick(shortUrl: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      Url.findOne({ where: { shortUrl } }).then((url) => {
+        if (url) {
+          url
+            .increment('clicks')
+            .then(() => resolve())
+            .catch((error) => reject(error))
+        } else {
+          reject(
+            new NotFoundError(
+              `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+            ),
+          )
+        }
+      })
     })
   }
 }

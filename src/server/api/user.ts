@@ -3,12 +3,16 @@ import jsonMessage from '../util/json'
 import { User, UserType } from '../models/user'
 import { Url } from '../models/url'
 import { ACTIVE, INACTIVE } from '../models/types'
-import { logger } from '../config'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { FileVisibility, generatePresignedUrl, setS3ObjectACL } from '../util/aws'
+import {
+  FileVisibility,
+  generatePresignedUrl,
+  setS3ObjectACL,
+} from '../util/aws'
 import { transaction } from '../util/sequelize'
+import { logger } from '../config'
 
 const { Public, Private } = FileVisibility
 
@@ -153,13 +157,14 @@ router.post('/url', validateUrls, async (req, res) => {
     }
 
     // Success
-    const result = await transaction((t) => (
-      Url.create(
-        {
-          userId: user.id, longUrl, shortUrl, isFile: !!isFile,
-        },
-        { transaction: t },
-      )
+    const result = await transaction((t) => Url.create(
+      {
+        userId: user.id,
+        longUrl,
+        shortUrl,
+        isFile: !!isFile,
+      },
+      { transaction: t },
     ))
 
     res.ok(result)

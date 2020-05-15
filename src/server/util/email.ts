@@ -27,7 +27,7 @@ export const mailOTP = (email: string, otp: string, callback: (err: Error) => vo
     return
   }
 
-  const emailHTML = `Your OTP is <b>${otp}</b>. It will expire in ${Math.floor(otpExpiry / 60)} minutes. 
+  const emailHTML = `Your OTP is <b>${otp}</b>. It will expire in ${Math.floor(otpExpiry / 60)} minutes.
   Please use this to login to your go.gov.sg account. <p>If your OTP does not work, please request for a new OTP.</p>`
   const mail: nodemailer.MailOptions = {
     to: email,
