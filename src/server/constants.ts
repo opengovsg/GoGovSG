@@ -5,6 +5,7 @@ export const DependencyIds = {
   cookieReducer: Symbol.for('cookieReducer'),
   userRepository: Symbol.for('userRepository'),
   otpCache: Symbol.for('otpCache'),
+  mailer: Symbol.for('mailer'),
 }
 
 export default DependencyIds

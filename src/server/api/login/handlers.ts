@@ -2,7 +2,7 @@ import Express from 'express'
 import bcrypt from 'bcrypt'
 import validator from 'validator'
 import jsonMessage from '../../util/json'
-import { mailOTP } from '../../util/email'
+import { Mailer } from '../../util/email'
 import {
   DEV_ENV,
   emailValidator,
@@ -35,6 +35,7 @@ export function getEmailDomains(_: Express.Request, res: Express.Response) {
 
 export async function generateOtp(req: Express.Request, res: Express.Response) {
   const { setOtpForEmail } = container.get<OtpCache>(DependencyIds.otpCache)
+  const { mailOTP } = container.get<Mailer>(DependencyIds.mailer)
 
   const { email } = req.body
 
@@ -59,10 +60,10 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
     try {
       await setOtpForEmail(email, otpObject)
       // Email out the otp (nodemailer)
-      mailOTP(email, otp, (mailError: Error) => {
-        if (!mailError) {
-          res.ok(jsonMessage('OTP generated and sent.'))
-        } else if (DEV_ENV) {
+      try {
+        await mailOTP(email, otp)
+      } catch {
+        if (DEV_ENV) {
           logger.warn('Allowing user to OTP even though mail errored.')
           logger.warn(
             'This may be an issue with your IP. More information can be found at https://support.google.com/mail/answer/10336?hl=en)',
@@ -74,7 +75,10 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
             jsonMessage('Error mailing OTP, please try again later.'),
           )
         }
-      })
+        return
+      }
+
+      res.ok(jsonMessage('OTP generated and sent.'))
     } catch (saveError) {
       res.serverError(jsonMessage('Could not save OTP hash.'))
       logger.error(`Could not save OTP hash:\t${saveError}`)
