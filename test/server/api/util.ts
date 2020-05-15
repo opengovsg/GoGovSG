@@ -70,6 +70,19 @@ export function createRequestWithShortUrl(
   })
 }
 
+/**
+ * Creates a mock request with the input session user.
+ * @param  {any} user
+ * @returns A mock Request with the input session user.
+ */
+export function createRequestWithUser(user: any): Request {
+  return httpMocks.createRequest({
+    session: {
+      user,
+    },
+  })
+}
+
 const sequelizeMock = new SequelizeMock()
 export const urlModelMock = sequelizeMock.define('url', {
   shortUrl: 'a',

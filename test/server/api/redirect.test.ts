@@ -11,12 +11,12 @@ import {
   UrlCacheMockDown,
   UrlCacheMockEmpty,
   UrlCacheMockFilled,
-} from './mocks/cache'
+} from './mocks/cache/url'
 import {
   UrlRepositoryMockDown,
   UrlRepositoryMockEmpty,
   UrlRepositoryMockFilled,
-} from './mocks/repository'
+} from './mocks/repositories/url'
 import {
   createRequestWithShortUrl,
   getUrlCache,
