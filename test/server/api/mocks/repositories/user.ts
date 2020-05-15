@@ -10,8 +10,8 @@ export class UserRepositoryMock implements UserRepository {
 }
 
 @injectable()
-export class UserRepositoryMockFail implements UserRepository {
-  findOrCreateWithEmail(email: string): Promise<object> {
+export class UserRepositoryMockDown implements UserRepository {
+  findOrCreateWithEmail(_: string): Promise<object> {
     return Promise.reject(Error('Database is down'))
   }
 }

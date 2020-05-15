@@ -94,7 +94,6 @@
     "@types/helmet": "0.0.43",
     "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.150",
-    "@types/jest": "^25.2.1",
     "@types/morgan": "^1.7.35",
     "@types/redis-mock": "^0.17.0",
     "@types/sinon": "^9.0.0",

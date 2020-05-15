@@ -1,5 +1,4 @@
 /* eslint-disable no-undef, no-underscore-dangle, import/no-extraneous-dependencies */
-import 'reflect-metadata'
 import httpMocks from 'node-mocks-http'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
@@ -23,14 +22,12 @@ import {
   getUrlRepository,
   isAnalyticsLogged,
 } from './util'
-import { logger } from '../config'
 import redirect from '../../../src/server/api/redirect'
 import { CookieReducer } from '../../../src/server/util/transitionPage'
 import { CookieArrayReducerMock } from './mocks/transitionPage'
+import { logger } from '../config'
 
-jest.mock('../../../src/server/config', () => ({
-  logger,
-}))
+const loggerErrorSpy = jest.spyOn(logger, 'error')
 
 describe('redirect API tests', () => {
   beforeEach(() => {
@@ -41,6 +38,7 @@ describe('redirect API tests', () => {
 
   afterEach(() => {
     container.unbindAll()
+    loggerErrorSpy.mockClear()
   })
 
   test('url exists in cache and db', async () => {
@@ -158,6 +156,7 @@ describe('redirect API tests', () => {
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
+    expect(logger.error).toBeCalled
   })
 
   test('url in cache and db is down', async () => {
@@ -203,6 +202,7 @@ describe('redirect API tests', () => {
       .to(AnalyticsLoggerMock)
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
+    expect(logger.error).toBeCalled
   })
 
   test('invalid url', async () => {

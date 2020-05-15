@@ -1,14 +1,9 @@
-import 'reflect-metadata'
 import { spy } from 'sinon'
 import { NotFoundError } from '../../../../src/server/util/error'
-import { logger, redirectExpiry } from '../../config'
+import { redirectExpiry } from '../../config'
 import { redisMockClient } from '../util'
 import { UrlCacheRedis } from '../../../../src/server/api/cache/url'
 
-jest.mock('../../../../src/server/config', () => ({
-  redirectExpiry,
-  logger,
-}))
 jest.mock('../../../../src/server/redis', () => ({
   redirectClient: redisMockClient,
 }))

@@ -1,16 +1,10 @@
-import 'reflect-metadata'
 import { fake } from 'sinon'
 import { urlModelMock } from '../util'
 import { NotFoundError } from '../../../../src/server/util/error'
-import { logger } from '../../config'
 import { UrlRepositorySequelize } from '../../../../src/server/api/repositories/url'
 
 jest.mock('../../../../src/server/models/url', () => ({
   Url: urlModelMock,
-}))
-
-jest.mock('../../../../src/server/config', () => ({
-  logger,
 }))
 
 const urlRepo = new UrlRepositorySequelize()
