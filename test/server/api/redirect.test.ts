@@ -156,7 +156,7 @@ describe('redirect API tests', () => {
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
-    expect(logger.error).toBeCalled
+    expect(logger.error).toBeCalled()
   })
 
   test('url in cache and db is down', async () => {
@@ -202,7 +202,7 @@ describe('redirect API tests', () => {
       .to(AnalyticsLoggerMock)
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
-    expect(logger.error).toBeCalled
+    expect(logger.error).toBeCalled()
   })
 
   test('invalid url', async () => {

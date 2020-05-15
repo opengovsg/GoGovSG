@@ -158,7 +158,7 @@ describe('login middleware tests', () => {
       expect(spy).toBeCalledTimes(1)
       expect(res.serverError.called).toBeTruthy()
 
-      expect(logger.error).toBeCalled
+      expect(logger.error).toBeCalled()
 
       spy.mockClear()
     })
@@ -181,7 +181,7 @@ describe('login middleware tests', () => {
       expect(spy).toBeCalledTimes(0)
       expect(res.serverError.called).toBeTruthy()
 
-      expect(logger.error).toBeCalled
+      expect(logger.error).toBeCalled()
 
       spy.mockClear()
     })
@@ -203,8 +203,6 @@ describe('login middleware tests', () => {
       await generateOtp(req, res)
       expect(spy).toBeCalledTimes(0)
       expect(res.badRequest.called).toBeTruthy()
-
-      expect(logger.error).toBeCalled
 
       spy.mockClear()
     })
@@ -228,8 +226,6 @@ describe('login middleware tests', () => {
 
       const cache = getOtpCache() as OtpCacheMock
       expect(cache.cache.has('aa@open.test.my')).toBe(false)
-
-      expect(logger.error).toBeCalled
 
       spy.mockClear()
     })
@@ -393,7 +389,7 @@ describe('login middleware tests', () => {
       expect(req.session!.user).toBeUndefined()
       expect(res.serverError.called).toBeTruthy()
 
-      expect(logger.error).toBeCalled
+      expect(logger.error).toBeCalled()
     })
 
     test('db down', async () => {
@@ -419,7 +415,7 @@ describe('login middleware tests', () => {
       expect(req.session!.user).toBeUndefined()
       expect(res.serverError.called).toBeTruthy()
 
-      expect(logger.error).toBeCalled
+      expect(logger.error).toBeCalled()
     })
   })
 })

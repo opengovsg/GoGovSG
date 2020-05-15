@@ -57,10 +57,10 @@ export function isAnalyticsLogged(
   ) as AnalyticsLoggerMock
 
   return (
-    logger.lastReq === req &&
-    logger.lastRes === res &&
-    logger.lastShortUrl === shortUrl &&
-    logger.lastLongUrl === longUrl
+    logger.lastReq === req
+    && logger.lastRes === res
+    && logger.lastShortUrl === shortUrl
+    && logger.lastLongUrl === longUrl
   )
 }
 
@@ -134,13 +134,12 @@ export const urlModelMock = sequelizeMock.define('url', {
 })
 
 export const userModelMock = {
-  findOrCreate: ({ where: { email } }: { where: { email: string } }) =>
-    Promise.resolve([
-      {
-        get: () => email,
-      },
-      {},
-    ]),
+  findOrCreate: ({ where: { email } }: { where: { email: string } }) => Promise.resolve([
+    {
+      get: () => email,
+    },
+    {},
+  ]),
 }
 
 export const redisMockClient = redisMock.createClient()

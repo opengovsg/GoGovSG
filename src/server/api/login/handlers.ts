@@ -68,7 +68,7 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
     // Email out the otp (nodemailer)
     try {
       await mailOTP(email, otp)
-    } catch {
+    } catch (error) {
       if (DEV_ENV) {
         logger.warn('Allowing user to OTP even though mail errored.')
         logger.warn(
@@ -80,6 +80,7 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
         res.serverError(
           jsonMessage('Error mailing OTP, please try again later.'),
         )
+        logger.error(`Error mailing OTP to ${email}: ${error}`)
       }
       return
     }
