@@ -5,7 +5,7 @@ import {
   getIsLoggedIn,
   getLoginMessage,
   verifyOtp,
-} from './util'
+} from './handlers'
 
 const router: Express.Router = Express.Router()
 
