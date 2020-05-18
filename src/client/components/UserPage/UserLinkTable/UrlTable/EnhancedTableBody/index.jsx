@@ -19,6 +19,8 @@ import userActions from '../../../../../actions/user'
 import EditableTextField from './EditableTextField'
 import { removeHttpsProtocol } from '../../../../../util/url'
 import useAppMargins from '../../../../AppMargins/useAppMargins'
+import ModalActions from '../../../Modals/util/reducers'
+import { useModalDispatch } from '../../../Modals'
 
 const mapDispatchToProps = (dispatch) => ({
   openOwnershipModal: (shortUrl) =>
@@ -105,6 +107,10 @@ const EnhancedTableBody = ({
   const [isCopied, setCopied] = useState(false)
   const copiedLinkIconDesc = 'Link copied'
 
+  const dispatch = useModalDispatch()
+  const openControlPanel = () =>
+    dispatch({ type: ModalActions.openControlPanel })
+
   if (urls.length > 0) {
     // Text descriptions of icons buttons in user url table body.
     // Used for tooltips and aria labels.
@@ -119,7 +125,7 @@ const EnhancedTableBody = ({
           <TableRow
             key={row.shortUrl}
             className={classes.hoverRow}
-            onClick={() => console.log('clicked on row.')}
+            onClick={openControlPanel}
           >
             <TableCell className={classes.tableBodyTitle}>Owners</TableCell>
             <TableCell className={classes.leftCell}>

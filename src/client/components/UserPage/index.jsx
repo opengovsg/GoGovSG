@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from 'react-router-dom'
 
-import { CreateUrlModal } from './Modals'
+import Modals, { CreateUrlModal } from './Modals'
 import QRCodeModal from './QRCodeModal'
 import OwnershipModal from './OwnershipModal'
 import userActions from '~/actions/user'
@@ -68,29 +68,31 @@ const UserPage = ({
     }, [])
     return (
       <BaseLayout>
-        <UserLinkTable />
-        <CreateUrlModal
-          createUrlModal={createUrlModal}
-          closeCreateUrlModal={closeCreateUrlModal}
-          onSubmit={() => onCreateUrl(history)}
-        />
-        {/* QR code modal */}
-        <QRCodeModal
-          id="qrCodeModal"
-          classes={classes}
-          qrCode={qrCode}
-          openQrCode={openQrCode}
-          closeQrCode={closeQrCode}
-        />
-        <OwnershipModal
-          id="ownershipModal"
-          classes={classes}
-          ownershipModal={ownershipModal}
-          closeOwnershipModal={closeOwnershipModal}
-          newOwner={newOwner}
-          setNewOwner={setNewOwner}
-          transferOwnership={transferOwnership}
-        />
+        <Modals>
+          <UserLinkTable />
+          <CreateUrlModal
+            createUrlModal={createUrlModal}
+            closeCreateUrlModal={closeCreateUrlModal}
+            onSubmit={() => onCreateUrl(history)}
+          />
+          {/* QR code modal */}
+          <QRCodeModal
+            id="qrCodeModal"
+            classes={classes}
+            qrCode={qrCode}
+            openQrCode={openQrCode}
+            closeQrCode={closeQrCode}
+          />
+          <OwnershipModal
+            id="ownershipModal"
+            classes={classes}
+            ownershipModal={ownershipModal}
+            closeOwnershipModal={closeOwnershipModal}
+            newOwner={newOwner}
+            setNewOwner={setNewOwner}
+            transferOwnership={transferOwnership}
+          />
+        </Modals>
       </BaseLayout>
     )
   }
