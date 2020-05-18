@@ -91,7 +91,7 @@ export function sendPageViewHit(
 
   // user language
   if (req.headers['accept-language']) {
-    [form.ul] = (req.headers['accept-language'] as string).split(',')
+    ;[form.ul] = (req.headers['accept-language'] as string).split(',')
   }
 
   request.post(

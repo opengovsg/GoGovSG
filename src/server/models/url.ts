@@ -110,11 +110,12 @@ export const Url = <UrlTypeStatic>sequelize.define(
         )
         return Promise.resolve()
       },
-      beforeBulkUpdate: () => Promise.reject(
-        new Error(
-          'Bulk updates are not allowed: please edit URLs individually instead.',
+      beforeBulkUpdate: () =>
+        Promise.reject(
+          new Error(
+            'Bulk updates are not allowed: please edit URLs individually instead.',
+          ),
         ),
-      ),
     },
     indexes: [
       {

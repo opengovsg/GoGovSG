@@ -10,6 +10,8 @@ export interface UserRepository {
   ["findOrCreateWithEmail"] }] */
 export class UserRepositorySequelize implements UserRepository {
   async findOrCreateWithEmail(email: string): Promise<object> {
-    return User.findOrCreate({ where: { email } }).then(([user, _]) => user.get())
+    return User.findOrCreate({ where: { email } }).then(([user, _]) =>
+      user.get(),
+    )
   }
 }
