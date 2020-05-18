@@ -14,7 +14,7 @@ import {
 import { createStyles, fade, makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 
-import GoTooltip from './templates/GoTooltip'
+import GoTooltip from './GoTooltip'
 import userActions from '../../../../../actions/user'
 import EditableTextField from './EditableTextField'
 import { removeHttpsProtocol } from '../../../../../util/url'
@@ -116,8 +116,12 @@ const EnhancedTableBody = ({
     return (
       <TableBody>
         {urls.map((row) => (
-          <TableRow key={row.shortUrl} className={classes.hoverRow}>
-            <TableCell className={classes.tableBodyTitle}>Owner</TableCell>
+          <TableRow
+            key={row.shortUrl}
+            className={classes.hoverRow}
+            onClick={() => console.log('clicked on row.')}
+          >
+            <TableCell className={classes.tableBodyTitle}>Owners</TableCell>
             <TableCell className={classes.leftCell}>
               <GoTooltip title={transferIconDesc}>
                 <IconButton
