@@ -16,6 +16,7 @@ import LinkAnalytics from './LinkAnalytics'
 import DialogHeader from './DialogHeader'
 import ConfigOption from './ConfigOption'
 import PanelTextField from './PanelTextField'
+import TrailingButton from './assets/TrailingButton'
 
 const useDialogOverrideStyles = makeStyles(() =>
   createStyles({
@@ -36,11 +37,19 @@ const useDialogOverrideStyles = makeStyles(() =>
 
 const useStyles = makeStyles(() =>
   createStyles({
+    dialogContents: {
+      marginTop: 116,
+      marginBottom: 141,
+    },
     closeIcon: {
       position: 'absolute',
       top: 0,
       left: 0,
       margin: 30,
+    },
+    trailingButton: {
+      width: 135,
+      height: 44,
     },
     divider: {
       marginTop: 51,
@@ -69,48 +78,54 @@ export default function ControlPanel() {
       open={dialogIsOpen}
       onClose={handleClose}
     >
-      <IconButton className={classes.closeIcon} onClick={handleClose}>
-        <img src={closeIcon} alt="Close" draggable={false} />
-      </IconButton>
-      <PanelMargin>
-        <DialogHeader />
-        <ConfigOption
-          title="Link status"
-          subtitle="Analytics will not be collected for deactivated links"
-          trailing={<Switch />}
-        />
-        <ConfigOption
-          title="QR Code"
-          subtitle="Download your link’s QR Code in PNG or SVG format"
-          trailing={<Switch />}
-        />
-        <ConfigOption
-          title="Original link"
-          leading={
-            <PanelTextField
-              value=""
-              onChange={() => {}}
-              placeholder="Original link"
-              prefix="https://"
-            />
-          }
-          trailing={<Switch />}
-        />
-        <ConfigOption
-          title="Link ownership"
-          subtitle="A Go.gov.sg link can only be transferred to an existing user"
-          leading={
-            <PanelTextField
-              value=""
-              onChange={() => {}}
-              placeholder="Email of link recipient"
-            />
-          }
-          trailing={<Switch />}
-        />
-        <Divider className={classes.divider} />
-        <LinkAnalytics />
-      </PanelMargin>
+      <main className={classes.dialogContents}>
+        <IconButton className={classes.closeIcon} onClick={handleClose}>
+          <img src={closeIcon} alt="Close" draggable={false} />
+        </IconButton>
+        <PanelMargin>
+          <DialogHeader />
+          <ConfigOption
+            title="Link status"
+            subtitle="Analytics will not be collected for deactivated links"
+            trailing={<Switch />}
+          />
+          <ConfigOption
+            title="QR Code"
+            subtitle="Download your link’s QR Code in PNG or SVG format"
+            trailing={
+              <TrailingButton onClick={() => {}}>Download</TrailingButton>
+            }
+          />
+          <ConfigOption
+            title="Original link"
+            leading={
+              <PanelTextField
+                value=""
+                onChange={() => {}}
+                placeholder="Original link"
+                prefix="https://"
+              />
+            }
+            trailing={<TrailingButton onClick={() => {}}>Save</TrailingButton>}
+          />
+          <ConfigOption
+            title="Link ownership"
+            subtitle="A Go.gov.sg link can only be transferred to an existing user"
+            leading={
+              <PanelTextField
+                value=""
+                onChange={() => {}}
+                placeholder="Email of link recipient"
+              />
+            }
+            trailing={
+              <TrailingButton onClick={() => {}}>Transfer</TrailingButton>
+            }
+          />
+          <Divider className={classes.divider} />
+          <LinkAnalytics />
+        </PanelMargin>
+      </main>
     </Dialog>
   )
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
 
 import copyIcon from './assets/copy-icon.svg'
 
@@ -9,7 +9,6 @@ const useStyles = makeStyles(() =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginTop: 116,
       marginBottom: 44,
     },
     copyLinkDiv: {
@@ -29,14 +28,16 @@ export default function DialogHeader() {
       <Typography variant="h2" color="primary">
         Edit link
       </Typography>
-      <div className={classes.copyLinkDiv}>
-        <img
-          className={classes.copyIcon}
-          src={copyIcon}
-          alt="Copy short link"
-        />
-        <Typography variant="subtitle2">Copy short link</Typography>
-      </div>
+      <Button>
+        <div className={classes.copyLinkDiv}>
+          <img
+            className={classes.copyIcon}
+            src={copyIcon}
+            alt="Copy short link"
+          />
+          <Typography variant="subtitle2">Copy short link</Typography>
+        </div>
+      </Button>
     </div>
   )
 }
