@@ -3,7 +3,7 @@ export type State = {
 }
 
 export const initialState: State = {
-  controlPanelIsOpen: false,
+  controlPanelIsOpen: true,
 }
 
 export type Action = {
