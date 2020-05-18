@@ -3,7 +3,6 @@ import validator from 'validator'
 import jsonMessage from '../../util/json'
 import { Mailer } from '../../util/email'
 import {
-  DEV_ENV,
   emailValidator,
   getOTP,
   logger,
