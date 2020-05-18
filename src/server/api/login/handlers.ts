@@ -83,7 +83,6 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
   } catch (error) {
     logger.error(`OTP generation failed unexpectedly:\t${error}`)
     res.serverError(jsonMessage('OTP generation failed unexpectedly.'))
-    return
   }
 }
 
