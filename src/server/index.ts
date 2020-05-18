@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import session from 'express-session'
 import cookieSession from 'cookie-session'
 import connectRedis from 'connect-redis'
+import fileUpload from 'express-fileupload'
 import bindInversifyDependencies from './inversify.config'
 
 // Routes
@@ -101,6 +102,8 @@ initDb()
       bodyParser.urlencoded({ extended: false }),
       // application/json
       bodyParser.json(),
+      // multipart/form-data
+      fileUpload(),
     ]
 
     const redirectSpecificMiddleware = [
