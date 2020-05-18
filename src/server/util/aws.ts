@@ -21,12 +21,7 @@ export const s3 = new S3()
  */
 const reformatPresignedUrl = (url: string, fileName: string) => {
   const urlObj = parse(url)
-  const {
-    host,
-    pathname,
-    protocol,
-    search,
-  } = urlObj
+  const { host, pathname, protocol, search } = urlObj
   const newUrl = new URL('https://lorem-ipsum.com')
   newUrl.protocol = protocol as string
   newUrl.host = `${pathname?.split('/')[1]}.${host}`
@@ -35,7 +30,10 @@ const reformatPresignedUrl = (url: string, fileName: string) => {
   return newUrl.href
 }
 
-export const generatePresignedUrl = async (fileName: string, fileType: string) => {
+export const generatePresignedUrl = async (
+  fileName: string,
+  fileType: string,
+) => {
   const params = {
     Bucket: s3Bucket,
     Key: fileName,
@@ -46,7 +44,10 @@ export const generatePresignedUrl = async (fileName: string, fileType: string) =
   return reformatPresignedUrl(presignedUrl, fileName)
 }
 
-export const setS3ObjectACL = (key: string, acl: FileVisibility): Promise<any> => {
+export const setS3ObjectACL = (
+  key: string,
+  acl: FileVisibility,
+): Promise<any> => {
   const params = {
     Bucket: s3Bucket,
     Key: key,

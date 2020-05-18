@@ -81,10 +81,9 @@ export default async function redirect(
   const { logRedirectAnalytics } = container.get<AnalyticsLogger>(
     DependencyIds.analyticsLogging,
   )
-  const {
-    userHasVisitedShortlink,
-    writeShortlinkToCookie,
-  } = container.get<CookieReducer>(DependencyIds.cookieReducer)
+  const { userHasVisitedShortlink, writeShortlinkToCookie } = container.get<
+    CookieReducer
+  >(DependencyIds.cookieReducer)
 
   let { shortUrl } = req.params
 
@@ -115,20 +114,16 @@ export default async function redirect(
       req.session!.visits,
       shortUrl,
     )
-    req.session!.visits = writeShortlinkToCookie(
-      req.session!.visits,
-      shortUrl,
-    )
+    req.session!.visits = writeShortlinkToCookie(req.session!.visits, shortUrl)
 
     if (renderTransitionPage) {
       // Extract root domain from long url.
       const rootDomain: string = parseDomain(longUrl)
 
-      res.status(200)
-        .render(TRANSITION_PATH, {
-          longUrl,
-          rootDomain,
-        })
+      res.status(200).render(TRANSITION_PATH, {
+        longUrl,
+        rootDomain,
+      })
       return
     }
     res.status(302).redirect(longUrl)

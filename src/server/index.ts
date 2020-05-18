@@ -14,9 +14,7 @@ import api from './api'
 import redirect from './api/redirect'
 
 // Logger configuration
-import {
-  cookieSettings, logger, sessionSettings, trustProxy,
-} from './config'
+import { cookieSettings, logger, sessionSettings, trustProxy } from './config'
 
 // Services
 const SessionStore = connectRedis(session)
@@ -44,14 +42,18 @@ import { Mailer } from './util/email'
 morgan.token('client-ip', (req: express.Request) => getIp(req) as string)
 morgan.token(
   'redirectUrl',
-  (_: express.Request, res: express.Response): string => (res.statusCode === 302 ? (res.getHeader('location') as string) : ''),
+  (_: express.Request, res: express.Response): string =>
+    res.statusCode === 302 ? (res.getHeader('location') as string) : '',
 )
-morgan.token('userId', (req: express.Request) => (req.session && req.session.user && req.session.user.id
-  ? (req.session.user.id as string)
-  : ''))
+morgan.token('userId', (req: express.Request) =>
+  req.session && req.session.user && req.session.user.id
+    ? (req.session.user.id as string)
+    : '',
+)
 
-const MORGAN_LOG_FORMAT = ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status '
-  + '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
+const MORGAN_LOG_FORMAT =
+  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
+  '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
 const app = express()
 app.use(helmet())

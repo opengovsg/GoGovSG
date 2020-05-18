@@ -33,18 +33,12 @@ export interface CookieReducer {
   ["userHasVisitedShortlink", "writeShortlinkToCookie"] }] */
 @injectable()
 export class CookieArrayReducer implements CookieReducer {
-  userHasVisitedShortlink(
-    cookie: string[] | null,
-    shortUrl: string,
-  ): boolean {
+  userHasVisitedShortlink(cookie: string[] | null, shortUrl: string): boolean {
     if (!cookie) return false
     return cookie.includes(shortUrl)
   }
 
-  writeShortlinkToCookie(
-    cookie: string[] | null,
-    shortUrl: string,
-  ): string[] {
+  writeShortlinkToCookie(cookie: string[] | null, shortUrl: string): string[] {
     if (!cookie) return [shortUrl]
     if (cookie.includes(shortUrl)) {
       return _.without(cookie, shortUrl).concat(shortUrl)

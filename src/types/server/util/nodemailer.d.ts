@@ -1,5 +1,4 @@
 declare module 'nodemailer' {
-
   interface TransporterCredentials {
     user: string
     pass: string
