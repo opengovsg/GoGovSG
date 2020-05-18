@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   Grid,
+  Hidden,
   Typography,
   createStyles,
   makeStyles,
@@ -32,7 +33,6 @@ const useStyles = makeStyles((theme) =>
         maxWidth: '624px',
       },
     },
-    nestedGrid: {},
     card: {
       display: 'flex',
       boxShadow: 'none',
@@ -97,6 +97,9 @@ const FeatureListSliver = () => {
       >
         Created for public officers{' '}
       </Typography>
+      <Hidden smUp>
+        <br />
+      </Hidden>
       <Typography
         variant="body1"
         color="textPrimary"
@@ -121,7 +124,7 @@ const FeatureListSliver = () => {
             className={classes.columnGrid}
           >
             {column.map((card) => (
-              <Grid item key={card.title} className={classes.nestedGrid}>
+              <Grid item key={card.title}>
                 <Card className={classes.card}>
                   <img
                     className={classes.cardVectorIcon}
