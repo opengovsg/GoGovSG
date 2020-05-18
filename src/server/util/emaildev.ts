@@ -1,5 +1,7 @@
-import { Mailer } from './email'
+/* eslint class-methods-use-this: ["error", { "exceptMethods":
+  ["mailOTP", "initMailer"] }] */
 import { injectable } from 'inversify'
+import { Mailer } from './email'
 import { logger } from '../config'
 
 @injectable()
