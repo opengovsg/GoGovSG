@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { injectable } from 'inversify'
-import { NotFoundError } from '../../../../src/server/util/error'
-import { UrlCache } from '../../../../src/server/api/cache/url'
+import { NotFoundError } from '../../../../../src/server/util/error'
+import { UrlCache } from '../../../../../src/server/api/cache/url'
 
 @injectable()
 export class UrlCacheMockFilled implements UrlCache {

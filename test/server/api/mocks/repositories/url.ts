@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { injectable } from 'inversify'
-import { NotFoundError } from '../../../../src/server/util/error'
-import { UrlRepository } from '../../../../src/server/api/repositories/url'
+import { NotFoundError } from '../../../../../src/server/util/error'
+import { UrlRepository } from '../../../../../src/server/api/repositories/url'
 
 @injectable()
 export class UrlRepositoryMockFilled implements UrlRepository {

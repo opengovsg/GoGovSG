@@ -11,6 +11,7 @@ import { UrlRepository } from '../../../src/server/api/repositories/url'
 import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogger'
 import AnalyticsLoggerMock from './mocks/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
+import { OtpCache } from '../../../src/server/api/cache/otp'
 
 /**
  * Retrieves the currently binded UrlCache in the Inversify container.
@@ -18,6 +19,14 @@ import { ACTIVE } from '../../../src/server/models/types'
  */
 export function getUrlCache(): UrlCache {
   return container.get<UrlCache>(DependencyIds.urlCache)
+}
+
+/**
+ * Retrieves the currently binded UrlCache in the Inversify container.
+ * @returns UrlCache.
+ */
+export function getOtpCache(): OtpCache {
+  return container.get<OtpCache>(DependencyIds.otpCache)
 }
 
 /**
@@ -67,6 +76,51 @@ export function createRequestWithShortUrl(
     params: {
       shortUrl,
     },
+    body: {},
+    session: {},
+  })
+}
+
+/**
+ * Creates a mock request with the input session user.
+ * @param  {any} user
+ * @returns A mock Request with the input session user.
+ */
+export function createRequestWithUser(user: any): Request {
+  return httpMocks.createRequest({
+    session: {
+      user,
+    },
+    body: {},
+  })
+}
+
+/**
+ * Creates a mock request with the input email in request body.
+ * @param  {any} user
+ * @returns A mock Request with the input email.
+ */
+export function createRequestWithEmail(email: any): Request {
+  return httpMocks.createRequest({
+    session: {},
+    body: {
+      email,
+    },
+  })
+}
+
+/**
+ * Creates a mock request with the input email and otp in request body.
+ * @param  {any} user
+ * @returns A mock Request with the input email and otp.
+ */
+export function createRequestWithEmailAndOtp(email: any, otp: any): Request {
+  return httpMocks.createRequest({
+    session: {},
+    body: {
+      email,
+      otp,
+    },
   })
 }
 
@@ -78,5 +132,14 @@ export const urlModelMock = sequelizeMock.define('url', {
   clicks: 0,
   increment: () => {},
 })
+
+export const userModelMock = {
+  findOrCreate: ({ where: { email } }: { where: { email: string } }) => Promise.resolve([
+    {
+      get: () => email,
+    },
+    {},
+  ]),
+}
 
 export const redisMockClient = redisMock.createClient()

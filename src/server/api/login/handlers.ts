@@ -1,10 +1,8 @@
 import Express from 'express'
-import bcrypt from 'bcrypt'
 import validator from 'validator'
 import jsonMessage from '../../util/json'
-import { mailOTP } from '../../util/email'
+import { Mailer } from '../../util/email'
 import {
-  DEV_ENV,
   emailValidator,
   getOTP,
   logger,
@@ -16,6 +14,7 @@ import { container } from '../../util/inversify'
 import { OtpCache } from '../cache/otp'
 import { DependencyIds } from '../../constants'
 import { UserRepository } from '../repositories/user'
+import { Cryptography } from '../../util/cryptography'
 
 /**
  * Checks if an email is valid and whether it follows a specified regex pattern.
@@ -35,6 +34,8 @@ export function getEmailDomains(_: Express.Request, res: Express.Response) {
 
 export async function generateOtp(req: Express.Request, res: Express.Response) {
   const { setOtpForEmail } = container.get<OtpCache>(DependencyIds.otpCache)
+  const { mailOTP } = container.get<Mailer>(DependencyIds.mailer)
+  const { hash } = container.get<Cryptography>(DependencyIds.cryptography)
 
   const { email } = req.body
 
@@ -42,13 +43,13 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
     res.badRequest(
       jsonMessage('Invalid email provided. Email domain is not whitelisted.'),
     )
+    return
   }
   // Generate otp
   const otp = getOTP()
-
   try {
     // Hash with bcrypt
-    const hashedOtp = await bcrypt.hash(otp, saltRounds)
+    const hashedOtp = await hash(otp, saltRounds)
 
     // Store the hash in a temp table that expires in 5 minutes
     const otpObject = {
@@ -58,32 +59,24 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
 
     try {
       await setOtpForEmail(email, otpObject)
-      // Email out the otp (nodemailer)
-      mailOTP(email, otp, (mailError: Error) => {
-        if (!mailError) {
-          res.ok(jsonMessage('OTP generated and sent.'))
-        } else if (DEV_ENV) {
-          logger.warn('Allowing user to OTP even though mail errored.')
-          logger.warn(
-            'This may be an issue with your IP. More information can be found at https://support.google.com/mail/answer/10336?hl=en)',
-          )
-          logger.warn('This message should NEVER be seen in production.')
-          res.ok(jsonMessage('Error mailing OTP.'))
-        } else {
-          res.serverError(
-            jsonMessage('Error mailing OTP, please try again later.'),
-          )
-        }
-      })
     } catch (saveError) {
       res.serverError(jsonMessage('Could not save OTP hash.'))
       logger.error(`Could not save OTP hash:\t${saveError}`)
       return
     }
+    // Email out the otp (nodemailer)
+    try {
+      await mailOTP(email, otp)
+    } catch (error) {
+      res.serverError(jsonMessage('Error mailing OTP, please try again later.'))
+      logger.error(`Error mailing OTP to ${email}: ${error}`)
+      return
+    }
+
+    res.ok(jsonMessage('OTP generated and sent.'))
   } catch (error) {
     logger.error(`OTP generation failed unexpectedly:\t${error}`)
     res.serverError(jsonMessage('OTP generation failed unexpectedly.'))
-    return
   }
 }
 
@@ -94,6 +87,7 @@ export async function verifyOtp(req: Express.Request, res: Express.Response) {
   const { findOrCreateWithEmail } = container.get<UserRepository>(
     DependencyIds.userRepository,
   )
+  const { compare } = container.get<Cryptography>(DependencyIds.cryptography)
 
   const { email, otp } = req.body
 
@@ -113,7 +107,7 @@ export async function verifyOtp(req: Express.Request, res: Express.Response) {
       return
     }
 
-    const isOtpMatch = await bcrypt.compare(otp, retrievedOtp.hashedOtp)
+    const isOtpMatch = await compare(otp, retrievedOtp.hashedOtp)
 
     if (!isOtpMatch) {
       const modifiedOtp = {
@@ -126,7 +120,7 @@ export async function verifyOtp(req: Express.Request, res: Express.Response) {
         ),
       )
 
-      if (retrievedOtp.retries > 0) {
+      if (modifiedOtp.retries > 0) {
         try {
           await setOtpForEmail(email, modifiedOtp)
         } catch (error) {

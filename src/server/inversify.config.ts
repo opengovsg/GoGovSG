@@ -1,38 +1,34 @@
 import { container } from './util/inversify'
-import { UrlCache, UrlCacheRedis } from './api/cache/url'
-import { UrlRepository, UrlRepositorySequelize } from './api/repositories/url'
-import { AnalyticsLogger, GaLogger } from './api/analytics/analyticsLogger'
+import { UrlCacheRedis } from './api/cache/url'
+import { UrlRepositorySequelize } from './api/repositories/url'
+import { GaLogger } from './api/analytics/analyticsLogger'
 import { DependencyIds } from './constants'
-import { CookieArrayReducer, CookieReducer } from './util/transitionPage'
-import { OtpCache, OtpCacheRedis } from './api/cache/otp'
-import {
-  UserRepository,
-  UserRepositorySequelize,
-} from './api/repositories/user'
+import { CookieArrayReducer } from './util/transitionPage'
+import { OtpCacheRedis } from './api/cache/otp'
+import { UserRepositorySequelize } from './api/repositories/user'
+import { MailerNode } from './util/email'
+import { CryptographyBcrypt } from './util/cryptography'
+import { DEV_ENV } from './config'
+import { MailerNoOp } from './util/emaildev'
+
+function bindIfUnbound<T>(dependencyId: symbol, impl: { new (): T }) {
+  if (!container.isBound(dependencyId)) {
+    container.bind(dependencyId).to(impl)
+  }
+}
 
 export default () => {
-  if (!container.isBound(DependencyIds.urlCache)) {
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheRedis)
-  }
-  if (!container.isBound(DependencyIds.urlRepository)) {
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositorySequelize)
-  }
-  if (!container.isBound(DependencyIds.analyticsLogging)) {
-    container.bind<AnalyticsLogger>(DependencyIds.analyticsLogging).to(GaLogger)
-  }
-  if (!container.isBound(DependencyIds.cookieReducer)) {
-    container
-      .bind<CookieReducer>(DependencyIds.cookieReducer)
-      .to(CookieArrayReducer)
-  }
-  if (!container.isBound(DependencyIds.otpCache)) {
-    container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheRedis)
-  }
-  if (!container.isBound(DependencyIds.userRepository)) {
-    container
-      .bind<UserRepository>(DependencyIds.userRepository)
-      .to(UserRepositorySequelize)
+  bindIfUnbound(DependencyIds.urlCache, UrlCacheRedis)
+  bindIfUnbound(DependencyIds.urlRepository, UrlRepositorySequelize)
+  bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
+  bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
+  bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)
+  bindIfUnbound(DependencyIds.userRepository, UserRepositorySequelize)
+  bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
+
+  if (DEV_ENV) {
+    bindIfUnbound(DependencyIds.mailer, MailerNoOp)
+  } else {
+    bindIfUnbound(DependencyIds.mailer, MailerNode)
   }
 }

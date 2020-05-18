@@ -2,12 +2,16 @@ import { injectable } from 'inversify'
 import { otpClient } from '../../redis'
 import { otpExpiry } from '../../config'
 
+export interface StoredOtp {
+  hashedOtp: string
+  retries: number
+}
 export interface OtpCache {
   deleteOtpByEmail(email: string): Promise<void>
 
-  setOtpForEmail(email: string, otp: object): Promise<void>
+  setOtpForEmail(email: string, otp: StoredOtp): Promise<void>
 
-  getOtpForEmail(email: string): Promise<any>
+  getOtpForEmail(email: string): Promise<StoredOtp | null>
 }
 
 @injectable()
@@ -27,7 +31,7 @@ export class OtpCacheRedis implements OtpCache {
     })
   }
 
-  setOtpForEmail(email: string, otp: object): Promise<void> {
+  setOtpForEmail(email: string, otp: StoredOtp): Promise<void> {
     return new Promise((resolve, reject) => {
       otpClient.set(
         email,
@@ -46,7 +50,7 @@ export class OtpCacheRedis implements OtpCache {
     })
   }
 
-  getOtpForEmail(email: string): Promise<any> {
+  getOtpForEmail(email: string): Promise<StoredOtp | null> {
     return new Promise((resolve, reject) => {
       otpClient.get(email, (redisError, string) => {
         if (redisError) {

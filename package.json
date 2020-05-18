@@ -17,7 +17,8 @@
     "server-dev": "nodemon --exec 'ts-node --files' src/server/index.ts",
     "docker-dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
     "dev": "docker-compose -f docker-compose.yml up --build",
-    "test": "jest --collectCoverage"
+    "test": "jest --collectCoverage",
+    "test:ci": "jest --coverage && coveralls < coverage/lcov.info"
   },
   "author": "Yuanruo Liang",
   "license": "",
@@ -92,8 +93,8 @@
     "@types/express": "^4.16.1",
     "@types/express-session": "^1.15.12",
     "@types/helmet": "0.0.43",
-    "@types/lodash": "^4.14.150",
     "@types/jest": "^25.2.1",
+    "@types/lodash": "^4.14.150",
     "@types/morgan": "^1.7.35",
     "@types/redis-mock": "^0.17.0",
     "@types/sinon": "^9.0.0",
@@ -104,6 +105,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "concurrently": "^4.0.0",
     "copyfiles": "^2.2.0",
+    "coveralls": "^3.1.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.10.1",

@@ -23,7 +23,7 @@ install:
 script:
   - npm run lint
   - npm run build
-  - npm run test
+  - npm run test:ci
 
 before_deploy:
   # Workaround to run before_deploy only once

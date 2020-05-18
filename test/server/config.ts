@@ -1,4 +1,5 @@
 import { createLogger, format, transports } from 'winston'
+import minimatch from 'minimatch'
 
 // Winston for generic logging
 export const logger = createLogger({
@@ -24,3 +25,20 @@ export const logger = createLogger({
 })
 
 export const redirectExpiry = 60
+
+jest.mock('../../src/server/config', () => ({
+  DEV_ENV: false,
+  emailValidator: new minimatch.Minimatch('*.test.sg', {
+    noext: true,
+    noglobstar: true,
+    nobrace: true,
+    nonegate: true,
+  }),
+  getOTP: () => '1',
+  logger,
+  loginMessage: 'login message',
+  saltRounds: '',
+  validEmailDomainGlobExpression: '*.test.sg',
+  redirectExpiry,
+  otpExpiry: 10,
+}))

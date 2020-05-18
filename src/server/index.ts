@@ -22,7 +22,6 @@ import {
 const SessionStore = connectRedis(session)
 import { sessionClient } from './redis'
 import initDb from './models'
-import { initMailer } from './util/email'
 
 // Helper static methods attached to http.ServerResponse class
 // to return appropriate status codes in readable manner
@@ -30,6 +29,9 @@ import './util/response'
 
 // Morgan configuration for logging HTTP requests
 import getIp from './util/request'
+import { container } from './util/inversify'
+import { DependencyIds } from './constants'
+import { Mailer } from './util/email'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -59,7 +61,7 @@ initDb()
     logger.info('Database initialised.')
 
     // Initialise nodemailer
-    initMailer()
+    container.get<Mailer>(DependencyIds.mailer).initMailer()
 
     // Site-wide cache control
     app.use((_, res, next) => {
