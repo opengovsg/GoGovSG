@@ -1,8 +1,12 @@
 import React from 'react'
-import { Dialog, Typography, createStyles, makeStyles } from '@material-ui/core'
-import ModalMargins from '../ModalMargins'
+import { Dialog, createStyles, makeStyles, Divider } from '@material-ui/core'
+
 import ModalActions from '../util/reducers'
 import { useModalState, useModalDispatch } from '..'
+import PanelMargin from './PanelMargin'
+import closeIcon from './assets/close-icon.svg'
+import LinkAnalytics from './LinkAnalytics'
+import DialogHeader from './DialogHeader'
 
 const useDialogOverrideStyles = makeStyles(() =>
   createStyles({
@@ -23,9 +27,15 @@ const useDialogOverrideStyles = makeStyles(() =>
 
 const useStyles = makeStyles(() =>
   createStyles({
-    dialogTitle: {
-      marginTop: 116,
-      marginBottom: 44,
+    closeIcon: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      margin: 30,
+    },
+    divider: {
+      marginTop: 21,
+      marginBottom: 68,
     },
   }),
 )
@@ -52,15 +62,17 @@ export default function ControlPanel() {
       open={dialogIsOpen}
       onClose={handleClose}
     >
-      <ModalMargins>
-        <Typography
-          className={classes.dialogTitle}
-          variant="h2"
-          color="primary"
-        >
-          Edit link
-        </Typography>
-      </ModalMargins>
+      <img
+        className={classes.closeIcon}
+        src={closeIcon}
+        alt="Close"
+        draggable={false}
+      />
+      <PanelMargin>
+        <DialogHeader />
+        <Divider className={classes.divider} />
+        <LinkAnalytics />
+      </PanelMargin>
     </Dialog>
   )
 }
