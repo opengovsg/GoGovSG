@@ -33,7 +33,7 @@ const useStyles = makeStyles(() =>
     feedbackButton: {
       height: 44,
       maxWidth: 200,
-      margin: 30,
+      marginTop: 30,
     },
   }),
 )
