@@ -8,6 +8,7 @@ const useDialogOverrideStyles = makeStyles(() =>
   createStyles({
     dialogPaper: {
       height: '100%',
+      width: '100%',
       borderRadius: 'unset',
       marginLeft: 'auto',
       marginRight: 0,
