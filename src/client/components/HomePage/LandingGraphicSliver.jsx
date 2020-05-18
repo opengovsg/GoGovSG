@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) =>
       maxWidth: '485px',
       marginBottom: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
-        minWidth: '485px',
+        minWidth: '500px',
       },
       '@media screen\\0': {
         display: 'inline',

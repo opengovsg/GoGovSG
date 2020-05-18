@@ -34,22 +34,22 @@ export default responsiveFontSizes(
         contrastText: '#000',
       },
       text: {
-        primary: '#000',
+        primary: '#384a51',
         secondary: '#767676',
       },
     },
     typography: {
       fontFamily: "'IBM Plex Sans', sans-serif",
       h1: {
-        fontSize: '3.25rem',
-        fontWeight: '600',
+        fontSize: '3.4375rem',
+        fontWeight: '500',
       },
       h2: {
-        fontSize: '1.5rem',
+        fontSize: '1.75rem',
         fontWeight: '600',
       },
       h3: {
-        fontSize: '1.2rem',
+        fontSize: '1.375rem',
       },
       subtitle1: {
         fontSize: '1.2rem',

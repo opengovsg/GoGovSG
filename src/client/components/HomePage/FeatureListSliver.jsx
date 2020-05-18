@@ -21,7 +21,18 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('lg')]: {
         marginTop: theme.spacing(4),
       },
+      maxWidth: '1400px',
     },
+    columnGrid: {
+      maxWidth: 'min(600px, calc(100% + 48px))',
+      [theme.breakpoints.up('lg')]: {
+        maxWidth: '552px',
+      },
+      [theme.breakpoints.up('xl')]: {
+        maxWidth: '624px',
+      },
+    },
+    nestedGrid: {},
     card: {
       display: 'flex',
       flexDirection: 'column',
@@ -29,11 +40,9 @@ const useStyles = makeStyles((theme) =>
       height: '100%',
       backgroundColor: 'transparent',
       alignItems: 'flex-start',
-      maxWidth: 'min(400px, 80%)',
       [theme.breakpoints.up('lg')]: {
         alignItems: 'flex-start',
         flexDirection: 'row',
-        maxWidth: '350px',
       },
     },
     cardVectorIcon: {
@@ -58,22 +67,26 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const cards = [
-  {
-    icon: antiPhisingIcon,
-    title: 'Anti-phishing',
-    description: <Trans>homePage.features.antiPhishing.description</Trans>,
-  },
-  {
-    icon: customisedIcon,
-    title: 'Customised',
-    description: <Trans>homePage.features.customised.description</Trans>,
-  },
-  {
-    icon: analyticsIcon,
-    title: 'Analytics',
-    description: <Trans>homePage.features.analytics.description</Trans>,
-  },
+const columns = [
+  [
+    {
+      icon: antiPhisingIcon,
+      title: 'Anti-phishing',
+      description: <Trans>homePage.features.antiPhishing.description</Trans>,
+    },
+    {
+      icon: analyticsIcon,
+      title: 'Analytics',
+      description: <Trans>homePage.features.analytics.description</Trans>,
+    },
+  ],
+  [
+    {
+      icon: customisedIcon,
+      title: 'Customised',
+      description: <Trans>homePage.features.customised.description</Trans>,
+    },
+  ],
 ]
 
 const FeatureListSliver = () => {
@@ -101,24 +114,37 @@ const FeatureListSliver = () => {
       <Grid
         container
         className={classes.grid}
-        spacing={!isDesktopWidth ? 6 : 8}
+        spacing={6}
         direction={!isDesktopWidth ? 'column' : 'row'}
+        justify="space-between"
       >
-        {cards.map((card) => (
-          <Grid item key={card.title}>
-            <Card className={classes.card}>
-              <img
-                className={classes.cardVectorIcon}
-                src={card.icon}
-                alt={card.title}
-              />
-              <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h3" gutterBottom>
-                  <strong>{card.title}</strong>
-                </Typography>
-                <Typography color="textPrimary">{card.description}</Typography>
-              </CardContent>
-            </Card>
+        {columns.map((column) => (
+          <Grid
+            item
+            container
+            spacing={6}
+            direction="column"
+            className={classes.columnGrid}
+          >
+            {column.map((card) => (
+              <Grid item key={card.title} className={classes.nestedGrid}>
+                <Card className={classes.card}>
+                  <img
+                    className={classes.cardVectorIcon}
+                    src={card.icon}
+                    alt={card.title}
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography color="primary" variant="h3" gutterBottom>
+                      <strong>{card.title}</strong>
+                    </Typography>
+                    <Typography color="textPrimary">
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         ))}
       </Grid>

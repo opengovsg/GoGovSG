@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Grid,
+  Hidden,
   Typography,
   createStyles,
   makeStyles,
@@ -14,6 +15,8 @@ import {
 
 import homeActions from '~/actions/home'
 import numberFormatter from '~/util/format'
+
+import statsGraphic from '~/assets/landing-page-graphics/stats-graphic.svg'
 
 const mapDispatchToProps = (dispatch) => ({
   loadStats: () => dispatch(homeActions.loadStats()),
@@ -28,7 +31,7 @@ const mapStateToProps = (state, ownProps) => ({
 const useStyles = makeStyles((theme) =>
   createStyles({
     grid: {
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(8),
     },
     card: {
       display: 'flex',
@@ -72,13 +75,22 @@ const useStyles = makeStyles((theme) =>
         width: '150px',
       },
     },
+    stats: {
+      flexGrow: 0.75,
+      width: '130px',
+      [theme.breakpoints.up('lg')]: {
+        width: '384px',
+      },
+      [theme.breakpoints.up('xl')]: {
+        width: '544px',
+        maxWidth: '800px',
+      },
+    },
   }),
 )
 
 const StatisticsSliver = (props) => {
   const classes = useStyles()
-  const theme = useTheme()
-  const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
   const { statistics } = props
   const { userCount, linkCount, clickCount } = statistics
 
@@ -92,48 +104,68 @@ const StatisticsSliver = (props) => {
       <Typography variant="h2" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
-      <Grid
-        container
-        className={classes.grid}
-        spacing={!isDesktopWidth ? 6 : 8}
-        direction={!isDesktopWidth ? 'column' : 'row'}
-      >
-        <Grid item>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3">
-                <strong>{numberFormatter.format(userCount)}</strong>
-              </Typography>
-              <Typography className={classes.statsLabel} color="textPrimary">
-                PUBLIC OFFICERS ONBOARD
-              </Typography>
-            </CardContent>
-          </Card>
+      <Grid container className={classes.grid}>
+        <Grid
+          container
+          item
+          spacing={6}
+          direction="column"
+          className={classes.stats}
+        >
+          <Grid item>
+            <Card className={classes.card}>
+              <CardContent className={classes.cardContent}>
+                <Typography color="primary" variant="h3">
+                  <strong>{numberFormatter.format(userCount)}</strong>
+                </Typography>
+                <Typography
+                  className={classes.statsLabel}
+                  variant="body2"
+                  color="textPrimary"
+                >
+                  PUBLIC OFFICERS ONBOARD
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item>
+            <Card className={classes.card}>
+              <CardContent className={classes.cardContent}>
+                <Typography color="primary" variant="h3">
+                  <strong>{numberFormatter.format(linkCount)}</strong>
+                </Typography>
+                <Typography
+                  className={classes.statsLabel}
+                  variant="body2"
+                  color="textPrimary"
+                >
+                  SHORT LINKS CREATED
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item>
+            <Card className={classes.card}>
+              <CardContent className={classes.cardContent}>
+                <Typography color="primary" variant="h3">
+                  <strong>{numberFormatter.format(clickCount)}</strong>
+                </Typography>
+                <Typography
+                  className={classes.statsLabel}
+                  variant="body2"
+                  color="textPrimary"
+                >
+                  CLICKS
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3">
-                <strong>{numberFormatter.format(linkCount)}</strong>
-              </Typography>
-              <Typography className={classes.statsLabel} color="textPrimary">
-                SHORT LINKS CREATED
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3">
-                <strong>{numberFormatter.format(clickCount)}</strong>
-              </Typography>
-              <Typography className={classes.statsLabel} color="textPrimary">
-                CLICKS
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Hidden smDown>
+          <Grid item>
+            <img src={statsGraphic} alt="Statistics graphic" />
+          </Grid>
+        </Hidden>
       </Grid>
       <Button
         className={classes.getStartedButton}
