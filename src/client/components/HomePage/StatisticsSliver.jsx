@@ -5,18 +5,14 @@ import {
   Card,
   CardContent,
   Grid,
-  Hidden,
   Typography,
   createStyles,
   makeStyles,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core'
 
 import homeActions from '~/actions/home'
 import numberFormatter from '~/util/format'
-
-import statsGraphic from '~/assets/landing-page-graphics/stats-graphic.svg'
+import StatisticsGraphic from './StatisticsGraphic'
 
 const mapDispatchToProps = (dispatch) => ({
   loadStats: () => dispatch(homeActions.loadStats()),
@@ -76,15 +72,9 @@ const useStyles = makeStyles((theme) =>
       },
     },
     stats: {
-      flexGrow: 0.75,
-      width: '130px',
-      [theme.breakpoints.up('lg')]: {
-        width: '384px',
-      },
-      [theme.breakpoints.up('xl')]: {
-        width: '544px',
-        maxWidth: '800px',
-      },
+      flexGrow: 0.8,
+      width: '384px',
+      maxWidth: '800px',
     },
   }),
 )
@@ -104,7 +94,7 @@ const StatisticsSliver = (props) => {
       <Typography variant="h2" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
-      <Grid container className={classes.grid}>
+      <Grid container className={classes.grid} spacing={2}>
         <Grid
           container
           item
@@ -161,11 +151,9 @@ const StatisticsSliver = (props) => {
             </Card>
           </Grid>
         </Grid>
-        <Hidden smDown>
-          <Grid item>
-            <img src={statsGraphic} alt="Statistics graphic" />
-          </Grid>
-        </Hidden>
+        <Grid item>
+          <StatisticsGraphic />
+        </Grid>
       </Grid>
       <Button
         className={classes.getStartedButton}

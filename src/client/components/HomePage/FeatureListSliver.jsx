@@ -35,18 +35,15 @@ const useStyles = makeStyles((theme) =>
     nestedGrid: {},
     card: {
       display: 'flex',
-      flexDirection: 'column',
       boxShadow: 'none',
       height: '100%',
       backgroundColor: 'transparent',
       alignItems: 'flex-start',
-      [theme.breakpoints.up('lg')]: {
-        alignItems: 'flex-start',
-        flexDirection: 'row',
-      },
+      flexDirection: 'row',
     },
     cardVectorIcon: {
       minWidth: '50px',
+      marginRight: theme.spacing(2),
       [theme.breakpoints.up('lg')]: {
         minWidth: 'auto',
         minHeight: '60px',
@@ -54,14 +51,11 @@ const useStyles = makeStyles((theme) =>
       },
     },
     cardContent: {
-      paddingTop: theme.spacing(4),
+      paddingTop: theme.spacing(1),
       paddingLeft: theme.spacing(0),
       paddingRight: theme.spacing(0),
       '&:last-child': {
         paddingBottom: 0,
-      },
-      [theme.breakpoints.up('lg')]: {
-        paddingTop: theme.spacing(0),
       },
     },
   }),
