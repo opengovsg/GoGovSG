@@ -69,19 +69,8 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
     try {
       await mailOTP(email, otp)
     } catch (error) {
-      if (DEV_ENV) {
-        logger.warn('Allowing user to OTP even though mail errored.')
-        logger.warn(
-          'This may be an issue with your IP. More information can be found at https://support.google.com/mail/answer/10336?hl=en)',
-        )
-        logger.warn('This message should NEVER be seen in production.')
-        res.ok(jsonMessage('Error mailing OTP.'))
-      } else {
-        res.serverError(
-          jsonMessage('Error mailing OTP, please try again later.'),
-        )
-        logger.error(`Error mailing OTP to ${email}: ${error}`)
-      }
+      res.serverError(jsonMessage('Error mailing OTP, please try again later.'))
+      logger.error(`Error mailing OTP to ${email}: ${error}`)
       return
     }
 

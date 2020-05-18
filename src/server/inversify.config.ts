@@ -8,6 +8,8 @@ import { OtpCacheRedis } from './api/cache/otp'
 import { UserRepositorySequelize } from './api/repositories/user'
 import { MailerNode } from './util/email'
 import { CryptographyBcrypt } from './util/cryptography'
+import { DEV_ENV } from './config'
+import { MailerNoOp } from './util/emaildev'
 
 function bindIfUnbound<T>(dependencyId: symbol, impl: { new (): T }) {
   if (!container.isBound(dependencyId)) {
@@ -22,6 +24,11 @@ export default () => {
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
   bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)
   bindIfUnbound(DependencyIds.userRepository, UserRepositorySequelize)
-  bindIfUnbound(DependencyIds.mailer, MailerNode)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
+
+  if (DEV_ENV) {
+    bindIfUnbound(DependencyIds.mailer, MailerNoOp)
+  } else {
+    bindIfUnbound(DependencyIds.mailer, MailerNode)
+  }
 }

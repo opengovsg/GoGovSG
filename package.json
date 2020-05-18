@@ -18,7 +18,7 @@
     "docker-dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
     "dev": "docker-compose -f docker-compose.yml up --build",
     "test": "jest --collectCoverage",
-    "coveralls": "jest --coverage && coveralls < coverage/lcov.info"
+    "test:ci": "jest --coverage && coveralls < coverage/lcov.info"
   },
   "author": "Yuanruo Liang",
   "license": "",
