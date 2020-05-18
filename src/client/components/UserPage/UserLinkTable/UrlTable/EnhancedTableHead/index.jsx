@@ -1,18 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-
 import {
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
 } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
 
-import userActions from '~/actions/user'
-
-import userPageStyle from '~/styles/userPage'
+import userActions from '../../../../../actions/user'
+import useAppMargins from '../../../../AppMargins/useAppMargins'
 
 const mapStateToProps = (state) => ({
   tableConfig: state.user.tableConfig,
@@ -30,11 +28,28 @@ const mapDispatchToProps = (dispatch) => ({
   },
 })
 
-const EnhancedTableHead = ({
-  classes,
-  updateOrderAndDirection,
-  tableConfig,
-}) => {
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    leftCell: {
+      textAlign: 'left',
+      paddingLeft: (props) => props.appMargins,
+    },
+    rightCell: {
+      textAlign: 'right',
+      paddingRight: (props) => props.appMargins,
+    },
+    tableHeadResponsive: {
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
+    },
+  }),
+)
+
+const EnhancedTableHead = ({ updateOrderAndDirection, tableConfig }) => {
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
+
   const columnTitles = [
     {
       name: 'Owner',
@@ -47,7 +62,12 @@ const EnhancedTableHead = ({
     { name: 'QR', sortable: false, center: false },
     { name: 'Last Modified', sortable: true, center: false },
     { name: 'Visits', sortable: true, center: false },
-    { name: 'Status', sortable: true, center: false },
+    {
+      name: 'Status',
+      sortable: true,
+      center: false,
+      className: classes.rightCell,
+    },
   ]
 
   const titleMap = {
@@ -65,8 +85,7 @@ const EnhancedTableHead = ({
    * @param {string} columnTitle
    * @param {string} sortDirection
    */
-  // eslint-disable-next-line
-  const changeSortHandler = (columnTitle, sortDirection) => (event) => {
+  const changeSortHandler = (columnTitle, sortDirection) => () => {
     const newOrder = sortDirection === 'desc' ? 'asc' : 'desc'
     updateOrderAndDirection(titleMap[columnTitle], newOrder)
   }
@@ -117,9 +136,6 @@ EnhancedTableHead.propTypes = {
     ]),
     searchText: PropTypes.string,
   }).isRequired,
-  classes: PropTypes.shape({}).isRequired,
 }
 
-export default withStyles(userPageStyle)(
-  connect(mapStateToProps, mapDispatchToProps)(EnhancedTableHead),
-)
+export default connect(mapStateToProps, mapDispatchToProps)(EnhancedTableHead)

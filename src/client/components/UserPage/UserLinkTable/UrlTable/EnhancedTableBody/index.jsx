@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import 'boxicons'
 import copy from 'copy-to-clipboard'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 
 import {
   IconButton,
@@ -10,19 +10,15 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  Tooltip,
 } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
+import { createStyles, fade, makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 
-import userActions from '~/actions/user'
+import GoTooltip from './templates/GoTooltip'
+import userActions from '../../../../../actions/user'
 import EditableTextField from './EditableTextField'
-import { removeHttpsProtocol } from '~/util/url'
-import userPageStyle from '~/styles/userPage'
-
-const mapStateToProps = (state) => ({
-  urls: state.user.urls,
-})
+import { removeHttpsProtocol } from '../../../../../util/url'
+import useAppMargins from '../../../../AppMargins/useAppMargins'
 
 const mapDispatchToProps = (dispatch) => ({
   openOwnershipModal: (shortUrl) =>
@@ -42,15 +38,73 @@ const mapDispatchToProps = (dispatch) => ({
   openQrCode: (shortUrl) => dispatch(userActions.openQrCode(shortUrl)),
 })
 
+const useStyles = makeStyles((theme) => {
+  return createStyles({
+    bar: {
+      backgroundColor: theme.palette.grey[500],
+    },
+    leftCell: {
+      [theme.breakpoints.up('md')]: {
+        textAlign: 'left',
+        paddingLeft: (props) => props.appMargins,
+      },
+    },
+    rightCell: {
+      [theme.breakpoints.up('md')]: {
+        textAlign: 'right',
+        paddingRight: (props) => props.appMargins,
+      },
+    },
+    iconButton: {
+      padding: '0px',
+    },
+    editableTextField: {
+      minWidth: '25vw',
+    },
+    shortBtn: {
+      display: 'block',
+      color: 'black',
+    },
+    shortBtnLabel: {
+      fontWeight: '400',
+      textAlign: 'left',
+    },
+    tableBodyTitle: {
+      display: 'none',
+      [theme.breakpoints.down('sm')]: {
+        display: 'inline-block',
+        margin: 'auto 0',
+        padding: theme.spacing(0, 1, 0, 10),
+        width: '30%',
+        fontSize: '0.75em',
+      },
+      [theme.breakpoints.down('xs')]: {
+        padding: theme.spacing(0, 1, 0, 2),
+      },
+    },
+    hoverRow: {
+      '&:hover': {
+        backgroundColor: fade(theme.palette.common.black, 0.1),
+      },
+    },
+  })
+})
+
 const EnhancedTableBody = ({
-  classes,
-  urls,
   openOwnershipModal,
   toggleUrlState,
   onSaveUrl,
   setEditedLongUrl,
   openQrCode,
 }) => {
+  const urls = useSelector((state) => state.user.urls)
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
+
+  // Used to manage tooltip descriptions for our short url anchor button.
+  const [isCopied, setCopied] = useState(false)
+  const copiedLinkIconDesc = 'Link copied'
+
   if (urls.length > 0) {
     // Text descriptions of icons buttons in user url table body.
     // Used for tooltips and aria labels.
@@ -58,18 +112,14 @@ const EnhancedTableBody = ({
     const copyLinkIconDesc = 'Copy link'
     const qrCodeIconDesc = 'Download QR Code'
 
-    // Used to manage tooltip descriptions for our short url anchor button.
-    const [isCopied, setCopied] = useState(false)
-    const copiedLinkIconDesc = 'Link copied'
-
     // If user has existing links, show the user's list of stored links.
     return (
       <TableBody>
         {urls.map((row) => (
           <TableRow key={row.shortUrl} className={classes.hoverRow}>
             <TableCell className={classes.tableBodyTitle}>Owner</TableCell>
-            <TableCell align="center" className={classes.leftCell}>
-              <Tooltip title={transferIconDesc} arrow placement="top">
+            <TableCell className={classes.leftCell}>
+              <GoTooltip title={transferIconDesc}>
                 <IconButton
                   className={classes.iconButton}
                   color="inherit"
@@ -78,7 +128,7 @@ const EnhancedTableBody = ({
                 >
                   <box-icon name="user" />
                 </IconButton>
-              </Tooltip>
+              </GoTooltip>
             </TableCell>
             <TableCell className={classes.tableBodyTitle}>
               Original URL
@@ -95,15 +145,13 @@ const EnhancedTableBody = ({
             </TableCell>
             <TableCell className={classes.tableBodyTitle}>Short URL</TableCell>
             <TableCell>
-              <Tooltip
+              <GoTooltip
                 title={isCopied ? copiedLinkIconDesc : copyLinkIconDesc}
                 onClose={() => {
                   // Sets the link as not copied. Sets tooltip accordingly.
                   // Short timeout to prevent tooltip changes on close.
                   setTimeout(() => setCopied(false), 100)
                 }}
-                arrow
-                placement="top"
               >
                 <Button
                   className={classes.shortBtn}
@@ -119,11 +167,11 @@ const EnhancedTableBody = ({
                 >
                   {`/${row.shortUrl}`}
                 </Button>
-              </Tooltip>
+              </GoTooltip>
             </TableCell>
             <TableCell className={classes.tableBodyTitle}>QR</TableCell>
             <TableCell>
-              <Tooltip title={qrCodeIconDesc} arrow placement="top">
+              <GoTooltip title={qrCodeIconDesc}>
                 <IconButton
                   className={classes.iconButton}
                   color="secondary"
@@ -132,7 +180,7 @@ const EnhancedTableBody = ({
                 >
                   <box-icon name="scan" />
                 </IconButton>
-              </Tooltip>
+              </GoTooltip>
             </TableCell>
             <TableCell className={classes.tableBodyTitle}>
               Last Modified
@@ -143,6 +191,7 @@ const EnhancedTableBody = ({
             <TableCell className={classes.tableBodyTitle}>Status</TableCell>
             <TableCell className={classes.rightCell}>
               <Switch
+                color="primary"
                 checked={row.state === 'ACTIVE'}
                 onChange={() => toggleUrlState(row.shortUrl, row.state)}
                 value={row.state}
@@ -166,15 +215,13 @@ const EnhancedTableBody = ({
         <TableCell />
         <TableCell />
         <TableCell />
-        <TableCell />
+        <TableCell className={classes.rightCell} />
       </TableRow>
     </TableBody>
   )
 }
 
 EnhancedTableBody.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
-  urls: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   openOwnershipModal: PropTypes.func.isRequired,
   toggleUrlState: PropTypes.func.isRequired,
   onSaveUrl: PropTypes.func.isRequired,
@@ -182,6 +229,4 @@ EnhancedTableBody.propTypes = {
   openQrCode: PropTypes.func.isRequired,
 }
 
-export default withStyles(userPageStyle)(
-  connect(mapStateToProps, mapDispatchToProps)(EnhancedTableBody),
-)
+export default connect(null, mapDispatchToProps)(EnhancedTableBody)

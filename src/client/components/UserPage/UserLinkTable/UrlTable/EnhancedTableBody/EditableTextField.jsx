@@ -2,7 +2,7 @@ import React from 'react'
 import { InputAdornment, TextField } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-import { isValidLongUrl } from '../../../shared/util/validation'
+import { isValidLongUrl } from '../../../../../../shared/util/validation'
 
 import { removeHttpsProtocol } from '~/util/url'
 import userPageStyle from '~/styles/userPage'
