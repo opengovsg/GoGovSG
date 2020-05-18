@@ -75,31 +75,30 @@ on localhost to be `111111`.
 
 Much of this step will involve setting up key infrastructure components since we do not have docker-compose
 to do that for us. On top of running the server, GoGovSG minimally requires the following infrastructure to be available:
-
 - A PostgreSQL database (for storing short-long URL mappings)
 - A Redis server (transient storage of sessions, one-time passwords, click statistics and frequently used shortlinks)
 
 After these have been set up, set the environment variables according to the table below:
 
-|    Environment Variable     | Required | Description/Value                                                                                                                                                                              |
-| :-------------------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|          NODE_ENV           |   Yes    | `production`                                                                                                                                                                                   |
-|           DB_URI            |   Yes    | The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`                                                                                                     |
-|           OG_URL            |   Yes    | The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`                                                                                      |
-|        AWS_S3_BUCKET        |   Yes    | The bucket name used for storing file uploads.                                                                                                                                                 |
-|        REDIS_OTP_URI        |   Yes    | Redis connection string, e.g. `redis://redis:6379/0`                                                                                                                                           |
-|      REDIS_SESSION_URI      |   Yes    | Redis connection string, e.g. `redis://redis:6379/1`                                                                                                                                           |
-|     REDIS_REDIRECT_URI      |   Yes    | Redis connection string, e.g. `redis://redis:6379/2`                                                                                                                                           |
-|       REDIS_STAT_URI        |   Yes    | Redis connection string, e.g. `redis://redis:6379/3`                                                                                                                                           |
-|       SESSION_SECRET        |   Yes    | For hashing browser sessions, e.g. `change-this`                                                                                                                                               |
-| VALID_EMAIL_GLOB_EXPRESSION |   Yes    | The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com` |
-|       GA_TRACKING_ID        |    No    | The Google Analytics tracking ID, e.g. `UA-12345678-9`                                                                                                                                         |
-|      SENTRY_AUTH_TOKEN      |    No    | To get relevant permissions to upload the source maps.                                                                                                                                         |
-|         SENTRY_DNS          |    No    | The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`                                                                                                           |
-|         SENTRY_ORG          |    No    | Our Sentry organisation name, e.g. `example-org`                                                                                                                                               |
-|       SENTRY_PROJECT        |    No    | The relevant Sentry project. e.g. `project-prod`                                                                                                                                               |
-|         SENTRY_URL          |    No    | The Sentry url. e.g. `https://sentry.io/`                                                                                                                                                      |
-|        LOGIN_MESSAGE        |    No    | A text message that will be displayed on the login page as a snackbar.                                                                                                                         |
+|Environment Variable|Required|Description/Value|
+|:---:|:---:|:---|
+|NODE_ENV|Yes|`production`|
+|DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
+|OG_URL|Yes|The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`|
+|AWS_S3_BUCKET|Yes|The bucket name used for storing file uploads.|
+|REDIS_OTP_URI|Yes|Redis connection string, e.g. `redis://redis:6379/0`|
+|REDIS_SESSION_URI|Yes|Redis connection string, e.g. `redis://redis:6379/1`|
+|REDIS_REDIRECT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/2`|
+|REDIS_STAT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/3`|
+|SESSION_SECRET|Yes|For hashing browser sessions, e.g. `change-this`|
+|VALID_EMAIL_GLOB_EXPRESSION|Yes|The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com`|
+|GA_TRACKING_ID|No|The Google Analytics tracking ID, e.g. `UA-12345678-9`|
+|SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps.|
+|SENTRY_DNS|No|The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`|
+|SENTRY_ORG|No|Our Sentry organisation name, e.g. `example-org`|
+|SENTRY_PROJECT|No|The relevant Sentry project. e.g. `project-prod`|
+|SENTRY_URL|No|The Sentry url. e.g. `https://sentry.io/`|
+|LOGIN_MESSAGE|No|A text message that will be displayed on the login page as a snackbar.|
 
 Trigger the typescript compilation and webpack bundling process by calling `npm run build`.
 
@@ -109,22 +108,22 @@ Finally, start the production server by running `npm start`.
 
 GoGovSG uses Travis to deploy to AWS Elastic Beanstalk. We also use Sentry.io to track client-side errors.
 
-|              Environment Variable               | Required | Description/Value                                                                   |
-| :---------------------------------------------: | :------: | :---------------------------------------------------------------------------------- |
-|                AWS_ACCESS_KEY_ID                |   Yes    | AWS credential ID used to deploy to Elastic Beanstalk                               |
-|              AWS_SECRET_ACCESS_KEY              |   Yes    | AWS credential secret used to deploy to Elastic Beanstalk                           |
-|    AWS_EB_ENV_PRODUCTION, AWS_EB_ENV_STAGING    |   Yes    | Elastic Beanstalk environment name                                                  |
-|    AWS_EB_APP_PRODUCTION, AWS_EB_APP_STAGING    |   Yes    | Elastic Beanstalk application name                                                  |
-| AWS_EB_BUCKET_PRODUCTION, AWS_EB_BUCKET_STAGING |   Yes    | S3 bucket used to store the application bundle                                      |
-|                  AWS_EB_REGION                  |   Yes    | AWS region to deploy to, e.g. `ap-southeast-1`                                      |
-|                 EMAIL_RECIPIENT                 |   Yes    | Email for Travis notifications                                                      |
-|        PRODUCTION_BRANCH, STAGING_BRANCH        |   Yes    | Name of Git branches for triggerring deployments to production/staging respectively |
-|                      REPO                       |   Yes    | Docker container registry URI to push built images to                               |
-|                  ROTATED_LINKS                  |    No    | List of comma separated path of links to rotate on the landing page                 |
-|                   SENTRY_ORG                    |    No    | Sentry.io organisation name                                                         |
-|                 SENTRY_PROJECT                  |    No    | Sentry.io project name                                                              |
-|                   SENTRY_URL                    |    No    | Sentry.io URL e.g. `https://sentry.io/`                                             |
-|                   SENTRY_DNS                    |    No    | Sentry.io endpoint to post client-side errors to                                    |
+|Environment Variable|Required|Description/Value|
+|:---:|:---:|:---|
+|AWS_ACCESS_KEY_ID|Yes|AWS credential ID used to deploy to Elastic Beanstalk|
+|AWS_SECRET_ACCESS_KEY|Yes|AWS credential secret used to deploy to Elastic Beanstalk|
+|AWS_EB_ENV_PRODUCTION, AWS_EB_ENV_STAGING|Yes|Elastic Beanstalk environment name|
+|AWS_EB_APP_PRODUCTION, AWS_EB_APP_STAGING|Yes|Elastic Beanstalk application name|
+|AWS_EB_BUCKET_PRODUCTION, AWS_EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|
+|AWS_EB_REGION|Yes|AWS region to deploy to, e.g. `ap-southeast-1`|
+|EMAIL_RECIPIENT|Yes|Email for Travis notifications|
+|PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
+|REPO|Yes|Docker container registry URI to push built images to|
+|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
+|SENTRY_ORG|No|Sentry.io organisation name|
+|SENTRY_PROJECT|No|Sentry.io project name|
+|SENTRY_URL|No|Sentry.io URL e.g. `https://sentry.io/`|
+|SENTRY_DNS|No|Sentry.io endpoint to post client-side errors to|
 
 ## Pre-release
 
@@ -168,7 +167,7 @@ Babel requires plugins to do the transformation. Presets are the set of plugins 
 [webpack.config.js](https://webpack.js.org/configuration/) file is used to describe the configurations required for webpack.
 
 1. **entry:** entry: ./src/client/index.js is where the application starts executing and webpack starts bundling.
-   Note: babel-polyfill is added to support async/await. Read more [here](https://babeljs.io/docs/en/babel-polyfill#usage-in-node-browserify-webpack).
+    Note: babel-polyfill is added to support async/await. Read more [here](https://babeljs.io/docs/en/babel-polyfill#usage-in-node-browserify-webpack).
 2. **output path and filename:** the target directory and the filename for the bundled output
 3. **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. CSS files are passed through [css-loaders](https://github.com/webpack-contrib/css-loader) and [style-loaders](https://github.com/webpack-contrib/style-loader) to load and bundle CSS files. Fonts and images are loaded through url-loader.
 4. **Dev Server:** Configurations for the webpack-dev-server which will be described in coming section.
