@@ -23,13 +23,18 @@ module.exports = () => {
       publicPath: '/',
     },
     resolve: {
-      extensions: ['.jsx', '.js', '.json'],
+      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
       alias: {
         '~': srcDirectory,
       },
     },
     module: {
       rules: [
+        {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules/,
+          use: 'ts-loader',
+        },
         {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
