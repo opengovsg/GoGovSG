@@ -45,7 +45,7 @@ function validateUrls(
   res: Express.Response,
   next: Express.NextFunction,
 ) {
-  const { userId, longUrl, shortUrl } = req.body
+  const { userId, longUrl, shortUrl, isFile } = req.body
 
   if (!(userId && longUrl && shortUrl)) {
     res.badRequest(
@@ -77,6 +77,12 @@ function validateUrls(
     res.badRequest(
       jsonMessage('Creation of URLs to link shortener sites prohibited.'),
     )
+    return
+  }
+
+  // An upload request must contain a file
+  if (isFile && !req.files) {
+    res.badRequest(jsonMessage('Missing file to upload.'))
     return
   }
 
@@ -139,6 +145,7 @@ function validatePresignedUrlRequest(
  */
 router.post('/url', validateUrls, async (req, res) => {
   const { isFile, userId, longUrl, shortUrl } = req.body
+  const { file } = req.files
 
   try {
     const user = await User.findByPk(userId)
@@ -155,8 +162,8 @@ router.post('/url', validateUrls, async (req, res) => {
     }
 
     // Success
-    const result = await transaction((t) =>
-      Url.create(
+    const result = await transaction(async (t) => {
+      const url = Url.create(
         {
           userId: user.id,
           longUrl,
@@ -164,8 +171,12 @@ router.post('/url', validateUrls, async (req, res) => {
           isFile: !!isFile,
         },
         { transaction: t },
-      ),
-    )
+      )
+      if (isFile) {
+        // TODO
+      }
+      return url
+    })
 
     res.ok(result)
   } catch (error) {
@@ -186,14 +197,6 @@ router.post('/upload', validatePresignedUrlRequest, async (req, res) => {
     logger.error(`Error creating pre-signed url: \t${error}`)
     return res.serverError('Could not generate pre-signed url.')
   }
-})
-
-/**
- * Creates a link with the specified shortUrl and uploads a file with the same key
- * to S3.
- */
-router.post('/upload2', async (req, res) => {
-  return res.send(req.path)
 })
 
 router.patch('/url/ownership', async (req, res) => {
