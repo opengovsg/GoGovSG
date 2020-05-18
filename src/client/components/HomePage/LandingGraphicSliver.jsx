@@ -48,9 +48,6 @@ const useStyles = makeStyles((theme) =>
     subtitleText: {
       marginTop: theme.spacing(2),
       maxWidth: '404px',
-      [theme.breakpoints.up('lg')]: {
-        marginTop: theme.spacing(0),
-      },
     },
     rotatingLinksGraphic: {
       marginTop: theme.spacing(4),
