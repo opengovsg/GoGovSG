@@ -55,3 +55,13 @@ export const setS3ObjectACL = (
   }
   return s3.putObjectAcl(params).promise()
 }
+
+export const uploadFileToS3 = async (file: Buffer, key: string) => {
+  const params = {
+    Bucket: s3Bucket,
+    Body: file,
+    Key: key,
+    ACL: FileVisibility.Public,
+  }
+  return s3.putObject(params).promise()
+}

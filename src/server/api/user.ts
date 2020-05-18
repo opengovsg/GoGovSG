@@ -10,6 +10,7 @@ import {
   FileVisibility,
   generatePresignedUrl,
   setS3ObjectACL,
+  uploadFileToS3,
 } from '../util/aws'
 import { transaction } from '../util/sequelize'
 import { logger } from '../config'
@@ -173,7 +174,7 @@ router.post('/url', validateUrls, async (req, res) => {
         { transaction: t },
       )
       if (isFile) {
-        // TODO
+        await uploadFileToS3(file.data, shortUrl)
       }
       return url
     })
