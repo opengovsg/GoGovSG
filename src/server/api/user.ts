@@ -188,6 +188,14 @@ router.post('/upload', validatePresignedUrlRequest, async (req, res) => {
   }
 })
 
+/**
+ * Creates a link with the specified shortUrl and uploads a file with the same key
+ * to S3.
+ */
+router.post('/upload2', async (req, res) => {
+  return res.send(req.path)
+})
+
 router.patch('/url/ownership', async (req, res) => {
   const { userId, shortUrl, newUserEmail } = req.body
   try {
