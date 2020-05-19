@@ -6,11 +6,7 @@ import { ACTIVE, INACTIVE } from '../models/types'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import {
-  FileVisibility,
-  setS3ObjectACL,
-  uploadFileToS3,
-} from '../util/aws'
+import { FileVisibility, setS3ObjectACL, uploadFileToS3 } from '../util/aws'
 import { transaction } from '../util/sequelize'
 import { logger } from '../config'
 
