@@ -10,10 +10,10 @@ import {
 } from '@material-ui/core'
 import 'boxicons'
 
-import userActions from '../../../../actions/user'
+import userActions from '../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'
-import useFullScreenDialog from '../util/useFullScreenDialog'
-import ModalMargins from '../ModalMargins'
+import useFullScreenDialog from '../Drawer/util/useFullScreenDialog'
+import ModalMargins from './ModalMargins'
 
 const mapStateToProps = (state) => ({
   shortUrl: state.user.shortUrl,

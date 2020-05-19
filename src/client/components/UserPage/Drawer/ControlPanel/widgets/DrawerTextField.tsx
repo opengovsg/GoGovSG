@@ -56,6 +56,7 @@ const useTextFieldStyles = makeStyles((theme) =>
       width: '100%',
       maxWidth: 633,
       marginTop: 12,
+      marginBottom: -24,
     },
     removePrefixPadding: { padding: theme.spacing(0) },
     textInput: {
@@ -79,7 +80,7 @@ type TextFieldProps = {
   helperText?: string
 }
 
-export default function PanelTextField(props: TextFieldProps) {
+export default function DrawerTextField(props: TextFieldProps) {
   const classes = useTextFieldStyles({ textFieldHeight: TEXT_FIELD_HEIGHT })
 
   return (
