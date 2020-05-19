@@ -147,7 +147,7 @@ router.post('/url', validateUrls, async (req, res) => {
         { transaction: t },
       )
       if (isFile) {
-        await uploadFileToS3(file.data, shortUrl)
+        await uploadFileToS3(file.data, shortUrl, file.mimetype)
       }
       return url
     })
