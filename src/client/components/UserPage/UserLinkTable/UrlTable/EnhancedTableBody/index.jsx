@@ -14,7 +14,7 @@ import {
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
 import useAppMargins from '../../../../AppMargins/useAppMargins'
-import ModalActions from '../../../Modals/ControlPanel/store/reducers'
+import ModalActions from '../../../Modals/ControlPanel/helpers/reducers'
 import { useModalDispatch } from '../../../Modals'
 import { numberUnitFormatter } from '../../../../../util/format'
 

@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react'
 import CreateUrlModal from './CreateUrlModal'
 import ControlPanel from './ControlPanel'
-import { Action, State, initialState, modalReducer } from './ControlPanel/store/reducers'
+import { Action, State, initialState, modalReducer } from './ControlPanel/helpers/reducers'
 
 export { CreateUrlModal }
 

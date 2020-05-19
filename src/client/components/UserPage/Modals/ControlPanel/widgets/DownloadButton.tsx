@@ -11,7 +11,7 @@ import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useModalState, useModalDispatch } from '../..'
 import QRCodeModal from '../QRCodeModal'
-import ModalActions from '../store/reducers'
+import ModalActions from '../helpers/reducers'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

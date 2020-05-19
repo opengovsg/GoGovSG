@@ -7,7 +7,7 @@ import {
   IconButton,
 } from '@material-ui/core'
 
-import ModalActions from './store/reducers'
+import ModalActions from './helpers/reducers'
 import { useModalState, useModalDispatch } from '..'
 import PanelMargin from './PanelMargin'
 import closeIcon from './assets/close-icon.svg'
