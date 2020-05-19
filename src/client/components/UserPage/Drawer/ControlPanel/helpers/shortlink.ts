@@ -35,7 +35,8 @@ export default function useShortLink(shortLink: string) {
   )[0]
   const dispatch = useDispatch()
   const dispatchOptions = {
-    toggleStatus: () => dispatch(userActions.toggleUrlState(shortLink, urlState.state)),
+    toggleStatus: () =>
+      dispatch(userActions.toggleUrlState(shortLink, urlState.state)),
     setEditLongUrl: (editedUrl: string) => {
       dispatch(userActions.setEditedLongUrl(shortLink, editedUrl))
     },
