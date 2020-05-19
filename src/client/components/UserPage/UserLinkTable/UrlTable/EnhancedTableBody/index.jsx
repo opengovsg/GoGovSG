@@ -108,8 +108,8 @@ const EnhancedTableBody = ({
   const copiedLinkIconDesc = 'Link copied'
 
   const dispatch = useModalDispatch()
-  const openControlPanel = () =>
-    dispatch({ type: ModalActions.openControlPanel })
+  const openControlPanel = (row) =>
+    dispatch({ type: ModalActions.openControlPanel, payload: row })
 
   if (urls.length > 0) {
     // Text descriptions of icons buttons in user url table body.
@@ -125,7 +125,7 @@ const EnhancedTableBody = ({
           <TableRow
             key={row.shortUrl}
             className={classes.hoverRow}
-            onClick={openControlPanel}
+            onClick={() => openControlPanel(row)}
           >
             <TableCell className={classes.tableBodyTitle}>Owners</TableCell>
             <TableCell className={classes.leftCell}>
