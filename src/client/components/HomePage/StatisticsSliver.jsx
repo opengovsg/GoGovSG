@@ -91,7 +91,7 @@ const StatisticsSliver = (props) => {
 
   return (
     <>
-      <Typography variant="h2" color="textPrimary" gutterBottom>
+      <Typography variant="h3" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
       <Grid container className={classes.grid} spacing={2}>
@@ -105,7 +105,7 @@ const StatisticsSliver = (props) => {
           <Grid item>
             <Card className={classes.card}>
               <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h3">
+                <Typography color="primary" variant="h4">
                   <strong>{numberFormatter.format(userCount)}</strong>
                 </Typography>
                 <Typography
@@ -121,7 +121,7 @@ const StatisticsSliver = (props) => {
           <Grid item>
             <Card className={classes.card}>
               <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h3">
+                <Typography color="primary" variant="h4">
                   <strong>{numberFormatter.format(linkCount)}</strong>
                 </Typography>
                 <Typography
@@ -137,7 +137,7 @@ const StatisticsSliver = (props) => {
           <Grid item>
             <Card className={classes.card}>
               <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h3">
+                <Typography color="primary" variant="h4">
                   <strong>{numberFormatter.format(clickCount)}</strong>
                 </Typography>
                 <Typography

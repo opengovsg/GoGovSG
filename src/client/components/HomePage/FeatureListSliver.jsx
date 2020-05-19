@@ -90,7 +90,7 @@ const FeatureListSliver = () => {
   return (
     <>
       <Typography
-        variant="h2"
+        variant="h3"
         color="textPrimary"
         display="inline"
         gutterBottom
@@ -132,7 +132,7 @@ const FeatureListSliver = () => {
                     alt={card.title}
                   />
                   <CardContent className={classes.cardContent}>
-                    <Typography color="primary" variant="h3" gutterBottom>
+                    <Typography color="primary" variant="h4" gutterBottom>
                       <strong>{card.title}</strong>
                     </Typography>
                     <Typography color="textPrimary">

@@ -14,7 +14,12 @@ const StatisticsGraphic = () => {
   const classes = useStyles()
 
   return (
-    <img className={classes.root} src={statsGraphic} alt="Statistics graphic" />
+    <img
+      className={classes.root}
+      src={statsGraphic}
+      alt="Statistics graphic"
+      draggable={false}
+    />
   )
 }
 

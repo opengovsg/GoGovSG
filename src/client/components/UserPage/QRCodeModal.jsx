@@ -23,7 +23,7 @@ const QRCodeModal = ({ classes, qrCode, closeQrCode }) => (
         value={`https://${document.location.host}/${qrCode}`}
       />
       <Typography
-        variant="h3"
+        variant="h4"
         className={classes.qrCodeModalTitle}
         align="center"
         gutterBottom

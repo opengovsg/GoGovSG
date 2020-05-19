@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme) =>
         display: 'inline',
       },
     },
+    titleText: {
+      fontWeight: '500',
+    },
     subtitleText: {
       marginTop: theme.spacing(2),
       maxWidth: '404px',
@@ -120,7 +123,12 @@ const LandingGraphicSliver = () => {
       >
         <div className={classes.container}>
           <div className={classes.titleTextContainer}>
-            <Typography variant="h1" color="textPrimary" gutterBottom>
+            <Typography
+              variant="h1"
+              color="textPrimary"
+              gutterBottom
+              className={classes.titleText}
+            >
               <Trans>general.appCatchphrase.styled</Trans>
             </Typography>
             <Typography
@@ -158,7 +166,7 @@ const LandingGraphicSliver = () => {
           <ApplyAppMargins>
             <Typography
               className={classes.signInText}
-              variant="subtitle1"
+              variant="caption"
               color="secondary"
             >
               <Trans>general.appSignInPrompt</Trans>{' '}

@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme) =>
     },
     appTitle: {
       marginRight: theme.spacing(2),
+      fontWeight: 700,
+    },
+    appCatchPhrase: {
+      fontWeight: 400,
     },
     navLinkGroup: {
       gridRow: 2,
@@ -91,12 +95,17 @@ const BaseLayoutFooter = () => {
           <div className={classes.appHeaderGroup}>
             <Typography
               className={classes.appTitle}
-              variant="h3"
+              variant="body1"
               color="textPrimary"
             >
               <strong>{i18next.t('general.appTitle')}</strong>
             </Typography>
-            <Typography variant="body1" color="textPrimary" noWrap>
+            <Typography
+              variant="body2"
+              color="textPrimary"
+              noWrap
+              className={classes.appCatchPhrase}
+            >
               {i18next.t('general.appCatchphrase.noStyle')}
             </Typography>
           </div>
