@@ -3,7 +3,7 @@ import { injectable } from 'inversify'
 import { CookieReducer } from '../../../../src/server/util/transitionPage'
 
 @injectable()
-export class CookieArrayReducerMock implements CookieReducer {
+export class CookieArrayReducerMockVisited implements CookieReducer {
   userHasVisitedShortlink(_: string[] | null, __: string): boolean {
     return true
   }
@@ -13,4 +13,13 @@ export class CookieArrayReducerMock implements CookieReducer {
   }
 }
 
-export default CookieArrayReducerMock
+@injectable()
+export class CookieArrayReducerMockUnvisited implements CookieReducer {
+  userHasVisitedShortlink(_: string[] | null, __: string): boolean {
+    return false
+  }
+
+  writeShortlinkToCookie(_: string[] | null, __: string): string[] {
+    return []
+  }
+}
