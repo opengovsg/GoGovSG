@@ -151,10 +151,6 @@ export default function EnhancedTableBody() {
   const openControlPanel = (shortlink) =>
     dispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
-  const dispatch = useModalDispatch()
-  const openControlPanel = (row) =>
-    dispatch({ type: ModalActions.openControlPanel, payload: row })
-
   if (urls.length > 0) {
     // If user has existing links, show the user's list of stored links.
     return (
