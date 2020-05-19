@@ -65,7 +65,7 @@ const TrustedBySliver = () => {
     <>
       <Typography
         className={classes.trustedByText}
-        variant="h2"
+        variant="h3"
         color="textPrimary"
         gutterBottom
       >
