@@ -34,26 +34,41 @@ export default responsiveFontSizes(
         contrastText: '#000',
       },
       text: {
-        primary: '#000',
+        primary: '#384a51',
         secondary: '#767676',
       },
     },
     typography: {
       fontFamily: "'IBM Plex Sans', sans-serif",
       h1: {
-        fontSize: '3.25rem',
+        fontSize: '3.4375rem',
         fontWeight: '600',
+        lineHeight: 1.182,
       },
       h2: {
-        fontSize: '1.5rem',
-        fontWeight: '600',
+        fontSize: '2.8125rem',
+        fontWeight: '500',
+        lineHeight: 1.267,
       },
       h3: {
-        fontSize: '1.2rem',
+        fontSize: '1.75rem',
+        fontWeight: '600',
+        lineHeight: 1.321,
+      },
+      h4: {
+        fontSize: '1.375rem',
+        fontWeight: '600',
+        lineHeight: 1.364,
+      },
+      h5: {
+        fontSize: '1.125rem',
+        fontWeight: '700',
+        lineHeight: 1.389,
       },
       h6: {
         fontSize: '1rem',
-        fontWeight: 500,
+        fontWeight: '500',
+        lineHeight: 1.3125,
       },
       subtitle1: {
         fontSize: '1.2rem',
@@ -61,12 +76,16 @@ export default responsiveFontSizes(
       },
       body1: {
         fontSize: '1rem',
+        lineHeight: 1.5625,
       },
       body2: {
         fontSize: '0.875rem',
+        fontWeight: '500',
+        lineHeight: 1.429,
       },
       caption: {
-        fontSize: '0.8rem',
+        fontSize: '0.8125rem',
+        lineHeight: 1.308,
       },
       button: {
         textTransform: 'none',

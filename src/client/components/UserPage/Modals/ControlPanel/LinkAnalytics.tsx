@@ -43,7 +43,7 @@ export default function LinkAnalytics() {
 
   return (
     <div className={classes.linkAnalyticsDiv}>
-      <Typography variant="h2" color="primary">
+      <Typography variant="h3" color="primary">
         Link analytics coming soon!
       </Typography>
       <Typography className={classes.linkAnalyticsText} variant="body1">

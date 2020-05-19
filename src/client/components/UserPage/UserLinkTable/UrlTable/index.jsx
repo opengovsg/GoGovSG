@@ -2,7 +2,6 @@ import React from 'react'
 import { Table, createStyles, makeStyles } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 
-import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableBody from './EnhancedTableBody'
 import MemoTablePagination from './MemoTablePagination'
 import userActions from '../../../../actions/user'
@@ -29,7 +28,6 @@ export default function UrlTable() {
   return (
     <div className={classes.urlTable}>
       <Table aria-label="table with urls">
-        <EnhancedTableHead />
         <EnhancedTableBody />
       </Table>
       <MemoTablePagination
