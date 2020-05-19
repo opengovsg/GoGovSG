@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  Button,
-} from '@material-ui/core'
+import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
 
 import copyIcon from './assets/copy-icon.svg'
 import copy from 'copy-to-clipboard'
@@ -30,7 +25,7 @@ const useStyles = makeStyles(() =>
 
 export default function DialogHeader() {
   const classes = useStyles()
-  const shortUrl = useModalState().controlPanelData?.shortUrl
+  const shortUrl = useModalState().relevantShortLink
 
   return (
     <div className={classes.dialogTitleDiv}>

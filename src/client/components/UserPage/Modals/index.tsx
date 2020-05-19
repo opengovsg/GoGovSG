@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react'
 import CreateUrlModal from './CreateUrlModal'
 import ControlPanel from './ControlPanel'
-import { Action, State, initialState, modalReducer } from './util/reducers'
+import { Action, State, initialState, modalReducer } from './ControlPanel/store/reducers'
 
 export { CreateUrlModal }
 
@@ -46,6 +46,7 @@ type ModalProps = {
   children: React.ReactNode
 }
 
+// Wraps modals around children components on user page.
 export default function Modals({ children }: ModalProps) {
   const { state, dispatch } = useDialogController()
   return (

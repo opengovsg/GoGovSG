@@ -7,7 +7,7 @@ import {
   IconButton,
 } from '@material-ui/core'
 
-import ModalActions from '../util/reducers'
+import ModalActions from './store/reducers'
 import { useModalState, useModalDispatch } from '..'
 import PanelMargin from './PanelMargin'
 import closeIcon from './assets/close-icon.svg'
@@ -17,6 +17,7 @@ import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
 import PanelTextField from './PanelTextField'
 import TrailingButton from './TrailingButton'
 import GoSwitch from './assets/GoSwitch'
+import useShortLink from './helpers/shortlink'
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -46,15 +47,20 @@ const useStyles = makeStyles(() =>
 )
 
 export default function ControlPanel() {
+  // Styles used in this component.
   const classes = useStyles()
+
+  // Modal controller.
   const modalStates = useModalState()
   const drawerIsOpen = modalStates.controlPanelIsOpen
-  const drawerContent = modalStates.controlPanelData
   const modalDispatch = useModalDispatch()
   const handleClose = () =>
     modalDispatch({ type: ModalActions.closeControlPanel })
 
-  console.log(drawerContent)
+  // Fetch short link state and dispatches from redux store through our helper hook.
+  const [drawerState, drawerDispatch] = useShortLink(
+    modalStates.relevantShortLink!,
+  )
 
   return (
     <Drawer
@@ -77,7 +83,8 @@ export default function ControlPanel() {
             trailing={
               <GoSwitch
                 color="primary"
-                checked={drawerContent?.state === 'ACTIVE'}
+                checked={drawerState?.state === 'ACTIVE'}
+                onChange={drawerDispatch?.toggleStatus}
               />
             }
             trailingPosition={TrailingPosition.center}
@@ -94,7 +101,7 @@ export default function ControlPanel() {
             title="Original link"
             leading={
               <PanelTextField
-                value={drawerContent?.longUrl || ''}
+                value={drawerState?.longUrl || ''}
                 onChange={() => {}}
                 placeholder="Original link"
                 prefix="https://"

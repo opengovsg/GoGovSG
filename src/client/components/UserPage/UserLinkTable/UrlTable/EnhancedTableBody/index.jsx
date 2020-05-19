@@ -14,7 +14,7 @@ import {
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
 import useAppMargins from '../../../../AppMargins/useAppMargins'
-import ModalActions from '../../../Modals/util/reducers'
+import ModalActions from '../../../Modals/ControlPanel/store/reducers'
 import { useModalDispatch } from '../../../Modals'
 import { numberUnitFormatter } from '../../../../../util/format'
 
@@ -167,8 +167,8 @@ const EnhancedTableBody = (/* {
   // const copiedLinkIconDesc = 'Link copied'
 
   const dispatch = useModalDispatch()
-  const openControlPanel = (row) =>
-    dispatch({ type: ModalActions.openControlPanel, payload: row })
+  const openControlPanel = (shortlink) =>
+    dispatch({ type: ModalActions.openControlPanel, payload: shortlink })
 
   if (urls.length > 0) {
     // Text descriptions of icons buttons in user url table body.
@@ -184,7 +184,7 @@ const EnhancedTableBody = (/* {
           <TableRow
             key={row.shortUrl}
             className={classes.hoverRow}
-            onClick={() => openControlPanel(row)}
+            onClick={() => openControlPanel(row.shortUrl)}
           >
             <TableCell className={classes.leftCell} width="5%">
               <div className={classes.icon}>
