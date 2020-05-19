@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 
 import userActions from '../../../../../actions/user'
+import { isValidLongUrl } from '../../../../../../shared/util/validation'
 
 export type LinkState = {
   clicks: number
@@ -16,25 +17,41 @@ export type LinkState = {
 
 export type ShortLinkState = [
   LinkState | undefined,
-  (
-    | {
-        toggleStatus: () => (dispatch: any) => void
-      }
-    | undefined
-  ),
+  ShortLinkDispatch | undefined,
 ]
 
-export default function useShortLink(shortLink: string): ShortLinkState {
+type Dispatch = () => (dispatch: any) => void
+
+export type ShortLinkDispatch = {
+  toggleStatus: Dispatch
+  setEditLongUrl: Dispatch
+  applyEditLongUrl: Dispatch
+}
+
+export default function useShortLink(shortLink: string) {
   const urls: LinkState[] = useSelector((state: any) => state.user.urls)
   const urlState = urls.filter(
     (url: LinkState) => url.shortUrl === shortLink,
   )[0]
   const dispatch = useDispatch()
   const dispatchOptions = {
-    toggleStatus: () => dispatch(userActions.toggleUrlState(urlState.shortUrl, urlState.state)),
+    toggleStatus: () => dispatch(userActions.toggleUrlState(shortLink, urlState.state)),
+    setEditLongUrl: (editedUrl: string) => {
+      dispatch(userActions.setEditedLongUrl(shortLink, editedUrl))
+    },
+    applyEditLongUrl: (editedUrl: string) => {
+      if (!isValidLongUrl(editedUrl)) {
+        throw new Error('Attempt to save an invalid long url.')
+      }
+      dispatch(userActions.updateLongUrl(shortLink, editedUrl))
+    },
+    applyNewOwner: (newOwner: string) => {
+      dispatch(userActions.transferOwnership(shortLink, newOwner))
+    },
   }
-  if (shortLink) {
-    return [urlState, dispatchOptions]
+
+  return {
+    shortLinkState: shortLink ? urlState : undefined,
+    shortLinkDispatch: shortLink ? dispatchOptions : undefined,
   }
-  return [undefined, undefined]
 }

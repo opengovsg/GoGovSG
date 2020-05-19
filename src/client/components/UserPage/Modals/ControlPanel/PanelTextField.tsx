@@ -56,6 +56,7 @@ const useTextFieldStyles = makeStyles((theme) =>
       width: '100%',
       maxWidth: 633,
       marginTop: 12,
+      marginBottom: -24,
     },
     removePrefixPadding: { padding: theme.spacing(0) },
     textInput: {

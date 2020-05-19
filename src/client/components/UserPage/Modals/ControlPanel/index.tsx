@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Drawer,
   createStyles,
@@ -18,11 +18,14 @@ import PanelTextField from './PanelTextField'
 import TrailingButton from './TrailingButton'
 import GoSwitch from './assets/GoSwitch'
 import useShortLink from './helpers/shortlink'
+import { removeHttpsProtocol } from '../../../../util/url'
+import { isValidLongUrl } from '../../../../../shared/util/validation'
+import DownloadButton from './DownloadButton'
 
 const useStyles = makeStyles(() =>
   createStyles({
     drawerPaper: {
-      width: '60%',
+      width: '100%',
       maxWidth: 885,
     },
     dialogContents: {
@@ -54,13 +57,23 @@ export default function ControlPanel() {
   const modalStates = useModalState()
   const drawerIsOpen = modalStates.controlPanelIsOpen
   const modalDispatch = useModalDispatch()
-  const handleClose = () =>
-    modalDispatch({ type: ModalActions.closeControlPanel })
 
   // Fetch short link state and dispatches from redux store through our helper hook.
-  const [drawerState, drawerDispatch] = useShortLink(
+  const { shortLinkState, shortLinkDispatch } = useShortLink(
     modalStates.relevantShortLink!,
   )
+
+  // Manage values in our text fields.
+  const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
+  const editedLongUrl = shortLinkState?.editedLongUrl || ''
+  const [pendingOwner, setPendingOwner] = useState<string>('')
+
+  // Disposes any current unsaved changes and closes the modal.
+  const handleClose = () => {
+    shortLinkDispatch?.setEditLongUrl(originalLongUrl)
+    setPendingOwner('')
+    modalDispatch({ type: ModalActions.closeControlPanel })
+  }
 
   return (
     <Drawer
@@ -83,8 +96,8 @@ export default function ControlPanel() {
             trailing={
               <GoSwitch
                 color="primary"
-                checked={drawerState?.state === 'ACTIVE'}
-                onChange={drawerDispatch?.toggleStatus}
+                checked={shortLinkState?.state === 'ACTIVE'}
+                onChange={shortLinkDispatch?.toggleStatus}
               />
             }
             trailingPosition={TrailingPosition.center}
@@ -92,22 +105,40 @@ export default function ControlPanel() {
           <ConfigOption
             title="QR Code"
             subtitle="Download your link’s QR Code in PNG or SVG format"
-            trailing={
-              <TrailingButton onClick={() => {}}>Download</TrailingButton>
-            }
+            trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
           <ConfigOption
             title="Original link"
             leading={
               <PanelTextField
-                value={drawerState?.longUrl || ''}
-                onChange={() => {}}
+                value={editedLongUrl}
+                onChange={(event) =>
+                  shortLinkDispatch?.setEditLongUrl(event.target.value)
+                }
                 placeholder="Original link"
                 prefix="https://"
+                error={!isValidLongUrl(editedLongUrl, true)}
+                helperText={
+                  isValidLongUrl(editedLongUrl, true)
+                    ? ' '
+                    : "This doesn't look like a valid url."
+                }
               />
             }
-            trailing={<TrailingButton onClick={() => {}}>Save</TrailingButton>}
+            trailing={
+              <TrailingButton
+                disabled={
+                  !isValidLongUrl(editedLongUrl, false) ||
+                  editedLongUrl === originalLongUrl
+                }
+                onClick={() =>
+                  shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
+                }
+              >
+                Save
+              </TrailingButton>
+            }
             trailingPosition={TrailingPosition.end}
           />
           <ConfigOption
@@ -115,13 +146,19 @@ export default function ControlPanel() {
             subtitle="A Go.gov.sg link can only be transferred to an existing user"
             leading={
               <PanelTextField
-                value=""
-                onChange={() => {}}
+                value={pendingOwner}
+                onChange={(event) => setPendingOwner(event.target.value)}
                 placeholder="Email of link recipient"
+                helperText={' '}
               />
             }
             trailing={
-              <TrailingButton onClick={() => {}}>Transfer</TrailingButton>
+              <TrailingButton
+                onClick={() => shortLinkDispatch?.applyNewOwner(pendingOwner)}
+                disabled={!pendingOwner}
+              >
+                Transfer
+              </TrailingButton>
             }
             trailingPosition={TrailingPosition.end}
           />
