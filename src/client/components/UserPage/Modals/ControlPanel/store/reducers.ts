@@ -1,10 +1,12 @@
 export type State = {
   controlPanelIsOpen: boolean
   relevantShortLink?: string
+  qrCodeModalIsOpen: boolean
 }
 
 export const initialState: State = {
   controlPanelIsOpen: false,
+  qrCodeModalIsOpen: false,
 }
 
 export type Action = {
@@ -15,6 +17,8 @@ export type Action = {
 export const ModalActions = {
   openControlPanel: 'OPEN_CONTROL_PANEL',
   closeControlPanel: 'CLOSE_CONTROL_PANEL',
+  openQrCodeModal: 'OPEN_QR_CODE_MODAL',
+  closeQrCodeModal: 'CLOSE_QR_CODE_MODAL',
 }
 
 export function modalReducer(state: State, action: Action) {
@@ -28,6 +32,12 @@ export function modalReducer(state: State, action: Action) {
     case ModalActions.closeControlPanel:
       newState.controlPanelIsOpen = false
       newState.relevantShortLink = undefined
+      break
+    case ModalActions.openQrCodeModal:
+      newState.qrCodeModalIsOpen = true
+      break
+    case ModalActions.closeQrCodeModal:
+      newState.qrCodeModalIsOpen = false
       break
     default:
       throw new Error(`Undefined modal action: ${action.type}`)
