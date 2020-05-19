@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   coverageThreshold: {
     global: {
-      statements: 23,
+      statements: 24,
     },
   },
   collectCoverageFrom: ['./src/server/**/*.{ts,js}'],

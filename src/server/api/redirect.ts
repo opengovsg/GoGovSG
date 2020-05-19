@@ -35,11 +35,9 @@ async function getLongUrlFromStore(shortUrl: string): Promise<string> {
   } catch {
     // Cache failed, look in database
     const longUrl = await getLongUrlFromDatabase(shortUrl)
-    try {
-      cacheShortUrl(shortUrl, longUrl)
-    } catch (err) {
-      logger.error(err)
-    }
+    cacheShortUrl(shortUrl, longUrl).catch((error) =>
+      logger.error(`Unable to cache short URL: ${error}`),
+    )
     return longUrl
   }
 }
@@ -99,7 +97,9 @@ export default async function redirect(
     const longUrl = await getLongUrlFromStore(shortUrl)
 
     // Update clicks in database
-    incrementClick(shortUrl)
+    incrementClick(shortUrl).catch((error) =>
+      logger.error(`Unable to increment click count: ${error}`),
+    )
 
     // Google analytics
     logRedirectAnalytics(req, res, shortUrl, longUrl)

@@ -24,7 +24,10 @@ import {
 } from './util'
 import redirect from '../../../src/server/api/redirect'
 import { CookieReducer } from '../../../src/server/util/transitionPage'
-import { CookieArrayReducerMock } from './mocks/transitionPage'
+import {
+  CookieArrayReducerMockUnvisited,
+  CookieArrayReducerMockVisited,
+} from './mocks/transitionPage'
 import { logger } from '../config'
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
@@ -33,7 +36,7 @@ describe('redirect API tests', () => {
   beforeEach(() => {
     container
       .bind<CookieReducer>(DependencyIds.cookieReducer)
-      .to(CookieArrayReducerMock)
+      .to(CookieArrayReducerMockVisited)
   })
 
   afterEach(() => {
@@ -41,7 +44,79 @@ describe('redirect API tests', () => {
     loggerErrorSpy.mockClear()
   })
 
-  test('url exists in cache and db', async () => {
+  test('url exists in cache and db, real user unvisited', async () => {
+    const cookieReducer = new CookieArrayReducerMockUnvisited()
+    container.unbind(DependencyIds.cookieReducer)
+    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
+    container
+      .bind<UrlRepository>(DependencyIds.urlRepository)
+      .to(UrlRepositoryMockFilled)
+    container
+      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
+      .to(AnalyticsLoggerMock)
+    container
+      .bind<CookieReducer>(DependencyIds.cookieReducer)
+      .toConstantValue(cookieReducer)
+    const req = createRequestWithShortUrl('Aaa')
+    const res = httpMocks.createResponse()
+    req.headers['user-agent'] =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+
+    const cookieSpy = jest.spyOn(cookieReducer, 'writeShortlinkToCookie')
+
+    await redirect(req, res)
+
+    const repo = getUrlRepository() as UrlRepositoryMockFilled
+    expect(repo.clicks.get('aaa')).toBe(1)
+    expect(repo.clicks.size).toBe(1)
+    expect(res.statusCode).toBe(200)
+    expect(res._getRedirectUrl()).toBe('')
+    expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
+      undefined,
+      'aaa',
+    )
+
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    cookieSpy.mockClear()
+  })
+
+  test('url exists in cache and db, real user visited', async () => {
+    const cookieReducer = new CookieArrayReducerMockVisited()
+    container.unbind(DependencyIds.cookieReducer)
+    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
+    container
+      .bind<UrlRepository>(DependencyIds.urlRepository)
+      .to(UrlRepositoryMockFilled)
+    container
+      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
+      .to(AnalyticsLoggerMock)
+    container
+      .bind<CookieReducer>(DependencyIds.cookieReducer)
+      .toConstantValue(cookieReducer)
+    const req = createRequestWithShortUrl('Aaa')
+    const res = httpMocks.createResponse()
+    req.headers['user-agent'] =
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+
+    const cookieSpy = jest.spyOn(cookieReducer, 'writeShortlinkToCookie')
+
+    await redirect(req, res)
+
+    const repo = getUrlRepository() as UrlRepositoryMockFilled
+    expect(repo.clicks.get('aaa')).toBe(1)
+    expect(repo.clicks.size).toBe(1)
+    expect(res.statusCode).toBe(302)
+    expect(res._getRedirectUrl()).toBe('aaa')
+    expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
+      undefined,
+      'aaa',
+    )
+
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    cookieSpy.mockClear()
+  })
+
+  test('url exists in cache and db crawler', async () => {
     container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
     container
       .bind<UrlRepository>(DependencyIds.urlRepository)
@@ -51,6 +126,7 @@ describe('redirect API tests', () => {
       .to(AnalyticsLoggerMock)
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
+
     await redirect(req, res)
 
     const repo = getUrlRepository() as UrlRepositoryMockFilled
