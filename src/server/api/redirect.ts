@@ -35,11 +35,9 @@ async function getLongUrlFromStore(shortUrl: string): Promise<string> {
   } catch {
     // Cache failed, look in database
     const longUrl = await getLongUrlFromDatabase(shortUrl)
-    try {
-      await cacheShortUrl(shortUrl, longUrl)
-    } catch (err) {
-      logger.error(err)
-    }
+    cacheShortUrl(shortUrl, longUrl).catch((error) =>
+      logger.error(`Unable to cache short URL: ${error}`),
+    )
     return longUrl
   }
 }
