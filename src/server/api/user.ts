@@ -6,9 +6,11 @@ import { ACTIVE, INACTIVE } from '../models/types'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { FileVisibility, setS3ObjectACL, uploadFileToS3 } from '../util/aws'
+import { FileVisibility, S3Interface } from '../util/aws'
 import { transaction } from '../util/sequelize'
 import { logger } from '../config'
+import { DependencyIds } from '../constants'
+import { container } from '../util/inversify'
 
 const { Public, Private } = FileVisibility
 
@@ -147,6 +149,7 @@ router.post('/url', validateUrls, async (req, res) => {
         { transaction: t },
       )
       if (isFile) {
+        const { uploadFileToS3 } = container.get<S3Interface>(DependencyIds.s3)
         await uploadFileToS3(file.data, shortUrl, file.mimetype)
       }
       return url
@@ -274,6 +277,7 @@ router.patch('/url', validateState, async (req, res) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
         // Toggle the ACL of the S3 object
+        const { setS3ObjectACL } = container.get<S3Interface>(DependencyIds.s3)
         await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
       }
     })

@@ -1,4 +1,5 @@
 import { S3 } from 'aws-sdk'
+import { injectable } from 'inversify'
 import { s3Bucket } from '../config'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
@@ -9,29 +10,32 @@ export enum FileVisibility {
 
 export const s3 = new S3()
 
-export const setS3ObjectACL = (
-  key: string,
-  acl: FileVisibility,
-): Promise<any> => {
-  const params = {
-    Bucket: s3Bucket,
-    Key: key,
-    ACL: acl,
-  }
-  return s3.putObjectAcl(params).promise()
+export interface S3Interface {
+  setS3ObjectACL: (key: string, acl: FileVisibility) => Promise<any>
+  uploadFileToS3: (file: Buffer, key: string, fileType: string) => Promise<any>
 }
 
-export const uploadFileToS3 = async (
-  file: Buffer,
-  key: string,
-  fileType: string,
-) => {
-  const params = {
-    ContentType: fileType,
-    Bucket: s3Bucket,
-    Body: file,
-    Key: key,
-    ACL: FileVisibility.Public,
+@injectable()
+/* eslint class-methods-use-this: ["error", { "exceptMethods":
+  ["setS3ObjectACL", "uploadFileToS3"] }] */
+export class S3ServerSide implements S3Interface {
+  setS3ObjectACL(key: string, acl: FileVisibility): Promise<any> {
+    const params = {
+      Bucket: s3Bucket,
+      Key: key,
+      ACL: acl,
+    }
+    return s3.putObjectAcl(params).promise()
   }
-  return s3.putObject(params).promise()
+
+  uploadFileToS3(file: Buffer, key: string, fileType: string): Promise<any> {
+    const params = {
+      ContentType: fileType,
+      Bucket: s3Bucket,
+      Body: file,
+      Key: key,
+      ACL: FileVisibility.Public,
+    }
+    return s3.putObject(params).promise()
+  }
 }
