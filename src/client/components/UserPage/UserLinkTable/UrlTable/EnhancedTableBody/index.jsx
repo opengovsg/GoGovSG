@@ -1,6 +1,6 @@
 import React from 'react'
 import 'boxicons'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 import { connect, useSelector } from 'react-redux'
 
 import {
@@ -12,19 +12,13 @@ import {
   Typography,
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
 
-import userActions from '../../../../../actions/user'
-import { removeHttpsProtocol } from '../../../../../util/url'
 import useAppMargins from '../../../../AppMargins/useAppMargins'
 import ModalActions from '../../../Modals/util/reducers'
 import { useModalDispatch } from '../../../Modals'
-import fileIcon from '~/assets/icons/file-icon.svg'
-import linkIcon from '~/assets/icons/link-icon.svg'
-import barChartIcon from '~/assets/icons/bar-chart-icon.svg'
 import { numberUnitFormatter } from '../../../../../util/format'
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (/* dispatch */) => ({
   // openOwnershipModal: (shortUrl) =>
   //   dispatch(userActions.openOwnershipModal(shortUrl)),
   // toggleUrlState: (shortUrl, state) =>
@@ -157,13 +151,13 @@ const useStyles = makeStyles((theme) => {
   })
 })
 
-const EnhancedTableBody = ({
+const EnhancedTableBody = (/* {
   openOwnershipModal,
   toggleUrlState,
   onSaveUrl,
   setEditedLongUrl,
   openQrCode,
-}) => {
+} */) => {
   const urls = useSelector((state) => state.user.urls)
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
@@ -179,9 +173,9 @@ const EnhancedTableBody = ({
   if (urls.length > 0) {
     // Text descriptions of icons buttons in user url table body.
     // Used for tooltips and aria labels.
-    const transferIconDesc = 'Transfer link'
-    const copyLinkIconDesc = 'Copy link'
-    const qrCodeIconDesc = 'Download QR Code'
+    // const transferIconDesc = 'Transfer link'
+    // const copyLinkIconDesc = 'Copy link'
+    // const qrCodeIconDesc = 'Download QR Code'
 
     // If user has existing links, show the user's list of stored links.
     return (
@@ -198,7 +192,7 @@ const EnhancedTableBody = ({
                   size="cssSize"
                   name={row.isFile ? 'file-blank' : 'link-alt'}
                   color="#384a51"
-                ></box-icon>
+                />
               </div>
             </TableCell>
             <TableCell align="left" className={classes.urlCell}>
@@ -265,11 +259,11 @@ const EnhancedTableBody = ({
 }
 
 EnhancedTableBody.propTypes = {
-  openOwnershipModal: PropTypes.func.isRequired,
-  toggleUrlState: PropTypes.func.isRequired,
-  onSaveUrl: PropTypes.func.isRequired,
-  setEditedLongUrl: PropTypes.func.isRequired,
-  openQrCode: PropTypes.func.isRequired,
+  // openOwnershipModal: PropTypes.func.isRequired,
+  // toggleUrlState: PropTypes.func.isRequired,
+  // onSaveUrl: PropTypes.func.isRequired,
+  // setEditedLongUrl: PropTypes.func.isRequired,
+  // openQrCode: PropTypes.func.isRequired,
 }
 
 export default connect(null, mapDispatchToProps)(EnhancedTableBody)
