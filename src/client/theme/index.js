@@ -52,7 +52,7 @@ export default responsiveFontSizes(
         fontSize: '1.2rem',
       },
       h6: {
-        fontSize: '1.1428rem',
+        fontSize: '1rem',
         fontWeight: 500,
       },
       subtitle1: {

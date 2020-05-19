@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Dialog,
+  Drawer,
   createStyles,
   makeStyles,
   Divider,
@@ -17,23 +17,6 @@ import ConfigOption, { TrailingPosition } from './ConfigOption'
 import PanelTextField from './PanelTextField'
 import TrailingButton from './TrailingButton'
 import GoSwitch from './assets/GoSwitch'
-
-const useDialogOverrideStyles = makeStyles(() =>
-  createStyles({
-    dialogPaper: {
-      height: '100%',
-      width: '100%',
-      borderRadius: 'unset',
-      marginLeft: 'auto',
-      marginRight: 0,
-    },
-    dialogPaperScrollPaper: {
-      display: 'flex',
-      maxHeight: 'unset',
-      flexDirection: 'column',
-    },
-  }),
-)
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -59,7 +42,6 @@ const useStyles = makeStyles(() =>
 )
 
 export default function ControlPanel() {
-  const overrideClasses = useDialogOverrideStyles()
   const classes = useStyles()
   const modalStates = useModalState()
   const modalDispatch = useModalDispatch()
@@ -68,16 +50,7 @@ export default function ControlPanel() {
     modalDispatch({ type: ModalActions.closeControlPanel })
 
   return (
-    <Dialog
-      classes={{
-        paper: overrideClasses.dialogPaper,
-        paperScrollPaper: overrideClasses.dialogPaperScrollPaper,
-      }}
-      fullWidth={true}
-      maxWidth="md"
-      open={dialogIsOpen}
-      onClose={handleClose}
-    >
+    <Drawer anchor="right" open={dialogIsOpen} onClose={handleClose}>
       <main className={classes.dialogContents}>
         <IconButton className={classes.closeIcon} onClick={handleClose}>
           <img src={closeIcon} alt="Close" draggable={false} />
@@ -87,9 +60,7 @@ export default function ControlPanel() {
           <ConfigOption
             title="Link status"
             subtitle="Analytics will not be collected for deactivated links"
-            trailing={
-              <GoSwitch color="primary" />
-            }
+            trailing={<GoSwitch color="primary" />}
             trailingPosition={TrailingPosition.center}
           />
           <ConfigOption
@@ -132,6 +103,6 @@ export default function ControlPanel() {
           <LinkAnalytics />
         </PanelMargin>
       </main>
-    </Dialog>
+    </Drawer>
   )
 }

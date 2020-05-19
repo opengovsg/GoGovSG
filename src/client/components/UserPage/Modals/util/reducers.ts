@@ -1,14 +1,28 @@
 export type State = {
   controlPanelIsOpen: boolean
+  controlPanelData?: Row
 }
 
 export const initialState: State = {
-  controlPanelIsOpen: true,
+  controlPanelIsOpen: false,
+}
+
+export type Row = {
+  userId: number
+  isFile: boolean
+  state: string
+  shortUrl: string
+  longUrl: string
+  editedLongUrl: string
+  createdAt: string
+  updatedAt: string
+  clicks: number
+  [key: string]: any
 }
 
 export type Action = {
   type: string
-  payload?: unknown
+  payload?: Row
 }
 
 export const ModalActions = {
@@ -22,9 +36,11 @@ export function modalReducer(state: State, action: Action) {
   switch (action.type) {
     case ModalActions.openControlPanel:
       newState.controlPanelIsOpen = true
+      newState.controlPanelData = action.payload
       break
     case ModalActions.closeControlPanel:
       newState.controlPanelIsOpen = false
+      newState.controlPanelData = undefined
       break
     default:
       throw new Error(`Undefined modal action: ${action.type}`)
