@@ -83,6 +83,11 @@ const StatisticsSliver = (props) => {
   const classes = useStyles()
   const { statistics } = props
   const { userCount, linkCount, clickCount } = statistics
+  const statisticsToShow = [
+    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount },
+    { label: 'SHORT LINKS CREATED', number: linkCount },
+    { label: 'CLICKS', number: clickCount },
+  ]
 
   useEffect(() => {
     const { loadStats } = props
@@ -102,54 +107,24 @@ const StatisticsSliver = (props) => {
           direction="column"
           className={classes.stats}
         >
-          <Grid item>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h4">
-                  <strong>{numberFormatter.format(userCount)}</strong>
-                </Typography>
-                <Typography
-                  className={classes.statsLabel}
-                  variant="body2"
-                  color="textPrimary"
-                >
-                  PUBLIC OFFICERS ONBOARD
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h4">
-                  <strong>{numberFormatter.format(linkCount)}</strong>
-                </Typography>
-                <Typography
-                  className={classes.statsLabel}
-                  variant="body2"
-                  color="textPrimary"
-                >
-                  SHORT LINKS CREATED
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h4">
-                  <strong>{numberFormatter.format(clickCount)}</strong>
-                </Typography>
-                <Typography
-                  className={classes.statsLabel}
-                  variant="body2"
-                  color="textPrimary"
-                >
-                  CLICKS
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          {statisticsToShow.map((stat) => (
+            <Grid item>
+              <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                  <Typography color="primary" variant="h4">
+                    <strong>{numberFormatter.format(stat.number)}</strong>
+                  </Typography>
+                  <Typography
+                    className={classes.statsLabel}
+                    variant="body2"
+                    color="textPrimary"
+                  >
+                    {stat.label}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
         <Grid item>
           <StatisticsGraphic />
