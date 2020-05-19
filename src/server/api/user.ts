@@ -82,7 +82,7 @@ function validateUrls(
   }
 
   // An upload request must contain a file
-  if (isFile && !req.files) {
+  if (isFile && !req.files?.file) {
     res.badRequest(jsonMessage('Missing file to upload.'))
     return
   }
@@ -146,6 +146,7 @@ function validatePresignedUrlRequest(
  */
 router.post('/url', validateUrls, async (req, res) => {
   const { isFile, userId, longUrl, shortUrl } = req.body
+  // @ts-ignore Type definition does not know about the compulsory file field.
   const { file } = req.files
 
   try {
