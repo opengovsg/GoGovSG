@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => {
     leftCell: {
       [theme.breakpoints.up('md')]: {
         textAlign: 'end',
-        paddingTop: '4px',
+        paddingTop: '0px',
         paddingRight: '12px',
         paddingLeft: (props) => props.appMargins,
       },
@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => {
     icon: {
       width: '18px',
       fontSize: '18px',
-      marginTop: '4px',
+      marginTop: '-4px',
       [theme.breakpoints.down('sm')]: {
         display: 'none',
       },
