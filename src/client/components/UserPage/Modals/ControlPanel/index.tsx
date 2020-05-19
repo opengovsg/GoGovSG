@@ -13,13 +13,17 @@ import PanelMargin from './PanelMargin'
 import closeIcon from './assets/close-icon.svg'
 import LinkAnalytics from './LinkAnalytics'
 import DialogHeader from './DialogHeader'
-import ConfigOption, { TrailingPosition } from './ConfigOption'
+import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
 import PanelTextField from './PanelTextField'
 import TrailingButton from './TrailingButton'
 import GoSwitch from './assets/GoSwitch'
 
 const useStyles = makeStyles(() =>
   createStyles({
+    drawerPaper: {
+      width: '60%',
+      maxWidth: 885,
+    },
     dialogContents: {
       marginTop: 116,
       marginBottom: 141,
@@ -44,13 +48,23 @@ const useStyles = makeStyles(() =>
 export default function ControlPanel() {
   const classes = useStyles()
   const modalStates = useModalState()
+  const drawerIsOpen = modalStates.controlPanelIsOpen
+  const drawerContent = modalStates.controlPanelData
   const modalDispatch = useModalDispatch()
-  const dialogIsOpen = modalStates.controlPanelIsOpen
   const handleClose = () =>
     modalDispatch({ type: ModalActions.closeControlPanel })
 
+  console.log(drawerContent)
+
   return (
-    <Drawer anchor="right" open={dialogIsOpen} onClose={handleClose}>
+    <Drawer
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+      anchor="right"
+      open={drawerIsOpen}
+      onClose={handleClose}
+    >
       <main className={classes.dialogContents}>
         <IconButton className={classes.closeIcon} onClick={handleClose}>
           <img src={closeIcon} alt="Close" draggable={false} />
@@ -60,7 +74,12 @@ export default function ControlPanel() {
           <ConfigOption
             title="Link status"
             subtitle="Analytics will not be collected for deactivated links"
-            trailing={<GoSwitch color="primary" />}
+            trailing={
+              <GoSwitch
+                color="primary"
+                checked={drawerContent?.state === 'ACTIVE'}
+              />
+            }
             trailingPosition={TrailingPosition.center}
           />
           <ConfigOption
@@ -75,7 +94,7 @@ export default function ControlPanel() {
             title="Original link"
             leading={
               <PanelTextField
-                value=""
+                value={drawerContent?.longUrl || ''}
                 onChange={() => {}}
                 placeholder="Original link"
                 prefix="https://"
