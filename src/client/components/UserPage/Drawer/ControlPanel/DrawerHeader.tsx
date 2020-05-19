@@ -3,12 +3,12 @@ import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
 
 import copyIcon from './assets/copy-icon.svg'
 import copy from 'copy-to-clipboard'
-import { useModalState } from '..'
+import { useDrawerState } from '..'
 import OnClickTooltip from './widgets/OnClickTooltip'
 
 const useStyles = makeStyles(() =>
   createStyles({
-    dialogTitleDiv: {
+    drawerTitleDiv: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -23,12 +23,12 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-export default function DialogHeader() {
+export default function DrawerHeader() {
   const classes = useStyles()
-  const shortUrl = useModalState().relevantShortLink
+  const shortUrl = useDrawerState().relevantShortLink
 
   return (
-    <div className={classes.dialogTitleDiv}>
+    <div className={classes.drawerTitleDiv}>
       <Typography variant="h3" color="primary">
         Edit link
       </Typography>

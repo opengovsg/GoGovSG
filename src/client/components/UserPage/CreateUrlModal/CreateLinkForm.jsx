@@ -14,8 +14,8 @@ import useCreateLinkFormStyles from './styles/useCreateLinkFormStyles'
 import {
   isValidLongUrl,
   isValidShortUrl,
-} from '../../../../../shared/util/validation'
-import ModalMargins from '../ModalMargins'
+} from '../../../../shared/util/validation'
+import ModalMargins from './ModalMargins'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44

@@ -14,29 +14,29 @@ export type Action = {
   payload?: string
 }
 
-export const ModalActions = {
+export const DrawerActions = {
   openControlPanel: 'OPEN_CONTROL_PANEL',
   closeControlPanel: 'CLOSE_CONTROL_PANEL',
   openQrCodeModal: 'OPEN_QR_CODE_MODAL',
   closeQrCodeModal: 'CLOSE_QR_CODE_MODAL',
 }
 
-export function modalReducer(state: State, action: Action) {
+export function drawerReducer(state: State, action: Action) {
   const newState: Partial<State> = {}
 
   switch (action.type) {
-    case ModalActions.openControlPanel:
+    case DrawerActions.openControlPanel:
       newState.controlPanelIsOpen = true
       newState.relevantShortLink = action.payload
       break
-    case ModalActions.closeControlPanel:
+    case DrawerActions.closeControlPanel:
       newState.controlPanelIsOpen = false
       newState.relevantShortLink = undefined
       break
-    case ModalActions.openQrCodeModal:
+    case DrawerActions.openQrCodeModal:
       newState.qrCodeModalIsOpen = true
       break
-    case ModalActions.closeQrCodeModal:
+    case DrawerActions.closeQrCodeModal:
       newState.qrCodeModalIsOpen = false
       break
     default:
@@ -45,4 +45,4 @@ export function modalReducer(state: State, action: Action) {
   return { ...state, ...newState }
 }
 
-export default ModalActions
+export default DrawerActions

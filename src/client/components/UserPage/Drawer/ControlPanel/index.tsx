@@ -7,14 +7,14 @@ import {
   IconButton,
 } from '@material-ui/core'
 
-import ModalActions from './helpers/reducers'
-import { useModalState, useModalDispatch } from '..'
-import PanelMargin from './PanelMargin'
+import DrawerActions from './helpers/reducers'
+import { useDrawerState, useDrawerDispatch } from '..'
+import DrawerMargin from './DrawerMargin'
 import closeIcon from './assets/close-icon.svg'
 import LinkAnalytics from './LinkAnalytics'
-import DialogHeader from './DialogHeader'
+import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
-import PanelTextField from './widgets/PanelTextField'
+import DrawerTextField from './widgets/DrawerTextField'
 import TrailingButton from './widgets/TrailingButton'
 import GoSwitch from './assets/GoSwitch'
 import useShortLink from './helpers/shortlink'
@@ -54,13 +54,13 @@ export default function ControlPanel() {
   const classes = useStyles()
 
   // Modal controller.
-  const modalStates = useModalState()
-  const drawerIsOpen = modalStates.controlPanelIsOpen
-  const modalDispatch = useModalDispatch()
+  const drawerStates = useDrawerState()
+  const drawerIsOpen = drawerStates.controlPanelIsOpen
+  const modalDispatch = useDrawerDispatch()
 
   // Fetch short link state and dispatches from redux store through our helper hook.
   const { shortLinkState, shortLinkDispatch } = useShortLink(
-    modalStates.relevantShortLink!,
+    drawerStates.relevantShortLink!,
   )
 
   // Manage values in our text fields.
@@ -72,7 +72,7 @@ export default function ControlPanel() {
   const handleClose = () => {
     shortLinkDispatch?.setEditLongUrl(originalLongUrl)
     setPendingOwner('')
-    modalDispatch({ type: ModalActions.closeControlPanel })
+    modalDispatch({ type: DrawerActions.closeControlPanel })
   }
 
   return (
@@ -88,8 +88,8 @@ export default function ControlPanel() {
         <IconButton className={classes.closeIcon} onClick={handleClose}>
           <img src={closeIcon} alt="Close" draggable={false} />
         </IconButton>
-        <PanelMargin>
-          <DialogHeader />
+        <DrawerMargin>
+          <DrawerHeader />
           <ConfigOption
             title="Link status"
             subtitle="Analytics will not be collected for deactivated links"
@@ -111,7 +111,7 @@ export default function ControlPanel() {
           <ConfigOption
             title="Original link"
             leading={
-              <PanelTextField
+              <DrawerTextField
                 value={editedLongUrl}
                 onChange={(event) =>
                   shortLinkDispatch?.setEditLongUrl(event.target.value)
@@ -145,7 +145,7 @@ export default function ControlPanel() {
             title="Link ownership"
             subtitle="A Go.gov.sg link can only be transferred to an existing user"
             leading={
-              <PanelTextField
+              <DrawerTextField
                 value={pendingOwner}
                 onChange={(event) => setPendingOwner(event.target.value)}
                 placeholder="Email of link recipient"
@@ -164,7 +164,7 @@ export default function ControlPanel() {
           />
           <Divider className={classes.divider} />
           <LinkAnalytics />
-        </PanelMargin>
+        </DrawerMargin>
       </main>
     </Drawer>
   )

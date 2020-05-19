@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import Modals, { CreateUrlModal } from './Modals'
+import Drawer from './Drawer'
+import CreateUrlModal from './CreateUrlModal'
 import userActions from '~/actions/user'
 import BaseLayout from '../BaseLayout'
 import UserLinkTable from './UserLinkTable'
@@ -39,14 +40,14 @@ const UserPage = ({
     }, [])
     return (
       <BaseLayout>
-        <Modals>
+        <Drawer>
           <UserLinkTable />
           <CreateUrlModal
             createUrlModal={createUrlModal}
             closeCreateUrlModal={closeCreateUrlModal}
             onSubmit={() => onCreateUrl(history)}
           />
-        </Modals>
+        </Drawer>
       </BaseLayout>
     )
   }

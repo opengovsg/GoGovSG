@@ -9,9 +9,9 @@ import {
 
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
-import { useModalState, useModalDispatch } from '../..'
+import { useDrawerState, useDrawerDispatch } from '../..'
 import QRCodeModal from '../QRCodeModal'
-import ModalActions from '../helpers/reducers'
+import DrawerActions from '../helpers/reducers'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -73,10 +73,10 @@ async function downloadQrCode(
 
 export default function DownloadButton() {
   const classes = useStyles()
-  const modalState = useModalState()
+  const modalState = useDrawerState()
   const shortLink = modalState.relevantShortLink!
   const qrModalIsOpen = modalState.qrCodeModalIsOpen
-  const modalDispatch = useModalDispatch()
+  const modalDispatch = useDrawerDispatch()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -88,9 +88,9 @@ export default function DownloadButton() {
   }
 
   const openQrModal = () =>
-    modalDispatch({ type: ModalActions.openQrCodeModal })
+    modalDispatch({ type: DrawerActions.openQrCodeModal })
   const closeQrModal = () =>
-    modalDispatch({ type: ModalActions.closeQrCodeModal })
+    modalDispatch({ type: DrawerActions.closeQrCodeModal })
 
   const options: Option[] = [
     {

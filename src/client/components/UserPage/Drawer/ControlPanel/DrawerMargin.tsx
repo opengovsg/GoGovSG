@@ -14,7 +14,7 @@ type PanelMarginProps = {
   children: React.ReactNode
 }
 
-export default function PanelMargin({ children }: PanelMarginProps) {
+export default function DrawerMargin({ children }: PanelMarginProps) {
   const classes = useStyles()
 
   return <div className={classes.panelMargins}>{children}</div>

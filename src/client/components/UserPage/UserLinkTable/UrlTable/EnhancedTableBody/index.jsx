@@ -14,8 +14,8 @@ import {
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
 import useAppMargins from '../../../../AppMargins/useAppMargins'
-import ModalActions from '../../../Modals/ControlPanel/helpers/reducers'
-import { useModalDispatch } from '../../../Modals'
+import DrawerActions from '../../../Drawer/ControlPanel/helpers/reducers'
+import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../util/format'
 
 const mapDispatchToProps = (/* dispatch */) => ({
@@ -166,9 +166,9 @@ const EnhancedTableBody = (/* {
   // const [isCopied, setCopied] = useState(false)
   // const copiedLinkIconDesc = 'Link copied'
 
-  const dispatch = useModalDispatch()
+  const dispatch = useDrawerDispatch()
   const openControlPanel = (shortlink) =>
-    dispatch({ type: ModalActions.openControlPanel, payload: shortlink })
+    dispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
   if (urls.length > 0) {
     // Text descriptions of icons buttons in user url table body.
