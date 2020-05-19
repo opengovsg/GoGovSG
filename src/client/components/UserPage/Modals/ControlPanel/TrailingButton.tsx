@@ -22,7 +22,7 @@ export default function TrailingButton(props: TrailingButtonProps) {
   return (
     <Button
       className={classes.trailingButton}
-      variant="contained"
+      variant="outlined"
       color="primary"
       size="large"
       onClick={props.onClick}
