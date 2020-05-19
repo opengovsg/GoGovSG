@@ -5,11 +5,14 @@ import PropTypes from 'prop-types'
 import { connect, useSelector } from 'react-redux'
 
 import {
+  Grid,
+  Hidden,
   IconButton,
   Switch,
   TableBody,
   TableCell,
   TableRow,
+  Typography,
 } from '@material-ui/core'
 import { createStyles, fade, makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -21,6 +24,10 @@ import { removeHttpsProtocol } from '../../../../../util/url'
 import useAppMargins from '../../../../AppMargins/useAppMargins'
 import ModalActions from '../../../Modals/util/reducers'
 import { useModalDispatch } from '../../../Modals'
+import fileIcon from '~/assets/icons/file-icon.svg'
+import linkIcon from '~/assets/icons/link-icon.svg'
+import barChartIcon from '~/assets/icons/bar-chart-icon.svg'
+import { numberUnitFormatter } from '../../../../../util/format'
 
 const mapDispatchToProps = (dispatch) => ({
   openOwnershipModal: (shortUrl) =>
@@ -47,8 +54,43 @@ const useStyles = makeStyles((theme) => {
     },
     leftCell: {
       [theme.breakpoints.up('md')]: {
-        textAlign: 'left',
+        textAlign: 'end',
+        paddingTop: '0px',
+        paddingRight: '12px',
         paddingLeft: (props) => props.appMargins,
+      },
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
+    },
+    urlCell: {
+      width: 'min(70%, 1500px)',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        padding: theme.spacing(2, 2, 0, 3),
+      },
+    },
+    shortUrlGrid: {
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+    },
+    stateCell: {
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 2, 2, 3),
+        width: 'max(50px, 30%)',
+      },
+    },
+    updatedAtCell: {
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 1, 2, 1),
+        width: 'max(100px, 35%)',
+      },
+    },
+    clicksCell: {
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 1, 2, 2),
+        width: 'max(50px, 20%)',
       },
     },
     rightCell: {
@@ -57,11 +99,46 @@ const useStyles = makeStyles((theme) => {
         paddingRight: (props) => props.appMargins,
       },
     },
+    icon: {
+      width: '18px',
+      color: '#384a51',
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
+    },
+    stateActive: {
+      color: '#6d9067',
+      textTransform: 'capitalize',
+    },
+    stateInactive: {
+      color: '#c85151',
+      textTransform: 'capitalize',
+    },
     iconButton: {
       padding: '0px',
     },
     editableTextField: {
       minWidth: '25vw',
+    },
+    shortUrl: {
+      width: 'calc(100% - 32px)',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+    longUrl: {
+      color: '#767676',
+    },
+    updatedAt: {
+      color: '#767676',
+    },
+    clicksIcon: {
+      width: '13px',
+      verticalAlign: 'middle',
+    },
+    clicksText: {
+      color: '#767676',
+      paddingLeft: '4px',
     },
     shortBtn: {
       display: 'block',
@@ -85,8 +162,13 @@ const useStyles = makeStyles((theme) => {
       },
     },
     hoverRow: {
+      [theme.breakpoints.down('sm')]: {
+        height: 'auto',
+        border: 'solid 0.25px rgba(0, 0, 0, 0.15)',
+      },
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.black, 0.1),
+        backgroundColor: '#f9f9f9',
+        cursor: 'pointer',
       },
     },
   })
@@ -127,7 +209,58 @@ const EnhancedTableBody = ({
             className={classes.hoverRow}
             onClick={() => openControlPanel(row)}
           >
-            <TableCell className={classes.tableBodyTitle}>Owners</TableCell>
+            <TableCell className={classes.leftCell} width="5%">
+              <img
+                className={classes.icon}
+                src={row.isFile ? fileIcon : linkIcon}
+              />
+            </TableCell>
+            <TableCell align="left" className={classes.urlCell}>
+              <Grid container direction="column">
+                <Grid item className={classes.shortUrlGrid}>
+                  <Typography variant="h6" className={classes.shortUrl}>
+                    /{row.shortUrl}
+                  </Typography>
+                </Grid>
+                <Hidden smDown>
+                  <Grid item>
+                    <Typography variant="caption" className={classes.longUrl}>
+                      {row.longUrl}
+                    </Typography>
+                  </Grid>
+                </Hidden>
+              </Grid>
+            </TableCell>
+            <TableCell className={classes.stateCell}>
+              <Typography
+                variant="caption"
+                className={
+                  row.state == 'ACTIVE'
+                    ? classes.stateActive
+                    : classes.stateInactive
+                }
+              >
+                <b style={{ fontWeight: 900 }}>{'• '}</b>
+                {row.state.toLowerCase()}
+                {/* <li>
+                  <span style={{ position: 'relative', left: '-8px' }}>
+                    {row.state.toLowerCase()}
+                  </span>
+                </li> */}
+              </Typography>
+            </TableCell>
+            <TableCell className={classes.updatedAtCell}>
+              <Typography variant="caption" className={classes.updatedAt}>
+                {row.updatedAt}
+              </Typography>
+            </TableCell>
+            <TableCell className={classes.clicksCell}>
+              <img src={barChartIcon} className={classes.clicksIcon} />
+              <Typography variant="caption" className={classes.clicksText}>
+                {numberUnitFormatter(row.clicks)}
+              </Typography>
+            </TableCell>
+            {/* <TableCell className={classes.tableBodyTitle}>Owners</TableCell>
             <TableCell className={classes.leftCell}>
               <GoTooltip title={transferIconDesc}>
                 <IconButton
@@ -209,7 +342,7 @@ const EnhancedTableBody = ({
                   track: classes.bar,
                 }}
               />
-            </TableCell>
+            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>

@@ -89,7 +89,7 @@ const StatisticsSliver = (props) => {
 
   return (
     <>
-      <Typography variant="h2" color="textPrimary" gutterBottom>
+      <Typography variant="h3" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
       <Grid

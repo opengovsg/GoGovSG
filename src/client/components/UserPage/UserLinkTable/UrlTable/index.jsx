@@ -29,7 +29,6 @@ export default function UrlTable() {
   return (
     <div className={classes.urlTable}>
       <Table aria-label="table with urls">
-        <EnhancedTableHead />
         <EnhancedTableBody />
       </Table>
       <MemoTablePagination

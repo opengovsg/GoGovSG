@@ -83,7 +83,7 @@ const FeatureListSliver = () => {
   return (
     <>
       <Typography
-        variant="h2"
+        variant="h3"
         color="textPrimary"
         display="inline"
         gutterBottom

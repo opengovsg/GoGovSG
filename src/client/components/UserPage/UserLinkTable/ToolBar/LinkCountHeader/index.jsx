@@ -23,7 +23,7 @@ export default function LinkCountHeader() {
     showHeader && (
       <Typography
         className={classes.linkCountHeader}
-        variant="h2"
+        variant="h3"
         color="primary"
       >
         {urlCount}
