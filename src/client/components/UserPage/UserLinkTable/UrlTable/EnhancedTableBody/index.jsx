@@ -1,25 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 import 'boxicons'
-import copy from 'copy-to-clipboard'
 import PropTypes from 'prop-types'
 import { connect, useSelector } from 'react-redux'
 
 import {
   Grid,
   Hidden,
-  IconButton,
-  Switch,
   TableBody,
   TableCell,
   TableRow,
   Typography,
 } from '@material-ui/core'
-import { createStyles, fade, makeStyles } from '@material-ui/core/styles'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 
-import GoTooltip from './GoTooltip'
 import userActions from '../../../../../actions/user'
-import EditableTextField from './EditableTextField'
 import { removeHttpsProtocol } from '../../../../../util/url'
 import useAppMargins from '../../../../AppMargins/useAppMargins'
 import ModalActions from '../../../Modals/util/reducers'
@@ -30,21 +25,21 @@ import barChartIcon from '~/assets/icons/bar-chart-icon.svg'
 import { numberUnitFormatter } from '../../../../../util/format'
 
 const mapDispatchToProps = (dispatch) => ({
-  openOwnershipModal: (shortUrl) =>
-    dispatch(userActions.openOwnershipModal(shortUrl)),
-  toggleUrlState: (shortUrl, state) =>
-    dispatch(userActions.toggleUrlState(shortUrl, state)),
-  onSaveUrl: (shortUrl, longUrl, editedLongUrl) => {
-    if (removeHttpsProtocol(longUrl) === editedLongUrl) {
-      dispatch(userActions.cancelEditLongUrl())
-    } else {
-      dispatch(userActions.updateLongUrl(shortUrl, editedLongUrl))
-    }
-  },
-  setEditedLongUrl: (shortUrl, editedLongUrl) => {
-    dispatch(userActions.setEditedLongUrl(shortUrl, editedLongUrl))
-  },
-  openQrCode: (shortUrl) => dispatch(userActions.openQrCode(shortUrl)),
+  // openOwnershipModal: (shortUrl) =>
+  //   dispatch(userActions.openOwnershipModal(shortUrl)),
+  // toggleUrlState: (shortUrl, state) =>
+  //   dispatch(userActions.toggleUrlState(shortUrl, state)),
+  // onSaveUrl: (shortUrl, longUrl, editedLongUrl) => {
+  //   if (removeHttpsProtocol(longUrl) === editedLongUrl) {
+  //     dispatch(userActions.cancelEditLongUrl())
+  //   } else {
+  //     dispatch(userActions.updateLongUrl(shortUrl, editedLongUrl))
+  //   }
+  // },
+  // setEditedLongUrl: (shortUrl, editedLongUrl) => {
+  //   dispatch(userActions.setEditedLongUrl(shortUrl, editedLongUrl))
+  // },
+  // openQrCode: (shortUrl) => dispatch(userActions.openQrCode(shortUrl)),
 })
 
 const useStyles = makeStyles((theme) => {
@@ -55,7 +50,7 @@ const useStyles = makeStyles((theme) => {
     leftCell: {
       [theme.breakpoints.up('md')]: {
         textAlign: 'end',
-        paddingTop: '0px',
+        paddingTop: '4px',
         paddingRight: '12px',
         paddingLeft: (props) => props.appMargins,
       },
@@ -64,7 +59,16 @@ const useStyles = makeStyles((theme) => {
       },
     },
     urlCell: {
-      width: 'min(70%, 1500px)',
+      paddingTop: '24px',
+      [theme.breakpoints.up('xl')]: {
+        width: '65%',
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '60%',
+      },
+      [theme.breakpoints.up('md')]: {
+        width: '50%',
+      },
       [theme.breakpoints.down('sm')]: {
         width: '100%',
         padding: theme.spacing(2, 2, 0, 3),
@@ -75,10 +79,13 @@ const useStyles = makeStyles((theme) => {
         width: '100%',
       },
     },
+    longUrlGrid: {
+      padding: theme.spacing(1, 0, 1, 0),
+    },
     stateCell: {
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(1, 2, 2, 3),
-        width: 'max(50px, 30%)',
+        width: 'max(100px, 30%)',
       },
     },
     updatedAtCell: {
@@ -88,9 +95,10 @@ const useStyles = makeStyles((theme) => {
       },
     },
     clicksCell: {
+      paddingRight: (props) => props.appMargins,
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(1, 1, 2, 2),
-        width: 'max(50px, 20%)',
+        width: 'max(100px, 20%)',
       },
     },
     rightCell: {
@@ -101,7 +109,8 @@ const useStyles = makeStyles((theme) => {
     },
     icon: {
       width: '18px',
-      color: '#384a51',
+      fontSize: '18px',
+      marginTop: '4px',
       [theme.breakpoints.down('sm')]: {
         display: 'none',
       },
@@ -113,12 +122,6 @@ const useStyles = makeStyles((theme) => {
     stateInactive: {
       color: '#c85151',
       textTransform: 'capitalize',
-    },
-    iconButton: {
-      padding: '0px',
-    },
-    editableTextField: {
-      minWidth: '25vw',
     },
     shortUrl: {
       width: 'calc(100% - 32px)',
@@ -134,32 +137,12 @@ const useStyles = makeStyles((theme) => {
     },
     clicksIcon: {
       width: '13px',
+      display: 'inline-block',
       verticalAlign: 'middle',
     },
     clicksText: {
       color: '#767676',
       paddingLeft: '4px',
-    },
-    shortBtn: {
-      display: 'block',
-      color: 'black',
-    },
-    shortBtnLabel: {
-      fontWeight: '400',
-      textAlign: 'left',
-    },
-    tableBodyTitle: {
-      display: 'none',
-      [theme.breakpoints.down('sm')]: {
-        display: 'inline-block',
-        margin: 'auto 0',
-        padding: theme.spacing(0, 1, 0, 10),
-        width: '30%',
-        fontSize: '0.75em',
-      },
-      [theme.breakpoints.down('xs')]: {
-        padding: theme.spacing(0, 1, 0, 2),
-      },
     },
     hoverRow: {
       [theme.breakpoints.down('sm')]: {
@@ -186,8 +169,8 @@ const EnhancedTableBody = ({
   const classes = useStyles({ appMargins })
 
   // Used to manage tooltip descriptions for our short url anchor button.
-  const [isCopied, setCopied] = useState(false)
-  const copiedLinkIconDesc = 'Link copied'
+  // const [isCopied, setCopied] = useState(false)
+  // const copiedLinkIconDesc = 'Link copied'
 
   const dispatch = useModalDispatch()
   const openControlPanel = (row) =>
@@ -210,10 +193,13 @@ const EnhancedTableBody = ({
             onClick={() => openControlPanel(row)}
           >
             <TableCell className={classes.leftCell} width="5%">
-              <img
-                className={classes.icon}
-                src={row.isFile ? fileIcon : linkIcon}
-              />
+              <div className={classes.icon}>
+                <box-icon
+                  size="cssSize"
+                  name={row.isFile ? 'file-blank' : 'link-alt'}
+                  color="#384a51"
+                ></box-icon>
+              </div>
             </TableCell>
             <TableCell align="left" className={classes.urlCell}>
               <Grid container direction="column">
@@ -223,7 +209,7 @@ const EnhancedTableBody = ({
                   </Typography>
                 </Grid>
                 <Hidden smDown>
-                  <Grid item>
+                  <Grid item className={classes.longUrlGrid}>
                     <Typography variant="caption" className={classes.longUrl}>
                       {row.longUrl}
                     </Typography>
@@ -235,18 +221,13 @@ const EnhancedTableBody = ({
               <Typography
                 variant="caption"
                 className={
-                  row.state == 'ACTIVE'
+                  row.state === 'ACTIVE'
                     ? classes.stateActive
                     : classes.stateInactive
                 }
               >
                 <b style={{ fontWeight: 900 }}>{'• '}</b>
                 {row.state.toLowerCase()}
-                {/* <li>
-                  <span style={{ position: 'relative', left: '-8px' }}>
-                    {row.state.toLowerCase()}
-                  </span>
-                </li> */}
               </Typography>
             </TableCell>
             <TableCell className={classes.updatedAtCell}>
@@ -255,94 +236,13 @@ const EnhancedTableBody = ({
               </Typography>
             </TableCell>
             <TableCell className={classes.clicksCell}>
-              <img src={barChartIcon} className={classes.clicksIcon} />
+              <div className={classes.clicksIcon}>
+                <box-icon name="bar-chart-alt" size="cssSize" color="#384a51" />
+              </div>
               <Typography variant="caption" className={classes.clicksText}>
                 {numberUnitFormatter(row.clicks)}
               </Typography>
             </TableCell>
-            {/* <TableCell className={classes.tableBodyTitle}>Owners</TableCell>
-            <TableCell className={classes.leftCell}>
-              <GoTooltip title={transferIconDesc}>
-                <IconButton
-                  className={classes.iconButton}
-                  color="inherit"
-                  aria-label={transferIconDesc}
-                  onClick={() => openOwnershipModal(row.shortUrl)}
-                >
-                  <box-icon name="user" />
-                </IconButton>
-              </GoTooltip>
-            </TableCell>
-            <TableCell className={classes.tableBodyTitle}>
-              Original URL
-            </TableCell>
-            <TableCell className={classes.editableTextField}>
-              <EditableTextField
-                editedLongUrl={row.editedLongUrl}
-                shortUrl={row.shortUrl}
-                originalLongUrl={row.longUrl}
-                onSaveUrl={onSaveUrl}
-                setEditedLongUrl={setEditedLongUrl}
-                classes={classes}
-              />
-            </TableCell>
-            <TableCell className={classes.tableBodyTitle}>Short URL</TableCell>
-            <TableCell>
-              <GoTooltip
-                title={isCopied ? copiedLinkIconDesc : copyLinkIconDesc}
-                onClose={() => {
-                  // Sets the link as not copied. Sets tooltip accordingly.
-                  // Short timeout to prevent tooltip changes on close.
-                  setTimeout(() => setCopied(false), 100)
-                }}
-              >
-                <Button
-                  className={classes.shortBtn}
-                  classes={{ label: classes.shortBtnLabel }}
-                  color="primary"
-                  onClick={() => {
-                    copy(
-                      `${document.location.protocol}//${document.location.host}/${row.shortUrl}`,
-                    )
-                    // Sets the link as copied. Changes tooltip accordingly.
-                    setCopied(true)
-                  }}
-                >
-                  {`/${row.shortUrl}`}
-                </Button>
-              </GoTooltip>
-            </TableCell>
-            <TableCell className={classes.tableBodyTitle}>QR</TableCell>
-            <TableCell>
-              <GoTooltip title={qrCodeIconDesc}>
-                <IconButton
-                  className={classes.iconButton}
-                  color="secondary"
-                  aria-label={qrCodeIconDesc}
-                  onClick={() => openQrCode(row.shortUrl)}
-                >
-                  <box-icon name="scan" />
-                </IconButton>
-              </GoTooltip>
-            </TableCell>
-            <TableCell className={classes.tableBodyTitle}>
-              Last Modified
-            </TableCell>
-            <TableCell>{row.updatedAt}</TableCell>
-            <TableCell className={classes.tableBodyTitle}>Visits</TableCell>
-            <TableCell>{row.clicks}</TableCell>
-            <TableCell className={classes.tableBodyTitle}>Status</TableCell>
-            <TableCell className={classes.rightCell}>
-              <Switch
-                color="primary"
-                checked={row.state === 'ACTIVE'}
-                onChange={() => toggleUrlState(row.shortUrl, row.state)}
-                value={row.state}
-                classes={{
-                  track: classes.bar,
-                }}
-              />
-            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>
