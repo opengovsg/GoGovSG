@@ -21,7 +21,11 @@ export const setS3ObjectACL = (
   return s3.putObjectAcl(params).promise()
 }
 
-export const uploadFileToS3 = async (file: Buffer, key: string, fileType: string) => {
+export const uploadFileToS3 = async (
+  file: Buffer,
+  key: string,
+  fileType: string,
+) => {
   const params = {
     ContentType: fileType,
     Bucket: s3Bucket,
