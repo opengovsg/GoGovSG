@@ -4,7 +4,6 @@ import {
   createStyles,
   makeStyles,
   Divider,
-  Switch,
   IconButton,
 } from '@material-ui/core'
 
@@ -14,9 +13,10 @@ import PanelMargin from './PanelMargin'
 import closeIcon from './assets/close-icon.svg'
 import LinkAnalytics from './LinkAnalytics'
 import DialogHeader from './DialogHeader'
-import ConfigOption from './ConfigOption'
+import ConfigOption, { TrailingPosition } from './ConfigOption'
 import PanelTextField from './PanelTextField'
-import TrailingButton from './assets/TrailingButton'
+import TrailingButton from './TrailingButton'
+import GoSwitch from './assets/GoSwitch'
 
 const useDialogOverrideStyles = makeStyles(() =>
   createStyles({
@@ -87,7 +87,10 @@ export default function ControlPanel() {
           <ConfigOption
             title="Link status"
             subtitle="Analytics will not be collected for deactivated links"
-            trailing={<Switch />}
+            trailing={
+              <GoSwitch color="primary" />
+            }
+            trailingPosition={TrailingPosition.center}
           />
           <ConfigOption
             title="QR Code"
@@ -95,6 +98,7 @@ export default function ControlPanel() {
             trailing={
               <TrailingButton onClick={() => {}}>Download</TrailingButton>
             }
+            trailingPosition={TrailingPosition.end}
           />
           <ConfigOption
             title="Original link"
@@ -107,6 +111,7 @@ export default function ControlPanel() {
               />
             }
             trailing={<TrailingButton onClick={() => {}}>Save</TrailingButton>}
+            trailingPosition={TrailingPosition.end}
           />
           <ConfigOption
             title="Link ownership"
@@ -121,6 +126,7 @@ export default function ControlPanel() {
             trailing={
               <TrailingButton onClick={() => {}}>Transfer</TrailingButton>
             }
+            trailingPosition={TrailingPosition.end}
           />
           <Divider className={classes.divider} />
           <LinkAnalytics />
