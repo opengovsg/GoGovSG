@@ -1,11 +1,12 @@
 export type State = {
   controlPanelIsOpen: boolean
-  relevantShortLink?: string
+  relevantShortLink: string | null
   qrCodeModalIsOpen: boolean
 }
 
 export const initialState: State = {
   controlPanelIsOpen: false,
+  relevantShortLink: null,
   qrCodeModalIsOpen: false,
 }
 
@@ -31,7 +32,7 @@ export function drawerReducer(state: State, action: Action) {
       break
     case DrawerActions.closeControlPanel:
       newState.controlPanelIsOpen = false
-      newState.relevantShortLink = undefined
+      newState.relevantShortLink = null
       break
     case DrawerActions.openQrCodeModal:
       newState.qrCodeModalIsOpen = true
