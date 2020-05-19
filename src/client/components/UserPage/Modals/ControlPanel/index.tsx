@@ -14,13 +14,13 @@ import closeIcon from './assets/close-icon.svg'
 import LinkAnalytics from './LinkAnalytics'
 import DialogHeader from './DialogHeader'
 import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
-import PanelTextField from './PanelTextField'
-import TrailingButton from './TrailingButton'
+import PanelTextField from './widgets/PanelTextField'
+import TrailingButton from './widgets/TrailingButton'
 import GoSwitch from './assets/GoSwitch'
 import useShortLink from './helpers/shortlink'
 import { removeHttpsProtocol } from '../../../../util/url'
 import { isValidLongUrl } from '../../../../../shared/util/validation'
-import DownloadButton from './DownloadButton'
+import DownloadButton from './widgets/DownloadButton'
 
 const useStyles = makeStyles(() =>
   createStyles({
