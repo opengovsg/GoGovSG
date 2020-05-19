@@ -1,4 +1,5 @@
 import React from 'react'
+import i18next from 'i18next'
 import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
 
 import analyticSoonGraphic from './assets/analytics-soon.svg'
@@ -61,7 +62,8 @@ export default function LinkAnalytics() {
         variant="contained"
         color="primary"
         size="large"
-        onClick={() => {}}
+        href={i18next.t('general.links.contact')}
+        target="_blank"
       >
         Share your feedback
       </Button>

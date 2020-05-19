@@ -16,6 +16,9 @@ export default class QRCode extends React.Component {
     this.downloadSvg = this.downloadSvg.bind(this)
     this.downloadPng = this.downloadPng.bind(this)
 
+    // Download qr code externally.
+    window.QrCodeComponent = this
+
     // Accessing refs via callbacks.
     this.canvasRef = null
     this.svgContainerRef = null
