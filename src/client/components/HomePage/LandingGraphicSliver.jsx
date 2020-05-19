@@ -89,6 +89,7 @@ const useStyles = makeStyles((theme) =>
         justifyContent: 'flex-start',
       },
       [theme.breakpoints.up('lg')]: {
+        marginTop: theme.spacing(2),
         alignItems: 'flex-start',
       },
     },
