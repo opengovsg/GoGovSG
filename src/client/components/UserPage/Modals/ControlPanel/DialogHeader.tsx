@@ -25,7 +25,7 @@ export default function DialogHeader() {
 
   return (
     <div className={classes.dialogTitleDiv}>
-      <Typography variant="h2" color="primary">
+      <Typography variant="h3" color="primary">
         Edit link
       </Typography>
       <Button>
