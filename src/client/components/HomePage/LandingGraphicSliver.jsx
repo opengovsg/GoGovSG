@@ -39,18 +39,18 @@ const useStyles = makeStyles((theme) =>
       maxWidth: '485px',
       marginBottom: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
-        minWidth: '485px',
+        minWidth: '500px',
       },
       '@media screen\\0': {
         display: 'inline',
       },
     },
+    titleText: {
+      fontWeight: '500',
+    },
     subtitleText: {
       marginTop: theme.spacing(2),
       maxWidth: '404px',
-      [theme.breakpoints.up('lg')]: {
-        marginTop: theme.spacing(0),
-      },
     },
     rotatingLinksGraphic: {
       marginTop: theme.spacing(4),
@@ -89,6 +89,7 @@ const useStyles = makeStyles((theme) =>
         justifyContent: 'flex-start',
       },
       [theme.breakpoints.up('lg')]: {
+        marginTop: theme.spacing(2),
         alignItems: 'flex-start',
       },
     },
@@ -123,7 +124,12 @@ const LandingGraphicSliver = () => {
       >
         <div className={classes.container}>
           <div className={classes.titleTextContainer}>
-            <Typography variant="h1" color="textPrimary" gutterBottom>
+            <Typography
+              variant="h1"
+              color="textPrimary"
+              gutterBottom
+              className={classes.titleText}
+            >
               <Trans>general.appCatchphrase.styled</Trans>
             </Typography>
             <Typography
@@ -161,7 +167,7 @@ const LandingGraphicSliver = () => {
           <ApplyAppMargins>
             <Typography
               className={classes.signInText}
-              variant="subtitle1"
+              variant="caption"
               color="secondary"
             >
               <Trans>general.appSignInPrompt</Trans>{' '}

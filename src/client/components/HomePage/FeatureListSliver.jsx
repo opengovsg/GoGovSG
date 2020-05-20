@@ -4,15 +4,16 @@ import {
   Card,
   CardContent,
   Grid,
+  Hidden,
   Typography,
   createStyles,
   makeStyles,
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import antiPhisingIcon from '~/assets/icons/anti-phishing-icon.svg'
-import customisedIcon from '~/assets/icons/customised-icon.svg'
-import analyticsIcon from '~/assets/icons/analytics-icon.svg'
+import antiPhisingIcon from '~/assets/icons/home-page-anti-phishing-icon.svg'
+import customisedIcon from '~/assets/icons/home-page-customised-icon.svg'
+import analyticsIcon from '~/assets/icons/home-page-analytics-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -21,23 +22,28 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('lg')]: {
         marginTop: theme.spacing(4),
       },
+      maxWidth: '1400px',
+    },
+    columnGrid: {
+      maxWidth: 'min(600px, calc(100% + 48px))',
+      [theme.breakpoints.up('lg')]: {
+        maxWidth: '552px',
+      },
+      [theme.breakpoints.up('xl')]: {
+        maxWidth: '624px',
+      },
     },
     card: {
       display: 'flex',
-      flexDirection: 'column',
       boxShadow: 'none',
       height: '100%',
       backgroundColor: 'transparent',
       alignItems: 'flex-start',
-      maxWidth: 'min(400px, 80%)',
-      [theme.breakpoints.up('lg')]: {
-        alignItems: 'flex-start',
-        flexDirection: 'row',
-        maxWidth: '350px',
-      },
+      flexDirection: 'row',
     },
     cardVectorIcon: {
       minWidth: '50px',
+      marginRight: theme.spacing(2),
       [theme.breakpoints.up('lg')]: {
         minWidth: 'auto',
         minHeight: '60px',
@@ -45,35 +51,36 @@ const useStyles = makeStyles((theme) =>
       },
     },
     cardContent: {
-      paddingTop: theme.spacing(4),
+      paddingTop: theme.spacing(1),
       paddingLeft: theme.spacing(0),
       paddingRight: theme.spacing(0),
       '&:last-child': {
         paddingBottom: 0,
       },
-      [theme.breakpoints.up('lg')]: {
-        paddingTop: theme.spacing(0),
-      },
     },
   }),
 )
 
-const cards = [
-  {
-    icon: antiPhisingIcon,
-    title: 'Anti-phishing',
-    description: <Trans>homePage.features.antiPhishing.description</Trans>,
-  },
-  {
-    icon: customisedIcon,
-    title: 'Customised',
-    description: <Trans>homePage.features.customised.description</Trans>,
-  },
-  {
-    icon: analyticsIcon,
-    title: 'Analytics',
-    description: <Trans>homePage.features.analytics.description</Trans>,
-  },
+const columns = [
+  [
+    {
+      icon: antiPhisingIcon,
+      title: 'Anti-phishing',
+      description: <Trans>homePage.features.antiPhishing.description</Trans>,
+    },
+    {
+      icon: analyticsIcon,
+      title: 'Analytics',
+      description: <Trans>homePage.features.analytics.description</Trans>,
+    },
+  ],
+  [
+    {
+      icon: customisedIcon,
+      title: 'Customised',
+      description: <Trans>homePage.features.customised.description</Trans>,
+    },
+  ],
 ]
 
 const FeatureListSliver = () => {
@@ -83,13 +90,16 @@ const FeatureListSliver = () => {
   return (
     <>
       <Typography
-        variant="h2"
+        variant="h3"
         color="textPrimary"
         display="inline"
         gutterBottom
       >
         Created for public officers{' '}
       </Typography>
+      <Hidden smUp>
+        <br />
+      </Hidden>
       <Typography
         variant="body1"
         color="textPrimary"
@@ -101,24 +111,37 @@ const FeatureListSliver = () => {
       <Grid
         container
         className={classes.grid}
-        spacing={!isDesktopWidth ? 6 : 8}
+        spacing={6}
         direction={!isDesktopWidth ? 'column' : 'row'}
+        justify="space-between"
       >
-        {cards.map((card) => (
-          <Grid item key={card.title}>
-            <Card className={classes.card}>
-              <img
-                className={classes.cardVectorIcon}
-                src={card.icon}
-                alt={card.title}
-              />
-              <CardContent className={classes.cardContent}>
-                <Typography color="primary" variant="h3" gutterBottom>
-                  <strong>{card.title}</strong>
-                </Typography>
-                <Typography color="textPrimary">{card.description}</Typography>
-              </CardContent>
-            </Card>
+        {columns.map((column) => (
+          <Grid
+            item
+            container
+            spacing={6}
+            direction="column"
+            className={classes.columnGrid}
+          >
+            {column.map((card) => (
+              <Grid item key={card.title}>
+                <Card className={classes.card}>
+                  <img
+                    className={classes.cardVectorIcon}
+                    src={card.icon}
+                    alt={card.title}
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography color="primary" variant="h4" gutterBottom>
+                      <strong>{card.title}</strong>
+                    </Typography>
+                    <Typography color="textPrimary">
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         ))}
       </Grid>

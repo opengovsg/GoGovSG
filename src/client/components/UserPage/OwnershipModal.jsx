@@ -44,7 +44,7 @@ const OwnershipModal = ({
       <div className={classes.ownershipModalBottomHalf}>
         <Typography
           className={classes.transferOwnershipTitle}
-          variant="h3"
+          variant="h4"
           gutterBottom
         >
           <strong>Transfer link ownership to</strong>

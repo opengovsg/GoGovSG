@@ -77,7 +77,7 @@ const CreateUrlModal = ({
         <div className={classes.headerDiv}>
           <Typography
             className={classes.headerText}
-            variant="h2"
+            variant="h3"
             color="primary"
           >
             Create new link
