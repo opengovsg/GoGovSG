@@ -5,6 +5,7 @@ import {
   Divider,
   Menu,
   MenuItem,
+  Typography,
 } from '@material-ui/core'
 
 import TrailingButton from './TrailingButton'
@@ -25,6 +26,21 @@ const useStyles = makeStyles((theme) =>
       '&:hover': {
         backgroundColor: theme.palette.primary.dark,
       },
+    },
+    menuPaper: {
+      width: 135,
+      height: 120,
+      marginTop: 6,
+      marginBottom: 6,
+      boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.1)',
+    },
+    menuText: {
+      fontWeight: 500,
+      paddingLeft: 30,
+      paddingRight: 30,
+    },
+    menuItemRoot: {
+      height: '50%',
     },
   }),
 )
@@ -94,14 +110,7 @@ export default function DownloadButton() {
 
   const options: Option[] = [
     {
-      name: 'Show QR code',
-      onClick: () => {
-        openQrModal()
-        handleClose()
-      },
-    },
-    {
-      name: 'Download as PNG',
+      name: 'PNG',
       onClick: async () => {
         await downloadQrCode('png', openQrModal, () => {
           closeQrModal()
@@ -110,7 +119,7 @@ export default function DownloadButton() {
       },
     },
     {
-      name: 'Download as SVG',
+      name: 'SVG',
       onClick: async () => {
         await downloadQrCode('svg', openQrModal, () => {
           closeQrModal()
@@ -132,15 +141,35 @@ export default function DownloadButton() {
         <img src={downloadIcon} alt="Download" draggable={false} />
       </TrailingButton>
       <Menu
+        classes={{
+          paper: classes.menuPaper,
+        }}
+        MenuListProps={{ style: { padding: '5 0', height: '100%' } }}
         anchorEl={anchorEl}
+        getContentAnchorEl={null}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
         {options.map((option) => {
           return (
-            <MenuItem key={option.name} onClick={option.onClick}>
-              {option.name}
+            <MenuItem
+              classes={{
+                root: classes.menuItemRoot,
+              }}
+              key={option.name}
+              onClick={option.onClick}
+              disableGutters
+            >
+              <Typography
+                className={classes.menuText}
+                variant="body2"
+                color="primary"
+              >
+                {option.name}
+              </Typography>
             </MenuItem>
           )
         })}
