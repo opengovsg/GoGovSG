@@ -87,9 +87,16 @@ function validateUrls(
   }
 
   // An upload request must contain a file
-  if (isFile && !req.files?.file) {
-    res.badRequest(jsonMessage('Missing file to upload.'))
-    return
+  if (isFile) {
+    if (!req.files?.file) {
+      res.badRequest(jsonMessage('Missing file to upload.'))
+      return
+    }
+    const { isValidS3Shortlink } = container.get<S3Interface>(DependencyIds.s3)
+    if (!isValidS3Shortlink(longUrl, shortUrl)) {
+      res.badRequest(jsonMessage('File links must point to the S3 object'))
+      return
+    }
   }
 
   next()
