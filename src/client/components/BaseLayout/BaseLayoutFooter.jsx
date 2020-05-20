@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     navLink: {
+      fontSize: '0.75rem',
       marginTop: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
         marginRight: theme.spacing(3),
