@@ -1,4 +1,5 @@
 import Express from 'express'
+import { UploadedFile } from 'express-fileupload'
 import jsonMessage from '../util/json'
 import { User, UserType } from '../models/user'
 import { Url } from '../models/url'
@@ -121,7 +122,7 @@ function validateState(
 router.post('/url', validateUrls, async (req, res) => {
   const { isFile, userId, longUrl, shortUrl } = req.body
   // @ts-ignore Type definition does not know about the compulsory file field.
-  const { file } = req.files
+  const file: UploadedFile | undefined = req.files?.file
 
   try {
     const user = await User.findByPk(userId)
@@ -148,7 +149,7 @@ router.post('/url', validateUrls, async (req, res) => {
         },
         { transaction: t },
       )
-      if (isFile) {
+      if (isFile && file) {
         const { uploadFileToS3 } = container.get<S3Interface>(DependencyIds.s3)
         await uploadFileToS3(file.data, shortUrl, file.mimetype)
       }
