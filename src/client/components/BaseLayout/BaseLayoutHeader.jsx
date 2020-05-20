@@ -11,13 +11,13 @@ import {
 } from '@material-ui/core'
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.svg'
-import loginActions from '~/actions/login'
+import loginActions from '../../actions/login'
 import Section from '../Section'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     appBar: {
-      zIndex: '1',
+      zIndex: 1,
       boxShadow: 'none',
       flexShrink: 1,
       paddingTop: theme.spacing(2),

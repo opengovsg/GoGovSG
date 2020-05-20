@@ -154,7 +154,9 @@ export default function ControlPanel() {
             }
             trailing={
               <TrailingButton
-                onClick={() => shortLinkDispatch?.applyNewOwner(pendingOwner)}
+                onClick={() => {
+                  shortLinkDispatch?.applyNewOwner(pendingOwner, handleClose)
+                }}
                 disabled={!pendingOwner}
               >
                 Transfer

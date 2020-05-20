@@ -1,30 +1,23 @@
 import moment from 'moment-timezone'
 
 import {
-  CANCEL_EDIT_LONG_URL,
   CLOSE_CREATE_URL_MODAL,
-  CLOSE_OWNERSHIP_MODAL,
-  CLOSE_QR_CODE,
-  EDIT_LONG_URL,
   GET_URLS_FOR_USER_SUCCESS,
   OPEN_CREATE_URL_MODAL,
-  OPEN_OWNERSHIP_MODAL,
-  OPEN_QR_CODE,
   RESET_USER_STATE,
   SET_EDITED_LONG_URL,
   SET_LONG_URL,
-  SET_NEW_OWNER,
   SET_RANDOM_SHORT_URL,
   SET_SHORT_URL,
   SET_URL_TABLE_CONFIG,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
-} from '~/actions/types'
-import { get, patch, postJson } from '~/util/requests'
-import rootActions from '~/actions/root'
-import { generateShortUrl, removeHttpsProtocol } from '~/util/url'
+} from './types'
+import { get, patch, postJson } from '../util/requests'
+import rootActions from './root'
+import { generateShortUrl, removeHttpsProtocol } from '../util/url'
 import { isValidUrl } from '../../shared/util/validation'
-import { LOGIN_PAGE } from '~/util/types'
+import { LOGIN_PAGE } from '../util/types'
 
 const querystring = require('querystring')
 
@@ -150,15 +143,6 @@ const createUrl = (dispatch, user) => {
   })
 }
 
-const editLongUrl = (shortUrl) => ({
-  type: EDIT_LONG_URL,
-  payload: shortUrl,
-})
-
-const cancelEditLongUrl = () => ({
-  type: CANCEL_EDIT_LONG_URL,
-})
-
 // API call to update long URL
 const updateLongUrl = (shortUrl, longUrl) => (dispatch) => {
   // Append https:// as the protocol is stripped out
@@ -180,7 +164,6 @@ const updateLongUrl = (shortUrl, longUrl) => (dispatch) => {
     }
 
     return response.json().then((json) => {
-      dispatch(editLongUrl()) // disable edit state
       dispatch(rootActions.setErrorMessage(json.message))
       return null
     })
@@ -271,35 +254,11 @@ const createUrlOrRedirect = (history) => (dispatch, getState) => {
   return null
 }
 
-const openQrCode = (shortUrl) => ({
-  type: OPEN_QR_CODE,
-  payload: shortUrl,
-})
-
-const closeQrCode = () => ({
-  type: CLOSE_QR_CODE,
-})
-
-const openOwnershipModal = (shortUrl) => ({
-  type: OPEN_OWNERSHIP_MODAL,
-  payload: shortUrl,
-})
-
-const closeOwnershipModal = () => ({
-  type: CLOSE_OWNERSHIP_MODAL,
-})
-
-const setNewOwner = (newOwner) => ({
-  type: SET_NEW_OWNER,
-  payload: newOwner,
-})
-
-const transferOwnership = (shortUrl, newOwner) => (dispatch) =>
+const transferOwnership = (shortUrl, newOwner, onSuccess) => (dispatch) =>
   patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
     (response) => {
       if (response.ok) {
-        // On success, close the modal, update user urls, and show success toast.
-        dispatch(closeOwnershipModal())
+        onSuccess()
         dispatch(getUrlsForUser())
         const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
         return dispatch(rootActions.setInfoMessage(successMessage))
@@ -321,15 +280,8 @@ export default {
   toggleUrlState,
   openCreateUrlModal,
   closeCreateUrlModal,
-  openQrCode,
-  closeQrCode,
-  openOwnershipModal,
-  closeOwnershipModal,
-  setNewOwner,
   transferOwnership,
   resetUserState,
-  editLongUrl,
-  cancelEditLongUrl,
   updateLongUrl,
   updateUrlCount,
   setUrlTableConfig,

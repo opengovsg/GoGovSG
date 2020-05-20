@@ -4,7 +4,7 @@ import { createStyles, makeStyles } from '@material-ui/core/styles'
 const useStyles = makeStyles(() =>
   createStyles({
     masthead: {
-      zIndex: '2',
+      zIndex: 2,
       position: 'relative',
       backgroundColor: '#f0f0f0',
       height: 'auto',

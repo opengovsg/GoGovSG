@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 
-import useMinifiedActions from '../util/useMinifiedActions'
+import useMinifiedActions from '../util/minifiedActions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

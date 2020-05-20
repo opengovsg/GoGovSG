@@ -9,7 +9,7 @@ import {
 import debounce from 'lodash/debounce'
 
 import userActions from '../../../../../actions/user'
-import useMinifiedActions from '../util/useMinifiedActions'
+import useMinifiedActions from '../util/minifiedActions'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
