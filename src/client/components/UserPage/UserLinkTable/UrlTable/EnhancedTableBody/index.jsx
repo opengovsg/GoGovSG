@@ -41,6 +41,11 @@ const useStyles = makeStyles((theme) => {
     bar: {
       backgroundColor: theme.palette.grey[500],
     },
+    root: {
+      '&:first-child': {
+        borderTop: '1px solid #d8d8d860',
+      },
+    },
     leftCell: {
       [theme.breakpoints.up('md')]: {
         textAlign: 'end',
@@ -54,14 +59,11 @@ const useStyles = makeStyles((theme) => {
     },
     urlCell: {
       paddingTop: '24px',
-      [theme.breakpoints.up('xl')]: {
-        width: '65%',
+      [theme.breakpoints.up('md')]: {
+        width: '61%',
       },
       [theme.breakpoints.up('lg')]: {
-        width: '60%',
-      },
-      [theme.breakpoints.up('md')]: {
-        width: '50%',
+        width: '61%',
       },
       [theme.breakpoints.down('sm')]: {
         width: '100%',
@@ -74,25 +76,37 @@ const useStyles = makeStyles((theme) => {
       },
     },
     longUrlGrid: {
-      padding: theme.spacing(1, 0, 1, 0),
+      padding: theme.spacing(1, 0, 0.5, 0),
     },
     stateCell: {
+      [theme.breakpoints.up('md')]: {
+        minWidth: '100px',
+      },
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(1, 2, 2, 3),
-        width: 'max(100px, 30%)',
+        width: '30%',
+        minWidth: '100px',
       },
     },
     updatedAtCell: {
+      [theme.breakpoints.up('md')]: {
+        minWidth: '125px',
+      },
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(1, 1, 2, 1),
-        width: 'max(100px, 35%)',
+        width: '35%',
+        minWidth: '100px',
       },
     },
     clicksCell: {
       paddingRight: (props) => props.appMargins,
+      [theme.breakpoints.up('md')]: {
+        minWidth: '180px',
+      },
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(1, 1, 2, 2),
-        width: 'max(100px, 20%)',
+        width: '20%',
+        minWidth: '100px',
       },
     },
     rightCell: {
@@ -179,7 +193,7 @@ const EnhancedTableBody = (/* {
 
     // If user has existing links, show the user's list of stored links.
     return (
-      <TableBody>
+      <TableBody className={classes.root}>
         {urls.map((row) => (
           <TableRow
             key={row.shortUrl}
