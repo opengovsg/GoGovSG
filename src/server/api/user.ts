@@ -1,5 +1,5 @@
 import Express from 'express'
-import { UploadedFile } from 'express-fileupload'
+import fileUpload, { UploadedFile } from 'express-fileupload'
 import jsonMessage from '../util/json'
 import { User, UserType } from '../models/user'
 import { Url } from '../models/url'
@@ -16,6 +16,13 @@ import { container } from '../util/inversify'
 const { Public, Private } = FileVisibility
 
 const router = Express.Router()
+
+const fileUploadMiddleware = fileUpload({
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+    files: 1,
+  },
+})
 
 /**
  * Make sure all parameters needed for user URL retrieval API are present.
@@ -119,7 +126,7 @@ function validateState(
 /**
  * Endpoint for a user to create a short URL.
  */
-router.post('/url', validateUrls, async (req, res) => {
+router.post('/url', fileUploadMiddleware, validateUrls, async (req, res) => {
   const { isFile, userId, longUrl, shortUrl } = req.body
   // @ts-ignore Type definition does not know about the compulsory file field.
   const file: UploadedFile | undefined = req.files?.file
