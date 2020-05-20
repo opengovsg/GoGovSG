@@ -74,7 +74,7 @@ const user = (state = initialState, action) => {
       }
       break
     case TOGGLE_URL_STATE_SUCCESS: {
-      const { shortUrl, toState } = payload // eslint-disable-line no-shadow
+      const { shortUrl, toState } = payload
 
       nextState = {
         urls: state.urls.map((url) => {

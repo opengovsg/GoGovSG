@@ -155,8 +155,7 @@ export default function ControlPanel() {
             trailing={
               <TrailingButton
                 onClick={() => {
-                  shortLinkDispatch?.applyNewOwner(pendingOwner)
-                  handleClose()
+                  shortLinkDispatch?.applyNewOwner(pendingOwner, handleClose)
                 }}
                 disabled={!pendingOwner}
               >

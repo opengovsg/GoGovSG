@@ -254,10 +254,11 @@ const createUrlOrRedirect = (history) => (dispatch, getState) => {
   return null
 }
 
-const transferOwnership = (shortUrl, newOwner) => (dispatch) =>
+const transferOwnership = (shortUrl, newOwner, onSuccess) => (dispatch) =>
   patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
     (response) => {
       if (response.ok) {
+        onSuccess()
         dispatch(getUrlsForUser())
         const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
         return dispatch(rootActions.setInfoMessage(successMessage))
