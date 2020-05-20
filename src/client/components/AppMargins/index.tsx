@@ -2,21 +2,25 @@ import React from 'react'
 import classNames from 'classnames'
 import { createStyles, makeStyles } from '@material-ui/core'
 
-import useAppMargins from './useAppMargins'
+import useAppMargins from './appMargins'
+
+type styleProps = {
+  appMargins: number
+}
 
 const useStyles = makeStyles(() =>
   createStyles({
     applyAppMarginsContainer: {
-      marginLeft: (props) => props.appMargins,
-      marginRight: (props) => props.appMargins,
+      marginLeft: (props: styleProps) => props.appMargins,
+      marginRight: (props: styleProps) => props.appMargins,
     },
     ignoreAppMarginsContainer: {
-      marginLeft: (props) => -props.appMargins,
-      marginRight: (props) => -props.appMargins,
+      marginLeft: (props: styleProps) => -props.appMargins,
+      marginRight: (props: styleProps) => -props.appMargins,
     },
     ignoreAppRightMarginsContainer: {
       marginLeft: 0,
-      marginRight: (props) => -props.appMargins,
+      marginRight: (props: styleProps) => -props.appMargins,
     },
     layout: {
       flexGrow: 1,
@@ -24,7 +28,12 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-export const ApplyAppMargins = ({ className, children }) => {
+type AppMarginsProps = {
+  className?: string
+  children: React.ReactElement
+}
+
+export const ApplyAppMargins = ({ className, children }: AppMarginsProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   return (
@@ -34,7 +43,7 @@ export const ApplyAppMargins = ({ className, children }) => {
   )
 }
 
-export const IgnoreAppMargins = ({ className, children }) => {
+export const IgnoreAppMargins = ({ className, children }: AppMarginsProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   return (
@@ -44,7 +53,10 @@ export const IgnoreAppMargins = ({ className, children }) => {
   )
 }
 
-export const IgnoreAppRightMargins = ({ className, children }) => {
+export const IgnoreAppRightMargins = ({
+  className,
+  children,
+}: AppMarginsProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   return (

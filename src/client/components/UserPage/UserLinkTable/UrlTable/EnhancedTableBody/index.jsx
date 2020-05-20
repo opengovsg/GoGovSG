@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
-import useAppMargins from '../../../../AppMargins/useAppMargins'
+import useAppMargins from '../../../../AppMargins/appMargins'
 import DrawerActions from '../../../Drawer/ControlPanel/helpers/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../util/format'
