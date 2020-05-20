@@ -46,8 +46,13 @@ export default function useShortLink(shortLink: string) {
       }
       dispatch(userActions.updateLongUrl(shortLink, editedUrl))
     },
+<<<<<<< HEAD
     applyNewOwner: (newOwner: string) => {
       dispatch(userActions.transferOwnership(shortLink, newOwner))
+=======
+    applyNewOwner: (newOwner: string, onSuccess: () => void) => {
+      dispatch(userActions.transferOwnership(shortLink, newOwner, onSuccess))
+>>>>>>> user-page-table
     },
   }
 

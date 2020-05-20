@@ -10,7 +10,7 @@ import {
 import DrawerActions from './helpers/reducers'
 import { useDrawerState, useDrawerDispatch } from '..'
 import DrawerMargin from './DrawerMargin'
-import closeIcon from '~/assets/icons/close-icon.svg'
+import closeIcon from './assets/close-icon.svg'
 import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
@@ -154,7 +154,9 @@ export default function ControlPanel() {
             }
             trailing={
               <TrailingButton
-                onClick={() => shortLinkDispatch?.applyNewOwner(pendingOwner)}
+                onClick={() => {
+                  shortLinkDispatch?.applyNewOwner(pendingOwner, handleClose)
+                }}
                 disabled={!pendingOwner}
               >
                 Transfer

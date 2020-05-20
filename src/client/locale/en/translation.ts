@@ -2,13 +2,11 @@ const translationEn = {
   general: {
     emailDomain: 'gov.sg',
     shortUrlPrefix: 'go.gov.sg/',
-    // If you are modifying appTitle, then you will need to also modify the title tag content
-    // of index.html, 404.error.ejs, and 500.error.ejs.
     appTitle: 'Go.gov.sg',
     appCatchphrase: {
       styled:
         'Trusted short links from <strong><i>public officers</i></strong>',
-      noStyle: 'Trusted links from public officers',
+      noStyle: 'Trusted short links from public officers',
     },
     appDescription: {
       get subtitle() {

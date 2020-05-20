@@ -17,7 +17,11 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const BuiltByWidget = ({ className }) => {
+type BuiltByWidgetProps = {
+  className?: string
+}
+
+const BuiltByWidget = ({ className }: BuiltByWidgetProps) => {
   const classes = useStyles()
   return (
     <div className={classNames(className, classes.builtByLinkGroup)}>

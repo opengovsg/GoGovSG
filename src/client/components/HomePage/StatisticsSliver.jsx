@@ -8,12 +8,11 @@ import {
   Typography,
   createStyles,
   makeStyles,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core'
 
 import homeActions from '~/actions/home'
 import numberFormatter from '~/util/format'
+import StatisticsGraphic from './StatisticsGraphic'
 
 const mapDispatchToProps = (dispatch) => ({
   loadStats: () => dispatch(homeActions.loadStats()),
@@ -28,7 +27,7 @@ const mapStateToProps = (state, ownProps) => ({
 const useStyles = makeStyles((theme) =>
   createStyles({
     grid: {
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(8),
     },
     card: {
       display: 'flex',
@@ -72,15 +71,23 @@ const useStyles = makeStyles((theme) =>
         width: '150px',
       },
     },
+    stats: {
+      flexGrow: 0.8,
+      width: '384px',
+      maxWidth: '800px',
+    },
   }),
 )
 
 const StatisticsSliver = (props) => {
   const classes = useStyles()
-  const theme = useTheme()
-  const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
   const { statistics } = props
   const { userCount, linkCount, clickCount } = statistics
+  const statisticsToShow = [
+    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount },
+    { label: 'SHORT LINKS CREATED', number: linkCount },
+    { label: 'CLICKS', number: clickCount },
+  ]
 
   useEffect(() => {
     const { loadStats } = props
@@ -92,47 +99,35 @@ const StatisticsSliver = (props) => {
       <Typography variant="h3" color="textPrimary" gutterBottom>
         The official link shortener for the Singapore government
       </Typography>
-      <Grid
-        container
-        className={classes.grid}
-        spacing={!isDesktopWidth ? 6 : 8}
-        direction={!isDesktopWidth ? 'column' : 'row'}
-      >
-        <Grid item>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3">
-                <strong>{numberFormatter.format(userCount)}</strong>
-              </Typography>
-              <Typography className={classes.statsLabel} color="textPrimary">
-                PUBLIC OFFICERS ONBOARD
-              </Typography>
-            </CardContent>
-          </Card>
+      <Grid container className={classes.grid} spacing={2}>
+        <Grid
+          container
+          item
+          spacing={6}
+          direction="column"
+          className={classes.stats}
+        >
+          {statisticsToShow.map((stat) => (
+            <Grid item>
+              <Card className={classes.card}>
+                <CardContent className={classes.cardContent}>
+                  <Typography color="primary" variant="h4">
+                    <strong>{numberFormatter.format(stat.number)}</strong>
+                  </Typography>
+                  <Typography
+                    className={classes.statsLabel}
+                    variant="body2"
+                    color="textPrimary"
+                  >
+                    {stat.label}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
         <Grid item>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3">
-                <strong>{numberFormatter.format(linkCount)}</strong>
-              </Typography>
-              <Typography className={classes.statsLabel} color="textPrimary">
-                SHORT LINKS CREATED
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item>
-          <Card className={classes.card}>
-            <CardContent className={classes.cardContent}>
-              <Typography color="primary" variant="h3">
-                <strong>{numberFormatter.format(clickCount)}</strong>
-              </Typography>
-              <Typography className={classes.statsLabel} color="textPrimary">
-                CLICKS
-              </Typography>
-            </CardContent>
-          </Card>
+          <StatisticsGraphic />
         </Grid>
       </Grid>
       <Button

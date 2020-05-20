@@ -9,14 +9,25 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
     },
+    copyrightText: {
+      fontSize: '0.75rem',
+    },
   }),
 )
 
-const CopyrightWidget = ({ className }) => {
+type CopyrightWidgetProps = {
+  className?: string
+}
+
+const CopyrightWidget = ({ className }: CopyrightWidgetProps) => {
   const classes = useStyles()
   return (
     <span className={classNames(className, classes.copyright)}>
-      <Typography variant="caption" color="textPrimary">
+      <Typography
+        variant="caption"
+        color="textPrimary"
+        className={classes.copyrightText}
+      >
         {i18next.t('general.copyright')}
       </Typography>
     </span>
