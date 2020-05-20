@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { connect, useSelector } from 'react-redux'
 import {
+  ClickAwayListener,
+  IconButton,
   InputAdornment,
   TextField,
   createStyles,
   makeStyles,
 } from '@material-ui/core'
 import debounce from 'lodash/debounce'
+import FilterSortPanel from '../FilterSortPanel'
 
 import userActions from '../../../../../actions/user'
 import useMinifiedActions from '../util/useMinifiedActions'
@@ -30,6 +33,9 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flex: (props) => (props.fillWidth ? 1 : 'unset'),
       width: (props) => (props.fillWidth ? 'unset' : 445),
+      [theme.breakpoints.up('md')]: {
+        position: 'relative',
+      },
     },
     input: {
       flexGrow: '1',
@@ -37,6 +43,24 @@ const useStyles = makeStyles((theme) =>
       minHeight: (props) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      margin: 8,
+    },
+    sortButtonRoot: {
+      borderRadius: 0,
+    },
+    sortButton: {
+      height: '100%',
+      justifyContent: 'start',
+    },
+    sortButtonSelected: {
+      height: '100%',
+      justifyContent: 'start',
+      background: '#f9f9f9',
     },
   }),
 )
@@ -65,39 +89,62 @@ const SearchInput = React.memo(({ updateSearchText }) => {
   const clearSearchTextHandler = () => {
     searchIfChanged('')
   }
+  const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
 
   return (
-    <TextField
-      autoFocus
-      className={classes.searchInput}
-      variant="outlined"
-      value={tableConfig.searchText}
-      onChange={changeSearchTextHandler}
-      onBlur={changeSearchTextHandler}
-      onKeyDown={(e) => {
-        switch (e.key) {
-          case 'Escape':
-            e.target.value = ''
-            clearSearchTextHandler()
-            break
-          case 'Enter':
-            break
-          default:
-            return
-        }
-        e.target.blur()
-        e.preventDefault()
+    <ClickAwayListener
+      onClickAway={() => {
+        if (isSortFilterOpen) setIsSortFilterOpen(false)
       }}
-      placeholder="Search links"
-      InputProps={{
-        classes: { input: classes.input },
-        startAdornment: (
-          <InputAdornment position="start">
-            <box-icon name="search" />
-          </InputAdornment>
-        ),
-      }}
-    />
+    >
+      <div className={classes.searchInput}>
+        <TextField
+          autoFocus
+          className={classes.searchInput}
+          variant="outlined"
+          value={tableConfig.searchText}
+          onChange={changeSearchTextHandler}
+          onBlur={changeSearchTextHandler}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case 'Escape':
+                e.target.value = ''
+                clearSearchTextHandler()
+                break
+              case 'Enter':
+                break
+              default:
+                return
+            }
+            e.target.blur()
+            e.preventDefault()
+          }}
+          placeholder="Search links"
+          InputProps={{
+            classes: { input: classes.input },
+            startAdornment: (
+              <InputAdornment position="start">
+                <box-icon name="search" />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setIsSortFilterOpen(!isSortFilterOpen)}
+                >
+                  <box-icon name="slider" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        <FilterSortPanel
+          isOpen={isSortFilterOpen}
+          onClose={() => setIsSortFilterOpen(false)}
+          tableConfig={tableConfig}
+        />
+      </div>
+    </ClickAwayListener>
   )
 }, searchInputIsEqual)
 
