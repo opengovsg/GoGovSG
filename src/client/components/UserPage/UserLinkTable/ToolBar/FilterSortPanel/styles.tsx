@@ -10,7 +10,7 @@ export default makeStyles((theme) =>
       [theme.breakpoints.down('sm')]: {
         top: 0,
         height: '100% !important', // Bypass Material UI uses element style
-        minHeight: '700px !important',
+        minHeight: '800px !important',
         left: 0,
       },
     },
