@@ -11,7 +11,7 @@ import {
 
 import userActions from '../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'
-import useFullScreenDialog from '../Drawer/util/useFullScreenDialog'
+import useFullScreenDialog from './helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
 
 const mapStateToProps = (state) => ({

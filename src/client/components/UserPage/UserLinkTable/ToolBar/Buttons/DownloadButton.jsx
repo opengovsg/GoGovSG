@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { createStyles, makeStyles } from '@material-ui/core'
 
 import OutlinedIconButton from './templates/OutlinedIconButton'
-import useMinifiedActions from '../util/useMinifiedActions'
+import useMinifiedActions from '../util/minifiedActions'
 import { downloadUrls } from '../../../../../util/download'
 
 const useStyles = makeStyles((theme) =>
