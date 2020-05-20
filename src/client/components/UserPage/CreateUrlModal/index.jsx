@@ -8,7 +8,6 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import 'boxicons'
 
 import userActions from '../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'

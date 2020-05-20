@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core'
 
-import useCreateLinkFormStyles from './styles/useCreateLinkFormStyles'
+import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
   isValidShortUrl,

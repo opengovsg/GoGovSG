@@ -12,7 +12,11 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const CopyrightWidget = ({ className }) => {
+type CopyrightWidgetProps = {
+  className?: string
+}
+
+const CopyrightWidget = ({ className }: CopyrightWidgetProps) => {
   const classes = useStyles()
   return (
     <span className={classNames(className, classes.copyright)}>
