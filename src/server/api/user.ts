@@ -231,6 +231,8 @@ router.patch('/url/ownership', async (req, res) => {
  */
 router.patch('/url/edit', validateUrls, async (req, res) => {
   const { userId, longUrl, shortUrl } = req.body
+  // @ts-ignore Type definition does not know about the compulsory file field.
+  const file: UploadedFile | undefined = req.files?.file
   try {
     const user = await User.scope({
       method: ['includeShortUrl', shortUrl],
@@ -249,7 +251,14 @@ router.patch('/url/edit', validateUrls, async (req, res) => {
       res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
     }
 
-    await transaction((t) => url.update({ longUrl }, { transaction: t }))
+    await transaction(async (t) => {
+      if (!url.isFile) {
+        await url.update({ longUrl }, { transaction: t })
+      } else if (file) {
+        const { uploadFileToS3 } = container.get<S3Interface>(DependencyIds.s3)
+        await uploadFileToS3(file.data, shortUrl, file.mimetype)
+      }
+    })
     res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
 
     // Expire the Redis cache
