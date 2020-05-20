@@ -25,20 +25,12 @@ describe('thousands are formatted with k', () => {
     expect(numberUnitFormatter(valueToTest)).toBe('1k')
   })
   test('thousands does not round up', () => {
-    const valueToTest = 1_499
+    const valueToTest = 1_999
     expect(numberUnitFormatter(valueToTest)).toBe('1k')
   })
-  test('thousands rounds up', () => {
-    const valueToTest = 1_500
-    expect(numberUnitFormatter(valueToTest)).toBe('2k')
-  })
   test('thousands does not round up to millions', () => {
-    const valueToTest = 999_499
+    const valueToTest = 999_999
     expect(numberUnitFormatter(valueToTest)).toBe('999k')
-  })
-  test('thousands rounds up to millions', () => {
-    const valueToTest = 999_500
-    expect(numberUnitFormatter(valueToTest)).toBe('1m')
   })
 })
 
@@ -48,20 +40,12 @@ describe('millions are formatted with m', () => {
     expect(numberUnitFormatter(valueToTest)).toBe('1m')
   })
   test('millions does not round up', () => {
-    const valueToTest = 1_499_999
+    const valueToTest = 1_999_999
     expect(numberUnitFormatter(valueToTest)).toBe('1m')
   })
-  test('millions rounds up', () => {
-    const valueToTest = 1_500_000
-    expect(numberUnitFormatter(valueToTest)).toBe('2m')
-  })
   test('millions does not round up to billions', () => {
-    const valueToTest = 999_499_999
+    const valueToTest = 999_999_999
     expect(numberUnitFormatter(valueToTest)).toBe('999m')
-  })
-  test('millions rounds up to billions', () => {
-    const valueToTest = 999_500_000
-    expect(numberUnitFormatter(valueToTest)).toBe('1b')
   })
 })
 
@@ -71,19 +55,11 @@ describe('billions are formatted with b', () => {
     expect(numberUnitFormatter(valueToTest)).toBe('1b')
   })
   test('billions does not round up', () => {
-    const valueToTest = 1_499_999_999
+    const valueToTest = 1_999_999_999
     expect(numberUnitFormatter(valueToTest)).toBe('1b')
   })
-  test('billions rounds up', () => {
-    const valueToTest = 1_500_000_000
-    expect(numberUnitFormatter(valueToTest)).toBe('2b')
-  })
   test('billions does not round up to trillions', () => {
-    const valueToTest = 999_499_999_999
+    const valueToTest = 999_999_999_999
     expect(numberUnitFormatter(valueToTest)).toBe('999b')
-  })
-  test('billions rounds up to trillions', () => {
-    const valueToTest = 999_500_000_000
-    expect(numberUnitFormatter(valueToTest)).toBe('1t')
   })
 })
