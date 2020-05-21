@@ -7,8 +7,8 @@ import userActions from '../../../actions/user'
 const useStyles = makeStyles((theme) =>
   createStyles({
     createButton: {
-      width: '180px',
-      minWidth: '140px',
+      width: 150,
+      height: 44,
       marginTop: theme.spacing(4),
     },
   }),
@@ -20,8 +20,8 @@ type CreateButtonProps = {
 
 export default function CreateButton({ className }: CreateButtonProps) {
   const classes = useStyles()
-  const openCreateUrlModal = () =>
-    useDispatch()(userActions.openCreateUrlModal())
+  const dispatch = useDispatch()
+  const openCreateUrlModal = () => dispatch(userActions.openCreateUrlModal())
 
   return (
     <Button

@@ -27,6 +27,7 @@ const mapDispatchToProps = (dispatch) => {
   )
   return {
     updateSearchText: (searchText) => {
+      dispatch(userActions.isFetchingUrls(true))
       dispatch(userActions.setUrlTableConfig({ searchText, pageNumber: 0 }))
       debouncedUpdateSearchText()
     },
@@ -45,7 +46,8 @@ const useStyles = makeStyles((theme) =>
       },
     },
     searchInput: {
-      width: (props) => (props.fillWidth ? 'unset' : 445),
+      width: '100%',
+      maxWidth: (props) => (props.fillWidth ? 'unset' : 445),
     },
     input: {
       flexGrow: '1',
