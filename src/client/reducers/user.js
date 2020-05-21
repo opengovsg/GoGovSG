@@ -21,8 +21,9 @@ const initialState = {
     numberOfRows: 10,
     pageNumber: 0,
     sortDirection: 'desc',
-    orderBy: 'createdAt',
+    orderBy: 'updatedAt',
     searchText: '',
+    filter: {},
   },
   urlCount: 0,
 }

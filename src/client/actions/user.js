@@ -62,6 +62,7 @@ const getUrlsForUser = () => async (dispatch, getState) => {
     sortDirection,
     orderBy,
     searchText,
+    filter: { state: urlState, isFile },
   } = tableConfig
   const offset = pageNumber * numberOfRows
 
@@ -71,6 +72,8 @@ const getUrlsForUser = () => async (dispatch, getState) => {
     orderBy,
     sortDirection,
     searchText,
+    state: urlState,
+    isFile,
   }
 
   const { json, isOk } = await getUrls(queryObj)

@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.up('md')]: {
         textAlign: 'end',
         paddingTop: '0px',
-        paddingRight: '12px',
+        paddingRight: theme.spacing(1.5),
         paddingLeft: (props) => props.appMargins,
       },
       [theme.breakpoints.down('sm')]: {
@@ -37,16 +37,14 @@ const useStyles = makeStyles((theme) => {
       },
     },
     urlCell: {
-      paddingTop: '24px',
+      paddingTop: theme.spacing(3),
       [theme.breakpoints.up('md')]: {
-        width: '61%',
-      },
-      [theme.breakpoints.up('lg')]: {
         width: '61%',
       },
       [theme.breakpoints.down('sm')]: {
         width: '100%',
         padding: theme.spacing(2, 2, 0, 3),
+        paddingLeft: (props) => props.appMargins,
       },
     },
     shortUrlGrid: {
@@ -64,7 +62,8 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(1, 2, 2, 3),
         width: '30%',
-        minWidth: '100px',
+        minWidth: '110px',
+        paddingLeft: (props) => props.appMargins,
       },
     },
     updatedAtCell: {
@@ -97,7 +96,7 @@ const useStyles = makeStyles((theme) => {
     icon: {
       width: '18px',
       fontSize: '18px',
-      marginTop: '-4px',
+      marginTop: theme.spacing(-0.5),
       [theme.breakpoints.down('sm')]: {
         display: 'none',
       },

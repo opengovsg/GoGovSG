@@ -23,8 +23,8 @@ export default function ToolBar() {
     <div className={classes.toolBar}>
       <LinkCountHeader />
       <SearchInput />
-      <CreateLinkButton />
       <DownloadButton />
+      <CreateLinkButton />
     </div>
   )
 }
