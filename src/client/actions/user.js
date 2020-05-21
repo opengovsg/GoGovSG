@@ -13,6 +13,7 @@ import {
   SET_URL_TABLE_CONFIG,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
+  WIPE_USER_STATE,
 } from './types'
 import { get, patch, postJson } from '../util/requests'
 import rootActions from './root'
@@ -104,6 +105,10 @@ const getUrlsForUser = () => async (dispatch, getState) => {
 
 const resetUserState = () => ({
   type: RESET_USER_STATE,
+})
+
+const wipeUserState = () => ({
+  type: WIPE_USER_STATE,
 })
 
 // API call to create URL
@@ -293,6 +298,7 @@ export default {
   openCreateUrlModal,
   closeCreateUrlModal,
   transferOwnership,
+  wipeUserState,
   resetUserState,
   updateLongUrl,
   updateUrlCount,

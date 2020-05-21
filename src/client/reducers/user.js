@@ -11,9 +11,11 @@ import {
   SET_URL_TABLE_CONFIG,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
+  WIPE_USER_STATE,
 } from '../actions/types'
 
 const initialState = {
+  initialised: false,
   urls: [],
   isFetchingUrls: false,
   shortUrl: '',
@@ -42,6 +44,7 @@ const user = (state = initialState, action) => {
       break
     case GET_URLS_FOR_USER_SUCCESS:
       nextState = {
+        initialised: true,
         urls: payload,
       }
       break
@@ -79,6 +82,11 @@ const user = (state = initialState, action) => {
       nextState = {
         shortUrl: '',
         longUrl: '',
+      }
+      break
+    case WIPE_USER_STATE:
+      nextState = {
+        ...initialState,
       }
       break
     case TOGGLE_URL_STATE_SUCCESS: {

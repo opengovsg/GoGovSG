@@ -7,6 +7,9 @@ import { ApplyAppMargins } from '../../AppMargins'
 import { useSelector } from 'react-redux'
 
 export default function UserLinkTable() {
+  const initialised = useSelector((state: any) => {
+    return state.user.initialised
+  })
   const urlCount = useSelector((state: any) => {
     return state.user.urlCount
   })
@@ -16,7 +19,9 @@ export default function UserLinkTable() {
       <ApplyAppMargins>
         <ToolBar />
       </ApplyAppMargins>
-      {urlCount > 0 ? <UrlTable /> : <EmptyState urlsFiltered />}
+      {!initialised && <div />}
+      {initialised &&
+        (urlCount > 0 ? <UrlTable /> : <EmptyState urlsFiltered />)}
     </>
   )
 }
