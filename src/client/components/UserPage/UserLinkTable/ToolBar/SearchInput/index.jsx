@@ -86,7 +86,6 @@ const searchInputIsEqual = (prev, next) => {
 const SearchInput = React.memo(({ updateSearchText }) => {
   const tableConfig = useSelector((state) => state.user.tableConfig)
   const fillWidth = useMinifiedActions()
-  console.log(fillWidth)
   const classes = useStyles({ fillWidth, textFieldHeight })
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {
