@@ -17,6 +17,9 @@ import userActions from '../../../../../actions/user'
 import useMinifiedActions from '../util/minifiedActions'
 import useSearchInputHeight from './searchInputHeight'
 
+import filterSortIcon from '../assets/filtersort-icon.svg'
+import searchIcon from '../assets/search-icon.svg'
+
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
     () => dispatch(userActions.getUrlsForUser()),
@@ -59,6 +62,9 @@ const useStyles = makeStyles((theme) =>
       position: 'fixed',
       height: '100vh',
       width: '100vw',
+    },
+    filterSortButton: {
+      marginRight: '-12px',
     },
   }),
 )
@@ -122,15 +128,16 @@ const SearchInput = React.memo(({ updateSearchText }) => {
             classes: { input: classes.input },
             startAdornment: (
               <InputAdornment position="start">
-                <box-icon name="search" />
+                <img src={searchIcon} alt="Search icon" />
               </InputAdornment>
             ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
+                  className={classes.filterSortButton}
                   onClick={() => setIsSortFilterOpen(!isSortFilterOpen)}
                 >
-                  <box-icon name="slider" />
+                  <img src={filterSortIcon} alt="Filter and sort icon" />
                 </IconButton>
               </InputAdornment>
             ),
