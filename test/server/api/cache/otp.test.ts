@@ -37,15 +37,6 @@ describe('otp cache redis test', () => {
     )
   })
 
-  test('deleteOtpByEmail throws test', async () => {
-    const originalDel = redisMockClient.del
-    redisMockClient.del = () => {
-      throw Error()
-    }
-    await expect(cache.deleteOtpByEmail('aaa@aa.com')).rejects.toThrowError()
-    redisMockClient.del = originalDel
-  })
-
   test('getOtpByEmail test', async () => {
     redisMockClient.set('aaa@aa.com', JSON.stringify(otp))
     await expect(cache.getOtpForEmail('aaa@aa.com')).resolves.toStrictEqual(otp)
@@ -67,8 +58,12 @@ describe('otp cache redis test', () => {
 
   test('getOtpByEmail throws test', async () => {
     const originalGet = redisMockClient.get
-    redisMockClient.get = () => {
-      throw Error()
+    redisMockClient.get = (_, callback) => {
+      if (callback == null) {
+        return false
+      }
+      callback(Error(), '')
+      return true
     }
     redisMockClient.set('aaa@aa.com', JSON.stringify(otp))
     await expect(cache.getOtpForEmail('aaa@aa.com')).rejects.toThrowError()
