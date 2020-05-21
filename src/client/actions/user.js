@@ -3,6 +3,7 @@ import moment from 'moment-timezone'
 import {
   CLOSE_CREATE_URL_MODAL,
   GET_URLS_FOR_USER_SUCCESS,
+  IS_FETCHING_URLS,
   OPEN_CREATE_URL_MODAL,
   RESET_USER_STATE,
   SET_EDITED_LONG_URL,
@@ -20,6 +21,11 @@ import { isValidUrl } from '../../shared/util/validation'
 import { LOGIN_PAGE } from '../util/types'
 
 const querystring = require('querystring')
+
+const isFetchingUrls = (payload) => ({
+  type: IS_FETCHING_URLS,
+  payload,
+})
 
 const isGetUrlsForUserSuccess = (urls) => ({
   type: GET_URLS_FOR_USER_SUCCESS,
@@ -76,6 +82,7 @@ const getUrlsForUser = () => async (dispatch, getState) => {
     isFile,
   }
 
+  dispatch(isFetchingUrls(true))
   const { json, isOk } = await getUrls(queryObj)
 
   if (isOk) {
@@ -91,6 +98,7 @@ const getUrlsForUser = () => async (dispatch, getState) => {
   } else {
     dispatch(rootActions.setErrorMessage(json.message))
   }
+  dispatch(isFetchingUrls(false))
   return null
 }
 
@@ -275,6 +283,7 @@ const transferOwnership = (shortUrl, newOwner, onSuccess) => (dispatch) =>
 
 export default {
   getUrlsForUser,
+  isFetchingUrls,
   createUrlOrRedirect,
   setShortUrl,
   setLongUrl,

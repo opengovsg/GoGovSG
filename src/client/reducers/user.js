@@ -1,6 +1,7 @@
 import {
   CLOSE_CREATE_URL_MODAL,
   GET_URLS_FOR_USER_SUCCESS,
+  IS_FETCHING_URLS,
   OPEN_CREATE_URL_MODAL,
   RESET_USER_STATE,
   SET_EDITED_LONG_URL,
@@ -14,6 +15,7 @@ import {
 
 const initialState = {
   urls: [],
+  isFetchingUrls: false,
   shortUrl: '',
   longUrl: '',
   createUrlModal: false,
@@ -33,6 +35,11 @@ const user = (state = initialState, action) => {
   const { payload } = action
 
   switch (action.type) {
+    case IS_FETCHING_URLS:
+      nextState = {
+        isFetchingUrls: payload,
+      }
+      break
     case GET_URLS_FOR_USER_SUCCESS:
       nextState = {
         urls: payload,

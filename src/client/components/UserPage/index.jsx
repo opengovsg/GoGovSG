@@ -36,6 +36,7 @@ const UserPage = ({
   history,
   getUrlsForUser,
 }) => {
+  const fetchingUrls = useSelector((state) => state.user.isFetchingUrls)
   const urlCount = useSelector((state) => state.user.urlCount)
   const urlsFiltered = useIsFiltered()
 
@@ -47,7 +48,7 @@ const UserPage = ({
     return (
       <BaseLayout>
         <Drawer>
-          {urlCount === 0 && !urlsFiltered ? (
+          {!fetchingUrls && urlCount === 0 && !urlsFiltered ? (
             <EmptyState urlsFiltered={urlsFiltered} />
           ) : (
             <UserLinkTable />

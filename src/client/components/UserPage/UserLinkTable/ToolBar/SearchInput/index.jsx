@@ -27,6 +27,7 @@ const mapDispatchToProps = (dispatch) => {
   )
   return {
     updateSearchText: (searchText) => {
+      dispatch(userActions.isFetchingUrls(true))
       dispatch(userActions.setUrlTableConfig({ searchText, pageNumber: 0 }))
       debouncedUpdateSearchText()
     },
