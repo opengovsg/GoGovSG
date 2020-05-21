@@ -1,4 +1,4 @@
-import { numberUnitFormatter } from './format'
+import { numberUnitFormatter } from '../../../src/client/util/format'
 
 describe('ones, tens, hundreds are not formatted', () => {
   test('one is 1', () => {
