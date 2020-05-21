@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { connect, useSelector } from 'react-redux'
 import {
+  Backdrop,
   ClickAwayListener,
+  Hidden,
   IconButton,
   InputAdornment,
   TextField,
   createStyles,
   makeStyles,
-  Hidden,
-  Backdrop,
 } from '@material-ui/core'
 import debounce from 'lodash/debounce'
 import FilterSortPanel from '../FilterSortPanel'
