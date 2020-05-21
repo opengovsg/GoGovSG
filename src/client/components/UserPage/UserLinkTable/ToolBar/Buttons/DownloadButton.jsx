@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Button, createStyles, makeStyles, Typography } from '@material-ui/core'
+import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 
 import useMinifiedActions from '../util/minifiedActions'
 import { downloadUrls } from '../../../../../util/download'

@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import {
   AppBar,
   Button,
-  Grid,
   Hidden,
   Toolbar,
   createStyles,
