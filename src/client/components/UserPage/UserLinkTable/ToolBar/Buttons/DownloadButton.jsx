@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) =>
     downloadButton: {
       border: 'solid 1px #456682',
       height: '100%',
+      width: '150px',
     },
   }),
 )
@@ -31,7 +32,6 @@ export default function DownloadButton() {
           variant="outlined"
           onClick={() => downloadUrls(urlCount, tableConfig)}
           className={classes.downloadButton}
-          fullWidth
         >
           <Typography variant="body2">Download Links</Typography>
         </Button>

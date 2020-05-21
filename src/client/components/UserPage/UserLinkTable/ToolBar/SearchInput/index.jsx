@@ -35,7 +35,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    searchInput: {
+    root: {
       display: 'flex',
       height: useSearchInputHeight(),
       flex: (props) => (props.fillWidth ? 1 : 'unset'),
@@ -43,6 +43,9 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         position: 'relative',
       },
+    },
+    searchInput: {
+      width: (props) => (props.fillWidth ? 'unset' : 445),
     },
     input: {
       flexGrow: '1',
@@ -101,7 +104,7 @@ const SearchInput = React.memo(({ updateSearchText }) => {
         if (isSortFilterOpen) setIsSortFilterOpen(false)
       }}
     >
-      <div className={classes.searchInput}>
+      <div className={classes.root}>
         <TextField
           autoFocus
           className={classes.searchInput}
