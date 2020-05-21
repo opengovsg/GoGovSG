@@ -1,43 +1,9 @@
 import React from 'react'
-import { TablePagination, createStyles, makeStyles } from '@material-ui/core'
+import { TablePagination } from '@material-ui/core'
 import isMatch from 'lodash/isMatch'
 import useAppMargins from '../../../../AppMargins/appMargins'
 import PaginationActionComponent from './PaginationActionComponent'
-
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    root: {
-      display: 'inline',
-    },
-    toolbar: {
-      paddingLeft: 0,
-      paddingRight: 0,
-      width: '50%',
-    },
-    spacer: {
-      flex: 0,
-      paddingLeft: (props) => props.appMargins,
-    },
-    caption: {
-      fontWeight: 400,
-      marginRight: '4px',
-      [theme.breakpoints.down('sm')]: {
-        display: 'none',
-      },
-    },
-    select: {
-      border: 'solid 1px #d8d8d8',
-      [theme.breakpoints.down('sm')]: {
-        display: 'none',
-      },
-    },
-    selectIcon: {
-      [theme.breakpoints.down('sm')]: {
-        display: 'none',
-      },
-    },
-  }),
-)
+import useStyles from './styles'
 
 // Prevents re-render if pagination did not change.
 const paginationInputIsEqual = (prev, next) =>
