@@ -229,49 +229,58 @@ router.patch('/url/ownership', async (req, res) => {
 /**
  * Endpoint for user to edit a longUrl.
  */
-router.patch('/url/edit', validateUrls, async (req, res) => {
-  const { userId, longUrl, shortUrl } = req.body
-  // @ts-ignore Type definition does not know about the compulsory file field.
-  const file: UploadedFile | undefined = req.files?.file
-  try {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne({
-      where: { id: userId },
-    })
+router.patch(
+  '/url/edit',
+  fileUploadMiddleware,
+  validateUrls,
+  async (req, res) => {
+    const { userId, longUrl, shortUrl } = req.body
+    // @ts-ignore Type definition does not know about the compulsory file field.
+    const file: UploadedFile | undefined = req.files?.file
+    try {
+      const user = await User.scope({
+        method: ['includeShortUrl', shortUrl],
+      }).findOne({
+        where: { id: userId },
+      })
 
-    if (!user) {
-      res.notFound(jsonMessage('User not found.'))
-      return
-    }
-
-    const [url] = (user.get() as UserType).Urls
-
-    if (!url) {
-      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
-    }
-
-    await transaction(async (t) => {
-      if (!url.isFile) {
-        await url.update({ longUrl }, { transaction: t })
-      } else if (file) {
-        const { uploadFileToS3 } = container.get<S3Interface>(DependencyIds.s3)
-        await uploadFileToS3(file.data, shortUrl, file.mimetype)
+      if (!user) {
+        res.notFound(jsonMessage('User not found.'))
+        return
       }
-    })
-    res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
 
-    // Expire the Redis cache
-    redirectClient.del(shortUrl, (err) => {
-      if (err) {
-        logger.error(`Short URL could not be purged from cache:\t${err}`)
+      const [url] = (user.get() as UserType).Urls
+
+      if (!url) {
+        res.notFound(
+          jsonMessage(`Short link "${shortUrl}" not found for user.`),
+        )
       }
-    })
-  } catch (e) {
-    logger.error(`Error editing long URL:\t${e}`)
-    res.badRequest(jsonMessage('Invalid URL.'))
-  }
-})
+
+      await transaction(async (t) => {
+        if (!url.isFile) {
+          await url.update({ longUrl }, { transaction: t })
+        } else if (file) {
+          const { uploadFileToS3 } = container.get<S3Interface>(
+            DependencyIds.s3,
+          )
+          await uploadFileToS3(file.data, shortUrl, file.mimetype)
+        }
+      })
+      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
+
+      // Expire the Redis cache
+      redirectClient.del(shortUrl, (err) => {
+        if (err) {
+          logger.error(`Short URL could not be purged from cache:\t${err}`)
+        }
+      })
+    } catch (e) {
+      logger.error(`Error editing long URL:\t${e}`)
+      res.badRequest(jsonMessage('Invalid URL.'))
+    }
+  },
+)
 
 /**
  * Endpoint for user to render a URL active/inactive.
