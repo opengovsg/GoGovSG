@@ -7,6 +7,8 @@ import {
   TextField,
   createStyles,
   makeStyles,
+  Hidden,
+  Backdrop,
 } from '@material-ui/core'
 import debounce from 'lodash/debounce'
 import FilterSortPanel from '../FilterSortPanel'
@@ -50,17 +52,11 @@ const useStyles = makeStyles((theme) =>
       right: 0,
       margin: 8,
     },
-    sortButtonRoot: {
-      borderRadius: 0,
-    },
-    sortButton: {
-      height: '100%',
-      justifyContent: 'start',
-    },
-    sortButtonSelected: {
-      height: '100%',
-      justifyContent: 'start',
-      background: '#f9f9f9',
+    panelBackdrop: {
+      zIndex: 999,
+      position: 'fixed',
+      height: '100vh',
+      width: '100vw',
     },
   }),
 )
@@ -143,6 +139,9 @@ const SearchInput = React.memo(({ updateSearchText }) => {
           onClose={() => setIsSortFilterOpen(false)}
           tableConfig={tableConfig}
         />
+        <Hidden mdUp>
+          <Backdrop className={classes.panelBackdrop} open={isSortFilterOpen} />
+        </Hidden>
       </div>
     </ClickAwayListener>
   )
