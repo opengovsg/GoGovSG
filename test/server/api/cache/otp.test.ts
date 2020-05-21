@@ -91,7 +91,7 @@ describe('otp cache redis test', () => {
     redisMockClient.set = () => {
       throw Error()
     }
-    expect(cache.setOtpForEmail('aaa@aa.com', otp)).rejects.toThrowError()
+    await expect(cache.setOtpForEmail('aaa@aa.com', otp)).rejects.toThrowError()
     redisMockClient.set = originalSet
   })
 })
