@@ -46,7 +46,8 @@ const useStyles = makeStyles((theme) =>
       },
     },
     searchInput: {
-      width: (props) => (props.fillWidth ? 'unset' : 445),
+      width: '100%',
+      maxWidth: (props) => (props.fillWidth ? 'unset' : 445),
     },
     input: {
       flexGrow: '1',
@@ -85,6 +86,7 @@ const searchInputIsEqual = (prev, next) => {
 const SearchInput = React.memo(({ updateSearchText }) => {
   const tableConfig = useSelector((state) => state.user.tableConfig)
   const fillWidth = useMinifiedActions()
+  console.log(fillWidth)
   const classes = useStyles({ fillWidth, textFieldHeight })
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {

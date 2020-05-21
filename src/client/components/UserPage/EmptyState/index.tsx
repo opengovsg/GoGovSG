@@ -6,10 +6,12 @@ import CreateButton from './CreateButton'
 const useState = makeStyles((theme) =>
   createStyles({
     emptyStateContainer: {
+      width: 234,
       margin: 'auto',
       marginTop: (props: EmptyStateProps) => (!props.urlsFiltered ? 45 : 26),
-      marginBottom: (props: EmptyStateProps) => (!props.urlsFiltered ? 45 : 26),
+      marginBottom: 78,
       [theme.breakpoints.up('md')]: {
+        width: 'unset',
         marginTop: (props: EmptyStateProps) => (!props.urlsFiltered ? 85 : 45),
         marginBottom: (props: EmptyStateProps) =>
           !props.urlsFiltered ? 85 : 45,
@@ -18,6 +20,7 @@ const useState = makeStyles((theme) =>
     headerText: {
       lineHeight: '25px',
       marginBottom: 0,
+      fontWeight: 400,
       '&:last-child': {
         marginBottom: 21,
       },
@@ -46,7 +49,7 @@ const EmptyState = (props: EmptyStateProps) => {
           <Typography
             className={classes.headerText}
             align="center"
-            variant="body1"
+            variant="body2"
             color="textPrimary"
           >
             {'No results found, try expanding your search terms.'}
@@ -56,7 +59,7 @@ const EmptyState = (props: EmptyStateProps) => {
           <Typography
             className={classes.headerText}
             align="center"
-            variant="body1"
+            variant="body2"
             color="textPrimary"
           >
             {'You do not have any short links yet.'}
@@ -66,7 +69,7 @@ const EmptyState = (props: EmptyStateProps) => {
           <Typography
             className={classes.headerText}
             align="center"
-            variant="body1"
+            variant="body2"
             color="textPrimary"
           >
             {'Get started and customise one from an existing link or file!'}

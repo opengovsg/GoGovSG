@@ -5,10 +5,10 @@ import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 import useMinifiedActions from '../util/minifiedActions'
 import { downloadUrls } from '../../../../../util/download'
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     downloadButtonContainer: {
-      marginLeft: theme.spacing(1.5),
+      marginLeft: 20,
       width: '150px',
     },
     downloadButton: {
