@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import Drawer from './Drawer'
@@ -7,6 +7,8 @@ import CreateUrlModal from './CreateUrlModal'
 import userActions from '~/actions/user'
 import BaseLayout from '../BaseLayout'
 import UserLinkTable from './UserLinkTable'
+import EmptyState from './EmptyState'
+import useIsFiltered from './EmptyState/isFiltered'
 
 /**
  * List URLs belonging to the user in a table.
@@ -34,14 +36,22 @@ const UserPage = ({
   history,
   getUrlsForUser,
 }) => {
+  const urlCount = useSelector((state) => state.user.urlCount)
+  const urlsFiltered = useIsFiltered()
+
+  useEffect(() => {
+    if (isLoggedIn) getUrlsForUser()
+  }, [])
+
   if (isLoggedIn) {
-    useEffect(() => {
-      getUrlsForUser()
-    }, [])
     return (
       <BaseLayout>
         <Drawer>
-          <UserLinkTable />
+          {urlCount === 0 && !urlsFiltered ? (
+            <EmptyState urlsFiltered={urlsFiltered} />
+          ) : (
+            <UserLinkTable />
+          )}
           <CreateUrlModal
             createUrlModal={createUrlModal}
             closeCreateUrlModal={closeCreateUrlModal}

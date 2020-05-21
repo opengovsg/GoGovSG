@@ -7,16 +7,20 @@ const useState = makeStyles((theme) =>
   createStyles({
     emptyStateContainer: {
       margin: 'auto',
-      width: '180px',
-      marginTop: theme.spacing(10),
-      marginBottom: theme.spacing(10),
+      marginTop: (props: EmptyStateProps) => (!props.urlsFiltered ? 45 : 26),
+      marginBottom: (props: EmptyStateProps) => (!props.urlsFiltered ? 45 : 26),
       [theme.breakpoints.up('md')]: {
-        marginTop: theme.spacing(12),
-        marginBottom: theme.spacing(12),
+        marginTop: (props: EmptyStateProps) => (!props.urlsFiltered ? 85 : 45),
+        marginBottom: (props: EmptyStateProps) =>
+          !props.urlsFiltered ? 85 : 45,
       },
     },
     headerText: {
-      marginBottom: theme.spacing(4),
+      lineHeight: '25px',
+      marginBottom: 0,
+      '&:last-child': {
+        marginBottom: 21,
+      },
     },
     emptyStateGraphic: {
       display: 'block',
@@ -29,26 +33,57 @@ const useState = makeStyles((theme) =>
   }),
 )
 
-const EmptyState = () => {
-  const classes = useState()
+type EmptyStateProps = {
+  urlsFiltered: boolean
+}
+
+const EmptyState = (props: EmptyStateProps) => {
+  const classes = useState(props)
   return (
     <div className={classes.emptyStateContainer}>
-      <Typography
-        className={classes.headerText}
-        align="center"
-        variant="body1"
-        color="textPrimary"
-      >
-        You have not created any short links yet.
-      </Typography>
+      <div>
+        {props.urlsFiltered && (
+          <Typography
+            className={classes.headerText}
+            align="center"
+            variant="body1"
+            color="textPrimary"
+          >
+            {'No results found, try expanding your search terms.'}
+          </Typography>
+        )}
+        {!props.urlsFiltered && (
+          <Typography
+            className={classes.headerText}
+            align="center"
+            variant="body1"
+            color="textPrimary"
+          >
+            {'You do not have any short links yet.'}
+          </Typography>
+        )}
+        {!props.urlsFiltered && (
+          <Typography
+            className={classes.headerText}
+            align="center"
+            variant="body1"
+            color="textPrimary"
+          >
+            {'Get started and customise one from an existing link or file!'}
+          </Typography>
+        )}
+      </div>
       <img
         className={classes.emptyStateGraphic}
         src={emptyStateGraphic}
         alt="No shortened links yet"
+        draggable={false}
       />
-      <div className={classes.createButtonDiv}>
-        <CreateButton />
-      </div>
+      {!props.urlsFiltered && (
+        <div className={classes.createButtonDiv}>
+          <CreateButton />
+        </div>
+      )}
     </div>
   )
 }
