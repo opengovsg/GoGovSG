@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Typography } from '@material-ui/core'
 import useStyles from '../../styles'
-import 'boxicons'
+import checkIcon from '~/assets/icons/check-icon.svg'
 
 export type SortButtonProps = {
   columnLabel: string
@@ -21,11 +21,7 @@ const SortButton = ({ columnLabel, isSelected, onClick }: SortButtonProps) => {
       <Typography variant="body2" className={classes.columnLabel}>
         {columnLabel}
       </Typography>
-      {isSelected && (
-        <div className={classes.checkIcon}>
-          <box-icon name="check" size="cssSize" />
-        </div>
-      )}
+      {isSelected && <img src={checkIcon} className={classes.checkIcon} />}
     </Button>
   )
 }

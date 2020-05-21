@@ -81,6 +81,8 @@ const FilterSortPanel = ({
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
     setOrderBy('updatedAt')
+    updateSortAndFilter('updatedAt', 'desc', undefined, false)
+    onClose()
   }
 
   return (

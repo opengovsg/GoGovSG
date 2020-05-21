@@ -15,6 +15,7 @@ import FilterSortPanel from '../FilterSortPanel'
 
 import userActions from '../../../../../actions/user'
 import useMinifiedActions from '../util/minifiedActions'
+import useSearchInputHeight from './searchInputHeight'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     searchInput: {
       display: 'flex',
+      height: useSearchInputHeight(),
       flex: (props) => (props.fillWidth ? 1 : 'unset'),
       width: (props) => (props.fillWidth ? 'unset' : 445),
       [theme.breakpoints.up('md')]: {

@@ -1,11 +1,12 @@
 import { createStyles, makeStyles } from '@material-ui/core'
+import useSearchInputHeight from '../SearchInput/searchInputHeight'
 
 export default makeStyles((theme) =>
   createStyles({
     collapse: {
       width: '100%',
       position: 'absolute',
-      top: 60,
+      top: useSearchInputHeight() + 10,
       zIndex: 1000,
       [theme.breakpoints.down('sm')]: {
         top: 0,
@@ -100,7 +101,6 @@ export default makeStyles((theme) =>
     checkIcon: {
       marginLeft: 'auto',
       marginRight: '32px',
-      marginTop: '4px',
       width: '24px',
     },
     applyButton: {
