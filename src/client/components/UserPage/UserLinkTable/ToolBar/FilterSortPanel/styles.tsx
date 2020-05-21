@@ -24,9 +24,9 @@ export default makeStyles((theme) =>
       position: 'absolute',
       top: 0,
       right: 0,
-      margin: '8px',
+      margin: theme.spacing(1),
       [theme.breakpoints.down('sm')]: {
-        margin: '24px',
+        margin: theme.spacing(3),
       },
     },
     sortButtonGrid: {
@@ -34,28 +34,28 @@ export default makeStyles((theme) =>
       width: '100%',
     },
     sectionHeader: {
-      paddingLeft: '32px',
+      paddingLeft: theme.spacing(4),
       [theme.breakpoints.up('md')]: {
         color: '#767676',
       },
     },
     sortHeaderGrid: {
-      marginBottom: '8px',
+      marginBottom: theme.spacing(1),
     },
     filterHeaderGrid: {
-      marginTop: '12px',
-      marginBottom: '8px',
+      marginTop: theme.spacing(0.5),
+      marginBottom: theme.spacing(1),
       [theme.breakpoints.down('sm')]: {
-        marginTop: '46px',
+        marginTop: theme.spacing(5.75),
       },
     },
     filterSectionGrid: {
-      marginLeft: '32px',
+      marginLeft: theme.spacing(4),
     },
     filterSectionHeader: {
-      marginTop: '20px',
+      marginTop: theme.spacing(2.5),
       fontWeight: 500,
-      marginBottom: '4px',
+      marginBottom: theme.spacing(0.5),
     },
     filterLabelLeft: {
       fontWeight: 400,
@@ -68,9 +68,9 @@ export default makeStyles((theme) =>
       width: '100%',
     },
     dividerGrid: {
-      marginBottom: '4px',
+      marginBottom: theme.spacing(0.5),
       [theme.breakpoints.down('sm')]: {
-        marginBottom: '32px',
+        marginBottom: theme.spacing(4),
       },
     },
     root: {
@@ -80,7 +80,7 @@ export default makeStyles((theme) =>
       overflow: 'hidden',
     },
     leftCheckbox: {
-      marginLeft: '-12px',
+      marginLeft: theme.spacing(-1.5),
     },
     sortButtonRoot: {
       borderRadius: 0,
@@ -95,12 +95,12 @@ export default makeStyles((theme) =>
       background: '#f9f9f9',
     },
     columnLabel: {
-      paddingLeft: '24px',
+      paddingLeft: theme.spacing(3),
       fontWeight: 400,
     },
     checkIcon: {
       marginLeft: 'auto',
-      marginRight: '32px',
+      marginRight: theme.spacing(4),
       width: '24px',
     },
     applyButton: {
@@ -109,20 +109,20 @@ export default makeStyles((theme) =>
       [theme.breakpoints.down('sm')]: {
         width: '100%',
         height: '55px',
-        marginRight: '32px',
+        marginRight: theme.spacing(4),
       },
     },
     footer: {
-      marginTop: '48px',
-      marginLeft: '32px',
-      marginRight: '32px',
+      marginTop: theme.spacing(6),
+      marginLeft: theme.spacing(4),
+      marginRight: theme.spacing(4),
       [theme.breakpoints.down('sm')]: {
-        marginTop: '88px',
+        marginTop: theme.spacing(11),
         flexDirection: 'column-reverse',
       },
     },
     resetButton: {
-      marginRight: '12px',
+      marginRight: theme.spacing(1.5),
       [theme.breakpoints.down('sm')]: {
         width: '100%',
         height: '55px',
