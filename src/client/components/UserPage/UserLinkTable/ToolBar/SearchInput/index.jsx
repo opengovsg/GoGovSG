@@ -14,11 +14,11 @@ import debounce from 'lodash/debounce'
 import FilterSortPanel from '../FilterSortPanel'
 
 import userActions from '../../../../../actions/user'
-import useMinifiedActions from '../util/minifiedActions'
-import useSearchInputHeight from './searchInputHeight'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 
 import filterSortIcon from '../assets/filtersort-icon.svg'
 import searchIcon from '../assets/search-icon.svg'
+import useSearchInputHeight from './searchInputHeight'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       display: 'flex',
-      height: useSearchInputHeight(),
+      height: useSearchInputHeight,
       flex: (props) => (props.fillWidth ? 1 : 'unset'),
       width: (props) => (props.fillWidth ? 'unset' : 445),
       [theme.breakpoints.up('md')]: {
