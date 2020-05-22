@@ -13,7 +13,7 @@ import copy from 'copy-to-clipboard'
 import { useDrawerState } from '..'
 import OnClickTooltip from './widgets/OnClickTooltip'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     drawerTitleDiv: {
       display: 'flex',
@@ -23,6 +23,10 @@ const useStyles = makeStyles(() =>
     },
     copyLinkDiv: {
       display: 'flex',
+      marginTop: '12px',
+      [theme.breakpoints.up('md')]: {
+        marginTop: 0,
+      },
     },
     copyIcon: {
       marginRight: 5,

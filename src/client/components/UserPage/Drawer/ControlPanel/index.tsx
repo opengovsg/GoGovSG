@@ -34,29 +34,30 @@ const useStyles = makeStyles((theme) =>
       maxWidth: 885,
     },
     dialogContents: {
-      marginTop: 116,
+      marginTop: theme.spacing(6.5),
       marginBottom: 141,
-      [theme.breakpoints.down('sm')]: {
-        marginTop: theme.spacing(6.5),
+      [theme.breakpoints.up('md')]: {
+        marginTop: 116,
       },
     },
     closeIcon: {
       position: 'absolute',
       top: 0,
-      left: 0,
-      margin: 30,
-      [theme.breakpoints.down('sm')]: {
-        right: theme.spacing(0),
-        left: 'auto',
-        margin: theme.spacing(2),
+      right: theme.spacing(0),
+      left: 'auto',
+      margin: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
+        left: 0,
+        margin: 30,
+        right: 'auto',
       },
     },
     divider: {
-      marginTop: 51,
-      marginBottom: 68,
-      [theme.breakpoints.down('sm')]: {
-        marginTop: 50,
-        marginBottom: 50,
+      marginTop: 50,
+      marginBottom: 50,
+      [theme.breakpoints.up('md')]: {
+        marginTop: 51,
+        marginBottom: 68,
       },
     },
     activeText: {
@@ -255,7 +256,7 @@ export default function ControlPanel() {
                 }}
                 disabled={!pendingOwner}
                 variant={isMobileView ? 'contained' : 'outlined'}
-                fullWidth
+                fullWidth={isMobileView}
               >
                 Transfer
               </TrailingButton>

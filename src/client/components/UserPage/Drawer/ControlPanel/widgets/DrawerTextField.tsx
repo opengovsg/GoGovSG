@@ -55,9 +55,9 @@ const useTextFieldStyles = makeStyles((theme) =>
     textField: {
       width: '100%',
       marginTop: theme.spacing(1),
-      marginBottom: -24,
-      [theme.breakpoints.down('sm')]: {
-        marginBottom: 0,
+      marginBottom: 0,
+      [theme.breakpoints.up('md')]: {
+        marginBottom: -24,
       },
     },
     removePrefixPadding: { padding: theme.spacing(0) },
@@ -68,9 +68,9 @@ const useTextFieldStyles = makeStyles((theme) =>
       padding: theme.spacing(0),
       lineHeight: 1.5,
       marginLeft: 14,
-      marginRight: 14,
-      [theme.breakpoints.down('sm')]: {
-        marginRight: 0,
+      marginRight: 0,
+      [theme.breakpoints.up('md')]: {
+        marginRight: 14,
       },
     },
   }),

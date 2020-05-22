@@ -9,13 +9,13 @@ import {
 const useStyles = makeStyles((theme) =>
   createStyles({
     trailingButton: {
-      width: 135,
       height: 44,
       padding: 0,
       fontSize: '0.875rem',
-      [theme.breakpoints.down('sm')]: {
-        marginTop: theme.spacing(0.5),
-        width: (props: ButtonProps) => (props.fullWidth ? '100%' : 135),
+      marginTop: theme.spacing(0.5),
+      width: (props: ButtonProps) => (props.fullWidth ? '100%' : 135),
+      [theme.breakpoints.up('md')]: {
+        marginTop: 0,
       },
     },
   }),

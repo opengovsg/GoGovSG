@@ -4,11 +4,11 @@ import { createStyles, makeStyles } from '@material-ui/core'
 const useStyles = makeStyles((theme) =>
   createStyles({
     panelMargins: {
-      marginLeft: 45,
-      marginRight: 45,
-      [theme.breakpoints.down('sm')]: {
-        marginLeft: theme.spacing(4),
-        marginRight: theme.spacing(4),
+      marginLeft: theme.spacing(4),
+      marginRight: theme.spacing(4),
+      [theme.breakpoints.up('md')]: {
+        marginLeft: 45,
+        marginRight: 45,
       },
     },
   }),

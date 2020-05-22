@@ -4,6 +4,7 @@ import { Variant } from '@material-ui/core/styles/createTypography'
 
 type StylesProps = {
   trailingPosition: TrailingPosition
+  wrapTrailing?: boolean
 }
 
 const useStyles = makeStyles((theme) =>
@@ -13,12 +14,14 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 30,
+      flexWrap: (props: StylesProps) =>
+        props.wrapTrailing ? 'wrap' : 'nowrap',
     },
     leadingContainer: {
       flex: 1,
-      marginRight: 19,
-      [theme.breakpoints.down('sm')]: {
-        marginRight: 0,
+      marginRight: 0,
+      [theme.breakpoints.up('md')]: {
+        marginRight: 19,
       },
     },
     trailingContainer: {
@@ -26,6 +29,7 @@ const useStyles = makeStyles((theme) =>
         props.trailingPosition == TrailingPosition.end ? 'auto' : 'unset',
       marginBottom: (props: StylesProps) =>
         props.trailingPosition == TrailingPosition.start ? 'auto' : 'unset',
+      width: (props: StylesProps) => (props.wrapTrailing ? '100%' : 'unset'),
     },
   }),
 )
@@ -49,12 +53,12 @@ type ConfigOptionProps = {
 
 // Represents an edit option on the ControlPanel.
 export default function ConfigOption(props: ConfigOptionProps) {
-  const classes = useStyles({ trailingPosition: props.trailingPosition })
+  const classes = useStyles({
+    trailingPosition: props.trailingPosition,
+    wrapTrailing: props.wrapTrailing,
+  })
   return (
-    <main
-      className={classes.mainContainer}
-      style={{ flexWrap: props.wrapTrailing ? 'wrap' : 'nowrap' }}
-    >
+    <main className={classes.mainContainer}>
       <section className={classes.leadingContainer}>
         <Typography
           variant={props.titleVariant}
@@ -69,12 +73,7 @@ export default function ConfigOption(props: ConfigOptionProps) {
         )}
         {props.leading}
       </section>
-      <section
-        className={classes.trailingContainer}
-        style={{ width: props.wrapTrailing ? '100%' : 'unset' }}
-      >
-        {props.trailing}
-      </section>
+      <section className={classes.trailingContainer}>{props.trailing}</section>
     </main>
   )
 }
