@@ -174,7 +174,7 @@ export default function ControlPanel() {
                 : stateTitleInactive
             }
             titleVariant="h6"
-            titleClassName={classes.regularText}
+            titleClassName={isMobileView ? classes.regularText : ''}
             trailing={
               <GoSwitch
                 color="primary"
@@ -187,7 +187,7 @@ export default function ControlPanel() {
           <ConfigOption
             title="Download QR Code"
             titleVariant="h6"
-            titleClassName={classes.regularText}
+            titleClassName={isMobileView ? classes.regularText : ''}
             trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
