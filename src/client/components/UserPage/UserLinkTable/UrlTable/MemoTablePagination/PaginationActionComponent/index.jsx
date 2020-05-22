@@ -32,7 +32,7 @@ export default ({ pageCount, onChangePage, page }) => {
           onClick={(event) => onChangePage(event, page - 1)}
           disabled={page <= 0}
         >
-          <img src={arrowLeftIcon} alt="Previous page" />
+          <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
         </IconButton>
       </Grid>
       <Grid item>{`Page ${page + 1} of ${pageCount}`}</Grid>
@@ -41,7 +41,7 @@ export default ({ pageCount, onChangePage, page }) => {
           onClick={(event) => onChangePage(event, page + 1)}
           disabled={pageCount <= page + 1}
         >
-          <img src={arrowRightIcon} alt="Next page" />
+          <img src={arrowRightIcon} alt="Next page" draggable={false} />
         </IconButton>
       </Grid>
     </Grid>
