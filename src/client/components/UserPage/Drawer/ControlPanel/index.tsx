@@ -144,6 +144,7 @@ export default function ControlPanel() {
           className={classes.ownershipHelpIcon}
           src={helpIcon}
           alt="Ownership help"
+          draggable={false}
         />
       </Tooltip>
     </>
