@@ -1,18 +1,17 @@
 import { createStyles, makeStyles } from '@material-ui/core'
 
+type StyleProps = {
+  appMargins: number
+}
+
 export default makeStyles((theme) =>
   createStyles({
-    root: {
-      display: 'inline',
-    },
     toolbar: {
-      paddingLeft: 0,
-      paddingRight: 0,
-      width: '50%',
+      paddingLeft: (props: StyleProps) => props.appMargins,
+      paddingRight: (props: StyleProps) => props.appMargins,
     },
     spacer: {
       flex: 0,
-      paddingLeft: (props) => props.appMargins,
     },
     caption: {
       fontWeight: 400,
@@ -23,11 +22,13 @@ export default makeStyles((theme) =>
     },
     select: {
       border: 'solid 1px #d8d8d8',
+      zIndex: 2,
       [theme.breakpoints.down('sm')]: {
         display: 'none',
       },
     },
     selectIcon: {
+      zIndex: 2,
       [theme.breakpoints.down('sm')]: {
         display: 'none',
       },

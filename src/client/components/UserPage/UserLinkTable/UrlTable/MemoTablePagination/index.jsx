@@ -58,7 +58,6 @@ const MemoTablePagination = React.memo(
           toolbar: classes.toolbar,
           caption: classes.caption,
           select: classes.select,
-          root: classes.root,
           selectIcon: classes.selectIcon,
         }}
         labelDisplayedRows={() => {}}
