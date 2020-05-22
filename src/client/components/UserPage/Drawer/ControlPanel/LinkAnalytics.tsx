@@ -33,11 +33,11 @@ const useStyles = makeStyles((theme) =>
     },
     feedbackButton: {
       height: 44,
-      maxWidth: 200,
       marginTop: 30,
-      [theme.breakpoints.down('sm')]: {
-        width: '100%',
-        maxWidth: '100%',
+      width: '100%',
+      maxWidth: '100%',
+      [theme.breakpoints.up('md')]: {
+        maxWidth: 200,
       },
     },
   }),
