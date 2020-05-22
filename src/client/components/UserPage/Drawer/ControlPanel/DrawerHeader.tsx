@@ -1,5 +1,12 @@
 import React from 'react'
-import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
+import {
+  Typography,
+  createStyles,
+  makeStyles,
+  Button,
+  useTheme,
+  useMediaQuery,
+} from '@material-ui/core'
 
 import copyIcon from './assets/copy-icon.svg'
 import copy from 'copy-to-clipboard'
@@ -26,10 +33,12 @@ const useStyles = makeStyles(() =>
 export default function DrawerHeader() {
   const classes = useStyles()
   const shortUrl = useDrawerState().relevantShortLink
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <div className={classes.drawerTitleDiv}>
-      <Typography variant="h3" color="primary">
+      <Typography variant={isMobileView ? 'h6' : 'h3'} color="primary">
         Edit link
       </Typography>
       <OnClickTooltip tooltipText="Short link copied">

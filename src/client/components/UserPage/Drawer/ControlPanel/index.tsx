@@ -3,8 +3,12 @@ import {
   Drawer,
   createStyles,
   makeStyles,
+  Hidden,
   Divider,
   IconButton,
+  Tooltip,
+  useTheme,
+  useMediaQuery,
 } from '@material-ui/core'
 
 import DrawerActions from './helpers/reducers'
@@ -21,8 +25,9 @@ import useShortLink from './helpers/shortlink'
 import { removeHttpsProtocol } from '../../../../util/url'
 import { isValidLongUrl } from '../../../../../shared/util/validation'
 import DownloadButton from './widgets/DownloadButton'
+import helpIcon from '../../../../assets/help-icon.svg'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     drawerPaper: {
       width: '100%',
@@ -31,20 +36,55 @@ const useStyles = makeStyles(() =>
     dialogContents: {
       marginTop: 116,
       marginBottom: 141,
+      [theme.breakpoints.down('sm')]: {
+        marginTop: theme.spacing(6.5),
+      },
     },
     closeIcon: {
       position: 'absolute',
       top: 0,
       left: 0,
       margin: 30,
-    },
-    trailingButton: {
-      width: 135,
-      height: 44,
+      [theme.breakpoints.down('sm')]: {
+        right: theme.spacing(0),
+        left: 'auto',
+        margin: theme.spacing(2),
+      },
     },
     divider: {
       marginTop: 51,
       marginBottom: 68,
+      [theme.breakpoints.down('sm')]: {
+        marginTop: 50,
+        marginBottom: 50,
+      },
+    },
+    activeText: {
+      color: '#6d9067',
+    },
+    inactiveText: {
+      color: '#c85151',
+    },
+    regularText: {
+      fontWeight: 400,
+    },
+    ownershipHelpIcon: {
+      width: '14px',
+      verticalAlign: 'middle',
+    },
+    ownershipTooltip: {
+      margin: theme.spacing(1.5, 1, 1.5, 1),
+      whiteSpace: 'nowrap',
+      maxWidth: 'unset',
+    },
+    topBar: {
+      width: '100%',
+      height: '100px',
+      boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
+      backgroundColor: '#f9f9f9',
+      position: 'absolute',
+      top: 0,
+      zIndex: -1,
     },
   }),
 )
@@ -52,6 +92,8 @@ const useStyles = makeStyles(() =>
 export default function ControlPanel() {
   // Styles used in this component.
   const classes = useStyles()
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
   // Modal controller.
   const drawerStates = useDrawerState()
@@ -75,24 +117,64 @@ export default function ControlPanel() {
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
 
+  const stateTitleActive = (
+    <>
+      Your link is <span className={classes.activeText}>active</span> and
+      publicly accessible
+    </>
+  )
+
+  const stateTitleInactive = (
+    <>
+      Your link is <span className={classes.inactiveText}>inactive</span> and
+      not publicly accessible
+    </>
+  )
+
+  const linkOwnershipHelp = (
+    <>
+      Link owner{' '}
+      <Tooltip
+        title="Links can only be transferred to an existing Go.gov.sg user"
+        arrow
+        placement="top"
+        classes={{ tooltip: classes.ownershipTooltip }}
+      >
+        <img
+          className={classes.ownershipHelpIcon}
+          src={helpIcon}
+          alt="Ownership help"
+        />
+      </Tooltip>
+    </>
+  )
+
   return (
     <Drawer
       classes={{
         paper: classes.drawerPaper,
       }}
-      anchor="right"
+      anchor={isMobileView ? 'bottom' : 'right'}
       open={drawerIsOpen}
       onClose={handleClose}
     >
       <main className={classes.dialogContents}>
+        <Hidden mdUp>
+          <div className={classes.topBar} />
+        </Hidden>
         <IconButton className={classes.closeIcon} onClick={handleClose}>
           <img src={closeIcon} alt="Close" draggable={false} />
         </IconButton>
         <DrawerMargin>
           <DrawerHeader />
           <ConfigOption
-            title="Link status"
-            subtitle="Analytics will not be collected for deactivated links"
+            title={
+              shortLinkState?.state === 'ACTIVE'
+                ? stateTitleActive
+                : stateTitleInactive
+            }
+            titleVariant="h6"
+            titleClassName={classes.regularText}
             trailing={
               <GoSwitch
                 color="primary"
@@ -103,13 +185,19 @@ export default function ControlPanel() {
             trailingPosition={TrailingPosition.center}
           />
           <ConfigOption
-            title="QR Code"
-            subtitle="Download your link’s QR Code in PNG or SVG format"
+            title="Download QR Code"
+            titleVariant="h6"
+            titleClassName={classes.regularText}
             trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
+          <Hidden mdUp>
+            <Divider className={classes.divider} />
+          </Hidden>
           <ConfigOption
             title="Original link"
+            titleVariant="body2"
+            titleClassName={classes.regularText}
             leading={
               <DrawerTextField
                 value={editedLongUrl}
@@ -135,15 +223,22 @@ export default function ControlPanel() {
                 onClick={() =>
                   shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
                 }
+                fullWidth={isMobileView}
+                variant={isMobileView ? 'contained' : 'outlined'}
               >
                 Save
               </TrailingButton>
             }
+            wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
+          <Hidden mdUp>
+            <Divider className={classes.divider} />
+          </Hidden>
           <ConfigOption
-            title="Link ownership"
-            subtitle="A Go.gov.sg link can only be transferred to an existing user"
+            title={linkOwnershipHelp}
+            titleVariant="body2"
+            titleClassName={classes.regularText}
             leading={
               <DrawerTextField
                 value={pendingOwner}
@@ -158,10 +253,13 @@ export default function ControlPanel() {
                   shortLinkDispatch?.applyNewOwner(pendingOwner, handleClose)
                 }}
                 disabled={!pendingOwner}
+                variant={isMobileView ? 'contained' : 'outlined'}
+                fullWidth
               >
                 Transfer
               </TrailingButton>
             }
+            wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
           <Divider className={classes.divider} />

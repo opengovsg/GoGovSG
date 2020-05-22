@@ -54,9 +54,11 @@ const useTextFieldStyles = makeStyles((theme) =>
   createStyles({
     textField: {
       width: '100%',
-      maxWidth: 633,
-      marginTop: 12,
+      marginTop: theme.spacing(1),
       marginBottom: -24,
+      [theme.breakpoints.down('sm')]: {
+        marginBottom: 0,
+      },
     },
     removePrefixPadding: { padding: theme.spacing(0) },
     textInput: {
@@ -67,6 +69,9 @@ const useTextFieldStyles = makeStyles((theme) =>
       lineHeight: 1.5,
       marginLeft: 14,
       marginRight: 14,
+      [theme.breakpoints.down('sm')]: {
+        marginRight: 0,
+      },
     },
   }),
 )
