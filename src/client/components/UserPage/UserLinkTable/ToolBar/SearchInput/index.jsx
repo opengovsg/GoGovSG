@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       display: 'flex',
-      height: useSearchInputHeight,
+      height: (props) => props.searchInputHeight,
       flex: (props) => (props.fillWidth ? 1 : 'unset'),
       width: (props) => (props.fillWidth ? 'unset' : 445),
       [theme.breakpoints.up('md')]: {
@@ -86,7 +86,8 @@ const searchInputIsEqual = (prev, next) => {
 const SearchInput = React.memo(({ updateSearchText }) => {
   const tableConfig = useSelector((state) => state.user.tableConfig)
   const fillWidth = useMinifiedActions()
-  const classes = useStyles({ fillWidth, textFieldHeight })
+  const searchInputHeight = useSearchInputHeight()
+  const classes = useStyles({ fillWidth, textFieldHeight, searchInputHeight })
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {
       updateSearchText(text)
