@@ -55,12 +55,14 @@ export default class QRCode extends React.Component {
   }
 
   getTotalRow(noOfCharPerRow) {
-    return Math.ceil(this.props.value.length / noOfCharPerRow)
+    const { value } = this.props
+    return Math.ceil(value.length / noOfCharPerRow)
   }
 
   getTextArray(noOfCharPerRow) {
+    const { value } = this.props
     const regex = new RegExp(`.{1,${noOfCharPerRow}}`, 'g')
-    return this.props.value.match(regex) // get substrings with size at most noOfCharPerRow
+    return value.match(regex) // get substrings with size at most noOfCharPerRow
   }
 
   getSvgWithLinkContainer(noOfCharPerRow, svgFontSize) {
