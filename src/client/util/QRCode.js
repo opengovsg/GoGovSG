@@ -25,6 +25,24 @@ export default class QRCode extends React.Component {
     this.setSvgContainerRef = (element) => {
       this.svgContainerRef = element
     }
+
+    //downloadPng and downloadSvg with links need additional functions & props
+    this.getTotalRow = (noOfCharPerRow) => {
+      return Math.ceil(this.props.value.length / noOfCharPerRow)
+    }
+    this.getTextArray = (noOfCharPerRow) => {
+      const regex = new RegExp(`.{1,${noOfCharPerRow}}`, 'g')
+      return this.props.value.match(regex) //get substrings with size at most noOfCharPerRow
+    }
+
+    this.svgWithoutLinkHeight = 0
+    this.svgWithoutLinkWidth = 0
+    this.updateSvgWithoutLinkHeight = (height) => {
+      this.svgWithoutLinkHeight = height 
+    }
+    this.updateSvgWithoutLinkWidth = (width) => {
+      this.svgWithoutLinkWidth = width
+    }
   }
 
   componentDidMount() {
@@ -44,10 +62,33 @@ export default class QRCode extends React.Component {
     this.update()
   }
 
+  getSvgWithLinkContainer(noOfCharPerRow, svgFontSize){
+    const svgWithLinkContainer = document.createElement('div')
+    svgWithLinkContainer.innerHTML = this.svgContainerRef.innerHTML
+    const svg = svgWithLinkContainer.firstChild
+    const viewBoxAttrValue = '0 0 ' + this.svgWithoutLinkWidth + ' ' + (this.svgWithoutLinkHeight*1+this.getTotalRow(noOfCharPerRow)*svgFontSize)
+    svg.setAttribute('viewBox', viewBoxAttrValue)
+
+    const splitText = this.getTextArray(noOfCharPerRow)
+    for(let i=0; i<splitText.length; i++){
+      const newText = document.createElementNS(SVG_NS, 'text')
+      newText.setAttributeNS(null, 'x', '50%')
+      newText.setAttributeNS(null, 'text-anchor', 'middle')
+      newText.setAttributeNS(null, 'y', (this.svgWithoutLinkHeight*1 + (i+1)*svgFontSize))
+      newText.setAttributeNS(null, 'font-size', svgFontSize)
+      
+      var textNode = document.createTextNode(splitText[i]);
+      newText.appendChild(textNode)
+      svg.appendChild(newText)
+    }
+    return svgWithLinkContainer;
+  }
+
   /* Triggers SVG download of QR code */
   downloadSvg() {
     const { value: filename } = this.props
-    const blob = new Blob([this.svgContainerRef.innerHTML], {
+
+    const blob = new Blob([this.getSvgWithLinkContainer(40, 3).innerHTML], {
       type: 'text/plain;charset=utf-8',
     })
     FileSaver.saveAs(blob, `${filename}.svg`)
@@ -59,18 +100,19 @@ export default class QRCode extends React.Component {
     const { value: filename } = this.props
 
     // Get source SVG
-    const svg = this.svgContainerRef.firstChild
-
+    const svg = this.getSvgWithLinkContainer(40, 3).firstChild
+    
     // Set width and height attributes of svg,
     // required to draw image on canvas on FireFox.
-    svg.setAttribute('width', svg.clientWidth)
-    svg.setAttribute('height', svg.clientHeight)
+    // svg.clientWidth and svg.clientHeight are both zero
+    svg.setAttribute('width', this.svgContainerRef.firstChild.clientWidth)
+    svg.setAttribute('height', this.svgContainerRef.firstChild.clientHeight)
 
     // Canvas to draw on
     const canvas = document.createElement('canvas')
     canvas.width = self.props.size
     canvas.height = self.props.size
-
+    
     const ctx = canvas.getContext('2d')
     const loader = new Image(self.props.size, self.props.size)
 
@@ -80,7 +122,7 @@ export default class QRCode extends React.Component {
     // eslint-disable-next-line func-names
     loader.onload = function () {
       ctx.drawImage(loader, 0, 0, loader.width, loader.height)
-
+      
       canvas.toBlob((blob) => {
         FileSaver.saveAs(blob, `${filename}.png`, 'image/png')
       })
@@ -109,7 +151,8 @@ export default class QRCode extends React.Component {
           const [_posX, _posY, width, height] = svg
             .getAttribute('viewBox')
             .split(' ')
-
+          this.updateSvgWithoutLinkWidth(width)
+          this.updateSvgWithoutLinkHeight(height)
           // Embedded logo
           const logoImg = document.createElement('img')
           logoImg.src = self.props.logo
