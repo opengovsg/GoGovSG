@@ -1,5 +1,5 @@
 import Express from 'express'
-import fileUpload, { UploadedFile } from 'express-fileupload'
+import fileUpload from 'express-fileupload'
 import jsonMessage from '../util/json'
 import { User, UserType } from '../models/user'
 import { Url } from '../models/url'
@@ -145,8 +145,7 @@ function validateState(
  */
 router.post('/url', fileUploadMiddleware, validateUrls, async (req, res) => {
   const { isFile, userId, longUrl, shortUrl } = req.body
-  // @ts-ignore Type definition does not know about the compulsory file field.
-  const file: UploadedFile | undefined = req.files?.file
+  const file = req.files?.file
 
   try {
     const user = await User.findByPk(userId)
@@ -173,7 +172,7 @@ router.post('/url', fileUploadMiddleware, validateUrls, async (req, res) => {
         },
         { transaction: t },
       )
-      if (isFile && file) {
+      if (isFile && file && !Array.isArray(file)) {
         await uploadFileToS3(file.data, shortUrl, file.mimetype)
       }
       return url
@@ -248,8 +247,7 @@ router.patch(
   validateUrls,
   async (req, res) => {
     const { userId, longUrl, shortUrl } = req.body
-    // @ts-ignore Type definition does not know about the compulsory file field.
-    const file: UploadedFile | undefined = req.files?.file
+    const file = req.files?.file
     try {
       const user = await User.scope({
         method: ['includeShortUrl', shortUrl],
@@ -273,7 +271,7 @@ router.patch(
       await transaction(async (t) => {
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
-        } else if (file) {
+        } else if (file && !Array.isArray(file)) {
           await uploadFileToS3(file.data, shortUrl, file.mimetype)
         }
       })
