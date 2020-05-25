@@ -1,4 +1,5 @@
-import { S3 } from 'aws-sdk'
+import { AWSError, S3 } from 'aws-sdk'
+import { PromiseResult } from 'aws-sdk/lib/request'
 import { injectable } from 'inversify'
 import { parse } from 'url'
 import { s3Bucket } from '../config'
@@ -12,8 +13,15 @@ export enum FileVisibility {
 export const s3 = new S3()
 
 export interface S3Interface {
-  setS3ObjectACL: (key: string, acl: FileVisibility) => Promise<any>
-  uploadFileToS3: (file: Buffer, key: string, fileType: string) => Promise<any>
+  setS3ObjectACL: (
+    key: string,
+    acl: FileVisibility,
+  ) => Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>>
+  uploadFileToS3: (
+    file: Buffer,
+    key: string,
+    fileType: string,
+  ) => Promise<PromiseResult<S3.PutObjectOutput, AWSError>>
   isValidS3Shortlink: (url: string, shortUrl: string) => boolean
 }
 
@@ -21,7 +29,10 @@ export interface S3Interface {
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
   ["setS3ObjectACL", "uploadFileToS3", "isValidS3Shortlink"] }] */
 export class S3ServerSide implements S3Interface {
-  setS3ObjectACL(key: string, acl: FileVisibility): Promise<any> {
+  setS3ObjectACL(
+    key: string,
+    acl: FileVisibility,
+  ): Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>> {
     const params = {
       Bucket: s3Bucket,
       Key: key,
@@ -30,7 +41,11 @@ export class S3ServerSide implements S3Interface {
     return s3.putObjectAcl(params).promise()
   }
 
-  uploadFileToS3(file: Buffer, key: string, fileType: string): Promise<any> {
+  uploadFileToS3(
+    file: Buffer,
+    key: string,
+    fileType: string,
+  ): Promise<PromiseResult<S3.PutObjectOutput, AWSError>> {
     const params = {
       ContentType: fileType,
       Bucket: s3Bucket,
