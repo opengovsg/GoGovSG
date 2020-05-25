@@ -15,6 +15,10 @@ import { container } from '../util/inversify'
 
 const { Public, Private } = FileVisibility
 
+const { isValidS3Shortlink, setS3ObjectACL, uploadFileToS3 } = container.get<
+  S3Interface
+>(DependencyIds.s3)
+
 const router = Express.Router()
 
 const fileUploadMiddleware = fileUpload({
@@ -92,7 +96,6 @@ function validateUrls(
       res.badRequest(jsonMessage('Missing file to upload.'))
       return
     }
-    const { isValidS3Shortlink } = container.get<S3Interface>(DependencyIds.s3)
     if (!isValidS3Shortlink(longUrl, shortUrl)) {
       res.badRequest(jsonMessage('File links must point to the S3 object'))
       return
@@ -171,7 +174,6 @@ router.post('/url', fileUploadMiddleware, validateUrls, async (req, res) => {
         { transaction: t },
       )
       if (isFile && file) {
-        const { uploadFileToS3 } = container.get<S3Interface>(DependencyIds.s3)
         await uploadFileToS3(file.data, shortUrl, file.mimetype)
       }
       return url
@@ -272,9 +274,6 @@ router.patch(
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
         } else if (file) {
-          const { uploadFileToS3 } = container.get<S3Interface>(
-            DependencyIds.s3,
-          )
           await uploadFileToS3(file.data, shortUrl, file.mimetype)
         }
       })
@@ -321,7 +320,6 @@ router.patch('/url', validateState, async (req, res) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
         // Toggle the ACL of the S3 object
-        const { setS3ObjectACL } = container.get<S3Interface>(DependencyIds.s3)
         await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
       }
     })
