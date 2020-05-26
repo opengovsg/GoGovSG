@@ -52,7 +52,6 @@ export default function DrawerHeader() {
         variant={isMobileView ? 'h6' : 'h3'}
         color="primary"
         className={classes.headerText}
-      >
         Edit link
       </Typography>
       <OnClickTooltip tooltipText="Short link copied">

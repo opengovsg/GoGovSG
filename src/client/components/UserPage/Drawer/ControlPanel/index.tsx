@@ -193,7 +193,6 @@ export default function ControlPanel() {
             trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
-
           {shortLinkState?.isFile && (
             <>
               <Hidden mdUp>

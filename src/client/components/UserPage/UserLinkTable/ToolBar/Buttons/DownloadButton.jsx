@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 
-import useMinifiedActions from '../util/minifiedActions'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import { downloadUrls } from '../../../../../util/download'
 
 const useStyles = makeStyles(() =>
