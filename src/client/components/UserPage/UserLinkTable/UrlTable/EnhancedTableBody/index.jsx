@@ -22,9 +22,14 @@ const useStyles = makeStyles((theme) => {
     },
     root: {
       '&:first-child': {
+        borderTop: 'non',
         [theme.breakpoints.up('md')]: {
           borderTop: '1px solid #d8d8d860',
         },
+      },
+      borderBottom: '1px solid #d8d8d8',
+      [theme.breakpoints.up('md')]: {
+        borderBottom: 'none',
       },
     },
     leftCell: {
@@ -158,7 +163,7 @@ export default function EnhancedTableBody() {
   if (urls.length > 0) {
     // If user has existing links, show the user's list of stored links.
     return (
-      <TableBody className={classes.root}>
+      <TableBody classes={{ root: classes.root }}>
         {urls.map((row) => (
           <TableRow
             key={row.shortUrl}
