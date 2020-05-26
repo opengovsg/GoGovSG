@@ -57,7 +57,7 @@ const useTextFieldStyles = makeStyles((theme) =>
       marginTop: theme.spacing(1),
       marginBottom: 0,
       [theme.breakpoints.up('md')]: {
-        marginBottom: -24,
+        marginBottom: -19,
       },
     },
     removePrefixPadding: { padding: theme.spacing(0) },
