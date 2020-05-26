@@ -20,8 +20,6 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 44,
-    },
-    copyLinkButton: {
       marginTop: '12px',
       [theme.breakpoints.up('md')]: {
         marginTop: 0,
@@ -54,7 +52,6 @@ export default function DrawerHeader() {
               `${document.location.protocol}//${document.location.host}/${shortUrl}`,
             )
           }
-          className={classes.copyLinkButton}
         >
           <div className={classes.copyLinkDiv}>
             <img
