@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme) => {
     },
     root: {
       '&:first-child': {
-        borderTop: '1px solid #d8d8d860',
+        [theme.breakpoints.up('md')]: {
+          borderTop: '1px solid #d8d8d860',
+        },
       },
     },
     leftCell: {
@@ -133,7 +135,9 @@ const useStyles = makeStyles((theme) => {
     hoverRow: {
       [theme.breakpoints.down('sm')]: {
         height: 'auto',
-        border: 'solid 0.25px rgba(0, 0, 0, 0.15)',
+        borderBottom: 'none',
+        borderRight: 'none',
+        borderLeft: 'none',
       },
       '&:hover': {
         backgroundColor: '#f9f9f9',
