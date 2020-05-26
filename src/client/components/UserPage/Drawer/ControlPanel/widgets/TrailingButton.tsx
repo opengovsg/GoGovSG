@@ -1,29 +1,32 @@
 import * as React from 'react'
 import {
   Button,
-  ButtonBaseProps,
+  ButtonProps,
   createStyles,
   makeStyles,
 } from '@material-ui/core'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     trailingButton: {
-      width: 135,
       height: 44,
       padding: 0,
       fontSize: '0.875rem',
+      marginTop: theme.spacing(0.5),
+      width: (props: ButtonProps) => (props.fullWidth ? '100%' : 135),
+      [theme.breakpoints.up('md')]: {
+        marginTop: 0,
+      },
     },
   }),
 )
 
-export default function TrailingButton(props: ButtonBaseProps) {
-  const classes = useStyles()
+export default function TrailingButton(props: ButtonProps) {
+  const classes = useStyles(props)
   return (
     <Button
       {...props}
       className={classes.trailingButton}
-      variant="outlined"
       color="primary"
       size="large"
       onClick={props.onClick}

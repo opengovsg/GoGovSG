@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import {
   createStyles,
   makeStyles,
-  Divider,
   Menu,
   MenuItem,
   Typography,
@@ -14,18 +13,10 @@ import { useDrawerState, useDrawerDispatch } from '../..'
 import QRCodeModal from '../QRCodeModal'
 import DrawerActions from '../helpers/reducers'
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     textDiv: {
-      width: '70%',
-    },
-    buttonVerticalDivider: {
-      height: 42,
-      marginRight: 7,
-      backgroundColor: theme.palette.primary.light,
-      '&:hover': {
-        backgroundColor: theme.palette.primary.dark,
-      },
+      width: '55%',
     },
     menuPaper: {
       width: 135,
@@ -131,13 +122,8 @@ export default function DownloadButton() {
 
   return (
     <>
-      <TrailingButton onClick={handleClick}>
+      <TrailingButton onClick={handleClick} variant="outlined">
         <div className={classes.textDiv}>Download</div>
-        <Divider
-          className={classes.buttonVerticalDivider}
-          orientation="vertical"
-          flexItem
-        />
         <img src={downloadIcon} alt="Download" draggable={false} />
       </TrailingButton>
       <Menu

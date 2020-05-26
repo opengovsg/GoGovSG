@@ -4,7 +4,7 @@ import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
 
 import analyticSoonGraphic from './assets/analytics-soon.svg'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     dialogTitleDiv: {
       display: 'flex',
@@ -33,8 +33,12 @@ const useStyles = makeStyles(() =>
     },
     feedbackButton: {
       height: 44,
-      maxWidth: 200,
       marginTop: 30,
+      width: '100%',
+      maxWidth: '100%',
+      [theme.breakpoints.up('md')]: {
+        maxWidth: 200,
+      },
     },
   }),
 )

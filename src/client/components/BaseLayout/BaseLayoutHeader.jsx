@@ -16,7 +16,7 @@ import GoLogo from '~/assets/go-main-logo.svg'
 import loginActions from '../../actions/login'
 import Section from '../Section'
 import logoutIcon from './assets/logout-icon.svg'
-import helpIcon from './assets/help-icon.svg'
+import helpIcon from '../../assets/help-icon.svg'
 import feedbackIcon from './assets/feedback-icon.svg'
 
 const useStyles = makeStyles((theme) =>
