@@ -17,11 +17,12 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     drawerTitleDiv: {
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-end',
       justifyContent: 'space-between',
       marginBottom: 44,
       marginTop: '12px',
       [theme.breakpoints.up('md')]: {
+        alignItems: 'center',
         marginTop: 0,
       },
     },
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme) =>
       marginRight: 5,
     },
     headerText: {
-      marginTop: 0,
+      marginBottom: '6px',
       [theme.breakpoints.up('md')]: {
         marginTop: '6px',
       },
@@ -52,6 +53,7 @@ export default function DrawerHeader() {
         variant={isMobileView ? 'h6' : 'h3'}
         color="primary"
         className={classes.headerText}
+      >
         Edit link
       </Typography>
       <OnClickTooltip tooltipText="Short link copied">

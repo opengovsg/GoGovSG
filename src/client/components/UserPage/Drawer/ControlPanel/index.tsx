@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) =>
     },
     topBar: {
       width: '100%',
-      height: '100px',
+      height: '110px',
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       backgroundColor: '#f9f9f9',
       position: 'absolute',
@@ -193,7 +193,7 @@ export default function ControlPanel() {
             trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
-          {shortLinkState?.isFile && (
+          {!shortLinkState?.isFile && (
             <>
               <Hidden mdUp>
                 <Divider className={classes.divider} />

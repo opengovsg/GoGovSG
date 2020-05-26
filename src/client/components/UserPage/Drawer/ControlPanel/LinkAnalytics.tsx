@@ -2,7 +2,7 @@ import React from 'react'
 import i18next from 'i18next'
 import { Typography, createStyles, makeStyles, Button } from '@material-ui/core'
 
-import analyticSoonGraphic from './assets/analytics-soon.svg'
+import analyticSoonGraphic from './assets/drawer-analytics-soon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
