@@ -196,44 +196,46 @@ export default function ControlPanel() {
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
-          <ConfigOption
-            title="Original link"
-            titleVariant="body2"
-            titleClassName={classes.regularText}
-            leading={
-              <DrawerTextField
-                value={editedLongUrl}
-                onChange={(event) =>
-                  shortLinkDispatch?.setEditLongUrl(event.target.value)
-                }
-                placeholder="Original link"
-                prefix="https://"
-                error={!isValidLongUrl(editedLongUrl, true)}
-                helperText={
-                  isValidLongUrl(editedLongUrl, true)
-                    ? ' '
-                    : "This doesn't look like a valid url."
-                }
-              />
-            }
-            trailing={
-              <TrailingButton
-                disabled={
-                  !isValidLongUrl(editedLongUrl, false) ||
-                  editedLongUrl === originalLongUrl
-                }
-                onClick={() =>
-                  shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
-                }
-                fullWidth={isMobileView}
-                variant={isMobileView ? 'contained' : 'outlined'}
-              >
-                Save
-              </TrailingButton>
-            }
-            wrapTrailing={isMobileView}
-            trailingPosition={TrailingPosition.end}
-          />
+          {!shortLinkState?.isFile && (
+            <ConfigOption
+              title="Original link"
+              titleVariant="body2"
+              titleClassName={classes.regularText}
+              leading={
+                <DrawerTextField
+                  value={editedLongUrl}
+                  onChange={(event) =>
+                    shortLinkDispatch?.setEditLongUrl(event.target.value)
+                  }
+                  placeholder="Original link"
+                  prefix="https://"
+                  error={!isValidLongUrl(editedLongUrl, true)}
+                  helperText={
+                    isValidLongUrl(editedLongUrl, true)
+                      ? ' '
+                      : "This doesn't look like a valid url."
+                  }
+                />
+              }
+              trailing={
+                <TrailingButton
+                  disabled={
+                    !isValidLongUrl(editedLongUrl, false) ||
+                    editedLongUrl === originalLongUrl
+                  }
+                  onClick={() =>
+                    shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
+                  }
+                  fullWidth={isMobileView}
+                  variant={isMobileView ? 'contained' : 'outlined'}
+                >
+                  Save
+                </TrailingButton>
+              }
+              wrapTrailing={isMobileView}
+              trailingPosition={TrailingPosition.end}
+            />
+          )}
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>

@@ -31,6 +31,12 @@ const useStyles = makeStyles((theme) =>
     copyIcon: {
       marginRight: 5,
     },
+    headerText: {
+      marginTop: 0,
+      [theme.breakpoints.up('md')]: {
+        marginTop: '6px',
+      },
+    },
   }),
 )
 
@@ -42,7 +48,11 @@ export default function DrawerHeader() {
 
   return (
     <div className={classes.drawerTitleDiv}>
-      <Typography variant={isMobileView ? 'h6' : 'h3'} color="primary">
+      <Typography
+        variant={isMobileView ? 'h6' : 'h3'}
+        color="primary"
+        className={classes.headerText}
+      >
         Edit link
       </Typography>
       <OnClickTooltip tooltipText="Short link copied">
