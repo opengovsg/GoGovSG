@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) =>
     linkAnalyticsText: {
       marginTop: 20,
       marginBottom: 38,
+      textAlign: 'center',
     },
     linkAnalysticsImage: {
       width: '50%',
@@ -49,7 +50,7 @@ export default function LinkAnalytics() {
   return (
     <div className={classes.linkAnalyticsDiv}>
       <Typography variant="h3" color="primary">
-        Link analytics coming soon!
+        Link click history coming soon!
       </Typography>
       <Typography className={classes.linkAnalyticsText} variant="body1">
         Share your feedback about other enhancements you would like to see in

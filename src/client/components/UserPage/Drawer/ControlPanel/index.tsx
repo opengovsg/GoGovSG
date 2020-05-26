@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     drawerPaper: {
       width: '100%',
-      maxWidth: 885,
+      maxWidth: theme.breakpoints.width('md'),
     },
     dialogContents: {
       marginTop: theme.spacing(6.5),
