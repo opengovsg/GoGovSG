@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     drawerPaper: {
       width: '100%',
-      maxWidth: 885,
+      maxWidth: theme.breakpoints.width('md'),
     },
     dialogContents: {
       marginTop: theme.spacing(6.5),
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) =>
     },
     topBar: {
       width: '100%',
-      height: '100px',
+      height: '110px',
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       backgroundColor: '#f9f9f9',
       position: 'absolute',
@@ -193,47 +193,51 @@ export default function ControlPanel() {
             trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
-          <Hidden mdUp>
-            <Divider className={classes.divider} />
-          </Hidden>
-          <ConfigOption
-            title="Original link"
-            titleVariant="body2"
-            titleClassName={classes.regularText}
-            leading={
-              <DrawerTextField
-                value={editedLongUrl}
-                onChange={(event) =>
-                  shortLinkDispatch?.setEditLongUrl(event.target.value)
+          {!shortLinkState?.isFile && (
+            <>
+              <Hidden mdUp>
+                <Divider className={classes.divider} />
+              </Hidden>
+              <ConfigOption
+                title="Original link"
+                titleVariant="body2"
+                titleClassName={classes.regularText}
+                leading={
+                  <DrawerTextField
+                    value={editedLongUrl}
+                    onChange={(event) =>
+                      shortLinkDispatch?.setEditLongUrl(event.target.value)
+                    }
+                    placeholder="Original link"
+                    prefix="https://"
+                    error={!isValidLongUrl(editedLongUrl, true)}
+                    helperText={
+                      isValidLongUrl(editedLongUrl, true)
+                        ? ' '
+                        : "This doesn't look like a valid url."
+                    }
+                  />
                 }
-                placeholder="Original link"
-                prefix="https://"
-                error={!isValidLongUrl(editedLongUrl, true)}
-                helperText={
-                  isValidLongUrl(editedLongUrl, true)
-                    ? ' '
-                    : "This doesn't look like a valid url."
+                trailing={
+                  <TrailingButton
+                    disabled={
+                      !isValidLongUrl(editedLongUrl, false) ||
+                      editedLongUrl === originalLongUrl
+                    }
+                    onClick={() =>
+                      shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
+                    }
+                    fullWidth={isMobileView}
+                    variant={isMobileView ? 'contained' : 'outlined'}
+                  >
+                    Save
+                  </TrailingButton>
                 }
+                wrapTrailing={isMobileView}
+                trailingPosition={TrailingPosition.end}
               />
-            }
-            trailing={
-              <TrailingButton
-                disabled={
-                  !isValidLongUrl(editedLongUrl, false) ||
-                  editedLongUrl === originalLongUrl
-                }
-                onClick={() =>
-                  shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
-                }
-                fullWidth={isMobileView}
-                variant={isMobileView ? 'contained' : 'outlined'}
-              >
-                Save
-              </TrailingButton>
-            }
-            wrapTrailing={isMobileView}
-            trailingPosition={TrailingPosition.end}
-          />
+            </>
+          )}
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
