@@ -12,6 +12,9 @@ import QRCode from './QRCode'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    invisibleModal: {
+      opacity: 0,
+    },
     qrCodeModal: {
       outline: 'none',
       top: 'calc(50% - 250px)',
@@ -51,6 +54,7 @@ const QRCodeModal = (props: QRCodeModalProps) => {
       aria-describedby="qrCodeImage"
       open={props.open}
       onClose={props.onClose}
+      className={classes.invisibleModal}
     >
       <Paper className={classes.qrCodeModal}>
         <QRCode
