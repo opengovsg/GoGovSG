@@ -26,11 +26,11 @@ import {
   USER_PAGE,
   snackbarVariants,
 } from '~/util/types'
-import theme from '~/styles/theme'
+import theme from '../../theme'
 
 const snackbars = Object.values(snackbarVariants).map((variant) => (
   <MessageSnackbar key={variant} variant={variant} />
-)) // eslint-disable-line max-len
+))
 const Root = ({ store }) => (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>

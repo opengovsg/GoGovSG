@@ -10,8 +10,18 @@
     "browser": true,
     "node": true
   },
-  "plugins": ["jsdoc", "prettier"],
+  "plugins": ["jsdoc", "prettier", "jest"],
   "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
     "no-console": "off",
     "comma-dangle": ["error", "always-multiline"],
     "import/no-unresolved": "warn",
@@ -37,7 +47,7 @@
           ["^~", "./src/client"],
           ["^\\$components", "./src/client/scss/components"]
         ],
-        "extensions": [".jsx", ".js", ".scss", ".css"]
+        "extensions": [".jsx", ".js", ".tsx", ".ts", ".scss", ".css"]
       }
     }
   }

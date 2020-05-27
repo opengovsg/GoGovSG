@@ -14,15 +14,12 @@ import api from './api'
 import redirect from './api/redirect'
 
 // Logger configuration
-import {
-  cookieSettings, logger, sessionSettings, trustProxy,
-} from './config'
+import { cookieSettings, logger, sessionSettings, trustProxy } from './config'
 
 // Services
 const SessionStore = connectRedis(session)
 import { sessionClient } from './redis'
 import initDb from './models'
-import { initMailer } from './util/email'
 
 // Helper static methods attached to http.ServerResponse class
 // to return appropriate status codes in readable manner
@@ -30,6 +27,9 @@ import './util/response'
 
 // Morgan configuration for logging HTTP requests
 import getIp from './util/request'
+import { container } from './util/inversify'
+import { DependencyIds } from './constants'
+import { Mailer } from './util/email'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -42,14 +42,18 @@ import getIp from './util/request'
 morgan.token('client-ip', (req: express.Request) => getIp(req) as string)
 morgan.token(
   'redirectUrl',
-  (_: express.Request, res: express.Response): string => (res.statusCode === 302 ? (res.getHeader('location') as string) : ''),
+  (_: express.Request, res: express.Response): string =>
+    res.statusCode === 302 ? (res.getHeader('location') as string) : '',
 )
-morgan.token('userId', (req: express.Request) => (req.session && req.session.user && req.session.user.id
-  ? (req.session.user.id as string)
-  : ''))
+morgan.token('userId', (req: express.Request) =>
+  req.session && req.session.user && req.session.user.id
+    ? (req.session.user.id as string)
+    : '',
+)
 
-const MORGAN_LOG_FORMAT = ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status '
-  + '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
+const MORGAN_LOG_FORMAT =
+  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
+  '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
 const app = express()
 app.use(helmet())
@@ -59,7 +63,7 @@ initDb()
     logger.info('Database initialised.')
 
     // Initialise nodemailer
-    initMailer()
+    container.get<Mailer>(DependencyIds.mailer).initMailer()
 
     // Site-wide cache control
     app.use((_, res, next) => {

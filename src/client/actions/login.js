@@ -180,8 +180,8 @@ const logout = () => (dispatch) =>
     if (response.ok) {
       dispatch(isLoggedOut())
 
-      // Clear the shortUrl and longUrl on logout
-      dispatch(userActions.resetUserState())
+      // Wipe user data on log out.
+      dispatch(userActions.wipeUserState())
     } else {
       console.error(response)
     }

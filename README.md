@@ -1,4 +1,7 @@
 # GoGovSG
+
+[![Build Status](https://travis-ci.com/opengovsg/GoGovSG.svg?branch=develop)](https://travis-ci.com/opengovsg/GoGovSG) [![Coverage Status](https://coveralls.io/repos/github/opengovsg/GoGovSG/badge.svg?branch=develop)](https://coveralls.io/github/opengovsg/GoGovSG?branch=develop)
+
 The official Singapore government link shortener.
 
 ## Content

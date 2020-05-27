@@ -33,7 +33,7 @@ const NotFoundPage = ({ match }) => {
     <BaseLayout>
       <div className={classes.heroContent}>
         <Typography
-          variant="h2"
+          variant="h3"
           align="center"
           color="textPrimary"
           gutterBottom

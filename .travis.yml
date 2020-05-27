@@ -23,7 +23,7 @@ install:
 script:
   - npm run lint
   - npm run build
-#TODO: test
+  - npm run test:ci
 
 before_deploy:
   # Workaround to run before_deploy only once
@@ -57,7 +57,7 @@ deploy:
     app: $AWS_EB_APP_STAGING
     env: $AWS_EB_ENV_STAGING
     bucket_name: $AWS_EB_BUCKET_STAGING
-    zip_file: "$TAG.zip"
+    zip_file: '$TAG.zip'
     on:
       branch: $STAGING_BRANCH
 
@@ -69,6 +69,6 @@ deploy:
     app: $AWS_EB_APP_PRODUCTION
     env: $AWS_EB_ENV_PRODUCTION
     bucket_name: $AWS_EB_BUCKET_PRODUCTION
-    zip_file: "$TAG.zip"
+    zip_file: '$TAG.zip'
     on:
       branch: $PRODUCTION_BRANCH

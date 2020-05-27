@@ -1,11 +1,16 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["airbnb", "plugin:import/typescript"],
+  "extends": [
+    "airbnb",
+    "plugin:import/typescript",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": ["jsdoc"],
+  "plugins": ["jsdoc", "jest"],
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
     "import/first": "off",
@@ -15,6 +20,14 @@
     "no-unused-vars": "off",
     "semi": [2, "never"],
     "sort-imports": ["error", { "ignoreDeclarationSort": true }],
-    "jsdoc/require-description-complete-sentence": "error"
+    "jsdoc/require-description-complete-sentence": "error",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
+  },
+  "env": {
+    "jest": true
   }
 }

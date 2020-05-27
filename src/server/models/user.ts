@@ -44,6 +44,8 @@ export const User = <UserTypeStatic>sequelize.define(
        * @property {string} sortDirection - ASC/DESC.
        * @property {string} searchText - User's search input.
        * @property {number} userId - UserId of requester.
+       * @property {string | undefined} state - State of urls.
+       * @property {boolean | undefined} isFile - Whether the url links to a file.
        */
       urlsWithQueryConditions(queryConditions: {
         limit: number
@@ -52,6 +54,8 @@ export const User = <UserTypeStatic>sequelize.define(
         sortDirection: string
         searchText: string
         userId: number
+        state: string | undefined
+        isFile: boolean | undefined
       }) {
         const {
           limit,
@@ -60,28 +64,36 @@ export const User = <UserTypeStatic>sequelize.define(
           sortDirection,
           userId,
           searchText,
+          state,
+          isFile,
         } = queryConditions
         const { Op } = Sequelize
-
+        const whereUrlConditions: any = {
+          [Op.or]: [
+            {
+              shortUrl: {
+                [Op.substring]: searchText,
+              },
+            },
+            {
+              longUrl: {
+                [Op.substring]: searchText,
+              },
+            },
+          ],
+        }
+        if (state) {
+          whereUrlConditions.state = state
+        }
+        if (isFile) {
+          whereUrlConditions.isFile = isFile
+        }
         return {
           include: [
             {
               model: Url,
               as: 'Urls',
-              where: {
-                [Op.or]: [
-                  {
-                    shortUrl: {
-                      [Op.substring]: searchText,
-                    },
-                  },
-                  {
-                    longUrl: {
-                      [Op.substring]: searchText,
-                    },
-                  },
-                ],
-              },
+              where: whereUrlConditions,
               // use left outer join instead of default inner join
               required: false,
               right: false,

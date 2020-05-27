@@ -5,7 +5,7 @@ import { parse } from 'url'
 import generateOTP, { OtpFunction } from './util/otp'
 
 // Check environment
-const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
+export const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
 
 // Constants for export
 // For bcrypt hash
@@ -15,7 +15,8 @@ const OTP_EXPIRY: number = Number(process.env.OTP_EXPIRY) || 5 * 60
 // in seconds, for URL cache expiry
 const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
 // in seconds, for statistics cache expiry
-const STATISTICS_EXPIRY: number = Number(process.env.STATISTICS_EXPIRY) || 5 * 60
+const STATISTICS_EXPIRY: number =
+  Number(process.env.STATISTICS_EXPIRY) || 5 * 60
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
@@ -147,7 +148,8 @@ export const getOTP: OtpFunction = otpFunction
 export const transporterOptions: nodemailer.TransporterOptions | null = transporterOpts
 export const trustProxy: boolean = proxy
 export const cookieSettings: CookieSettings = cookieConfig
-export const cookieSessionMaxSizeBytes = Number(process.env.COOKIE_SESSION_MAX_SIZE_BYTES) || 2000
+export const cookieSessionMaxSizeBytes =
+  Number(process.env.COOKIE_SESSION_MAX_SIZE_BYTES) || 2000
 export const ogUrl = process.env.OG_URL as string
 export const ogHostname = parse(ogUrl).hostname
 export const gaTrackingId: string | undefined = process.env.GA_TRACKING_ID

@@ -35,11 +35,9 @@ async function getLongUrlFromStore(shortUrl: string): Promise<string> {
   } catch {
     // Cache failed, look in database
     const longUrl = await getLongUrlFromDatabase(shortUrl)
-    try {
-      cacheShortUrl(shortUrl, longUrl)
-    } catch (err) {
-      logger.error(err)
-    }
+    cacheShortUrl(shortUrl, longUrl).catch((error) =>
+      logger.error(`Unable to cache short URL: ${error}`),
+    )
     return longUrl
   }
 }
@@ -81,10 +79,9 @@ export default async function redirect(
   const { logRedirectAnalytics } = container.get<AnalyticsLogger>(
     DependencyIds.analyticsLogging,
   )
-  const {
-    userHasVisitedShortlink,
-    writeShortlinkToCookie,
-  } = container.get<CookieReducer>(DependencyIds.cookieReducer)
+  const { userHasVisitedShortlink, writeShortlinkToCookie } = container.get<
+    CookieReducer
+  >(DependencyIds.cookieReducer)
 
   let { shortUrl } = req.params
 
@@ -100,7 +97,9 @@ export default async function redirect(
     const longUrl = await getLongUrlFromStore(shortUrl)
 
     // Update clicks in database
-    incrementClick(shortUrl)
+    incrementClick(shortUrl).catch((error) =>
+      logger.error(`Unable to increment click count: ${error}`),
+    )
 
     // Google analytics
     logRedirectAnalytics(req, res, shortUrl, longUrl)
@@ -115,20 +114,16 @@ export default async function redirect(
       req.session!.visits,
       shortUrl,
     )
-    req.session!.visits = writeShortlinkToCookie(
-      req.session!.visits,
-      shortUrl,
-    )
+    req.session!.visits = writeShortlinkToCookie(req.session!.visits, shortUrl)
 
     if (renderTransitionPage) {
       // Extract root domain from long url.
       const rootDomain: string = parseDomain(longUrl)
 
-      res.status(200)
-        .render(TRANSITION_PATH, {
-          longUrl,
-          rootDomain,
-        })
+      res.status(200).render(TRANSITION_PATH, {
+        longUrl,
+        rootDomain,
+      })
       return
     }
     res.status(302).redirect(longUrl)
