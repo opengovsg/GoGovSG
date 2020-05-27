@@ -46,6 +46,30 @@ describe('otp cache redis test', () => {
     )
   })
 
+  test('getOtpByEmail null test', async () => {
+    await expect(cache.getOtpForEmail('aaa@aa.com')).resolves.toStrictEqual(
+      null,
+    )
+    expect(redisMockClient.get).toBeCalledWith(
+      'aaa@aa.com',
+      expect.any(Function),
+    )
+  })
+
+  test('getOtpByEmail throws test', async () => {
+    const originalGet = redisMockClient.get
+    redisMockClient.get = (_, callback) => {
+      if (callback == null) {
+        return false
+      }
+      callback(Error(), '')
+      return true
+    }
+    redisMockClient.set('aaa@aa.com', JSON.stringify(otp))
+    await expect(cache.getOtpForEmail('aaa@aa.com')).rejects.toThrowError()
+    redisMockClient.get = originalGet
+  })
+
   test('setOtpByEmail test', async () => {
     await cache.setOtpForEmail('aaa@aa.com', otp)
     expect(redisMockClient.set).toBeCalledWith(
@@ -55,5 +79,14 @@ describe('otp cache redis test', () => {
       10,
       expect.any(Function),
     )
+  })
+
+  test('setOtpByEmail throws test', async () => {
+    const originalSet = redisMockClient.set
+    redisMockClient.set = () => {
+      throw Error()
+    }
+    await expect(cache.setOtpForEmail('aaa@aa.com', otp)).rejects.toThrowError()
+    redisMockClient.set = originalSet
   })
 })

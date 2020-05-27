@@ -1,52 +1,97 @@
-import React, { useState } from 'react'
-import 'boxicons'
-import copy from 'copy-to-clipboard'
-import PropTypes from 'prop-types'
-import { connect, useSelector } from 'react-redux'
-
+import React from 'react'
+import { useSelector } from 'react-redux'
 import {
-  IconButton,
-  Switch,
+  Grid,
+  Hidden,
   TableBody,
   TableCell,
   TableRow,
+  Typography,
 } from '@material-ui/core'
-import { createStyles, fade, makeStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
+import { createStyles, makeStyles } from '@material-ui/core/styles'
 
-import GoTooltip from './templates/GoTooltip'
-import userActions from '../../../../../actions/user'
-import EditableTextField from './EditableTextField'
-import { removeHttpsProtocol } from '../../../../../util/url'
-import useAppMargins from '../../../../AppMargins/useAppMargins'
-
-const mapDispatchToProps = (dispatch) => ({
-  openOwnershipModal: (shortUrl) =>
-    dispatch(userActions.openOwnershipModal(shortUrl)),
-  toggleUrlState: (shortUrl, state) =>
-    dispatch(userActions.toggleUrlState(shortUrl, state)),
-  onSaveUrl: (shortUrl, longUrl, editedLongUrl) => {
-    if (removeHttpsProtocol(longUrl) === editedLongUrl) {
-      dispatch(userActions.cancelEditLongUrl())
-    } else {
-      dispatch(userActions.updateLongUrl(shortUrl, editedLongUrl))
-    }
-  },
-  setEditedLongUrl: (shortUrl, editedLongUrl) => {
-    dispatch(userActions.setEditedLongUrl(shortUrl, editedLongUrl))
-  },
-  openQrCode: (shortUrl) => dispatch(userActions.openQrCode(shortUrl)),
-})
+import useAppMargins from '../../../../AppMargins/appMargins'
+import DrawerActions from '../../../Drawer/ControlPanel/helpers/reducers'
+import { useDrawerDispatch } from '../../../Drawer'
+import { numberUnitFormatter } from '../../../../../util/format'
 
 const useStyles = makeStyles((theme) => {
   return createStyles({
     bar: {
       backgroundColor: theme.palette.grey[500],
     },
+    root: {
+      '&:first-child': {
+        borderTop: 'non',
+        [theme.breakpoints.up('md')]: {
+          borderTop: '1px solid #d8d8d860',
+        },
+      },
+      borderBottom: '1px solid #d8d8d8',
+      [theme.breakpoints.up('md')]: {
+        borderBottom: 'none',
+      },
+    },
     leftCell: {
       [theme.breakpoints.up('md')]: {
-        textAlign: 'left',
+        textAlign: 'end',
+        paddingTop: '0px',
+        paddingRight: theme.spacing(1.5),
         paddingLeft: (props) => props.appMargins,
+      },
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
+    },
+    urlCell: {
+      paddingTop: theme.spacing(3),
+      [theme.breakpoints.up('md')]: {
+        width: '61%',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        padding: theme.spacing(2, 2, 0, 3),
+        paddingLeft: (props) => props.appMargins,
+      },
+    },
+    shortUrlGrid: {
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+    },
+    longUrlGrid: {
+      padding: theme.spacing(1, 0, 0.5, 0),
+    },
+    stateCell: {
+      [theme.breakpoints.up('md')]: {
+        minWidth: '100px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 2, 2, 3),
+        width: '30%',
+        minWidth: '110px',
+        paddingLeft: (props) => props.appMargins,
+      },
+    },
+    updatedAtCell: {
+      [theme.breakpoints.up('md')]: {
+        minWidth: '125px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 1, 2, 1),
+        width: '35%',
+        minWidth: '100px',
+      },
+    },
+    clicksCell: {
+      paddingRight: (props) => props.appMargins,
+      [theme.breakpoints.up('md')]: {
+        minWidth: '180px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 1, 2, 2),
+        width: '20%',
+        minWidth: '100px',
       },
     },
     rightCell: {
@@ -55,150 +100,126 @@ const useStyles = makeStyles((theme) => {
         paddingRight: (props) => props.appMargins,
       },
     },
-    iconButton: {
-      padding: '0px',
-    },
-    editableTextField: {
-      minWidth: '25vw',
-    },
-    shortBtn: {
-      display: 'block',
-      color: 'black',
-    },
-    shortBtnLabel: {
-      fontWeight: '400',
-      textAlign: 'left',
-    },
-    tableBodyTitle: {
-      display: 'none',
+    icon: {
+      width: '18px',
+      fontSize: '18px',
+      marginTop: theme.spacing(-0.5),
       [theme.breakpoints.down('sm')]: {
-        display: 'inline-block',
-        margin: 'auto 0',
-        padding: theme.spacing(0, 1, 0, 10),
-        width: '30%',
-        fontSize: '0.75em',
+        display: 'none',
       },
-      [theme.breakpoints.down('xs')]: {
-        padding: theme.spacing(0, 1, 0, 2),
-      },
+    },
+    stateActive: {
+      color: '#6d9067',
+      textTransform: 'capitalize',
+    },
+    stateInactive: {
+      color: '#c85151',
+      textTransform: 'capitalize',
+    },
+    shortUrl: {
+      width: 'calc(100% - 32px)',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+    longUrl: {
+      color: '#767676',
+    },
+    updatedAt: {
+      color: '#767676',
+    },
+    clicksIcon: {
+      width: '13px',
+      display: 'inline-block',
+      verticalAlign: 'middle',
+    },
+    clicksText: {
+      color: '#767676',
+      paddingLeft: '4px',
     },
     hoverRow: {
+      [theme.breakpoints.down('sm')]: {
+        height: 'auto',
+        borderBottom: 'none',
+        borderRight: 'none',
+        borderLeft: 'none',
+      },
       '&:hover': {
-        backgroundColor: fade(theme.palette.common.black, 0.1),
+        backgroundColor: '#f9f9f9',
+        cursor: 'pointer',
       },
     },
   })
 })
 
-const EnhancedTableBody = ({
-  openOwnershipModal,
-  toggleUrlState,
-  onSaveUrl,
-  setEditedLongUrl,
-  openQrCode,
-}) => {
+export default function EnhancedTableBody() {
   const urls = useSelector((state) => state.user.urls)
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-
-  // Used to manage tooltip descriptions for our short url anchor button.
-  const [isCopied, setCopied] = useState(false)
-  const copiedLinkIconDesc = 'Link copied'
+  const dispatch = useDrawerDispatch()
+  const openControlPanel = (shortlink) =>
+    dispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
   if (urls.length > 0) {
-    // Text descriptions of icons buttons in user url table body.
-    // Used for tooltips and aria labels.
-    const transferIconDesc = 'Transfer link'
-    const copyLinkIconDesc = 'Copy link'
-    const qrCodeIconDesc = 'Download QR Code'
-
     // If user has existing links, show the user's list of stored links.
     return (
-      <TableBody>
+      <TableBody classes={{ root: classes.root }}>
         {urls.map((row) => (
-          <TableRow key={row.shortUrl} className={classes.hoverRow}>
-            <TableCell className={classes.tableBodyTitle}>Owner</TableCell>
-            <TableCell className={classes.leftCell}>
-              <GoTooltip title={transferIconDesc}>
-                <IconButton
-                  className={classes.iconButton}
-                  color="inherit"
-                  aria-label={transferIconDesc}
-                  onClick={() => openOwnershipModal(row.shortUrl)}
-                >
-                  <box-icon name="user" />
-                </IconButton>
-              </GoTooltip>
+          <TableRow
+            key={row.shortUrl}
+            className={classes.hoverRow}
+            onClick={() => openControlPanel(row.shortUrl)}
+          >
+            <TableCell className={classes.leftCell} width="5%">
+              <div className={classes.icon}>
+                <box-icon
+                  size="cssSize"
+                  name={row.isFile ? 'file-blank' : 'link-alt'}
+                  color="#384a51"
+                />
+              </div>
             </TableCell>
-            <TableCell className={classes.tableBodyTitle}>
-              Original URL
+            <TableCell align="left" className={classes.urlCell}>
+              <Grid container direction="column">
+                <Grid item className={classes.shortUrlGrid}>
+                  <Typography variant="h6" className={classes.shortUrl}>
+                    /{row.shortUrl}
+                  </Typography>
+                </Grid>
+                <Hidden smDown>
+                  <Grid item className={classes.longUrlGrid}>
+                    <Typography variant="caption" className={classes.longUrl}>
+                      {row.longUrl}
+                    </Typography>
+                  </Grid>
+                </Hidden>
+              </Grid>
             </TableCell>
-            <TableCell className={classes.editableTextField}>
-              <EditableTextField
-                editedLongUrl={row.editedLongUrl}
-                shortUrl={row.shortUrl}
-                originalLongUrl={row.longUrl}
-                onSaveUrl={onSaveUrl}
-                setEditedLongUrl={setEditedLongUrl}
-                classes={classes}
-              />
-            </TableCell>
-            <TableCell className={classes.tableBodyTitle}>Short URL</TableCell>
-            <TableCell>
-              <GoTooltip
-                title={isCopied ? copiedLinkIconDesc : copyLinkIconDesc}
-                onClose={() => {
-                  // Sets the link as not copied. Sets tooltip accordingly.
-                  // Short timeout to prevent tooltip changes on close.
-                  setTimeout(() => setCopied(false), 100)
-                }}
+            <TableCell className={classes.stateCell}>
+              <Typography
+                variant="caption"
+                className={
+                  row.state === 'ACTIVE'
+                    ? classes.stateActive
+                    : classes.stateInactive
+                }
               >
-                <Button
-                  className={classes.shortBtn}
-                  classes={{ label: classes.shortBtnLabel }}
-                  color="primary"
-                  onClick={() => {
-                    copy(
-                      `${document.location.protocol}//${document.location.host}/${row.shortUrl}`,
-                    )
-                    // Sets the link as copied. Changes tooltip accordingly.
-                    setCopied(true)
-                  }}
-                >
-                  {`/${row.shortUrl}`}
-                </Button>
-              </GoTooltip>
+                <b style={{ fontWeight: 900 }}>{'• '}</b>
+                {row.state.toLowerCase()}
+              </Typography>
             </TableCell>
-            <TableCell className={classes.tableBodyTitle}>QR</TableCell>
-            <TableCell>
-              <GoTooltip title={qrCodeIconDesc}>
-                <IconButton
-                  className={classes.iconButton}
-                  color="secondary"
-                  aria-label={qrCodeIconDesc}
-                  onClick={() => openQrCode(row.shortUrl)}
-                >
-                  <box-icon name="scan" />
-                </IconButton>
-              </GoTooltip>
+            <TableCell className={classes.updatedAtCell}>
+              <Typography variant="caption" className={classes.updatedAt}>
+                {row.updatedAt}
+              </Typography>
             </TableCell>
-            <TableCell className={classes.tableBodyTitle}>
-              Last Modified
-            </TableCell>
-            <TableCell>{row.updatedAt}</TableCell>
-            <TableCell className={classes.tableBodyTitle}>Visits</TableCell>
-            <TableCell>{row.clicks}</TableCell>
-            <TableCell className={classes.tableBodyTitle}>Status</TableCell>
-            <TableCell className={classes.rightCell}>
-              <Switch
-                color="primary"
-                checked={row.state === 'ACTIVE'}
-                onChange={() => toggleUrlState(row.shortUrl, row.state)}
-                value={row.state}
-                classes={{
-                  track: classes.bar,
-                }}
-              />
+            <TableCell className={classes.clicksCell}>
+              <div className={classes.clicksIcon}>
+                <box-icon name="bar-chart-alt" size="cssSize" color="#384a51" />
+              </div>
+              <Typography variant="caption" className={classes.clicksText}>
+                {numberUnitFormatter(row.clicks)}
+              </Typography>
             </TableCell>
           </TableRow>
         ))}
@@ -220,13 +241,3 @@ const EnhancedTableBody = ({
     </TableBody>
   )
 }
-
-EnhancedTableBody.propTypes = {
-  openOwnershipModal: PropTypes.func.isRequired,
-  toggleUrlState: PropTypes.func.isRequired,
-  onSaveUrl: PropTypes.func.isRequired,
-  setEditedLongUrl: PropTypes.func.isRequired,
-  openQrCode: PropTypes.func.isRequired,
-}
-
-export default connect(null, mapDispatchToProps)(EnhancedTableBody)

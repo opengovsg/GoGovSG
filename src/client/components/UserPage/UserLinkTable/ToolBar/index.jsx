@@ -13,6 +13,10 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(2),
       width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        flexWrap: 'wrap',
+        marginBottom: theme.spacing(1),
+      },
     },
   }),
 )
@@ -23,8 +27,8 @@ export default function ToolBar() {
     <div className={classes.toolBar}>
       <LinkCountHeader />
       <SearchInput />
-      <CreateLinkButton />
       <DownloadButton />
+      <CreateLinkButton />
     </div>
   )
 }

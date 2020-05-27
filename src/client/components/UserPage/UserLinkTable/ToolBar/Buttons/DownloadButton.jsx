@@ -1,15 +1,20 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { createStyles, makeStyles } from '@material-ui/core'
+import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 
-import OutlinedIconButton from './templates/OutlinedIconButton'
-import useMinifiedActions from '../util/useMinifiedActions'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import { downloadUrls } from '../../../../../util/download'
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     downloadButtonContainer: {
-      marginLeft: theme.spacing(1.5),
+      marginLeft: 20,
+      width: '150px',
+    },
+    downloadButton: {
+      border: 'solid 1px #456682',
+      height: '100%',
+      width: '150px',
     },
   }),
 )
@@ -23,9 +28,13 @@ export default function DownloadButton() {
     // Only shown when actions are not minified.
     !useMinifiedActions() && (
       <span className={classes.downloadButtonContainer}>
-        <OutlinedIconButton onClick={() => downloadUrls(urlCount, tableConfig)}>
-          <box-icon name="download" />
-        </OutlinedIconButton>
+        <Button
+          variant="outlined"
+          onClick={() => downloadUrls(urlCount, tableConfig)}
+          className={classes.downloadButton}
+        >
+          <Typography variant="body2">Download Links</Typography>
+        </Button>
       </span>
     )
   )

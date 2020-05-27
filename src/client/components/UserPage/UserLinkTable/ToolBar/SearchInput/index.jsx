@@ -1,15 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { connect, useSelector } from 'react-redux'
 import {
+  Backdrop,
+  ClickAwayListener,
+  Hidden,
+  IconButton,
   InputAdornment,
   TextField,
   createStyles,
   makeStyles,
 } from '@material-ui/core'
 import debounce from 'lodash/debounce'
+import FilterSortPanel from '../FilterSortPanel'
 
 import userActions from '../../../../../actions/user'
-import useMinifiedActions from '../util/useMinifiedActions'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
+
+import filterSortIcon from '../assets/filtersort-icon.svg'
+import searchIcon from '../assets/search-icon.svg'
+import useSearchInputHeight from './searchInputHeight'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
@@ -18,6 +27,7 @@ const mapDispatchToProps = (dispatch) => {
   )
   return {
     updateSearchText: (searchText) => {
+      dispatch(userActions.isFetchingUrls(true))
       dispatch(userActions.setUrlTableConfig({ searchText, pageNumber: 0 }))
       debouncedUpdateSearchText()
     },
@@ -26,10 +36,18 @@ const mapDispatchToProps = (dispatch) => {
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    searchInput: {
+    root: {
       display: 'flex',
+      height: (props) => props.searchInputHeight,
       flex: (props) => (props.fillWidth ? 1 : 'unset'),
       width: (props) => (props.fillWidth ? 'unset' : 445),
+      [theme.breakpoints.up('md')]: {
+        position: 'relative',
+      },
+    },
+    searchInput: {
+      width: '100%',
+      maxWidth: (props) => (props.fillWidth ? 'unset' : 445),
     },
     input: {
       flexGrow: '1',
@@ -37,6 +55,21 @@ const useStyles = makeStyles((theme) =>
       minHeight: (props) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      margin: 8,
+    },
+    panelBackdrop: {
+      zIndex: 999,
+      position: 'fixed',
+      height: '100vh',
+      width: '100vw',
+    },
+    filterSortButton: {
+      marginRight: '-12px',
     },
   }),
 )
@@ -53,7 +86,8 @@ const searchInputIsEqual = (prev, next) => {
 const SearchInput = React.memo(({ updateSearchText }) => {
   const tableConfig = useSelector((state) => state.user.tableConfig)
   const fillWidth = useMinifiedActions()
-  const classes = useStyles({ fillWidth, textFieldHeight })
+  const searchInputHeight = useSearchInputHeight()
+  const classes = useStyles({ fillWidth, textFieldHeight, searchInputHeight })
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {
       updateSearchText(text)
@@ -65,39 +99,66 @@ const SearchInput = React.memo(({ updateSearchText }) => {
   const clearSearchTextHandler = () => {
     searchIfChanged('')
   }
+  const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
 
   return (
-    <TextField
-      autoFocus
-      className={classes.searchInput}
-      variant="outlined"
-      value={tableConfig.searchText}
-      onChange={changeSearchTextHandler}
-      onBlur={changeSearchTextHandler}
-      onKeyDown={(e) => {
-        switch (e.key) {
-          case 'Escape':
-            e.target.value = ''
-            clearSearchTextHandler()
-            break
-          case 'Enter':
-            break
-          default:
-            return
-        }
-        e.target.blur()
-        e.preventDefault()
+    <ClickAwayListener
+      onClickAway={() => {
+        if (isSortFilterOpen) setIsSortFilterOpen(false)
       }}
-      placeholder="Search links"
-      InputProps={{
-        classes: { input: classes.input },
-        startAdornment: (
-          <InputAdornment position="start">
-            <box-icon name="search" />
-          </InputAdornment>
-        ),
-      }}
-    />
+    >
+      <div className={classes.root}>
+        <TextField
+          autoFocus
+          className={classes.searchInput}
+          variant="outlined"
+          value={tableConfig.searchText}
+          onChange={changeSearchTextHandler}
+          onBlur={changeSearchTextHandler}
+          onKeyDown={(e) => {
+            switch (e.key) {
+              case 'Escape':
+                e.target.value = ''
+                clearSearchTextHandler()
+                break
+              case 'Enter':
+                break
+              default:
+                return
+            }
+            e.target.blur()
+            e.preventDefault()
+          }}
+          placeholder="Search links"
+          InputProps={{
+            classes: { input: classes.input },
+            startAdornment: (
+              <InputAdornment position="start">
+                <img src={searchIcon} alt="Search icon" />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  className={classes.filterSortButton}
+                  onClick={() => setIsSortFilterOpen(!isSortFilterOpen)}
+                >
+                  <img src={filterSortIcon} alt="Filter and sort icon" />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        <FilterSortPanel
+          isOpen={isSortFilterOpen}
+          onClose={() => setIsSortFilterOpen(false)}
+          tableConfig={tableConfig}
+        />
+        <Hidden mdUp>
+          <Backdrop className={classes.panelBackdrop} open={isSortFilterOpen} />
+        </Hidden>
+      </div>
+    </ClickAwayListener>
   )
 }, searchInputIsEqual)
 

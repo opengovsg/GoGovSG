@@ -1,6 +1,9 @@
 import React from 'react'
 import { TablePagination } from '@material-ui/core'
 import isMatch from 'lodash/isMatch'
+import useAppMargins from '../../../../AppMargins/appMargins'
+import PaginationActionComponent from './PaginationActionComponent'
+import useStyles from './styles'
 
 // Prevents re-render if pagination did not change.
 const paginationInputIsEqual = (prev, next) =>
@@ -10,6 +13,9 @@ const paginationInputIsEqual = (prev, next) =>
 
 const MemoTablePagination = React.memo(
   ({ urlCount, tableConfig, updateUrlTableConfig }) => {
+    const appMargins = useAppMargins()
+    const classes = useStyles({ appMargins })
+
     const updateTableIfChanged = (newConfig) => {
       if (!isMatch(tableConfig, newConfig)) {
         updateUrlTableConfig(newConfig)
@@ -22,8 +28,18 @@ const MemoTablePagination = React.memo(
       updateTableIfChanged({ numberOfRows: event.target.value, pageNumber: 0 })
     }
 
+    const pageCount = Math.ceil(urlCount / tableConfig.numberOfRows)
+
     return (
       <TablePagination
+        ActionsComponent={({ onChangePage, page }) => (
+          <PaginationActionComponent
+            pageCount={pageCount}
+            onChangePage={onChangePage}
+            page={page}
+          />
+        )}
+        labelRowsPerPage="Links per page"
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
         count={urlCount}
@@ -37,6 +53,14 @@ const MemoTablePagination = React.memo(
         }}
         onChangePage={changePageHandler}
         onChangeRowsPerPage={changeRowsPerPageHandler}
+        classes={{
+          spacer: classes.spacer,
+          toolbar: classes.toolbar,
+          caption: classes.caption,
+          select: classes.select,
+          selectIcon: classes.selectIcon,
+        }}
+        labelDisplayedRows={() => {}}
       />
     )
   },

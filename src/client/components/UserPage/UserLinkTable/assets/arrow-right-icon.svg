@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20">
+    <path fill="#BBB" d="M7.707 15.707L13.414 10 7.707 4.293 6.293 5.707 10.586 10l-4.293 4.293 1.414 1.414z"/>
+    <mask id="prefix__a" width="8" height="12" x="6" y="4" maskUnits="userSpaceOnUse">
+        <path fill="#fff" d="M7.707 15.707L13.414 10 7.707 4.293 6.293 5.707 10.586 10l-4.293 4.293 1.414 1.414z"/>
+    </mask>
+</svg>

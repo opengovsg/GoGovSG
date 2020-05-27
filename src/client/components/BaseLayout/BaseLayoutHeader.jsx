@@ -8,16 +8,21 @@ import {
   Toolbar,
   createStyles,
   makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.svg'
-import loginActions from '~/actions/login'
+import loginActions from '../../actions/login'
 import Section from '../Section'
+import logoutIcon from './assets/logout-icon.svg'
+import helpIcon from '../../assets/help-icon.svg'
+import feedbackIcon from './assets/feedback-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     appBar: {
-      zIndex: '1',
+      zIndex: 1,
       boxShadow: 'none',
       flexShrink: 1,
       paddingTop: theme.spacing(2),
@@ -43,10 +48,12 @@ const useStyles = makeStyles((theme) =>
     },
     appBarSignOutBtn: {
       fill: theme.palette.primary.main,
+      order: 10,
     },
     appBarSignInBtn: {
       width: '140px',
       minWidth: '90px',
+      order: 10,
     },
     toolbarLogo: {
       maxWidth: '130px',
@@ -69,6 +76,8 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
+  const theme = useTheme()
+  const isMobileVariant = useMediaQuery(theme.breakpoints.down('xs'))
   const classes = useStyles({ isLoggedIn })
 
   const headers = [
@@ -76,19 +85,20 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
-      xsHidden: true,
     },
     {
       text: 'FAQ',
       link: i18next.t('general.links.faq'),
       public: false,
-      xsHidden: true,
+      icon: helpIcon,
+      mobileOrder: 2,
     },
     {
       text: 'Help us improve',
       link: i18next.t('general.links.contact'),
       public: false,
-      xsHidden: true,
+      icon: feedbackIcon,
+      mobileOrder: 1,
     },
   ]
 
@@ -100,8 +110,10 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
       variant="text"
       className={classes.appBarSignOutBtn}
     >
-      <strong>Sign out&nbsp;</strong>
-      <box-icon name="log-out-circle" />
+      <Hidden xsDown>
+        <strong>Sign out&nbsp;</strong>
+      </Hidden>
+      <img src={logoutIcon} alt="Sign out" />
     </Button>
   ) : (
     <Button
@@ -126,17 +138,25 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
           {headers.map(
             (header) =>
               (header.public ? !isLoggedIn : isLoggedIn) && (
-                <Hidden xsDown={header.xsHidden} key={header.text}>
-                  <Button
-                    href={header.link}
-                    target="_blank"
-                    color="primary"
-                    size="large"
-                    variant="text"
-                  >
-                    {header.text}
-                  </Button>
-                </Hidden>
+                <Button
+                  href={header.link}
+                  target="_blank"
+                  color="primary"
+                  size="large"
+                  variant="text"
+                  key={header.text}
+                  style={
+                    isMobileVariant && header.mobileOrder
+                      ? { order: header.mobileOrder }
+                      : {}
+                  }
+                >
+                  {isMobileVariant && header.icon ? (
+                    <img src={header.icon} alt={header.text} />
+                  ) : (
+                    header.text
+                  )}
+                </Button>
               ),
           )}
           {appBarBtn}

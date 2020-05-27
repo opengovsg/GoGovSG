@@ -338,6 +338,8 @@ router.get('/url', validateUrlRetrieval, async (req, res) => {
     offset = 0,
     orderBy = 'updatedAt',
     sortDirection = 'desc',
+    isFile,
+    state,
   } = req.query
   const queryConditions = {
     limit,
@@ -346,6 +348,8 @@ router.get('/url', validateUrlRetrieval, async (req, res) => {
     sortDirection,
     searchText,
     userId,
+    state,
+    isFile,
   }
 
   try {

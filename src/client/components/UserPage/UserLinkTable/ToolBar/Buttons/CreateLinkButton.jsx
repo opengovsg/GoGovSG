@@ -4,13 +4,13 @@ import { createStyles, makeStyles } from '@material-ui/core'
 
 import userActions from '../../../../../actions/user'
 import ContainedIconButton from './templates/ContainedIconButton'
-import useMinifiedActions from '../util/useMinifiedActions'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import OvalContainedButton from './templates/OvalContainedButton'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     createLinkButtonContainer: {
-      marginLeft: theme.spacing(2.5),
+      marginLeft: theme.spacing(1.5),
     },
   }),
 )
