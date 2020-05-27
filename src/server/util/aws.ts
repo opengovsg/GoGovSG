@@ -1,7 +1,6 @@
 import { AWSError, S3 } from 'aws-sdk'
 import { PromiseResult } from 'aws-sdk/lib/request'
 import { injectable } from 'inversify'
-import { parse } from 'url'
 import { s3Bucket } from '../config'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
@@ -22,12 +21,12 @@ export interface S3Interface {
     key: string,
     fileType: string,
   ) => Promise<PromiseResult<S3.PutObjectOutput, AWSError>>
-  isValidS3Shortlink: (url: string, shortUrl: string) => boolean
+  buildFileLongUrl: (shortUrl: string) => string
 }
 
 @injectable()
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
-  ["setS3ObjectACL", "uploadFileToS3", "isValidS3Shortlink"] }] */
+  ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl"] }] */
 export class S3ServerSide implements S3Interface {
   setS3ObjectACL(
     key: string,
@@ -56,9 +55,7 @@ export class S3ServerSide implements S3Interface {
     return s3.putObject(params).promise()
   }
 
-  isValidS3Shortlink(url: string, shortUrl: string): boolean {
-    const parsedUrl = parse(url)
-    const { protocol, host, path } = parsedUrl
-    return protocol === 'https:' && host === s3Bucket && path === `/${shortUrl}`
+  buildFileLongUrl(shortUrl: string): string {
+    return `https://${s3Bucket}/${shortUrl}`
   }
 }

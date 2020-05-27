@@ -65,6 +65,21 @@ const stateEditSchema = Joi.object({
 })
 
 /**
+ * Place incoming file into the request body so that it can be
+ * validated together with the other fields by Joi.
+ */
+function preprocessPotentialIncomingFile(
+  req: Express.Request,
+  _: Express.Response,
+  next: Express.NextFunction,
+) {
+  if (req.files) {
+    req.body.files = req.files
+  }
+  next()
+}
+
+/**
  * Endpoint for a user to create a short URL. A short URL can either point to
  * a long URL, or a file provided by the user.
  *
@@ -77,9 +92,10 @@ const stateEditSchema = Joi.object({
 router.post(
   '/url',
   fileUploadMiddleware,
+  preprocessPotentialIncomingFile,
   validator.body(urlSchema),
   async (req, res) => {
-    const { isFile, userId, longUrl, shortUrl } = req.body
+    const { userId, longUrl, shortUrl } = req.body
     const file = req.files?.file
 
     try {
@@ -97,20 +113,20 @@ router.post(
       }
 
       // Success
+      const { buildFileLongUrl, uploadFileToS3 } = container.get<S3Interface>(
+        DependencyIds.s3,
+      )
       const result = await transaction(async (t) => {
         const url = Url.create(
           {
             userId: user.id,
-            longUrl,
+            longUrl: file ? buildFileLongUrl(shortUrl) : longUrl,
             shortUrl,
-            isFile: !!isFile,
+            isFile: !!file,
           },
           { transaction: t },
         )
-        if (isFile && file && !Array.isArray(file)) {
-          const { uploadFileToS3 } = container.get<S3Interface>(
-            DependencyIds.s3,
-          )
+        if (file && !Array.isArray(file)) {
           await uploadFileToS3(file.data, shortUrl, file.mimetype)
         }
         return url
@@ -183,6 +199,7 @@ router.patch('/url/ownership', async (req, res) => {
 router.patch(
   '/url/edit',
   fileUploadMiddleware,
+  preprocessPotentialIncomingFile,
   validator.body(urlSchema),
   async (req, res) => {
     const { userId, longUrl, shortUrl } = req.body
