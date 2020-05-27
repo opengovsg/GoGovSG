@@ -1,5 +1,7 @@
 import Express from 'express'
 import fileUpload from 'express-fileupload'
+import * as Joi from '@hapi/joi'
+import { createValidator } from 'express-joi-validation'
 import jsonMessage from '../util/json'
 import { User, UserType } from '../models/user'
 import { Url } from '../models/url'
@@ -28,24 +30,11 @@ const fileUploadMiddleware = fileUpload({
   },
 })
 
-/**
- * Make sure all parameters needed for user URL retrieval API are present.
- */
-function validateUrlRetrieval(
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction,
-) {
-  const { userId } = req.body
+const validator = createValidator()
 
-  if (!userId) {
-    res.badRequest(
-      jsonMessage('Some or all required arguments missing: userId'),
-    )
-  }
-
-  next()
-}
+const urlRetrievalSchema = Joi.object({
+  userId: Joi.number().required(),
+})
 
 /**
  * Make sure all parameters needed for the URL creation/edit API are present.
@@ -344,7 +333,7 @@ router.patch('/url', validateState, async (req, res) => {
 /**
  * Endpoint for a user to retrieve their own URLs based on the query conditions.
  */
-router.get('/url', validateUrlRetrieval, async (req, res) => {
+router.get('/url', validator.body(urlRetrievalSchema), async (req, res) => {
   const { userId } = req.body
   let { limit = 10000, searchText = '' } = req.query
   limit = Math.min(10000, limit)
