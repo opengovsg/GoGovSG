@@ -4,6 +4,7 @@ import fs from 'fs'
 import QRCode from 'qrcode'
 import { resolve } from 'path'
 import util from 'util'
+import sharp from 'sharp'
 
 const { JSDOM } = jsdom
 
@@ -53,12 +54,23 @@ async function makeGoQrCode(url: string) {
   return body.html()
 }
 
-// Takes in a svg string and downloads it as svg locally.
 function downloadSvgFromString(svgString: string) {
   fs.writeFileSync(`out.svg`, svgString)
+}
+
+function downloadPngFromString(svgString: string, size: number) {
+  const buffer = Buffer.from(svgString)
+  sharp(buffer).resize(size, size).png().toFile(`out.png`)
+}
+
+function downloadJpegFromString(svgString: string, size: number) {
+  const buffer = Buffer.from(svgString)
+  sharp(buffer).resize(size, size).jpeg().toFile(`out.jpg`)
 }
 
 // Create and downloads a qr code locally.
 makeGoQrCode('https://go.gov.sg').then((svgString) => {
   downloadSvgFromString(svgString)
+  downloadPngFromString(svgString, 500)
+  downloadJpegFromString(svgString, 500)
 })
