@@ -26,6 +26,9 @@ async function makeQrCode(url: string): Promise<string> {
     type: 'svg',
     margin: 1,
     errorCorrectionLevel: 'H',
+    color: {
+      dark: '#384A51',
+    },
   })
 }
 
