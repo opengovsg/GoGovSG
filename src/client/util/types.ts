@@ -44,7 +44,7 @@ export const loginFormVariants = {
       resendEnabled: false,
     },
   },
-  isEmailView(variant) {
+  isEmailView(variant: string) {
     return (
       variant === this.types.EMAIL_PENDING || variant === this.types.EMAIL_READY
     )

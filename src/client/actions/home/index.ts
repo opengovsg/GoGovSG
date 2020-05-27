@@ -1,9 +1,22 @@
-import { LOAD_STATS, SET_LINKS_TO_ROTATE } from '~/actions/types'
-import { get } from '../util/requests'
+import { Dispatch } from 'redux'
+import {
+  LOAD_STATS,
+  LoadStatsAction,
+  SET_LINKS_TO_ROTATE,
+  SetLinksToRotateAction,
+} from './types'
+import { get } from '../../util/requests'
+import { LinksToRotate } from '../../reducers/home/types'
+import { AllActions, GetReduxState } from '../types'
 
-const setLinksToRotate = (payload) => ({ type: SET_LINKS_TO_ROTATE, payload })
+const setLinksToRotate: (payload: LinksToRotate) => SetLinksToRotateAction = (
+  payload,
+) => ({ type: SET_LINKS_TO_ROTATE, payload })
 
-const getLinksToRotate = () => (dispatch, getState) => {
+const getLinksToRotate = () => (
+  dispatch: Dispatch<AllActions>,
+  getState: GetReduxState,
+) => {
   const { home } = getState()
   const { linksToRotate } = home
   if (!linksToRotate) {
@@ -12,7 +25,7 @@ const getLinksToRotate = () => (dispatch, getState) => {
         response.text().then((extractedString) => {
           if (extractedString) {
             const links = extractedString.split(',').map((link) => link.trim())
-            dispatch(setLinksToRotate(links))
+            dispatch<SetLinksToRotateAction>(setLinksToRotate(links))
           }
         })
       }
@@ -20,7 +33,10 @@ const getLinksToRotate = () => (dispatch, getState) => {
   }
 }
 
-const loadStats = () => (dispatch, getState) => {
+const loadStats = () => (
+  dispatch: Dispatch<AllActions>,
+  getState: GetReduxState,
+) => {
   const {
     home: { statistics },
   } = getState()
@@ -32,7 +48,7 @@ const loadStats = () => (dispatch, getState) => {
     get('/api/stats').then((response) => {
       if (response.ok) {
         response.json().then((stats) => {
-          dispatch({
+          dispatch<LoadStatsAction>({
             type: LOAD_STATS,
             payload: stats,
           })

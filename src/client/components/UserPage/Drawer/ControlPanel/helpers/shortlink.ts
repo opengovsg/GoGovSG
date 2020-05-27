@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import userActions from '../../../../../actions/user'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
+import { UrlState } from '../../../../../reducers/user/types'
 
 export type LinkState = {
   clicks: number
@@ -10,7 +11,7 @@ export type LinkState = {
   isFile: boolean
   longUrl: string
   shortUrl: string
-  state: string
+  state: UrlState
   updatedAt: string
   userId: number
 }

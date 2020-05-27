@@ -11,10 +11,12 @@ import {
   SET_URL_TABLE_CONFIG,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
+  UserActionType,
   WIPE_USER_STATE,
-} from '../actions/types'
+} from '../../actions/user/types'
+import { UserState } from './types'
 
-const initialState = {
+const initialState: UserState = {
   initialised: false,
   urls: [],
   isFetchingUrls: false,
@@ -32,34 +34,36 @@ const initialState = {
   urlCount: 0,
 }
 
-const user = (state = initialState, action) => {
+const user: (state: UserState, action: UserActionType) => UserState = (
+  state = initialState,
+  action,
+) => {
   let nextState = {}
-  const { payload } = action
 
   switch (action.type) {
     case IS_FETCHING_URLS:
       nextState = {
-        isFetchingUrls: payload,
+        isFetchingUrls: action.payload,
       }
       break
     case GET_URLS_FOR_USER_SUCCESS:
       nextState = {
         initialised: true,
-        urls: payload,
+        urls: action.payload,
       }
       break
     case SET_SHORT_URL:
       nextState = {
-        shortUrl: payload,
+        shortUrl: action.payload,
       }
       break
     case SET_LONG_URL:
       nextState = {
-        longUrl: payload,
+        longUrl: action.payload,
       }
       break
     case SET_EDITED_LONG_URL: {
-      const { editedLongUrl, shortUrl } = payload
+      const { editedLongUrl, shortUrl } = action.payload
       nextState = {
         urls: state.urls.map((url) => {
           if (shortUrl !== url.shortUrl) {
@@ -75,7 +79,7 @@ const user = (state = initialState, action) => {
     }
     case SET_RANDOM_SHORT_URL:
       nextState = {
-        shortUrl: payload,
+        shortUrl: action.payload,
       }
       break
     case RESET_USER_STATE:
@@ -90,7 +94,7 @@ const user = (state = initialState, action) => {
       }
       break
     case TOGGLE_URL_STATE_SUCCESS: {
-      const { shortUrl, toState } = payload
+      const { shortUrl, toState } = action.payload
 
       nextState = {
         urls: state.urls.map((url) => {
@@ -119,13 +123,13 @@ const user = (state = initialState, action) => {
       nextState = {
         tableConfig: {
           ...state.tableConfig,
-          ...payload,
+          ...action.payload,
         },
       }
       break
     case UPDATE_URL_COUNT:
       nextState = {
-        urlCount: payload,
+        urlCount: action.payload,
       }
       break
     default:

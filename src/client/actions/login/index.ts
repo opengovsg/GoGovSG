@@ -1,72 +1,107 @@
-import { Minimatch } from 'minimatch'
+import { IMinimatch, Minimatch } from 'minimatch'
+import { Dispatch } from 'redux'
 import {
   GET_OTP_EMAIL_ERROR,
   GET_OTP_EMAIL_PENDING,
   GET_OTP_EMAIL_SUCCESS,
+  GetOtpEmailErrorAction,
+  GetOtpEmailPendingAction,
+  GetOtpEmailSuccessAction,
   IS_LOGGED_IN_SUCCESS,
   IS_LOGGED_OUT,
+  IsLoggedInSuccessAction,
+  IsLoggedOutAction,
+  LoginActionType,
   RESEND_OTP_DISABLED,
   RESEND_OTP_PENDING,
+  ResendOtpDisabledAction,
+  ResendOtpPendingAction,
   SET_EMAIL,
   SET_EMAIL_VALIDATOR,
   SET_OTP,
+  SetEmailAction,
+  SetEmailValidatorAction,
+  SetOtpAction,
   VERIFY_OTP_ERROR,
   VERIFY_OTP_PENDING,
-} from '~/actions/types'
-import { loginFormVariants } from '~/util/types'
-import { get, postJson } from '~/util/requests'
-import userActions from '~/actions/user'
-import rootActions from '~/actions/root'
-import { defaultEmailValidationGlobExpression } from '~/reducers/login'
+  VerifyOtpErrorAction,
+  VerifyOtpPendingAction,
+} from './types'
+import { loginFormVariants } from '../../util/types'
+import { get, postJson } from '../../util/requests'
+import userActions from '../user'
+import rootActions from '../root'
+import { defaultEmailValidationGlobExpression } from '../../reducers/login'
+import { UserActionType } from '../user/types'
+import { AllActions, AllThunkDispatch, GetReduxState } from '../types'
 
-const isGetOTPSuccess = (email) => ({
+const isGetOTPSuccess: (email: string) => GetOtpEmailSuccessAction = (
+  email,
+) => ({
   type: GET_OTP_EMAIL_SUCCESS,
   payload: email,
 })
 
-const isGetOTPPending = () => ({
+const isGetOTPPending: () => GetOtpEmailPendingAction = () => ({
   type: GET_OTP_EMAIL_PENDING,
 })
 
-const isGetOTPError = (errorMessage) => ({
+const isGetOTPError: (errorMessage?: string) => GetOtpEmailErrorAction = (
+  errorMessage,
+) => ({
   type: GET_OTP_EMAIL_ERROR,
   payload: errorMessage,
 })
 
-const setEmail = (payload) => ({ type: SET_EMAIL, payload })
+const setEmail: (payload: string) => SetEmailAction = (payload) => ({
+  type: SET_EMAIL,
+  payload,
+})
 
-const setEmailValidator = (payload) => ({ type: SET_EMAIL_VALIDATOR, payload })
+const setEmailValidator: (payload: IMinimatch) => SetEmailValidatorAction = (
+  payload,
+) => ({ type: SET_EMAIL_VALIDATOR, payload })
 
-const setOTP = (payload) => ({ type: SET_OTP, payload })
+const setOTP: (payload: string) => SetOtpAction = (payload) => ({
+  type: SET_OTP,
+  payload,
+})
 
-const isVerifyOTPError = () => ({
+const isVerifyOTPError: () => VerifyOtpErrorAction = () => ({
   type: VERIFY_OTP_ERROR,
 })
 
-const isVerifyOTPPending = () => ({
+const isVerifyOTPPending: () => VerifyOtpPendingAction = () => ({
   type: VERIFY_OTP_PENDING,
 })
 
 const isResendOTPSuccess = isGetOTPSuccess
 
-const isResendOTPPending = () => ({
+const isResendOTPPending: () => ResendOtpPendingAction = () => ({
   type: RESEND_OTP_PENDING,
 })
 
 const isResendOTPError = isVerifyOTPError
 
-const isResendOTPDisabled = (errorMessage) => ({
+const isResendOTPDisabled: (
+  errorMessage?: string,
+) => ResendOtpDisabledAction = (errorMessage) => ({
   type: RESEND_OTP_DISABLED,
   payload: errorMessage,
 })
 
-const isLoggedInSuccess = (user) => ({
+const isLoggedInSuccess: (user: { id: string }) => IsLoggedInSuccessAction = (
+  user,
+) => ({
   type: IS_LOGGED_IN_SUCCESS,
   payload: user,
 })
-const isLoggedOut = () => ({ type: IS_LOGGED_OUT })
+const isLoggedOut: () => IsLoggedOutAction = () => ({ type: IS_LOGGED_OUT })
 
-const getEmailValidationGlobExpression = () => (dispatch, getState) => {
+const getEmailValidationGlobExpression = () => (
+  dispatch: Dispatch<LoginActionType>,
+  getState: GetReduxState,
+) => {
   const { login } = getState()
   const { emailValidator } = login
   if (emailValidator !== defaultEmailValidationGlobExpression) return
@@ -88,14 +123,17 @@ const getEmailValidationGlobExpression = () => (dispatch, getState) => {
 /**
  * Called when user enters email and waits for OTP.
  */
-const getOTPEmail = () => (dispatch, getState) => {
+const getOTPEmail = () => (
+  dispatch: Dispatch<AllActions>,
+  getState: GetReduxState,
+) => {
   dispatch(rootActions.closeSnackbar())
 
   const { login } = getState()
   const { email, formVariant } = login
-  let pendingAction
-  let successAction
-  let errorAction
+  let pendingAction: () => void
+  let successAction: () => void
+  let errorAction: () => void
 
   const disableResendForDuration = (duration = 20000) => {
     dispatch(isResendOTPDisabled())
@@ -136,7 +174,7 @@ const getOTPEmail = () => (dispatch, getState) => {
 }
 
 // Checks if there is an existing session.
-const isLoggedIn = () => (dispatch) =>
+const isLoggedIn = () => (dispatch: Dispatch<LoginActionType>) =>
   get('/api/login/isLoggedIn').then((response) => {
     const isOk = response.ok
     return response.json().then((json) => {
@@ -144,8 +182,7 @@ const isLoggedIn = () => (dispatch) =>
         const { user } = json
         dispatch(isLoggedInSuccess(user))
       } else {
-        const { message } = json
-        dispatch(isLoggedOut(message))
+        dispatch(isLoggedOut())
       }
     })
   })
@@ -153,7 +190,10 @@ const isLoggedIn = () => (dispatch) =>
 /**
  * Called when user enters OTP and submits for verification.
  */
-const verifyOTP = () => (dispatch, getState) => {
+const verifyOTP = () => (
+  dispatch: AllThunkDispatch,
+  getState: GetReduxState,
+) => {
   dispatch(rootActions.closeSnackbar())
 
   const { login } = getState()
@@ -175,7 +215,7 @@ const verifyOTP = () => (dispatch, getState) => {
   })
 }
 
-const logout = () => (dispatch) =>
+const logout = () => (dispatch: Dispatch<LoginActionType | UserActionType>) =>
   get('/api/logout').then((response) => {
     if (response.ok) {
       dispatch(isLoggedOut())
