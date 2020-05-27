@@ -94,33 +94,11 @@ function validateUrls(
   next()
 }
 
-/**
- * Make sure all parameters needed for the URL state toggling API are present.
- */
-function validateState(
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction,
-) {
-  const { userId, shortUrl, state } = req.body
-
-  if (!(userId && shortUrl && state)) {
-    res.badRequest(
-      jsonMessage(
-        'Some or all required arguments are missing: userId, shortUrl, state.',
-      ),
-    )
-    return
-  }
-
-  if (![ACTIVE, INACTIVE].includes(state)) {
-    res.badRequest(
-      jsonMessage(`state parameter must be one of {${ACTIVE}, ${INACTIVE}}.`),
-    )
-  }
-
-  next()
-}
+const stateEditSchema = Joi.object({
+  userId: Joi.number().required(),
+  shortUrl: Joi.string().required(),
+  state: Joi.string().allow(ACTIVE, INACTIVE).only().required(),
+})
 
 /**
  * Endpoint for a user to create a short URL. A short URL can either point to
@@ -282,7 +260,7 @@ router.patch(
 /**
  * Endpoint for user to render a URL active/inactive.
  */
-router.patch('/url', validateState, async (req, res) => {
+router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
   const { userId, shortUrl, state } = req.body
 
   try {
