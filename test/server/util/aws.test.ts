@@ -9,22 +9,10 @@ describe('S3 link validator', () => {
   beforeEach(() => {
     container.bind<S3Interface>(DependencyIds.s3).to(S3ServerSide)
   })
-  it('should return true when provided with a valid link', () => {
+  it('should return correct file link when provided with a short url', () => {
     const shortUrl = 'test'
     const validLink = `https://file-staging.go.gov.sg/${shortUrl}`
-    const { isValidS3Shortlink } = container.get<S3Interface>(DependencyIds.s3)
-    expect(isValidS3Shortlink(validLink, shortUrl)).toBe(true)
-  })
-  it('should return false when given correct bucket link but incorrect shortlink', () => {
-    const shortUrl = 'test'
-    const invalidLink = `https://file-staging.go.gov.sg/${shortUrl}1`
-    const { isValidS3Shortlink } = container.get<S3Interface>(DependencyIds.s3)
-    expect(isValidS3Shortlink(invalidLink, shortUrl)).toBe(false)
-  })
-  it('should return false when given correct shortlink but incorrect bucket link', () => {
-    const shortUrl = 'test'
-    const invalidLink = `https://file-staging-incorrect.go.gov.sg/${shortUrl}`
-    const { isValidS3Shortlink } = container.get<S3Interface>(DependencyIds.s3)
-    expect(isValidS3Shortlink(invalidLink, shortUrl)).toBe(false)
+    const { buildFileLongUrl } = container.get<S3Interface>(DependencyIds.s3)
+    expect(buildFileLongUrl(shortUrl)).toBe(validLink)
   })
 })
