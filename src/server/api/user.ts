@@ -17,10 +17,6 @@ import { container } from '../util/inversify'
 
 const { Public, Private } = FileVisibility
 
-const { isValidS3Shortlink, setS3ObjectACL, uploadFileToS3 } = container.get<
-  S3Interface
->(DependencyIds.s3)
-
 const router = Express.Router()
 
 const fileUploadMiddleware = fileUpload({
@@ -215,6 +211,9 @@ router.patch(
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
         } else if (file && !Array.isArray(file)) {
+          const { uploadFileToS3 } = container.get<S3Interface>(
+            DependencyIds.s3,
+          )
           await uploadFileToS3(file.data, shortUrl, file.mimetype)
         }
       })
@@ -260,6 +259,7 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
     await transaction(async (t) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
+        const { setS3ObjectACL } = container.get<S3Interface>(DependencyIds.s3)
         // Toggle the ACL of the S3 object
         await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
       }
