@@ -5,6 +5,7 @@ import QRCode from 'qrcode'
 import { resolve } from 'path'
 import util from 'util'
 import sharp from 'sharp'
+import filenamify from 'filenamify'
 
 const { JSDOM } = jsdom
 
@@ -97,15 +98,16 @@ export default async function createGoQrCode(
 // Generates and download a QR code using a specified url and format.
 export async function downloadGoQrCode(url: string, format: Format) {
   const qrcode = await createGoQrCode(url, format)
+  const outFileName = filenamify(url)
   switch (format) {
     case Format.SvgString:
-      fs.writeFileSync('out.svg', qrcode)
+      fs.writeFileSync(`${outFileName}.svg`, qrcode)
       break
     case Format.PngString:
-      sharp(qrcode).toFile('out.png')
+      sharp(qrcode).toFile(`${outFileName}.png`)
       break
     case Format.JpegString:
-      sharp(qrcode).toFile('out.jpg')
+      sharp(qrcode).toFile(`${outFileName}.jpg`)
       break
     default:
       throw Error('Invalid format')
