@@ -36,63 +36,31 @@ const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
 
-/**
- * Make sure all parameters needed for the URL creation/edit API are present.
- */
-function validateUrls(
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction,
-) {
-  const { userId, longUrl, shortUrl, isFile } = req.body
-
-  if (!(userId && longUrl && shortUrl)) {
-    res.badRequest(
-      jsonMessage(
-        'Some or all of required arguments are missing: userId, longUrl, shortUrl',
-      ),
-    )
-    return
-  }
-
-  // Test for https
-  if (!isHttps(longUrl)) {
-    res.badRequest(jsonMessage('URL must start with https://'))
-    return
-  }
-
-  // Test for malformed short link
-  if (!isValidShortUrl(shortUrl)) {
-    res.badRequest(
-      jsonMessage(
-        'Short links should only consist of lowercase letters, numbers and hyphens.',
-      ),
-    )
-    return
-  }
-
-  // Do not allow URLs to blacklisted sites
-  if (blacklist.some((bl) => longUrl.includes(bl))) {
-    res.badRequest(
-      jsonMessage('Creation of URLs to link shortener sites prohibited.'),
-    )
-    return
-  }
-
-  // An upload request must contain a file
-  if (isFile) {
-    if (!req.files?.file) {
-      res.badRequest(jsonMessage('Missing file to upload.'))
-      return
+const urlSchema = Joi.object({
+  userId: Joi.number().required(),
+  shortUrl: Joi.string()
+    .custom((url: string, helpers) => {
+      if (!isValidShortUrl(url)) {
+        return helpers.message({ message: 'Short url format is invalid.' })
+      }
+      return url
+    })
+    .required(),
+  longUrl: Joi.string().custom((url: string, helpers) => {
+    if (!isHttps(url)) {
+      return helpers.message({ message: 'Long url must start with https://' })
     }
-    if (!isValidS3Shortlink(longUrl, shortUrl)) {
-      res.badRequest(jsonMessage('File links must point to the S3 object'))
-      return
+    if (blacklist.some((bl) => url.includes(bl))) {
+      return helpers.message({
+        message: 'Creation of URLs to link shortener sites prohibited.',
+      })
     }
-  }
-
-  next()
-}
+    return url
+  }),
+  files: Joi.object({
+    file: Joi.object().keys().required(),
+  }),
+}).xor('longUrl', 'files')
 
 const stateEditSchema = Joi.object({
   userId: Joi.number().required(),
@@ -110,47 +78,55 @@ const stateEditSchema = Joi.object({
  * example, a file upload request for the shortUrl named `test` should have `longUrl` set
  * to `https://file[-staging].go.gov.sg/test`.
  */
-router.post('/url', fileUploadMiddleware, validateUrls, async (req, res) => {
-  const { isFile, userId, longUrl, shortUrl } = req.body
-  const file = req.files?.file
+router.post(
+  '/url',
+  fileUploadMiddleware,
+  validator.body(urlSchema),
+  async (req, res) => {
+    const { isFile, userId, longUrl, shortUrl } = req.body
+    const file = req.files?.file
 
-  try {
-    const user = await User.findByPk(userId)
+    try {
+      const user = await User.findByPk(userId)
 
-    if (!user) {
-      res.notFound(jsonMessage('User not found'))
-      return
-    }
-
-    const existsShortUrl = await Url.findOne({ where: { shortUrl } })
-    if (existsShortUrl) {
-      res.badRequest(jsonMessage(`Short link "${shortUrl}" already exists`))
-      return
-    }
-
-    // Success
-    const result = await transaction(async (t) => {
-      const url = Url.create(
-        {
-          userId: user.id,
-          longUrl,
-          shortUrl,
-          isFile: !!isFile,
-        },
-        { transaction: t },
-      )
-      if (isFile && file && !Array.isArray(file)) {
-        await uploadFileToS3(file.data, shortUrl, file.mimetype)
+      if (!user) {
+        res.notFound(jsonMessage('User not found'))
+        return
       }
-      return url
-    })
 
-    res.ok(result)
-  } catch (error) {
-    logger.error(`Error creating short URL:\t${error}`)
-    res.badRequest(jsonMessage('Invalid URL.'))
-  }
-})
+      const existsShortUrl = await Url.findOne({ where: { shortUrl } })
+      if (existsShortUrl) {
+        res.badRequest(jsonMessage(`Short link "${shortUrl}" already exists`))
+        return
+      }
+
+      // Success
+      const result = await transaction(async (t) => {
+        const url = Url.create(
+          {
+            userId: user.id,
+            longUrl,
+            shortUrl,
+            isFile: !!isFile,
+          },
+          { transaction: t },
+        )
+        if (isFile && file && !Array.isArray(file)) {
+          const { uploadFileToS3 } = container.get<S3Interface>(
+            DependencyIds.s3,
+          )
+          await uploadFileToS3(file.data, shortUrl, file.mimetype)
+        }
+        return url
+      })
+
+      res.ok(result)
+    } catch (error) {
+      logger.error(`Error creating short URL:\t${error}`)
+      res.badRequest(jsonMessage('Invalid URL.'))
+    }
+  },
+)
 
 router.patch('/url/ownership', async (req, res) => {
   const { userId, shortUrl, newUserEmail } = req.body
@@ -211,7 +187,7 @@ router.patch('/url/ownership', async (req, res) => {
 router.patch(
   '/url/edit',
   fileUploadMiddleware,
-  validateUrls,
+  validator.body(urlSchema),
   async (req, res) => {
     const { userId, longUrl, shortUrl } = req.body
     const file = req.files?.file
