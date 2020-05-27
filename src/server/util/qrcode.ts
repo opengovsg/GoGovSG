@@ -8,22 +8,33 @@ import sharp from 'sharp'
 
 const { JSDOM } = jsdom
 
-const QR_CODE_DIMENSIONS = 1000
+export const QR_CODE_DIMENSIONS = 1000
 
 const readFile = util.promisify(fs.readFile)
 
-async function makeGoQrCode(url: string) {
-  const qrString = await QRCode.toString(url, {
+// Available formats for download.
+export enum Format {
+  SvgString,
+  PngString,
+  JpegString,
+}
+
+// Build base QR code string without logo.
+async function makeQrCode(url: string): Promise<string> {
+  return QRCode.toString(url, {
     type: 'svg',
     margin: 1,
     errorCorrectionLevel: 'H',
   })
+}
 
+// Build QR code string with GoGovSg logo.
+async function makeGoQrCode(url: string): Promise<Buffer> {
+  const qrString = await makeQrCode(url)
   const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
 
-  const filePath = resolve(__dirname, 'assets/qrlogo.svg')
-
   // Read the logo as a string.
+  const filePath = resolve(__dirname, 'assets/qrlogo.svg')
   const contents = await readFile(filePath, 'utf-8')
 
   const body = select(dom.window.document.querySelector('body'))
@@ -51,26 +62,52 @@ async function makeGoQrCode(url: string) {
     .html(contents)
 
   // Return the result svg as string.
-  return body.html()
+  return Buffer.from(body.html())
 }
 
-function downloadSvgFromString(svgString: string) {
-  fs.writeFileSync(`out.svg`, svgString)
+// Build QR code of specified file format as a string or buffer.
+export default async function createGoQrCode(
+  url: string,
+  format: Format,
+): Promise<Buffer> {
+  const qrSvgString = await makeGoQrCode(url)
+  switch (format) {
+    case Format.SvgString: {
+      return qrSvgString
+    }
+    case Format.PngString: {
+      const buffer = Buffer.from(qrSvgString)
+      return sharp(buffer)
+        .resize(QR_CODE_DIMENSIONS, QR_CODE_DIMENSIONS)
+        .png()
+        .toBuffer()
+    }
+    case Format.JpegString: {
+      const buffer = Buffer.from(qrSvgString)
+      return sharp(buffer)
+        .resize(QR_CODE_DIMENSIONS, QR_CODE_DIMENSIONS)
+        .jpeg()
+        .toBuffer()
+    }
+    default:
+      throw Error('Invalid format')
+  }
 }
 
-function downloadPngFromString(svgString: string, size: number) {
-  const buffer = Buffer.from(svgString)
-  sharp(buffer).resize(size, size).png().toFile(`out.png`)
+// Generates and download a QR code using a specified url and format.
+export async function downloadGoQrCode(url: string, format: Format) {
+  const qrcode = await createGoQrCode(url, format)
+  switch (format) {
+    case Format.SvgString:
+      fs.writeFileSync('out.svg', qrcode)
+      break
+    case Format.PngString:
+      sharp(qrcode).toFile('out.png')
+      break
+    case Format.JpegString:
+      sharp(qrcode).toFile('out.jpg')
+      break
+    default:
+      throw Error('Invalid format')
+  }
 }
-
-function downloadJpegFromString(svgString: string, size: number) {
-  const buffer = Buffer.from(svgString)
-  sharp(buffer).resize(size, size).jpeg().toFile(`out.jpg`)
-}
-
-// Create and downloads a qr code locally.
-makeGoQrCode('https://go.gov.sg').then((svgString) => {
-  downloadSvgFromString(svgString)
-  downloadPngFromString(svgString, 500)
-  downloadJpegFromString(svgString, 500)
-})
