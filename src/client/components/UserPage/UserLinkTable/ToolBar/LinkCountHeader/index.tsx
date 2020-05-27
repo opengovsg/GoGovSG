@@ -49,7 +49,7 @@ export default function LinkCountHeader() {
       variant={isMinified ? 'h4' : 'h3'}
       color="primary"
     >
-      {urlCount} {` ${currentDescriptor}`}
+      {`${urlCount} ${currentDescriptor}`}
     </Typography>
   )
 }
