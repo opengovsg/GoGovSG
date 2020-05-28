@@ -33,7 +33,7 @@ import userActions from '../user'
 import rootActions from '../root'
 import { defaultEmailValidationGlobExpression } from '../../reducers/login'
 import { WipeUserStateAction } from '../user/types'
-import { AllActions, GetReduxState } from '../types'
+import { GetReduxState } from '../types'
 import { GoGovReduxState } from '../../reducers/types'
 import {
   CloseSnackbarAction,

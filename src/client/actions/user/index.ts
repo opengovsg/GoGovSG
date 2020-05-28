@@ -50,7 +50,7 @@ import {
   UrlType,
   UserState,
 } from '../../reducers/user/types'
-import { AllActions, AllThunkDispatch, GetReduxState } from '../types'
+import { GetReduxState } from '../types'
 import { GoGovReduxState } from '../../reducers/types'
 
 const isFetchingUrls: (payload: boolean) => IsFetchingUrlsAction = (
