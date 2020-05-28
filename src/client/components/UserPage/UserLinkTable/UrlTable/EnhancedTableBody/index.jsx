@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => {
         width: '61%',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         width: '100%',
         padding: theme.spacing(2, 2, 0, 3),
         paddingLeft: (props) => props.appMargins,
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) => {
         minWidth: '100px',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         padding: theme.spacing(1, 2, 2, 3),
         width: '30%',
         minWidth: '110px',
@@ -81,6 +83,7 @@ const useStyles = makeStyles((theme) => {
         minWidth: '125px',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 1),
         width: '35%',
         minWidth: '100px',
@@ -92,6 +95,7 @@ const useStyles = makeStyles((theme) => {
         minWidth: '180px',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 2),
         width: '20%',
         minWidth: '100px',
