@@ -8,7 +8,6 @@ import { withStyles } from '@material-ui/core/styles'
 import CloseIcon from './widgets/CloseIcon'
 import rootActions from '~/actions/root'
 import { snackbarVariants } from '~/util/types'
-import 'boxicons'
 
 const snackbarStyle = (theme) => ({
   error: {
