@@ -1,6 +1,8 @@
 export type UrlType = {
   shortUrl: string
   longUrl: string
+  updatedAt: string
+  editedLongUrl: string
 }
 
 export type UserState = {

@@ -88,7 +88,12 @@ const updateUrlCount: (urlCount: number) => UpdateUrlCountAction = (
 })
 
 // retrieve urls based on query object
-const getUrls: (queryObj: object) => any = (queryObj) => {
+const getUrls: (
+  queryObj: object,
+) => Promise<{
+  json: { urls: Array<UrlType>; count: number; message?: string }
+  isOk: boolean
+}> = (queryObj) => {
   const query = querystring.stringify(queryObj)
 
   return get(`/api/user/url?${query}`).then((response) => {
@@ -138,7 +143,7 @@ const getUrlsForUser = (): ThunkAction<
   const { json, isOk } = await getUrls(queryObj)
 
   if (isOk) {
-    json.urls.forEach((url: any) => {
+    json.urls.forEach((url: UrlType) => {
       url.updatedAt = moment(url.updatedAt) // eslint-disable-line no-param-reassign
         .tz('Singapore')
         .format('D MMM YYYY')
@@ -148,7 +153,9 @@ const getUrlsForUser = (): ThunkAction<
     dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
     dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
   } else {
-    dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage(json.message || 'Error fetching URLs'),
+    )
   }
   dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
 }
