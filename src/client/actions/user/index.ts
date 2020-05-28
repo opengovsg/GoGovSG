@@ -1,7 +1,6 @@
 import moment from 'moment-timezone'
 
 import querystring from 'querystring'
-/* eslint-disable-next-line import/no-extraneous-dependencies */
 import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
