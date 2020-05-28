@@ -27,6 +27,12 @@ export type UrlTableConfig = {
   }
 }
 
-export type UrlState = 'ACTIVE' | 'INACTIVE'
+export enum UrlState {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+}
 
-export type SortDirection = 'desc' | 'asc'
+export enum SortDirection {
+  Descending = 'desc',
+  Ascending = 'asc',
+}

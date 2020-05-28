@@ -270,7 +270,8 @@ const isToggleUrlStateSuccess: (payload: {
 const toggleUrlState = (shortUrl: string, state: UrlState) => (
   dispatch: Dispatch<UserActionType | RootActionType>,
 ) => {
-  const toState = state === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
+  const toState =
+    state === UrlState.Active ? UrlState.Inactive : UrlState.Active
 
   patch('/api/user/url', { shortUrl, state: toState }).then((response) => {
     if (response.ok) {

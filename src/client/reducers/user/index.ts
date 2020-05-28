@@ -14,7 +14,7 @@ import {
   UserActionType,
   WIPE_USER_STATE,
 } from '../../actions/user/types'
-import { UserState } from './types'
+import { UserState, SortDirection } from './types'
 
 const initialState: UserState = {
   initialised: false,
@@ -26,7 +26,7 @@ const initialState: UserState = {
   tableConfig: {
     numberOfRows: 10,
     pageNumber: 0,
-    sortDirection: 'desc',
+    sortDirection: SortDirection.Descending,
     orderBy: 'updatedAt',
     searchText: '',
     filter: {},
