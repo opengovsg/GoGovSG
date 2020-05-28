@@ -16,6 +16,7 @@ import {
   isValidShortUrl,
 } from '../../../../shared/util/validation'
 import ModalMargins from './ModalMargins'
+import refreshIcon from './assets/refresh-icon.svg'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
@@ -103,7 +104,7 @@ export default function CreateLinkForm({
                     onClick={setRandomShortUrl}
                     size="small"
                   >
-                    <box-icon name="refresh" />
+                    <img src={refreshIcon} alt="Get new short link" />
                   </IconButton>
                 </InputAdornment>
               ),

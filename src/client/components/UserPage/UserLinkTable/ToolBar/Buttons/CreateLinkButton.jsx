@@ -6,6 +6,7 @@ import userActions from '../../../../../actions/user'
 import ContainedIconButton from './templates/ContainedIconButton'
 import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import OvalContainedButton from './templates/OvalContainedButton'
+import addIcon from '../assets/add-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -23,7 +24,7 @@ export default function CreateLinkButton() {
     <span className={classes.createLinkButtonContainer}>
       {useMinifiedActions() ? (
         <ContainedIconButton onClick={openCreateUrlModal}>
-          <box-icon name="plus" />
+          <img src={addIcon} alt="Create link" />
         </ContainedIconButton>
       ) : (
         <OvalContainedButton onClick={openCreateUrlModal}>

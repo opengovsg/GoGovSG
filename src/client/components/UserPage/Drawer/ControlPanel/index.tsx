@@ -14,7 +14,7 @@ import {
 import DrawerActions from './helpers/reducers'
 import { useDrawerState, useDrawerDispatch } from '..'
 import DrawerMargin from './DrawerMargin'
-import closeIcon from '~/assets/icons/close-icon.svg'
+import CloseIcon from '../../../widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
@@ -165,7 +165,7 @@ export default function ControlPanel() {
           <div className={classes.topBar} />
         </Hidden>
         <IconButton className={classes.closeIcon} onClick={handleClose}>
-          <img src={closeIcon} alt="Close" draggable={false} />
+          <CloseIcon size={24} />
         </IconButton>
         <DrawerMargin>
           <DrawerHeader />

@@ -39,10 +39,12 @@ const useStyles = makeStyles((theme) =>
     root: {
       display: 'flex',
       height: (props) => props.searchInputHeight,
-      flex: (props) => (props.fillWidth ? 1 : 'unset'),
-      width: (props) => (props.fillWidth ? 'unset' : 445),
+      flex: 1,
+      width: 'unset',
       [theme.breakpoints.up('md')]: {
         position: 'relative',
+        width: 445,
+        flex: 'unset',
       },
     },
     searchInput: {
@@ -55,12 +57,6 @@ const useStyles = makeStyles((theme) =>
       minHeight: (props) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
-    },
-    closeIcon: {
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      margin: 8,
     },
     panelBackdrop: {
       zIndex: 999,

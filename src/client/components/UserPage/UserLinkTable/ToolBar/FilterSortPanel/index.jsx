@@ -6,7 +6,7 @@ import userActions from '../../../../../actions/user'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
 
-import closeIcon from '~/assets/icons/close-icon.svg'
+import CloseIcon from '../../../../widgets/CloseIcon'
 import useStyles from './styles'
 
 const mapDispatchToProps = (dispatch) => ({
@@ -94,7 +94,7 @@ const FilterSortPanel = ({
     >
       <Paper className={classes.root}>
         <IconButton className={classes.closeIcon} onClick={onClose}>
-          <img src={closeIcon} alt="Close" draggable={false} />
+          <CloseIcon size={24} />
         </IconButton>
         <Grid
           container

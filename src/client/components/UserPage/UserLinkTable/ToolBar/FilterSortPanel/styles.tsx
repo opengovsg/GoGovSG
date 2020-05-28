@@ -97,11 +97,14 @@ export default makeStyles((theme) =>
     columnLabel: {
       paddingLeft: theme.spacing(3),
       fontWeight: 400,
+      flex: 1,
+      textAlign: 'left',
     },
     checkIcon: {
       marginLeft: 'auto',
       marginRight: theme.spacing(4),
-      width: '24px',
+      flexShrink: 0,
+      flexGrow: 0,
     },
     sortButtonLabel: {
       display: 'flex',
