@@ -15,7 +15,7 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
     },
     endAdornment: {
       flexShrink: 0,
-    }
+    },
     startAdormentText: {
       width: '87px',
       paddingLeft: theme.spacing(1.5),
