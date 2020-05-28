@@ -1,6 +1,8 @@
 import moment from 'moment-timezone'
 
 import querystring from 'querystring'
+/* eslint-disable-next-line import/no-extraneous-dependencies */
+import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 import {
@@ -134,8 +136,8 @@ const getUrlsForUser = (): ThunkAction<
       // eslint-disable-next-line no-param-reassign
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
     })
-    dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
-    dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
+    dispatch(isGetUrlsForUserSuccess(json.urls))
+    dispatch(updateUrlCount(json.count))
   } else {
     dispatch(rootActions.setErrorMessage(json.message))
   }
@@ -184,7 +186,7 @@ const createUrl = (dispatch: AllThunkDispatch, user: UserState) => {
     }
     return response.json().then((json) => {
       if (response.status === 200) {
-        dispatch<ResetUserStateAction>(resetUserState())
+        dispatch(resetUserState())
         dispatch(getUrlsForUser())
         dispatch(
           rootActions.setInfoMessage(`New link created: ${json.shortUrl}`),

@@ -1,7 +1,6 @@
 import { Dispatch } from 'redux'
 import {
   LOAD_STATS,
-  LoadStatsAction,
   SET_LINKS_TO_ROTATE,
   SetLinksToRotateAction,
 } from './types'
@@ -25,7 +24,7 @@ const getLinksToRotate = () => (
         response.text().then((extractedString) => {
           if (extractedString) {
             const links = extractedString.split(',').map((link) => link.trim())
-            dispatch<SetLinksToRotateAction>(setLinksToRotate(links))
+            dispatch(setLinksToRotate(links))
           }
         })
       }
@@ -48,7 +47,7 @@ const loadStats = () => (
     get('/api/stats').then((response) => {
       if (response.ok) {
         response.json().then((stats) => {
-          dispatch<LoadStatsAction>({
+          dispatch({
             type: LOAD_STATS,
             payload: stats,
           })
