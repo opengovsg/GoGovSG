@@ -344,7 +344,6 @@ const createUrlOrRedirect = (history: History) => (
       .catch((error) => {
         // Get user to login if the status is unauthorized
         if (error.name === 401) {
-          // @ts-ignore
           history.push(LOGIN_PAGE)
         } else if (error.message) {
           dispatch<SetErrorMessageAction>(
@@ -359,7 +358,6 @@ const createUrlOrRedirect = (history: History) => (
       })
   }
 
-  // @ts-ignore
   history.push(LOGIN_PAGE)
   return null
 }
