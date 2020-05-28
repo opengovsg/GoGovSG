@@ -62,6 +62,7 @@ module.exports = () => {
         '/api': 'http://localhost:8080',
       },
       historyApiFallback: true,
+      disableHostCheck: true,
     },
     devtool: 'source-map',
     plugins: [
