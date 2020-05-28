@@ -4,7 +4,7 @@ import querystring from 'querystring'
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 import { History } from 'history'
 import { Dispatch } from 'redux'
-import { ThunkAction } from 'redux-thunk'
+import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import {
   CLOSE_CREATE_URL_MODAL,
   CloseCreateUrlModalAction,
@@ -34,7 +34,11 @@ import {
   WIPE_USER_STATE,
   WipeUserStateAction,
 } from './types'
-import { RootActionType } from '../root/types'
+import {
+  RootActionType,
+  SetErrorMessageAction,
+  SetInfoMessageAction,
+} from '../root/types'
 import { get, patch, postJson } from '../../util/requests'
 import rootActions from '../root'
 import { generateShortUrl, removeHttpsProtocol } from '../../util/url'
@@ -100,7 +104,12 @@ const getUrlsForUser = (): ThunkAction<
   void,
   UserActionType | RootActionType
 > => async (
-  dispatch: Dispatch<UserActionType | RootActionType>,
+  dispatch: Dispatch<
+    | IsFetchingUrlsAction
+    | GetUrlsForUserSuccessAction
+    | UpdateUrlCountAction
+    | SetErrorMessageAction
+  >,
   getState: GetReduxState,
 ) => {
   const state = getState()
@@ -125,7 +134,7 @@ const getUrlsForUser = (): ThunkAction<
     isFile,
   }
 
-  dispatch(isFetchingUrls(true))
+  dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
   const { json, isOk } = await getUrls(queryObj)
 
   if (isOk) {
@@ -136,12 +145,12 @@ const getUrlsForUser = (): ThunkAction<
       // eslint-disable-next-line no-param-reassign
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
     })
-    dispatch(isGetUrlsForUserSuccess(json.urls))
-    dispatch(updateUrlCount(json.count))
+    dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
+    dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
   } else {
-    dispatch(rootActions.setErrorMessage(json.message))
+    dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
   }
-  dispatch(isFetchingUrls(false))
+  dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
 }
 
 const resetUserState: () => ResetUserStateAction = () => ({
@@ -153,13 +162,20 @@ const wipeUserState: () => WipeUserStateAction = () => ({
 })
 
 // API call to create URL
-const createUrl = (dispatch: AllThunkDispatch, user: UserState) => {
+const createUrl = (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetErrorMessageAction | SetInfoMessageAction | ResetUserStateAction
+  >,
+  user: UserState,
+) => {
   const { shortUrl } = user
   let { longUrl } = user
 
   // Test for malformed short URL
   if (!/^[a-z0-9-]/.test(shortUrl)) {
-    dispatch(
+    dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage(
         'Short links should only consist of a-z, 0-9 and hyphens.',
       ),
@@ -174,7 +190,9 @@ const createUrl = (dispatch: AllThunkDispatch, user: UserState) => {
   }
 
   if (!isValidUrl(longUrl)) {
-    dispatch(rootActions.setErrorMessage('URL is invalid.'))
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage('URL is invalid.'),
+    )
     return Promise.reject()
   }
 
@@ -186,9 +204,9 @@ const createUrl = (dispatch: AllThunkDispatch, user: UserState) => {
     }
     return response.json().then((json) => {
       if (response.status === 200) {
-        dispatch(resetUserState())
-        dispatch(getUrlsForUser())
-        dispatch(
+        dispatch<ResetUserStateAction>(resetUserState())
+        dispatch<void>(getUrlsForUser())
+        dispatch<SetInfoMessageAction>(
           rootActions.setInfoMessage(`New link created: ${json.shortUrl}`),
         )
         return Promise.resolve()
@@ -202,7 +220,11 @@ const createUrl = (dispatch: AllThunkDispatch, user: UserState) => {
 
 // API call to update long URL
 const updateLongUrl = (shortUrl: string, longUrl: string) => (
-  dispatch: AllThunkDispatch,
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetErrorMessageAction | SetInfoMessageAction
+  >,
 ) => {
   // Append https:// as the protocol is stripped out
   // TODO: consider using Upgrade-Insecure-Requests header for HTTP
@@ -211,19 +233,23 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
   }
 
   if (!isValidUrl(longUrl)) {
-    dispatch(rootActions.setErrorMessage('URL is invalid.'))
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage('URL is invalid.'),
+    )
     return null
   }
 
   return patch('/api/user/url/edit', { longUrl, shortUrl }).then((response) => {
     if (response.ok) {
-      dispatch(getUrlsForUser())
-      dispatch(rootActions.setInfoMessage('URL is updated.'))
+      dispatch<void>(getUrlsForUser())
+      dispatch<SetInfoMessageAction>(
+        rootActions.setInfoMessage('URL is updated.'),
+      )
       return null
     }
 
     return response.json().then((json) => {
-      dispatch(rootActions.setErrorMessage(json.message))
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
       return null
     })
   })
@@ -252,7 +278,7 @@ const setEditedLongUrl: (
 // For generating a random short URL
 const setRandomShortUrl = () => (dispatch: Dispatch<SetRandomShortUrlAction>) =>
   generateShortUrl().then((randomUrl) => {
-    dispatch({
+    dispatch<SetRandomShortUrlAction>({
       type: SET_RANDOM_SHORT_URL,
       payload: randomUrl,
     })
@@ -275,12 +301,14 @@ const toggleUrlState = (shortUrl: string, state: UrlState) => (
 
   patch('/api/user/url', { shortUrl, state: toState }).then((response) => {
     if (response.ok) {
-      dispatch(isToggleUrlStateSuccess({ shortUrl, toState }))
+      dispatch<ToggleUrlStateSuccessAction>(
+        isToggleUrlStateSuccess({ shortUrl, toState }),
+      )
       return null
     }
 
     return response.json().then((json) => {
-      dispatch(rootActions.setErrorMessage(json.message))
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
       return null
     })
   })
@@ -297,14 +325,14 @@ const closeCreateUrlModal: () => CloseCreateUrlModalAction = () => ({
 // If user is not logged in, the createUrl call returns unauthorized,
 // get them to login, else create the url.
 const createUrlOrRedirect = (history: History) => (
-  dispatch: Dispatch<AllActions>,
+  dispatch: Dispatch<CloseCreateUrlModalAction | SetErrorMessageAction>,
   getState: GetReduxState,
 ) => {
   const { login, user } = getState()
   if (login.user.id) {
     return createUrl(dispatch, user)
       .then(() => {
-        dispatch(closeCreateUrlModal())
+        dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
       })
       .catch((error) => {
         // Get user to login if the status is unauthorized
@@ -312,9 +340,11 @@ const createUrlOrRedirect = (history: History) => (
           // @ts-ignore
           history.push(LOGIN_PAGE)
         } else if (error.message) {
-          dispatch(rootActions.setErrorMessage(error.message))
+          dispatch<SetErrorMessageAction>(
+            rootActions.setErrorMessage(error.message),
+          )
         } else {
-          dispatch(
+          dispatch<SetErrorMessageAction>(
             rootActions.setErrorMessage('An unknown error has occurred.'),
           )
           console.error(error)
@@ -331,18 +361,28 @@ const transferOwnership = (
   shortUrl: string,
   newOwner: string,
   onSuccess: () => void,
-) => (dispatch: AllThunkDispatch) =>
+) => (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetInfoMessageAction | SetErrorMessageAction
+  >,
+) =>
   patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
     (response) => {
       if (response.ok) {
         onSuccess()
-        dispatch(getUrlsForUser())
+        dispatch<void>(getUrlsForUser())
         const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
-        dispatch(rootActions.setInfoMessage(successMessage))
+        dispatch<SetInfoMessageAction>(
+          rootActions.setInfoMessage(successMessage),
+        )
       }
       // Otherwise, show error toast with relevant error message.
       response.json().then((json) => {
-        dispatch(rootActions.setErrorMessage(json.message))
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
       })
     },
   )

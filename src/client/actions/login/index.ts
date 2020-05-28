@@ -1,5 +1,6 @@
 import { IMinimatch, Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
+import { ThunkDispatch } from 'redux-thunk'
 import {
   GET_OTP_EMAIL_ERROR,
   GET_OTP_EMAIL_PENDING,
@@ -11,7 +12,6 @@ import {
   IS_LOGGED_OUT,
   IsLoggedInSuccessAction,
   IsLoggedOutAction,
-  LoginActionType,
   RESEND_OTP_DISABLED,
   RESEND_OTP_PENDING,
   ResendOtpDisabledAction,
@@ -32,8 +32,14 @@ import { get, postJson } from '../../util/requests'
 import userActions from '../user'
 import rootActions from '../root'
 import { defaultEmailValidationGlobExpression } from '../../reducers/login'
-import { UserActionType } from '../user/types'
-import { AllActions, AllThunkDispatch, GetReduxState } from '../types'
+import { WipeUserStateAction } from '../user/types'
+import { AllActions, GetReduxState } from '../types'
+import { GoGovReduxState } from '../../reducers/types'
+import {
+  CloseSnackbarAction,
+  SetErrorMessageAction,
+  SetInfoMessageAction,
+} from '../root/types'
 
 const isGetOTPSuccess: (email: string) => GetOtpEmailSuccessAction = (
   email,
@@ -99,7 +105,7 @@ const isLoggedInSuccess: (user: { id: string }) => IsLoggedInSuccessAction = (
 const isLoggedOut: () => IsLoggedOutAction = () => ({ type: IS_LOGGED_OUT })
 
 const getEmailValidationGlobExpression = () => (
-  dispatch: Dispatch<LoginActionType>,
+  dispatch: Dispatch<SetEmailValidatorAction>,
   getState: GetReduxState,
 ) => {
   const { login } = getState()
@@ -114,7 +120,7 @@ const getEmailValidationGlobExpression = () => (
           nobrace: true,
           nonegate: true,
         })
-        dispatch(setEmailValidator(validator))
+        dispatch<SetEmailValidatorAction>(setEmailValidator(validator))
       })
     }
   })
@@ -124,10 +130,19 @@ const getEmailValidationGlobExpression = () => (
  * Called when user enters email and waits for OTP.
  */
 const getOTPEmail = () => (
-  dispatch: Dispatch<AllActions>,
+  dispatch: Dispatch<
+    | GetOtpEmailErrorAction
+    | CloseSnackbarAction
+    | ResendOtpDisabledAction
+    | GetOtpEmailSuccessAction
+    | GetOtpEmailPendingAction
+    | ResendOtpPendingAction
+    | VerifyOtpErrorAction
+    | SetErrorMessageAction
+  >,
   getState: GetReduxState,
 ) => {
-  dispatch(rootActions.closeSnackbar())
+  dispatch<CloseSnackbarAction>(rootActions.closeSnackbar())
 
   const { login } = getState()
   const { email, formVariant } = login
@@ -136,21 +151,24 @@ const getOTPEmail = () => (
   let errorAction: () => void
 
   const disableResendForDuration = (duration = 20000) => {
-    dispatch(isResendOTPDisabled())
+    dispatch<ResendOtpDisabledAction>(isResendOTPDisabled())
     // reenable after duration
-    setTimeout(() => dispatch(isResendOTPSuccess(email)), duration)
+    setTimeout(
+      () => dispatch<GetOtpEmailSuccessAction>(isResendOTPSuccess(email)),
+      duration,
+    )
   }
   if (loginFormVariants.isEmailView(formVariant)) {
-    pendingAction = () => dispatch(isGetOTPPending())
+    pendingAction = () => dispatch<GetOtpEmailPendingAction>(isGetOTPPending())
     successAction = () => {
-      dispatch(isGetOTPSuccess(email))
+      dispatch<GetOtpEmailSuccessAction>(isGetOTPSuccess(email))
       disableResendForDuration()
     }
-    errorAction = () => dispatch(isGetOTPError())
+    errorAction = () => dispatch<GetOtpEmailErrorAction>(isGetOTPError())
   } else {
-    pendingAction = () => dispatch(isResendOTPPending())
+    pendingAction = () => dispatch<ResendOtpPendingAction>(isResendOTPPending())
     successAction = () => disableResendForDuration()
-    errorAction = () => dispatch(isResendOTPError())
+    errorAction = () => dispatch<VerifyOtpErrorAction>(isResendOTPError())
   }
 
   pendingAction()
@@ -163,26 +181,30 @@ const getOTPEmail = () => (
       return response.json().then((json) => {
         const { message } = json
         errorAction()
-        dispatch(rootActions.setErrorMessage(message))
+        dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
       })
     })
     .catch(() => {
       errorAction()
-      dispatch(rootActions.setErrorMessage('Network connectivity failed.'))
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Network connectivity failed.'),
+      )
       return null
     })
 }
 
 // Checks if there is an existing session.
-const isLoggedIn = () => (dispatch: Dispatch<LoginActionType>) =>
+const isLoggedIn = () => (
+  dispatch: Dispatch<IsLoggedInSuccessAction | IsLoggedOutAction>,
+) =>
   get('/api/login/isLoggedIn').then((response) => {
     const isOk = response.ok
     return response.json().then((json) => {
       if (isOk) {
         const { user } = json
-        dispatch(isLoggedInSuccess(user))
+        dispatch<IsLoggedInSuccessAction>(isLoggedInSuccess(user))
       } else {
-        dispatch(isLoggedOut())
+        dispatch<IsLoggedOutAction>(isLoggedOut())
       }
     })
   })
@@ -191,37 +213,49 @@ const isLoggedIn = () => (dispatch: Dispatch<LoginActionType>) =>
  * Called when user enters OTP and submits for verification.
  */
 const verifyOTP = () => (
-  dispatch: AllThunkDispatch,
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    | SetInfoMessageAction
+    | SetErrorMessageAction
+    | VerifyOtpPendingAction
+    | VerifyOtpErrorAction
+    | CloseSnackbarAction
+  >,
   getState: GetReduxState,
 ) => {
-  dispatch(rootActions.closeSnackbar())
+  dispatch<CloseSnackbarAction>(rootActions.closeSnackbar())
 
   const { login } = getState()
   const { email, otp } = login
 
-  dispatch(isVerifyOTPPending())
+  dispatch<VerifyOtpPendingAction>(isVerifyOTPPending())
   return postJson('/api/login/verify', { email, otp }).then((response) => {
     const isOk = !!response.ok
     return response.json().then((json) => {
       if (isOk) {
-        dispatch(rootActions.setInfoMessage('OTP Verified'))
-        dispatch(isLoggedIn())
+        dispatch<SetInfoMessageAction>(
+          rootActions.setInfoMessage('OTP Verified'),
+        )
+        dispatch<void>(isLoggedIn())
       } else {
         const { message } = json
-        dispatch(isVerifyOTPError())
-        dispatch(rootActions.setErrorMessage(message))
+        dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
+        dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
       }
     })
   })
 }
 
-const logout = () => (dispatch: Dispatch<LoginActionType | UserActionType>) =>
+const logout = () => (
+  dispatch: Dispatch<IsLoggedOutAction | WipeUserStateAction>,
+) =>
   get('/api/logout').then((response) => {
     if (response.ok) {
-      dispatch(isLoggedOut())
+      dispatch<IsLoggedOutAction>(isLoggedOut())
 
       // Wipe user data on log out.
-      dispatch(userActions.wipeUserState())
+      dispatch<WipeUserStateAction>(userActions.wipeUserState())
     } else {
       console.error(response)
     }
