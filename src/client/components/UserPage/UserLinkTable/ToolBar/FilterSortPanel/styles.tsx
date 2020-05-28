@@ -103,6 +103,10 @@ export default makeStyles((theme) =>
       marginRight: theme.spacing(4),
       width: '24px',
     },
+    sortButtonLabel: {
+      display: 'flex',
+      alignItems: 'flex-start',
+    },
     applyButton: {
       width: '121px',
       height: '45px',
