@@ -3,3 +3,4 @@ image:
 tasks:
   - init: npm install
     command: echo "test"
+  - command: redis-server
