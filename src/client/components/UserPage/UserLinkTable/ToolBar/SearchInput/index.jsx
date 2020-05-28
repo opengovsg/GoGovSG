@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         position: 'relative',
         width: 445,
-        flex: 'unset',
+        flex: '0 1 auto',
       },
     },
     searchInput: {

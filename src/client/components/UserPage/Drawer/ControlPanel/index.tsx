@@ -35,7 +35,6 @@ const useStyles = makeStyles((theme) =>
     },
     dialogContents: {
       marginTop: theme.spacing(6.5),
-      marginBottom: 141,
       [theme.breakpoints.up('md')]: {
         marginTop: 116,
       },

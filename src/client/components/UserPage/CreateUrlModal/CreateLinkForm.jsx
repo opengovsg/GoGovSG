@@ -98,7 +98,7 @@ export default function CreateLinkForm({
                 </FormStartAdorment>
               ),
               endAdornment: (
-                <InputAdornment position="end">
+                <InputAdornment position="end" className={classes.endAdornment}>
                   <IconButton
                     className={classes.refreshIcon}
                     onClick={setRandomShortUrl}
