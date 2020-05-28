@@ -14,7 +14,7 @@ import {
   UserActionType,
   WIPE_USER_STATE,
 } from '../../actions/user/types'
-import { UserState, SortDirection } from './types'
+import { SortDirection, UserState } from './types'
 
 const initialState: UserState = {
   initialised: false,
