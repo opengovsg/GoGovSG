@@ -6,6 +6,7 @@ import {
   GET_OTP_EMAIL_SUCCESS,
   IS_LOGGED_IN_SUCCESS,
   IS_LOGGED_OUT,
+  LoginActionType,
   RESEND_OTP_DISABLED,
   RESEND_OTP_PENDING,
   SET_EMAIL,
@@ -13,39 +14,38 @@ import {
   SET_OTP,
   VERIFY_OTP_ERROR,
   VERIFY_OTP_PENDING,
-} from '~/actions/types'
-import { loginFormVariants } from '~/util/types'
+} from '../../actions/login/types'
+import { loginFormVariants } from '../../util/types'
+import { LoginState } from './types'
 
 export const defaultEmailValidationGlobExpression = new Minimatch('*')
 
-const initialState = {
+const initialState: LoginState = {
   email: '',
   emailValidator: defaultEmailValidationGlobExpression,
   otp: '',
   user: {},
   isLoggedIn: false,
   formVariant: loginFormVariants.types.EMAIL_READY,
-  location: {},
 }
 
-export const login = (state = initialState, action) => {
+export const login = (state = initialState, action: LoginActionType) => {
   let nextState = {}
-  const { payload } = action
 
   switch (action.type) {
     case SET_EMAIL:
       nextState = {
-        email: payload.toLowerCase(), // Force input to be lowercase
+        email: action.payload.toLowerCase(), // Force input to be lowercase
       }
       break
     case SET_OTP:
       nextState = {
-        otp: payload,
+        otp: action.payload,
       }
       break
     case SET_EMAIL_VALIDATOR:
       nextState = {
-        emailValidator: payload,
+        emailValidator: action.payload,
       }
       break
     case GET_OTP_EMAIL_ERROR:
@@ -61,7 +61,7 @@ export const login = (state = initialState, action) => {
     case GET_OTP_EMAIL_SUCCESS:
       nextState = {
         formVariant: loginFormVariants.types.OTP_READY,
-        email: payload,
+        email: action.payload,
       }
       break
     case VERIFY_OTP_ERROR:
@@ -96,7 +96,7 @@ export const login = (state = initialState, action) => {
     case IS_LOGGED_IN_SUCCESS:
       nextState = {
         isLoggedIn: true,
-        user: payload,
+        user: action.payload,
         formVariant: loginFormVariants.types.EMAIL_READY,
       }
       break

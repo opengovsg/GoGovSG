@@ -1,6 +1,10 @@
-const fetch = require('cross-fetch')
+import crossFetch from 'cross-fetch'
 
-const postJson = (url = '', data = {}, options) => {
+export const postJson = (
+  url: string = '',
+  data: object = {},
+  options?: RequestInit,
+) => {
   const opts = options || {
     method: 'POST',
     mode: 'cors',
@@ -11,11 +15,14 @@ const postJson = (url = '', data = {}, options) => {
     credentials: 'include',
     body: JSON.stringify(data),
   }
-
-  return fetch(url, opts)
+  return crossFetch(url, opts)
 }
 
-const patch = (url = '', data = {}, options) => {
+export const patch = (
+  url: string = '',
+  data: object = {},
+  options?: RequestInit,
+) => {
   const opts = options || {
     method: 'PATCH',
     mode: 'cors',
@@ -27,10 +34,10 @@ const patch = (url = '', data = {}, options) => {
     body: JSON.stringify(data),
   }
 
-  return fetch(url, opts)
+  return crossFetch(url, opts)
 }
 
-const get = (url, options) => {
+export const get = (url: string, options?: RequestInit) => {
   const opts = options || {
     method: 'GET',
     mode: 'cors',
@@ -38,11 +45,5 @@ const get = (url, options) => {
     credentials: 'include',
   }
 
-  return fetch(url, opts)
-}
-
-module.exports = {
-  postJson,
-  get,
-  patch,
+  return crossFetch(url, opts)
 }
