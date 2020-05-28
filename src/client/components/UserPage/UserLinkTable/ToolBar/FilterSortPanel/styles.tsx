@@ -6,13 +6,13 @@ export default makeStyles((theme) =>
     collapse: {
       width: '100%',
       position: 'absolute',
+      left: 0,
       top: useSearchInputHeight() + 10,
       zIndex: 1000,
       [theme.breakpoints.down('sm')]: {
         top: 0,
         height: '100% !important', // Bypass Material UI uses element style
         minHeight: '800px !important',
-        left: 0,
       },
     },
     collapseWrapper: {
