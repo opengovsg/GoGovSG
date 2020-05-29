@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      marginBottom: '141px',
     },
     linkAnalyticsText: {
       marginTop: 20,

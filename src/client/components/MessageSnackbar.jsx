@@ -5,9 +5,9 @@ import Snackbar from '@material-ui/core/Snackbar'
 import SnackbarContent from '@material-ui/core/SnackbarContent'
 import IconButton from '@material-ui/core/IconButton'
 import { withStyles } from '@material-ui/core/styles'
+import CloseIcon from './widgets/CloseIcon'
 import rootActions from '~/actions/root'
 import { snackbarVariants } from '~/util/types'
-import 'boxicons'
 
 const snackbarStyle = (theme) => ({
   error: {
@@ -49,7 +49,7 @@ const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
             onClick={closeSnackbar}
             size="small"
           >
-            <box-icon name="x" color="white" size="sm" />
+            <CloseIcon color="#fff" size={24} />
           </IconButton>,
         ]}
       />

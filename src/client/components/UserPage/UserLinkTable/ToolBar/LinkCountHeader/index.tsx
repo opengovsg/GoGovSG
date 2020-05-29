@@ -19,7 +19,8 @@ export function useUrlCount(): number {
 const useStyles = makeStyles((theme) =>
   createStyles({
     linkCountHeader: {
-      flex: 1,
+      flexGrow: 1,
+      flexShrink: 0,
       alignSelf: 'center',
       marginRight: 20,
       whiteSpace: 'nowrap',

@@ -40,7 +40,6 @@
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
-    "boxicons": "^2.0.5",
     "classnames": "^2.2.6",
     "connect-redis": "^3.4.1",
     "cookie-session": "^1.4.0",
