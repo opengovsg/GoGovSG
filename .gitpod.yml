@@ -4,3 +4,8 @@ tasks:
   - init: npm install
     command: echo "test"
   - command: redis-server
+ports:
+  - port: 5432
+    onOpen: ignore
+  - port: 6379
+    onOpen: ignore
