@@ -19,6 +19,10 @@ const { Public, Private } = FileVisibility
 
 const router = Express.Router()
 
+const { buildFileLongUrl, setS3ObjectACL, uploadFileToS3 } = container.get<
+  S3Interface
+>(DependencyIds.s3)
+
 const fileUploadMiddleware = fileUpload({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB
@@ -118,9 +122,6 @@ router.post(
       }
 
       // Success
-      const { buildFileLongUrl, uploadFileToS3 } = container.get<S3Interface>(
-        DependencyIds.s3,
-      )
       const result = await transaction(async (t) => {
         const url = Url.create(
           {
@@ -238,9 +239,6 @@ router.patch(
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
         } else if (file) {
-          const { uploadFileToS3 } = container.get<S3Interface>(
-            DependencyIds.s3,
-          )
           await uploadFileToS3(file.data, shortUrl, file.mimetype)
         }
       })
@@ -286,7 +284,6 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
     await transaction(async (t) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
-        const { setS3ObjectACL } = container.get<S3Interface>(DependencyIds.s3)
         // Toggle the ACL of the S3 object
         await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
       }

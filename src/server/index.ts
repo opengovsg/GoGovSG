@@ -9,6 +9,10 @@ import cookieSession from 'cookie-session'
 import connectRedis from 'connect-redis'
 import bindInversifyDependencies from './inversify.config'
 
+// Happens at the top so all imports will have
+// properly-bound containers
+bindInversifyDependencies()
+
 // Routes
 import api from './api'
 import redirect from './api/redirect'
@@ -57,7 +61,6 @@ const MORGAN_LOG_FORMAT =
 
 const app = express()
 app.use(helmet())
-bindInversifyDependencies()
 initDb()
   .then(() => {
     logger.info('Database initialised.')
