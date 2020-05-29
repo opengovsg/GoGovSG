@@ -2,8 +2,8 @@ import jsdom from 'jsdom'
 import { select } from 'd3'
 import fs from 'fs'
 import QRCode from 'qrcode'
-// import { resolve } from 'path'
-// import util from 'util'
+import { resolve } from 'path'
+import util from 'util'
 import sharp from 'sharp'
 import filenamify from 'filenamify'
 
@@ -13,7 +13,7 @@ const { JSDOM } = jsdom
 
 export const QR_CODE_DIMENSIONS = 1000
 
-// const readFile = util.promisify(fs.readFile)
+const readFile = util.promisify(fs.readFile)
 
 // Build base QR code string without logo.
 async function makeQrCode(url: string): Promise<string> {
@@ -33,8 +33,11 @@ async function makeGoQrCode(url: string): Promise<Buffer> {
   const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
 
   // Read the logo as a string.
-  // const filePath = resolve(__dirname, 'assets/qrlogo.svg')
-  // const contents = await readFile(filePath, 'utf-8')
+  const filePath = resolve(__dirname, 'assets/qrlogo.svg')
+  const contents = await readFile(filePath, 'utf-8')
+
+  // To prevent lint errors.
+  console.log(contents)
 
   const body = select(dom.window.document.querySelector('body'))
 
