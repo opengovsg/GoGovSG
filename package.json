@@ -11,7 +11,7 @@
     "lint": "npm run lint-js && npm run lint-ts",
     "lint:fix": "npm run lint-js:fix && npm run lint-ts:fix",
     "build": "tsc && webpack --mode production",
-    "postbuild": "copyfiles -u 1 src/server/views/**/* build",
+    "postbuild": "copyfiles -u 1 src/server/views/**/* build && copyfiles -u 3 src/server/util/assets/**/* build/server/util",
     "start": "node build/server/index.js",
     "client-dev": "webpack-dev-server --mode development --host 0.0.0.0 --devtool inline-source-map --hot",
     "server-dev": "nodemon --exec 'ts-node --files' src/server/index.ts",

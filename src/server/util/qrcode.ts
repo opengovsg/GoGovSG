@@ -36,9 +36,6 @@ async function makeGoQrCode(url: string): Promise<Buffer> {
   const filePath = resolve(__dirname, 'assets/qrlogo.svg')
   const contents = await readFile(filePath, 'utf-8')
 
-  // To prevent lint errors.
-  console.log(contents)
-
   const body = select(dom.window.document.querySelector('body'))
 
   const svg = body
@@ -50,18 +47,18 @@ async function makeGoQrCode(url: string): Promise<Buffer> {
   // Append generated qr code to jsdom.
   svg.append('svg').html(qrString)
 
-  // // Calculate relevant dimensions for logo.
-  // const logoDimensions = 0.35 * QR_CODE_DIMENSIONS
-  // const logoOffsets = (QR_CODE_DIMENSIONS - logoDimensions) / 2
+  // Calculate relevant dimensions for logo.
+  const logoDimensions = 0.35 * QR_CODE_DIMENSIONS
+  const logoOffsets = (QR_CODE_DIMENSIONS - logoDimensions) / 2
 
-  // // Append go logo to the qr code on jsdom.
-  // svg
-  //   .append('svg')
-  //   .attr('x', logoOffsets)
-  //   .attr('y', logoOffsets)
-  //   .attr('width', logoDimensions)
-  //   .attr('height', logoDimensions)
-  //   .html(contents)
+  // Append go logo to the qr code on jsdom.
+  svg
+    .append('svg')
+    .attr('x', logoOffsets)
+    .attr('y', logoOffsets)
+    .attr('width', logoDimensions)
+    .attr('height', logoDimensions)
+    .html(contents)
 
   // Return the result svg as string.
   return Buffer.from(body.html())
