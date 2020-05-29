@@ -98,6 +98,11 @@ router.post(
     const { userId, longUrl, shortUrl } = req.body
     const file = req.files?.file
 
+    if (Array.isArray(file)) {
+      res.badRequest(jsonMessage('Only single file uploads are supported.'))
+      return
+    }
+
     try {
       const user = await User.findByPk(userId)
 
@@ -126,7 +131,7 @@ router.post(
           },
           { transaction: t },
         )
-        if (file && !Array.isArray(file)) {
+        if (file) {
           await uploadFileToS3(file.data, shortUrl, file.mimetype)
         }
         return url
@@ -204,6 +209,11 @@ router.patch(
   async (req, res) => {
     const { userId, longUrl, shortUrl } = req.body
     const file = req.files?.file
+    if (Array.isArray(file)) {
+      res.badRequest(jsonMessage('Only single file uploads are supported.'))
+      return
+    }
+
     try {
       const user = await User.scope({
         method: ['includeShortUrl', shortUrl],
@@ -227,7 +237,7 @@ router.patch(
       await transaction(async (t) => {
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
-        } else if (file && !Array.isArray(file)) {
+        } else if (file) {
           const { uploadFileToS3 } = container.get<S3Interface>(
             DependencyIds.s3,
           )
