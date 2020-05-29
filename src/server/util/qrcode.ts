@@ -7,18 +7,13 @@ import util from 'util'
 import sharp from 'sharp'
 import filenamify from 'filenamify'
 
+import ImageFormat from '../../shared/util/imageFormat'
+
 const { JSDOM } = jsdom
 
 export const QR_CODE_DIMENSIONS = 1000
 
 const readFile = util.promisify(fs.readFile)
-
-// Available formats for download.
-export enum Format {
-  SvgString,
-  PngString,
-  JpegString,
-}
 
 // Build base QR code string without logo.
 async function makeQrCode(url: string): Promise<string> {
@@ -72,21 +67,21 @@ async function makeGoQrCode(url: string): Promise<Buffer> {
 // Build QR code of specified file format as a string or buffer.
 export default async function createGoQrCode(
   url: string,
-  format: Format,
+  format: ImageFormat,
 ): Promise<Buffer> {
   const qrSvgString = await makeGoQrCode(url)
   switch (format) {
-    case Format.SvgString: {
+    case ImageFormat.SVG: {
       return qrSvgString
     }
-    case Format.PngString: {
+    case ImageFormat.PNG: {
       const buffer = Buffer.from(qrSvgString)
       return sharp(buffer)
         .resize(QR_CODE_DIMENSIONS, QR_CODE_DIMENSIONS)
         .png()
         .toBuffer()
     }
-    case Format.JpegString: {
+    case ImageFormat.JPEG: {
       const buffer = Buffer.from(qrSvgString)
       return sharp(buffer)
         .resize(QR_CODE_DIMENSIONS, QR_CODE_DIMENSIONS)
@@ -99,17 +94,17 @@ export default async function createGoQrCode(
 }
 
 // Generates and download a QR code using a specified url and format.
-export async function downloadGoQrCode(url: string, format: Format) {
+export async function downloadGoQrCode(url: string, format: ImageFormat) {
   const qrcode = await createGoQrCode(url, format)
   const outFileName = filenamify(url)
   switch (format) {
-    case Format.SvgString:
+    case ImageFormat.SVG:
       fs.writeFileSync(`${outFileName}.svg`, qrcode)
       break
-    case Format.PngString:
+    case ImageFormat.PNG:
       sharp(qrcode).toFile(`${outFileName}.png`)
       break
-    case Format.JpegString:
+    case ImageFormat.JPEG:
       sharp(qrcode).toFile(`${outFileName}.jpg`)
       break
     default:

@@ -6,12 +6,49 @@ import {
   MenuItem,
   Typography,
 } from '@material-ui/core'
+import FileSaver from 'file-saver'
 
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
-import { useDrawerState, useDrawerDispatch } from '../..'
-import QRCodeModal from '../QRCodeModal'
-import DrawerActions from '../helpers/reducers'
+import { useDrawerState } from '../..'
+import ImageFormat from '../../../../../../shared/util/imageFormat'
+import { postJson } from '../../../../../util/requests'
+
+// Gets file extension from content-type.
+function getFileExtension(format: ImageFormat) {
+  switch (format) {
+    case ImageFormat.SVG:
+      return 'svg'
+    case ImageFormat.PNG:
+      return 'png'
+    case ImageFormat.JPEG:
+      return 'jpeg'
+    default:
+      throw Error('Invalid format passed to getFileExtension')
+  }
+}
+
+// Downloads QR code from server.
+async function downloadServerQrCode(
+  shortLink: string,
+  format: ImageFormat,
+): Promise<void> {
+  if (typeof window === 'undefined') {
+    throw Error('This code should only run in a browser environment')
+  }
+  const url = `https://${document.location.host}/${shortLink}`
+  const response: Response = await postJson('/api/qrcode', {
+    url,
+    format,
+  })
+  if (response.ok) {
+    const bodyBlob = await response.blob()
+    const blob = new Blob([bodyBlob], {
+      type: response.headers.get('content-type') || format,
+    })
+    FileSaver.saveAs(blob, `${url}.${getFileExtension(format)}`)
+  }
+}
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -36,54 +73,15 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-// Use window to ref and download our qr code.
-declare global {
-  interface Window {
-    QrCodeComponent: any
-  }
-}
-
 type Option = {
   name: string
   onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void
-}
-
-const MAX_DOWNLOAD_WAIT_MS = 2000
-const WAIT_INTERVAL_MS = 100
-
-async function downloadQrCode(
-  variant: 'png' | 'svg',
-  before: () => void,
-  after: () => void,
-) {
-  let count = 0
-  before()
-  let intervalId = setInterval(function () {
-    // Wait for rendering to be ready.
-    if (window.QrCodeComponent.svgContainerRef.firstChild) {
-      clearInterval(intervalId)
-      if (variant === 'png') {
-        window.QrCodeComponent.downloadPng()
-      } else {
-        window.QrCodeComponent.downloadSvg()
-      }
-      after()
-    }
-    // Stop trying after max wait time is hit.
-    if (count >= MAX_DOWNLOAD_WAIT_MS / WAIT_INTERVAL_MS) {
-      clearInterval(intervalId)
-      after()
-    }
-    count += 1
-  }, WAIT_INTERVAL_MS)
 }
 
 export default function DownloadButton() {
   const classes = useStyles()
   const modalState = useDrawerState()
   const shortLink = modalState.relevantShortLink!
-  const qrModalIsOpen = modalState.qrCodeModalIsOpen
-  const modalDispatch = useDrawerDispatch()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,28 +92,19 @@ export default function DownloadButton() {
     setAnchorEl(null)
   }
 
-  const openQrModal = () =>
-    modalDispatch({ type: DrawerActions.openQrCodeModal })
-  const closeQrModal = () =>
-    modalDispatch({ type: DrawerActions.closeQrCodeModal })
-
   const options: Option[] = [
     {
       name: 'PNG',
-      onClick: async () => {
-        await downloadQrCode('png', openQrModal, () => {
-          closeQrModal()
-          handleClose()
-        })
+      onClick: () => {
+        downloadServerQrCode(shortLink, ImageFormat.PNG)
+        handleClose()
       },
     },
     {
       name: 'SVG',
-      onClick: async () => {
-        await downloadQrCode('svg', openQrModal, () => {
-          closeQrModal()
-          handleClose()
-        })
+      onClick: () => {
+        downloadServerQrCode(shortLink, ImageFormat.SVG)
+        handleClose()
       },
     },
   ]
@@ -160,11 +149,6 @@ export default function DownloadButton() {
           )
         })}
       </Menu>
-      <QRCodeModal
-        shortLink={shortLink}
-        open={qrModalIsOpen}
-        onClose={closeQrModal}
-      />
     </>
   )
 }

@@ -1,14 +1,15 @@
 import jsQR from 'jsqr'
 import png from 'upng-js'
 
-import createGoQrCode, { Format } from '../../../src/server/util/qrcode'
+import createGoQrCode from '../../../src/server/util/qrcode'
+import ImageFormat from '../../../src/shared/util/imageFormat'
 
 const testUrl = 'https://github.com/opengovsg/GoGovSG'
 
 describe('GoGovSg QR code', () => {
   describe('generates accurately', () => {
     test('png string', async () => {
-      const buffer = (await createGoQrCode(testUrl, Format.PngString)) as Buffer
+      const buffer = (await createGoQrCode(testUrl, ImageFormat.PNG)) as Buffer
       const data = png.decode(buffer)
       const out = {
         data: new Uint8ClampedArray(png.toRGBA8(data)[0]),
