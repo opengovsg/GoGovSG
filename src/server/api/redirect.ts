@@ -8,7 +8,7 @@ import { UrlCache } from './cache/url'
 import { UrlRepository } from './repositories/url'
 import { DependencyIds } from '../constants'
 import { AnalyticsLogger } from './analytics/analyticsLogger'
-import { CookieReducer } from '../util/transitionPage'
+import { CookieReducer } from '../util/transition-page'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
