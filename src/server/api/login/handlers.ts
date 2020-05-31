@@ -1,9 +1,7 @@
 import Express from 'express'
-import validator from 'validator'
 import jsonMessage from '../../util/json'
 import { Mailer } from '../../util/email'
 import {
-  emailValidator,
   getOTP,
   logger,
   loginMessage,
@@ -15,14 +13,6 @@ import { OtpCache } from '../cache/otp'
 import { DependencyIds } from '../../constants'
 import { UserRepository } from '../repositories/user'
 import { Cryptography } from '../../util/cryptography'
-
-/**
- * Checks if an email is valid and whether it follows a specified regex pattern.
- * @param email The email to be validated.
- */
-function isValidGovEmail(email: string) {
-  return validator.isEmail(email) && emailValidator.match(email)
-}
 
 export function getLoginMessage(_: Express.Request, res: Express.Response) {
   res.send(loginMessage)
@@ -37,14 +27,8 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
   const { mailOTP } = container.get<Mailer>(DependencyIds.mailer)
   const { hash } = container.get<Cryptography>(DependencyIds.cryptography)
 
-  const { email } = req.body
+  const { email }: { email: string } = req.body
 
-  if (!isValidGovEmail(email)) {
-    res.badRequest(
-      jsonMessage('Invalid email provided. Email domain is not whitelisted.'),
-    )
-    return
-  }
   // Generate otp
   const otp = getOTP()
   try {
@@ -89,14 +73,7 @@ export async function verifyOtp(req: Express.Request, res: Express.Response) {
   )
   const { compare } = container.get<Cryptography>(DependencyIds.cryptography)
 
-  const { email, otp } = req.body
-
-  if (!isValidGovEmail || !otp) {
-    res.badRequest(
-      jsonMessage('Some or all of required arguments are missing: email, otp'),
-    )
-    return
-  }
+  const { email, otp }: { email: string; otp: string } = req.body
 
   try {
     // Retrieve hash from cache
