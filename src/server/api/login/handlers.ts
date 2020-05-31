@@ -14,7 +14,10 @@ import { DependencyIds } from '../../constants'
 import { UserRepository } from '../repositories/user'
 import { Cryptography } from '../../util/cryptography'
 
-import { EmailProperty, VerifyOtpRequest } from '../../../types/server/api/login/handlers'
+import {
+  EmailProperty,
+  VerifyOtpRequest,
+} from '../../../types/server/api/login/handlers'
 
 export function getLoginMessage(_: Express.Request, res: Express.Response) {
   res.send(loginMessage)
