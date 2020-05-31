@@ -14,6 +14,10 @@ import { DependencyIds } from '../../constants'
 import { UserRepository } from '../repositories/user'
 import { Cryptography } from '../../util/cryptography'
 
+type EmailProperty = { email: string }
+type OtpProperty = { otp: string }
+type VerifyOtpRequest = EmailProperty & OtpProperty
+
 export function getLoginMessage(_: Express.Request, res: Express.Response) {
   res.send(loginMessage)
 }
@@ -27,7 +31,7 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
   const { mailOTP } = container.get<Mailer>(DependencyIds.mailer)
   const { hash } = container.get<Cryptography>(DependencyIds.cryptography)
 
-  const { email }: { email: string } = req.body
+  const { email }: EmailProperty = req.body
 
   // Generate otp
   const otp = getOTP()
@@ -73,7 +77,7 @@ export async function verifyOtp(req: Express.Request, res: Express.Response) {
   )
   const { compare } = container.get<Cryptography>(DependencyIds.cryptography)
 
-  const { email, otp }: { email: string; otp: string } = req.body
+  const { email, otp }: VerifyOtpRequest = req.body
 
   try {
     // Retrieve hash from cache
