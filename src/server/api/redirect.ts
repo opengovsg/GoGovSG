@@ -83,7 +83,7 @@ export default async function redirect(
     CookieReducer
   >(DependencyIds.cookieReducer)
 
-  let { shortUrl } = req.params
+  let { shortUrl }: { shortUrl: string } = req.params
 
   // Short link must consist of valid characters
   if (isValidShortUrl(shortUrl)) {
