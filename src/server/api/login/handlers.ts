@@ -14,9 +14,7 @@ import { DependencyIds } from '../../constants'
 import { UserRepository } from '../repositories/user'
 import { Cryptography } from '../../util/cryptography'
 
-type EmailProperty = { email: string }
-type OtpProperty = { otp: string }
-type VerifyOtpRequest = EmailProperty & OtpProperty
+import { EmailProperty, VerifyOtpRequest } from '../../../types/server/api/login/handlers'
 
 export function getLoginMessage(_: Express.Request, res: Express.Response) {
   res.send(loginMessage)
