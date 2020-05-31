@@ -117,29 +117,6 @@ describe('login middleware tests', () => {
 
       spy.mockClear()
     })
-    test('valid invalid email', async () => {
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
-      container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
-      container
-        .bind<Cryptography>(DependencyIds.cryptography)
-        .to(CryptographyMock)
-
-      const req = createRequestWithEmail('aa@open.test.my')
-      const res = getMockResponse()
-      const spy = jest.spyOn(
-        container.get<Mailer>(DependencyIds.mailer),
-        'mailOTP',
-      )
-
-      await generateOtp(req, res)
-      expect(spy).toBeCalledTimes(0)
-      expect(res.badRequest.called).toBeTruthy()
-
-      const cache = getOtpCache() as OtpCacheMock
-      expect(cache.cache.has('aa@open.test.my')).toBe(false)
-
-      spy.mockClear()
-    })
     test('email server down', async () => {
       container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
       container.bind<Mailer>(DependencyIds.mailer).to(MailerMockDown)
@@ -182,50 +159,6 @@ describe('login middleware tests', () => {
       expect(res.serverError.called).toBeTruthy()
 
       expect(logger.error).toBeCalled()
-
-      spy.mockClear()
-    })
-
-    test('cache down and invalid email', async () => {
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMockDown)
-      container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
-      container
-        .bind<Cryptography>(DependencyIds.cryptography)
-        .to(CryptographyMock)
-
-      const req = createRequestWithEmail('aa@open.test.my')
-      const res = getMockResponse()
-      const spy = jest.spyOn(
-        container.get<Mailer>(DependencyIds.mailer),
-        'mailOTP',
-      )
-
-      await generateOtp(req, res)
-      expect(spy).toBeCalledTimes(0)
-      expect(res.badRequest.called).toBeTruthy()
-
-      spy.mockClear()
-    })
-    test('email down and invalid email', async () => {
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
-      container.bind<Mailer>(DependencyIds.mailer).to(MailerMockDown)
-      container
-        .bind<Cryptography>(DependencyIds.cryptography)
-        .to(CryptographyMock)
-
-      const req = createRequestWithEmail('aa@open.test.my')
-      const res = getMockResponse()
-      const spy = jest.spyOn(
-        container.get<Mailer>(DependencyIds.mailer),
-        'mailOTP',
-      )
-
-      await generateOtp(req, res)
-      expect(spy).toBeCalledTimes(0)
-      expect(res.badRequest.called).toBeTruthy()
-
-      const cache = getOtpCache() as OtpCacheMock
-      expect(cache.cache.has('aa@open.test.my')).toBe(false)
 
       spy.mockClear()
     })
