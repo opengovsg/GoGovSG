@@ -245,46 +245,6 @@ describe('login middleware tests', () => {
         expect(res.unauthorized.called).toBeTruthy()
       })
 
-      test('no email and no otp', async () => {
-        getOtpCache().setOtpForEmail('aa@open.test.sg', {
-          hashedOtp: '1',
-          retries: 100,
-        })
-        const req = createRequestWithEmailAndOtp(undefined, undefined)
-        const res = getMockResponse()
-
-        await verifyOtp(req, res)
-
-        await expect(
-          getOtpCache().getOtpForEmail('aa@open.test.sg'),
-        ).resolves.toStrictEqual({
-          hashedOtp: '1',
-          retries: 100,
-        })
-        expect(req.session!.user).toBeUndefined()
-        expect(res.badRequest.called).toBeTruthy()
-      })
-
-      test('valid email and no otp in request', async () => {
-        getOtpCache().setOtpForEmail('aa@open.test.sg', {
-          hashedOtp: '1',
-          retries: 100,
-        })
-        const req = createRequestWithEmailAndOtp('aa@open.test.sg', undefined)
-        const res = getMockResponse()
-
-        await verifyOtp(req, res)
-
-        await expect(
-          getOtpCache().getOtpForEmail('aa@open.test.sg'),
-        ).resolves.toStrictEqual({
-          hashedOtp: '1',
-          retries: 100,
-        })
-        expect(req.session!.user).toBeUndefined()
-        expect(res.badRequest.called).toBeTruthy()
-      })
-
       test('no email and has valid otp in request', async () => {
         getOtpCache().setOtpForEmail('aa@open.test.sg', {
           hashedOtp: '1',
