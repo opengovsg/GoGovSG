@@ -43,7 +43,8 @@ async function makeGoQrCode(url: string): Promise<[Buffer, number]> {
     MARGIN_VERTICAL +
       QR_CODE_DIMENSIONS +
       MARGIN_VERTICAL +
-      lines.length * FONT_SIZE * LINE_HEIGHT +
+      (lines.length - 1 * FONT_SIZE * LINE_HEIGHT) +
+      FONT_SIZE +
       MARGIN_VERTICAL,
   )
 
