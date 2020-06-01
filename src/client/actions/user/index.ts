@@ -336,6 +336,27 @@ const closeCreateUrlModal: () => CloseCreateUrlModalAction = () => ({
   type: CLOSE_CREATE_URL_MODAL,
 })
 
+const urlCreated = (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    | CloseCreateUrlModalAction
+    | ResetUserStateAction
+    | SetSuccessMessageAction
+    | SetLastCreatedLinkAction
+  >,
+  shortUrl: string,
+) => {
+  dispatch<void>(getUrlsForUser())
+  dispatch<ResetUserStateAction>(resetUserState())
+  const successMessage = 'Your link has been created'
+  dispatch<SetLastCreatedLinkAction>(setLastCreatedLink(shortUrl))
+  dispatch<SetSuccessMessageAction>(
+    rootActions.setSuccessMessage(successMessage),
+  )
+  dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
+}
+
 // API call to create URL
 // If user is not logged in, the createUrl call returns unauthorized,
 // get them to login, else create the url.
@@ -457,27 +478,6 @@ const uploadFile = (file: File) => async (
   }
   const json = await response.json()
   urlCreated(dispatch, json.shortUrl)
-}
-
-const urlCreated = (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    | CloseCreateUrlModalAction
-    | ResetUserStateAction
-    | SetSuccessMessageAction
-    | SetLastCreatedLinkAction
-  >,
-  shortUrl: string,
-) => {
-  dispatch<void>(getUrlsForUser())
-  dispatch<ResetUserStateAction>(resetUserState())
-  const successMessage = 'Your link has been created'
-  dispatch<SetLastCreatedLinkAction>(setLastCreatedLink(shortUrl))
-  dispatch<SetSuccessMessageAction>(
-    rootActions.setSuccessMessage(successMessage),
-  )
-  dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
 }
 
 export default {
