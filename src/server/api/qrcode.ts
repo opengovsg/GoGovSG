@@ -37,7 +37,7 @@ router.post('/', validator.body(qrCodeRequestSchema), (req, res) => {
   const url = req.body.url as string
   const format = req.body.format as ImageFormat
   // Append base url to short link before creating the qr.
-  const goShortLink = ogUrl + url
+  const goShortLink = `${ogUrl}/${url}`
   // Creates the QR code and sends it to the client.
   createGoQrCode(goShortLink, format).then((buffer) => {
     res.contentType(format)
