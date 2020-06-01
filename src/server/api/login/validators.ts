@@ -14,7 +14,7 @@ export const otpVerificationSchema = Joi.object({
   email: Joi.string()
     .custom((email: string, helpers) => {
       if (!isValidGovEmail(email)) {
-        return helpers.message({ message: 'Not a valid gov email' })
+        return helpers.message({ custom: 'Not a valid gov email' })
       }
       return email
     })
@@ -27,7 +27,7 @@ export const otpGenerationSchema = Joi.object({
     .custom((email: string, helpers) => {
       if (!isValidGovEmail(email)) {
         return helpers.message({
-          message: 'Invalid email provided. Email domain is not whitelisted.',
+          custom: 'Invalid email provided. Email domain is not whitelisted.',
         })
       }
       return email

@@ -52,14 +52,14 @@ const urlSchema = Joi.object({
   shortUrl: Joi.string()
     .custom((url: string, helpers) => {
       if (!isValidShortUrl(url)) {
-        return helpers.message({ message: 'Short url format is invalid.' })
+        return helpers.message({ custom: 'Short url format is invalid.' })
       }
       return url
     })
     .required(),
   longUrl: Joi.string().custom((url: string, helpers) => {
     if (!isHttps(url)) {
-      return helpers.message({ message: 'Long url must start with https://' })
+      return helpers.message({ custom: 'Long url must start with https://' })
     }
     if (blacklist.some((bl) => url.includes(bl))) {
       return helpers.message({
