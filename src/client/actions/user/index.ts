@@ -44,7 +44,6 @@ import {
 import {
   RootActionType,
   SetErrorMessageAction,
-  SetInfoMessageAction,
   SetSuccessMessageAction,
 } from '../root/types'
 import { get, patch, postFormData, postJson } from '../../util/requests'
