@@ -240,11 +240,9 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
     SetErrorMessageAction | SetInfoMessageAction
   >,
 ) => {
-  // Append https:// as the protocol is stripped out
-  // TODO: consider using Upgrade-Insecure-Requests header for HTTP
-  if (!/^(http|https):\/\//.test(longUrl)) {
-    longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
-  }
+  const longUrlObject = new URL(longUrl)
+  longUrlObject.protocol = 'https'
+  longUrl = longUrlObject.href
 
   if (!isValidUrl(longUrl)) {
     dispatch<SetErrorMessageAction>(

@@ -21,8 +21,6 @@ export type FilterPanelProps = {
   setIsIncludeInactive: (checked: boolean) => void
 }
 
-// Destination type filtering has been temporarily commented out.
-// The filter should not be added until file upload is released.
 export default ({
   isIncludeFiles,
   isIncludeLinks,

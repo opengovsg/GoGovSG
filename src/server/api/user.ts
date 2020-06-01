@@ -22,6 +22,7 @@ import {
 } from '../../types/server/api/user.d'
 import { addFileExtension, getFileExtension } from '../util/fileFormat'
 import { MessageType } from '../../shared/util/messages'
+import { MAX_FILE_UPLOAD_SIZE } from '../../shared/constants'
 
 const { Public, Private } = FileVisibility
 
@@ -36,7 +37,7 @@ const {
 
 const fileUploadMiddleware = fileUpload({
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
+    fileSize: MAX_FILE_UPLOAD_SIZE, // 10MB
     files: 1,
   },
 })

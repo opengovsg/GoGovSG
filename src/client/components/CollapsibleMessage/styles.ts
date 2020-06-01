@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import { CollapsibleMessageStyles } from './types'
+import { CollapsibleMessageStyles, CollapsibleMessageType } from './types'
 
 export default makeStyles((theme) =>
   createStyles({
@@ -9,11 +9,11 @@ export default makeStyles((theme) =>
     message: {
       width: '100%',
       backgroundColor: ({ type }: CollapsibleMessageStyles) =>
-        type === 'success' ? '#eaf9e7' : '#ffeded',
+        type === CollapsibleMessageType.Success ? '#eaf9e7' : '#ffeded',
       display: 'flex',
       alignItems: 'center',
       color: ({ type }: CollapsibleMessageStyles) =>
-        type === 'success' ? '#6d9067' : '#c85151',
+        type === CollapsibleMessageType.Success ? '#6d9067' : '#c85151',
       fontSize: '13px',
       fontWeight: 400,
       padding: theme.spacing(1, 1.5),

@@ -1,4 +1,7 @@
-export type CollapsibleMessageType = 'error' | 'success'
+export enum CollapsibleMessageType {
+  Error,
+  Success,
+}
 
 export type CollapsibleMessageProps = {
   type: CollapsibleMessageType

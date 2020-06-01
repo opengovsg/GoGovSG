@@ -23,6 +23,8 @@ import FileIcon from '../Widgets/FileIcon'
 import InfoIcon from '../Widgets/InfoIcon'
 import { formatBytes } from '../../../util/format'
 import CollapsibleMessage from '../../CollapsibleMessage'
+import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../../shared/constants'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
@@ -172,12 +174,13 @@ export default function CreateLinkForm({
                   type="file"
                   id="file"
                   className={classes.fileInputInvis}
+                  disabled={isUploading}
                   onChange={(event) => {
                     const chosenFile = event.target.files[0]
                     if (!chosenFile) {
                       return
                     }
-                    if (chosenFile.size > 10 * 1024 * 1024) {
+                    if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
                       setNoFileText('File size too large.')
                       setFile(null)
                       setUploadFileError(
@@ -198,13 +201,17 @@ export default function CreateLinkForm({
                       variant="contained"
                       className={classes.uploadFileButton}
                       component="span"
+                      disabled={isUploading}
                     >
                       Browse
                     </Button>
                   </label>
                 </div>
               </div>
-              <CollapsibleMessage visible={!!uploadFileError} type="error">
+              <CollapsibleMessage
+                visible={!!uploadFileError}
+                type={CollapsibleMessageType.Error}
+              >
                 {uploadFileError}
               </CollapsibleMessage>
             </>
@@ -216,6 +223,7 @@ export default function CreateLinkForm({
           </div>
           <div>
             <TextField
+              disabled={isUploading}
               error={!isValidShortUrl(shortUrl, true)}
               className={classes.shortUrlInput}
               InputProps={{
@@ -235,6 +243,7 @@ export default function CreateLinkForm({
                       className={classes.refreshIcon}
                       onClick={setRandomShortUrl}
                       size="small"
+                      disabled={isUploading}
                     >
                       <img src={refreshIcon} alt="Get new short link" />
                     </IconButton>
@@ -255,7 +264,10 @@ export default function CreateLinkForm({
                   : 'Short links should only consist of lowercase letters, numbers and hyphens.'
               }
             />
-            <CollapsibleMessage visible={!!createShortLinkError} type="error">
+            <CollapsibleMessage
+              visible={!!createShortLinkError}
+              type={CollapsibleMessageType.Error}
+            >
               {createShortLinkError}
             </CollapsibleMessage>
           </div>
