@@ -103,7 +103,7 @@ router.post(
       userId,
       longUrl,
       shortUrl,
-    }: { userId: string; longUrl: string; shortUrl: string } = req.body
+    }: { userId: string; longUrl?: string; shortUrl: string } = req.body
     const file = req.files?.file
 
     if (Array.isArray(file)) {
@@ -216,7 +216,7 @@ router.patch(
       userId,
       longUrl,
       shortUrl,
-    }: { userId: string; longUrl: string; shortUrl: string } = req.body
+    }: { userId: string; longUrl?: string; shortUrl: string } = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
       res.badRequest(jsonMessage('Only single file uploads are supported.'))
