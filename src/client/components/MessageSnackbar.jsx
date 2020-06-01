@@ -1,8 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import Snackbar from '@material-ui/core/Snackbar'
-import SnackbarContent from '@material-ui/core/SnackbarContent'
+import {
+  Snackbar,
+  SnackbarContent,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import { withStyles } from '@material-ui/core/styles'
 import CloseIcon from './widgets/CloseIcon'
@@ -11,13 +15,45 @@ import { snackbarVariants } from '~/util/types'
 
 const snackbarStyle = (theme) => ({
   error: {
-    backgroundColor: theme.palette.error.main,
+    backgroundColor: '#FFEDED',
+    color: '#384A51',
   },
   info: {
     backgroundColor: theme.palette.primary.dark,
   },
-  wordSize: {
+  success: {
+    backgroundColor: '#EAF9E7',
+    color: '#384A51',
+  },
+  before: {
+    '&::before': {
+      backgroundColor: '#384A51',
+      width: '4px',
+      content: '""',
+      marginRight: theme.spacing(2.25),
+    },
+  },
+  content: {
+    padding: 0,
+    borderRadius: '3px',
+    boxShadow: '0px 0px 7px rgba(56, 74, 81, 0.15)',
     fontSize: '0.875rem',
+    fontWeight: '400',
+    width: 'calc(100vw - 20px)',
+    display: 'flex',
+    alignItems: 'stretch',
+    flexWrap: 'nowrap',
+    minHeight: '56px',
+    [theme.breakpoints.up('sm')]: {
+      width: '600px',
+    },
+  },
+  closeButton: {
+    marginRight: theme.spacing(2.5),
+  },
+  message: {
+    display: 'flex',
+    alignItems: 'center',
   },
 })
 const mapStateToProps = (state) => ({
@@ -33,20 +69,44 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
-  const colorClass =
-    variant === snackbarVariants.ERROR ? classes.error : classes.info
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
+  let colorClass = ''
+  switch (variant) {
+    case snackbarVariants.ERROR:
+      colorClass = classes.error
+      break
+    case snackbarVariants.info:
+      colorClass = classes.info
+      break
+    case snackbarVariants.SUCCESS:
+      colorClass = classes.success
+      break
+    default:
+      break
+  }
 
   return (
-    <Snackbar open={!!message} autoHideDuration={5000} onClose={closeSnackbar}>
+    <Snackbar
+      open={!!message}
+      autoHideDuration={50000}
+      onClose={closeSnackbar}
+      anchorOrigin={{
+        horizontal: 'center',
+        vertical: isMobileView ? 'bottom' : 'top',
+      }}
+    >
       <SnackbarContent
         message={message}
-        className={`${colorClass} ${classes.wordSize}`}
+        className={`${classes.content} ${colorClass} ${classes.before}`}
+        classes={{ message: classes.message }}
         action={[
           <IconButton
             key="close"
             aria-label="Close"
             color="inherit"
             onClick={closeSnackbar}
+            className={classes.closeButton}
             size="small"
           >
             <CloseIcon color="#fff" size={24} />

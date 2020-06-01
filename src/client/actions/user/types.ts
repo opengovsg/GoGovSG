@@ -15,6 +15,15 @@ export const SET_URL_TABLE_CONFIG = 'SET_URL_TABLE_CONFIG'
 export const UPDATE_URL_COUNT = 'UPDATE_URL_COUNT'
 export const IS_FETCHING_URLS = 'IS_FETCHING_URLS'
 export const WIPE_USER_STATE = 'WIPE_USER_STATE'
+export const SET_IS_UPLOADING = 'SET_IS_UPLOADING'
+export const SET_UPLOAD_FILE_ERROR = 'SET_UPLOAD_FILE_ERROR'
+export const SET_CREATE_SHORT_LINK_ERROR = 'SET_CREATE_SHORT_LINK_ERROR'
+export const SET_LAST_CREATED_LINK = 'SET_LAST_CREATED_LINK'
+
+export type SetLastCreatedLinkAction = {
+  type: typeof SET_LAST_CREATED_LINK
+  payload: string
+}
 
 export type WipeUserStateAction = {
   type: typeof WIPE_USER_STATE
@@ -55,8 +64,8 @@ export type SetLongUrlAction = {
 export type SetEditedLongUrlAction = {
   type: typeof SET_EDITED_LONG_URL
   payload: {
-    shortUrl: String
-    editedLongUrl: String
+    shortUrl: string
+    editedLongUrl: string
   }
 }
 
@@ -87,6 +96,21 @@ export type UpdateUrlCountAction = {
   payload: number
 }
 
+export type SetIsUploadingAction = {
+  type: typeof SET_IS_UPLOADING
+  payload: boolean
+}
+
+export type SetUploadFileError = {
+  type: typeof SET_UPLOAD_FILE_ERROR
+  payload: string | null
+}
+
+export type SetCreateShortLinkError = {
+  type: typeof SET_CREATE_SHORT_LINK_ERROR
+  payload: string | null
+}
+
 export type UserActionType =
   | UpdateUrlCountAction
   | SetUrlTableConfigAction
@@ -102,3 +126,8 @@ export type UserActionType =
   | CreateUrlSuccessAction
   | WipeUserStateAction
   | IsFetchingUrlsAction
+  | SetIsUploadingAction
+  | IsFetchingUrlsAction
+  | SetCreateShortLinkError
+  | SetUploadFileError
+  | SetLastCreatedLinkAction

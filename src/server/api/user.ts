@@ -1,5 +1,5 @@
 import Express from 'express'
-import fileUpload from 'express-fileupload'
+import fileUpload, { UploadedFile } from 'express-fileupload'
 import * as Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
 import jsonMessage from '../util/json'
@@ -20,14 +20,19 @@ import {
   UrlCreationRequest,
   UrlEditRequest,
 } from '../../types/server/api/user.d'
+import { addFileExtension, getFileExtension } from '../util/fileFormat'
+import { MessageType } from '../../shared/util/messages'
 
 const { Public, Private } = FileVisibility
 
 const router = Express.Router()
 
-const { buildFileLongUrl, setS3ObjectACL, uploadFileToS3 } = container.get<
-  S3Interface
->(DependencyIds.s3)
+const {
+  buildFileLongUrl,
+  setS3ObjectACL,
+  uploadFileToS3,
+  getKeyFromLongUrl,
+} = container.get<S3Interface>(DependencyIds.s3)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
@@ -58,7 +63,7 @@ const urlSchema = Joi.object({
     }
     if (blacklist.some((bl) => url.includes(bl))) {
       return helpers.message({
-        message: 'Creation of URLs to link shortener sites prohibited.',
+        custom: 'Creation of URLs to link shortener sites prohibited.',
       })
     }
     return url
@@ -121,6 +126,9 @@ router.post(
 
     try {
       const user = await User.findByPk(userId)
+      const fileKey = file
+        ? addFileExtension(shortUrl, getFileExtension(file.name))
+        : ''
 
       if (!user) {
         res.notFound(jsonMessage('User not found'))
@@ -129,7 +137,12 @@ router.post(
 
       const existsShortUrl = await Url.findOne({ where: { shortUrl } })
       if (existsShortUrl) {
-        res.badRequest(jsonMessage(`Short link "${shortUrl}" already exists`))
+        res.badRequest(
+          jsonMessage(
+            `Short link "${shortUrl}" already exists`,
+            MessageType.ShortUrlError,
+          ),
+        )
         return
       }
 
@@ -138,7 +151,7 @@ router.post(
         const url = Url.create(
           {
             userId: user.id,
-            longUrl: file ? buildFileLongUrl(shortUrl) : longUrl,
+            longUrl: file ? buildFileLongUrl(fileKey) : longUrl,
             shortUrl,
             isFile: !!file,
           },
@@ -153,7 +166,7 @@ router.post(
       res.ok(result)
     } catch (error) {
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Invalid URL.'))
+      res.badRequest(jsonMessage('Server error.'))
     }
   },
 )
@@ -261,7 +274,10 @@ router.patch(
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
         } else if (file) {
-          await uploadFileToS3(file.data, shortUrl, file.mimetype)
+          const oldKey = getKeyFromLongUrl(url.longUrl)
+          const newKey = addFileExtension(shortUrl, getFileExtension(file.name))
+          await setS3ObjectACL(oldKey, Private)
+          await uploadFileToS3(file.data, newKey, file.mimetype)
         }
       })
       res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
@@ -307,7 +323,10 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
         // Toggle the ACL of the S3 object
-        await setS3ObjectACL(url.shortUrl, state === ACTIVE ? Public : Private)
+        await setS3ObjectACL(
+          getKeyFromLongUrl(url.longUrl),
+          state === ACTIVE ? Public : Private,
+        )
       }
     })
     res.ok()

@@ -4,10 +4,14 @@ import {
   IS_FETCHING_URLS,
   OPEN_CREATE_URL_MODAL,
   RESET_USER_STATE,
+  SET_CREATE_SHORT_LINK_ERROR,
   SET_EDITED_LONG_URL,
+  SET_IS_UPLOADING,
+  SET_LAST_CREATED_LINK,
   SET_LONG_URL,
   SET_RANDOM_SHORT_URL,
   SET_SHORT_URL,
+  SET_UPLOAD_FILE_ERROR,
   SET_URL_TABLE_CONFIG,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
@@ -20,6 +24,7 @@ const initialState: UserState = {
   initialised: false,
   urls: [],
   isFetchingUrls: false,
+  isUploading: false,
   shortUrl: '',
   longUrl: '',
   createUrlModal: false,
@@ -38,9 +43,29 @@ const user: (state: UserState, action: UserActionType) => UserState = (
   state = initialState,
   action,
 ) => {
-  let nextState = {}
+  let nextState: Partial<UserState> = {}
 
   switch (action.type) {
+    case SET_LAST_CREATED_LINK:
+      nextState = {
+        lastCreatedLink: action.payload,
+      }
+      break
+    case SET_CREATE_SHORT_LINK_ERROR:
+      nextState = {
+        createShortLinkError: action.payload,
+      }
+      break
+    case SET_UPLOAD_FILE_ERROR:
+      nextState = {
+        uploadFileError: action.payload,
+      }
+      break
+    case SET_IS_UPLOADING:
+      nextState = {
+        isUploading: action.payload,
+      }
+      break
     case IS_FETCHING_URLS:
       nextState = {
         isFetchingUrls: action.payload,

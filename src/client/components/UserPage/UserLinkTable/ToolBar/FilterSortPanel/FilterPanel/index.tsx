@@ -24,12 +24,12 @@ export type FilterPanelProps = {
 // Destination type filtering has been temporarily commented out.
 // The filter should not be added until file upload is released.
 export default ({
-  // isIncludeFiles,
-  // isIncludeLinks,
+  isIncludeFiles,
+  isIncludeLinks,
   isIncludeActive,
   isIncludeInactive,
-  // setIsIncludeFiles,
-  // setIsIncludeLinks,
+  setIsIncludeFiles,
+  setIsIncludeLinks,
   setIsIncludeActive,
   setIsIncludeInactive,
 }: FilterPanelProps) => {
@@ -49,7 +49,7 @@ export default ({
       <Grid item className={classes.dividerGrid}>
         <Divider className={classes.divider} />
       </Grid>
-      {/* <Grid
+      <Grid
         item
         container
         direction="column"
@@ -78,7 +78,7 @@ export default ({
             File
           </Typography>
         </Grid>
-      </Grid> */}
+      </Grid>
       <Grid
         item
         container

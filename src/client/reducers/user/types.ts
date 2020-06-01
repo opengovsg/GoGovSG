@@ -13,7 +13,11 @@ export type UserState = {
   longUrl: string
   createUrlModal: boolean
   tableConfig: UrlTableConfig
-  urlCount: 0
+  isUploading: boolean
+  urlCount: number
+  createShortLinkError?: string | null
+  uploadFileError?: string | null
+  lastCreatedLink?: string
 }
 
 export type UrlTableConfig = {

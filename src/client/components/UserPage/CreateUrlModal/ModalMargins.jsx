@@ -8,8 +8,8 @@ import useFullScreenDialog from './helpers/fullScreenDialog'
 const useStyles = makeStyles((theme) =>
   createStyles({
     modalMargins: {
-      marginLeft: (props) => (props.applyLeftMargin ? theme.spacing(4) : 0),
-      marginRight: (props) => (props.applyRightMargin ? theme.spacing(4) : 0),
+      marginLeft: (props) => (props.applyLeftMargin ? theme.spacing(10) : 0),
+      marginRight: (props) => (props.applyRightMargin ? theme.spacing(10) : 0),
     },
   }),
 )

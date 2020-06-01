@@ -152,11 +152,15 @@ const useStyles = makeStyles((theme) => {
         cursor: 'pointer',
       },
     },
+    lastCreatedRow: {
+      backgroundColor: '#f9f9f9',
+    },
   })
 })
 
 export default function EnhancedTableBody() {
   const urls = useSelector((state) => state.user.urls)
+  const lastCreatedLink = useSelector((state) => state.user.lastCreatedLink)
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const dispatch = useDrawerDispatch()
@@ -170,7 +174,9 @@ export default function EnhancedTableBody() {
         {urls.map((row) => (
           <TableRow
             key={row.shortUrl}
-            className={classes.hoverRow}
+            className={`${classes.hoverRow} ${
+              lastCreatedLink === row.shortUrl ? classes.lastCreatedRow : ''
+            }`}
             onClick={() => openControlPanel(row.shortUrl)}
           >
             <TableCell className={classes.leftCell} width="5%">
