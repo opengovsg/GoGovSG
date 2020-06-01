@@ -237,7 +237,7 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    SetErrorMessageAction | SetInfoMessageAction
+    SetErrorMessageAction | SetSuccessMessageAction
   >,
 ) => {
   // Append https:// as the protocol is stripped out
@@ -256,8 +256,8 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
   return patch('/api/user/url/edit', { longUrl, shortUrl }).then((response) => {
     if (response.ok) {
       dispatch<void>(getUrlsForUser())
-      dispatch<SetInfoMessageAction>(
-        rootActions.setInfoMessage('URL is updated.'),
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage('URL is updated.'),
       )
       return null
     }
@@ -422,7 +422,7 @@ const transferOwnership = (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    SetInfoMessageAction | SetErrorMessageAction
+    SetSuccessMessageAction | SetErrorMessageAction
   >,
 ) =>
   patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
@@ -431,8 +431,8 @@ const transferOwnership = (
         onSuccess()
         dispatch<void>(getUrlsForUser())
         const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
-        dispatch<SetInfoMessageAction>(
-          rootActions.setInfoMessage(successMessage),
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage(successMessage),
         )
       }
       // Otherwise, show error toast with relevant error message.
