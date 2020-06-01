@@ -1,18 +1,18 @@
-version: "3"
+version: '3'
 
 services:
   app:
     build:
       context: .
       args:
-      - BUILD_MODE=development
+        - BUILD_MODE=development
     command: npm run docker-dev
     depends_on:
       - postgres
       - redis
     ports:
-      - "3000:3000" # Webpack dev server
-      - "8080:8080" # Express
+      - '3000:3000' # Webpack dev server
+      - '8080:8080' # Express
     environment:
       - NODE_ENV=development
       - PORT=8080
@@ -30,8 +30,13 @@ services:
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
       - AWS_S3_BUCKET=file-staging.go.gov.sg
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
+<<<<<<< HEAD
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
+=======
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+>>>>>>> 03314cd... Implement frontend for file upload and patch endpoint
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -41,13 +46,13 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432" # Postgres
+      - '5432:5432' # Postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
   redis:
     image: redis:5.0.3-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
 volumes:
   pgdata:

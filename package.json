@@ -53,6 +53,7 @@
     "express-joi-validation": "^4.0.3",
     "express-session": "^1.16.1",
     "file-saver": "^2.0.2",
+    "form-data": "^3.0.0",
     "helmet": "^3.21.1",
     "history": "^4.10.1",
     "i18next": "^19.3.4",

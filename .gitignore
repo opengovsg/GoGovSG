@@ -5,3 +5,4 @@ dist
 yarn.lock
 build
 coverage
+.env
