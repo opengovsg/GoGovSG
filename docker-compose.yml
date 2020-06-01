@@ -30,13 +30,8 @@ services:
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
       - AWS_S3_BUCKET=file-staging.go.gov.sg
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
-<<<<<<< HEAD
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-=======
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
->>>>>>> 03314cd... Implement frontend for file upload and patch endpoint
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
