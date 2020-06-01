@@ -24,14 +24,14 @@ import {
   SET_SHORT_URL,
   SET_UPLOAD_FILE_ERROR,
   SET_URL_TABLE_CONFIG,
-  SetCreateShortLinkError,
+  SetCreateShortLinkErrorAction,
   SetEditedLongUrlAction,
   SetIsUploadingAction,
   SetLastCreatedLinkAction,
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
-  SetUploadFileError,
+  SetUploadFileErrorAction,
   SetUrlTableConfigAction,
   TOGGLE_URL_STATE_SUCCESS,
   ToggleUrlStateSuccessAction,
@@ -80,14 +80,14 @@ const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
 
 const setCreateShortLinkError: (
   payload: string | null,
-) => SetCreateShortLinkError = (payload) => ({
+) => SetCreateShortLinkErrorAction = (payload) => ({
   type: SET_CREATE_SHORT_LINK_ERROR,
   payload,
 })
 
-const setUploadFileError: (payload: string | null) => SetUploadFileError = (
-  payload,
-) => ({
+const setUploadFileError: (
+  payload: string | null,
+) => SetUploadFileErrorAction = (payload) => ({
   type: SET_UPLOAD_FILE_ERROR,
   payload,
 })
@@ -121,7 +121,9 @@ const updateUrlCount: (urlCount: number) => UpdateUrlCountAction = (
 
 async function handleError(
   dispatch: Dispatch<
-    SetUploadFileError | SetCreateShortLinkError | SetErrorMessageAction
+    | SetUploadFileErrorAction
+    | SetCreateShortLinkErrorAction
+    | SetErrorMessageAction
   >,
   response: Response,
 ) {
@@ -138,10 +140,10 @@ async function handleError(
   message = message.replace('Error validating request body. ', '')
   switch (type) {
     case MessageType.FileUploadError:
-      dispatch<SetUploadFileError>(setUploadFileError(message))
+      dispatch<SetUploadFileErrorAction>(setUploadFileError(message))
       break
     case MessageType.ShortUrlError:
-      dispatch<SetCreateShortLinkError>(setCreateShortLinkError(message))
+      dispatch<SetCreateShortLinkErrorAction>(setCreateShortLinkError(message))
       break
     default:
       dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
@@ -387,14 +389,8 @@ const createUrlOrRedirect = (history: History) => async (
     handleError(dispatch, response)
     return
   }
-  dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
   const json = await response.json()
-  dispatch<ResetUserStateAction>(resetUserState())
-  dispatch<void>(getUrlsForUser())
-  dispatch<SetSuccessMessageAction>(
-    rootActions.setSuccessMessage('Your link has been created.'),
-  )
-  dispatch<SetLastCreatedLinkAction>(setLastCreatedLink(json.shortUrl))
+  urlCreated(dispatch, json.shortUrl)
 }
 
 const transferOwnership = (
@@ -453,13 +449,27 @@ const uploadFile = (file: File) => async (
   const data = new FormData()
   data.append('file', file, file.name)
   data.append('shortUrl', shortUrl)
-  // Fake call
   const response = await postFormData('/api/user/url', data)
   dispatch<SetIsUploadingAction>(setIsUploading(false))
   if (!response.ok) {
     await handleError(dispatch, response)
     return
   }
+  const json = await response.json()
+  urlCreated(dispatch, json.shortUrl)
+}
+
+const urlCreated = (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    | CloseCreateUrlModalAction
+    | ResetUserStateAction
+    | SetSuccessMessageAction
+    | SetLastCreatedLinkAction
+  >,
+  shortUrl: string,
+) => {
   dispatch<void>(getUrlsForUser())
   dispatch<ResetUserStateAction>(resetUserState())
   const successMessage = 'Your link has been created'
@@ -489,4 +499,5 @@ export default {
   uploadFile,
   setUrlTableConfig,
   getUrls,
+  setUploadFileError,
 }

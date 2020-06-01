@@ -89,7 +89,7 @@ const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
   return (
     <Snackbar
       open={!!message}
-      autoHideDuration={50000}
+      autoHideDuration={5000}
       onClose={closeSnackbar}
       anchorOrigin={{
         horizontal: 'center',

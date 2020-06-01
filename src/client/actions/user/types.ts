@@ -101,12 +101,12 @@ export type SetIsUploadingAction = {
   payload: boolean
 }
 
-export type SetUploadFileError = {
+export type SetUploadFileErrorAction = {
   type: typeof SET_UPLOAD_FILE_ERROR
   payload: string | null
 }
 
-export type SetCreateShortLinkError = {
+export type SetCreateShortLinkErrorAction = {
   type: typeof SET_CREATE_SHORT_LINK_ERROR
   payload: string | null
 }
@@ -128,6 +128,6 @@ export type UserActionType =
   | IsFetchingUrlsAction
   | SetIsUploadingAction
   | IsFetchingUrlsAction
-  | SetCreateShortLinkError
-  | SetUploadFileError
+  | SetCreateShortLinkErrorAction
+  | SetUploadFileErrorAction
   | SetLastCreatedLinkAction
