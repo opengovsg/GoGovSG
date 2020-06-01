@@ -17,7 +17,6 @@ const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
 // in seconds, for statistics cache expiry
 const STATISTICS_EXPIRY: number =
   Number(process.env.STATISTICS_EXPIRY) || 5 * 60
-// in seconds, for maximum age of files in s3 cache
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [

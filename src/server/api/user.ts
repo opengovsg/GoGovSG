@@ -1,5 +1,5 @@
 import Express from 'express'
-import fileUpload, { UploadedFile } from 'express-fileupload'
+import fileUpload from 'express-fileupload'
 import * as Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
 import jsonMessage from '../util/json'
