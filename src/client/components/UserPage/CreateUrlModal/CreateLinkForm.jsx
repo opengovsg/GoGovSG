@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import i18next from 'i18next'
 import {
@@ -11,7 +11,6 @@ import {
   Typography,
 } from '@material-ui/core'
 
-import debounce from 'lodash/debounce'
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
@@ -58,7 +57,6 @@ export default function CreateLinkForm({
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState(null)
   const [noFileText, setNoFileText] = useState('No file selected')
-  const fileInputEl = useRef(null)
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
     isFile,
@@ -174,7 +172,6 @@ export default function CreateLinkForm({
                   type="file"
                   id="file"
                   className={classes.fileInputInvis}
-                  ref={fileInputEl}
                   onChange={(event) => {
                     const chosenFile = event.target.files[0]
                     if (!chosenFile) {
@@ -200,18 +197,7 @@ export default function CreateLinkForm({
                     <Button
                       variant="contained"
                       className={classes.uploadFileButton}
-                      onClick={debounce(() => {
-                        // Prevent double click
-                        console.log('Called')
-                        if (
-                          !fileInputEl.current ||
-                          fileInputEl.current === document.activeElement
-                        ) {
-                          return
-                        }
-                        fileInputEl.current.focus()
-                        fileInputEl.current.click()
-                      }, 500)}
+                      component="span"
                     >
                       Browse
                     </Button>
