@@ -23,11 +23,11 @@ import {
   isAnalyticsLogged,
 } from './util'
 import redirect from '../../../src/server/api/redirect'
-import { CookieReducer } from '../../../src/server/util/transitionPage'
+import { CookieReducer } from '../../../src/server/util/transition-page'
 import {
   CookieArrayReducerMockUnvisited,
   CookieArrayReducerMockVisited,
-} from './mocks/transitionPage'
+} from './mocks/transition-page'
 import { logger } from '../config'
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
