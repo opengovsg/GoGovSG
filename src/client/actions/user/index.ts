@@ -242,29 +242,33 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
 ) => {
   const longUrlObject = new URL(longUrl)
   longUrlObject.protocol = 'https'
-  longUrl = longUrlObject.href
+  const longUrlHttps = longUrlObject.href
 
-  if (!isValidUrl(longUrl)) {
+  if (!isValidUrl(longUrlHttps)) {
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
     )
     return null
   }
 
-  return patch('/api/user/url/edit', { longUrl, shortUrl }).then((response) => {
-    if (response.ok) {
-      dispatch<void>(getUrlsForUser())
-      dispatch<SetInfoMessageAction>(
-        rootActions.setInfoMessage('URL is updated.'),
-      )
-      return null
-    }
+  return patch('/api/user/url/edit', { longUrl: longUrlHttps, shortUrl }).then(
+    (response) => {
+      if (response.ok) {
+        dispatch<void>(getUrlsForUser())
+        dispatch<SetInfoMessageAction>(
+          rootActions.setInfoMessage('URL is updated.'),
+        )
+        return null
+      }
 
-    return response.json().then((json) => {
-      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
-      return null
-    })
-  })
+      return response.json().then((json) => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
+        return null
+      })
+    },
+  )
 }
 
 // For setting short link value in the input box
