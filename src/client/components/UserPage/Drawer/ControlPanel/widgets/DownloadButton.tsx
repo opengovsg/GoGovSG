@@ -96,7 +96,6 @@ export default function DownloadButton() {
     {
       name: 'PNG',
       onClick: () => {
-        console.log(shortLink)
         downloadServerQrCode(shortLink, ImageFormat.PNG)
         handleClose()
       },
