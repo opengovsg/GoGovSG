@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) =>
       marginBottom: 38,
       textAlign: 'center',
     },
+    titleText: {
+      textAlign: 'center',
+    },
     linkAnalysticsImage: {
       width: '50%',
     },
@@ -50,7 +53,7 @@ export default function LinkAnalytics() {
 
   return (
     <div className={classes.linkAnalyticsDiv}>
-      <Typography variant="h3" color="primary">
+      <Typography className={classes.titleText} variant="h3" color="primary">
         Link click history coming soon!
       </Typography>
       <Typography className={classes.linkAnalyticsText} variant="body1">

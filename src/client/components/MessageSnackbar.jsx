@@ -107,7 +107,9 @@ const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
       <SnackbarContent
         message={
           <>
-            <CheckCircleIcon className={classes.checkCircleIcon} />
+            {variant === snackbarVariants.SUCCESS && (
+              <CheckCircleIcon className={classes.checkCircleIcon} />
+            )}
             {message}
           </>
         }

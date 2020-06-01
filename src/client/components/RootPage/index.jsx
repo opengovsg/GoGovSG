@@ -28,9 +28,6 @@ import {
 } from '~/util/types'
 import theme from '../../theme'
 
-const snackbars = Object.values(snackbarVariants).map((variant) => (
-  <MessageSnackbar key={variant} variant={variant} />
-))
 const Root = ({ store }) => (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
@@ -45,7 +42,7 @@ const Root = ({ store }) => (
           </Switch>
         </ScrollToTop>
       </HashRouter>
-      <>{snackbars}</>
+      <MessageSnackbar />
     </MuiThemeProvider>
   </Provider>
 )
