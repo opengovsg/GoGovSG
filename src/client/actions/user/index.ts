@@ -381,7 +381,6 @@ const createUrlOrRedirect = (history: History) => async (
 
   if (!response.ok) {
     if (response.status === 401) {
-      // @ts-ignore
       history.push(LOGIN_PAGE)
       return
     }
