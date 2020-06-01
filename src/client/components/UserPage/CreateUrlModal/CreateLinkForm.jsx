@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@material-ui/core'
 
-import debounce from 'lodash/debounce'
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
