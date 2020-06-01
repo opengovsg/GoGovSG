@@ -14,6 +14,12 @@ import { transaction } from '../util/sequelize'
 import { logger } from '../config'
 import { DependencyIds } from '../constants'
 import { container } from '../util/inversify'
+import {
+  OwnershipTransferRequest,
+  ShorturlStateEditRequest,
+  UrlCreationRequest,
+  UrlEditRequest,
+} from '../../types/server/api/user.d'
 
 const { Public, Private } = FileVisibility
 
@@ -105,11 +111,7 @@ router.post(
   preprocessPotentialIncomingFile,
   validator.body(urlSchema),
   async (req, res) => {
-    const {
-      userId,
-      longUrl,
-      shortUrl,
-    }: { userId: string; longUrl?: string; shortUrl: string } = req.body
+    const { userId, longUrl, shortUrl }: UrlCreationRequest = req.body
     const file = req.files?.file
 
     if (Array.isArray(file)) {
@@ -160,7 +162,11 @@ router.patch(
   '/url/ownership',
   validator.body(ownershipTransferSchema),
   async (req, res) => {
-    const { userId, shortUrl, newUserEmail } = req.body
+    const {
+      userId,
+      shortUrl,
+      newUserEmail,
+    }: OwnershipTransferRequest = req.body
     try {
       // Test current user really owns the shortlink
       const user = await User.scope({
@@ -224,11 +230,7 @@ router.patch(
   preprocessPotentialIncomingFile,
   validator.body(urlSchema),
   async (req, res) => {
-    const {
-      userId,
-      longUrl,
-      shortUrl,
-    }: { userId: string; longUrl?: string; shortUrl: string } = req.body
+    const { userId, longUrl, shortUrl }: UrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
       res.badRequest(jsonMessage('Only single file uploads are supported.'))
@@ -281,7 +283,7 @@ router.patch(
  * Endpoint for user to render a URL active/inactive.
  */
 router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
-  const { userId, shortUrl, state } = req.body
+  const { userId, shortUrl, state }: ShorturlStateEditRequest = req.body
 
   try {
     const user = await User.scope({
