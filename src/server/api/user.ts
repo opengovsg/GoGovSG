@@ -68,6 +68,12 @@ const stateEditSchema = Joi.object({
   state: Joi.string().allow(ACTIVE, INACTIVE).only().required(),
 })
 
+const ownershipTransferSchema = Joi.object({
+  userId: Joi.number().required(),
+  shortUrl: Joi.string().required(),
+  newUserEmail: Joi.string().required(),
+})
+
 /**
  * Place incoming file into the request body so that it can be
  * validated together with the other fields by Joi.
@@ -150,54 +156,60 @@ router.post(
   },
 )
 
-router.patch('/url/ownership', async (req, res) => {
-  const { userId, shortUrl, newUserEmail } = req.body
-  try {
-    // Test current user really owns the shortlink
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne({
-      where: { id: userId },
-    })
+router.patch(
+  '/url/ownership',
+  validator.body(ownershipTransferSchema),
+  async (req, res) => {
+    const { userId, shortUrl, newUserEmail } = req.body
+    try {
+      // Test current user really owns the shortlink
+      const user = await User.scope({
+        method: ['includeShortUrl', shortUrl],
+      }).findOne({
+        where: { id: userId },
+      })
 
-    if (!user) {
-      res.notFound(jsonMessage('User not found.'))
-      return
+      if (!user) {
+        res.notFound(jsonMessage('User not found.'))
+        return
+      }
+
+      const [url] = (user.get() as UserType).Urls
+
+      if (!url) {
+        res.notFound(
+          jsonMessage(`Short link "${shortUrl}" not found for user.`),
+        )
+      }
+
+      // Check that the new user exists
+      const newUser = await User.findOne({
+        where: { email: newUserEmail.toLowerCase() },
+      })
+
+      if (!newUser) {
+        res.notFound(jsonMessage('User not found.'))
+        return
+      }
+      const newUserId = (newUser.get() as UserType).id
+
+      // Do nothing if it is the same user
+      if (userId === newUserId) {
+        res.badRequest(jsonMessage('You already own this link.'))
+        return
+      }
+
+      // Success
+      const result = await transaction((t) =>
+        url.update({ userId: newUserId }, { transaction: t }),
+      )
+      res.ok(result)
+    } catch (error) {
+      logger.error(`Error transferring ownership of short URL:\t${error}`)
+      res.badRequest(jsonMessage('An error has occured'))
     }
-
-    const [url] = (user.get() as UserType).Urls
-
-    if (!url) {
-      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
-    }
-
-    // Check that the new user exists
-    const newUser = await User.findOne({
-      where: { email: newUserEmail.toLowerCase() },
-    })
-
-    if (!newUser) {
-      res.notFound(jsonMessage('User not found.'))
-      return
-    }
-    const newUserId = (newUser.get() as UserType).id
-
-    // Do nothing if it is the same user
-    if (userId === newUserId) {
-      res.badRequest(jsonMessage('You already own this link.'))
-      return
-    }
-
-    // Success
-    const result = await transaction((t) =>
-      url.update({ userId: newUserId }, { transaction: t }),
-    )
-    res.ok(result)
-  } catch (error) {
-    logger.error(`Error transferring ownership of short URL:\t${error}`)
-    res.badRequest(jsonMessage('An error has occured'))
-  }
-})
+  },
+)
 
 /**
  * Endpoint for user to edit a file or a longUrl.
