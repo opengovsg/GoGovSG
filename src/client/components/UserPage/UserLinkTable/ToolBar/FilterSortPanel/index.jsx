@@ -94,7 +94,7 @@ const FilterSortPanel = ({
     >
       <Paper className={classes.root}>
         <IconButton className={classes.closeIcon} onClick={onClose}>
-          <CloseIcon size={24} />
+          <CloseIcon size={20} />
         </IconButton>
         <Grid
           container

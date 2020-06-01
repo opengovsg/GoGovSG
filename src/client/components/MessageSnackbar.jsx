@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import { withStyles } from '@material-ui/core/styles'
+import CheckCircleIcon from './widgets/CheckCircleIcon'
 import CloseIcon from './widgets/CloseIcon'
 import rootActions from '~/actions/root'
 import { snackbarVariants } from '~/util/types'
@@ -55,6 +56,13 @@ const snackbarStyle = (theme) => ({
     display: 'flex',
     alignItems: 'center',
   },
+  iconWrapper: {
+    width: '16px',
+    height: '16px',
+  },
+  checkCircleIcon: {
+    marginRight: theme.spacing(1),
+  },
 })
 const mapStateToProps = (state) => ({
   message: state.root.snackbarMessage.message,
@@ -76,7 +84,7 @@ const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
     case snackbarVariants.ERROR:
       colorClass = classes.error
       break
-    case snackbarVariants.info:
+    case snackbarVariants.INFO:
       colorClass = classes.info
       break
     case snackbarVariants.SUCCESS:
@@ -97,7 +105,12 @@ const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
       }}
     >
       <SnackbarContent
-        message={message}
+        message={
+          <>
+            <CheckCircleIcon className={classes.checkCircleIcon} />
+            {message}
+          </>
+        }
         className={`${classes.content} ${colorClass} ${classes.before}`}
         classes={{ message: classes.message }}
         action={[
@@ -109,7 +122,12 @@ const MessageSnackbar = ({ classes, variant, message, closeSnackbar }) => {
             className={classes.closeButton}
             size="small"
           >
-            <CloseIcon color="#fff" size={24} />
+            <div className={classes.iconWrapper}>
+              <CloseIcon
+                color={variant === snackbarVariants.INFO ? '#fff' : '#384A51'}
+                size={16}
+              />
+            </div>
           </IconButton>,
         ]}
       />

@@ -245,7 +245,11 @@ export default function CreateLinkForm({
                       size="small"
                       disabled={isUploading}
                     >
-                      <img src={refreshIcon} alt="Get new short link" />
+                      <img
+                        src={refreshIcon}
+                        className={classes.iconTest}
+                        alt="Get new short link"
+                      />
                     </IconButton>
                   </InputAdornment>
                 ),

@@ -2,17 +2,16 @@ import React from 'react'
 
 type InfoIconProps = {
   color: string
-  size: number
 }
 
-export default ({ color = '#384A51', size = 16 }: InfoIconProps) => {
+export default ({ color = '#384A51' }: InfoIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={24}
+      height={24}
       fill="none"
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={'0 0 16 16'}
     >
       <path
         fill={color}

@@ -79,6 +79,11 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       marginRight: theme.spacing(1),
       fill: theme.palette.primary.dark,
     },
+    iconTest: {
+      '&.svg': {
+        fill: '#f00',
+      },
+    },
     linkTypeButton: {
       width: '125px',
       height: '50px',

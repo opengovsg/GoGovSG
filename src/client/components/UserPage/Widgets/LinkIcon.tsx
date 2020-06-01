@@ -2,17 +2,16 @@ import React from 'react'
 
 type LinkIconProps = {
   color: string
-  size: number
 }
 
-export default ({ color = '#384A51', size = 16 }: LinkIconProps) => {
+export default ({ color = '#384A51' }: LinkIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={16}
+      height={16}
       fill="none"
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox="0 0 16 16"
     >
       <path
         fill={color}

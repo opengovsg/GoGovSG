@@ -37,7 +37,7 @@ export default ({ checked, className, onClick }: FilterCheckboxProps) => {
     <IconButton className={className} onClick={onClick}>
       {checked ? (
         <div className={`${classes.uncheckedIcon} ${classes.filled}`}>
-          <CheckIcon size={24} color="#fff" />
+          <CheckIcon color="#fff" />
         </div>
       ) : (
         <div className={classes.uncheckedIcon} />
