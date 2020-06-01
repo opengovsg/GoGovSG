@@ -10,6 +10,7 @@ const useStyles = makeStyles(() =>
     downloadButtonContainer: {
       marginLeft: 20,
       width: '150px',
+      flexShrink: 0,
     },
     downloadButton: {
       border: 'solid 1px #456682',

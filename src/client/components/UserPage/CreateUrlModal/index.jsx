@@ -8,6 +8,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
+import CloseIcon from '../../widgets/CloseIcon'
 
 import userActions from '../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'
@@ -86,7 +87,7 @@ const CreateUrlModal = ({
             onClick={closeCreateUrlModal}
             size="small"
           >
-            <box-icon size={isFullScreenDialog ? 'md' : 'sm'} name="x" />
+            <CloseIcon size={isFullScreenDialog ? 36 : 24} />
           </IconButton>
         </div>
       </ModalMargins>

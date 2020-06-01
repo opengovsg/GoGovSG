@@ -6,13 +6,13 @@ export default makeStyles((theme) =>
     collapse: {
       width: '100%',
       position: 'absolute',
+      left: 0,
       top: useSearchInputHeight() + 10,
       zIndex: 1000,
       [theme.breakpoints.down('sm')]: {
         top: 0,
         height: '100% !important', // Bypass Material UI uses element style
         minHeight: '800px !important',
-        left: 0,
       },
     },
     collapseWrapper: {
@@ -97,11 +97,18 @@ export default makeStyles((theme) =>
     columnLabel: {
       paddingLeft: theme.spacing(3),
       fontWeight: 400,
+      flex: 1,
+      textAlign: 'left',
     },
     checkIcon: {
       marginLeft: 'auto',
       marginRight: theme.spacing(4),
-      width: '24px',
+      flexShrink: 0,
+      flexGrow: 0,
+    },
+    sortButtonLabel: {
+      display: 'flex',
+      alignItems: 'flex-start',
     },
     applyButton: {
       width: '121px',
