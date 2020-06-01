@@ -5,7 +5,6 @@ import QRCode from 'qrcode'
 import { resolve } from 'path'
 import util from 'util'
 import sharp from 'sharp'
-import filenamify from 'filenamify'
 
 import ImageFormat from '../../shared/util/imageFormat'
 
@@ -139,25 +138,6 @@ export default async function createGoQrCode(
       const buffer = Buffer.from(qrSvgString)
       return sharp(buffer).resize(IMAGE_WIDTH, imageHeight).jpeg().toBuffer()
     }
-    default:
-      throw Error('Invalid format')
-  }
-}
-
-// Generates and download a QR code using a specified url and format.
-export async function downloadGoQrCode(url: string, format: ImageFormat) {
-  const qrcode = await createGoQrCode(url, format)
-  const outFileName = filenamify(url)
-  switch (format) {
-    case ImageFormat.SVG:
-      fs.writeFileSync(`${outFileName}.svg`, qrcode)
-      break
-    case ImageFormat.PNG:
-      sharp(qrcode).toFile(`${outFileName}.png`, console.error)
-      break
-    case ImageFormat.JPEG:
-      sharp(qrcode).toFile(`${outFileName}.jpg`, console.error)
-      break
     default:
       throw Error('Invalid format')
   }
