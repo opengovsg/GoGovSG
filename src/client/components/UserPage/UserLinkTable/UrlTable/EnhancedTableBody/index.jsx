@@ -9,6 +9,9 @@ import {
   Typography,
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
+import linkIcon from '../../assets/link-icon.svg'
+import fileIcon from '../../assets/file-icon.svg'
+import clickCountIcon from '../../assets/click-count-icon.svg'
 
 import useAppMargins from '../../../../AppMargins/appMargins'
 import DrawerActions from '../../../Drawer/ControlPanel/helpers/reducers'
@@ -49,6 +52,7 @@ const useStyles = makeStyles((theme) => {
         width: '61%',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         width: '100%',
         padding: theme.spacing(2, 2, 0, 3),
         paddingLeft: (props) => props.appMargins,
@@ -67,6 +71,7 @@ const useStyles = makeStyles((theme) => {
         minWidth: '100px',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         padding: theme.spacing(1, 2, 2, 3),
         width: '30%',
         minWidth: '110px',
@@ -78,6 +83,7 @@ const useStyles = makeStyles((theme) => {
         minWidth: '125px',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 1),
         width: '35%',
         minWidth: '100px',
@@ -89,6 +95,7 @@ const useStyles = makeStyles((theme) => {
         minWidth: '180px',
       },
       [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 2),
         width: '20%',
         minWidth: '100px',
@@ -101,8 +108,6 @@ const useStyles = makeStyles((theme) => {
       },
     },
     icon: {
-      width: '18px',
-      fontSize: '18px',
       marginTop: theme.spacing(-0.5),
       [theme.breakpoints.down('sm')]: {
         display: 'none',
@@ -129,8 +134,6 @@ const useStyles = makeStyles((theme) => {
       color: '#767676',
     },
     clicksIcon: {
-      width: '13px',
-      display: 'inline-block',
       verticalAlign: 'middle',
     },
     clicksText: {
@@ -171,13 +174,11 @@ export default function EnhancedTableBody() {
             onClick={() => openControlPanel(row.shortUrl)}
           >
             <TableCell className={classes.leftCell} width="5%">
-              <div className={classes.icon}>
-                <box-icon
-                  size="cssSize"
-                  name={row.isFile ? 'file-blank' : 'link-alt'}
-                  color="#384a51"
-                />
-              </div>
+              <img
+                className={classes.icon}
+                src={row.isFile ? fileIcon : linkIcon}
+                alt={row.isFile ? 'File' : 'Link'}
+              />
             </TableCell>
             <TableCell align="left" className={classes.urlCell}>
               <Grid container direction="column">
@@ -214,9 +215,11 @@ export default function EnhancedTableBody() {
               </Typography>
             </TableCell>
             <TableCell className={classes.clicksCell}>
-              <div className={classes.clicksIcon}>
-                <box-icon name="bar-chart-alt" size="cssSize" color="#384a51" />
-              </div>
+              <img
+                className={classes.clicksIcon}
+                src={clickCountIcon}
+                alt="Clicks"
+              />
               <Typography variant="caption" className={classes.clicksText}>
                 {numberUnitFormatter(row.clicks)}
               </Typography>

@@ -14,7 +14,6 @@ import debounce from 'lodash/debounce'
 import FilterSortPanel from '../FilterSortPanel'
 
 import userActions from '../../../../../actions/user'
-import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 
 import filterSortIcon from '../assets/filtersort-icon.svg'
 import searchIcon from '../assets/search-icon.svg'
@@ -39,15 +38,19 @@ const useStyles = makeStyles((theme) =>
     root: {
       display: 'flex',
       height: (props) => props.searchInputHeight,
-      flex: (props) => (props.fillWidth ? 1 : 'unset'),
-      width: (props) => (props.fillWidth ? 'unset' : 445),
+      flex: 1,
+      width: 'unset',
       [theme.breakpoints.up('md')]: {
         position: 'relative',
+        width: 445,
+        flex: '0 1 auto',
       },
     },
     searchInput: {
       width: '100%',
-      maxWidth: (props) => (props.fillWidth ? 'unset' : 445),
+      [theme.breakpoints.up('md')]: {
+        maxWidth: 445,
+      },
     },
     input: {
       flexGrow: '1',
@@ -55,12 +58,6 @@ const useStyles = makeStyles((theme) =>
       minHeight: (props) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
-    },
-    closeIcon: {
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      margin: 8,
     },
     panelBackdrop: {
       zIndex: 999,
@@ -85,9 +82,8 @@ const searchInputIsEqual = (prev, next) => {
 // Search Input field.
 const SearchInput = React.memo(({ updateSearchText }) => {
   const tableConfig = useSelector((state) => state.user.tableConfig)
-  const fillWidth = useMinifiedActions()
   const searchInputHeight = useSearchInputHeight()
-  const classes = useStyles({ fillWidth, textFieldHeight, searchInputHeight })
+  const classes = useStyles({ textFieldHeight, searchInputHeight })
   const searchIfChanged = (text) => {
     if (tableConfig.searchText !== text) {
       updateSearchText(text)

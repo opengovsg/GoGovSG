@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme) =>
     leadingContainer: {
       flex: 1,
       marginBottom: 8,
+      flexBasis: '100%',
       [theme.breakpoints.up('md')]: {
+        flexBasis: 0,
         marginBottom: 0,
         marginRight: 19,
       },

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Redirect, withRouter } from 'react-router-dom'
-import 'boxicons'
 
 import homeActions from '~/actions/home'
 import loginActions from '~/actions/login'
