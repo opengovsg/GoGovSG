@@ -105,14 +105,14 @@ async function makeGoQrCode(url: string): Promise<[Buffer, number]> {
     .enter()
     .append('text')
     .attr('x', textLocationX)
-    .attr('y', function (_, i) {
+    .attr('y', (_, i) => {
       return textLocationY + i * FONT_SIZE * LINE_HEIGHT
     })
     .attr('text-anchor', 'middle')
     .attr('font-family', 'sans-serif')
     .attr('font-weight', '400')
     .attr('font-size', `${FONT_SIZE}px`)
-    .text(function (d) {
+    .text((d) => {
       return d
     })
 
