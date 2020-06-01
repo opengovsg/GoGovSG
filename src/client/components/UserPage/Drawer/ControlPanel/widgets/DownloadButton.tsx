@@ -38,7 +38,7 @@ async function downloadServerQrCode(
   }
   const url = `https://${document.location.host}/${shortLink}`
   const response: Response = await postJson('/api/qrcode', {
-    url,
+    url: shortLink,
     format,
   })
   if (response.ok) {
@@ -96,6 +96,7 @@ export default function DownloadButton() {
     {
       name: 'PNG',
       onClick: () => {
+        console.log(shortLink)
         downloadServerQrCode(shortLink, ImageFormat.PNG)
         handleClose()
       },
