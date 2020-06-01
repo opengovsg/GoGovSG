@@ -253,11 +253,13 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
     SetErrorMessageAction | SetSuccessMessageAction
   >,
 ) => {
-  const longUrlObject = new URL(longUrl)
-  longUrlObject.protocol = 'https'
-  const longUrlHttps = longUrlObject.href
+  // Append https:// as the protocol is stripped out
+  // TODO: consider using Upgrade-Insecure-Requests header for HTTP
+  if (!/^(http|https):\/\//.test(longUrl)) {
+    longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
+  }
 
-  if (!isValidUrl(longUrlHttps)) {
+  if (!isValidUrl(longUrl)) {
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
     )
@@ -273,14 +275,11 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
       return null
     }
 
-      return response.json().then((json) => {
-        dispatch<SetErrorMessageAction>(
-          rootActions.setErrorMessage(json.message),
-        )
-        return null
-      })
-    },
-  )
+    return response.json().then((json) => {
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
+      return null
+    })
+  })
 }
 
 // For setting short link value in the input box
