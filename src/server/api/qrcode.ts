@@ -6,15 +6,20 @@ import { ogUrl } from '../config'
 import createGoQrCode from '../util/qrcode'
 import ImageFormat from '../../shared/util/image-format'
 import { isValidShortUrl } from '../../shared/util/validation'
+import { Url } from '../models/url'
 
 function isValidFormat(format: string): boolean {
   const validFormats = Object.values(ImageFormat) as string[]
   return validFormats.includes(format)
 }
 
+async function shortUrlExists(shortUrl: string): Promise<boolean> {
+  return !!(await Url.findOne({ where: { shortUrl } }))
+}
+
 const qrCodeRequestSchema = Joi.object({
   url: Joi.string()
-    .custom((url: string, helpers) => {
+    .custom(async (url: string, helpers) => {
       if (!isValidShortUrl(url)) {
         return helpers.message({ custom: 'Not a valid short link' })
       }
@@ -34,18 +39,29 @@ const qrCodeRequestSchema = Joi.object({
 const router = Express.Router()
 const validator = createValidator()
 
-router.get('/', validator.query(qrCodeRequestSchema), (req, res) => {
-  const url = req.query.url as string
-  const format = req.query.format as ImageFormat
-  // Append base url to short link before creating the qr.
-  const goShortLink = `${ogUrl}/${url}`
-  // Creates the QR code and sends it to the client.
-  createGoQrCode(goShortLink, format).then((buffer) => {
-    // Provides callee a proposed filename for image.
-    res.set('Filename', goShortLink)
-    res.contentType(format)
-    res.end(buffer)
-  })
-})
+router.get(
+  '/',
+  validator.query(qrCodeRequestSchema),
+  async (req, res): Promise<void> => {
+    const url = (await req.query.url) as string
+    const format = req.query.format as ImageFormat
+
+    if (!(await shortUrlExists(url))) {
+      res.status(400).send('Short link does not exist')
+      return
+    }
+
+    // Append base url to short link before creating the qr.
+    const goShortLink = `${ogUrl}/${url}`
+
+    // Creates the QR code and sends it to the client.
+    createGoQrCode(goShortLink, format).then((buffer) => {
+      // Provides callee a proposed filename for image.
+      res.set('Filename', goShortLink)
+      res.contentType(format)
+      res.end(buffer)
+    })
+  },
+)
 
 module.exports = router
