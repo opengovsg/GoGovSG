@@ -6,7 +6,7 @@ import { resolve } from 'path'
 import util from 'util'
 import sharp from 'sharp'
 
-import ImageFormat from '../../shared/util/imageFormat'
+import ImageFormat from '../../shared/util/image-format'
 
 const { JSDOM } = jsdom
 

@@ -4,11 +4,12 @@ import { createValidator } from 'express-joi-validation'
 
 import { ogUrl } from '../config'
 import createGoQrCode from '../util/qrcode'
-import ImageFormat from '../../shared/util/imageFormat'
+import ImageFormat from '../../shared/util/image-format'
 import { isValidShortUrl } from '../../shared/util/validation'
 
 function isValidFormat(format: string): boolean {
-  return (Object as any).values(ImageFormat).includes(format)
+  const validFormats = Object.values(ImageFormat) as string[]
+  return validFormats.includes(format)
 }
 
 const qrCodeRequestSchema = Joi.object({

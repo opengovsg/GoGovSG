@@ -11,7 +11,7 @@ import FileSaver from 'file-saver'
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
-import ImageFormat from '../../../../../../shared/util/imageFormat'
+import ImageFormat from '../../../../../../shared/util/image-format'
 import { postJson } from '../../../../../util/requests'
 
 // Gets file extension from content-type.
@@ -33,9 +33,6 @@ async function downloadServerQrCode(
   shortLink: string,
   format: ImageFormat,
 ): Promise<void> {
-  if (typeof window === 'undefined') {
-    throw Error('This code should only run in a browser environment')
-  }
   const url = `https://${document.location.host}/${shortLink}`
   const response: Response = await postJson('/api/qrcode', {
     url: shortLink,

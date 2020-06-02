@@ -2,7 +2,7 @@ import jsQR from 'jsqr'
 import png from 'upng-js'
 
 import createGoQrCode from '../../../src/server/util/qrcode'
-import ImageFormat from '../../../src/shared/util/imageFormat'
+import ImageFormat from '../../../src/shared/util/image-format'
 
 const testUrl = 'https://github.com/opengovsg/GoGovSG'
 
@@ -17,7 +17,6 @@ describe('GoGovSg QR code', () => {
         width: data.width,
       }
       const code = jsQR(out.data, out.width, out.height)
-      expect(code).toBe(code)
       expect(code).not.toBeNull()
       expect(code!.data).toEqual(testUrl)
     })
