@@ -433,13 +433,14 @@ const transferOwnership = (
         dispatch<SetSuccessMessageAction>(
           rootActions.setSuccessMessage(successMessage),
         )
+      } else {
+        // Otherwise, show error toast with relevant error message.
+        response.json().then((json) => {
+          dispatch<SetErrorMessageAction>(
+            rootActions.setErrorMessage(json.message),
+          )
+        })
       }
-      // Otherwise, show error toast with relevant error message.
-      response.json().then((json) => {
-        dispatch<SetErrorMessageAction>(
-          rootActions.setErrorMessage(json.message),
-        )
-      })
     },
   )
 
