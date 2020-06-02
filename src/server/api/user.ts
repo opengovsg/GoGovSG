@@ -159,7 +159,7 @@ router.post(
           { transaction: t },
         )
         if (file) {
-          await uploadFileToS3(file.data, shortUrl, file.mimetype)
+          await uploadFileToS3(file.data, fileKey, file.mimetype)
         }
         return url
       })

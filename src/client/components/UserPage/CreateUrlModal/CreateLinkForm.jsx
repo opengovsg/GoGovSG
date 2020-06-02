@@ -155,7 +155,6 @@ export default function CreateLinkForm({
                   Choose your file
                 </Typography>
                 <div className={classes.maxSizeTextWrapper}>
-                  <InfoIcon />
                   <Typography variant="caption" className={classes.maxSizeText}>
                     Maximum size 10mb
                   </Typography>
