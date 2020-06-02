@@ -1,9 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
+
 import Masthead from './Masthead'
 import BaseLayoutHeader from './BaseLayoutHeader'
 import BaseLayoutFooter from './BaseLayoutFooter'
+import useIsIE from './util/ie'
+import BannerForIE from './BannerForIE'
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -40,10 +43,12 @@ const BaseLayout = ({
   children,
 }) => {
   const classes = useStyles()
+  const isIE = useIsIE()
   return (
     <>
       <CssBaseline />
       <Masthead />
+      {isIE && <BannerForIE />}
       {withHeader && <BaseLayoutHeader backgroundType={headerBackgroundType} />}
       <div className={classes.layout}>{children}</div>
       {withFooter && <BaseLayoutFooter />}
