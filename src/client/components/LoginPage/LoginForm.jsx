@@ -96,7 +96,7 @@ const LoginForm = ({
           type="submit"
           variant="contained"
           color="primary"
-          disabled={!variantMap.submitEnabled}
+          disabled={!variantMap.submitEnabled || !!textError()}
           size="large"
         >
           {buttonMessage}
