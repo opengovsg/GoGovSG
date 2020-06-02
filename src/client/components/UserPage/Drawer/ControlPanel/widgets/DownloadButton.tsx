@@ -12,7 +12,7 @@ import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
-import { postJson } from '../../../../../util/requests'
+import { get } from '../../../../../util/requests'
 
 // Gets file extension from content-type.
 function getFileExtension(format: ImageFormat) {
@@ -34,16 +34,16 @@ async function downloadServerQrCode(
   format: ImageFormat,
 ): Promise<void> {
   const url = `https://${document.location.host}/${shortLink}`
-  const response: Response = await postJson('/api/qrcode', {
-    url: shortLink,
-    format,
-  })
+  const qrCodeEnpoint = `/api/qrcode?url=${shortLink}&format=${format}`
+  const response: Response = await get(qrCodeEnpoint)
   if (response.ok) {
+    // Use filename from response for filename, fallbacks to endpoint.
+    const fileName = response.headers.get('Filename') ?? url
     const bodyBlob = await response.blob()
     const blob = new Blob([bodyBlob], {
       type: response.headers.get('content-type') || format,
     })
-    FileSaver.saveAs(blob, `${url}.${getFileExtension(format)}`)
+    FileSaver.saveAs(blob, `${fileName}.${getFileExtension(format)}`)
   }
 }
 
