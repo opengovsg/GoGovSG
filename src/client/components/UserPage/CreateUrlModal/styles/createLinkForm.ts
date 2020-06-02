@@ -134,9 +134,6 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       display: 'flex',
       alignItems: 'center',
     },
-    fileNameEmpty: {
-      opacity: 0.5,
-    },
     fileSizeText: {
       fontWeight: 400,
       display: 'flex',

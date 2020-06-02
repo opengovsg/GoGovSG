@@ -4,6 +4,7 @@ import i18next from 'i18next'
 import {
   Button,
   Divider,
+  Hidden,
   IconButton,
   InputAdornment,
   LinearProgress,
@@ -20,6 +21,7 @@ import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../Widgets/LinkIcon'
 import FileIcon from '../Widgets/FileIcon'
+import FileIconLarge from '../Widgets/FileIconLarge'
 import { formatBytes } from '../../../util/format'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
@@ -57,7 +59,6 @@ export default function CreateLinkForm({
 }) {
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState(null)
-  const [noFileText, setNoFileText] = useState('No file selected')
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
     isFile,
@@ -136,7 +137,7 @@ export default function CreateLinkForm({
                 }}
                 required
                 variant="outlined"
-                placeholder="Enter your link"
+                placeholder="Enter URL"
                 onChange={(event) => setLongUrl(event.target.value)}
                 value={longUrl}
                 helperText={
@@ -159,51 +160,69 @@ export default function CreateLinkForm({
                   </Typography>
                 </div>
               </div>
-              <div className={classes.fileInput}>
-                <Typography
-                  variant="body2"
-                  className={`${classes.fileNameText} ${
-                    file ? '' : classes.fileNameEmpty
-                  }`}
-                >
-                  {file ? file.name : noFileText}
-                </Typography>
-                <input
-                  type="file"
-                  id="file"
-                  className={classes.fileInputInvis}
-                  disabled={isUploading}
-                  onChange={(event) => {
-                    const chosenFile = event.target.files[0]
-                    if (!chosenFile) {
-                      return
-                    }
-                    if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
-                      setNoFileText('File size too large.')
-                      setFile(null)
-                      setUploadFileError(
-                        'File too large, please upload a file smaller than 10mb',
-                      )
-                      return
-                    }
-                    setUploadFileError(null)
-                    setFile(chosenFile)
-                  }}
-                />
-                <div className={classes.uploadFileInputEndWrapper}>
-                  <Typography variant="body2" className={classes.fileSizeText}>
-                    {file ? formatBytes(file.size) : ''}
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'stretch',
+                }}
+              >
+                <Hidden smDown>
+                  <div
+                    style={{
+                      width: '44px',
+                      backgroundColor: '#456682',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <FileIconLarge color="#f9f9f9" />
+                  </div>
+                </Hidden>
+                <div className={classes.fileInput}>
+                  <Typography variant="body2" className={classes.fileNameText}>
+                    {file ? file.name : 'No file selected'}
                   </Typography>
-                  <label htmlFor="file">
-                    <Button
-                      variant="contained"
-                      className={classes.uploadFileButton}
-                      component="span"
-                      disabled={isUploading}
+                  <input
+                    type="file"
+                    id="file"
+                    className={classes.fileInputInvis}
+                    disabled={isUploading}
+                    onChange={(event) => {
+                      const chosenFile = event.target.files[0]
+                      if (!chosenFile) {
+                        return
+                      }
+                      if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
+                        setFile(null)
+                        setUploadFileError(
+                          'File too large, please upload a file smaller than 10mb',
+                        )
+                        return
+                      }
+                      setUploadFileError(null)
+                      setFile(chosenFile)
+                    }}
+                  />
+                  <div className={classes.uploadFileInputEndWrapper}>
+                    <Typography
+                      variant="body2"
+                      className={classes.fileSizeText}
                     >
-                      Browse
-                    </Button>
-                  </label>
+                      {file ? formatBytes(file.size) : ''}
+                    </Typography>
+                    <label htmlFor="file">
+                      <Button
+                        variant="contained"
+                        className={classes.uploadFileButton}
+                        component="span"
+                        disabled={isUploading}
+                      >
+                        Browse
+                      </Button>
+                    </label>
+                  </div>
                 </div>
               </div>
               <CollapsibleMessage
@@ -257,7 +276,7 @@ export default function CreateLinkForm({
               }}
               required
               variant="outlined"
-              placeholder="Customise your link"
+              placeholder="your customised link"
               onChange={(event) => {
                 setShortUrl(event.target.value)
                 setCreateShortLinkError(null)
