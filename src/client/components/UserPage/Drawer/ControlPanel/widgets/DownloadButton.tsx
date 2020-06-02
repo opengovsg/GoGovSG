@@ -34,8 +34,10 @@ async function downloadServerQrCode(
   format: ImageFormat,
 ): Promise<void> {
   const url = `https://${document.location.host}/${shortLink}`
-  const qrCodeEnpoint = `/api/qrcode?url=${shortLink}&format=${format}`
-  const response: Response = await get(qrCodeEnpoint)
+  const endpoint = `/api/qrcode?url=${encodeURIComponent(
+    shortLink,
+  )}&format=${encodeURIComponent(format)}`
+  const response: Response = await get(endpoint)
   if (response.ok) {
     // Use filename from response for filename, fallbacks to endpoint.
     const fileName = response.headers.get('Filename') ?? url

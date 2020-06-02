@@ -19,7 +19,7 @@ async function shortUrlExists(shortUrl: string): Promise<boolean> {
 
 const qrCodeRequestSchema = Joi.object({
   url: Joi.string()
-    .custom(async (url: string, helpers) => {
+    .custom((url: string, helpers) => {
       if (!isValidShortUrl(url)) {
         return helpers.message({ custom: 'Not a valid short link' })
       }
@@ -28,10 +28,11 @@ const qrCodeRequestSchema = Joi.object({
     .required(),
   format: Joi.string()
     .custom((format: string, helpers) => {
-      if (!isValidFormat(format)) {
+      const decodedFormat = decodeURIComponent(format)
+      if (!isValidFormat(decodedFormat)) {
         return helpers.message({ custom: 'Not a valid format' })
       }
-      return format
+      return decodedFormat
     })
     .required(),
 })
@@ -43,7 +44,7 @@ router.get(
   '/',
   validator.query(qrCodeRequestSchema),
   async (req, res): Promise<void> => {
-    const url = (await req.query.url) as string
+    const url = req.query.url as string
     const format = req.query.format as ImageFormat
 
     if (!(await shortUrlExists(url))) {
