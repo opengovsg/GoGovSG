@@ -499,4 +499,5 @@ export default {
   setUrlTableConfig,
   getUrls,
   setUploadFileError,
+  setCreateShortLinkError,
 }

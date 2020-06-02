@@ -241,7 +241,10 @@ export default function CreateLinkForm({
                   <InputAdornment position="end">
                     <IconButton
                       className={classes.refreshIcon}
-                      onClick={setRandomShortUrl}
+                      onClick={() => {
+                        setRandomShortUrl()
+                        setCreateShortLinkError(null)
+                      }}
                       size="small"
                       disabled={isUploading}
                     >
