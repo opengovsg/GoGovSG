@@ -217,6 +217,7 @@ export default function CreateLinkForm({
                         variant="contained"
                         className={classes.uploadFileButton}
                         component="span"
+                        color="primary"
                         disabled={isUploading}
                       >
                         Browse

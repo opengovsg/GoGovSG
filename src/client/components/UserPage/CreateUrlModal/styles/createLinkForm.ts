@@ -150,7 +150,6 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       width: '81px',
       height: '100%',
       borderRadius: 0,
-      backgroundColor: '#8ca6ad',
       color: '#f9f9f9',
       [theme.breakpoints.up('sm')]: {
         width: '146px',
