@@ -20,10 +20,14 @@ const useStyles = makeStyles((theme) =>
       paddingTop: 15,
       paddingBottom: 15,
     },
+    appMargins: {
+      width: '100%',
+    },
     bannerContent: {
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'start',
+      alignItems: 'flex-start',
+      width: '100%',
     },
     icon: {
       marginRight: 6.67,
@@ -42,7 +46,7 @@ export default function BannerForIE() {
   const classes = useStyles()
   return (
     <div className={classes.bannerContainer}>
-      <ApplyAppMargins>
+      <ApplyAppMargins className={classes.appMargins}>
         <div className={classes.bannerContent}>
           <img className={classes.icon} src={cautionLogo} draggable={false} />
           <Typography className={classes.typography}>{BANNER_TEXT}</Typography>
