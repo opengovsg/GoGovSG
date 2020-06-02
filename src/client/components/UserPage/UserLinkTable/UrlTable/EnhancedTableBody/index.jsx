@@ -6,6 +6,7 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Tooltip,
   Typography,
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
@@ -100,6 +101,9 @@ const useStyles = makeStyles((theme) => {
         width: '20%',
         minWidth: '100px',
       },
+    },
+    clicksCellContent: {
+      width: 'fit-content',
     },
     rightCell: {
       [theme.breakpoints.up('md')]: {
@@ -221,14 +225,18 @@ export default function EnhancedTableBody() {
               </Typography>
             </TableCell>
             <TableCell className={classes.clicksCell}>
-              <img
-                className={classes.clicksIcon}
-                src={clickCountIcon}
-                alt="Clicks"
-              />
-              <Typography variant="caption" className={classes.clicksText}>
-                {numberUnitFormatter(row.clicks)}
-              </Typography>
+              <Tooltip title={row.clicks} placement="top" arrow>
+                <div className={classes.clicksCellContent}>
+                  <img
+                    className={classes.clicksIcon}
+                    src={clickCountIcon}
+                    alt="Clicks"
+                  />
+                  <Typography variant="caption" className={classes.clicksText}>
+                    {numberUnitFormatter(row.clicks)}
+                  </Typography>
+                </div>
+              </Tooltip>
             </TableCell>
           </TableRow>
         ))}
