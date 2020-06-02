@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) =>
     bannerContent: {
       display: 'flex',
       flexDirection: 'row',
+      justifyContent: 'center',
       alignItems: 'flex-start',
       width: '100%',
     },
