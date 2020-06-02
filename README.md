@@ -88,6 +88,8 @@ After these have been set up, set the environment variables according to the tab
 |DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 |OG_URL|Yes|The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`|
 |AWS_S3_BUCKET|Yes|The bucket name used for storing file uploads.|
+|AWS_ACCESS_KEY_ID|Yes|The access key id used for programatic access to S3 bucket.|
+|AWS_SECRET_ACCESS_KEY|Yes|The secret key used for programatic access to S3 bucket.|
 |REDIS_OTP_URI|Yes|Redis connection string, e.g. `redis://redis:6379/0`|
 |REDIS_SESSION_URI|Yes|Redis connection string, e.g. `redis://redis:6379/1`|
 |REDIS_REDIRECT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/2`|
