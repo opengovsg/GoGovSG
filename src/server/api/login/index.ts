@@ -11,7 +11,7 @@ import { otpGenerationSchema, otpVerificationSchema } from './validators'
 
 const router: Express.Router = Express.Router()
 
-const validator = createValidator()
+const validator = createValidator({ passError: true })
 
 /**
  * For the Login message banner.

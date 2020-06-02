@@ -42,7 +42,7 @@ const fileUploadMiddleware = fileUpload({
   },
 })
 
-const validator = createValidator()
+const validator = createValidator({ passError: true })
 
 const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
