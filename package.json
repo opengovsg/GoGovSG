@@ -147,7 +147,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run lint"
+      "pre-push": "npm run lint",
+      "pre-commit": "sh secrets-check.sh"
     }
   }
 }

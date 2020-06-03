@@ -6,6 +6,7 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Tooltip,
   Typography,
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
@@ -101,6 +102,9 @@ const useStyles = makeStyles((theme) => {
         minWidth: '100px',
       },
     },
+    clicksCellContent: {
+      width: 'fit-content',
+    },
     rightCell: {
       [theme.breakpoints.up('md')]: {
         textAlign: 'right',
@@ -152,11 +156,15 @@ const useStyles = makeStyles((theme) => {
         cursor: 'pointer',
       },
     },
+    lastCreatedRow: {
+      backgroundColor: '#f9f9f9',
+    },
   })
 })
 
 export default function EnhancedTableBody() {
   const urls = useSelector((state) => state.user.urls)
+  const lastCreatedLink = useSelector((state) => state.user.lastCreatedLink)
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const dispatch = useDrawerDispatch()
@@ -170,7 +178,9 @@ export default function EnhancedTableBody() {
         {urls.map((row) => (
           <TableRow
             key={row.shortUrl}
-            className={classes.hoverRow}
+            className={`${classes.hoverRow} ${
+              lastCreatedLink === row.shortUrl ? classes.lastCreatedRow : ''
+            }`}
             onClick={() => openControlPanel(row.shortUrl)}
           >
             <TableCell className={classes.leftCell} width="5%">
@@ -215,14 +225,18 @@ export default function EnhancedTableBody() {
               </Typography>
             </TableCell>
             <TableCell className={classes.clicksCell}>
-              <img
-                className={classes.clicksIcon}
-                src={clickCountIcon}
-                alt="Clicks"
-              />
-              <Typography variant="caption" className={classes.clicksText}>
-                {numberUnitFormatter(row.clicks)}
-              </Typography>
+              <Tooltip title={row.clicks} placement="top" arrow>
+                <div className={classes.clicksCellContent}>
+                  <img
+                    className={classes.clicksIcon}
+                    src={clickCountIcon}
+                    alt="Clicks"
+                  />
+                  <Typography variant="caption" className={classes.clicksText}>
+                    {numberUnitFormatter(row.clicks)}
+                  </Typography>
+                </div>
+              </Tooltip>
             </TableCell>
           </TableRow>
         ))}

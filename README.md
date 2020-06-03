@@ -110,8 +110,8 @@ GoGovSG uses Travis to deploy to AWS Elastic Beanstalk. We also use Sentry.io to
 
 |Environment Variable|Required|Description/Value|
 |:---:|:---:|:---|
-|AWS_ACCESS_KEY_ID|Yes|AWS credential ID used to deploy to Elastic Beanstalk|
-|AWS_SECRET_ACCESS_KEY|Yes|AWS credential secret used to deploy to Elastic Beanstalk|
+|AWS_ACCESS_KEY_ID|Yes|AWS credential ID used to deploy to Elastic and Modify files on S3|
+|AWS_SECRET_ACCESS_KEY|Yes|AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3|
 |AWS_EB_ENV_PRODUCTION, AWS_EB_ENV_STAGING|Yes|Elastic Beanstalk environment name|
 |AWS_EB_APP_PRODUCTION, AWS_EB_APP_STAGING|Yes|Elastic Beanstalk application name|
 |AWS_EB_BUCKET_PRODUCTION, AWS_EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|

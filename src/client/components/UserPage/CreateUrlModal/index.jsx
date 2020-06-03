@@ -18,12 +18,20 @@ import ModalMargins from './ModalMargins'
 const mapStateToProps = (state) => ({
   shortUrl: state.user.shortUrl,
   longUrl: state.user.longUrl,
+  isUploading: state.user.isUploading,
+  createShortLinkError: state.user.createShortLinkError,
+  uploadFileError: state.user.uploadFileError,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   setShortUrl: (shortUrl) => dispatch(userActions.setShortUrl(shortUrl)),
   setLongUrl: (longUrl) => dispatch(userActions.setLongUrl(longUrl)),
   setRandomShortUrl: () => dispatch(userActions.setRandomShortUrl()),
+  uploadFile: (file) => dispatch(userActions.uploadFile(file)),
+  setUploadFileError: (error) =>
+    dispatch(userActions.setUploadFileError(error)),
+  setCreateShortLinkError: (error) =>
+    dispatch(userActions.setCreateShortLinkError(error)),
 })
 
 const useStyles = makeStyles((theme) =>
@@ -48,6 +56,14 @@ const useStyles = makeStyles((theme) =>
       marginLeft: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
       marginRight: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
     },
+    headerWrapper: {
+      background: '#f9f9f9',
+      boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
+      [theme.breakpoints.up('sm')]: {
+        background: 'unset',
+        boxShadow: 'unset',
+      },
+    },
   }),
 )
 
@@ -60,6 +76,12 @@ const CreateUrlModal = ({
   longUrl,
   setLongUrl,
   setRandomShortUrl,
+  isUploading,
+  uploadFile,
+  uploadFileError,
+  setUploadFileError,
+  createShortLinkError,
+  setCreateShortLinkError,
 }) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
@@ -69,36 +91,44 @@ const CreateUrlModal = ({
       aria-describedby="create-links"
       fullScreen={isFullScreenDialog}
       fullWidth={!isFullScreenDialog}
-      maxWidth="sm"
+      maxWidth="md"
       open={createUrlModal}
       onClose={closeCreateUrlModal}
     >
-      <ModalMargins applyRightMargin={false}>
-        <div className={classes.headerDiv}>
-          <Typography
-            className={classes.headerText}
-            variant="h3"
-            color="primary"
-          >
-            Create new link
-          </Typography>
-          <IconButton
-            className={classes.closeIconButton}
-            onClick={closeCreateUrlModal}
-            size="small"
-          >
-            <CloseIcon size={isFullScreenDialog ? 36 : 24} />
-          </IconButton>
-        </div>
-      </ModalMargins>
+      <div className={classes.headerWrapper}>
+        <ModalMargins applyRightMargin={false}>
+          <div className={classes.headerDiv}>
+            <Typography
+              className={classes.headerText}
+              variant={isFullScreenDialog ? 'h6' : 'h3'}
+              color="primary"
+            >
+              Create new link
+            </Typography>
+            <IconButton
+              className={classes.closeIconButton}
+              onClick={closeCreateUrlModal}
+              size="small"
+            >
+              <CloseIcon size={isFullScreenDialog ? 36 : 24} />
+            </IconButton>
+          </div>
+        </ModalMargins>
+      </div>
       {/* // TODO: Convert props drilling to redux. */}
       <CreateLinkForm
-        onSubmit={onSubmit}
+        onSubmitLink={onSubmit}
         shortUrl={shortUrl}
         setShortUrl={setShortUrl}
         longUrl={longUrl}
         setLongUrl={setLongUrl}
         setRandomShortUrl={setRandomShortUrl}
+        isUploading={isUploading}
+        onSubmitFile={uploadFile}
+        uploadFileError={uploadFileError}
+        setUploadFileError={setUploadFileError}
+        createShortLinkError={createShortLinkError}
+        setCreateShortLinkError={setCreateShortLinkError}
       />
     </Dialog>
   )

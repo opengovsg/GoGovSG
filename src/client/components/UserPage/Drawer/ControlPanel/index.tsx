@@ -164,7 +164,7 @@ export default function ControlPanel() {
           <div className={classes.topBar} />
         </Hidden>
         <IconButton className={classes.closeIcon} onClick={handleClose}>
-          <CloseIcon size={24} />
+          <CloseIcon />
         </IconButton>
         <DrawerMargin>
           <DrawerHeader />

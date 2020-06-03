@@ -5,6 +5,7 @@ import {
   RootActionType,
   SET_ERROR_MESSAGE,
   SET_INFO_MESSAGE,
+  SET_SUCCESS_MESSAGE,
 } from '../../actions/root/types'
 
 const initialState = {
@@ -26,6 +27,14 @@ const root: (state: RootState, action: RootActionType) => RootState = (
         snackbarMessage: {
           message: '',
           variant: state.snackbarMessage.variant,
+        },
+      }
+      break
+    case SET_SUCCESS_MESSAGE:
+      nextState = {
+        snackbarMessage: {
+          message: action.payload,
+          variant: snackbarVariants.SUCCESS,
         },
       }
       break

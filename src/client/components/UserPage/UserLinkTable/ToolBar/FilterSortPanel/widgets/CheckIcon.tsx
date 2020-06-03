@@ -1,13 +1,11 @@
 import React, { FunctionComponent } from 'react'
 
 type CheckIconProps = {
-  size: number
   color?: string
   className?: string
 }
 
 const CheckIcon: FunctionComponent<CheckIconProps> = ({
-  size,
   color = '#000',
   className = '',
 }) => {
@@ -15,10 +13,10 @@ const CheckIcon: FunctionComponent<CheckIconProps> = ({
     <svg
       className={className}
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={24}
+      height={24}
       fill="none"
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={'0 0 24 24'}
     >
       <path
         fill={color}

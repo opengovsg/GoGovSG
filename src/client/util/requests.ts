@@ -18,6 +18,21 @@ export const postJson = (
   return crossFetch(url, opts)
 }
 
+export const postFormData = (
+  url: string,
+  data: FormData,
+  options?: RequestInit,
+) => {
+  const opts = options || {
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
+    body: data,
+  }
+  return crossFetch(url, opts)
+}
+
 export const patch = (
   url: string = '',
   data: object = {},

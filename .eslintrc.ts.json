@@ -28,6 +28,7 @@
     "jest/valid-expect": "error"
   },
   "env": {
+    "browser": true,
     "jest": true
   }
 }

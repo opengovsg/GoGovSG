@@ -15,11 +15,12 @@ const mapDispatchToProps = (dispatch) => ({
       userActions.setUrlTableConfig({
         orderBy: title,
         sortDirection: direction,
-        filter: {
-          state,
-          isFile,
-        },
-        pageNumber: 0,
+      }),
+    )
+    dispatch(
+      userActions.setUrlFilter({
+        state,
+        isFile,
       }),
     )
     dispatch(userActions.getUrlsForUser())
@@ -82,7 +83,7 @@ const FilterSortPanel = ({
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
     setOrderBy('createdAt')
-    updateSortAndFilter('createdAt', 'desc', undefined, false)
+    updateSortAndFilter('createdAt', 'desc', undefined, undefined)
     onClose()
   }
 
@@ -95,7 +96,7 @@ const FilterSortPanel = ({
     >
       <Paper className={classes.root}>
         <IconButton className={classes.closeIcon} onClick={onClose}>
-          <CloseIcon size={24} />
+          <CloseIcon size={20} />
         </IconButton>
         <Grid
           container
