@@ -72,7 +72,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
     },
     isFile: {
       type: Sequelize.BOOLEAN,
-      allowNull: false, // TODO: Make this false after backfill.
+      allowNull: false,
     },
   },
   {
@@ -151,7 +151,7 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
   },
   isFile: {
     type: Sequelize.BOOLEAN,
-    allowNull: false, // TODO: Make this false after backfill.
+    allowNull: false,
   },
 })
 
