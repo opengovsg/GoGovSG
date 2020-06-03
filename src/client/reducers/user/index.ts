@@ -18,6 +18,7 @@ import {
   UPDATE_URL_COUNT,
   UserActionType,
   WIPE_USER_STATE,
+  SET_URL_FILTER,
 } from '../../actions/user/types'
 import { UserState } from './types'
 import { initialSortConfig } from '../../constants/user'

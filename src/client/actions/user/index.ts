@@ -42,6 +42,8 @@ import {
   UserActionType,
   WIPE_USER_STATE,
   WipeUserStateAction,
+  SetUrlFilterAction,
+  SET_URL_FILTER,
 } from './types'
 import {
   RootActionType,
