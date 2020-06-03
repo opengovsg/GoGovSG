@@ -11,11 +11,7 @@ import { otpGenerationSchema, otpVerificationSchema } from './validators'
 
 const router: Express.Router = Express.Router()
 
-<<<<<<< HEAD
-const validator = createValidator()
-=======
 const validator = createValidator({ passError: true })
->>>>>>> 482e9e2... Implement frontend for file upload and patch endpoint
 
 /**
  * For the Login message banner.
