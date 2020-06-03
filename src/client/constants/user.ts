@@ -1,7 +1,7 @@
 import { SortDirection } from '../reducers/user/types'
 
 export const initialSortConfig = {
-  orderBy: 'createdat',
+  orderBy: 'createdAt',
   sortDirection: SortDirection.Descending,
 }
 
