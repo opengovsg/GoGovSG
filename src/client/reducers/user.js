@@ -25,7 +25,7 @@ const initialState = {
     numberOfRows: 10,
     pageNumber: 0,
     sortDirection: 'desc',
-    orderBy: 'updatedAt',
+    orderBy: 'createdAt',
     searchText: '',
     filter: {},
   },
