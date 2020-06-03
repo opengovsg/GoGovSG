@@ -20,6 +20,7 @@ import {
   WIPE_USER_STATE,
 } from '../../actions/user/types'
 import { SortDirection, UserState } from './types'
+import initialSortConfig from '../../constants/user'
 
 const initialState: UserState = {
   initialised: false,
@@ -32,10 +33,9 @@ const initialState: UserState = {
   tableConfig: {
     numberOfRows: 10,
     pageNumber: 0,
-    sortDirection: SortDirection.Descending,
-    orderBy: 'createdAt',
     searchText: '',
     filter: {},
+    ...initialSortConfig,
   },
   urlCount: 0,
 }

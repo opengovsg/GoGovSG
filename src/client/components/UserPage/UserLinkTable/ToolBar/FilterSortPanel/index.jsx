@@ -6,6 +6,7 @@ import userActions from '../../../../../actions/user'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
 import { SortDirection } from '../../../../../reducers/user/types'
+import { initialSortConfig } from '../../../../../constants/user.ts'
 
 import CloseIcon from '../../../../widgets/CloseIcon'
 import useStyles from './styles'
@@ -83,9 +84,8 @@ const FilterSortPanel = ({
     setIsIncludeLinks(false)
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
-    setOrderBy('createdAt')
-    updateSortAndFilter('createdAt', 'desc', undefined, undefined)
-    onClose()
+    setOrderBy(initialSortConfig.orderBy)
+    changeSortAndFilterHandler()
   }
 
   return (
