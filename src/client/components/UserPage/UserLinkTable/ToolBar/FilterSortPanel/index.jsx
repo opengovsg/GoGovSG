@@ -76,7 +76,7 @@ const FilterSortPanel = ({
         state = 'INACTIVE'
       }
     }
-    updateSortAndFilter(orderBy, SortDirection.DESCENDING, state, isFile)
+    updateSortAndFilter(orderBy, SortDirection.Descending, state, isFile)
     onClose()
   }
   const reset = () => {

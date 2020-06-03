@@ -406,7 +406,6 @@ const createUrlOrRedirect = (history: History) => async (
   }
 
   if (!isValidUrl(longUrl)) {
-    console.log(longUrl)
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
     )
