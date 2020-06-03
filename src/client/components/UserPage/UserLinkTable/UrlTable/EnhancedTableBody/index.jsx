@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => {
         paddingLeft: (props) => props.appMargins,
       },
     },
-    updatedAtCell: {
+    createdAtCell: {
       [theme.breakpoints.up('md')]: {
         minWidth: '125px',
       },
@@ -130,7 +130,7 @@ const useStyles = makeStyles((theme) => {
     longUrl: {
       color: '#767676',
     },
-    updatedAt: {
+    createdAt: {
       color: '#767676',
     },
     clicksIcon: {
@@ -209,9 +209,9 @@ export default function EnhancedTableBody() {
                 {row.state.toLowerCase()}
               </Typography>
             </TableCell>
-            <TableCell className={classes.updatedAtCell}>
-              <Typography variant="caption" className={classes.updatedAt}>
-                {row.updatedAt}
+            <TableCell className={classes.createdAtCell}>
+              <Typography variant="caption" className={classes.createdAt}>
+                {row.createdAt}
               </Typography>
             </TableCell>
             <TableCell className={classes.clicksCell}>
