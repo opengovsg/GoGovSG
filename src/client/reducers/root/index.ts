@@ -1,9 +1,11 @@
+import { snackbarVariants } from '../../util/types'
+import { RootState } from './types'
 import {
   CLOSE_SNACKBAR,
+  RootActionType,
   SET_ERROR_MESSAGE,
   SET_INFO_MESSAGE,
-} from '~/actions/types'
-import { snackbarVariants } from '~/util/types'
+} from '../../actions/root/types'
 
 const initialState = {
   snackbarMessage: {
@@ -11,9 +13,11 @@ const initialState = {
     variant: snackbarVariants.ERROR,
   },
 }
-const root = (state = initialState, action) => {
+const root: (state: RootState, action: RootActionType) => RootState = (
+  state = initialState,
+  action: RootActionType,
+) => {
   let nextState = {}
-  const { payload } = action
 
   switch (action.type) {
     case CLOSE_SNACKBAR:
@@ -28,7 +32,7 @@ const root = (state = initialState, action) => {
     case SET_ERROR_MESSAGE:
       nextState = {
         snackbarMessage: {
-          message: payload,
+          message: action.payload,
           variant: snackbarVariants.ERROR,
         },
       }
@@ -36,7 +40,7 @@ const root = (state = initialState, action) => {
     case SET_INFO_MESSAGE:
       nextState = {
         snackbarMessage: {
-          message: payload,
+          message: action.payload,
           variant: snackbarVariants.INFO,
         },
       }

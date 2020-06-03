@@ -19,6 +19,7 @@ const mapDispatchToProps = (dispatch) => ({
           state,
           isFile,
         },
+        pageNumber: 0,
       }),
     )
     dispatch(userActions.getUrlsForUser())
@@ -80,8 +81,8 @@ const FilterSortPanel = ({
     setIsIncludeLinks(false)
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
-    setOrderBy('updatedAt')
-    updateSortAndFilter('updatedAt', 'desc', undefined, false)
+    setOrderBy('createdAt')
+    updateSortAndFilter('createdAt', 'desc', undefined, false)
     onClose()
   }
 

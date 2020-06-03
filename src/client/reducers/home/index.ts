@@ -1,25 +1,32 @@
-import { LOAD_STATS, SET_LINKS_TO_ROTATE } from '~/actions/types'
+import { HomeState } from './types'
+import {
+  HomeActionType,
+  LOAD_STATS,
+  SET_LINKS_TO_ROTATE,
+} from '../../actions/home/types'
 
-const initialState = {
+const initialState: HomeState = {
   statistics: {
     userCount: null,
     linkCount: null,
     clickCount: null,
   },
 }
-const home = (state = initialState, action) => {
+const home = (
+  state: HomeState = initialState,
+  action: HomeActionType,
+): HomeState => {
   let nextState = {}
-  const { payload } = action
 
   switch (action.type) {
     case SET_LINKS_TO_ROTATE:
       nextState = {
-        linksToRotate: payload,
+        linksToRotate: action.payload,
       }
       break
     case LOAD_STATS:
       nextState = {
-        statistics: payload,
+        statistics: action.payload,
       }
       break
     default:

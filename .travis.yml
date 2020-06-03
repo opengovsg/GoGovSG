@@ -10,13 +10,6 @@ cache:
   directories:
     - 'node_modules'
 
-notifications:
-  email:
-    recipients:
-      - $EMAIL_RECIPIENT
-    on_success: change
-    on_failure: always
-
 install:
   - npm install
 
