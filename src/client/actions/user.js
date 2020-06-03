@@ -88,7 +88,7 @@ const getUrlsForUser = () => async (dispatch, getState) => {
 
   if (isOk) {
     json.urls.forEach((url) => {
-      url.updatedAt = moment(url.updatedAt) // eslint-disable-line no-param-reassign
+      url.createdAt = moment(url.createdAt) // eslint-disable-line no-param-reassign
         .tz('Singapore')
         .format('D MMM YYYY')
       // eslint-disable-next-line no-param-reassign
