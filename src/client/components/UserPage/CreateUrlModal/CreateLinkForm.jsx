@@ -8,7 +8,6 @@ import {
   Hidden,
   IconButton,
   InputAdornment,
-  LinearProgress,
   TextField,
   Typography,
 } from '@material-ui/core'
