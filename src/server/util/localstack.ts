@@ -23,6 +23,7 @@ const s3 = new AWS.S3({
   ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl", "getKeyFromLongUrl"] }] */
 export class S3LocalDev implements S3Interface {
   setS3ObjectACL(key: string, acl: FileVisibility) {
+    logger.info(`Setting file ACL to ${acl}`)
     const params = {
       Bucket: BUCKET_NAME,
       Key: key,
