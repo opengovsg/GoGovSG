@@ -277,6 +277,10 @@ router.patch(
         } else if (file) {
           const oldKey = getKeyFromLongUrl(url.longUrl)
           const newKey = addFileExtension(shortUrl, getFileExtension(file.name))
+          await url.update(
+            { longUrl: buildFileLongUrl(newKey) },
+            { transaction: t },
+          )
           await setS3ObjectACL(oldKey, Private)
           await uploadFileToS3(file.data, newKey, file.mimetype)
         }
