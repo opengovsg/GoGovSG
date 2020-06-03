@@ -19,6 +19,7 @@ const mapDispatchToProps = (dispatch) => ({
           state,
           isFile,
         },
+        pageNumber: 0,
       }),
     )
     dispatch(userActions.getUrlsForUser())
