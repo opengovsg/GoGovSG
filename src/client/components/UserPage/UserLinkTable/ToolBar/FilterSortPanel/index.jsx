@@ -5,6 +5,7 @@ import SortPanel from './SortPanel'
 import userActions from '../../../../../actions/user'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
+import { SortDirection } from '../../../../../reducers/user/types'
 
 import CloseIcon from '../../../../widgets/CloseIcon'
 import useStyles from './styles'
@@ -74,7 +75,7 @@ const FilterSortPanel = ({
         state = 'INACTIVE'
       }
     }
-    updateSortAndFilter(orderBy, 'desc', state, isFile)
+    updateSortAndFilter(orderBy, SortDirection.DESCENDING, state, isFile)
     onClose()
   }
   const reset = () => {
