@@ -34,9 +34,9 @@ export default ({ onChoose, currentlyChosen }: SortPanelProps) => {
       </Grid>
       <Grid item className={classes.sortButtonGrid}>
         <SortButton
-          onClick={() => onChoose('updatedAt')}
-          columnLabel="Last Updated"
-          isSelected={currentlyChosen === 'updatedAt'}
+          onClick={() => onChoose('createdAt')}
+          columnLabel="Date of creation"
+          isSelected={currentlyChosen === 'createdAt'}
         />
       </Grid>
       <Grid item className={classes.sortButtonGrid}>

@@ -2,6 +2,7 @@ export type UrlType = {
   shortUrl: string
   longUrl: string
   updatedAt: string
+  createdAt: string
   editedLongUrl: string
 }
 

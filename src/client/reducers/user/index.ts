@@ -27,7 +27,7 @@ const initialState: UserState = {
     numberOfRows: 10,
     pageNumber: 0,
     sortDirection: SortDirection.Descending,
-    orderBy: 'updatedAt',
+    orderBy: 'createdAt',
     searchText: '',
     filter: {},
   },
