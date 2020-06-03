@@ -5,7 +5,7 @@ import { ApplyAppMargins } from '../AppMargins'
 import cautionLogo from './assets/ie-banner-caution.svg'
 
 const BANNER_TEXT =
-  'Go.gov.sg may not display correctly in this browser. Please use a recent version of Chrome, Firefox, Safari, or Edge.'
+  'Go.gov.sg is not supported on Internet Explorer. Some features may not work correctly.'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
