@@ -11,6 +11,7 @@ import { CryptographyBcrypt } from './util/cryptography'
 import { DEV_ENV } from './config'
 import { MailerNoOp } from './util/emaildev'
 import { S3ServerSide } from './util/aws'
+import { S3LocalDev } from './util/localstack'
 
 function bindIfUnbound<T>(dependencyId: symbol, impl: { new (): T }) {
   if (!container.isBound(dependencyId)) {
@@ -26,11 +27,12 @@ export default () => {
   bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)
   bindIfUnbound(DependencyIds.userRepository, UserRepositorySequelize)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
-  bindIfUnbound(DependencyIds.s3, S3ServerSide)
 
   if (DEV_ENV) {
     bindIfUnbound(DependencyIds.mailer, MailerNoOp)
+    bindIfUnbound(DependencyIds.s3, S3LocalDev)
   } else {
     bindIfUnbound(DependencyIds.mailer, MailerNode)
+    bindIfUnbound(DependencyIds.s3, S3ServerSide)
   }
 }
