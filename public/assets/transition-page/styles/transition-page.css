@@ -1,18 +1,8 @@
-:root {
-  --text-color: #384a51;
-  --text-emphasize-color: #456682;
-  --banner-color: #f9f9f9;
-  --button-text-color: #ffffff;
-  --button-pine-color: #456682;
-  --button-seaweed-color: #384a51;
-  --divider-grey-color: #e8e8e8;
-}
-
 body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   font-family: 'IBM Plex Sans', sans-serif;
-  color: var(--text-color);
+  color: #384a51;
   overflow-wrap: break-word;
   /* Do not use default window margins. */
   margin: 0 !important;
@@ -24,7 +14,7 @@ button {
 }
 
 .emphasize-text-color {
-  color: var(--text-emphasize-color) !important;
+  color: #456682 !important;
 }
 
 .semi-bold-text {
@@ -33,7 +23,7 @@ button {
 
 .divider {
   height: 1px;
-  background-color: var(--divider-grey-color);
+  background-color: #e8e8e8;
   margin-top: 20.8px;
   margin-bottom: 30px;
 }
@@ -46,7 +36,7 @@ button {
   justify-content: center;
   height: 61px;
   width: 100%;
-  background-color: var(--banner-color);
+  background-color: #f9f9f9;
 }
 
 #page-banner-content {
@@ -57,7 +47,7 @@ button {
 }
 
 #page-banner-content img {
-  fill: var(--text-color);
+  fill: #384a51;
   min-width: 18px;
   min-height: 18px;
   margin-right: 5.3px;
@@ -82,7 +72,7 @@ button {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.36;
-  color: var(--button-seaweed-color);
+  color: #384a51;
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -96,8 +86,8 @@ button {
   width: 211px;
   height: 44px;
   border-radius: 40px;
-  border: solid 1px var(--button-pine-color);
-  background-color: var(--button-pine-color);
+  border: solid 1px #456682;
+  background-color: #456682;
   /* Styles adopted by MUI contained buttons. */
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   cursor: pointer;
@@ -105,7 +95,7 @@ button {
 }
 
 #main-message button:hover {
-  background-color: var(--button-seaweed-color);
+  background-color: #384a51;
 }
 
 #main-button-content {
@@ -116,8 +106,8 @@ button {
 
 #main-button-content p,
 img {
-  fill: var(--button-text-color);
-  color: var(--button-text-color);
+  fill: #ffffff;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   padding: 0;
