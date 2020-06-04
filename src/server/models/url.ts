@@ -5,7 +5,7 @@ import blacklist from '../resources/blacklist'
 import { isHttps } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { ogHostname } from '../config'
+import { DEV_ENV, logger, ogHostname } from '../config'
 
 interface UrlBaseType extends IdType {
   readonly shortUrl: string
@@ -36,11 +36,18 @@ export const Url = <UrlTypeStatic>sequelize.define(
     longUrl: {
       type: Sequelize.TEXT, // Support >255 chars
       validate: {
-        isUrl: true,
+        // Disable long url checks for localstack in development.
+        ...(!DEV_ENV ? { isUrl: true } : {}),
 
         httpsCheck(url: string) {
           // Must be https
-          if (!isHttps(url)) throw new Error('Only HTTPS URLs are allowed.')
+          if (!isHttps(url)) {
+            if (DEV_ENV) {
+              logger.warn('HTTPS URLs requirement disabled in development')
+            } else {
+              throw new Error('Only HTTPS URLs are allowed.')
+            }
+          }
         },
 
         noCircularRedirects(url: string) {

@@ -162,4 +162,8 @@ export const sessionSettings: SessionSettings = {
   name: 'gogovsg',
 }
 
+// LocalStack variables.
+export const bucketEndpoint = 'http://localstack:4572'
+export const accessEndpoint = 'http://localhost:4572'
+
 export const sentryDns: string | undefined = process.env.SENTRY_DNS
