@@ -1,21 +1,26 @@
 import React, { FunctionComponent } from 'react'
 
 type CloseIconProps = {
-  size: number
+  size?: number
   color?: string
 }
 
+const originalSize = 24
+
 const CloseIcon: FunctionComponent<CloseIconProps> = ({
-  size,
+  size = originalSize,
   color = '#BBB',
 }) => {
+  const offset = (originalSize - size) / 2
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
       fill="none"
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={`${offset} ${offset} ${originalSize - offset} ${
+        originalSize - offset
+      }`}
     >
       <path
         fill={color}

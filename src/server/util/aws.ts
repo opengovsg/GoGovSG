@@ -21,12 +21,13 @@ export interface S3Interface {
     key: string,
     fileType: string,
   ) => Promise<PromiseResult<S3.PutObjectOutput, AWSError>>
-  buildFileLongUrl: (shortUrl: string) => string
+  buildFileLongUrl: (key: string) => string
+  getKeyFromLongUrl: (longUrl: string) => string
 }
 
 @injectable()
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
-  ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl"] }] */
+  ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl", "getKeyFromLongUrl"] }] */
 export class S3ServerSide implements S3Interface {
   setS3ObjectACL(
     key: string,
@@ -37,7 +38,8 @@ export class S3ServerSide implements S3Interface {
       Key: key,
       ACL: acl,
     }
-    return s3.putObjectAcl(params).promise()
+    const result = s3.putObjectAcl(params).promise()
+    return result
   }
 
   uploadFileToS3(
@@ -51,11 +53,22 @@ export class S3ServerSide implements S3Interface {
       Body: file,
       Key: key,
       ACL: FileVisibility.Public,
+      CacheControl: `no-cache`,
     }
     return s3.putObject(params).promise()
   }
 
-  buildFileLongUrl(shortUrl: string): string {
-    return `https://${s3Bucket}/${shortUrl}`
+  buildFileLongUrl(key: string): string {
+    return `https://${s3Bucket}/${key}`
+  }
+
+  getKeyFromLongUrl(longUrl: string): string {
+    const key = longUrl.split('/').pop()
+
+    if (!key) {
+      throw new Error('Invalid URL')
+    }
+
+    return key
   }
 }

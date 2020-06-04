@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import session from 'express-session'
 import cookieSession from 'cookie-session'
 import connectRedis from 'connect-redis'
+import jsonMessage from './util/json'
 import bindInversifyDependencies from './inversify.config'
 
 // Happens at the top so all imports will have
@@ -132,11 +133,17 @@ initDb()
     })
 
     const errorHandler: express.ErrorRequestHandler = (
-      _err,
+      err,
       _req,
       res,
       _next,
     ) => {
+      // Catch Joi validation errors and pass them as properly-formatted
+      // messages.
+      if (err?.error?.isJoi) {
+        res.badRequest(jsonMessage(err.error.toString()))
+        return
+      }
       res.status(500).render('500.error.ejs')
     }
     app.use(errorHandler)

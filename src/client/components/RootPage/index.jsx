@@ -19,18 +19,9 @@ import '~/assets/favicon/apple-touch-icon.png'
 import '~/assets/favicon/favicon-16x16.png'
 import '~/assets/favicon/favicon-32x32.png'
 
-import {
-  HOME_PAGE,
-  LOGIN_PAGE,
-  NOT_FOUND_PAGE,
-  USER_PAGE,
-  snackbarVariants,
-} from '~/util/types'
+import { HOME_PAGE, LOGIN_PAGE, NOT_FOUND_PAGE, USER_PAGE } from '~/util/types'
 import theme from '../../theme'
 
-const snackbars = Object.values(snackbarVariants).map((variant) => (
-  <MessageSnackbar key={variant} variant={variant} />
-))
 const Root = ({ store }) => (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
@@ -45,7 +36,7 @@ const Root = ({ store }) => (
           </Switch>
         </ScrollToTop>
       </HashRouter>
-      <>{snackbars}</>
+      <MessageSnackbar />
     </MuiThemeProvider>
   </Provider>
 )

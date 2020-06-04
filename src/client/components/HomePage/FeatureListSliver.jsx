@@ -14,6 +14,7 @@ import {
 import antiPhisingIcon from '~/assets/icons/home-page-anti-phishing-icon.svg'
 import customisedIcon from '~/assets/icons/home-page-customised-icon.svg'
 import analyticsIcon from '~/assets/icons/home-page-analytics-icon.svg'
+import fileSharingIcon from '~/assets/icons/home-page-file-sharing-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -69,9 +70,9 @@ const columns = [
       description: <Trans>homePage.features.antiPhishing.description</Trans>,
     },
     {
-      icon: analyticsIcon,
-      title: 'Analytics',
-      description: <Trans>homePage.features.analytics.description</Trans>,
+      icon: fileSharingIcon,
+      title: 'File sharing',
+      description: <Trans>homePage.features.fileSharing.description</Trans>,
     },
   ],
   [
@@ -79,6 +80,11 @@ const columns = [
       icon: customisedIcon,
       title: 'Customised',
       description: <Trans>homePage.features.customised.description</Trans>,
+    },
+    {
+      icon: analyticsIcon,
+      title: 'Analytics',
+      description: <Trans>homePage.features.analytics.description</Trans>,
     },
   ],
 ]
