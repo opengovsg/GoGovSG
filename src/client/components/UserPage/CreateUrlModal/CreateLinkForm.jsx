@@ -26,6 +26,7 @@ import { formatBytes } from '../../../util/format'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../../shared/constants'
+import FileInputField from '../Widgets/FileInputField'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
@@ -162,6 +163,35 @@ export default function CreateLinkForm({
                   </Typography>
                 </div>
               </div>
+              <FileInputField
+                textFieldHeight={TEXT_FIELD_HEIGHT}
+                file={file}
+                uploadFileError={uploadFileError}
+                inputId="file"
+                setFile={setFile}
+                setUploadFileError={setUploadFileError}
+                endAdornment={
+                  <div className={classes.uploadFileInputEndWrapper}>
+                    <Typography
+                      variant="body2"
+                      className={classes.fileSizeText}
+                    >
+                      {file ? formatBytes(file.size) : ''}
+                    </Typography>
+                    <label htmlFor="file">
+                      <Button
+                        variant="contained"
+                        className={classes.uploadFileButton}
+                        component="span"
+                        color="primary"
+                        disabled={isUploading}
+                      >
+                        Browse
+                      </Button>
+                    </label>
+                  </div>
+                }
+              />
               <div className={classes.fileInputWrapper}>
                 <Hidden smDown>
                   <div className={classes.leftFileIcon}>
@@ -193,25 +223,6 @@ export default function CreateLinkForm({
                       setFile(chosenFile)
                     }}
                   />
-                  <div className={classes.uploadFileInputEndWrapper}>
-                    <Typography
-                      variant="body2"
-                      className={classes.fileSizeText}
-                    >
-                      {file ? formatBytes(file.size) : ''}
-                    </Typography>
-                    <label htmlFor="file">
-                      <Button
-                        variant="contained"
-                        className={classes.uploadFileButton}
-                        component="span"
-                        color="primary"
-                        disabled={isUploading}
-                      >
-                        Browse
-                      </Button>
-                    </label>
-                  </div>
                 </div>
               </div>
               <CollapsibleMessage
