@@ -1,6 +1,6 @@
-import { logOut } from '../../../src/server/api/logout/handlers'
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
+import { logOut } from '../../../src/server/api/logout/handlers'
 
 describe('logout api tests', () => {
   it('should destroy session', () => {
