@@ -3,18 +3,14 @@ import { injectable } from 'inversify'
 import AWS from 'aws-sdk'
 
 import { FileVisibility, S3Interface } from './aws'
-import { logger } from '../config'
-
-export const BUCKET_NAME = process.env.AWS_S3_BUCKET || 'local-bucket'
-export const BUCKET_ENDPOINT = 'http://localstack:4572'
-export const ACCESS_ENDPOINT = 'http://localhost:4572'
+import { accessEndpoint, bucketEndpoint, logger, s3Bucket } from '../config'
 
 const s3 = new AWS.S3({
   credentials: {
     accessKeyId: 'foobar',
     secretAccessKey: 'foobar',
   },
-  endpoint: BUCKET_ENDPOINT,
+  endpoint: bucketEndpoint,
   s3ForcePathStyle: true,
 })
 
@@ -25,7 +21,7 @@ export class S3LocalDev implements S3Interface {
   setS3ObjectACL(key: string, acl: FileVisibility) {
     logger.info(`Setting file ACL to ${acl}`)
     const params = {
-      Bucket: BUCKET_NAME,
+      Bucket: s3Bucket,
       Key: key,
       ACL: acl,
     }
@@ -37,7 +33,7 @@ export class S3LocalDev implements S3Interface {
     logger.warn('Your file will be uploaded to localstack rather than AWS S3')
     const params = {
       ContentType: fileType,
-      Bucket: BUCKET_NAME,
+      Bucket: s3Bucket,
       Body: file,
       Key: key,
       ACL: FileVisibility.Public,
@@ -47,7 +43,7 @@ export class S3LocalDev implements S3Interface {
   }
 
   buildFileLongUrl(key: string): string {
-    return `${ACCESS_ENDPOINT}/${BUCKET_NAME}/${key}`
+    return `${accessEndpoint}/${s3Bucket}/${key}`
   }
 
   getKeyFromLongUrl(longUrl: string): string {
