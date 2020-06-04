@@ -5,9 +5,9 @@ import AWS from 'aws-sdk'
 import { FileVisibility, S3Interface } from './aws'
 import { logger } from '../config'
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET || 'local-bucket'
-const BUCKET_ENDPOINT = 'http://localstack:4572'
-const ACCESS_ENPOINT = 'http://localhost:4572'
+export const BUCKET_NAME = process.env.AWS_S3_BUCKET || 'local-bucket'
+export const BUCKET_ENDPOINT = 'http://localstack:4572'
+export const ACCESS_ENPOINT = 'http://localhost:4572'
 
 const s3 = new AWS.S3({
   credentials: {
