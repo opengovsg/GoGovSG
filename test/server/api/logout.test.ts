@@ -19,7 +19,7 @@ describe('logout api tests', () => {
     expect(res.ok.called).toBeTruthy()
   })
 
-  it('should destroy session', () => {
+  it('should send server error when no session', () => {
     const serverErrorSpy = sinon.fake()
     const okSpy = sinon.fake()
     const req = httpMocks.createRequest()
