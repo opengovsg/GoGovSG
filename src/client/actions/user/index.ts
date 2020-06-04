@@ -51,9 +51,9 @@ import {
 import {
   get,
   patch,
+  patchFormData,
   postFormData,
   postJson,
-  patchFormData,
 } from '../../util/requests'
 import rootActions from '../root'
 import { generateShortUrl, removeHttpsProtocol } from '../../util/url'
