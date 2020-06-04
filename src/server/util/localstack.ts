@@ -7,7 +7,7 @@ import { logger } from '../config'
 
 export const BUCKET_NAME = process.env.AWS_S3_BUCKET || 'local-bucket'
 export const BUCKET_ENDPOINT = 'http://localstack:4572'
-export const ACCESS_ENPOINT = 'http://localhost:4572'
+export const ACCESS_ENDPOINT = 'http://localhost:4572'
 
 const s3 = new AWS.S3({
   credentials: {
@@ -47,7 +47,7 @@ export class S3LocalDev implements S3Interface {
   }
 
   buildFileLongUrl(key: string): string {
-    return `${ACCESS_ENPOINT}/${BUCKET_NAME}/${key}`
+    return `${ACCESS_ENDPOINT}/${BUCKET_NAME}/${key}`
   }
 
   getKeyFromLongUrl(longUrl: string): string {
