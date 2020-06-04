@@ -38,7 +38,7 @@ import { GoGovReduxState } from '../../reducers/types'
 import {
   CloseSnackbarAction,
   SetErrorMessageAction,
-  SetInfoMessageAction,
+  SetSuccessMessageAction,
 } from '../root/types'
 
 const isGetOTPSuccess: (email: string) => GetOtpEmailSuccessAction = (
@@ -216,7 +216,7 @@ const verifyOTP = () => (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    | SetInfoMessageAction
+    | SetSuccessMessageAction
     | SetErrorMessageAction
     | VerifyOtpPendingAction
     | VerifyOtpErrorAction
@@ -234,8 +234,8 @@ const verifyOTP = () => (
     const isOk = !!response.ok
     return response.json().then((json) => {
       if (isOk) {
-        dispatch<SetInfoMessageAction>(
-          rootActions.setInfoMessage('OTP Verified'),
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage('OTP Verified'),
         )
         dispatch<void>(isLoggedIn())
       } else {

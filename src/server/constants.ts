@@ -7,6 +7,7 @@ export const DependencyIds = {
   otpCache: Symbol.for('otpCache'),
   mailer: Symbol.for('mailer'),
   cryptography: Symbol.for('cryptography'),
+  s3: Symbol.for('s3'),
 }
 
 export default DependencyIds

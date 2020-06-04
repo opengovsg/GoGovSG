@@ -1,4 +1,5 @@
 import Express from 'express'
+import { createValidator } from 'express-joi-validation'
 import {
   generateOtp,
   getEmailDomains,
@@ -6,8 +7,11 @@ import {
   getLoginMessage,
   verifyOtp,
 } from './handlers'
+import { otpGenerationSchema, otpVerificationSchema } from './validators'
 
 const router: Express.Router = Express.Router()
+
+const validator = createValidator({ passError: true })
 
 /**
  * For the Login message banner.
@@ -19,12 +23,12 @@ router.get('/emaildomains', getEmailDomains)
 /**
  * Request for an OTP to be generated.
  */
-router.post('/otp', generateOtp)
+router.post('/otp', validator.body(otpGenerationSchema), generateOtp)
 
 /**
  * Verify an OTP submission.
  */
-router.post('/verify', verifyOtp)
+router.post('/verify', validator.body(otpVerificationSchema), verifyOtp)
 
 /**
  * Endpoint to check if a user is logged in via cookies.

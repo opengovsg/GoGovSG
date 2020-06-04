@@ -5,6 +5,8 @@ import SortPanel from './SortPanel'
 import userActions from '../../../../../actions/user'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
+import { SortDirection } from '../../../../../reducers/user/types'
+import { initialSortConfig } from '../../../../../constants/user'
 
 import CloseIcon from '../../../../widgets/CloseIcon'
 import useStyles from './styles'
@@ -15,11 +17,12 @@ const mapDispatchToProps = (dispatch) => ({
       userActions.setUrlTableConfig({
         orderBy: title,
         sortDirection: direction,
-        filter: {
-          state,
-          isFile,
-        },
-        pageNumber: 0,
+      }),
+    )
+    dispatch(
+      userActions.setUrlFilter({
+        state,
+        isFile,
       }),
     )
     dispatch(userActions.getUrlsForUser())
@@ -73,7 +76,7 @@ const FilterSortPanel = ({
         state = 'INACTIVE'
       }
     }
-    updateSortAndFilter(orderBy, 'desc', state, isFile)
+    updateSortAndFilter(orderBy, SortDirection.Descending, state, isFile)
     onClose()
   }
   const reset = () => {
@@ -81,8 +84,13 @@ const FilterSortPanel = ({
     setIsIncludeLinks(false)
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
-    setOrderBy('createdAt')
-    updateSortAndFilter('createdAt', 'desc', undefined, false)
+    setOrderBy(initialSortConfig.orderBy)
+    updateSortAndFilter(
+      initialSortConfig.orderBy,
+      SortDirection.Descending,
+      undefined,
+      undefined,
+    )
     onClose()
   }
 
@@ -95,7 +103,7 @@ const FilterSortPanel = ({
     >
       <Paper className={classes.root}>
         <IconButton className={classes.closeIcon} onClick={onClose}>
-          <CloseIcon size={24} />
+          <CloseIcon size={20} />
         </IconButton>
         <Grid
           container

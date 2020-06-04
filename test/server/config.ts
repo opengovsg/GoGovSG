@@ -41,4 +41,5 @@ jest.mock('../../src/server/config', () => ({
   validEmailDomainGlobExpression: '*.test.sg',
   redirectExpiry,
   otpExpiry: 10,
+  s3Bucket: 'file-staging.go.gov.sg',
 }))

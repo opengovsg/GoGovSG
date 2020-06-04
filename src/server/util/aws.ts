@@ -1,5 +1,6 @@
-import { URL, parse } from 'url'
-import { S3 } from 'aws-sdk'
+import { AWSError, S3 } from 'aws-sdk'
+import { PromiseResult } from 'aws-sdk/lib/request'
+import { injectable } from 'inversify'
 import { s3Bucket } from '../config'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
@@ -10,48 +11,64 @@ export enum FileVisibility {
 
 export const s3 = new S3()
 
-/**
- * Reformat the pre-signed url to one that will be accepted by S3.
- *
- * This is necessary because we used a gov.sg CNAME and configured S3
- * to only accept requests that have that gov.sg CNAME as the path.
- *
- * Broadly speaking, we need to change https://s3.amazonaws.com/file.go.gov.sg/link?search
- * to https://file.go.gov.sg.s3.amazonaws.com/link?search.
- */
-const reformatPresignedUrl = (url: string, fileName: string) => {
-  const urlObj = parse(url)
-  const { host, pathname, protocol, search } = urlObj
-  const newUrl = new URL('https://lorem-ipsum.com')
-  newUrl.protocol = protocol as string
-  newUrl.host = `${pathname?.split('/')[1]}.${host}`
-  newUrl.pathname = fileName
-  newUrl.search = search as string
-  return newUrl.href
+export interface S3Interface {
+  setS3ObjectACL: (
+    key: string,
+    acl: FileVisibility,
+  ) => Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>>
+  uploadFileToS3: (
+    file: Buffer,
+    key: string,
+    fileType: string,
+  ) => Promise<PromiseResult<S3.PutObjectOutput, AWSError>>
+  buildFileLongUrl: (key: string) => string
+  getKeyFromLongUrl: (longUrl: string) => string
 }
 
-export const generatePresignedUrl = async (
-  fileName: string,
-  fileType: string,
-) => {
-  const params = {
-    Bucket: s3Bucket,
-    Key: fileName,
-    ContentType: fileType,
-    Expires: 60, // 60 seconds.
+@injectable()
+/* eslint class-methods-use-this: ["error", { "exceptMethods":
+  ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl", "getKeyFromLongUrl"] }] */
+export class S3ServerSide implements S3Interface {
+  setS3ObjectACL(
+    key: string,
+    acl: FileVisibility,
+  ): Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>> {
+    const params = {
+      Bucket: s3Bucket,
+      Key: key,
+      ACL: acl,
+    }
+    const result = s3.putObjectAcl(params).promise()
+    return result
   }
-  const presignedUrl = await s3.getSignedUrlPromise('putObject', params)
-  return reformatPresignedUrl(presignedUrl, fileName)
-}
 
-export const setS3ObjectACL = (
-  key: string,
-  acl: FileVisibility,
-): Promise<any> => {
-  const params = {
-    Bucket: s3Bucket,
-    Key: key,
-    ACL: acl,
+  uploadFileToS3(
+    file: Buffer,
+    key: string,
+    fileType: string,
+  ): Promise<PromiseResult<S3.PutObjectOutput, AWSError>> {
+    const params = {
+      ContentType: fileType,
+      Bucket: s3Bucket,
+      Body: file,
+      Key: key,
+      ACL: FileVisibility.Public,
+      CacheControl: `no-cache`,
+    }
+    return s3.putObject(params).promise()
   }
-  return s3.putObjectAcl(params).promise()
+
+  buildFileLongUrl(key: string): string {
+    return `https://${s3Bucket}/${key}`
+  }
+
+  getKeyFromLongUrl(longUrl: string): string {
+    const key = longUrl.split('/').pop()
+
+    if (!key) {
+      throw new Error('Invalid URL')
+    }
+
+    return key
+  }
 }

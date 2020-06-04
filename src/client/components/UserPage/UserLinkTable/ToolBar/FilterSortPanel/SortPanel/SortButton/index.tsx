@@ -21,7 +21,7 @@ const SortButton = ({ columnLabel, isSelected, onClick }: SortButtonProps) => {
       <Typography variant="body2" className={classes.columnLabel}>
         {columnLabel}
       </Typography>
-      {isSelected && <CheckIcon size={24} className={classes.checkIcon} />}
+      {isSelected && <CheckIcon className={classes.checkIcon} />}
     </Button>
   )
 }

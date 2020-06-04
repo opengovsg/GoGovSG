@@ -45,6 +45,10 @@ const translationEn = {
         description:
           "Want to know how popular your links are? Track each link's click rate through our web interface.",
       },
+      fileSharing: {
+        description:
+          'Upload your file to share it with anyone, using a customised and trustworthy go.gov.sg short link.',
+      },
     },
   },
 }

@@ -15,15 +15,25 @@ import {
   OpenCreateUrlModalAction,
   RESET_USER_STATE,
   ResetUserStateAction,
+  SET_CREATE_SHORT_LINK_ERROR,
   SET_EDITED_LONG_URL,
+  SET_IS_UPLOADING,
+  SET_LAST_CREATED_LINK,
   SET_LONG_URL,
   SET_RANDOM_SHORT_URL,
   SET_SHORT_URL,
+  SET_UPLOAD_FILE_ERROR,
+  SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SetCreateShortLinkErrorAction,
   SetEditedLongUrlAction,
+  SetIsUploadingAction,
+  SetLastCreatedLinkAction,
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
+  SetUploadFileErrorAction,
+  SetUrlFilterAction,
   SetUrlTableConfigAction,
   TOGGLE_URL_STATE_SUCCESS,
   ToggleUrlStateSuccessAction,
@@ -36,9 +46,9 @@ import {
 import {
   RootActionType,
   SetErrorMessageAction,
-  SetInfoMessageAction,
+  SetSuccessMessageAction,
 } from '../root/types'
-import { get, patch, postJson } from '../../util/requests'
+import { get, patch, postFormData, postJson } from '../../util/requests'
 import rootActions from '../root'
 import { generateShortUrl, removeHttpsProtocol } from '../../util/url'
 import { isValidUrl } from '../../../shared/util/validation'
@@ -46,16 +56,45 @@ import { LOGIN_PAGE } from '../../util/types'
 import {
   UrlState,
   UrlTableConfig,
+  UrlTableFilterConfig,
   UrlType,
-  UserState,
 } from '../../reducers/user/types'
 import { GetReduxState } from '../types'
 import { GoGovReduxState } from '../../reducers/types'
+import { MessageType } from '../../../shared/util/messages'
 
 const isFetchingUrls: (payload: boolean) => IsFetchingUrlsAction = (
   payload,
 ) => ({
   type: IS_FETCHING_URLS,
+  payload,
+})
+
+const setLastCreatedLink: (payload: string) => SetLastCreatedLinkAction = (
+  payload,
+) => ({
+  type: SET_LAST_CREATED_LINK,
+  payload,
+})
+
+const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
+  payload,
+) => ({
+  type: SET_IS_UPLOADING,
+  payload,
+})
+
+const setCreateShortLinkError: (
+  payload: string | null,
+) => SetCreateShortLinkErrorAction = (payload) => ({
+  type: SET_CREATE_SHORT_LINK_ERROR,
+  payload,
+})
+
+const setUploadFileError: (
+  payload: string | null,
+) => SetUploadFileErrorAction = (payload) => ({
+  type: SET_UPLOAD_FILE_ERROR,
   payload,
 })
 
@@ -79,12 +118,51 @@ const setUrlTableConfig: (
   payload,
 })
 
+const setUrlFilter: (payload: UrlTableFilterConfig) => SetUrlFilterAction = (
+  payload,
+) => ({
+  type: SET_URL_FILTER,
+  payload,
+})
+
 const updateUrlCount: (urlCount: number) => UpdateUrlCountAction = (
   urlCount,
 ) => ({
   type: UPDATE_URL_COUNT,
   payload: urlCount,
 })
+
+async function handleError(
+  dispatch: Dispatch<
+    | SetUploadFileErrorAction
+    | SetCreateShortLinkErrorAction
+    | SetErrorMessageAction
+  >,
+  response: Response,
+) {
+  const responseType = response.headers.get('content-type')
+  let message: string
+  let type: MessageType | undefined
+  if (responseType?.includes('json')) {
+    const json = await response.json()
+    type = json.type
+    message = json.message
+  } else {
+    message = await response.text()
+  }
+  message = message.replace('Error validating request body. ', '')
+  switch (type) {
+    case MessageType.FileUploadError:
+      dispatch<SetUploadFileErrorAction>(setUploadFileError(message))
+      break
+    case MessageType.ShortUrlError:
+      dispatch<SetCreateShortLinkErrorAction>(setCreateShortLinkError(message))
+      break
+    default:
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
+      break
+  }
+}
 
 // retrieve urls based on query object
 const getUrls: (
@@ -167,69 +245,12 @@ const wipeUserState: () => WipeUserStateAction = () => ({
   type: WIPE_USER_STATE,
 })
 
-// API call to create URL
-const createUrl = (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    SetErrorMessageAction | SetInfoMessageAction | ResetUserStateAction
-  >,
-  user: UserState,
-) => {
-  const { shortUrl } = user
-  let { longUrl } = user
-
-  // Test for malformed short URL
-  if (!/^[a-z0-9-]/.test(shortUrl)) {
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage(
-        'Short links should only consist of a-z, 0-9 and hyphens.',
-      ),
-    )
-    return Promise.reject()
-  }
-
-  // Append https:// as the protocol is stripped out
-  // TODO: consider using Upgrade-Insecure-Requests header for HTTP
-  if (!/^(http|https):\/\//.test(longUrl)) {
-    longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
-  }
-
-  if (!isValidUrl(longUrl)) {
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage('URL is invalid.'),
-    )
-    return Promise.reject()
-  }
-
-  return postJson('/api/user/url', { longUrl, shortUrl }).then((response) => {
-    if (response.status === 401) {
-      const error = new Error('Unauthorized')
-      error.name = response.status.toString()
-      return Promise.reject(error)
-    }
-    return response.json().then((json) => {
-      if (response.status === 200) {
-        dispatch<ResetUserStateAction>(resetUserState())
-        dispatch<void>(getUrlsForUser())
-        dispatch<SetInfoMessageAction>(
-          rootActions.setInfoMessage(`New link created: ${json.shortUrl}`),
-        )
-        return Promise.resolve()
-      }
-      const error = new Error(json.message)
-      error.name = response.status.toString()
-      return Promise.reject(error)
-    })
-  })
-}
-
 // API call to update long URL
 const updateLongUrl = (shortUrl: string, longUrl: string) => (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    SetErrorMessageAction | SetInfoMessageAction
+    SetErrorMessageAction | SetSuccessMessageAction
   >,
 ) => {
   // Append https:// as the protocol is stripped out
@@ -248,8 +269,8 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
   return patch('/api/user/url/edit', { longUrl, shortUrl }).then((response) => {
     if (response.ok) {
       dispatch<void>(getUrlsForUser())
-      dispatch<SetInfoMessageAction>(
-        rootActions.setInfoMessage('URL is updated.'),
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage('URL is updated.'),
       )
       return null
     }
@@ -328,37 +349,81 @@ const closeCreateUrlModal: () => CloseCreateUrlModalAction = () => ({
   type: CLOSE_CREATE_URL_MODAL,
 })
 
+const urlCreated = (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    | CloseCreateUrlModalAction
+    | ResetUserStateAction
+    | SetSuccessMessageAction
+    | SetLastCreatedLinkAction
+  >,
+  shortUrl: string,
+) => {
+  dispatch<void>(getUrlsForUser())
+  dispatch<ResetUserStateAction>(resetUserState())
+  const successMessage = 'Your link has been created'
+  dispatch<SetLastCreatedLinkAction>(setLastCreatedLink(shortUrl))
+  dispatch<SetSuccessMessageAction>(
+    rootActions.setSuccessMessage(successMessage),
+  )
+  dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
+}
+
+// API call to create URL
 // If user is not logged in, the createUrl call returns unauthorized,
 // get them to login, else create the url.
-const createUrlOrRedirect = (history: History) => (
-  dispatch: Dispatch<CloseCreateUrlModalAction | SetErrorMessageAction>,
+const createUrlOrRedirect = (history: History) => async (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    | CloseCreateUrlModalAction
+    | ResetUserStateAction
+    | SetSuccessMessageAction
+    | SetLastCreatedLinkAction
+    | SetErrorMessageAction
+  >,
   getState: GetReduxState,
 ) => {
-  const { login, user } = getState()
-  if (login.user.id) {
-    return createUrl(dispatch, user)
-      .then(() => {
-        dispatch<CloseCreateUrlModalAction>(closeCreateUrlModal())
-      })
-      .catch((error) => {
-        // Get user to login if the status is unauthorized
-        if (error.name === 401) {
-          history.push(LOGIN_PAGE)
-        } else if (error.message) {
-          dispatch<SetErrorMessageAction>(
-            rootActions.setErrorMessage(error.message),
-          )
-        } else {
-          dispatch<SetErrorMessageAction>(
-            rootActions.setErrorMessage('An unknown error has occurred.'),
-          )
-          console.error(error)
-        }
-      })
+  const { user } = getState()
+  const { shortUrl } = user
+  let { longUrl } = user
+
+  // Test for malformed short URL
+  if (!/^[a-z0-9-]/.test(shortUrl)) {
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage(
+        'Short links should only consist of a-z, 0-9 and hyphens.',
+      ),
+    )
+    return
   }
 
-  history.push(LOGIN_PAGE)
-  return null
+  // Append https:// as the protocol is stripped out
+  // TODO: consider using Upgrade-Insecure-Requests header for HTTP
+  if (!/^(http|https):\/\//.test(longUrl)) {
+    longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
+  }
+
+  if (!isValidUrl(longUrl)) {
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage('URL is invalid.'),
+    )
+    return
+  }
+
+  const response = await postJson('/api/user/url', { longUrl, shortUrl })
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      history.push(LOGIN_PAGE)
+      return
+    }
+    handleError(dispatch, response)
+    return
+  }
+  const json = await response.json()
+  urlCreated(dispatch, json.shortUrl)
 }
 
 const transferOwnership = (
@@ -369,7 +434,7 @@ const transferOwnership = (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    SetInfoMessageAction | SetErrorMessageAction
+    SetSuccessMessageAction | SetErrorMessageAction
   >,
 ) =>
   patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
@@ -378,18 +443,55 @@ const transferOwnership = (
         onSuccess()
         dispatch<void>(getUrlsForUser())
         const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
-        dispatch<SetInfoMessageAction>(
-          rootActions.setInfoMessage(successMessage),
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage(successMessage),
         )
+      } else {
+        // Otherwise, show error toast with relevant error message.
+        response.json().then((json) => {
+          dispatch<SetErrorMessageAction>(
+            rootActions.setErrorMessage(json.message),
+          )
+        })
       }
-      // Otherwise, show error toast with relevant error message.
-      response.json().then((json) => {
-        dispatch<SetErrorMessageAction>(
-          rootActions.setErrorMessage(json.message),
-        )
-      })
     },
   )
+
+const uploadFile = (file: File) => async (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    | CloseCreateUrlModalAction
+    | ResetUserStateAction
+    | SetSuccessMessageAction
+    | SetLastCreatedLinkAction
+    | SetErrorMessageAction
+    | SetIsUploadingAction
+  >,
+  getState: GetReduxState,
+) => {
+  const {
+    user: { shortUrl },
+  } = getState()
+  if (file == null) {
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage('File is missing.'),
+    )
+    return
+  }
+  dispatch<SetIsUploadingAction>(setIsUploading(true))
+  const data = new FormData()
+  data.append('file', file, file.name)
+  data.append('shortUrl', shortUrl)
+  const response = await postFormData('/api/user/url', data)
+  dispatch<SetIsUploadingAction>(setIsUploading(false))
+  if (!response.ok) {
+    await handleError(dispatch, response)
+    return
+  }
+  const json = await response.json()
+  urlCreated(dispatch, json.shortUrl)
+}
 
 export default {
   getUrlsForUser,
@@ -407,6 +509,10 @@ export default {
   resetUserState,
   updateLongUrl,
   updateUrlCount,
+  uploadFile,
   setUrlTableConfig,
   getUrls,
+  setUploadFileError,
+  setCreateShortLinkError,
+  setUrlFilter,
 }

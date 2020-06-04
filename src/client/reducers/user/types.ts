@@ -14,7 +14,11 @@ export type UserState = {
   longUrl: string
   createUrlModal: boolean
   tableConfig: UrlTableConfig
-  urlCount: 0
+  isUploading: boolean
+  urlCount: number
+  createShortLinkError?: string | null
+  uploadFileError?: string | null
+  lastCreatedLink?: string
 }
 
 export type UrlTableConfig = {
@@ -23,11 +27,12 @@ export type UrlTableConfig = {
   sortDirection: SortDirection
   orderBy: string
   searchText: string
-  filter: {
-    isFile?: boolean
-    orderBy?: string
-    state?: UrlState
-  }
+  filter: UrlTableFilterConfig
+}
+
+export type UrlTableFilterConfig = {
+  isFile?: boolean
+  state?: UrlState
 }
 
 export enum UrlState {

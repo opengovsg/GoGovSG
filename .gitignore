@@ -1,3 +1,4 @@
+.localstack
 .vscode
 node_modules
 dist
