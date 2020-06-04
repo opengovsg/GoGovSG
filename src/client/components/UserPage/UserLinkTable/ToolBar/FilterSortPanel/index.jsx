@@ -85,7 +85,13 @@ const FilterSortPanel = ({
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
     setOrderBy(initialSortConfig.orderBy)
-    changeSortAndFilterHandler()
+    updateSortAndFilter(
+      initialSortConfig.orderBy,
+      SortDirection.Descending,
+      undefined,
+      undefined,
+    )
+    onClose()
   }
 
   return (
