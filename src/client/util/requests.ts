@@ -52,6 +52,22 @@ export const patch = (
   return crossFetch(url, opts)
 }
 
+export const patchFormData = (
+  url: string = '',
+  data: FormData,
+  options?: RequestInit,
+) => {
+  const opts = options || {
+    method: 'PATCH',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'include',
+    body: data,
+  }
+
+  return crossFetch(url, opts)
+}
+
 export const get = (url: string, options?: RequestInit) => {
   const opts = options || {
     method: 'GET',

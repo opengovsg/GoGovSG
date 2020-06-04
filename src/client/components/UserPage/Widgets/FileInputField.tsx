@@ -1,14 +1,7 @@
 import React, { FunctionComponent } from 'react'
-import {
-  Hidden,
-  Typography,
-  Button,
-  makeStyles,
-  createStyles,
-} from '@material-ui/core'
+import { Hidden, Typography, makeStyles, createStyles } from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../../shared/constants'
-import { formatBytes } from '../../../util/format'
 
 type FileInputFieldStyleProps = {
   uploadFileError: string | null
@@ -18,7 +11,7 @@ type FileInputFieldStyleProps = {
 type FileInputFieldProps = {
   uploadFileError: string | null
   textFieldHeight: number | string
-  file?: File
+  text: string
   endAdornment?: JSX.Element
   inputId: string
   setFile: (file: File | null) => void
@@ -73,7 +66,7 @@ const useStyles = makeStyles((theme) =>
 
 export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   textFieldHeight,
-  file,
+  text,
   uploadFileError,
   endAdornment,
   inputId,
@@ -90,7 +83,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
       </Hidden>
       <div className={classes.fileInput}>
         <Typography variant="body2" className={classes.fileNameText}>
-          {file ? file.name : 'No file selected'}
+          {text}
         </Typography>
         <input
           type="file"
@@ -120,3 +113,5 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
     </div>
   )
 }
+
+export default FileInputField

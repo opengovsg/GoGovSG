@@ -48,7 +48,13 @@ import {
   SetErrorMessageAction,
   SetSuccessMessageAction,
 } from '../root/types'
-import { get, patch, postFormData, postJson } from '../../util/requests'
+import {
+  get,
+  patch,
+  postFormData,
+  postJson,
+  patchFormData,
+} from '../../util/requests'
 import rootActions from '../root'
 import { generateShortUrl, removeHttpsProtocol } from '../../util/url'
 import { isValidUrl } from '../../../shared/util/validation'
@@ -280,6 +286,34 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
       return null
     })
   })
+}
+
+// API call to replace file
+const replaceFile = (
+  shortUrl: string,
+  file: File,
+  onError: (error: string) => void,
+) => async (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetErrorMessageAction | SetSuccessMessageAction
+  >,
+) => {
+  const data = new FormData()
+  data.append('file', file, file.name)
+  data.append('shortUrl', shortUrl)
+
+  const response = await patchFormData('/api/user/url/edit', data)
+  if (!response.ok) {
+    const json = await response.json()
+    onError(json.message)
+  }
+
+  dispatch<void>(getUrlsForUser())
+  dispatch<SetSuccessMessageAction>(
+    rootActions.setSuccessMessage('Your link has been updated.'),
+  )
 }
 
 // For setting short link value in the input box
@@ -515,4 +549,5 @@ export default {
   setUploadFileError,
   setCreateShortLinkError,
   setUrlFilter,
+  replaceFile,
 }

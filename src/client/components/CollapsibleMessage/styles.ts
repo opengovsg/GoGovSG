@@ -5,6 +5,9 @@ export default makeStyles((theme) =>
   createStyles({
     root: {
       width: '100%',
+      position: ({ position }: CollapsibleMessageStyles) => position,
+      top: '100%',
+      left: 0,
     },
     message: {
       width: '100%',

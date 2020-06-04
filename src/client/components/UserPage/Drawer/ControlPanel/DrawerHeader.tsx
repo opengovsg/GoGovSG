@@ -19,8 +19,8 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
-      marginBottom: 44,
-      marginTop: '12px',
+      marginBottom: theme.spacing(6.5),
+      marginTop: theme.spacing(1.5),
       [theme.breakpoints.up('md')]: {
         alignItems: 'center',
         marginTop: 0,

@@ -2,22 +2,11 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import userActions from '../../../../../actions/user'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
-import { UrlState } from '../../../../../reducers/user/types'
-
-export type LinkState = {
-  clicks: number
-  createdAt: string
-  editedLongUrl: string
-  isFile: boolean
-  longUrl: string
-  shortUrl: string
-  state: UrlState
-  updatedAt: string
-  userId: number
-}
+import { UrlType } from '../../../../../reducers/user/types'
+import { GoGovReduxState } from '../../../../../reducers/types'
 
 export type ShortLinkState = [
-  LinkState | undefined,
+  UrlType | undefined,
   ShortLinkDispatch | undefined,
 ]
 
@@ -30,10 +19,13 @@ export type ShortLinkDispatch = {
 }
 
 export default function useShortLink(shortLink: string) {
-  const urls: LinkState[] = useSelector((state: any) => state.user.urls)
-  const urlState = urls.filter(
-    (url: LinkState) => url.shortUrl === shortLink,
-  )[0]
+  const urls: UrlType[] = useSelector<GoGovReduxState, UrlType[]>(
+    (state) => state.user.urls,
+  )
+  const urlState = urls.filter((url: UrlType) => url.shortUrl === shortLink)[0]
+  const isUploading = useSelector<GoGovReduxState, boolean>(
+    (state) => state.user.isUploading,
+  )
   const dispatch = useDispatch()
   const dispatchOptions = {
     toggleStatus: () =>
@@ -50,10 +42,17 @@ export default function useShortLink(shortLink: string) {
     applyNewOwner: (newOwner: string, onSuccess: () => void) => {
       dispatch(userActions.transferOwnership(shortLink, newOwner, onSuccess))
     },
+    replaceFile: (newFile: File | null, onError: (error: string) => void) => {
+      if (!newFile) {
+        return
+      }
+      dispatch(userActions.replaceFile(shortLink, newFile, onError))
+    },
   }
 
   return {
     shortLinkState: shortLink ? urlState : undefined,
     shortLinkDispatch: shortLink ? dispatchOptions : undefined,
+    isUploading,
   }
 }
