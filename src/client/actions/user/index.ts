@@ -297,17 +297,20 @@ const replaceFile = (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    SetErrorMessageAction | SetSuccessMessageAction
+    SetErrorMessageAction | SetSuccessMessageAction | SetIsUploadingAction
   >,
 ) => {
+  dispatch<SetIsUploadingAction>(setIsUploading(true))
   const data = new FormData()
   data.append('file', file, file.name)
   data.append('shortUrl', shortUrl)
 
   const response = await patchFormData('/api/user/url/edit', data)
+  dispatch<SetIsUploadingAction>(setIsUploading(false))
   if (!response.ok) {
     const json = await response.json()
     onError(json.message)
+    return
   }
 
   dispatch<void>(getUrlsForUser())
