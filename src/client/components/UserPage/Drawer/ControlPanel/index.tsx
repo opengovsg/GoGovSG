@@ -9,6 +9,7 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery,
+  CircularProgress,
 } from '@material-ui/core'
 
 import DrawerActions from './helpers/reducers'
@@ -325,7 +326,11 @@ export default function ControlPanel() {
                     fullWidth={isMobileView}
                     component="span"
                   >
-                    Replace File
+                    {isUploading ? (
+                      <CircularProgress color="primary" size={20} />
+                    ) : (
+                      'Replace file'
+                    )}
                   </TrailingButton>
                 </label>
               }
