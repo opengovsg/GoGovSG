@@ -1,7 +1,6 @@
 import validator from 'validator'
 import { parse } from 'url'
 
-import { ogHostname } from '../../server/config'
 import blacklist from '../../server/resources/blacklist'
 
 export const WHITELIST = [new RegExp('^http://localhost:4572')]
@@ -51,6 +50,7 @@ export function isValidLongUrl(url: string, allowBlank = false): boolean {
 }
 
 // Checks if go short url redirects to go domain.
-export function isCircularRedirects(url: string): boolean {
-  return parse(url).hostname === ogHostname
+export function isCircularRedirects(url: string, hostname?: string): boolean {
+  if (!hostname) return false
+  return parse(url).hostname === hostname
 }

@@ -9,7 +9,7 @@ import {
 } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { DEV_ENV, logger } from '../config'
+import { DEV_ENV, logger, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 
 interface UrlBaseType extends IdType {
@@ -48,7 +48,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
         },
 
         httpsCheck(url: string) {
-          // Must be https
           if (!isHttps(url, true)) {
             if (DEV_ENV) {
               logger.warn('HTTPS URLs requirement disabled in development')
@@ -59,7 +58,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
         },
 
         noCircularRedirects(url: string) {
-          if (isCircularRedirects(url)) {
+          if (isCircularRedirects(url, ogHostname)) {
             throw new Error('Circular redirects to go.gov.sg are prohibited')
           }
         },
