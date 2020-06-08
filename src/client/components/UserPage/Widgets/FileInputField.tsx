@@ -16,6 +16,7 @@ type FileInputFieldProps = {
   inputId: string
   setFile: (file: File | null) => void
   setUploadFileError: (error: string | null) => void
+  className?: string
 }
 
 const useStyles = makeStyles((theme) =>
@@ -72,10 +73,11 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   inputId,
   setFile,
   setUploadFileError,
+  className,
 }) => {
   const classes = useStyles({ textFieldHeight, uploadFileError })
   return (
-    <div className={classes.fileInputWrapper}>
+    <div className={`classes.fileInputWrapper ${className}`}>
       <Hidden smDown>
         <div className={classes.leftFileIcon}>
           <FileIconLarge color="#f9f9f9" />

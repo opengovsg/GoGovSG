@@ -101,6 +101,12 @@ const useStyles = makeStyles((theme) =>
     originalFileLabel: {
       marginBottom: theme.spacing(1),
     },
+    fileInputField: {
+      marginBottom: theme.spacing(3),
+      [theme.breakpoints.up('md')]: {
+        marginBottom: 0,
+      },
+    },
   }),
 )
 
@@ -288,6 +294,7 @@ export default function ControlPanel() {
               leading={
                 <>
                   <FileInputField
+                    className={classes.fileInputField}
                     uploadFileError={uploadFileError}
                     textFieldHeight="44px"
                     inputId="replace-file-input"

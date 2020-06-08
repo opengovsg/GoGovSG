@@ -105,6 +105,9 @@ export default responsiveFontSizes(
             boxShadow: 'none',
           },
         },
+        outlinedPrimary: {
+          border: `1px solid #456682`,
+        },
       },
       MuiAppBar: {
         colorPrimary: {
