@@ -118,12 +118,6 @@ describe('Test long url check', () => {
   test('empty url passes if blanks are allowed', () => {
     expect(validation.isValidLongUrl('', true)).toBe(true)
   })
-
-  test('urls with double quotes fails check', () => {
-    const url = 'https://example.com/abc"abc'
-    expect(validation.isValidLongUrl(url)).toBe(false)
-    expect(validation.isValidLongUrl(url, true)).toBe(false)
-  })
 })
 
 describe('Test circular directs check', () => {

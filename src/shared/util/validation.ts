@@ -45,8 +45,12 @@ export function isValidShortUrl(url: string, allowBlank = false): boolean {
 }
 
 // Tests the validity of a long url. Will return true if blank.
-export function isValidLongUrl(url: string, allowBlank = false): boolean {
-  return (allowBlank && !url) || isValidUrl(`https://${url}`)
+export function isValidLongUrl(
+  url: string,
+  allowBlank = false,
+  useWhitelist = false,
+): boolean {
+  return (allowBlank && !url) || isValidUrl(`https://${url}`, useWhitelist)
 }
 
 // Checks if go short url redirects to go domain.
