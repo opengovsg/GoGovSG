@@ -1,11 +1,21 @@
 image:
   file: .gitpod.Dockerfile
 tasks:
-  - init: npm install
-    command: echo "test"
   - command: redis-server
+  - before: cp ./init-localstack.sh /docker-entrypoint-initaws.d/init-localstack.sh
+    command: localstack start --host
+  - before: export ACCESS_ENDPOINT=`gp url 4566`
+    init: npm ci
+    command: /tmp/wait-for-it.sh localhost:4566 -t 0 -- ./init-localstack.sh && echo "Run npm run docker-dev to begin"
 ports:
+  # postgres
   - port: 5432
     onOpen: ignore
+  # redis
   - port: 6379
+    onOpen: ignore
+  # localstack
+  - port: 4566
+    onOpen: ignore
+  - port: 4572
     onOpen: ignore
