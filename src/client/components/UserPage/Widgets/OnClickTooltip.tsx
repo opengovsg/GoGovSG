@@ -18,7 +18,7 @@ export default function OnClickTooltip(props: OnClickTooltipType) {
       }}
       title={props.tooltipText}
       open={open}
-      onClickCapture={handleTooltipOpen}
+      onClickCapture={() => handleTooltipOpen()}
       onClose={handleTooltipClose}
       placement="top"
       arrow
