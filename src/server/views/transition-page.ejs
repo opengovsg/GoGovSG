@@ -42,7 +42,7 @@
     </div>
     <script>
         function proceedToDestination() {
-            window.location = '<%- longUrl %>'
+            window.location = "<%- escapedLongUrl %>" // Use double-quotes to avoid templating issue as per RFC3986 (https://tools.ietf.org/html/rfc3986#appendix-C)
         }
     </script>
 </body>
