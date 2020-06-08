@@ -77,7 +77,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
 }) => {
   const classes = useStyles({ textFieldHeight, uploadFileError })
   return (
-    <div className={`classes.fileInputWrapper ${className}`}>
+    <div className={`${classes.fileInputWrapper} ${className}`}>
       <Hidden smDown>
         <div className={classes.leftFileIcon}>
           <FileIconLarge color="#f9f9f9" />
