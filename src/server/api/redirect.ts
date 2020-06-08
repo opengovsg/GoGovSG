@@ -65,6 +65,17 @@ function isCrawler(ua: string): boolean {
 }
 
 /**
+ * Encodes the long URL to be template safe. Currently this function
+ * only templates the double-quote character as it is invalid according
+ * to [RFC 3986](https://tools.ietf.org/html/rfc3986#appendix-C).
+ * @param {string} longUrl The long URL before templating.
+ * @return {string} The template-safe URL.
+ */
+function encodeLongUrl(longUrl: string) {
+  return longUrl.replace(/["]/g, encodeURIComponent)
+}
+
+/**
  * The redirect function.
  * @param {Object} req Express request object.
  * @param {Object} res Express response object.
@@ -121,7 +132,7 @@ export default async function redirect(
       const rootDomain: string = parseDomain(longUrl)
 
       res.status(200).render(TRANSITION_PATH, {
-        longUrl,
+        escapedLongUrl: encodeLongUrl(longUrl),
         rootDomain,
       })
       return
