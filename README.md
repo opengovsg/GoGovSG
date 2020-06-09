@@ -67,8 +67,8 @@ Once the setup is complete, the local version of GoGovSG can be accessed on your
 Note that 3000 is the port number that the webpack dev server listens on; the backend server actually listens
 on port 8080 instead.
 
-Because redirects are served directly from the backend, shortlinks should be accessed
-via `localhost:8080/shortlink` and not `localhost:3000/shortlink`. Also, given that GoGovSG will attempt to send
+Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
+but that is really being proxied to `localhost:8080/shortlink`. Also, given that GoGovSG will attempt to send
 emails directly from your computer when running on localhost, there is a chance that the email might land in
 spam or not be sent entirely. To mitigate this, we have set the one-time password for all log-in attempts
 on localhost to be `111111`.

@@ -19,3 +19,7 @@ ports:
     onOpen: ignore
   - port: 4572
     onOpen: ignore
+  # expressjs - not needed since we have
+  # access via webpack dev server proxy
+  - port: 8080
+    onOpen: ignore
