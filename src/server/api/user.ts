@@ -4,13 +4,10 @@ import * as Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
 import jsonMessage from '../util/json'
 import { User, UserType } from '../models/user'
-import { Url } from '../models/url'
 import { ACTIVE, INACTIVE } from '../models/types'
 import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { FileVisibility, S3Interface } from '../util/aws'
-import { transaction } from '../util/sequelize'
 import { logger } from '../config'
 import { DependencyIds } from '../constants'
 import { container } from '../util/inversify'
@@ -23,12 +20,14 @@ import {
 import { addFileExtension, getFileExtension } from '../util/fileFormat'
 import { MessageType } from '../../shared/util/messages'
 import { MAX_FILE_UPLOAD_SIZE } from '../../shared/constants'
-
-const { Public, Private } = FileVisibility
+import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
+import { StorableFile, StorableUrl } from '../repositories/types'
 
 const router = Express.Router()
 
-const s3 = container.get<S3Interface>(DependencyIds.s3)
+const urlRepository = container.get<UrlRepositoryInterface>(
+  DependencyIds.urlRepository,
+)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
@@ -122,16 +121,13 @@ router.post(
 
     try {
       const user = await User.findByPk(userId)
-      const fileKey = file
-        ? addFileExtension(shortUrl, getFileExtension(file.name))
-        : ''
 
       if (!user) {
         res.notFound(jsonMessage('User not found'))
         return
       }
 
-      const existsShortUrl = await Url.findOne({ where: { shortUrl } })
+      const existsShortUrl = await urlRepository.findByShortUrl(shortUrl)
       if (existsShortUrl) {
         res.badRequest(
           jsonMessage(
@@ -142,22 +138,24 @@ router.post(
         return
       }
 
+      const storableFile: StorableFile | undefined = file
+        ? {
+            data: file.data,
+            key: addFileExtension(shortUrl, getFileExtension(file.name)),
+            mimetype: file.mimetype,
+          }
+        : undefined
+
       // Success
-      const result = await transaction(async (t) => {
-        const url = Url.create(
-          {
-            userId: user.id,
-            longUrl: file ? s3.buildFileLongUrl(fileKey) : longUrl,
-            shortUrl,
-            isFile: !!file,
-          },
-          { transaction: t },
-        )
-        if (file) {
-          await s3.uploadFileToS3(file.data, fileKey, file.mimetype)
-        }
-        return url
-      })
+
+      const result = await urlRepository.create(
+        {
+          userId: user.id,
+          longUrl,
+          shortUrl,
+        },
+        storableFile,
+      )
 
       res.ok(result)
     } catch (error) {
@@ -215,8 +213,12 @@ router.patch(
       }
 
       // Success
-      const result = await transaction((t) =>
-        url.update({ userId: newUserId }, { transaction: t }),
+      // TODO: Remove force cast once UserRepository has been made
+      const result = await urlRepository.update(
+        (url as unknown) as StorableUrl,
+        {
+          userId: newUserId,
+        },
       )
       res.ok(result)
     } catch (error) {
@@ -266,21 +268,20 @@ router.patch(
         )
       }
 
-      await transaction(async (t) => {
-        if (!url.isFile) {
-          await url.update({ longUrl }, { transaction: t })
-        } else if (file) {
-          const oldKey = s3.getKeyFromLongUrl(url.longUrl)
-          const newKey = addFileExtension(shortUrl, getFileExtension(file.name))
-          await url.update(
-            { longUrl: s3.buildFileLongUrl(newKey) },
-            { transaction: t },
-          )
-          await s3.setS3ObjectACL(oldKey, Private)
-          await s3.uploadFileToS3(file.data, newKey, file.mimetype)
-        }
-      })
-      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
+      const storableFile: StorableFile | undefined = file
+        ? {
+            data: file.data,
+            key: addFileExtension(shortUrl, getFileExtension(file.name)),
+            mimetype: file.mimetype,
+          }
+        : undefined
+
+      // TODO: Remove force cast once UserRepository has been made
+      await urlRepository.update(
+        (url as unknown) as StorableUrl,
+        { longUrl },
+        storableFile,
+      )
 
       // Expire the Redis cache
       redirectClient.del(shortUrl, (err) => {
@@ -288,6 +289,7 @@ router.patch(
           logger.error(`Short URL could not be purged from cache:\t${err}`)
         }
       })
+      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
     } catch (e) {
       logger.error(`Error editing long URL:\t${e}`)
       res.badRequest(jsonMessage('Invalid URL.'))
@@ -319,16 +321,8 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
       res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
     }
 
-    await transaction(async (t) => {
-      await url.update({ state }, { transaction: t })
-      if (url.isFile) {
-        // Toggle the ACL of the S3 object
-        await s3.setS3ObjectACL(
-          s3.getKeyFromLongUrl(url.longUrl),
-          state === ACTIVE ? Public : Private,
-        )
-      }
-    })
+    // TODO: Remove force cast once UserRepository has been made
+    await urlRepository.update((url as unknown) as StorableUrl, { state })
     res.ok()
 
     if (state === INACTIVE) {

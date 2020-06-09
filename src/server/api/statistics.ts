@@ -1,10 +1,15 @@
 import Express from 'express'
 import { statClient } from '../redis'
 import { User } from '../models/user'
-import { Url } from '../models/url'
 import { logger, statisticsExpiry } from '../config'
+import { DependencyIds } from '../constants'
+import { container } from '../util/inversify'
+import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 
 const router = Express.Router()
+const urlRepository = container.get<UrlRepositoryInterface>(
+  DependencyIds.urlRepository,
+)
 
 /**
  * Endpoint to retrieve total user, link, and click counts.
@@ -35,8 +40,8 @@ router.get('/', async (_: Express.Request, res: Express.Response) => {
       // If the values are not found in the cache, we read from the DB
       const [userCount, linkCount, clickCountUntrusted] = await Promise.all([
         User.count(),
-        Url.count(),
-        Url.sum('clicks'),
+        urlRepository.getNumUrls(),
+        urlRepository.getTotalLinkClicks(),
       ])
 
       // Cater to the edge case where clickCount is NaN because there are no links
