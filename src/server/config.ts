@@ -163,7 +163,9 @@ export const sessionSettings: SessionSettings = {
 }
 
 // LocalStack variables.
-export const bucketEndpoint = process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
-export const accessEndpoint = process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
+export const bucketEndpoint =
+  process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
+export const accessEndpoint =
+  process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS

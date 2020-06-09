@@ -1,7 +1,7 @@
 import { AWSError, S3 } from 'aws-sdk'
 import { PromiseResult } from 'aws-sdk/lib/request'
-import { injectable, inject } from 'inversify'
-import DependencyIds from '../constants'
+import { inject, injectable } from 'inversify'
+import { DependencyIds } from '../constants'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
 export enum FileVisibility {
@@ -28,13 +28,15 @@ export interface S3Interface {
   ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl", "getKeyFromLongUrl"] }] */
 export class S3ServerSide implements S3Interface {
   private s3Client: S3
+
   private s3Bucket: string
+
   private fileURLPrefix: string
 
   constructor(
     @inject(DependencyIds.s3Client) s3Client: S3,
     @inject(DependencyIds.s3Bucket) s3Bucket: string,
-    @inject(DependencyIds.fileURLPrefix) fileURLPrefix: string
+    @inject(DependencyIds.fileURLPrefix) fileURLPrefix: string,
   ) {
     this.s3Client = s3Client
     this.s3Bucket = s3Bucket
