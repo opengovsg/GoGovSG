@@ -28,12 +28,7 @@ const { Public, Private } = FileVisibility
 
 const router = Express.Router()
 
-const {
-  buildFileLongUrl,
-  setS3ObjectACL,
-  uploadFileToS3,
-  getKeyFromLongUrl,
-} = container.get<S3Interface>(DependencyIds.s3)
+const s3 = container.get<S3Interface>(DependencyIds.s3)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
@@ -152,14 +147,14 @@ router.post(
         const url = Url.create(
           {
             userId: user.id,
-            longUrl: file ? buildFileLongUrl(fileKey) : longUrl,
+            longUrl: file ? s3.buildFileLongUrl(fileKey) : longUrl,
             shortUrl,
             isFile: !!file,
           },
           { transaction: t },
         )
         if (file) {
-          await uploadFileToS3(file.data, fileKey, file.mimetype)
+          await s3.uploadFileToS3(file.data, fileKey, file.mimetype)
         }
         return url
       })
@@ -275,14 +270,14 @@ router.patch(
         if (!url.isFile) {
           await url.update({ longUrl }, { transaction: t })
         } else if (file) {
-          const oldKey = getKeyFromLongUrl(url.longUrl)
+          const oldKey = s3.getKeyFromLongUrl(url.longUrl)
           const newKey = addFileExtension(shortUrl, getFileExtension(file.name))
           await url.update(
-            { longUrl: buildFileLongUrl(newKey) },
+            { longUrl: s3.buildFileLongUrl(newKey) },
             { transaction: t },
           )
-          await setS3ObjectACL(oldKey, Private)
-          await uploadFileToS3(file.data, newKey, file.mimetype)
+          await s3.setS3ObjectACL(oldKey, Private)
+          await s3.uploadFileToS3(file.data, newKey, file.mimetype)
         }
       })
       res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
@@ -328,8 +323,8 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
       await url.update({ state }, { transaction: t })
       if (url.isFile) {
         // Toggle the ACL of the S3 object
-        await setS3ObjectACL(
-          getKeyFromLongUrl(url.longUrl),
+        await s3.setS3ObjectACL(
+          s3.getKeyFromLongUrl(url.longUrl),
           state === ACTIVE ? Public : Private,
         )
       }
