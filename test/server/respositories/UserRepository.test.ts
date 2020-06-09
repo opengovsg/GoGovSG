@@ -13,7 +13,7 @@ const userRepo = new UserRepository(
 )
 
 /**
- * Simple integration test for UserRepository.
+ * Simple unit test for UserRepository.
  */
 describe('user repository implementation tests', () => {
   test('findOrCreate test', async () => {
