@@ -21,11 +21,10 @@ import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../Widgets/LinkIcon'
 import FileIcon from '../Widgets/FileIcon'
-import FileIconLarge from '../Widgets/FileIconLarge'
 import { formatBytes } from '../../../util/format'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
-import { MAX_FILE_UPLOAD_SIZE } from '../../../../shared/constants'
+import FileInputField from '../Widgets/FileInputField'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
@@ -162,37 +161,14 @@ export default function CreateLinkForm({
                   </Typography>
                 </div>
               </div>
-              <div className={classes.fileInputWrapper}>
-                <Hidden smDown>
-                  <div className={classes.leftFileIcon}>
-                    <FileIconLarge color="#f9f9f9" />
-                  </div>
-                </Hidden>
-                <div className={classes.fileInput}>
-                  <Typography variant="body2" className={classes.fileNameText}>
-                    {file ? file.name : 'No file selected'}
-                  </Typography>
-                  <input
-                    type="file"
-                    id="file"
-                    className={classes.fileInputInvis}
-                    disabled={isUploading}
-                    onChange={(event) => {
-                      const chosenFile = event.target.files[0]
-                      if (!chosenFile) {
-                        return
-                      }
-                      if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
-                        setFile(null)
-                        setUploadFileError(
-                          'File too large, please upload a file smaller than 10mb',
-                        )
-                        return
-                      }
-                      setUploadFileError(null)
-                      setFile(chosenFile)
-                    }}
-                  />
+              <FileInputField
+                textFieldHeight={TEXT_FIELD_HEIGHT}
+                text={file ? file.name : 'No file selected'}
+                uploadFileError={uploadFileError}
+                inputId="file"
+                setFile={setFile}
+                setUploadFileError={setUploadFileError}
+                endAdornment={
                   <div className={classes.uploadFileInputEndWrapper}>
                     <Typography
                       variant="body2"
@@ -212,8 +188,8 @@ export default function CreateLinkForm({
                       </Button>
                     </label>
                   </div>
-                </div>
-              </div>
+                }
+              />
               <CollapsibleMessage
                 visible={!!uploadFileError}
                 type={CollapsibleMessageType.Error}

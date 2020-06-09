@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 30,
+      marginBottom: theme.spacing(3.5),
       flexWrap: (props: StylesProps) =>
         props.wrapTrailing ? 'wrap' : 'nowrap',
     },
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 0,
         marginRight: 19,
       },
+      position: 'relative',
     },
     trailingContainer: {
       marginTop: (props: StylesProps) =>

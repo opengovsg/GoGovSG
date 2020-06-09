@@ -1,9 +1,13 @@
 export type UrlType = {
-  shortUrl: string
-  longUrl: string
-  updatedAt: string
+  clicks: number
   createdAt: string
   editedLongUrl: string
+  isFile: boolean
+  longUrl: string
+  shortUrl: string
+  state: UrlState
+  updatedAt: string
+  userId: number
 }
 
 export type UserState = {
