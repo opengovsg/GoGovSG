@@ -1,8 +1,6 @@
 import AWS from 'aws-sdk'
 
 import { container } from './util/inversify'
-import { UrlCacheRedis } from './api/cache/url'
-import { UrlRepositorySequelize } from './api/repositories/url'
 import { GaLogger } from './api/analytics/analyticsLogger'
 import { DependencyIds } from './constants'
 import { CookieArrayReducer } from './util/transition-page'
@@ -13,6 +11,7 @@ import { CryptographyBcrypt } from './util/cryptography'
 import { DEV_ENV, accessEndpoint, bucketEndpoint, s3Bucket } from './config'
 import { MailerNoOp } from './util/emaildev'
 import { S3ServerSide } from './util/aws'
+import { UrlRepository } from './repositories/UrlRepository'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -24,8 +23,7 @@ function bindIfUnbound<T>(
 }
 
 export default () => {
-  bindIfUnbound(DependencyIds.urlCache, UrlCacheRedis)
-  bindIfUnbound(DependencyIds.urlRepository, UrlRepositorySequelize)
+  bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
   bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)

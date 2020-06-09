@@ -6,35 +6,17 @@ import redisMock from 'redis-mock'
 import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { UrlCache } from '../../../src/server/api/cache/url'
-import { UrlRepository } from '../../../src/server/api/repositories/url'
 import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogger'
 import AnalyticsLoggerMock from './mocks/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
 import { OtpCache } from '../../../src/server/api/cache/otp'
 
 /**
- * Retrieves the currently binded UrlCache in the Inversify container.
- * @returns UrlCache.
- */
-export function getUrlCache(): UrlCache {
-  return container.get<UrlCache>(DependencyIds.urlCache)
-}
-
-/**
- * Retrieves the currently binded UrlCache in the Inversify container.
- * @returns UrlCache.
+ * Retrieves the currently binded OtpCache in the Inversify container.
+ * @returns OtpCache.
  */
 export function getOtpCache(): OtpCache {
   return container.get<OtpCache>(DependencyIds.otpCache)
-}
-
-/**
- * Retrieves the currently binded UrlRepository in the Inversify container.
- * @returns UrlRepository.
- */
-export function getUrlRepository(): UrlRepository {
-  return container.get<UrlRepository>(DependencyIds.urlRepository)
 }
 
 /**
@@ -55,7 +37,6 @@ export function isAnalyticsLogged(
   const logger = container.get<AnalyticsLogger>(
     DependencyIds.analyticsLogging,
   ) as AnalyticsLoggerMock
-
   return (
     logger.lastReq === req &&
     logger.lastRes === res &&
@@ -132,6 +113,8 @@ export const urlModelMock = sequelizeMock.define('url', {
   clicks: 0,
   increment: () => {},
 })
+
+export const mockTransaction = sequelizeMock.transaction
 
 export const userModelMock = {
   findOrCreate: ({ where: { email } }: { where: { email: string } }) =>

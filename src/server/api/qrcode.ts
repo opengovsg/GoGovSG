@@ -6,7 +6,13 @@ import { ogUrl } from '../config'
 import createGoQrCode from '../util/qrcode'
 import ImageFormat from '../../shared/util/image-format'
 import { isValidShortUrl } from '../../shared/util/validation'
-import { Url } from '../models/url'
+import { container } from '../util/inversify'
+import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
+import { DependencyIds } from '../constants'
+
+const urlRepository = container.get<UrlRepositoryInterface>(
+  DependencyIds.urlRepository,
+)
 
 function isValidFormat(format: string): boolean {
   const validFormats = Object.values(ImageFormat) as string[]
@@ -14,7 +20,7 @@ function isValidFormat(format: string): boolean {
 }
 
 async function shortUrlExists(shortUrl: string): Promise<boolean> {
-  return !!(await Url.findOne({ where: { shortUrl } }))
+  return !!(await urlRepository.findByShortUrl(shortUrl))
 }
 
 const qrCodeRequestSchema = Joi.object({

@@ -6,16 +6,17 @@ import { isHttps } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
 import { DEV_ENV, logger, ogHostname } from '../config'
+import { StorableUrlState } from '../repositories/enums'
 
 interface UrlBaseType extends IdType {
   readonly shortUrl: string
   readonly longUrl: string
-  readonly state: Sequelize.EnumDataType<string>
+  readonly state: StorableUrlState
   readonly isFile: boolean
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
-  readonly clicks: Sequelize.IntegerDataType
+  readonly clicks: number
 }
 
 // For sequelize define
