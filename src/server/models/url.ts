@@ -9,7 +9,7 @@ import {
 } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { DEV_ENV, logger, ogHostname } from '../config'
+import { DEV_ENV, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 
 interface UrlBaseType extends IdType {
@@ -42,18 +42,14 @@ export const Url = <UrlTypeStatic>sequelize.define(
       type: Sequelize.TEXT, // Support >255 chars
       validate: {
         urlCheck(url: string) {
-          if (!isValidUrl(url, true)) {
+          if (!isValidUrl(url, DEV_ENV)) {
             throw new Error('Invalid URLs are not allowed.')
           }
         },
 
         httpsCheck(url: string) {
-          if (!isHttps(url, true)) {
-            if (DEV_ENV) {
-              logger.warn('HTTPS URLs requirement disabled in development')
-            } else {
-              throw new Error('Only HTTPS URLs are allowed.')
-            }
+          if (!isHttps(url, DEV_ENV)) {
+            throw new Error('Only HTTPS URLs are allowed.')
           }
         },
 
