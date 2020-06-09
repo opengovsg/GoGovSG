@@ -22,6 +22,7 @@ import {
   CookieArrayReducerMockVisited,
 } from './mocks/transition-page'
 import { logger } from '../config'
+import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -36,7 +37,7 @@ jest.mock('../../../src/server/util/sequelize', () => ({
 }))
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
-const repository = new UrlRepository(new S3InterfaceMock())
+const repository = new UrlRepository(new S3InterfaceMock(), new UrlMapper())
 const incrementClicksSpy = jest.spyOn(repository, 'incrementClick')
 const dbFindOneSpy = jest.spyOn(urlModelMock, 'findOne')
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')

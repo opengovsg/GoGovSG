@@ -5,6 +5,7 @@ import {
   createRequestWithEmailAndOtp,
   createRequestWithUser,
   getOtpCache,
+  userModelMock,
 } from './util'
 import {
   generateOtp,
@@ -21,18 +22,30 @@ import { Cryptography } from '../../../src/server/util/cryptography'
 import CryptographyMock from './mocks/cryptography'
 import { OtpCache } from '../../../src/server/api/cache/otp'
 import { OtpCacheMock, OtpCacheMockDown } from './mocks/cache/otp'
-import { UserRepository } from '../../../src/server/api/repositories/user'
-import {
-  UserRepositoryMock,
-  UserRepositoryMockDown,
-} from './mocks/repositories/user'
+import { UserRepositoryInterface } from '../../../src/server/repositories/interfaces/UserRepositoryInterface'
 import { logger } from '../config'
+import { UserRepository } from '../../../src/server/repositories/UserRepository'
+import { UserMapper } from '../../../src/server/mappers/UserMapper'
+import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
+import { Mapper } from '../../../src/server/mappers/Mapper'
+import {
+  StorableUrl,
+  StorableUser,
+} from '../../../src/server/repositories/types'
+import { UrlType } from '../../../src/server/models/url'
+import { UserType } from '../../../src/server/models/user'
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 
 jest.mock('../../../src/server/util/email', () => ({
   mailOTP: sinon.fake(),
 }))
+
+jest.mock('../../../src/server/models/user', () => ({
+  User: userModelMock,
+}))
+
+const findOrCreateSpy = jest.spyOn(userModelMock, 'findOrCreate')
 
 function getMockResponse(): any {
   return {
@@ -45,6 +58,21 @@ function getMockResponse(): any {
   }
 }
 
+function bindUserRepo() {
+  container
+    .bind<Mapper<StorableUrl, UrlType>>(DependencyIds.urlMapper)
+    .to(UrlMapper)
+  container
+    .bind<Mapper<StorableUser, UserType>>(DependencyIds.userMapper)
+    .to(UserMapper)
+  container
+    .bind<UserRepositoryInterface>(DependencyIds.userRepository)
+    .to(UserRepository)
+}
+
+/**
+ * Integration tests for login middleware. I.e UserRepository is not mocked.
+ */
 describe('login middleware tests', () => {
   afterEach(() => {
     container.unbindAll()
@@ -167,9 +195,7 @@ describe('login middleware tests', () => {
   describe('verifyOtp tests', () => {
     describe('With all services up', () => {
       beforeEach(() => {
-        container
-          .bind<UserRepository>(DependencyIds.userRepository)
-          .to(UserRepositoryMock)
+        bindUserRepo()
         container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
         container
           .bind<Cryptography>(DependencyIds.cryptography)
@@ -191,7 +217,7 @@ describe('login middleware tests', () => {
         await expect(
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
         ).resolves.toBe(null)
-        expect(req.session!.user).toStrictEqual({})
+        expect(req.session!.user).toEqual('aa@open.test.sg')
         expect(res.ok.called).toBeTruthy()
       })
 
@@ -267,9 +293,7 @@ describe('login middleware tests', () => {
     })
 
     test('cache down', async () => {
-      container
-        .bind<UserRepository>(DependencyIds.userRepository)
-        .to(UserRepositoryMock)
+      bindUserRepo()
       container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMockDown)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
@@ -286,9 +310,7 @@ describe('login middleware tests', () => {
     })
 
     test('db down', async () => {
-      container
-        .bind<UserRepository>(DependencyIds.userRepository)
-        .to(UserRepositoryMockDown)
+      bindUserRepo()
       container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
@@ -299,6 +321,10 @@ describe('login middleware tests', () => {
       })
       const req = createRequestWithEmailAndOtp('aa@open.test.sg', '1')
       const res = getMockResponse()
+
+      findOrCreateSpy.mockImplementationOnce(() => {
+        return Promise.reject()
+      })
 
       await verifyOtp(req, res)
 

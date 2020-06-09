@@ -9,6 +9,7 @@ import { FileVisibility, S3Interface } from '../util/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
+import { Mapper } from '../mappers/Mapper'
 
 const { Public, Private } = FileVisibility
 /**
@@ -19,8 +20,14 @@ const { Public, Private } = FileVisibility
 export class UrlRepository implements UrlRepositoryInterface {
   private fileBucket: S3Interface
 
-  public constructor(@inject(DependencyIds.s3) fileBucket: S3Interface) {
+  private urlMapper: Mapper<StorableUrl, UrlType>
+
+  public constructor(
+    @inject(DependencyIds.s3) fileBucket: S3Interface,
+    @inject(DependencyIds.urlMapper) urlMapper: Mapper<StorableUrl, UrlType>,
+  ) {
     this.fileBucket = fileBucket
+    this.urlMapper = urlMapper
   }
 
   getTotalLinkClicks: () => Promise<number> = () => {
@@ -60,7 +67,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       return url
     })
 
-    return this.urlTypeToStoredUrl(newUrl)
+    return this.urlMapper.persistenceToDto(newUrl)
   }
 
   public update: (
@@ -105,7 +112,7 @@ export class UrlRepository implements UrlRepositoryInterface {
 
     this.invalidateCache(shortUrl)
 
-    return this.urlTypeToStoredUrl(newUrl)
+    return this.urlMapper.persistenceToDto(newUrl)
   }
 
   public getLongUrl: (shortUrl: string) => Promise<string> = async (
@@ -193,16 +200,6 @@ export class UrlRepository implements UrlRepositoryInterface {
         else resolve()
       })
     })
-  }
-
-  private urlTypeToStoredUrl: (urlType: UrlType) => StorableUrl = (urlType) => {
-    return {
-      shortUrl: urlType.shortUrl,
-      longUrl: urlType.longUrl,
-      state: urlType.state,
-      clicks: urlType.clicks,
-      isFile: urlType.isFile,
-    }
   }
 }
 

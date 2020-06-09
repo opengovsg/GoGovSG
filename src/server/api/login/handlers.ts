@@ -11,13 +11,13 @@ import {
 import { container } from '../../util/inversify'
 import { OtpCache } from '../cache/otp'
 import { DependencyIds } from '../../constants'
-import { UserRepository } from '../repositories/user'
 import { Cryptography } from '../../util/cryptography'
 
 import {
   EmailProperty,
   VerifyOtpRequest,
 } from '../../../types/server/api/login/handlers.d'
+import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepositoryInterface'
 
 export function getLoginMessage(_: Express.Request, res: Express.Response) {
   res.send(loginMessage)
@@ -73,7 +73,7 @@ export async function verifyOtp(req: Express.Request, res: Express.Response) {
   const { getOtpForEmail, setOtpForEmail, deleteOtpByEmail } = container.get<
     OtpCache
   >(DependencyIds.otpCache)
-  const { findOrCreateWithEmail } = container.get<UserRepository>(
+  const { findOrCreateWithEmail } = container.get<UserRepositoryInterface>(
     DependencyIds.userRepository,
   )
   const { compare } = container.get<Cryptography>(DependencyIds.cryptography)

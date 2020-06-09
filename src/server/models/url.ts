@@ -17,6 +17,8 @@ interface UrlBaseType extends IdType {
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly clicks: number
+  readonly createdAt: string
+  readonly updatedAt: string
 }
 
 // For sequelize define

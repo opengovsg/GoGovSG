@@ -3,9 +3,7 @@ import fileUpload from 'express-fileupload'
 import * as Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
 import jsonMessage from '../util/json'
-import { User, UserType } from '../models/user'
 import { ACTIVE, INACTIVE } from '../models/types'
-import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
 import { logger } from '../config'
@@ -21,12 +19,17 @@ import { addFileExtension, getFileExtension } from '../util/fileFormat'
 import { MessageType } from '../../shared/util/messages'
 import { MAX_FILE_UPLOAD_SIZE } from '../../shared/constants'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
-import { StorableFile, StorableUrl } from '../repositories/types'
+import { StorableFile } from '../repositories/types'
+import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
+import { NotFoundError } from '../util/error'
 
 const router = Express.Router()
 
 const urlRepository = container.get<UrlRepositoryInterface>(
   DependencyIds.urlRepository,
+)
+const userRepository = container.get<UserRepositoryInterface>(
+  DependencyIds.userRepository,
 )
 
 const fileUploadMiddleware = fileUpload({
@@ -120,7 +123,7 @@ router.post(
     }
 
     try {
-      const user = await User.findByPk(userId)
+      const user = await userRepository.findById(userId)
 
       if (!user) {
         res.notFound(jsonMessage('User not found'))
@@ -147,7 +150,6 @@ router.post(
         : undefined
 
       // Success
-
       const result = await urlRepository.create(
         {
           userId: user.id,
@@ -176,35 +178,25 @@ router.patch(
     }: OwnershipTransferRequest = req.body
     try {
       // Test current user really owns the shortlink
-      const user = await User.scope({
-        method: ['includeShortUrl', shortUrl],
-      }).findOne({
-        where: { id: userId },
-      })
-
-      if (!user) {
-        res.notFound(jsonMessage('User not found.'))
-        return
-      }
-
-      const [url] = (user.get() as UserType).Urls
+      const url = await userRepository.findOneUrlForUser(userId, shortUrl)
 
       if (!url) {
         res.notFound(
           jsonMessage(`Short link "${shortUrl}" not found for user.`),
         )
+        return
       }
 
       // Check that the new user exists
-      const newUser = await User.findOne({
-        where: { email: newUserEmail.toLowerCase() },
-      })
+      const newUser = await userRepository.findByEmail(
+        newUserEmail.toLowerCase(),
+      )
 
       if (!newUser) {
         res.notFound(jsonMessage('User not found.'))
         return
       }
-      const newUserId = (newUser.get() as UserType).id
+      const newUserId = newUser.id
 
       // Do nothing if it is the same user
       if (userId === newUserId) {
@@ -214,12 +206,9 @@ router.patch(
 
       // Success
       // TODO: Remove force cast once UserRepository has been made
-      const result = await urlRepository.update(
-        (url as unknown) as StorableUrl,
-        {
-          userId: newUserId,
-        },
-      )
+      const result = await urlRepository.update(url, {
+        userId: newUserId,
+      })
       res.ok(result)
     } catch (error) {
       logger.error(`Error transferring ownership of short URL:\t${error}`)
@@ -249,23 +238,13 @@ router.patch(
     }
 
     try {
-      const user = await User.scope({
-        method: ['includeShortUrl', shortUrl],
-      }).findOne({
-        where: { id: userId },
-      })
-
-      if (!user) {
-        res.notFound(jsonMessage('User not found.'))
-        return
-      }
-
-      const [url] = (user.get() as UserType).Urls
+      const url = await userRepository.findOneUrlForUser(userId, shortUrl)
 
       if (!url) {
         res.notFound(
           jsonMessage(`Short link "${shortUrl}" not found for user.`),
         )
+        return
       }
 
       const storableFile: StorableFile | undefined = file
@@ -277,18 +256,8 @@ router.patch(
         : undefined
 
       // TODO: Remove force cast once UserRepository has been made
-      await urlRepository.update(
-        (url as unknown) as StorableUrl,
-        { longUrl },
-        storableFile,
-      )
+      await urlRepository.update(url, { longUrl }, storableFile)
 
-      // Expire the Redis cache
-      redirectClient.del(shortUrl, (err) => {
-        if (err) {
-          logger.error(`Short URL could not be purged from cache:\t${err}`)
-        }
-      })
       res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
     } catch (e) {
       logger.error(`Error editing long URL:\t${e}`)
@@ -304,35 +273,15 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
   const { userId, shortUrl, state }: ShorturlStateEditRequest = req.body
 
   try {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne({
-      where: { id: userId },
-    })
-
-    if (!user) {
-      res.notFound(jsonMessage('User not found.'))
-      return
-    }
-
-    const [url] = (user.get() as UserType).Urls
+    const url = await userRepository.findOneUrlForUser(userId, shortUrl)
 
     if (!url) {
       res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
+      return
     }
 
-    // TODO: Remove force cast once UserRepository has been made
-    await urlRepository.update((url as unknown) as StorableUrl, { state })
+    await urlRepository.update(url, { state })
     res.ok()
-
-    if (state === INACTIVE) {
-      // Expire the Redis cache
-      redirectClient.del(shortUrl, (err) => {
-        if (err) {
-          logger.error(`Short URL could not be purged from cache:\t${err}`)
-        }
-      })
-    }
   } catch (error) {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
     res.badRequest(
@@ -368,39 +317,16 @@ router.get('/url', validator.body(urlRetrievalSchema), async (req, res) => {
     state,
     isFile,
   }
-
+  // Find user and paginated urls
   try {
-    // Find user and paginated urls
-    const userCountAndArray = await User.scope({
-      method: ['urlsWithQueryConditions', queryConditions],
-    }).findAndCountAll({
-      subQuery: false, // set limit and offset at end of main query instead of subquery
-    })
-
-    if (!userCountAndArray) {
-      res.notFound(jsonMessage('User not found'))
-      return
-    }
-
-    const { rows } = userCountAndArray
-    let { count } = userCountAndArray
-    const [userUrls] = rows
-
-    if (!userUrls) {
-      res.notFound(jsonMessage('Urls not found'))
-      return
-    }
-
-    const urls = (userUrls.get() as UserType).Urls
-    // count will always be >= 1 due to left outer join on user and url tables
-    // to handle edge case where count === 1 but user does not have any urls
-    if (urls.length === 0) {
-      count = 0
-    }
-
-    res.ok({ urls, count })
+    const urls = await userRepository.findUrlsForUser(queryConditions)
+    res.ok({ urls, count: urls.length })
   } catch (error) {
-    res.serverError(jsonMessage('Error retrieving URLs for user'))
+    if (error instanceof NotFoundError) {
+      res.notFound(error.message)
+    } else {
+      res.serverError(jsonMessage('Error retrieving URLs for user'))
+    }
   }
 })
 
