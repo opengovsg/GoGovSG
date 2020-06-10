@@ -15,10 +15,10 @@ import {
   verifyOtp,
 } from '../../../src/server/api/login/handlers'
 import { container } from '../../../src/server/util/inversify'
-import { Mailer } from '../../../src/server/util/email'
+import { Mailer } from '../../../src/server/services/email'
 import { MailerMock, MailerMockDown } from './mocks/email'
 import { DependencyIds } from '../../../src/server/constants'
-import { Cryptography } from '../../../src/server/util/cryptography'
+import { Cryptography } from '../../../src/server/services/cryptography'
 import CryptographyMock from './mocks/cryptography'
 import { OtpCache } from '../../../src/server/api/cache/otp'
 import { OtpCacheMock, OtpCacheMockDown } from './mocks/cache/otp'

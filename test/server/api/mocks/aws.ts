@@ -1,6 +1,9 @@
 import { AWSError, S3 } from 'aws-sdk'
 import { PromiseResult } from 'aws-sdk/lib/request'
-import { FileVisibility, S3Interface } from '../../../../src/server/util/aws'
+import {
+  FileVisibility,
+  S3Interface,
+} from '../../../../src/server/services/aws'
 
 export class S3InterfaceMock implements S3Interface {
   setS3ObjectACL: (
