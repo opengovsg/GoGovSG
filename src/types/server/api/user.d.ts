@@ -16,16 +16,19 @@ type NewUserEmailProperty = {
   newUserEmail: string
 }
 
-type StateProperty = {
-  state: 'ACTIVE' | 'INACTIVE'
+type OptionalStateProperty = {
+  state?: 'ACTIVE' | 'INACTIVE'
 }
 
 export type UrlCreationRequest = ShortUrlOperationProperty &
   OptionalLongUrlProperty
 
-export type UrlEditRequest = ShortUrlOperationProperty & OptionalLongUrlProperty
+export type OldUrlEditRequest = ShortUrlOperationProperty &
+  OptionalLongUrlProperty
 
 export type OwnershipTransferRequest = ShortUrlOperationProperty &
   NewUserEmailProperty
 
-export type ShorturlStateEditRequest = ShortUrlOperationProperty & StateProperty
+export type UrlEditRequest = ShortUrlOperationProperty &
+  OptionalStateProperty &
+  OptionalLongUrlProperty

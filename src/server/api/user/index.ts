@@ -6,8 +6,8 @@ import { logger } from '../../config'
 import { DependencyIds } from '../../constants'
 import { container } from '../../util/inversify'
 import {
+  OldUrlEditRequest,
   OwnershipTransferRequest,
-  ShorturlStateEditRequest,
   UrlCreationRequest,
   UrlEditRequest,
 } from '../../../types/server/api/user.d'
@@ -20,9 +20,9 @@ import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepos
 import { NotFoundError } from '../../util/error'
 import {
   ownershipTransferSchema,
+  urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
-  urlEditSchema,
 } from './validators'
 
 const router = Express.Router()
@@ -190,7 +190,7 @@ router.patch(
   preprocessPotentialIncomingFile,
   validator.body(urlSchema),
   async (req, res) => {
-    const { userId, longUrl, shortUrl }: UrlEditRequest = req.body
+    const { userId, longUrl, shortUrl }: OldUrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
       res.badRequest(jsonMessage('Only single file uploads are supported.'))
@@ -227,30 +227,46 @@ router.patch(
 )
 
 /**
- * Endpoint for user to render a URL active/inactive.
+ * Endpoint for user to make edits to their link.
  */
-router.patch('/url', validator.body(urlEditSchema), async (req, res) => {
-  const { userId, shortUrl, state }: ShorturlStateEditRequest = req.body
-
-  try {
-    const url = await userRepository.findOneUrlForUser(userId, shortUrl)
-
-    if (!url) {
-      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
+router.patch(
+  '/url',
+  preprocessPotentialIncomingFile,
+  validator.body(urlEditSchema),
+  async (req, res) => {
+    const { userId, longUrl, shortUrl, state }: UrlEditRequest = req.body
+    const file = req.files?.file
+    if (Array.isArray(file)) {
+      res.badRequest(jsonMessage('Only single file uploads are supported.'))
       return
     }
 
-    await urlRepository.update(url, { state })
-    res.ok()
-  } catch (error) {
-    logger.error(`Error rendering URL active/inactive:\t${error}`)
-    res.badRequest(
-      jsonMessage(
-        `Unable to set state to ${state} for short link "${shortUrl}"`,
-      ),
-    )
-  }
-})
+    try {
+      const url = await userRepository.findOneUrlForUser(userId, shortUrl)
+
+      if (!url) {
+        res.notFound(
+          jsonMessage(`Short link "${shortUrl}" not found for user.`),
+        )
+        return
+      }
+
+      const storableFile: StorableFile | undefined = file
+        ? {
+            data: file.data,
+            key: addFileExtension(shortUrl, getFileExtension(file.name)),
+            mimetype: file.mimetype,
+          }
+        : undefined
+
+      await urlRepository.update(url, { longUrl, state }, storableFile)
+      res.ok()
+    } catch (error) {
+      logger.error(`Error editing URL:\t${error}`)
+      res.badRequest(jsonMessage(`Unable to edit short link "${shortUrl}"`))
+    }
+  },
+)
 
 /**
  * Endpoint for a user to retrieve their own URLs based on the query conditions.
