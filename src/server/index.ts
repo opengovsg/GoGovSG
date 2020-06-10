@@ -34,7 +34,7 @@ import './util/response'
 import getIp from './util/request'
 import { container } from './util/inversify'
 import { DependencyIds } from './constants'
-import { Mailer } from './util/email'
+import { Mailer } from './services/email'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 

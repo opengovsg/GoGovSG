@@ -3,7 +3,7 @@ import {
   FileVisibility,
   S3Interface,
   S3ServerSide,
-} from '../../../src/server/util/aws'
+} from '../../../src/server/services/aws'
 import { DependencyIds } from '../../../src/server/constants'
 
 describe('S3ServerSide', () => {

@@ -16,7 +16,7 @@ import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogg
 import AnalyticsLoggerMock from './mocks/analytics'
 
 import redirect from '../../../src/server/api/redirect'
-import { CookieReducer } from '../../../src/server/util/transition-page'
+import { CookieReducer } from '../../../src/server/services/transition-page'
 import {
   CookieArrayReducerMockUnvisited,
   CookieArrayReducerMockVisited,

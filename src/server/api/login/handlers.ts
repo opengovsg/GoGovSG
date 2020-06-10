@@ -1,6 +1,6 @@
 import Express from 'express'
 import jsonMessage from '../../util/json'
-import { Mailer } from '../../util/email'
+import { Mailer } from '../../services/email'
 import {
   getOTP,
   logger,
@@ -11,7 +11,7 @@ import {
 import { container } from '../../util/inversify'
 import { OtpCache } from '../cache/otp'
 import { DependencyIds } from '../../constants'
-import { Cryptography } from '../../util/cryptography'
+import { Cryptography } from '../../services/cryptography'
 
 import {
   EmailProperty,
