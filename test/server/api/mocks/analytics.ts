@@ -1,6 +1,6 @@
 import { injectable } from 'inversify'
 import Express from 'express'
-import { AnalyticsLogger } from '../../../../src/server/api/analytics/analyticsLogger'
+import { AnalyticsLogger } from '../../../../src/server/services/analyticsLogger'
 @injectable()
 export default class AnalyticsLoggerMock implements AnalyticsLogger {
   lastReq?: Express.Request
