@@ -60,8 +60,10 @@ module.exports = () => {
       port: 3000,
       proxy: {
         '/api': 'http://localhost:8080',
+        '!/(assets/**|bundle.js)': 'http://localhost:8080',
       },
       historyApiFallback: true,
+      disableHostCheck: true,
     },
     devtool: 'source-map',
     plugins: [
