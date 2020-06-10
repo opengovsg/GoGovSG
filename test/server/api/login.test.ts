@@ -20,8 +20,7 @@ import { MailerMock, MailerMockDown } from './mocks/email'
 import { DependencyIds } from '../../../src/server/constants'
 import { Cryptography } from '../../../src/server/services/cryptography'
 import CryptographyMock from './mocks/cryptography'
-import { OtpCache } from '../../../src/server/api/cache/otp'
-import { OtpCacheMock, OtpCacheMockDown } from './mocks/cache/otp'
+import { OtpRepositoryMock, OtpRepositoryMockDown } from './mocks/cache/otp'
 import { UserRepositoryInterface } from '../../../src/server/repositories/interfaces/UserRepositoryInterface'
 import { logger } from '../config'
 import { UserRepository } from '../../../src/server/repositories/UserRepository'
@@ -34,6 +33,7 @@ import {
 } from '../../../src/server/repositories/types'
 import { UrlType } from '../../../src/server/models/url'
 import { UserType } from '../../../src/server/models/user'
+import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 
@@ -118,7 +118,9 @@ describe('login middleware tests', () => {
 
   describe('generateOtp tests', () => {
     test('valid new email', async () => {
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
+      container
+        .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
+        .to(OtpRepositoryMock)
       container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
@@ -135,7 +137,7 @@ describe('login middleware tests', () => {
       expect(spy).toBeCalledWith('aa@open.test.sg', '1')
       expect(res.ok.called).toBeTruthy()
 
-      const cache = getOtpCache() as OtpCacheMock
+      const cache = getOtpCache() as OtpRepositoryMock
       const storedOtp = cache.cache.get('aa@open.test.sg')
       if (!storedOtp) {
         throw Error('Should not be falsy')
@@ -146,7 +148,9 @@ describe('login middleware tests', () => {
       spy.mockClear()
     })
     test('email server down', async () => {
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
+      container
+        .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
+        .to(OtpRepositoryMock)
       container.bind<Mailer>(DependencyIds.mailer).to(MailerMockDown)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
@@ -169,7 +173,9 @@ describe('login middleware tests', () => {
     })
 
     test('cache down', async () => {
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMockDown)
+      container
+        .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
+        .to(OtpRepositoryMockDown)
       container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
@@ -196,7 +202,9 @@ describe('login middleware tests', () => {
     describe('With all services up', () => {
       beforeEach(() => {
         bindUserRepo()
-        container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
+        container
+          .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
+          .to(OtpRepositoryMock)
         container
           .bind<Cryptography>(DependencyIds.cryptography)
           .to(CryptographyMock)
@@ -294,7 +302,9 @@ describe('login middleware tests', () => {
 
     test('cache down', async () => {
       bindUserRepo()
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMockDown)
+      container
+        .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
+        .to(OtpRepositoryMockDown)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
         .to(CryptographyMock)
@@ -311,7 +321,9 @@ describe('login middleware tests', () => {
 
     test('db down', async () => {
       bindUserRepo()
-      container.bind<OtpCache>(DependencyIds.otpCache).to(OtpCacheMock)
+      container
+        .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
+        .to(OtpRepositoryMock)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
         .to(CryptographyMock)

@@ -5,7 +5,7 @@ import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
-import { AnalyticsLogger } from './analytics/analyticsLogger'
+import { AnalyticsLogger } from '../services/analyticsLogger'
 import { CookieReducer } from '../services/transition-page'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 

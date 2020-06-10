@@ -1,17 +1,18 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { injectable } from 'inversify'
-import { OtpCache, StoredOtp } from '../../../../../src/server/api/cache/otp'
+import { StorableOtp } from '../../../../../src/server/repositories/types'
+import { OtpRepositoryInterface } from '../../../../../src/server/repositories/interfaces/OtpRepositoryInterface'
 
 @injectable()
-export class OtpCacheMock implements OtpCache {
-  cache = new Map<string, StoredOtp>()
+export class OtpRepositoryMock implements OtpRepositoryInterface {
+  cache = new Map<string, StorableOtp>()
 
   deleteOtpByEmail = (email: string) => {
     this.cache.delete(email)
     return Promise.resolve()
   }
 
-  setOtpForEmail = (email: string, otp: StoredOtp) => {
+  setOtpForEmail = (email: string, otp: StorableOtp) => {
     this.cache.set(email, otp)
     return Promise.resolve()
   }
@@ -25,12 +26,12 @@ export class OtpCacheMock implements OtpCache {
 }
 
 @injectable()
-export class OtpCacheMockDown implements OtpCache {
+export class OtpRepositoryMockDown implements OtpRepositoryInterface {
   deleteOtpByEmail(_: string): Promise<void> {
     return Promise.reject(Error())
   }
 
-  setOtpForEmail(_: string, __: StoredOtp): Promise<void> {
+  setOtpForEmail(_: string, __: StorableOtp): Promise<void> {
     return Promise.reject(Error())
   }
 
@@ -39,8 +40,8 @@ export class OtpCacheMockDown implements OtpCache {
   }
 }
 
-export class OtpCacheMockNoWrite extends OtpCacheMock {
+export class OtpRepositoryMockNoWrite extends OtpRepositoryMock {
   deleteOtpByEmail = (_: string) => Promise.reject()
 
-  setOtpForEmail = (__: string, _: StoredOtp) => Promise.reject()
+  setOtpForEmail = (__: string, _: StorableOtp) => Promise.reject()
 }

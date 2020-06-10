@@ -1,10 +1,10 @@
 import AWS from 'aws-sdk'
 
 import { container } from './util/inversify'
-import { GaLogger } from './api/analytics/analyticsLogger'
+import { GaLogger } from './services/analyticsLogger'
 import { DependencyIds } from './constants'
 import { CookieArrayReducer } from './services/transition-page'
-import { OtpCacheRedis } from './api/cache/otp'
+import { OtpRepository } from './repositories/OtpRepository'
 import { MailerNode } from './services/email'
 import { CryptographyBcrypt } from './services/cryptography'
 import { DEV_ENV, accessEndpoint, bucketEndpoint, s3Bucket } from './config'
@@ -14,6 +14,7 @@ import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
+import { OtpMapper } from './mappers/OtpMapper'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -28,9 +29,10 @@ export default () => {
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
+  bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
-  bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)
+  bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
 

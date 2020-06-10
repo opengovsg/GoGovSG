@@ -1,7 +1,7 @@
 import Express from 'express'
 import { injectable } from 'inversify'
-import { generateCookie, sendPageViewHit } from '../../util/ga'
-import { gaTrackingId } from '../../config'
+import { generateCookie, sendPageViewHit } from '../util/ga'
+import { gaTrackingId } from '../config'
 
 export interface AnalyticsLogger {
   /**
