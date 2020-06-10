@@ -19,18 +19,14 @@ describe('ones, tens, hundreds are not formatted', () => {
   })
 })
 
-describe('thousands are formatted with k', () => {
-  test('a thousand is 1k', () => {
+describe('thousands are not formatted', () => {
+  test('a thousand is 1000', () => {
     const valueToTest = 1_000
-    expect(numberUnitFormatter(valueToTest)).toBe('1k')
-  })
-  test('thousands does not round up', () => {
-    const valueToTest = 1_999
-    expect(numberUnitFormatter(valueToTest)).toBe('1k')
+    expect(numberUnitFormatter(valueToTest)).toBe('1,000')
   })
   test('thousands does not round up to millions', () => {
     const valueToTest = 999_999
-    expect(numberUnitFormatter(valueToTest)).toBe('999k')
+    expect(numberUnitFormatter(valueToTest)).toBe('999,999')
   })
 })
 
