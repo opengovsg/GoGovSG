@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 
 import { injectable } from 'inversify'
-import { Mailer } from '../../../../src/server/util/email'
+import { Mailer } from '../../../../src/server/services/email'
 
 @injectable()
 export class MailerMock implements Mailer {

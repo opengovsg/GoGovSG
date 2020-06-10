@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 
 import { injectable } from 'inversify'
-import { Cryptography } from '../../../../src/server/util/cryptography'
+import { Cryptography } from '../../../../src/server/services/cryptography'
 
 /**
  * A mock cryptography class that does not encrypt any data.

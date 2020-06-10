@@ -6,7 +6,7 @@ import parseDomain from '../util/domain'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
 import { AnalyticsLogger } from './analytics/analyticsLogger'
-import { CookieReducer } from '../util/transition-page'
+import { CookieReducer } from '../services/transition-page'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 
 const ERROR_404_PATH = '404.error.ejs'
