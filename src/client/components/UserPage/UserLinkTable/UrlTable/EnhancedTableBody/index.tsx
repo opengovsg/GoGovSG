@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => {
     clicksCell: {
       paddingRight: (props: StyleProps) => props.appMargins,
       [theme.breakpoints.up('md')]: {
-        minWidth: '180px',
+        minWidth: '210px',
       },
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
