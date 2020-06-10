@@ -1,14 +1,17 @@
 import Express from 'express'
 import { statClient } from '../redis'
-import { User } from '../models/user'
 import { logger, statisticsExpiry } from '../config'
 import { DependencyIds } from '../constants'
 import { container } from '../util/inversify'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
+import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
 
 const router = Express.Router()
 const urlRepository = container.get<UrlRepositoryInterface>(
   DependencyIds.urlRepository,
+)
+const userRepository = container.get<UserRepositoryInterface>(
+  DependencyIds.userRepository,
 )
 
 /**
@@ -39,7 +42,7 @@ router.get('/', async (_: Express.Request, res: Express.Response) => {
 
       // If the values are not found in the cache, we read from the DB
       const [userCount, linkCount, clickCountUntrusted] = await Promise.all([
-        User.count(),
+        userRepository.getNumUsers(),
         urlRepository.getNumUrls(),
         urlRepository.getTotalLinkClicks(),
       ])

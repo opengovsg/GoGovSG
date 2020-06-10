@@ -5,13 +5,15 @@ import { GaLogger } from './api/analytics/analyticsLogger'
 import { DependencyIds } from './constants'
 import { CookieArrayReducer } from './util/transition-page'
 import { OtpCacheRedis } from './api/cache/otp'
-import { UserRepositorySequelize } from './api/repositories/user'
 import { MailerNode } from './util/email'
 import { CryptographyBcrypt } from './util/cryptography'
 import { DEV_ENV, accessEndpoint, bucketEndpoint, s3Bucket } from './config'
 import { MailerNoOp } from './util/emaildev'
 import { S3ServerSide } from './util/aws'
 import { UrlRepository } from './repositories/UrlRepository'
+import { UserRepository } from './repositories/UserRepository'
+import { UrlMapper } from './mappers/UrlMapper'
+import { UserMapper } from './mappers/UserMapper'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -24,10 +26,12 @@ function bindIfUnbound<T>(
 
 export default () => {
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
+  bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
+  bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
   bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)
-  bindIfUnbound(DependencyIds.userRepository, UserRepositorySequelize)
+  bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)

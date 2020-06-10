@@ -1,6 +1,7 @@
 import { mockTransaction, redisMockClient, urlModelMock } from '../api/util'
 import { S3InterfaceMock } from '../api/mocks/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
+import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -14,7 +15,7 @@ jest.mock('../../../src/server/util/sequelize', () => ({
   transaction: mockTransaction,
 }))
 
-const repository = new UrlRepository(new S3InterfaceMock())
+const repository = new UrlRepository(new S3InterfaceMock(), new UrlMapper())
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
 describe('UrlRepository tests', () => {

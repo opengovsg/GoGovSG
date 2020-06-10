@@ -35,26 +35,29 @@ export interface UrlRepositoryInterface {
    * to the database. The cache is re-populated if the database lookup is
    * performed successfully.
    * @param {string} shortUrl The shortUrl.
-   * @returns {Promise<string>}
+   * @returns Promise that resolves to the longUrl.
    * @throws {NotFoundError}
    */
   getLongUrl: (shortUrl: string) => Promise<string>
 
   /**
    * Asynchronously increment the number of clicks in the database.
-   * @param shortUrl
+   * @param {string} shortUrl
+   * @returns Promise that resolves to be empty.
    */
   incrementClick: (shortUrl: string) => Promise<void>
 
   /**
    * Retrieves the sum of link clicks across all links.
-   * @param shortUrl
+   * @param {string} shortUrl
+   * @returns Promise that resolves to the total number of clicks.
    */
   getTotalLinkClicks: () => Promise<number>
 
   /**
    * Retrieves the number of URLs in the data store.
-   * @param shortUrl
+   * @param {string} shortUrl
+   * @returns Promise that resolves to the total number of urls.
    */
   getNumUrls: () => Promise<number>
 }
