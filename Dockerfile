@@ -12,7 +12,7 @@ EXPOSE 8080
 # For dev webpack server only, proxies to localhost:8080
 EXPOSE 3000
 
-RUN apk update && apk add python g++ make && rm -rf /var/cache/apk/*
+RUN apk update && apk add python g++ make ttf-freefont && rm -rf /var/cache/apk/*
 
 # Install libraries
 COPY package.json package-lock.json ./
