@@ -1,5 +1,6 @@
 import { redisMockClient } from '../util'
-import { OtpCacheRedis } from '../../../../src/server/api/cache/otp'
+import { OtpRepository } from '../../../../src/server/repositories/OtpRepository'
+import { OtpMapper } from '../../../../src/server/mappers/OtpMapper'
 
 jest.mock('../../../../src/server/redis', () => ({
   otpClient: redisMockClient,
@@ -8,7 +9,7 @@ jest.mock('../../../../src/server/redis', () => ({
 const setSpy = jest.spyOn(redisMockClient, 'set')
 const getSpy = jest.spyOn(redisMockClient, 'get')
 const delSpy = jest.spyOn(redisMockClient, 'del')
-const cache = new OtpCacheRedis()
+const cache = new OtpRepository(new OtpMapper())
 const otp = {
   hashedOtp: 'aaa',
   retries: 1000,

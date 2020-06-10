@@ -12,7 +12,7 @@ import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlRepositoryInterface } from '../../../src/server/repositories/interfaces/UrlRepositoryInterface'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogger'
+import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
 import AnalyticsLoggerMock from './mocks/analytics'
 
 import redirect from '../../../src/server/api/redirect'

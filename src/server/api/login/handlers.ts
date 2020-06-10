@@ -9,7 +9,7 @@ import {
   validEmailDomainGlobExpression,
 } from '../../config'
 import { container } from '../../util/inversify'
-import { OtpCache } from '../cache/otp'
+import { OtpRepository } from '../../repositories/OtpRepository'
 import { DependencyIds } from '../../constants'
 import { Cryptography } from '../../services/cryptography'
 
@@ -28,7 +28,9 @@ export function getEmailDomains(_: Express.Request, res: Express.Response) {
 }
 
 export async function generateOtp(req: Express.Request, res: Express.Response) {
-  const { setOtpForEmail } = container.get<OtpCache>(DependencyIds.otpCache)
+  const { setOtpForEmail } = container.get<OtpRepository>(
+    DependencyIds.otpRepository,
+  )
   const { mailOTP } = container.get<Mailer>(DependencyIds.mailer)
   const { hash } = container.get<Cryptography>(DependencyIds.cryptography)
 
@@ -71,8 +73,8 @@ export async function generateOtp(req: Express.Request, res: Express.Response) {
 
 export async function verifyOtp(req: Express.Request, res: Express.Response) {
   const { getOtpForEmail, setOtpForEmail, deleteOtpByEmail } = container.get<
-    OtpCache
-  >(DependencyIds.otpCache)
+    OtpRepository
+  >(DependencyIds.otpRepository)
   const { findOrCreateWithEmail } = container.get<UserRepositoryInterface>(
     DependencyIds.userRepository,
   )
