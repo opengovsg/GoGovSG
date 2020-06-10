@@ -1,5 +1,4 @@
 import { UrlType } from '../models/url'
-import { UserType } from '../models/user'
 
 /**
  * A type that represents Urls stored in the data store.
