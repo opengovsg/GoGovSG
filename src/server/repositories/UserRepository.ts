@@ -1,7 +1,12 @@
 import { inject, injectable } from 'inversify'
 import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
 import { User, UserType } from '../models/user'
-import { StorableUrl, StorableUser, UserUrlsQueryConditions } from './types'
+import {
+  StorableUrl,
+  StorableUser,
+  UrlsPaginated,
+  UserUrlsQueryConditions,
+} from './types'
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
 import { UrlType } from '../models/url'
@@ -72,7 +77,7 @@ export class UserRepository implements UserRepositoryInterface {
 
   public findUrlsForUser: (
     conditions: UserUrlsQueryConditions,
-  ) => Promise<StorableUrl[]> = async (conditions) => {
+  ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
     const userCountAndArray = await User.scope({
       method: ['urlsWithQueryConditions', conditions],
@@ -85,6 +90,7 @@ export class UserRepository implements UserRepositoryInterface {
     }
 
     const { rows } = userCountAndArray
+    let { count } = userCountAndArray
     const [userUrls] = rows
 
     if (!userUrls) {
@@ -95,7 +101,13 @@ export class UserRepository implements UserRepositoryInterface {
       this.urlMapper.persistenceToDto(urlType),
     )
 
-    return urls
+    // count will always be >= 1 due to left outer join on user and url tables
+    // to handle edge case where count === 1 but user does not have any urls
+    if (urls.length === 0) {
+      count = 0
+    }
+
+    return { urls, count }
   }
 
   public getNumUsers: () => Promise<number> = () => {

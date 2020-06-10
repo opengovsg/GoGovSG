@@ -319,8 +319,10 @@ router.get('/url', validator.body(urlRetrievalSchema), async (req, res) => {
   }
   // Find user and paginated urls
   try {
-    const urls = await userRepository.findUrlsForUser(queryConditions)
-    res.ok({ urls, count: urls.length })
+    const { urls, count } = await userRepository.findUrlsForUser(
+      queryConditions,
+    )
+    res.ok({ urls, count })
   } catch (error) {
     if (error instanceof NotFoundError) {
       res.notFound(error.message)

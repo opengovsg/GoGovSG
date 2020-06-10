@@ -41,12 +41,7 @@ export type UserUrlsQueryConditions = {
   isFile: boolean | undefined
 }
 
-export type UserUrls = {
+export type UrlsPaginated = {
   count: number
   urls: Array<StorableUrl>
-}
-
-export type UserUrlsPersistence = {
-  count: number
-  rows: Array<UserType>
 }

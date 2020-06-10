@@ -1,4 +1,9 @@
-import { StorableUrl, StorableUser, UserUrlsQueryConditions } from '../types'
+import {
+  StorableUrl,
+  StorableUser,
+  UrlsPaginated,
+  UserUrlsQueryConditions,
+} from '../types'
 
 /**
  * A url repository that handles access to the data store of Users.
@@ -41,12 +46,11 @@ export interface UserRepositoryInterface {
 
   /**
    * Find the urls belonging to a user which matches the given query conditions.
+   * The total count of rows matching the query (both in and outside the limit) is also returned.
    * @param  {UserUrlsQueryConditions} conditions Query conditions.
-   * @returns Promise that resolves to an array of urls.
+   * @returns Promise that resolves to an object containing the urls and total count.
    */
-  findUrlsForUser(
-    conditions: UserUrlsQueryConditions,
-  ): Promise<Array<StorableUrl>>
+  findUrlsForUser(conditions: UserUrlsQueryConditions): Promise<UrlsPaginated>
 
   /**
    * Fetches the total number of users in the data store.
