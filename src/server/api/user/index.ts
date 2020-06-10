@@ -20,9 +20,9 @@ import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepos
 import { NotFoundError } from '../../util/error'
 import {
   ownershipTransferSchema,
-  stateEditSchema,
   urlRetrievalSchema,
   urlSchema,
+  urlEditSchema,
 } from './validators'
 
 const router = Express.Router()
@@ -229,7 +229,7 @@ router.patch(
 /**
  * Endpoint for user to render a URL active/inactive.
  */
-router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
+router.patch('/url', validator.body(urlEditSchema), async (req, res) => {
   const { userId, shortUrl, state }: ShorturlStateEditRequest = req.body
 
   try {

@@ -33,12 +33,6 @@ export const urlSchema = Joi.object({
   }),
 }).xor('longUrl', 'files')
 
-export const stateEditSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string().required(),
-  state: Joi.string().allow(ACTIVE, INACTIVE).only().required(),
-})
-
 export const urlEditSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
@@ -57,7 +51,7 @@ export const urlEditSchema = Joi.object({
     file: Joi.object().keys().required(),
   }),
   state: Joi.string().allow(ACTIVE, INACTIVE).only(),
-}).xor('longUrl', 'files')
+}).oxor('longUrl', 'files')
 
 export const ownershipTransferSchema = Joi.object({
   userId: Joi.number().required(),
