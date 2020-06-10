@@ -37,7 +37,7 @@ import { UserType } from '../../../src/server/models/user'
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 
-jest.mock('../../../src/server/util/email', () => ({
+jest.mock('../../../src/server/services/email', () => ({
   mailOTP: sinon.fake(),
 }))
 
