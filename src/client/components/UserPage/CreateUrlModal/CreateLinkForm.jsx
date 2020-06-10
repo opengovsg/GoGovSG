@@ -19,12 +19,12 @@ import {
 } from '../../../../shared/util/validation'
 import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
-import LinkIcon from '../widgets/LinkIcon'
-import FileIcon from '../widgets/FileIcon'
+import LinkIcon from '../Widgets/LinkIcon'
+import FileIcon from '../Widgets/FileIcon'
 import { formatBytes } from '../../../util/format'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
-import FileInputField from '../widgets/FileInputField'
+import FileInputField from '../Widgets/FileInputField'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44

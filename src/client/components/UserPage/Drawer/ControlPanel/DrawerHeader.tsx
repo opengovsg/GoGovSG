@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core'
 
 import { useDrawerState } from '..'
-import CopyButton from '../../widgets/CopyButton'
+import CopyButton from '../../Widgets/CopyButton'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

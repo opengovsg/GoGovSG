@@ -18,7 +18,7 @@ import useAppMargins from '../../../../AppMargins/appMargins'
 import DrawerActions from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../util/format'
-import CopyButton from '../../../widgets/CopyButton'
+import CopyButton from '../../../Widgets/CopyButton'
 
 type StyleProps = {
   appMargins: number
@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 1),
-        width: '35%',
+        width: '25%',
         minWidth: '100px',
       },
     },
@@ -102,8 +102,8 @@ const useStyles = makeStyles((theme) => {
       },
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
-        padding: theme.spacing(1, 1, 2, 2),
-        width: '20%',
+        padding: theme.spacing(1, 0, 2, 2),
+        width: '40%',
         minWidth: '100px',
       },
     },
@@ -213,15 +213,17 @@ export default function EnhancedTableBody() {
                 </Hidden>
               </Grid>
             </TableCell>
-            <TableCell className={classes.stateCell}>
-              <CopyButton
-                shortUrl={row.shortUrl}
-                buttonText={'Copy'}
-                iconSize={13}
-                variant={'caption'}
-                stopPropagation={true}
-              />
-            </TableCell>
+            <Hidden smDown>
+              <TableCell className={classes.stateCell}>
+                <CopyButton
+                  shortUrl={row.shortUrl}
+                  buttonText={'Copy'}
+                  iconSize={13}
+                  variant={'caption'}
+                  stopPropagation={true}
+                />
+              </TableCell>
+            </Hidden>
             <TableCell className={classes.stateCell}>
               <Typography
                 variant="caption"
