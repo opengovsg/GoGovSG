@@ -9,6 +9,7 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery,
+  CircularProgress,
 } from '@material-ui/core'
 
 import DrawerActions from './helpers/reducers'
@@ -26,6 +27,12 @@ import { removeHttpsProtocol } from '../../../../util/url'
 import { isValidLongUrl } from '../../../../../shared/util/validation'
 import DownloadButton from './widgets/DownloadButton'
 import helpIcon from '../../../../assets/help-icon.svg'
+import FileInputField from '../../Widgets/FileInputField'
+import CollapsibleMessage from '../../../CollapsibleMessage'
+import {
+  CollapsibleMessageType,
+  CollapsibleMessagePosition,
+} from '../../../CollapsibleMessage/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -55,7 +62,7 @@ const useStyles = makeStyles((theme) =>
       marginTop: 50,
       marginBottom: 50,
       [theme.breakpoints.up('md')]: {
-        marginTop: 51,
+        marginTop: 80,
         marginBottom: 68,
       },
     },
@@ -86,6 +93,21 @@ const useStyles = makeStyles((theme) =>
       top: 0,
       zIndex: -1,
     },
+    textFieldsTopSpacer: {
+      height: theme.spacing(1),
+    },
+    stateSwitch: {
+      marginBottom: theme.spacing(2),
+    },
+    originalFileLabel: {
+      marginBottom: theme.spacing(1),
+    },
+    fileInputField: {
+      marginBottom: theme.spacing(3),
+      [theme.breakpoints.up('md')]: {
+        marginBottom: 0,
+      },
+    },
   }),
 )
 
@@ -100,8 +122,13 @@ export default function ControlPanel() {
   const drawerIsOpen = drawerStates.controlPanelIsOpen
   const modalDispatch = useDrawerDispatch()
 
+  // Error from attempt to replace file
+  const uploadFileError = drawerStates.uploadFileError
+  const setUploadFileError = (error: string | null) =>
+    modalDispatch({ type: DrawerActions.setUploadFileError, payload: error })
+
   // Fetch short link state and dispatches from redux store through our helper hook.
-  const { shortLinkState, shortLinkDispatch } = useShortLink(
+  const { shortLinkState, shortLinkDispatch, isUploading } = useShortLink(
     drawerStates.relevantShortLink!,
   )
 
@@ -150,6 +177,25 @@ export default function ControlPanel() {
     </>
   )
 
+  const replaceFileHelp = (
+    <div className={classes.originalFileLabel}>
+      Original file{' '}
+      <Tooltip
+        title="Original file will be replaced after you select file. Maximum file size is 10mb."
+        arrow
+        placement="top"
+        classes={{ tooltip: classes.ownershipTooltip }}
+      >
+        <img
+          className={classes.ownershipHelpIcon}
+          src={helpIcon}
+          alt="Replace file help"
+          draggable={false}
+        />
+      </Tooltip>
+    </div>
+  )
+
   return (
     <Drawer
       classes={{
@@ -181,6 +227,7 @@ export default function ControlPanel() {
                 color="primary"
                 checked={shortLinkState?.state === 'ACTIVE'}
                 onChange={shortLinkDispatch?.toggleStatus}
+                className={classes.stateSwitch}
               />
             }
             trailingPosition={TrailingPosition.center}
@@ -192,11 +239,14 @@ export default function ControlPanel() {
             trailing={<DownloadButton />}
             trailingPosition={TrailingPosition.end}
           />
+          <Hidden smDown>
+            <div className={classes.textFieldsTopSpacer} />
+          </Hidden>
+          <Hidden mdUp>
+            <Divider className={classes.divider} />
+          </Hidden>
           {!shortLinkState?.isFile && (
             <>
-              <Hidden mdUp>
-                <Divider className={classes.divider} />
-              </Hidden>
               <ConfigOption
                 title="Original link"
                 titleVariant="body2"
@@ -236,6 +286,57 @@ export default function ControlPanel() {
                 trailingPosition={TrailingPosition.end}
               />
             </>
+          )}
+          {shortLinkState?.isFile && (
+            <ConfigOption
+              title={replaceFileHelp}
+              titleVariant="body2"
+              titleClassName={classes.regularText}
+              leading={
+                <>
+                  <FileInputField
+                    className={classes.fileInputField}
+                    uploadFileError={uploadFileError}
+                    textFieldHeight="44px"
+                    inputId="replace-file-input"
+                    text={originalLongUrl}
+                    setFile={(newFile) => {
+                      shortLinkDispatch?.replaceFile(
+                        newFile,
+                        setUploadFileError,
+                      )
+                    }}
+                    setUploadFileError={setUploadFileError}
+                  />
+                  <CollapsibleMessage
+                    type={CollapsibleMessageType.Error}
+                    visible={!!uploadFileError}
+                    position={CollapsibleMessagePosition.Absolute}
+                  >
+                    {uploadFileError}
+                  </CollapsibleMessage>
+                </>
+              }
+              trailing={
+                <label htmlFor="replace-file-input">
+                  <TrailingButton
+                    onClick={() => {}}
+                    disabled={isUploading}
+                    variant={isMobileView ? 'contained' : 'outlined'}
+                    fullWidth={isMobileView}
+                    component="span"
+                  >
+                    {isUploading ? (
+                      <CircularProgress color="primary" size={20} />
+                    ) : (
+                      'Replace file'
+                    )}
+                  </TrailingButton>
+                </label>
+              }
+              wrapTrailing={isMobileView}
+              trailingPosition={TrailingPosition.end}
+            />
           )}
           <Hidden mdUp>
             <Divider className={classes.divider} />

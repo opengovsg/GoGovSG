@@ -1,15 +1,13 @@
 import { AWSError, S3 } from 'aws-sdk'
 import { PromiseResult } from 'aws-sdk/lib/request'
-import { injectable } from 'inversify'
-import { s3Bucket } from '../config'
+import { inject, injectable } from 'inversify'
+import { DependencyIds } from '../constants'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
 export enum FileVisibility {
   Public = 'public-read',
   Private = 'private',
 }
-
-export const s3 = new S3()
 
 export interface S3Interface {
   setS3ObjectACL: (
@@ -29,16 +27,32 @@ export interface S3Interface {
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
   ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl", "getKeyFromLongUrl"] }] */
 export class S3ServerSide implements S3Interface {
+  private s3Client: S3
+
+  private s3Bucket: string
+
+  private fileURLPrefix: string
+
+  constructor(
+    @inject(DependencyIds.s3Client) s3Client: S3,
+    @inject(DependencyIds.s3Bucket) s3Bucket: string,
+    @inject(DependencyIds.fileURLPrefix) fileURLPrefix: string,
+  ) {
+    this.s3Client = s3Client
+    this.s3Bucket = s3Bucket
+    this.fileURLPrefix = fileURLPrefix
+  }
+
   setS3ObjectACL(
     key: string,
     acl: FileVisibility,
   ): Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>> {
     const params = {
-      Bucket: s3Bucket,
+      Bucket: this.s3Bucket,
       Key: key,
       ACL: acl,
     }
-    const result = s3.putObjectAcl(params).promise()
+    const result = this.s3Client.putObjectAcl(params).promise()
     return result
   }
 
@@ -49,17 +63,17 @@ export class S3ServerSide implements S3Interface {
   ): Promise<PromiseResult<S3.PutObjectOutput, AWSError>> {
     const params = {
       ContentType: fileType,
-      Bucket: s3Bucket,
+      Bucket: this.s3Bucket,
       Body: file,
       Key: key,
       ACL: FileVisibility.Public,
       CacheControl: `no-cache`,
     }
-    return s3.putObject(params).promise()
+    return this.s3Client.putObject(params).promise()
   }
 
   buildFileLongUrl(key: string): string {
-    return `https://${s3Bucket}/${key}`
+    return `${this.fileURLPrefix}${this.s3Bucket}/${key}`
   }
 
   getKeyFromLongUrl(longUrl: string): string {

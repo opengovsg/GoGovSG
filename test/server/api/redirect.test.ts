@@ -1,27 +1,20 @@
-/* eslint-disable no-undef, no-underscore-dangle, import/no-extraneous-dependencies */
+/* eslint-disable no-underscore-dangle */
 import httpMocks from 'node-mocks-http'
-import { container } from '../../../src/server/util/inversify'
-import { DependencyIds } from '../../../src/server/constants'
-import { UrlCache } from '../../../src/server/api/cache/url'
-import { UrlRepository } from '../../../src/server/api/repositories/url'
-import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogger'
-import AnalyticsLoggerMock from './mocks/analytics'
-import {
-  UrlCacheMockDown,
-  UrlCacheMockEmpty,
-  UrlCacheMockFilled,
-} from './mocks/cache/url'
-import {
-  UrlRepositoryMockDown,
-  UrlRepositoryMockEmpty,
-  UrlRepositoryMockFilled,
-} from './mocks/repositories/url'
 import {
   createRequestWithShortUrl,
-  getUrlCache,
-  getUrlRepository,
   isAnalyticsLogged,
+  mockTransaction,
+  redisMockClient,
+  urlModelMock,
 } from './util'
+import { S3InterfaceMock } from './mocks/aws'
+import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
+import { UrlRepositoryInterface } from '../../../src/server/repositories/interfaces/UrlRepositoryInterface'
+import { container } from '../../../src/server/util/inversify'
+import { DependencyIds } from '../../../src/server/constants'
+import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogger'
+import AnalyticsLoggerMock from './mocks/analytics'
+
 import redirect from '../../../src/server/api/redirect'
 import { CookieReducer } from '../../../src/server/util/transition-page'
 import {
@@ -29,34 +22,77 @@ import {
   CookieArrayReducerMockVisited,
 } from './mocks/transition-page'
 import { logger } from '../config'
+import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
+
+jest.mock('../../../src/server/models/url', () => ({
+  Url: urlModelMock,
+}))
+
+jest.mock('../../../src/server/redis', () => ({
+  redirectClient: redisMockClient,
+}))
+
+jest.mock('../../../src/server/util/sequelize', () => ({
+  transaction: mockTransaction,
+}))
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
+const repository = new UrlRepository(new S3InterfaceMock(), new UrlMapper())
+const incrementClicksSpy = jest.spyOn(repository, 'incrementClick')
+const dbFindOneSpy = jest.spyOn(urlModelMock, 'findOne')
+const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
+function mockCacheDown() {
+  cacheGetSpy.mockImplementationOnce((_, callback) => {
+    if (!callback) {
+      return false
+    }
+    callback(new Error('Cache down'), 'Error')
+    return false
+  })
+}
+
+function mockDbDown() {
+  dbFindOneSpy.mockImplementationOnce(() => {
+    throw new Error()
+  })
+}
+
+function mockDbEmpty() {
+  dbFindOneSpy.mockImplementationOnce(() => null)
+}
+
+/**
+ * Redirect API integration tests. I.E UrlRepository is not mocked but redis and sequelize are.
+ */
 describe('redirect API tests', () => {
   beforeEach(() => {
     container
       .bind<CookieReducer>(DependencyIds.cookieReducer)
       .to(CookieArrayReducerMockVisited)
+    container
+      .bind<UrlRepositoryInterface>(DependencyIds.urlRepository)
+      .toConstantValue(repository)
+    container
+      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
+      .to(AnalyticsLoggerMock)
+    redisMockClient.flushall()
   })
-
   afterEach(() => {
     container.unbindAll()
     loggerErrorSpy.mockClear()
+    incrementClicksSpy.mockClear()
+    dbFindOneSpy.mockClear()
+    cacheGetSpy.mockClear()
   })
 
   test('url exists in cache and db, real user unvisited', async () => {
     const cookieReducer = new CookieArrayReducerMockUnvisited()
     container.unbind(DependencyIds.cookieReducer)
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
     container
       .bind<CookieReducer>(DependencyIds.cookieReducer)
       .toConstantValue(cookieReducer)
+    redisMockClient.set('aaa', 'aa')
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
     req.headers['user-agent'] =
@@ -66,9 +102,8 @@ describe('redirect API tests', () => {
 
     await redirect(req, res)
 
-    const repo = getUrlRepository() as UrlRepositoryMockFilled
-    expect(repo.clicks.get('aaa')).toBe(1)
-    expect(repo.clicks.size).toBe(1)
+    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(200)
     expect(res._getRedirectUrl()).toBe('')
     expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
@@ -76,23 +111,17 @@ describe('redirect API tests', () => {
       'aaa',
     )
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
     cookieSpy.mockClear()
   })
 
   test('url exists in cache and db, real user visited', async () => {
     const cookieReducer = new CookieArrayReducerMockVisited()
     container.unbind(DependencyIds.cookieReducer)
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
     container
       .bind<CookieReducer>(DependencyIds.cookieReducer)
       .toConstantValue(cookieReducer)
+    redisMockClient.set('aaa', 'aa')
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
     req.headers['user-agent'] =
@@ -102,80 +131,57 @@ describe('redirect API tests', () => {
 
     await redirect(req, res)
 
-    const repo = getUrlRepository() as UrlRepositoryMockFilled
-    expect(repo.clicks.get('aaa')).toBe(1)
-    expect(repo.clicks.size).toBe(1)
+    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('aaa')
+    expect(res._getRedirectUrl()).toBe('aa')
     expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
       undefined,
       'aaa',
     )
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
     cookieSpy.mockClear()
   })
 
   test('url exists in cache and db crawler', async () => {
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
+    redisMockClient.set('aaa', 'aa')
 
     await redirect(req, res)
 
-    const repo = getUrlRepository() as UrlRepositoryMockFilled
-    expect(repo.clicks.get('aaa')).toBe(1)
-    expect(repo.clicks.size).toBe(1)
+    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('aaa')
+    expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url does not exist in cache but does in db', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockEmpty)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
     await redirect(req, res)
 
-    const repo = getUrlRepository() as UrlRepositoryMockFilled
-    expect(repo.clicks.get('aaa')).toBe(1)
-    expect(repo.clicks.size).toBe(1)
-    const cache = getUrlCache() as UrlCacheMockEmpty
-    expect(cache.cache.get('aaa')).toBe('longUrlFromDb')
-    expect(cache.cache.size).toBe(1)
+    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('longUrlFromDb')
+    expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'longUrlFromDb')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url does not exist in neither cache nor db', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockEmpty)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockEmpty)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    mockDbEmpty()
+
     await redirect(req, res)
 
-    const cache = getUrlCache() as UrlCacheMockEmpty
-    expect(cache.cache.size).toBe(0)
+    expect(incrementClicksSpy).toBeCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
   })
@@ -183,53 +189,43 @@ describe('redirect API tests', () => {
   test('url does exists in cache but not db', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockEmpty)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    redisMockClient.set('aaa', 'aa')
+    mockDbEmpty()
+
     await redirect(req, res)
 
     expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('aaa')
+    expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url does exists in db but cache is down', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockDown)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    mockCacheDown()
+
     await redirect(req, res)
 
-    const repo = getUrlRepository() as UrlRepositoryMockFilled
-    expect(repo.clicks.get('aaa')).toBe(1)
-    expect(repo.clicks.size).toBe(1)
+    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('longUrlFromDb')
+    expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'longUrlFromDb')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('both db and cache down', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockDown)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockDown)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    mockCacheDown()
+    mockDbDown()
+
     await redirect(req, res)
+    expect(incrementClicksSpy).toBeCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
     expect(logger.error).toBeCalled()
@@ -238,30 +234,24 @@ describe('redirect API tests', () => {
   test('url in cache and db is down', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockDown)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    mockDbDown()
+    redisMockClient.set('aaa', 'aa')
+
     await redirect(req, res)
     expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('aaa')
+    expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aaa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url not in db and cache is down', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockDown)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockEmpty)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    mockCacheDown()
+    mockDbEmpty()
+
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
   })
@@ -269,13 +259,9 @@ describe('redirect API tests', () => {
   test('url not in cache and db is down', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockEmpty)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockDown)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
+    mockDbDown()
+
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
     expect(logger.error).toBeCalled()
@@ -284,13 +270,7 @@ describe('redirect API tests', () => {
   test('invalid url', async () => {
     const req = createRequestWithShortUrl(')*')
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
   })
@@ -298,13 +278,7 @@ describe('redirect API tests', () => {
   test('no url', async () => {
     const req = createRequestWithShortUrl(undefined)
     const res = httpMocks.createResponse()
-    container.bind<UrlCache>(DependencyIds.urlCache).to(UrlCacheMockFilled)
-    container
-      .bind<UrlRepository>(DependencyIds.urlRepository)
-      .to(UrlRepositoryMockFilled)
-    container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
-      .to(AnalyticsLoggerMock)
+
     await redirect(req, res)
     expect(res.statusCode).toBe(404)
   })

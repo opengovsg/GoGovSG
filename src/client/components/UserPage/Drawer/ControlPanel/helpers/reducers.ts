@@ -2,17 +2,19 @@ export type State = {
   controlPanelIsOpen: boolean
   relevantShortLink: string | null
   qrCodeModalIsOpen: boolean
+  uploadFileError: string | null
 }
 
 export const initialState: State = {
   controlPanelIsOpen: false,
   relevantShortLink: null,
   qrCodeModalIsOpen: false,
+  uploadFileError: null,
 }
 
 export type Action = {
   type: string
-  payload?: string
+  payload?: string | null
 }
 
 export const DrawerActions = {
@@ -20,6 +22,7 @@ export const DrawerActions = {
   closeControlPanel: 'CLOSE_CONTROL_PANEL',
   openQrCodeModal: 'OPEN_QR_CODE_MODAL',
   closeQrCodeModal: 'CLOSE_QR_CODE_MODAL',
+  setUploadFileError: 'SET_UPLOAD_FILE_ERROR',
 }
 
 export function drawerReducer(state: State, action: Action) {
@@ -39,6 +42,9 @@ export function drawerReducer(state: State, action: Action) {
       break
     case DrawerActions.closeQrCodeModal:
       newState.qrCodeModalIsOpen = false
+      break
+    case DrawerActions.setUploadFileError:
+      newState.uploadFileError = action.payload
       break
     default:
       throw new Error(`Undefined modal action: ${action.type}`)

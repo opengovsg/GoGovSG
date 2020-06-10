@@ -3,14 +3,9 @@ import fileUpload from 'express-fileupload'
 import * as Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
 import jsonMessage from '../util/json'
-import { User, UserType } from '../models/user'
-import { Url } from '../models/url'
 import { ACTIVE, INACTIVE } from '../models/types'
-import { redirectClient } from '../redis'
 import blacklist from '../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { FileVisibility, S3Interface } from '../util/aws'
-import { transaction } from '../util/sequelize'
 import { logger } from '../config'
 import { DependencyIds } from '../constants'
 import { container } from '../util/inversify'
@@ -23,17 +18,19 @@ import {
 import { addFileExtension, getFileExtension } from '../util/fileFormat'
 import { MessageType } from '../../shared/util/messages'
 import { MAX_FILE_UPLOAD_SIZE } from '../../shared/constants'
-
-const { Public, Private } = FileVisibility
+import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
+import { StorableFile } from '../repositories/types'
+import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
+import { NotFoundError } from '../util/error'
 
 const router = Express.Router()
 
-const {
-  buildFileLongUrl,
-  setS3ObjectACL,
-  uploadFileToS3,
-  getKeyFromLongUrl,
-} = container.get<S3Interface>(DependencyIds.s3)
+const urlRepository = container.get<UrlRepositoryInterface>(
+  DependencyIds.urlRepository,
+)
+const userRepository = container.get<UserRepositoryInterface>(
+  DependencyIds.userRepository,
+)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
@@ -126,17 +123,14 @@ router.post(
     }
 
     try {
-      const user = await User.findByPk(userId)
-      const fileKey = file
-        ? addFileExtension(shortUrl, getFileExtension(file.name))
-        : ''
+      const user = await userRepository.findById(userId)
 
       if (!user) {
         res.notFound(jsonMessage('User not found'))
         return
       }
 
-      const existsShortUrl = await Url.findOne({ where: { shortUrl } })
+      const existsShortUrl = await urlRepository.findByShortUrl(shortUrl)
       if (existsShortUrl) {
         res.badRequest(
           jsonMessage(
@@ -147,22 +141,23 @@ router.post(
         return
       }
 
+      const storableFile: StorableFile | undefined = file
+        ? {
+            data: file.data,
+            key: addFileExtension(shortUrl, getFileExtension(file.name)),
+            mimetype: file.mimetype,
+          }
+        : undefined
+
       // Success
-      const result = await transaction(async (t) => {
-        const url = Url.create(
-          {
-            userId: user.id,
-            longUrl: file ? buildFileLongUrl(fileKey) : longUrl,
-            shortUrl,
-            isFile: !!file,
-          },
-          { transaction: t },
-        )
-        if (file) {
-          await uploadFileToS3(file.data, fileKey, file.mimetype)
-        }
-        return url
-      })
+      const result = await urlRepository.create(
+        {
+          userId: user.id,
+          longUrl,
+          shortUrl,
+        },
+        storableFile,
+      )
 
       res.ok(result)
     } catch (error) {
@@ -183,35 +178,25 @@ router.patch(
     }: OwnershipTransferRequest = req.body
     try {
       // Test current user really owns the shortlink
-      const user = await User.scope({
-        method: ['includeShortUrl', shortUrl],
-      }).findOne({
-        where: { id: userId },
-      })
-
-      if (!user) {
-        res.notFound(jsonMessage('User not found.'))
-        return
-      }
-
-      const [url] = (user.get() as UserType).Urls
+      const url = await userRepository.findOneUrlForUser(userId, shortUrl)
 
       if (!url) {
         res.notFound(
           jsonMessage(`Short link "${shortUrl}" not found for user.`),
         )
+        return
       }
 
       // Check that the new user exists
-      const newUser = await User.findOne({
-        where: { email: newUserEmail.toLowerCase() },
-      })
+      const newUser = await userRepository.findByEmail(
+        newUserEmail.toLowerCase(),
+      )
 
       if (!newUser) {
         res.notFound(jsonMessage('User not found.'))
         return
       }
-      const newUserId = (newUser.get() as UserType).id
+      const newUserId = newUser.id
 
       // Do nothing if it is the same user
       if (userId === newUserId) {
@@ -220,9 +205,10 @@ router.patch(
       }
 
       // Success
-      const result = await transaction((t) =>
-        url.update({ userId: newUserId }, { transaction: t }),
-      )
+      // TODO: Remove force cast once UserRepository has been made
+      const result = await urlRepository.update(url, {
+        userId: newUserId,
+      })
       res.ok(result)
     } catch (error) {
       logger.error(`Error transferring ownership of short URL:\t${error}`)
@@ -252,47 +238,27 @@ router.patch(
     }
 
     try {
-      const user = await User.scope({
-        method: ['includeShortUrl', shortUrl],
-      }).findOne({
-        where: { id: userId },
-      })
-
-      if (!user) {
-        res.notFound(jsonMessage('User not found.'))
-        return
-      }
-
-      const [url] = (user.get() as UserType).Urls
+      const url = await userRepository.findOneUrlForUser(userId, shortUrl)
 
       if (!url) {
         res.notFound(
           jsonMessage(`Short link "${shortUrl}" not found for user.`),
         )
+        return
       }
 
-      await transaction(async (t) => {
-        if (!url.isFile) {
-          await url.update({ longUrl }, { transaction: t })
-        } else if (file) {
-          const oldKey = getKeyFromLongUrl(url.longUrl)
-          const newKey = addFileExtension(shortUrl, getFileExtension(file.name))
-          await url.update(
-            { longUrl: buildFileLongUrl(newKey) },
-            { transaction: t },
-          )
-          await setS3ObjectACL(oldKey, Private)
-          await uploadFileToS3(file.data, newKey, file.mimetype)
-        }
-      })
-      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
+      const storableFile: StorableFile | undefined = file
+        ? {
+            data: file.data,
+            key: addFileExtension(shortUrl, getFileExtension(file.name)),
+            mimetype: file.mimetype,
+          }
+        : undefined
 
-      // Expire the Redis cache
-      redirectClient.del(shortUrl, (err) => {
-        if (err) {
-          logger.error(`Short URL could not be purged from cache:\t${err}`)
-        }
-      })
+      // TODO: Remove force cast once UserRepository has been made
+      await urlRepository.update(url, { longUrl }, storableFile)
+
+      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
     } catch (e) {
       logger.error(`Error editing long URL:\t${e}`)
       res.badRequest(jsonMessage('Invalid URL.'))
@@ -307,43 +273,15 @@ router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
   const { userId, shortUrl, state }: ShorturlStateEditRequest = req.body
 
   try {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne({
-      where: { id: userId },
-    })
-
-    if (!user) {
-      res.notFound(jsonMessage('User not found.'))
-      return
-    }
-
-    const [url] = (user.get() as UserType).Urls
+    const url = await userRepository.findOneUrlForUser(userId, shortUrl)
 
     if (!url) {
       res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
+      return
     }
 
-    await transaction(async (t) => {
-      await url.update({ state }, { transaction: t })
-      if (url.isFile) {
-        // Toggle the ACL of the S3 object
-        await setS3ObjectACL(
-          getKeyFromLongUrl(url.longUrl),
-          state === ACTIVE ? Public : Private,
-        )
-      }
-    })
+    await urlRepository.update(url, { state })
     res.ok()
-
-    if (state === INACTIVE) {
-      // Expire the Redis cache
-      redirectClient.del(shortUrl, (err) => {
-        if (err) {
-          logger.error(`Short URL could not be purged from cache:\t${err}`)
-        }
-      })
-    }
   } catch (error) {
     logger.error(`Error rendering URL active/inactive:\t${error}`)
     res.badRequest(
@@ -379,39 +317,18 @@ router.get('/url', validator.body(urlRetrievalSchema), async (req, res) => {
     state,
     isFile,
   }
-
+  // Find user and paginated urls
   try {
-    // Find user and paginated urls
-    const userCountAndArray = await User.scope({
-      method: ['urlsWithQueryConditions', queryConditions],
-    }).findAndCountAll({
-      subQuery: false, // set limit and offset at end of main query instead of subquery
-    })
-
-    if (!userCountAndArray) {
-      res.notFound(jsonMessage('User not found'))
-      return
-    }
-
-    const { rows } = userCountAndArray
-    let { count } = userCountAndArray
-    const [userUrls] = rows
-
-    if (!userUrls) {
-      res.notFound(jsonMessage('Urls not found'))
-      return
-    }
-
-    const urls = (userUrls.get() as UserType).Urls
-    // count will always be >= 1 due to left outer join on user and url tables
-    // to handle edge case where count === 1 but user does not have any urls
-    if (urls.length === 0) {
-      count = 0
-    }
-
+    const { urls, count } = await userRepository.findUrlsForUser(
+      queryConditions,
+    )
     res.ok({ urls, count })
   } catch (error) {
-    res.serverError(jsonMessage('Error retrieving URLs for user'))
+    if (error instanceof NotFoundError) {
+      res.notFound(error.message)
+    } else {
+      res.serverError(jsonMessage('Error retrieving URLs for user'))
+    }
   }
 })
 

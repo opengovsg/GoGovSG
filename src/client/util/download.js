@@ -1,6 +1,7 @@
 import { saveAs } from 'file-saver'
 import rootActions from '~/actions/root'
 import userActions from '~/actions/user'
+import { useIsIE } from '../components/BaseLayout/util/ie'
 
 export const downloadUrls = async (urlCount, tableConfig) => {
   const urlsArr = []
@@ -58,8 +59,15 @@ export const downloadUrls = async (urlCount, tableConfig) => {
     })
   })
 
-  const blob = new Blob(urlsArr, { type: 'text/plain;charset=utf-8' })
-  saveAs(blob, 'urls.csv')
+  const blob = new Blob([urlsArr.join('')], {
+    type: 'text/csv;charset=utf-8',
+  })
+
+  if (useIsIE) {
+    navigator.msSaveBlob(blob, 'urls.csv')
+  } else {
+    saveAs(blob, 'urls.csv')
+  }
   return null
 }
 

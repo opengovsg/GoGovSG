@@ -1,21 +1,28 @@
 import Sequelize from 'sequelize'
-import { parse } from 'url'
+
 import { ACTIVE, INACTIVE } from './types'
-import blacklist from '../resources/blacklist'
-import { isHttps } from '../../shared/util/validation'
+import {
+  isBlacklisted,
+  isCircularRedirects,
+  isHttps,
+  isValidUrl,
+} from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { DEV_ENV, logger, ogHostname } from '../config'
+import { DEV_ENV, ogHostname } from '../config'
+import { StorableUrlState } from '../repositories/enums'
 
 interface UrlBaseType extends IdType {
   readonly shortUrl: string
   readonly longUrl: string
-  readonly state: Sequelize.EnumDataType<string>
+  readonly state: StorableUrlState
   readonly isFile: boolean
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
-  readonly clicks: Sequelize.IntegerDataType
+  readonly clicks: number
+  readonly createdAt: string
+  readonly updatedAt: string
 }
 
 // For sequelize define
@@ -36,29 +43,27 @@ export const Url = <UrlTypeStatic>sequelize.define(
     longUrl: {
       type: Sequelize.TEXT, // Support >255 chars
       validate: {
-        // Disable long url checks for localstack in development.
-        ...(!DEV_ENV ? { isUrl: true } : {}),
+        urlCheck(url: string) {
+          if (!isValidUrl(url, DEV_ENV)) {
+            throw new Error('Invalid URLs are not allowed.')
+          }
+        },
 
         httpsCheck(url: string) {
-          // Must be https
-          if (!isHttps(url)) {
-            if (DEV_ENV) {
-              logger.warn('HTTPS URLs requirement disabled in development')
-            } else {
-              throw new Error('Only HTTPS URLs are allowed.')
-            }
+          if (!isHttps(url, DEV_ENV)) {
+            throw new Error('Only HTTPS URLs are allowed.')
           }
         },
 
         noCircularRedirects(url: string) {
-          if (parse(url).hostname === ogHostname) {
+          if (isCircularRedirects(url, ogHostname)) {
             throw new Error('Circular redirects to go.gov.sg are prohibited')
           }
         },
 
         // Blacklist check
         blacklistCheck(longUrl: string) {
-          if (blacklist.some((bl) => longUrl.includes(bl))) {
+          if (isBlacklisted(longUrl)) {
             throw new Error(
               'Database creation of URLs to link shortener sites prohibited.',
             )

@@ -4,43 +4,13 @@ import { logger } from '../config'
 import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
 import { container } from '../util/inversify'
-import { UrlCache } from './cache/url'
-import { UrlRepository } from './repositories/url'
 import { DependencyIds } from '../constants'
 import { AnalyticsLogger } from './analytics/analyticsLogger'
 import { CookieReducer } from '../util/transition-page'
+import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
-
-/**
- * Looks up the longUrl given a shortUrl from the cache, falling back
- * to the database. The cache is re-populated if the database lookup is
- * performed successfully.
- * @param {string} shortUrl
- * @returns {Promise<string>}
- * @throws {NotFoundError}
- */
-async function getLongUrlFromStore(shortUrl: string): Promise<string> {
-  const { getLongUrlFromCache, cacheShortUrl } = container.get<UrlCache>(
-    DependencyIds.urlCache,
-  )
-  const { getLongUrlFromDatabase } = container.get<UrlRepository>(
-    DependencyIds.urlRepository,
-  )
-
-  try {
-    // Cache lookup
-    return await getLongUrlFromCache(shortUrl)
-  } catch {
-    // Cache failed, look in database
-    const longUrl = await getLongUrlFromDatabase(shortUrl)
-    cacheShortUrl(shortUrl, longUrl).catch((error) =>
-      logger.error(`Unable to cache short URL: ${error}`),
-    )
-    return longUrl
-  }
-}
 
 /**
  * Checks whether the input short url is valid.
@@ -84,15 +54,16 @@ export default async function redirect(
   req: Express.Request,
   res: Express.Response,
 ) {
-  const { incrementClick } = container.get<UrlRepository>(
-    DependencyIds.urlRepository,
-  )
   const { logRedirectAnalytics } = container.get<AnalyticsLogger>(
     DependencyIds.analyticsLogging,
   )
   const { userHasVisitedShortlink, writeShortlinkToCookie } = container.get<
     CookieReducer
   >(DependencyIds.cookieReducer)
+
+  const { getLongUrl, incrementClick } = container.get<UrlRepositoryInterface>(
+    DependencyIds.urlRepository,
+  )
 
   let { shortUrl }: { shortUrl: string } = req.params
 
@@ -105,7 +76,7 @@ export default async function redirect(
 
   try {
     // Find longUrl to redirect to
-    const longUrl = await getLongUrlFromStore(shortUrl)
+    const longUrl = await getLongUrl(shortUrl)
 
     // Update clicks in database
     incrementClick(shortUrl).catch((error) =>

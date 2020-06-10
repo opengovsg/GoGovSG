@@ -21,7 +21,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function TrailingButton(props: ButtonProps) {
+export default function TrailingButton(
+  props: ButtonProps & { component?: string },
+) {
   const classes = useStyles(props)
   return (
     <Button
