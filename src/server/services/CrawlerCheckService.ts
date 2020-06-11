@@ -1,6 +1,6 @@
 import { UAParser } from 'ua-parser-js'
-import { CrawlerCheckServiceInterface } from './interfaces/CrawlerCheckServiceInterface'
 import { injectable } from 'inversify'
+import { CrawlerCheckServiceInterface } from './interfaces/CrawlerCheckServiceInterface'
 
 @injectable()
 export class CrawlerCheckService implements CrawlerCheckServiceInterface {
