@@ -7,7 +7,7 @@ import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
 import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
-import AnalyticsLoggerMock from './mocks/analytics'
+import AnalyticsLoggerMock from '../mocks/services/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
 import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
 
