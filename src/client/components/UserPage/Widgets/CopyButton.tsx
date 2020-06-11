@@ -1,6 +1,12 @@
 import React from 'react'
 import copy from 'copy-to-clipboard'
-import { Button, Typography, makeStyles, createStyles } from '@material-ui/core'
+import {
+  Button,
+  Typography,
+  TypographyVariant,
+  makeStyles,
+  createStyles,
+} from '@material-ui/core'
 
 import copyIcon from '../assets/copy-icon.svg'
 import OnClickTooltip from './OnClickTooltip'
@@ -25,23 +31,7 @@ export type CopyButtonProps = {
   shortUrl: string
   buttonText: string
   iconSize: number
-  variant?:
-    | 'button'
-    | 'caption'
-    | 'h1'
-    | 'h2'
-    | 'h3'
-    | 'h4'
-    | 'h5'
-    | 'h6'
-    | 'inherit'
-    | 'subtitle1'
-    | 'subtitle2'
-    | 'body1'
-    | 'body2'
-    | 'overline'
-    | 'srOnly'
-    | undefined
+  variant?: TypographyVariant
   stopPropagation?: boolean
 }
 
