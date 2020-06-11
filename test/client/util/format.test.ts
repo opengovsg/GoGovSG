@@ -28,25 +28,25 @@ describe('thousands are not formatted', () => {
     expect(numberUnitFormatter(valueToTest)).toBe('1,000')
   })
   test('thousands does not round up to millions', () => {
-    const valueToTest = THRESHOLD_VAL
+    const valueToTest = 999_999
     expect(numberUnitFormatter(valueToTest)).toBe('999,999')
   })
 })
 
 describe('millions below threshold are not formatted', () => {
   test('a million is 1,000,000', () => {
-    const valueToTest = THRESHOLD_VAL + 1
+    const valueToTest = 1_000_000
     expect(numberUnitFormatter(valueToTest)).toBe('1,000,000')
   })
   test('threshold limit is not formatted', () => {
-    const valueToTest = 9_999_999
+    const valueToTest = THRESHOLD_VAL
     expect(numberUnitFormatter(valueToTest)).toBe('9,999,999')
   })
 })
 
 describe('millions above threshold are formatted with m', () => {
   test('value after threshold limit is formatted', () => {
-    const valueToTest = 10_000_000
+    const valueToTest = THRESHOLD_VAL + 1
     expect(numberUnitFormatter(valueToTest)).toBe('10m')
   })
   test('millions does not round up to billions', () => {
