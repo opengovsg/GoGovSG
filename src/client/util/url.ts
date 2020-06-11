@@ -13,7 +13,10 @@ export async function generateShortUrl() {
   return generate(ALPHABET, LENGTH)
 }
 
-// Strips http or https from url string.
+/**
+ * Strips http or https from url string.
+ * @param url The url to strip the protocol from.
+ */
 export function removeHttpsProtocol(url: string) {
   return url.replace(/^(https?):\/\//, '')
 }
