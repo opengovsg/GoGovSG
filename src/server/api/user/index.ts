@@ -229,6 +229,7 @@ router.patch(
  */
 router.patch(
   '/url',
+  fileUploadMiddleware,
   preprocessPotentialIncomingFile,
   validator.body(urlEditSchema),
   async (req, res) => {
