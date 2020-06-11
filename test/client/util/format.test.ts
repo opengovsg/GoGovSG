@@ -1,4 +1,7 @@
-import { numberUnitFormatter, THRESHOLD_VAL } from '../../../src/client/util/format'
+import {
+  THRESHOLD_VAL,
+  numberUnitFormatter,
+} from '../../../src/client/util/format'
 
 describe('ones, tens, hundreds are not formatted', () => {
   test('one is 1', () => {
