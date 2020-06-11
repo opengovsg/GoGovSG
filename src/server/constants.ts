@@ -13,6 +13,9 @@ export const DependencyIds = {
   s3Bucket: Symbol.for('s3Bucket'),
   s3Client: Symbol.for('s3Client'),
   fileURLPrefix: Symbol.for('fileURLPrefix'),
+  redirectService: Symbol.for('redirectService'),
+  crawlerCheckService: Symbol.for('crawlerCheckService'),
+  redirectController: Symbol.for('redirectController'),
 }
 
 export default DependencyIds

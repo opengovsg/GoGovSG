@@ -3,7 +3,7 @@ import AWS from 'aws-sdk'
 import { container } from './util/inversify'
 import { GaLogger } from './services/analyticsLogger'
 import { DependencyIds } from './constants'
-import { CookieArrayReducer } from './services/transition-page'
+import { CookieArrayReducerService } from './services/CookieArrayReducerService'
 import { OtpRepository } from './repositories/OtpRepository'
 import { MailerNode } from './services/email'
 import { CryptographyBcrypt } from './services/cryptography'
@@ -15,6 +15,9 @@ import { UserRepository } from './repositories/UserRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
+import { RedirectService } from './services/RedirectService'
+import { RedirectController } from './controllers/RedirectController'
+import { CrawlerCheckService } from './services/CrawlerCheckService'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -31,10 +34,13 @@ export default () => {
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
-  bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
+  bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducerService)
   bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
+  bindIfUnbound(DependencyIds.redirectController, RedirectController)
+  bindIfUnbound(DependencyIds.redirectService, RedirectService)
+  bindIfUnbound(DependencyIds.crawlerCheckService, CrawlerCheckService)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 
