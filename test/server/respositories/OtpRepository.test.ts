@@ -1,8 +1,8 @@
-import { redisMockClient } from '../util'
-import { OtpRepository } from '../../../../src/server/repositories/OtpRepository'
-import { OtpMapper } from '../../../../src/server/mappers/OtpMapper'
+import { redisMockClient } from '../api/util'
+import { OtpRepository } from '../../../src/server/repositories/OtpRepository'
+import { OtpMapper } from '../../../src/server/mappers/OtpMapper'
 
-jest.mock('../../../../src/server/redis', () => ({
+jest.mock('../../../src/server/redis', () => ({
   otpClient: redisMockClient,
 }))
 

@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { injectable } from 'inversify'
-import { StorableOtp } from '../../../../../src/server/repositories/types'
-import { OtpRepositoryInterface } from '../../../../../src/server/repositories/interfaces/OtpRepositoryInterface'
+import { StorableOtp } from '../../../../src/server/repositories/types'
+import { OtpRepositoryInterface } from '../../../../src/server/repositories/interfaces/OtpRepositoryInterface'
 
 @injectable()
 export class OtpRepositoryMock implements OtpRepositoryInterface {

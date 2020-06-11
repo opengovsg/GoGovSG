@@ -16,11 +16,14 @@ import {
 } from '../../../src/server/api/login/handlers'
 import { container } from '../../../src/server/util/inversify'
 import { Mailer } from '../../../src/server/services/email'
-import { MailerMock, MailerMockDown } from './mocks/email'
+import { MailerMock, MailerMockDown } from '../mocks/services/email'
 import { DependencyIds } from '../../../src/server/constants'
 import { Cryptography } from '../../../src/server/services/cryptography'
-import CryptographyMock from './mocks/cryptography'
-import { OtpRepositoryMock, OtpRepositoryMockDown } from './mocks/cache/otp'
+import CryptographyMock from '../mocks/services/cryptography'
+import {
+  OtpRepositoryMock,
+  OtpRepositoryMockDown,
+} from '../mocks/repositories/OtpRepository'
 import { UserRepositoryInterface } from '../../../src/server/repositories/interfaces/UserRepositoryInterface'
 import { logger } from '../config'
 import { UserRepository } from '../../../src/server/repositories/UserRepository'
