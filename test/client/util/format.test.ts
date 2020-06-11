@@ -1,4 +1,4 @@
-import { numberUnitFormatter } from '../../../src/client/util/format'
+import { numberUnitFormatter, THRESHOLD_VAL } from '../../../src/client/util/format'
 
 describe('ones, tens, hundreds are not formatted', () => {
   test('one is 1', () => {
@@ -25,19 +25,26 @@ describe('thousands are not formatted', () => {
     expect(numberUnitFormatter(valueToTest)).toBe('1,000')
   })
   test('thousands does not round up to millions', () => {
-    const valueToTest = 999_999
+    const valueToTest = THRESHOLD_VAL
     expect(numberUnitFormatter(valueToTest)).toBe('999,999')
   })
 })
 
-describe('millions are formatted with m', () => {
-  test('a million is 1m', () => {
-    const valueToTest = 1_000_000
-    expect(numberUnitFormatter(valueToTest)).toBe('1m')
+describe('millions below threshold are not formatted', () => {
+  test('a million is 1,000,000', () => {
+    const valueToTest = THRESHOLD_VAL + 1
+    expect(numberUnitFormatter(valueToTest)).toBe('1,000,000')
   })
-  test('millions does not round up', () => {
-    const valueToTest = 1_999_999
-    expect(numberUnitFormatter(valueToTest)).toBe('1m')
+  test('threshold limit is not formatted', () => {
+    const valueToTest = 9_999_999
+    expect(numberUnitFormatter(valueToTest)).toBe('9,999,999')
+  })
+})
+
+describe('millions above threshold are formatted with m', () => {
+  test('value after threshold limit is formatted', () => {
+    const valueToTest = 10_000_000
+    expect(numberUnitFormatter(valueToTest)).toBe('10m')
   })
   test('millions does not round up to billions', () => {
     const valueToTest = 999_999_999

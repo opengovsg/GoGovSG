@@ -108,7 +108,7 @@ const useStyles = makeStyles((theme) => {
       },
     },
     clicksCellContent: {
-      width: 'fit-content',
+      width: 118,
     },
     rightCell: {
       [theme.breakpoints.up('md')]: {

@@ -1,3 +1,6 @@
+// Threshold value for click count before applying compact notations.
+export const THRESHOLD_VAL = 9_999_999
+
 /**
  * Takes in a number and format in into a compact form without rounding.
  *
@@ -11,7 +14,7 @@ export function numberUnitFormatter(numberToFormat: number): string {
     if (numberToFormat >= 1_000_000) return 'm'
     return ''
   }
-  if (numberToFormat < 1_000_000) {
+  if (numberToFormat <= THRESHOLD_VAL) {
     const numberFormatter = new Intl.NumberFormat('en-US')
     return numberFormatter.format(numberToFormat)
   }
@@ -22,6 +25,11 @@ export function numberUnitFormatter(numberToFormat: number): string {
   return compactNumber + getNotation()
 }
 
+/**
+ * Takes in numerical bytes and apply compact notations to it.
+ *
+ * @param bytes The bytes for format.
+ */
 export function formatBytes(bytes: number) {
   if (bytes === 0) return '0b'
 
