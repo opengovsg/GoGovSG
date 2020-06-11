@@ -6,20 +6,20 @@ import {
   mockTransaction,
   redisMockClient,
   urlModelMock,
-} from './util'
-import { S3InterfaceMock } from './mocks/aws'
+} from '../api/util'
+import { S3InterfaceMock } from '../api/mocks/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlRepositoryInterface } from '../../../src/server/repositories/interfaces/UrlRepositoryInterface'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
 import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
-import AnalyticsLoggerMock from './mocks/analytics'
+import AnalyticsLoggerMock from '../api/mocks/analytics'
 
 import { CookieArrayReducerServiceInterface } from '../../../src/server/services/interfaces/CookieArrayReducerServiceInterface'
 import {
   CookieArrayReducerMockUnvisited,
   CookieArrayReducerMockVisited,
-} from './mocks/transition-page'
+} from '../api/mocks/transition-page'
 import { RedirectService } from '../../../src/server/services/RedirectService'
 import { RedirectServiceInterface } from '../../../src/server/services/interfaces/RedirectServiceInterface'
 import { RedirectController } from '../../../src/server/controllers/RedirectController'
