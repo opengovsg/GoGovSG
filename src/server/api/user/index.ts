@@ -165,7 +165,6 @@ router.patch(
       }
 
       // Success
-      // TODO: Remove force cast once UserRepository has been made
       const result = await urlRepository.update(url, {
         userId: newUserId,
       })
@@ -215,7 +214,6 @@ router.patch(
           }
         : undefined
 
-      // TODO: Remove force cast once UserRepository has been made
       await urlRepository.update(url, { longUrl }, storableFile)
 
       res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
