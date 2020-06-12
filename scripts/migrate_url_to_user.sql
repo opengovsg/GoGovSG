@@ -10,6 +10,8 @@
 --
 -- Change History:
 --   31 July 2019 github.com/jeantanzj: Function created
+--   12 June 2020 Foo Yong Jie:         Update function's url_history insertion step to include compulsory
+--                                      isFile column
 -- =============================================
 CREATE OR REPLACE FUNCTION migrate_url_to_user(short_url_value text, to_user_email text) RETURNS void AS
 $BODY$
@@ -41,8 +43,8 @@ BEGIN
         RAISE EXCEPTION 'No transferring of links to the same user';
     END IF;
 -- Insert the intended changes into URL history table
-    INSERT INTO url_histories ("urlShortUrl","longUrl","state","userId","createdAt","updatedAt")
-        SELECT "shortUrl", "longUrl", "state", "to_user_id", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    INSERT INTO url_histories ("urlShortUrl","longUrl","state","userId","isFile","createdAt","updatedAt")
+        SELECT "shortUrl", "longUrl", "state", "to_user_id", "isFile", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         FROM urls
         WHERE "shortUrl" = short_url LIMIT 1;
 -- Update the link in the URL table
