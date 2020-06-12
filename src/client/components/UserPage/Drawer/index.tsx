@@ -5,7 +5,7 @@ import {
   State,
   initialState,
   drawerReducer,
-} from './ControlPanel/helpers/reducers'
+} from './ControlPanel/util/reducers'
 
 function useDrawerController() {
   const [state, dispatch] = useReducer(drawerReducer, initialState)

@@ -1,7 +1,8 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
-import sgdsIconsTtf from '~/assets/fonts/sgds-icons.ttf'
-import sgdsIconsWoff from '~/assets/fonts/sgds-icons.woff'
-import sgdsIconsSvg from '~/assets/fonts/sgds-icons.svg'
+
+import sgdsIconsTtf from '../assets/fonts/sgds-icons.ttf'
+import sgdsIconsWoff from '../assets/fonts/sgds-icons.woff'
+import sgdsIconsSvg from '../assets/fonts/sgds-icons.svg'
 
 // Provides theme spacing, breakpoint values for the main theme to consume.
 const basicTheme = createMuiTheme({
@@ -21,7 +22,6 @@ export default responsiveFontSizes(
     breakpoints: basicTheme.breakpoints,
     palette: {
       type: 'light',
-      dividerLight: '#f0f0f0',
       divider: '#d8d8d8',
       primary: {
         main: '#456682',
@@ -42,32 +42,32 @@ export default responsiveFontSizes(
       fontFamily: "'IBM Plex Sans', sans-serif",
       h1: {
         fontSize: '3.4375rem',
-        fontWeight: '600',
+        fontWeight: 600,
         lineHeight: 1.182,
       },
       h2: {
         fontSize: '2.8125rem',
-        fontWeight: '500',
+        fontWeight: 500,
         lineHeight: 1.267,
       },
       h3: {
         fontSize: '1.75rem',
-        fontWeight: '600',
+        fontWeight: 600,
         lineHeight: 1.321,
       },
       h4: {
         fontSize: '1.375rem',
-        fontWeight: '600',
+        fontWeight: 600,
         lineHeight: 1.364,
       },
       h5: {
         fontSize: '1.125rem',
-        fontWeight: '700',
+        fontWeight: 700,
         lineHeight: 1.389,
       },
       h6: {
         fontSize: '1rem',
-        fontWeight: '500',
+        fontWeight: 500,
         lineHeight: 1.3125,
       },
       subtitle1: {
@@ -80,7 +80,7 @@ export default responsiveFontSizes(
       },
       body2: {
         fontSize: '0.875rem',
-        fontWeight: '500',
+        fontWeight: 500,
         lineHeight: 1.429,
       },
       caption: {
@@ -151,7 +151,7 @@ export default responsiveFontSizes(
       },
       MuiLink: {
         root: {
-          fontWeight: '500',
+          fontWeight: 500,
         },
       },
       MuiTooltip: {
