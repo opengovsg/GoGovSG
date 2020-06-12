@@ -15,9 +15,14 @@ import fileIcon from '../../assets/file-icon.svg'
 import clickCountIcon from '../../assets/click-count-icon.svg'
 
 import useAppMargins from '../../../../AppMargins/appMargins'
-import DrawerActions from '../../../Drawer/ControlPanel/helpers/reducers'
+import DrawerActions from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../util/format'
+import CopyButton from '../../../Widgets/CopyButton'
+
+type StyleProps = {
+  appMargins: number
+}
 
 const useStyles = makeStyles((theme) => {
   return createStyles({
@@ -41,7 +46,7 @@ const useStyles = makeStyles((theme) => {
         textAlign: 'end',
         paddingTop: '0px',
         paddingRight: theme.spacing(1.5),
-        paddingLeft: (props) => props.appMargins,
+        paddingLeft: (props: StyleProps) => props.appMargins,
       },
       [theme.breakpoints.down('sm')]: {
         display: 'none',
@@ -56,7 +61,7 @@ const useStyles = makeStyles((theme) => {
         display: 'inline-flex',
         width: '100%',
         padding: theme.spacing(2, 2, 0, 3),
-        paddingLeft: (props) => props.appMargins,
+        paddingLeft: (props: StyleProps) => props.appMargins,
       },
     },
     shortUrlGrid: {
@@ -76,7 +81,7 @@ const useStyles = makeStyles((theme) => {
         padding: theme.spacing(1, 2, 2, 3),
         width: '30%',
         minWidth: '110px',
-        paddingLeft: (props) => props.appMargins,
+        paddingLeft: (props: StyleProps) => props.appMargins,
       },
     },
     createdAtCell: {
@@ -86,29 +91,29 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 1),
-        width: '35%',
+        width: '25%',
         minWidth: '100px',
       },
     },
     clicksCell: {
-      paddingRight: (props) => props.appMargins,
+      paddingRight: (props: StyleProps) => props.appMargins,
       [theme.breakpoints.up('md')]: {
-        minWidth: '180px',
+        minWidth: '210px',
       },
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
-        padding: theme.spacing(1, 1, 2, 2),
-        width: '20%',
+        padding: theme.spacing(1, 0, 2, 2),
+        width: '40%',
         minWidth: '100px',
       },
     },
     clicksCellContent: {
-      width: 'fit-content',
+      width: 118,
     },
     rightCell: {
       [theme.breakpoints.up('md')]: {
         textAlign: 'right',
-        paddingRight: (props) => props.appMargins,
+        paddingRight: (props: StyleProps) => props.appMargins,
       },
     },
     icon: {
@@ -163,12 +168,14 @@ const useStyles = makeStyles((theme) => {
 })
 
 export default function EnhancedTableBody() {
-  const urls = useSelector((state) => state.user.urls)
-  const lastCreatedLink = useSelector((state) => state.user.lastCreatedLink)
+  const urls: any[] = useSelector((state: any) => state.user.urls)
+  const lastCreatedLink = useSelector(
+    (state: any) => state.user.lastCreatedLink,
+  )
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const dispatch = useDrawerDispatch()
-  const openControlPanel = (shortlink) =>
+  const openControlPanel = (shortlink: string) =>
     dispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
   if (urls.length > 0) {
@@ -183,7 +190,7 @@ export default function EnhancedTableBody() {
             }`}
             onClick={() => openControlPanel(row.shortUrl)}
           >
-            <TableCell className={classes.leftCell} width="5%">
+            <TableCell className={classes.leftCell}>
               <img
                 className={classes.icon}
                 src={row.isFile ? fileIcon : linkIcon}
@@ -206,6 +213,17 @@ export default function EnhancedTableBody() {
                 </Hidden>
               </Grid>
             </TableCell>
+            <Hidden smDown>
+              <TableCell className={classes.stateCell}>
+                <CopyButton
+                  shortUrl={row.shortUrl}
+                  buttonText={'Copy'}
+                  iconSize={13}
+                  variant={'caption'}
+                  stopPropagation={true}
+                />
+              </TableCell>
+            </Hidden>
             <TableCell className={classes.stateCell}>
               <Typography
                 variant="caption"

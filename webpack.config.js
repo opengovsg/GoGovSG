@@ -16,7 +16,7 @@ const requiredSentryEnvVar = [
 
 module.exports = () => {
   const jsBundle = {
-    entry: ['babel-polyfill', path.join(srcDirectory, 'index.js')],
+    entry: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
     output: {
       path: path.join(__dirname, outputDirectory),
       filename: 'bundle.js',
