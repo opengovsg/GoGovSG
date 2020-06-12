@@ -1,27 +1,29 @@
 import Express from 'express'
 import fileUpload from 'express-fileupload'
-import * as Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
-import jsonMessage from '../util/json'
-import { ACTIVE, INACTIVE } from '../models/types'
-import blacklist from '../resources/blacklist'
-import { isHttps, isValidShortUrl } from '../../shared/util/validation'
-import { logger } from '../config'
-import { DependencyIds } from '../constants'
-import { container } from '../util/inversify'
+import jsonMessage from '../../util/json'
+import { logger } from '../../config'
+import { DependencyIds } from '../../constants'
+import { container } from '../../util/inversify'
 import {
+  OldUrlEditRequest,
   OwnershipTransferRequest,
-  ShorturlStateEditRequest,
   UrlCreationRequest,
   UrlEditRequest,
-} from '../../types/server/api/user.d'
-import { addFileExtension, getFileExtension } from '../util/fileFormat'
-import { MessageType } from '../../shared/util/messages'
-import { MAX_FILE_UPLOAD_SIZE } from '../../shared/constants'
-import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
-import { StorableFile } from '../repositories/types'
-import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
-import { NotFoundError } from '../util/error'
+} from '../../../types/server/api/user.d'
+import { addFileExtension, getFileExtension } from '../../util/fileFormat'
+import { MessageType } from '../../../shared/util/messages'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
+import { UrlRepositoryInterface } from '../../repositories/interfaces/UrlRepositoryInterface'
+import { StorableFile } from '../../repositories/types'
+import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepositoryInterface'
+import { NotFoundError } from '../../util/error'
+import {
+  ownershipTransferSchema,
+  urlEditSchema,
+  urlRetrievalSchema,
+  urlSchema,
+} from './validators'
 
 const router = Express.Router()
 
@@ -40,48 +42,6 @@ const fileUploadMiddleware = fileUpload({
 })
 
 const validator = createValidator({ passError: true })
-
-const urlRetrievalSchema = Joi.object({
-  userId: Joi.number().required(),
-})
-
-const urlSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Short url format is invalid.' })
-      }
-      return url
-    })
-    .required(),
-  longUrl: Joi.string().custom((url: string, helpers) => {
-    if (!isHttps(url)) {
-      return helpers.message({ custom: 'Long url must start with https://' })
-    }
-    if (blacklist.some((bl) => url.includes(bl))) {
-      return helpers.message({
-        custom: 'Creation of URLs to link shortener sites prohibited.',
-      })
-    }
-    return url
-  }),
-  files: Joi.object({
-    file: Joi.object().keys().required(),
-  }),
-}).xor('longUrl', 'files')
-
-const stateEditSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string().required(),
-  state: Joi.string().allow(ACTIVE, INACTIVE).only().required(),
-})
-
-const ownershipTransferSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string().required(),
-  newUserEmail: Joi.string().required(),
-})
 
 /**
  * Place incoming file into the request body so that it can be
@@ -205,7 +165,6 @@ router.patch(
       }
 
       // Success
-      // TODO: Remove force cast once UserRepository has been made
       const result = await urlRepository.update(url, {
         userId: newUserId,
       })
@@ -230,7 +189,7 @@ router.patch(
   preprocessPotentialIncomingFile,
   validator.body(urlSchema),
   async (req, res) => {
-    const { userId, longUrl, shortUrl }: UrlEditRequest = req.body
+    const { userId, longUrl, shortUrl }: OldUrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
       res.badRequest(jsonMessage('Only single file uploads are supported.'))
@@ -255,7 +214,6 @@ router.patch(
           }
         : undefined
 
-      // TODO: Remove force cast once UserRepository has been made
       await urlRepository.update(url, { longUrl }, storableFile)
 
       res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
@@ -267,30 +225,47 @@ router.patch(
 )
 
 /**
- * Endpoint for user to render a URL active/inactive.
+ * Endpoint for user to make edits to their link.
  */
-router.patch('/url', validator.body(stateEditSchema), async (req, res) => {
-  const { userId, shortUrl, state }: ShorturlStateEditRequest = req.body
-
-  try {
-    const url = await userRepository.findOneUrlForUser(userId, shortUrl)
-
-    if (!url) {
-      res.notFound(jsonMessage(`Short link "${shortUrl}" not found for user.`))
+router.patch(
+  '/url',
+  fileUploadMiddleware,
+  preprocessPotentialIncomingFile,
+  validator.body(urlEditSchema),
+  async (req, res) => {
+    const { userId, longUrl, shortUrl, state }: UrlEditRequest = req.body
+    const file = req.files?.file
+    if (Array.isArray(file)) {
+      res.badRequest(jsonMessage('Only single file uploads are supported.'))
       return
     }
 
-    await urlRepository.update(url, { state })
-    res.ok()
-  } catch (error) {
-    logger.error(`Error rendering URL active/inactive:\t${error}`)
-    res.badRequest(
-      jsonMessage(
-        `Unable to set state to ${state} for short link "${shortUrl}"`,
-      ),
-    )
-  }
-})
+    try {
+      const url = await userRepository.findOneUrlForUser(userId, shortUrl)
+
+      if (!url) {
+        res.notFound(
+          jsonMessage(`Short link "${shortUrl}" not found for user.`),
+        )
+        return
+      }
+
+      const storableFile: StorableFile | undefined = file
+        ? {
+            data: file.data,
+            key: addFileExtension(shortUrl, getFileExtension(file.name)),
+            mimetype: file.mimetype,
+          }
+        : undefined
+
+      await urlRepository.update(url, { longUrl, state }, storableFile)
+      res.ok()
+    } catch (error) {
+      logger.error(`Error editing URL:\t${error}`)
+      res.badRequest(jsonMessage(`Unable to edit short link "${shortUrl}"`))
+    }
+  },
+)
 
 /**
  * Endpoint for a user to retrieve their own URLs based on the query conditions.
