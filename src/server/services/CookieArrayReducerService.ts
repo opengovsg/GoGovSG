@@ -11,7 +11,7 @@ import { cookieSessionMaxSizeBytes } from '../config'
  * Utility functions to store and read a user's visit
  * history in the browser cookie.
  */
-export interface CookieReducer {
+export interface CookieArrayReducerServiceInterface {
   userHasVisitedShortlink: (
     cookie: string[] | null,
     shortUrl: string,
@@ -32,7 +32,8 @@ export interface CookieReducer {
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
   ["userHasVisitedShortlink", "writeShortlinkToCookie"] }] */
 @injectable()
-export class CookieArrayReducer implements CookieReducer {
+export class CookieArrayReducerService
+  implements CookieArrayReducerServiceInterface {
   userHasVisitedShortlink(cookie: string[] | null, shortUrl: string): boolean {
     if (!cookie) return false
     return cookie.includes(shortUrl)

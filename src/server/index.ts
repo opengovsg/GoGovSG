@@ -16,7 +16,6 @@ bindInversifyDependencies()
 
 // Routes
 import api from './api'
-import redirect from './api/redirect'
 
 // Logger configuration
 import { cookieSettings, logger, sessionSettings, trustProxy } from './config'
@@ -35,6 +34,7 @@ import getIp from './util/request'
 import { container } from './util/inversify'
 import { DependencyIds } from './constants'
 import { Mailer } from './services/email'
+import { RedirectControllerInterface } from './controllers/interfaces/RedirectControllerInterface'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -125,7 +125,9 @@ initDb()
     app.use(
       '/:shortUrl([a-zA-Z0-9-]+)',
       ...redirectSpecificMiddleware,
-      redirect,
+      container.get<RedirectControllerInterface>(
+        DependencyIds.redirectController,
+      ).redirect,
     ) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
