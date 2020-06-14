@@ -1,9 +1,10 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { injectable } from 'inversify'
-import { CookieReducer } from '../../../../src/server/services/transition-page'
+import { CookieArrayReducerServiceInterface } from '../../../../src/server/services/interfaces/CookieArrayReducerServiceInterface'
 
 @injectable()
-export class CookieArrayReducerMockVisited implements CookieReducer {
+export class CookieArrayReducerMockVisited
+  implements CookieArrayReducerServiceInterface {
   userHasVisitedShortlink(_: string[] | null, __: string): boolean {
     return true
   }
@@ -14,7 +15,8 @@ export class CookieArrayReducerMockVisited implements CookieReducer {
 }
 
 @injectable()
-export class CookieArrayReducerMockUnvisited implements CookieReducer {
+export class CookieArrayReducerMockUnvisited
+  implements CookieArrayReducerServiceInterface {
   userHasVisitedShortlink(_: string[] | null, __: string): boolean {
     return false
   }

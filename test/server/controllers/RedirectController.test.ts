@@ -6,7 +6,7 @@ import {
   mockTransaction,
   redisMockClient,
   urlModelMock,
-} from './util'
+} from '../api/util'
 import { S3InterfaceMock } from '../mocks/services/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlRepositoryInterface } from '../../../src/server/repositories/interfaces/UrlRepositoryInterface'
@@ -15,14 +15,18 @@ import { DependencyIds } from '../../../src/server/constants'
 import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
 import AnalyticsLoggerMock from '../mocks/services/analytics'
 
-import redirect from '../../../src/server/api/redirect'
-import { CookieReducer } from '../../../src/server/services/transition-page'
+import { CookieArrayReducerServiceInterface } from '../../../src/server/services/interfaces/CookieArrayReducerServiceInterface'
 import {
   CookieArrayReducerMockUnvisited,
   CookieArrayReducerMockVisited,
 } from '../mocks/services/transition-page'
+import { RedirectService } from '../../../src/server/services/RedirectService'
+import { RedirectServiceInterface } from '../../../src/server/services/interfaces/RedirectServiceInterface'
+import { RedirectController } from '../../../src/server/controllers/RedirectController'
 import { logger } from '../config'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
+import { CrawlerCheckServiceInterface } from '../../../src/server/services/interfaces/CrawlerCheckServiceInterface'
+import { CrawlerCheckService } from '../../../src/server/services/CrawlerCheckService'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -68,7 +72,7 @@ function mockDbEmpty() {
 describe('redirect API tests', () => {
   beforeEach(() => {
     container
-      .bind<CookieReducer>(DependencyIds.cookieReducer)
+      .bind<CookieArrayReducerServiceInterface>(DependencyIds.cookieReducer)
       .to(CookieArrayReducerMockVisited)
     container
       .bind<UrlRepositoryInterface>(DependencyIds.urlRepository)
@@ -76,6 +80,15 @@ describe('redirect API tests', () => {
     container
       .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
       .to(AnalyticsLoggerMock)
+    container
+      .bind<RedirectServiceInterface>(DependencyIds.redirectService)
+      .to(RedirectService)
+    container
+      .bind<RedirectController>(DependencyIds.redirectController)
+      .to(RedirectController)
+    container
+      .bind<CrawlerCheckServiceInterface>(DependencyIds.crawlerCheckService)
+      .to(CrawlerCheckService)
     redisMockClient.flushall()
   })
   afterEach(() => {
@@ -90,7 +103,7 @@ describe('redirect API tests', () => {
     const cookieReducer = new CookieArrayReducerMockUnvisited()
     container.unbind(DependencyIds.cookieReducer)
     container
-      .bind<CookieReducer>(DependencyIds.cookieReducer)
+      .bind<CookieArrayReducerServiceInterface>(DependencyIds.cookieReducer)
       .toConstantValue(cookieReducer)
     redisMockClient.set('aaa', 'aa')
     const req = createRequestWithShortUrl('Aaa')
@@ -100,7 +113,9 @@ describe('redirect API tests', () => {
 
     const cookieSpy = jest.spyOn(cookieReducer, 'writeShortlinkToCookie')
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(incrementClicksSpy).toBeCalledWith('aaa')
     expect(incrementClicksSpy).toBeCalledTimes(1)
@@ -119,7 +134,7 @@ describe('redirect API tests', () => {
     const cookieReducer = new CookieArrayReducerMockVisited()
     container.unbind(DependencyIds.cookieReducer)
     container
-      .bind<CookieReducer>(DependencyIds.cookieReducer)
+      .bind<CookieArrayReducerServiceInterface>(DependencyIds.cookieReducer)
       .toConstantValue(cookieReducer)
     redisMockClient.set('aaa', 'aa')
     const req = createRequestWithShortUrl('Aaa')
@@ -129,7 +144,9 @@ describe('redirect API tests', () => {
 
     const cookieSpy = jest.spyOn(cookieReducer, 'writeShortlinkToCookie')
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(incrementClicksSpy).toBeCalledWith('aaa')
     expect(incrementClicksSpy).toBeCalledTimes(1)
@@ -149,7 +166,9 @@ describe('redirect API tests', () => {
     const res = httpMocks.createResponse()
     redisMockClient.set('aaa', 'aa')
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(incrementClicksSpy).toBeCalledWith('aaa')
     expect(incrementClicksSpy).toBeCalledTimes(1)
@@ -163,7 +182,9 @@ describe('redirect API tests', () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(incrementClicksSpy).toBeCalledWith('aaa')
     expect(incrementClicksSpy).toBeCalledTimes(1)
@@ -179,7 +200,9 @@ describe('redirect API tests', () => {
 
     mockDbEmpty()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(incrementClicksSpy).toBeCalledTimes(0)
     expect(res.statusCode).toBe(404)
@@ -193,7 +216,9 @@ describe('redirect API tests', () => {
     redisMockClient.set('aaa', 'aa')
     mockDbEmpty()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
@@ -207,7 +232,9 @@ describe('redirect API tests', () => {
 
     mockCacheDown()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
 
     expect(incrementClicksSpy).toBeCalledWith('aaa')
     expect(incrementClicksSpy).toBeCalledTimes(1)
@@ -224,7 +251,9 @@ describe('redirect API tests', () => {
     mockCacheDown()
     mockDbDown()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
     expect(incrementClicksSpy).toBeCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
@@ -238,7 +267,9 @@ describe('redirect API tests', () => {
     mockDbDown()
     redisMockClient.set('aaa', 'aa')
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
@@ -252,7 +283,9 @@ describe('redirect API tests', () => {
     mockCacheDown()
     mockDbEmpty()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
     expect(res.statusCode).toBe(404)
   })
 
@@ -262,7 +295,9 @@ describe('redirect API tests', () => {
 
     mockDbDown()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
     expect(res.statusCode).toBe(404)
     expect(logger.error).toBeCalled()
   })
@@ -271,7 +306,9 @@ describe('redirect API tests', () => {
     const req = createRequestWithShortUrl(')*')
     const res = httpMocks.createResponse()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
     expect(res.statusCode).toBe(404)
   })
 
@@ -279,7 +316,9 @@ describe('redirect API tests', () => {
     const req = createRequestWithShortUrl(undefined)
     const res = httpMocks.createResponse()
 
-    await redirect(req, res)
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
     expect(res.statusCode).toBe(404)
   })
 })
