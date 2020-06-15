@@ -42,4 +42,5 @@ jest.mock('../../src/server/config', () => ({
   redirectExpiry,
   otpExpiry: 10,
   s3Bucket: 'file-staging.go.gov.sg',
+  linksToRotate: 'testlink1,testlink2,testlink3',
 }))
