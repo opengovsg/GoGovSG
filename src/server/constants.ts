@@ -19,6 +19,8 @@ export const DependencyIds = {
   statisticsRepository: Symbol.for('statisticsRepository'),
   statisticsService: Symbol.for('repositoryService'),
   statisticsController: Symbol.for('statisticsController'),
+  sentryController: Symbol.for('sentryController'),
+  linksController: Symbol.for('linksController'),
 }
 
 export default DependencyIds
