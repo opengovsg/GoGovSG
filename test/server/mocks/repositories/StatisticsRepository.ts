@@ -2,19 +2,12 @@
 
 import { injectable } from 'inversify'
 import { StatisticsRepositoryInterface } from '../../../../src/server/repositories/interfaces/StatisticsRepositoryInterface'
+import { GlobalStatistics } from '../../../../src/server/repositories/types'
 
 @injectable()
 export class MockStatisticsRepository implements StatisticsRepositoryInterface {
-  getGlobalUserCount(): Promise<number> {
-    return Promise.resolve(1)
-  }
-
-  getGlobalClickCount(): Promise<number> {
-    return Promise.resolve(2)
-  }
-
-  getGlobalLinkCount(): Promise<number> {
-    return Promise.resolve(3)
+  getGlobalStatistics(): Promise<GlobalStatistics> {
+    return Promise.resolve({ userCount: 1, clickCount: 2, linkCount: 3 })
   }
 }
 
