@@ -43,4 +43,5 @@ jest.mock('../../src/server/config', () => ({
   otpExpiry: 10,
   s3Bucket: 'file-staging.go.gov.sg',
   linksToRotate: 'testlink1,testlink2,testlink3',
+  sentryDns: 'mocksentry.com',
 }))
