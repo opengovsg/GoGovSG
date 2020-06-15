@@ -1,10 +1,10 @@
 /* eslint-disable class-methods-use-this */
 
 import { injectable } from 'inversify'
-import { IStatisticsRepository } from '../../../../src/server/repositories/interfaces/IStatisticsRepository'
+import { StatisticsRepositoryInterface } from '../../../../src/server/repositories/interfaces/StatisticsRepositoryInterface'
 
 @injectable()
-export class MockStatisticsRepository implements IStatisticsRepository {
+export class MockStatisticsRepository implements StatisticsRepositoryInterface {
   getGlobalUserCount(): Promise<number> {
     return Promise.resolve(1)
   }
