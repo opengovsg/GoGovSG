@@ -1,11 +1,17 @@
 import Express from 'express'
-import { sentryDns } from '../config'
+import { container } from '../util/inversify'
+import { SentryControllerInterface } from '../controllers/interfaces/SentryControllerInterface'
+import { DependencyIds } from '../constants'
 
 const router = Express.Router()
+
+const sentryController = container.get<SentryControllerInterface>(
+  DependencyIds.sentryController,
+)
 
 /**
  * Requests for the Sentry DNS.
  */
-router.get('/', (_, res) => res.send(sentryDns))
+router.get('/', sentryController.getSentryDns)
 
 module.exports = router

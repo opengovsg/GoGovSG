@@ -21,6 +21,8 @@ import { CrawlerCheckService } from './services/CrawlerCheckService'
 import { StatisticsRepository } from './repositories/StatisticsRepository'
 import { StatisticsService } from './services/StatisticsService'
 import { StatisticsController } from './controllers/StatisticsController'
+import { RotatingLinksController } from './controllers/RotatingLinksController'
+import { SentryController } from './controllers/SentryController'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -47,6 +49,8 @@ export default () => {
   bindIfUnbound(DependencyIds.statisticsController, StatisticsController)
   bindIfUnbound(DependencyIds.statisticsRepository, StatisticsRepository)
   bindIfUnbound(DependencyIds.statisticsService, StatisticsService)
+  bindIfUnbound(DependencyIds.linksController, RotatingLinksController)
+  bindIfUnbound(DependencyIds.sentryController, SentryController)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 

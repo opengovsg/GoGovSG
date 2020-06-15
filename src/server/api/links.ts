@@ -1,11 +1,17 @@
 import Express from 'express'
-import { linksToRotate } from '../config'
+import { container } from '../util/inversify'
+import { RotatingLinksControllerInterface } from '../controllers/interfaces/RotatingLinksControllerInterface'
+import { DependencyIds } from '../constants'
 
 const router = Express.Router()
+
+const linksController = container.get<RotatingLinksControllerInterface>(
+  DependencyIds.linksController,
+)
 
 /**
  * Requests for the array of links to rotate.
  */
-router.get('/', (_, res) => res.send(linksToRotate))
+router.get('/', linksController.getRotatingLinks)
 
 module.exports = router
