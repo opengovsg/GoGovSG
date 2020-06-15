@@ -1,6 +1,6 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { logger } from '../config'
+import { gaTrackingId, logger } from '../config'
 import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
 import { DependencyIds } from '../constants'
@@ -8,6 +8,10 @@ import { AnalyticsLogger } from '../services/analyticsLogger'
 import { RedirectControllerInterface } from './interfaces/RedirectControllerInterface'
 import { RedirectService } from '../services/RedirectService'
 import { RedirectType } from '../services/types'
+import {
+  EventAction,
+  EventCategory,
+} from '../services/googleAnalytics/types/enum'
 
 const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
@@ -63,9 +67,19 @@ export class RedirectController implements RedirectControllerInterface {
         // Extract root domain from long url.
         const rootDomain: string = parseDomain(longUrl)
 
+        this.analyticsLogger.logTransitionPageServed(
+          req,
+          res,
+          shortUrl.toLowerCase(),
+        )
+
         res.status(200).render(TRANSITION_PATH, {
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
           rootDomain,
+          gaTrackingId,
+          gaEventType: EventCategory.TRANSITION_PAGE,
+          gaOnLoad: EventAction.LOADED,
+          gaOnProceed: EventAction.PROCEEDED,
         })
       } else {
         res.status(302).redirect(longUrl)
