@@ -18,6 +18,9 @@ import { OtpMapper } from './mappers/OtpMapper'
 import { RedirectService } from './services/RedirectService'
 import { RedirectController } from './controllers/RedirectController'
 import { CrawlerCheckService } from './services/CrawlerCheckService'
+import { StatisticsRepository } from './repositories/StatisticsRepository'
+import { StatisticsService } from './services/StatisticsService'
+import { StatisticsController } from './controllers/StatisticsController'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -41,6 +44,9 @@ export default () => {
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
   bindIfUnbound(DependencyIds.redirectService, RedirectService)
   bindIfUnbound(DependencyIds.crawlerCheckService, CrawlerCheckService)
+  bindIfUnbound(DependencyIds.statisticsController, StatisticsController)
+  bindIfUnbound(DependencyIds.statisticsRepository, StatisticsRepository)
+  bindIfUnbound(DependencyIds.statisticsService, StatisticsService)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 

@@ -30,14 +30,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     this.urlMapper = urlMapper
   }
 
-  getTotalLinkClicks: () => Promise<number> = () => {
-    return Url.sum('clicks')
-  }
-
-  getNumUrls: () => Promise<number> = () => {
-    return Url.count()
-  }
-
   public findByShortUrl: (
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (shortUrl) => {

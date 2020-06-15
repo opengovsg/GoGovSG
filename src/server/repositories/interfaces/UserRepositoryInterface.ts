@@ -51,10 +51,4 @@ export interface UserRepositoryInterface {
    * @returns Promise that resolves to an object containing the urls and total count.
    */
   findUrlsForUser(conditions: UserUrlsQueryConditions): Promise<UrlsPaginated>
-
-  /**
-   * Fetches the total number of users in the data store.
-   * @returns Promise which resolves to the number.
-   */
-  getNumUsers(): Promise<number>
 }
