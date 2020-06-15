@@ -18,10 +18,15 @@
     "docker-dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
     "dev": "docker-compose -f docker-compose.yml up --build",
     "test": "jest --collectCoverage",
-    "test:ci": "jest --coverage && coveralls < coverage/lcov.info"
+    "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
+    "cz": "git-cz"
   },
   "author": "Yuanruo Liang",
-  "license": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opengovsg/GoGovSG.git"
+  },
   "dependencies": {
     "@hapi/joi": "^16.1.8",
     "@material-ui/core": "^4.9.7",
@@ -84,6 +89,9 @@
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.9.0",
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@commitlint/travis-cli": "^8.3.5",
     "@sentry/webpack-plugin": "^1.10.0",
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.26",
@@ -121,9 +129,11 @@
     "babel-eslint": "^10.0.0",
     "babel-loader": "^8.0.0",
     "clean-webpack-plugin": "^0.1.19",
+    "commitizen": "^4.1.2",
     "concurrently": "^5.2.0",
     "copyfiles": "^2.2.0",
     "coveralls": "^3.1.0",
+    "cz-conventional-changelog": "^3.2.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.10.1",
@@ -158,7 +168,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run lint",
+      "pre-push": "npm run lint && commitlint --from origin/develop --to HEAD --verbose",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "sh secrets-check.sh && lint-staged"
     }
   },
@@ -169,5 +180,10 @@
     "**/*.ts": [
       "eslint --ext .ts --no-eslintrc -c .eslintrc.ts.json --fix"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
