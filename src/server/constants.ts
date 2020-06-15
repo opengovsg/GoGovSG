@@ -16,6 +16,9 @@ export const DependencyIds = {
   redirectService: Symbol.for('redirectService'),
   crawlerCheckService: Symbol.for('crawlerCheckService'),
   redirectController: Symbol.for('redirectController'),
+  statisticsRepository: Symbol.for('statisticsRepository'),
+  statisticsService: Symbol.for('repositoryService'),
+  statisticsController: Symbol.for('statisticsController'),
 }
 
 export default DependencyIds
