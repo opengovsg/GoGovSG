@@ -109,10 +109,6 @@ export class UserRepository implements UserRepositoryInterface {
 
     return { urls, count }
   }
-
-  public getNumUsers: () => Promise<number> = () => {
-    return User.count()
-  }
 }
 
 export default UserRepository

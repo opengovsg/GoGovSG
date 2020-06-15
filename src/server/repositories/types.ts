@@ -49,3 +49,9 @@ export type StorableOtp = {
   hashedOtp: string
   retries: number
 }
+
+export type GlobalStatistics = {
+  userCount: number
+  clickCount: number
+  linkCount: number
+}
