@@ -79,6 +79,12 @@
     "winston": "^3.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.9.0",
+    "@sentry/webpack-plugin": "^1.10.0",
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.26",
     "@types/classnames": "^2.2.10",
@@ -110,12 +116,6 @@
     "@types/upng-js": "^2.1.1",
     "@types/uuid": "^3.4.4",
     "@types/validator": "^10.11.0",
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
-    "@babel/preset-env": "^7.4.3",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/preset-typescript": "^7.9.0",
-    "@sentry/webpack-plugin": "^1.10.0",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
     "babel-eslint": "^10.0.0",
@@ -136,9 +136,10 @@
     "eslint-plugin-react": "^7.19.0",
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
-    "husky": "^4.0.7",
+    "husky": "^4.2.5",
     "jest": "^25.5.4",
     "jsqr": "^1.3.1",
+    "lint-staged": "^10.2.10",
     "node-mocks-http": "^1.8.1",
     "nodemon": "^1.18.11",
     "prettier": "^2.0.4",
@@ -158,7 +159,15 @@
   "husky": {
     "hooks": {
       "pre-push": "npm run lint",
-      "pre-commit": "sh secrets-check.sh"
+      "pre-commit": "sh secrets-check.sh && lint-staged"
     }
+  },
+  "lint-staged": {
+    "**/*.(js|jsx)": [
+      "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.json --fix"
+    ],
+    "**/*.ts": [
+      "eslint --ext .ts --no-eslintrc -c .eslintrc.ts.json --fix"
+    ]
   }
 }
