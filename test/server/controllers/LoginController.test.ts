@@ -83,6 +83,9 @@ describe('login middleware tests', () => {
       container
         .bind<LoginController>(DependencyIds.loginController)
         .to(LoginController)
+      container
+        .bind<AuthServiceInterface>(DependencyIds.authService)
+        .to(AuthService)
     })
     test('session contains user', () => {
       const req = createRequestWithUser('fakeUser')
