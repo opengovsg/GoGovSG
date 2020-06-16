@@ -1,4 +1,4 @@
-/* eslint-disable import/prefer-default-export, max-classes-per-file */
+/* eslint-disable max-classes-per-file */
 
 export class NotFoundError extends Error {
   constructor(message: string) {
@@ -16,5 +16,19 @@ export class InvalidOtpError extends Error {
     this.name = 'InvalidOtpError'
     this.retries = retries
     Object.setPrototypeOf(this, InvalidOtpError.prototype)
+
+export class AlreadyExistsError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'AlreadyExistsError'
+    Object.setPrototypeOf(this, AlreadyExistsError.prototype)
+  }
+}
+
+export class AlreadyOwnLinkError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'AlreadyOwnLinkError'
+    Object.setPrototypeOf(this, AlreadyOwnLinkError.prototype)
   }
 }
