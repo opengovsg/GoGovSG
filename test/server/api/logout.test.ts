@@ -1,6 +1,6 @@
 import httpMocks from 'node-mocks-http'
 import sinon from 'sinon'
-import { logOut } from '../../../src/server/api/logout/handlers'
+import { LogoutController } from '../../../src/server/controllers/LogoutController'
 
 describe('logout api tests', () => {
   it('should destroy session', () => {
@@ -13,7 +13,7 @@ describe('logout api tests', () => {
     })
     const res = httpMocks.createResponse() as any
     res.ok = okSpy
-    logOut(req, res)
+    new LogoutController().logOut(req, res)
     expect(destroySpy.called).toBeTruthy()
     destroySpy.getCalls()[0].args[0]()
     expect(res.ok.called).toBeTruthy()
@@ -26,7 +26,7 @@ describe('logout api tests', () => {
     const res = httpMocks.createResponse() as any
     res.serverError = serverErrorSpy
     res.ok = okSpy
-    logOut(req, res)
+    new LogoutController().logOut(req, res)
     expect(serverErrorSpy.called).toBeTruthy()
     expect(res.ok.called).toBeFalsy()
   })
