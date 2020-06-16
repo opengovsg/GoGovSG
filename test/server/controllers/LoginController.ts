@@ -6,7 +6,7 @@ import {
   createRequestWithUser,
   getOtpCache,
   userModelMock,
-} from './util'
+} from '../api/util'
 import { container } from '../../../src/server/util/inversify'
 import { Mailer } from '../../../src/server/services/email'
 import { MailerMock, MailerMockDown } from '../mocks/services/email'
