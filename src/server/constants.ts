@@ -26,6 +26,7 @@ export const DependencyIds = {
   logoutController: Symbol.for('logoutController'),
   urlManagementService: Symbol.for('urlManagementService'),
   userController: Symbol.for('userController'),
+  qrCodeService: Symbol.for('qrCodeService'),
 }
 
 export default DependencyIds
