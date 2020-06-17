@@ -16,6 +16,8 @@ export class InvalidOtpError extends Error {
     this.name = 'InvalidOtpError'
     this.retries = retries
     Object.setPrototypeOf(this, InvalidOtpError.prototype)
+  }
+}
 
 export class AlreadyExistsError extends Error {
   constructor(message: string) {
