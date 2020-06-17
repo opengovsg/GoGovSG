@@ -6,14 +6,7 @@ import {
   createRequestWithUser,
   getOtpCache,
   userModelMock,
-} from './util'
-import {
-  generateOtp,
-  getEmailDomains,
-  getIsLoggedIn,
-  getLoginMessage,
-  verifyOtp,
-} from '../../../src/server/api/login/handlers'
+} from '../api/util'
 import { container } from '../../../src/server/util/inversify'
 import { Mailer } from '../../../src/server/services/email'
 import { MailerMock, MailerMockDown } from '../mocks/services/email'
@@ -37,6 +30,9 @@ import {
 import { UrlType } from '../../../src/server/models/url'
 import { UserType } from '../../../src/server/models/user'
 import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
+import { LoginController } from '../../../src/server/controllers/LoginController'
+import { AuthServiceInterface } from '../../../src/server/services/interfaces/AuthServiceInterface'
+import { AuthService } from '../../../src/server/services/AuthService'
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 
@@ -82,11 +78,19 @@ describe('login middleware tests', () => {
     loggerErrorSpy.mockClear()
   })
   describe('getIsLoggedIn tests', () => {
+    beforeEach(() => {
+      container.bind(DependencyIds.authService).toConstantValue(null)
+      container
+        .bind<LoginController>(DependencyIds.loginController)
+        .to(LoginController)
+    })
     test('session contains user', () => {
       const req = createRequestWithUser('fakeUser')
       const res = getMockResponse()
 
-      getIsLoggedIn(req, res)
+      container
+        .get<LoginController>(DependencyIds.loginController)
+        .getIsLoggedIn(req, res)
       expect(res.ok.lastCall.args[0].user).toBeTruthy()
     })
 
@@ -94,32 +98,56 @@ describe('login middleware tests', () => {
       const req = createRequestWithUser(undefined)
       const res = getMockResponse()
 
-      getIsLoggedIn(req, res)
+      container
+        .get<LoginController>(DependencyIds.loginController)
+        .getIsLoggedIn(req, res)
       expect(res.notFound.called).toBeTruthy()
     })
   })
 
   describe('getLoginMessage test', () => {
     test('returns login message', () => {
+      container.bind(DependencyIds.authService).toConstantValue(null)
+      container
+        .bind<LoginController>(DependencyIds.loginController)
+        .to(LoginController)
+
       const req = httpMocks.createRequest()
       const res = getMockResponse()
 
-      getLoginMessage(req, res)
+      container
+        .get<LoginController>(DependencyIds.loginController)
+        .getLoginMessage(req, res)
       expect(res.send.calledWith('login message')).toBeTruthy()
     })
   })
 
   describe('getEmailDomains test', () => {
     test('returns domains', () => {
+      container.bind(DependencyIds.authService).toConstantValue(null)
+      container
+        .bind<LoginController>(DependencyIds.loginController)
+        .to(LoginController)
       const req = httpMocks.createRequest()
       const res = getMockResponse()
 
-      getEmailDomains(req, res)
+      container
+        .get<LoginController>(DependencyIds.loginController)
+        .getEmailDomains(req, res)
       expect(res.send.calledWith('*.test.sg')).toBeTruthy()
     })
   })
 
   describe('generateOtp tests', () => {
+    beforeEach(() => {
+      bindUserRepo()
+      container
+        .bind<AuthServiceInterface>(DependencyIds.authService)
+        .to(AuthService)
+      container
+        .bind<LoginController>(DependencyIds.loginController)
+        .to(LoginController)
+    })
     test('valid new email', async () => {
       container
         .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
@@ -136,7 +164,9 @@ describe('login middleware tests', () => {
         'mailOTP',
       )
 
-      await generateOtp(req, res)
+      await container
+        .get<LoginController>(DependencyIds.loginController)
+        .generateOtp(req, res)
       expect(spy).toBeCalledWith('aa@open.test.sg', '1')
       expect(res.ok.called).toBeTruthy()
 
@@ -166,7 +196,9 @@ describe('login middleware tests', () => {
         'mailOTP',
       )
 
-      await generateOtp(req, res)
+      await container
+        .get<LoginController>(DependencyIds.loginController)
+        .generateOtp(req, res)
       expect(spy).toBeCalledTimes(1)
       expect(res.serverError.called).toBeTruthy()
 
@@ -191,7 +223,9 @@ describe('login middleware tests', () => {
         'mailOTP',
       )
 
-      await generateOtp(req, res)
+      await container
+        .get<LoginController>(DependencyIds.loginController)
+        .generateOtp(req, res)
       expect(spy).toBeCalledTimes(0)
       expect(res.serverError.called).toBeTruthy()
 
@@ -211,6 +245,13 @@ describe('login middleware tests', () => {
         container
           .bind<Cryptography>(DependencyIds.cryptography)
           .to(CryptographyMock)
+        container
+          .bind<AuthServiceInterface>(DependencyIds.authService)
+          .to(AuthService)
+        container
+          .bind<LoginController>(DependencyIds.loginController)
+          .to(LoginController)
+        container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
       })
 
       afterEach(container.unbindAll)
@@ -223,7 +264,9 @@ describe('login middleware tests', () => {
         const req = createRequestWithEmailAndOtp('aa@open.test.sg', '1')
         const res = getMockResponse()
 
-        await verifyOtp(req, res)
+        await container
+          .get<LoginController>(DependencyIds.loginController)
+          .verifyOtp(req, res)
 
         await expect(
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
@@ -240,7 +283,9 @@ describe('login middleware tests', () => {
         const req = createRequestWithEmailAndOtp('aa@open.test.sg', '0')
         const res = getMockResponse()
 
-        await verifyOtp(req, res)
+        await container
+          .get<LoginController>(DependencyIds.loginController)
+          .verifyOtp(req, res)
 
         await expect(
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
@@ -253,7 +298,9 @@ describe('login middleware tests', () => {
         const req = createRequestWithEmailAndOtp('aa@open.test.sg', '1')
         const res = getMockResponse()
 
-        await verifyOtp(req, res)
+        await container
+          .get<LoginController>(DependencyIds.loginController)
+          .verifyOtp(req, res)
 
         await expect(
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
@@ -270,7 +317,9 @@ describe('login middleware tests', () => {
         const req = createRequestWithEmailAndOtp('aa@open.test.sg', '0')
         const res = getMockResponse()
 
-        await verifyOtp(req, res)
+        await container
+          .get<LoginController>(DependencyIds.loginController)
+          .verifyOtp(req, res)
 
         await expect(
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
@@ -290,7 +339,9 @@ describe('login middleware tests', () => {
         const req = createRequestWithEmailAndOtp(undefined, '1')
         const res = getMockResponse()
 
-        await verifyOtp(req, res)
+        await container
+          .get<LoginController>(DependencyIds.loginController)
+          .verifyOtp(req, res)
 
         await expect(
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
@@ -305,16 +356,25 @@ describe('login middleware tests', () => {
 
     test('cache down', async () => {
       bindUserRepo()
+      container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
       container
         .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
         .to(OtpRepositoryMockDown)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
         .to(CryptographyMock)
+      container
+        .bind<AuthServiceInterface>(DependencyIds.authService)
+        .to(AuthService)
+      container
+        .bind<LoginController>(DependencyIds.loginController)
+        .to(LoginController)
       const req = createRequestWithEmailAndOtp('aa@open.gov.sg', '1')
       const res = getMockResponse()
 
-      await verifyOtp(req, res)
+      await container
+        .get<LoginController>(DependencyIds.loginController)
+        .verifyOtp(req, res)
 
       expect(req.session!.user).toBeUndefined()
       expect(res.serverError.called).toBeTruthy()
@@ -324,12 +384,19 @@ describe('login middleware tests', () => {
 
     test('db down', async () => {
       bindUserRepo()
+      container.bind<Mailer>(DependencyIds.mailer).to(MailerMock)
       container
         .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
         .to(OtpRepositoryMock)
       container
         .bind<Cryptography>(DependencyIds.cryptography)
         .to(CryptographyMock)
+      container
+        .bind<AuthServiceInterface>(DependencyIds.authService)
+        .to(AuthService)
+      container
+        .bind<LoginController>(DependencyIds.loginController)
+        .to(LoginController)
       getOtpCache().setOtpForEmail('aa@open.test.sg', {
         hashedOtp: '1',
         retries: 100,
@@ -341,7 +408,9 @@ describe('login middleware tests', () => {
         return Promise.reject()
       })
 
-      await verifyOtp(req, res)
+      await container
+        .get<LoginController>(DependencyIds.loginController)
+        .verifyOtp(req, res)
 
       await expect(
         getOtpCache().getOtpForEmail('aa@open.test.sg'),
