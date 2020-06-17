@@ -1,19 +1,31 @@
 import AWS from 'aws-sdk'
 
 import { container } from './util/inversify'
-import { GaLogger } from './api/analytics/analyticsLogger'
+import { GaLogger } from './services/analyticsLogger'
 import { DependencyIds } from './constants'
-import { CookieArrayReducer } from './util/transition-page'
-import { OtpCacheRedis } from './api/cache/otp'
-import { MailerNode } from './util/email'
-import { CryptographyBcrypt } from './util/cryptography'
+import { CookieArrayReducerService } from './services/CookieArrayReducerService'
+import { OtpRepository } from './repositories/OtpRepository'
+import { MailerNode } from './services/email'
+import { CryptographyBcrypt } from './services/cryptography'
 import { DEV_ENV, accessEndpoint, bucketEndpoint, s3Bucket } from './config'
-import { MailerNoOp } from './util/emaildev'
-import { S3ServerSide } from './util/aws'
+import { MailerNoOp } from './services/emaildev'
+import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
+import { OtpMapper } from './mappers/OtpMapper'
+import { RedirectService } from './services/RedirectService'
+import { RedirectController } from './controllers/RedirectController'
+import { CrawlerCheckService } from './services/CrawlerCheckService'
+import { StatisticsRepository } from './repositories/StatisticsRepository'
+import { StatisticsService } from './services/StatisticsService'
+import { StatisticsController } from './controllers/StatisticsController'
+import { RotatingLinksController } from './controllers/RotatingLinksController'
+import { SentryController } from './controllers/SentryController'
+import { LoginController } from './controllers/LoginController'
+import { AuthService } from './services/AuthService'
+import { LogoutController } from './controllers/LogoutController'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -28,11 +40,23 @@ export default () => {
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
+  bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
-  bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducer)
-  bindIfUnbound(DependencyIds.otpCache, OtpCacheRedis)
+  bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducerService)
+  bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
+  bindIfUnbound(DependencyIds.redirectController, RedirectController)
+  bindIfUnbound(DependencyIds.redirectService, RedirectService)
+  bindIfUnbound(DependencyIds.crawlerCheckService, CrawlerCheckService)
+  bindIfUnbound(DependencyIds.statisticsController, StatisticsController)
+  bindIfUnbound(DependencyIds.statisticsRepository, StatisticsRepository)
+  bindIfUnbound(DependencyIds.statisticsService, StatisticsService)
+  bindIfUnbound(DependencyIds.linksController, RotatingLinksController)
+  bindIfUnbound(DependencyIds.sentryController, SentryController)
+  bindIfUnbound(DependencyIds.loginController, LoginController)
+  bindIfUnbound(DependencyIds.authService, AuthService)
+  bindIfUnbound(DependencyIds.logoutController, LogoutController)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 

@@ -6,17 +6,17 @@ import redisMock from 'redis-mock'
 import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { AnalyticsLogger } from '../../../src/server/api/analytics/analyticsLogger'
-import AnalyticsLoggerMock from './mocks/analytics'
+import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
+import AnalyticsLoggerMock from '../mocks/services/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
-import { OtpCache } from '../../../src/server/api/cache/otp'
+import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
 
 /**
  * Retrieves the currently binded OtpCache in the Inversify container.
  * @returns OtpCache.
  */
-export function getOtpCache(): OtpCache {
-  return container.get<OtpCache>(DependencyIds.otpCache)
+export function getOtpCache(): OtpRepositoryInterface {
+  return container.get<OtpRepositoryInterface>(DependencyIds.otpRepository)
 }
 
 /**

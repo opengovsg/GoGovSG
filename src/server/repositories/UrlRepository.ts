@@ -5,7 +5,7 @@ import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
 import { transaction } from '../util/sequelize'
 import { DependencyIds } from '../constants'
-import { FileVisibility, S3Interface } from '../util/aws'
+import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
@@ -28,14 +28,6 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) {
     this.fileBucket = fileBucket
     this.urlMapper = urlMapper
-  }
-
-  getTotalLinkClicks: () => Promise<number> = () => {
-    return Url.sum('clicks')
-  }
-
-  getNumUrls: () => Promise<number> = () => {
-    return Url.count()
   }
 
   public findByShortUrl: (

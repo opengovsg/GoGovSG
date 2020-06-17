@@ -46,18 +46,4 @@ export interface UrlRepositoryInterface {
    * @returns Promise that resolves to be empty.
    */
   incrementClick: (shortUrl: string) => Promise<void>
-
-  /**
-   * Retrieves the sum of link clicks across all links.
-   * @param {string} shortUrl
-   * @returns Promise that resolves to the total number of clicks.
-   */
-  getTotalLinkClicks: () => Promise<number>
-
-  /**
-   * Retrieves the number of URLs in the data store.
-   * @param {string} shortUrl
-   * @returns Promise that resolves to the total number of urls.
-   */
-  getNumUrls: () => Promise<number>
 }

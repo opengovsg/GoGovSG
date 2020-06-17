@@ -44,3 +44,14 @@ export type UrlsPaginated = {
   count: number
   urls: Array<StorableUrl>
 }
+
+export type StorableOtp = {
+  hashedOtp: string
+  retries: number
+}
+
+export type GlobalStatistics = {
+  userCount: number
+  clickCount: number
+  linkCount: number
+}

@@ -272,7 +272,7 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
     return null
   }
 
-  return patch('/api/user/url/edit', { longUrl, shortUrl }).then((response) => {
+  return patch('/api/user/url', { longUrl, shortUrl }).then((response) => {
     if (response.ok) {
       dispatch<void>(getUrlsForUser())
       dispatch<SetSuccessMessageAction>(
@@ -305,7 +305,7 @@ const replaceFile = (
   data.append('file', file, file.name)
   data.append('shortUrl', shortUrl)
 
-  const response = await patchFormData('/api/user/url/edit', data)
+  const response = await patchFormData('/api/user/url', data)
   dispatch<SetIsUploadingAction>(setIsUploading(false))
   if (!response.ok) {
     const json = await response.json()

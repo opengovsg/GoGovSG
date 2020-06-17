@@ -1,5 +1,5 @@
 import { mockTransaction, redisMockClient, urlModelMock } from '../api/util'
-import { S3InterfaceMock } from '../api/mocks/aws'
+import { S3InterfaceMock } from '../mocks/services/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 
