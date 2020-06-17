@@ -1,12 +1,16 @@
 import { UpdateUrlOptions } from '../types'
 import { GoUploadedFile } from '../../controllers/types'
-import { StorableUrl } from '../../repositories/types'
+import {
+  StorableUrl,
+  UrlsPaginated,
+  UserUrlsQueryConditions,
+} from '../../repositories/types'
 
-export interface UserUrlServiceInterface {
+export interface UrlManagementServiceInterface {
   createUrl(
     userId: number,
     shortUrl: string,
-    longUrl: string,
+    longUrl?: string,
     file?: GoUploadedFile,
   ): Promise<StorableUrl>
 
@@ -21,4 +25,8 @@ export interface UserUrlServiceInterface {
     shortUrl: string,
     newUserEmail: string,
   ): Promise<StorableUrl>
+
+  getUrlsWithConditions(
+    conditions: UserUrlsQueryConditions,
+  ): Promise<UrlsPaginated>
 }

@@ -1,8 +1,13 @@
 import { inject, injectable } from 'inversify'
-import { UserUrlServiceInterface } from './interfaces/UserUrlServiceInterface'
+import { UrlManagementServiceInterface } from './interfaces/UrlManagermentServiceInterface'
 import { UpdateUrlOptions } from './types'
 import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
-import { StorableFile, StorableUrl } from '../repositories/types'
+import {
+  StorableFile,
+  StorableUrl,
+  UrlsPaginated,
+  UserUrlsQueryConditions,
+} from '../repositories/types'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
@@ -14,7 +19,7 @@ import { GoUploadedFile } from '../controllers/types'
 import { DependencyIds } from '../constants'
 
 @injectable()
-export class UserUrlService implements UserUrlServiceInterface {
+export class UrlManagementService implements UrlManagementServiceInterface {
   private userRepository: UserRepositoryInterface
 
   private urlRepository: UrlRepositoryInterface
@@ -31,7 +36,7 @@ export class UserUrlService implements UserUrlServiceInterface {
   createUrl: (
     userId: number,
     shortUrl: string,
-    longUrl: string,
+    longUrl?: string,
     file?: GoUploadedFile,
   ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file) => {
     const user = await this.userRepository.findById(userId)
@@ -124,6 +129,12 @@ export class UserUrlService implements UserUrlServiceInterface {
 
     return result
   }
+
+  getUrlsWithConditions: (
+    conditions: UserUrlsQueryConditions,
+  ) => Promise<UrlsPaginated> = (conditions) => {
+    return this.userRepository.findUrlsForUser(conditions)
+  }
 }
 
-export default UserUrlService
+export default UrlManagementService

@@ -26,6 +26,8 @@ import { SentryController } from './controllers/SentryController'
 import { LoginController } from './controllers/LoginController'
 import { AuthService } from './services/AuthService'
 import { LogoutController } from './controllers/LogoutController'
+import { UrlManagementService } from './services/UrlManagementService'
+import { UserController } from './controllers/UserController'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -57,6 +59,8 @@ export default () => {
   bindIfUnbound(DependencyIds.loginController, LoginController)
   bindIfUnbound(DependencyIds.authService, AuthService)
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
+  bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
+  bindIfUnbound(DependencyIds.userController, UserController)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 
