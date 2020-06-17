@@ -67,13 +67,16 @@ export class UserController implements UserControllerInterface {
       return
     }
 
+    let urlState
+    if (state) {
+      urlState =
+        state === 'ACTIVE' ? StorableUrlState.Active : StorableUrlState.Inactive
+    }
+
     try {
       const url = this.urlManagementService.updateUrl(userId, shortUrl, {
         longUrl,
-        state:
-          state === 'ACTIVE'
-            ? StorableUrlState.Active
-            : StorableUrlState.Inactive,
+        state: urlState,
         file,
       })
       res.ok(url)
@@ -98,11 +101,12 @@ export class UserController implements UserControllerInterface {
     }: OwnershipTransferRequest = req.body
 
     try {
-      await this.urlManagementService.changeOwnership(
+      const url = await this.urlManagementService.changeOwnership(
         userId,
         shortUrl,
         newUserEmail,
       )
+      res.ok(url)
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
