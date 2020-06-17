@@ -193,25 +193,29 @@ devServer: {
 
 [**Port**](https://webpack.js.org/configuration/dev-server/#devserver-port) specifies the Webpack dev server to listen on this particular port (3000 in this case). When [**open**](https://webpack.js.org/configuration/dev-server/#devserver-open) is set to true, it will automatically open the home page on startup. [Proxying](https://webpack.js.org/configuration/dev-server/#devserver-proxy) URLs can be useful when we have a separate API backend development server and we want to send API requests on the same domain. In our case, we have a Node.js/Express backend where we want to send the API requests to.
 
-### Nodemon
+### ts-node-dev
 
-Nodemon is a utility that will monitor for any changes in the server source code and it automatically restart the server. This is used in development only.
+[ts-node-dev](https://github.com/whitecolor/ts-node-dev) will monitor for any changes in the server source code and automatically restart the server. This is used in development only. It watches changes to all files required from the entry point onwards, and will restart the node server whenever such files are modified.
 
-nodemon.json file is used to describe the configurations for Nodemon.
+ts-node-dev also allows debugging via [Inspector](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients). The quickest way to debug the application will be to use Chrome DevTools via chrome://inspect. VSCode users may want to add the following to their launch.json to quickly attach VSCode to the application for debugging:
 
-```javascript
-{
-  "watch": ["src/server/"]
-}
+```json
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Inspect",
+      "protocol": "inspector",
+      "port": 9229,
+      "restart": true,
+      "cwd": "${workspaceFolder}"
+    }
 ```
-
-Here, we tell nodemon to watch the files in the directory src/server where out server side code resides. Nodemon will restart the node server whenever a file under src/server directory is modified.
 
 ### Express
 
 Express is a web application framework for Node.js. It is used to build our backend API's.
 
-src/server/index.js is the entry point to the server application. This starts a server and listens on port 8080 for connections. It is also configured to serve the static files from **dist** directory.
+`src/server/index.ts` is the entry point to the server application. This starts a server and listens on port 8080 for connections. It is also configured to serve the static files from **dist** directory.
 
 ### Concurrently
 

@@ -14,6 +14,7 @@ services:
     ports:
       - '3000:3000' # Webpack dev server
       - '8080:8080' # Express
+      - '9229:9229' # Debugging for Node.js
     environment:
       - NODE_ENV=development
       - PORT=8080
