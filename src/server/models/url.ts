@@ -17,6 +17,8 @@ interface UrlBaseType extends IdType {
   readonly longUrl: string
   readonly state: StorableUrlState
   readonly isFile: boolean
+  readonly contactEmail: string
+  readonly description: string
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
@@ -85,6 +87,18 @@ export const Url = <UrlTypeStatic>sequelize.define(
     isFile: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
+    },
+    contactEmail: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+      validate: {
+        isEmail: true,
+        isLowercase: true,
+      },
+    },
+    description: {
+      type: Sequelize.TEXT,
+      allowNull: true,
     },
   },
   {
@@ -165,6 +179,14 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
     type: Sequelize.BOOLEAN,
     allowNull: false,
   },
+  contactEmail: {
+    type: Sequelize.TEXT,
+    allowNull: true,
+  },
+  description: {
+    type: Sequelize.TEXT,
+    allowNull: true,
+  },
 })
 
 /**
@@ -183,6 +205,8 @@ const writeToUrlHistory = async (
       urlShortUrl: urlObj.shortUrl,
       longUrl: urlObj.longUrl,
       isFile: urlObj.isFile,
+      contactEmail: urlObj.contactEmail,
+      description: urlObj.description,
     },
     {
       transaction: options.transaction,
