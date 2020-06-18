@@ -1,7 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 import httpMocks from 'node-mocks-http'
 import {
+  clicksModelMock,
   createRequestWithShortUrl,
+  devicesModelMock,
+  heatMapModelMock,
   isAnalyticsLogged,
   mockTransaction,
   redisMockClient,
@@ -30,6 +33,18 @@ import { CrawlerCheckService } from '../../../src/server/services/CrawlerCheckSe
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/clicks', () => ({
+  Clicks: clicksModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/heatmap', () => ({
+  HeatMap: heatMapModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/devices', () => ({
+  Devices: devicesModelMock,
 }))
 
 jest.mock('../../../src/server/redis', () => ({
