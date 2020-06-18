@@ -318,6 +318,45 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
   })
 }
 
+// API call to update description and contact email
+const applyLinkInformation = (shortUrl: string) => (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetErrorMessageAction | SetSuccessMessageAction
+  >,
+  getState: GetReduxState,
+) => {
+  const { user } = getState()
+  const url = user.urls.filter(
+    (urlToCheck) => urlToCheck.shortUrl === shortUrl,
+  )[0]
+  if (!url) {
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage('Url not found.'),
+    )
+    return null
+  }
+  return patch('/api/user/url', {
+    contactEmail: url.editedContactEmail,
+    description: url.editedDescription,
+    shortUrl,
+  }).then((response) => {
+    if (response.ok) {
+      dispatch<void>(getUrlsForUser())
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage('URL is updated.'),
+      )
+      return null
+    }
+
+    return response.json().then((json) => {
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
+      return null
+    })
+  })
+}
+
 // API call to replace file
 const replaceFile = (
   shortUrl: string,
@@ -585,4 +624,5 @@ export default {
   replaceFile,
   setEditedContactEmail,
   setEditedDescription,
+  applyLinkInformation,
 }

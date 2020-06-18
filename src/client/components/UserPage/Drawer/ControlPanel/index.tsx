@@ -10,6 +10,7 @@ import {
   useTheme,
   useMediaQuery,
   CircularProgress,
+  Typography,
 } from '@material-ui/core'
 
 import DrawerActions from './util/reducers'
@@ -131,6 +132,13 @@ const useStyles = makeStyles((theme) =>
     characterCount: {
       marginLeft: 2,
       marginTop: 9,
+    },
+    linkInformationHeader: {
+      marginBottom: theme.spacing(1.25),
+    },
+    linkInformationDesc: {
+      marginBottom: theme.spacing(3),
+      fontWeight: 400,
     },
   }),
 )
@@ -436,6 +444,18 @@ export default function ControlPanel() {
           />
           <Hidden smDown>
             <Divider className={classes.dividerInformation} />
+            <Typography
+              variant="h3"
+              className={classes.linkInformationHeader}
+              color="primary"
+            >
+              Link information
+            </Typography>
+            <Typography variant="body2" className={classes.linkInformationDesc}>
+              The information you enter below will be displayed on our Go Search
+              page (coming soon), and the 404 page if users are unable to access
+              your short link.
+            </Typography>
             <ConfigOption
               title={contactEmailHelp}
               titleVariant="body2"
