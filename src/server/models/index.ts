@@ -14,9 +14,12 @@ User.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
 UrlHistory.belongsTo(User, { foreignKey: { allowNull: false } })
 
 // A Url record can have various rows of relevant statistics.
-Url.hasMany(Clicks, { foreignKey: { allowNull: false } })
-Url.hasMany(HeatMap, { foreignKey: { allowNull: false } })
-Url.hasMany(Devices, { foreignKey: { allowNull: false } })
+Url.hasMany(Clicks, { foreignKey: 'shortUrl' })
+Url.hasOne(HeatMap, { foreignKey: 'shortUrl' })
+Url.hasOne(Devices, { foreignKey: 'shortUrl' })
+Clicks.belongsTo(Url, { foreignKey: 'shortUrl' })
+HeatMap.belongsTo(Url, { foreignKey: 'shortUrl' })
+Devices.belongsTo(Url, { foreignKey: 'shortUrl' })
 
 /**
  * Initialise the database table.

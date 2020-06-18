@@ -4,7 +4,8 @@ import { sequelize } from '../../util/sequelize'
 import { IdType } from '../../../types/server/models'
 
 export interface ClicksType extends IdType, Sequelize.Model {
-  readonly date: string
+  readonly shortUrl: string
+  readonly epochHours: number
   readonly clicks: number
   readonly createdAt: string
   readonly updatedAt: string
@@ -15,8 +16,16 @@ type ClicksTypeStatic = typeof Sequelize.Model & {
 }
 
 export const Clicks = <ClicksTypeStatic>sequelize.define('click_stats', {
-  date: {
+  shortUrl: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    validate: {
+      is: /^[a-z0-9-]+$/,
+    },
+  },
+  epochHours: {
     type: Sequelize.INTEGER,
+    primaryKey: true,
   },
   clicks: {
     type: Sequelize.INTEGER,

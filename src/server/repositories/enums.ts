@@ -9,14 +9,14 @@ export enum StorableUrlState {
 /**
  * The state in which week.
  */
-export enum StorageWeekState {
+export enum StorageDay {
+  Sunday = 'SUNDAY',
   Monday = 'MONDAY',
   Tuesday = 'TUESDAY',
   Wednesday = 'WEDNESDAY',
   Thursday = 'THURSDAY',
   Friday = 'FRIDAY',
   Saturday = 'SATURDAY',
-  Sunday = 'SUNDAY',
 }
 
-export default { StorableUrlState, StorageWeekState }
+export default { StorableUrlState, StorageDay }

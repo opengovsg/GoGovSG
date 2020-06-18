@@ -46,4 +46,12 @@ export interface UrlRepositoryInterface {
    * @returns Promise that resolves to be empty.
    */
   incrementClick: (shortUrl: string) => Promise<void>
+
+  /**
+   * Asynchronously upserts the relevant short link's statistics.
+   *
+   * @param shortUrl
+   * @returns Promise that resolves to be empty.
+   */
+  updateLinkStatistics: (shortUrl: string, userAgent: string) => Promise<void>
 }

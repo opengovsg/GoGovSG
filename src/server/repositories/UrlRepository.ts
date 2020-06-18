@@ -10,6 +10,11 @@ import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
+import { getUtcDate } from '../util/time'
+import { Clicks } from '../models/statistics/clicks'
+import { getDeviceType } from '../util/device-type'
+import { HeatMap } from '../models/statistics/heatmap'
+import { Devices } from '../models/statistics/devices'
 
 const { Public, Private } = FileVisibility
 /**
@@ -134,6 +139,60 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
 
     await url.increment('clicks')
+  }
+
+  private static updateClickStatistics: (
+    shortUrl: string,
+  ) => Promise<void> = async (shortUrl) => {
+    const time = getUtcDate()
+    const [clickStats] = await Clicks.findOrCreate({
+      where: { shortUrl, epochHours: time.hoursfromEpochUTC },
+    })
+    clickStats.increment('clicks')
+  }
+
+  private static updateDayStatistics: (
+    shortUrl: string,
+  ) => Promise<void> = async (shortUrl) => {
+    const time = getUtcDate()
+    const [clickStats] = await HeatMap.findOrCreate({
+      where: { shortUrl, sgtDay: time.dayOfWeekSGT },
+    })
+    clickStats.increment('clicks')
+  }
+
+  private static updateDeviceStatistics: (
+    shortUrl: string,
+    userAgent: string,
+  ) => Promise<void> = async (shortUrl, userAgent) => {
+    const deviceType = getDeviceType(userAgent)
+    if (deviceType) {
+      const [clickStats] = await Devices.findOrCreate({
+        where: { shortUrl },
+      })
+      clickStats.increment(deviceType!)
+    }
+  }
+
+  public updateLinkStatistics: (
+    shortUrl: string,
+    userAgent: string,
+  ) => Promise<void> = async (shortUrl, userAgent) => {
+    const urlExists = Boolean(await Url.findOne({ where: { shortUrl } }))
+
+    if (urlExists) {
+      const updatingClicks = UrlRepository.updateClickStatistics(shortUrl)
+      const updatingDays = UrlRepository.updateDayStatistics(shortUrl)
+      const updatingDevices = UrlRepository.updateDeviceStatistics(
+        shortUrl,
+        userAgent,
+      )
+      await Promise.all([updatingClicks, updatingDays, updatingDevices])
+    } else {
+      throw new NotFoundError(
+        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+      )
+    }
   }
 
   private invalidateCache: (shortUrl: string) => Promise<void> = async (

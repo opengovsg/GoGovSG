@@ -50,6 +50,13 @@ export class RedirectService implements RedirectServiceInterface {
         logger.error(`Unable to increment click count: ${error}`),
       )
 
+    // Update click statistics for link.
+    this.urlRepository
+      .updateLinkStatistics(shortUrl, userAgent)
+      .catch((error) =>
+        logger.error(`Unable to update link statistics: ${error}`),
+      )
+
     if (this.crawlerCheckService.isCrawler(userAgent)) {
       return {
         longUrl,

@@ -2,10 +2,11 @@ import Sequelize from 'sequelize'
 
 import { sequelize } from '../../util/sequelize'
 import { IdType } from '../../../types/server/models'
-import { StorageWeekState } from '../../repositories/enums'
+import { StorageDay } from '../../repositories/enums'
 
 export interface HeatMapType extends IdType, Sequelize.Model {
-  readonly day: StorageWeekState
+  readonly shortUrl: string
+  readonly sgtDay: StorageDay
   readonly clicks: number
   readonly createdAt: string
   readonly updatedAt: string
@@ -16,17 +17,25 @@ type HeatMapTypeStatic = typeof Sequelize.Model & {
 }
 
 export const HeatMap = <HeatMapTypeStatic>sequelize.define('day_stats', {
-  day: {
+  shortUrl: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    validate: {
+      is: /^[a-z0-9-]+$/,
+    },
+  },
+  sgtDay: {
     type: Sequelize.ENUM,
     values: [
-      StorageWeekState.Monday,
-      StorageWeekState.Tuesday,
-      StorageWeekState.Wednesday,
-      StorageWeekState.Thursday,
-      StorageWeekState.Friday,
-      StorageWeekState.Saturday,
-      StorageWeekState.Sunday,
+      StorageDay.Monday,
+      StorageDay.Tuesday,
+      StorageDay.Wednesday,
+      StorageDay.Thursday,
+      StorageDay.Friday,
+      StorageDay.Saturday,
+      StorageDay.Sunday,
     ],
+    primaryKey: true,
   },
   clicks: {
     type: Sequelize.INTEGER,
