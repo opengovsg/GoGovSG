@@ -50,7 +50,32 @@ export interface UrlRepositoryInterface {
   /**
    * Asynchronously upserts the relevant short link's statistics.
    *
-   * @param shortUrl
+   * @param shortUrl The relevant short url.
+   * @returns Promise that resolves to be empty.
+   */
+  updateClickStatistics: (shortUrl: string) => Promise<void>
+
+  /**
+   * Asynchronously updates the relevant short link's week map statistics.
+   *
+   * @param shortUrl The relevant short url.
+   * @returns Promise that resolves to be empty.
+   */
+  updateDayStatistics: (shortUrl: string) => Promise<void>
+
+  /**
+   * Asynchronously updates the relevant short link's device statistics.
+   *
+   * @param shortUrl The relevant short url.
+   * @param userAgent The relevant user agent string to parse device type.
+   * @returns Promise that resolves to be empty.
+   */
+  updateDeviceStatistics: (shortUrl: string, userAgent: string) => Promise<void>
+
+  /**
+   * Asynchronously upserts the relevant short link's statistics.
+   *
+   * @param shortUrl The relevant short url.
    * @returns Promise that resolves to be empty.
    */
   updateLinkStatistics: (shortUrl: string, userAgent: string) => Promise<void>

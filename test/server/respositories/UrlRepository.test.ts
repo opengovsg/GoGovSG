@@ -1,10 +1,29 @@
-import { mockTransaction, redisMockClient, urlModelMock } from '../api/util'
+import {
+  clicksModelMock,
+  devicesModelMock,
+  heatMapModelMock,
+  mockTransaction,
+  redisMockClient,
+  urlModelMock,
+} from '../api/util'
 import { S3InterfaceMock } from '../mocks/services/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/clicks', () => ({
+  Clicks: clicksModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/heatmap', () => ({
+  HeatMap: heatMapModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/devices', () => ({
+  Devices: devicesModelMock,
 }))
 
 jest.mock('../../../src/server/redis', () => ({

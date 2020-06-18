@@ -1,5 +1,8 @@
 import { inject, injectable } from 'inversify'
 import { Url, UrlType } from '../models/url'
+import { Clicks } from '../models/statistics/clicks'
+import { HeatMap } from '../models/statistics/heatmap'
+import { Devices } from '../models/statistics/devices'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
@@ -11,10 +14,7 @@ import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { getUtcDate } from '../util/time'
-import { Clicks } from '../models/statistics/clicks'
 import { getDeviceType } from '../util/device-type'
-import { HeatMap } from '../models/statistics/heatmap'
-import { Devices } from '../models/statistics/devices'
 
 const { Public, Private } = FileVisibility
 /**
@@ -141,9 +141,9 @@ export class UrlRepository implements UrlRepositoryInterface {
     await url.increment('clicks')
   }
 
-  private static updateClickStatistics: (
-    shortUrl: string,
-  ) => Promise<void> = async (shortUrl) => {
+  public updateClickStatistics: (shortUrl: string) => Promise<void> = async (
+    shortUrl,
+  ) => {
     const time = getUtcDate()
     const [clickStats] = await Clicks.findOrCreate({
       where: { shortUrl, epochHours: time.hoursfromEpochUTC },
@@ -151,9 +151,9 @@ export class UrlRepository implements UrlRepositoryInterface {
     clickStats.increment('clicks')
   }
 
-  private static updateDayStatistics: (
-    shortUrl: string,
-  ) => Promise<void> = async (shortUrl) => {
+  public updateDayStatistics: (shortUrl: string) => Promise<void> = async (
+    shortUrl,
+  ) => {
     const time = getUtcDate()
     const [clickStats] = await HeatMap.findOrCreate({
       where: { shortUrl, sgtDay: time.dayOfWeekSGT },
@@ -161,7 +161,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     clickStats.increment('clicks')
   }
 
-  private static updateDeviceStatistics: (
+  public updateDeviceStatistics: (
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {
@@ -181,12 +181,9 @@ export class UrlRepository implements UrlRepositoryInterface {
     const urlExists = Boolean(await Url.findOne({ where: { shortUrl } }))
 
     if (urlExists) {
-      const updatingClicks = UrlRepository.updateClickStatistics(shortUrl)
-      const updatingDays = UrlRepository.updateDayStatistics(shortUrl)
-      const updatingDevices = UrlRepository.updateDeviceStatistics(
-        shortUrl,
-        userAgent,
-      )
+      const updatingClicks = this.updateClickStatistics(shortUrl)
+      const updatingDays = this.updateDayStatistics(shortUrl)
+      const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
       await Promise.all([updatingClicks, updatingDays, updatingDevices])
     } else {
       throw new NotFoundError(
