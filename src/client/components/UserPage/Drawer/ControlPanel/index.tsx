@@ -34,6 +34,7 @@ import {
   CollapsibleMessageType,
   CollapsibleMessagePosition,
 } from '../../../CollapsibleMessage/types'
+import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../../../shared/constants'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -489,8 +490,8 @@ export default function ControlPanel() {
                     }
                     placeholder=""
                     helperText={
-                      editedDescription.length <= 200
-                        ? `${editedDescription.length}/200`
+                      editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH
+                        ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
                         : undefined
                     }
                     multiline
@@ -499,7 +500,9 @@ export default function ControlPanel() {
                   />
                   <CollapsibleMessage
                     type={CollapsibleMessageType.Error}
-                    visible={editedDescription.length > 200}
+                    visible={
+                      editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
+                    }
                     position={CollapsibleMessagePosition.Absolute}
                     timeout={0}
                   >
