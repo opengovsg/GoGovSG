@@ -16,6 +16,8 @@ import {
   RESET_USER_STATE,
   ResetUserStateAction,
   SET_CREATE_SHORT_LINK_ERROR,
+  SET_EDITED_CONTACT_EMAIL,
+  SET_EDITED_DESCRIPTION,
   SET_EDITED_LONG_URL,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
@@ -26,6 +28,8 @@ import {
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
   SetCreateShortLinkErrorAction,
+  SetEditedContactEmailAction,
+  SetEditedDescriptionAction,
   SetEditedLongUrlAction,
   SetIsUploadingAction,
   SetLastCreatedLinkAction,
@@ -88,6 +92,28 @@ const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
 ) => ({
   type: SET_IS_UPLOADING,
   payload,
+})
+
+const setEditedContactEmail: (
+  shortUrl: string,
+  editedContactEmail: string,
+) => SetEditedContactEmailAction = (shortUrl, editedContactEmail) => ({
+  type: SET_EDITED_CONTACT_EMAIL,
+  payload: {
+    shortUrl,
+    editedContactEmail,
+  },
+})
+
+const setEditedDescription: (
+  shortUrl: string,
+  editedDescription: string,
+) => SetEditedDescriptionAction = (shortUrl, editedDescription) => ({
+  type: SET_EDITED_DESCRIPTION,
+  payload: {
+    shortUrl,
+    editedDescription,
+  },
 })
 
 const setCreateShortLinkError: (
@@ -232,6 +258,10 @@ const getUrlsForUser = (): ThunkAction<
         .format('D MMM YYYY')
       // eslint-disable-next-line no-param-reassign
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
+      // eslint-disable-next-line no-param-reassign
+      url.editedContactEmail = url.contactEmail
+      // eslint-disable-next-line no-param-reassign
+      url.editedDescription = url.description
     })
     dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
     dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
@@ -553,4 +583,6 @@ export default {
   setCreateShortLinkError,
   setUrlFilter,
   replaceFile,
+  setEditedContactEmail,
+  setEditedDescription,
 }

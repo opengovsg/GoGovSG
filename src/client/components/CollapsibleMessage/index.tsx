@@ -7,11 +7,12 @@ const CollapsibleMessage: FunctionComponent<CollapsibleMessageProps> = ({
   type,
   visible,
   children,
+  timeout,
   position = CollapsibleMessagePosition.Static,
 }) => {
   const classes = useStyles({ type, position })
   return (
-    <Collapse className={classes.root} in={visible}>
+    <Collapse className={classes.root} in={visible} timeout={timeout}>
       <div className={classes.message}>{children}</div>
     </Collapse>
   )

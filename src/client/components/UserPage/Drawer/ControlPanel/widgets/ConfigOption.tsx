@@ -19,12 +19,13 @@ const useStyles = makeStyles((theme) =>
     },
     leadingContainer: {
       flex: 1,
-      marginBottom: 8,
+      marginBottom: theme.spacing(3),
       flexBasis: '100%',
       [theme.breakpoints.up('md')]: {
         flexBasis: 0,
         marginBottom: 0,
-        marginRight: 19,
+        marginRight: (props: StylesProps) =>
+          props.trailingPosition === TrailingPosition.none ? 0 : 19,
       },
       position: 'relative',
     },
@@ -42,6 +43,7 @@ export enum TrailingPosition {
   start,
   center,
   end,
+  none,
 }
 
 type ConfigOptionProps = {

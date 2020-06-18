@@ -66,6 +66,22 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 68,
       },
     },
+    dividerAnalytics: {
+      marginTop: 50,
+      marginBottom: 50,
+      [theme.breakpoints.up('md')]: {
+        marginTop: 50,
+        marginBottom: 68,
+      },
+    },
+    dividerInformation: {
+      marginTop: 50,
+      marginBottom: 50,
+      [theme.breakpoints.up('md')]: {
+        marginTop: 73,
+        marginBottom: 50,
+      },
+    },
     activeText: {
       color: '#6d9067',
     },
@@ -79,10 +95,14 @@ const useStyles = makeStyles((theme) =>
       width: '14px',
       verticalAlign: 'middle',
     },
-    ownershipTooltip: {
-      margin: theme.spacing(1.5, 1, 1.5, 1),
+    drawerTooltip: {
+      // margin: theme.spacing(1.5, 1, 1.5, 1),
       whiteSpace: 'nowrap',
       maxWidth: 'unset',
+      [theme.breakpoints.up('md')]: {
+        marginTop: '-12px',
+        padding: '16px',
+      },
     },
     topBar: {
       width: '100%',
@@ -107,6 +127,10 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         marginBottom: 0,
       },
+    },
+    characterCount: {
+      marginLeft: 2,
+      marginTop: 9,
     },
   }),
 )
@@ -135,7 +159,11 @@ export default function ControlPanel() {
   // Manage values in our text fields.
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
   const editedLongUrl = shortLinkState?.editedLongUrl || ''
+  const editedContactEmail = shortLinkState?.editedContactEmail || ''
+  const editedDescription = shortLinkState?.editedDescription || ''
   const [pendingOwner, setPendingOwner] = useState<string>('')
+  const originalDescription = shortLinkState?.description || ''
+  const originalContactEmail = shortLinkState?.contactEmail || ''
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
@@ -165,12 +193,50 @@ export default function ControlPanel() {
         title="Links can only be transferred to an existing Go.gov.sg user"
         arrow
         placement="top"
-        classes={{ tooltip: classes.ownershipTooltip }}
+        classes={{ tooltip: classes.drawerTooltip }}
       >
         <img
           className={classes.ownershipHelpIcon}
           src={helpIcon}
           alt="Ownership help"
+          draggable={false}
+        />
+      </Tooltip>
+    </>
+  )
+
+  const contactEmailHelp = (
+    <>
+      Contact email{' '}
+      <Tooltip
+        title="Enter an email which users can contact if they have queries about your short link."
+        arrow
+        placement="top"
+        classes={{ tooltip: classes.drawerTooltip }}
+      >
+        <img
+          className={classes.ownershipHelpIcon}
+          src={helpIcon}
+          alt="Contact help"
+          draggable={false}
+        />
+      </Tooltip>
+    </>
+  )
+
+  const linkDescriptionHelp = (
+    <>
+      Link description{' '}
+      <Tooltip
+        title="Link descriptions have a maximum character count of 200."
+        arrow
+        placement="top"
+        classes={{ tooltip: classes.drawerTooltip }}
+      >
+        <img
+          className={classes.ownershipHelpIcon}
+          src={helpIcon}
+          alt="Description help"
           draggable={false}
         />
       </Tooltip>
@@ -184,7 +250,7 @@ export default function ControlPanel() {
         title="Original file will be replaced after you select file. Maximum file size is 10mb."
         arrow
         placement="top"
-        classes={{ tooltip: classes.ownershipTooltip }}
+        classes={{ tooltip: classes.drawerTooltip }}
       >
         <img
           className={classes.ownershipHelpIcon}
@@ -368,7 +434,84 @@ export default function ControlPanel() {
             wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
-          <Divider className={classes.divider} />
+          <Hidden smDown>
+            <Divider className={classes.dividerInformation} />
+            <ConfigOption
+              title={contactEmailHelp}
+              titleVariant="body2"
+              titleClassName={classes.regularText}
+              leading={
+                <DrawerTextField
+                  value={editedContactEmail}
+                  onChange={(event) =>
+                    shortLinkDispatch?.setEditContactEmail(event.target.value)
+                  }
+                  placeholder=""
+                  helperText={' '}
+                />
+              }
+              trailing={<></>}
+              wrapTrailing={isMobileView}
+              trailingPosition={TrailingPosition.none}
+            />
+            <ConfigOption
+              title={linkDescriptionHelp}
+              titleVariant="body2"
+              titleClassName={classes.regularText}
+              leading={
+                <>
+                  <DrawerTextField
+                    value={editedDescription}
+                    onChange={(event) =>
+                      shortLinkDispatch?.setEditDescription(
+                        event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+                      )
+                    }
+                    placeholder=""
+                    helperText={
+                      editedDescription.length <= 200
+                        ? `${editedDescription.length}/200`
+                        : undefined
+                    }
+                    multiline
+                    rows={2}
+                    FormHelperTextProps={{ className: classes.characterCount }}
+                  />
+                  <CollapsibleMessage
+                    type={CollapsibleMessageType.Error}
+                    visible={editedDescription.length > 200}
+                    position={CollapsibleMessagePosition.Absolute}
+                    timeout={0}
+                  >
+                    {`${editedDescription.length}/200`}
+                  </CollapsibleMessage>
+                </>
+              }
+              trailing={<></>}
+              wrapTrailing={isMobileView}
+              trailingPosition={TrailingPosition.none}
+            />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                paddingTop: 9,
+              }}
+            >
+              <TrailingButton
+                disabled={
+                  editedDescription.length > 200 ||
+                  (editedContactEmail === originalContactEmail &&
+                    editedDescription === originalDescription)
+                }
+                fullWidth={isMobileView}
+                variant={isMobileView ? 'contained' : 'outlined'}
+              >
+                Save
+              </TrailingButton>
+            </div>
+          </Hidden>
+          <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
         </DrawerMargin>
       </main>
