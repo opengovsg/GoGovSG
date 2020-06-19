@@ -42,7 +42,7 @@ export class SearchController implements SearchControllerInterface {
       })
     } catch (error) {
       logger.error(`Error searching urls: ${error}`)
-      res.serverError(jsonMessage('Error retrieving URLs for user'))
+      res.serverError(jsonMessage('Error retrieving URLs for search'))
     }
   }
 }
