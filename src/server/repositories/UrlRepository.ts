@@ -185,7 +185,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       model: Url,
       mapToModel: true,
     })) as Array<UrlType>
-    console.log(urlsModel)
 
     const urls = urlsModel.map((urlType) =>
       this.urlMapper.persistenceToDto(urlType),
