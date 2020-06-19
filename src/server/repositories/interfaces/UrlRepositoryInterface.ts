@@ -1,4 +1,4 @@
-import { StorableFile, StorableUrl } from '../types'
+import { StorableFile, StorableUrl, UrlsPaginated } from '../types'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -46,4 +46,19 @@ export interface UrlRepositoryInterface {
    * @returns Promise that resolves to be empty.
    */
   incrementClick: (shortUrl: string) => Promise<void>
+
+  /**
+   * Performs plain text search on Urls based on their shortUrl and
+   * description. The results are ranked in order of relevance based
+   * on click count, length and cover density.
+   * @param  {string} query The search query in plain text.
+   * @param  {number} limit Number of results to return.
+   * @param  {number} offset The number of top results to skip.
+   * @returns Promise of total no. Of search results and the results on the current page.
+   */
+  plainTextSearch: (
+    query: string,
+    limit: number,
+    offset: number,
+  ) => Promise<UrlsPaginated>
 }

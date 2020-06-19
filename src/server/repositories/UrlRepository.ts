@@ -1,13 +1,14 @@
 import { inject, injectable } from 'inversify'
+import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
-import { transaction } from '../util/sequelize'
+import { sequelize, transaction } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
-import { StorableFile, StorableUrl } from './types'
+import { StorableFile, StorableUrl, UrlsPaginated } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 
@@ -134,6 +135,66 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
 
     await url.increment('clicks')
+  }
+
+  public plainTextSearch: (
+    query: string,
+    limit: number,
+    offset: number,
+  ) => Promise<UrlsPaginated> = async (query, limit, offset) => {
+    // TODO: Make this maintainable
+
+    // Warning: This expression has to be EXACTLY the same as the one used in the index
+    // or else the index will not be used leading to unnecessarily long query times.
+    const urlVector = `
+      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+    `
+    const rawCountQuery = `
+    SELECT count(*)
+      FROM urls, plainto_tsquery($query) query
+      WHERE query @@ (${urlVector})
+    `
+    const [{ count: countString }] = await sequelize.query(rawCountQuery, {
+      bind: {
+        query,
+      },
+      raw: true,
+      type: QueryTypes.SELECT,
+    })
+
+    const count = parseInt(countString, 10)
+
+    const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
+    const rankingAlgorithm = `${textRanking} * log(urls.clicks + 1)`
+    const rawQuery = `
+      SELECT urls.*
+      FROM urls, plainto_tsquery($query) query
+      WHERE query @@ (${urlVector})
+      ORDER BY (${rankingAlgorithm}) desc
+      limit $limit
+      offset $offset`
+
+    const urlsModel = (await sequelize.query(rawQuery, {
+      bind: {
+        limit,
+        offset,
+        query,
+      },
+      type: QueryTypes.SELECT,
+      model: Url,
+      mapToModel: true,
+    })) as Array<UrlType>
+    console.log(urlsModel)
+
+    const urls = urlsModel.map((urlType) =>
+      this.urlMapper.persistenceToDto(urlType),
+    )
+
+    return {
+      count,
+      urls,
+    }
   }
 
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
