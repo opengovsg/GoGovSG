@@ -9,6 +9,7 @@ import BaseLayout from '../BaseLayout'
 import UserLinkTable from './UserLinkTable'
 import EmptyState from './EmptyState'
 import useIsFiltered from './EmptyState/isFiltered'
+import loginActions from '~/actions/login'
 
 /**
  * List URLs belonging to the user in a table.
@@ -17,12 +18,15 @@ import useIsFiltered from './EmptyState/isFiltered'
 const mapStateToProps = (state) => ({
   isLoggedIn: state.login.isLoggedIn,
   createUrlModal: state.user.createUrlModal,
+  emailValidator: state.login.emailValidator,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
   closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
   getUrlsForUser: () => dispatch(userActions.getUrlsForUser()),
+  getEmailValidator: () =>
+    dispatch(loginActions.getEmailValidationGlobExpression()),
 })
 
 /**
@@ -35,13 +39,20 @@ const UserPage = ({
   closeCreateUrlModal,
   history,
   getUrlsForUser,
+  getEmailValidator,
+  emailValidator,
 }) => {
   const fetchingUrls = useSelector((state) => state.user.isFetchingUrls)
   const urlCount = useSelector((state) => state.user.urlCount)
   const urlsFiltered = useIsFiltered()
 
   useEffect(() => {
-    if (isLoggedIn) getUrlsForUser()
+    if (isLoggedIn) {
+      getUrlsForUser()
+      if (!emailValidator) {
+        getEmailValidator()
+      }
+    }
   }, [])
 
   if (isLoggedIn) {

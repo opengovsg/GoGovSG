@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 
+import { IMinimatch } from 'minimatch'
 import userActions from '../../../../../actions/user'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
 import { UrlType } from '../../../../../reducers/user/types'
@@ -25,6 +26,9 @@ export default function useShortLink(shortLink: string) {
   const urlState = urls.filter((url: UrlType) => url.shortUrl === shortLink)[0]
   const isUploading = useSelector<GoGovReduxState, boolean>(
     (state) => state.user.isUploading,
+  )
+  const emailValidator = useSelector<GoGovReduxState, IMinimatch>(
+    (state) => state.login.emailValidator,
   )
   const dispatch = useDispatch()
   const dispatchOptions = {
@@ -60,5 +64,6 @@ export default function useShortLink(shortLink: string) {
     shortLinkState: shortLink ? urlState : undefined,
     shortLinkDispatch: shortLink ? dispatchOptions : undefined,
     isUploading,
+    emailValidator,
   }
 }

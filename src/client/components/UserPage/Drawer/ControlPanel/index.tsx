@@ -35,6 +35,7 @@ import {
   CollapsibleMessagePosition,
 } from '../../../CollapsibleMessage/types'
 import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../../../shared/constants'
+import i18next from 'i18next'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -161,9 +162,12 @@ export default function ControlPanel() {
     modalDispatch({ type: DrawerActions.setUploadFileError, payload: error })
 
   // Fetch short link state and dispatches from redux store through our helper hook.
-  const { shortLinkState, shortLinkDispatch, isUploading } = useShortLink(
-    drawerStates.relevantShortLink!,
-  )
+  const {
+    shortLinkState,
+    shortLinkDispatch,
+    isUploading,
+    emailValidator,
+  } = useShortLink(drawerStates.relevantShortLink!)
 
   // Manage values in our text fields.
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
@@ -173,6 +177,8 @@ export default function ControlPanel() {
   const [pendingOwner, setPendingOwner] = useState<string>('')
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
+  const isContactEmailValid =
+    !editedContactEmail || emailValidator.match(editedContactEmail)
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
@@ -454,8 +460,8 @@ export default function ControlPanel() {
             </Typography>
             <Typography variant="body2" className={classes.linkInformationDesc}>
               The information you enter below will be displayed on our Go Search
-              page (coming soon), and the 404 page if users are unable to access
-              your short link.
+              page (coming soon), and the error page if users are unable to
+              access your short link.
             </Typography>
             <ConfigOption
               title={contactEmailHelp}
@@ -468,7 +474,14 @@ export default function ControlPanel() {
                     shortLinkDispatch?.setEditContactEmail(event.target.value)
                   }
                   placeholder=""
-                  helperText={' '}
+                  helperText={
+                    isContactEmailValid
+                      ? ''
+                      : `This doesn't look like a valid ${i18next.t(
+                          'general.emailDomain',
+                        )} email.`
+                  }
+                  error={!isContactEmailValid}
                 />
               }
               trailing={<></>}
@@ -487,6 +500,9 @@ export default function ControlPanel() {
                       shortLinkDispatch?.setEditDescription(
                         event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
                       )
+                    }
+                    error={
+                      editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
                     }
                     placeholder=""
                     helperText={
@@ -525,7 +541,8 @@ export default function ControlPanel() {
                 disabled={
                   editedDescription.length > 200 ||
                   (editedContactEmail === originalContactEmail &&
-                    editedDescription === originalDescription)
+                    editedDescription === originalDescription) ||
+                  !isContactEmailValid
                 }
                 fullWidth={isMobileView}
                 variant={isMobileView ? 'contained' : 'outlined'}

@@ -9,7 +9,7 @@ import {
 } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { DEV_ENV, ogHostname } from '../config'
+import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 
 interface UrlBaseType extends IdType {
@@ -94,6 +94,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
       validate: {
         isEmail: true,
         isLowercase: true,
+        is: emailValidator.makeRe(),
       },
     },
     description: {
