@@ -24,6 +24,8 @@ export const DependencyIds = {
   authService: Symbol.for('authService'),
   loginController: Symbol.for('loginController'),
   logoutController: Symbol.for('logoutController'),
+  urlManagementService: Symbol.for('urlManagementService'),
+  userController: Symbol.for('userController'),
 }
 
 export default DependencyIds
