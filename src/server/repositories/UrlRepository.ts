@@ -156,7 +156,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) => {
     const time = getLocalTime()
     const [clickStats] = await WeekDayClicks.findOrCreate({
-      where: { shortUrl, weekday: time.weekday },
+      where: { shortUrl, weekday: time.weekday, hours: time.hours },
     })
     clickStats.increment('clicks')
   }
@@ -174,7 +174,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
-  public updateLinkStatistics: (
+  public updateDailyStatistics: (
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {

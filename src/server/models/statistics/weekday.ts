@@ -17,7 +17,7 @@ type WeekdayClicksTypeStatic = typeof Sequelize.Model & {
 }
 
 export const WeekDayClicks = <WeekdayClicksTypeStatic>sequelize.define(
-  'day_stats',
+  'weekday_stats',
   {
     shortUrl: {
       type: Sequelize.STRING,

@@ -15,7 +15,7 @@ type ClicksTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): ClicksType
 }
 
-export const Clicks = <ClicksTypeStatic>sequelize.define('click_stats', {
+export const Clicks = <ClicksTypeStatic>sequelize.define('daily_stats', {
   shortUrl: {
     type: Sequelize.STRING,
     primaryKey: true,
@@ -24,7 +24,7 @@ export const Clicks = <ClicksTypeStatic>sequelize.define('click_stats', {
     },
   },
   date: {
-    type: Sequelize.DATE,
+    type: Sequelize.DATEONLY,
     primaryKey: true,
   },
   clicks: {
