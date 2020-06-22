@@ -17,7 +17,7 @@ interface UrlBaseType extends IdType {
   readonly longUrl: string
   readonly state: StorableUrlState
   readonly isFile: boolean
-  readonly contactEmail: string
+  readonly contactEmail: string | null
   readonly description: string
 }
 
@@ -90,7 +90,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
     },
     contactEmail: {
       type: Sequelize.TEXT,
-      allowNull: false,
+      allowNull: true,
       validate: {
         isEmail: true,
         isLowercase: true,
@@ -182,7 +182,7 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
   },
   contactEmail: {
     type: Sequelize.TEXT,
-    allowNull: false,
+    allowNull: true,
   },
   description: {
     type: Sequelize.TEXT,

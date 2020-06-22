@@ -9,8 +9,8 @@ ALTER TABLE urls ADD "description" text NOT NULL DEFAULT '';
 
 ALTER TABLE url_histories ADD "description" text NOT NULL DEFAULT '';
 
-ALTER TABLE urls ADD "contactEmail" text NOT NULL DEFAULT '';
+ALTER TABLE urls ADD "contactEmail" text;
 
-ALTER TABLE url_histories ADD "contactEmail" text NOT NULL DEFAULT '';
+ALTER TABLE url_histories ADD "contactEmail" text;
 
 COMMIT;

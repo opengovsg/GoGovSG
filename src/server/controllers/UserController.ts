@@ -80,12 +80,19 @@ export class UserController implements UserControllerInterface {
         state === 'ACTIVE' ? StorableUrlState.Active : StorableUrlState.Inactive
     }
 
+    let newContactEmail: string | undefined | null
+    if (contactEmail) {
+      newContactEmail = contactEmail?.trim().toLowerCase()
+    } else if (contactEmail === null) {
+      newContactEmail = null
+    }
+
     try {
       const url = this.urlManagementService.updateUrl(userId, shortUrl, {
         longUrl,
         state: urlState,
         file,
-        contactEmail: contactEmail?.trim().toLowerCase(),
+        contactEmail: newContactEmail,
         description: description?.trim(),
       })
       res.ok(url)

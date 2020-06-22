@@ -335,7 +335,7 @@ const updateUrlInformation = (shortUrl: string) => (
     return null
   }
   return patch('/api/user/url', {
-    contactEmail: url.editedContactEmail,
+    contactEmail: url.editedContactEmail ? url.editedContactEmail : null,
     description: url.editedDescription,
     shortUrl,
   }).then((response) => {
