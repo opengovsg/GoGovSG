@@ -19,11 +19,12 @@ const useStyles = makeStyles((theme) =>
     },
     leadingContainer: {
       flex: 1,
-      marginBottom: theme.spacing(3),
+      marginBottom: (props: StylesProps) =>
+        props.trailingPosition === TrailingPosition.none ? 0 : theme.spacing(3),
       flexBasis: '100%',
       [theme.breakpoints.up('md')]: {
         flexBasis: 0,
-        marginBottom: 0,
+        marginBottom: () => 0, // Function can only be overwritten by another function
         marginRight: (props: StylesProps) =>
           props.trailingPosition === TrailingPosition.none ? 0 : 19,
       },

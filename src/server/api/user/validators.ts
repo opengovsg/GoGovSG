@@ -53,7 +53,7 @@ export const urlEditSchema = Joi.object({
     file: Joi.object().keys().required(),
   }),
   state: Joi.string().allow(ACTIVE, INACTIVE).only(),
-  description: Joi.string().length(LINK_DESCRIPTION_MAX_LENGTH),
+  description: Joi.string().max(LINK_DESCRIPTION_MAX_LENGTH),
   contactEmail: Joi.string().custom((email: string, helpers) => {
     if (!isValidGovEmail(email)) {
       return helpers.message({ custom: 'Not a valid gov email' })

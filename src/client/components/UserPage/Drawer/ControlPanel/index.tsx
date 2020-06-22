@@ -142,6 +142,13 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(3),
       fontWeight: 400,
     },
+    saveLinkInformationButtonWrapper: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      [theme.breakpoints.up('md')]: {
+        paddingTop: 9,
+      },
+    },
   }),
 )
 
@@ -183,6 +190,8 @@ export default function ControlPanel() {
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
     shortLinkDispatch?.setEditLongUrl(originalLongUrl)
+    shortLinkDispatch?.setEditDescription(originalDescription)
+    shortLinkDispatch?.setEditContactEmail(originalContactEmail)
     setPendingOwner('')
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
@@ -449,7 +458,7 @@ export default function ControlPanel() {
             wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
-          <Hidden smDown>
+          <Hidden xlUp>
             <Divider className={classes.dividerInformation} />
             <Typography
               variant="h3"
@@ -512,6 +521,7 @@ export default function ControlPanel() {
                     }
                     multiline
                     rows={2}
+                    rowsMax={isMobileView ? 5 : undefined}
                     FormHelperTextProps={{ className: classes.characterCount }}
                   />
                   <CollapsibleMessage
@@ -519,7 +529,7 @@ export default function ControlPanel() {
                     visible={
                       editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
                     }
-                    position={CollapsibleMessagePosition.Absolute}
+                    position={CollapsibleMessagePosition.Static}
                     timeout={0}
                   >
                     {`${editedDescription.length}/200`}
@@ -530,22 +540,17 @@ export default function ControlPanel() {
               wrapTrailing={isMobileView}
               trailingPosition={TrailingPosition.none}
             />
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                paddingTop: 9,
-              }}
-            >
+            <div className={classes.saveLinkInformationButtonWrapper}>
               <TrailingButton
                 disabled={
-                  editedDescription.length > 200 ||
+                  editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH ||
                   (editedContactEmail === originalContactEmail &&
                     editedDescription === originalDescription) ||
                   !isContactEmailValid
                 }
                 fullWidth={isMobileView}
                 variant={isMobileView ? 'contained' : 'outlined'}
+                onClick={shortLinkDispatch?.applyEditInformation}
               >
                 Save
               </TrailingButton>

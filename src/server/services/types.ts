@@ -13,5 +13,7 @@ export enum RedirectType {
 }
 
 export type UpdateUrlOptions = Partial<
-  Pick<StorableUrl, 'state' | 'longUrl'> & { file: GoUploadedFile }
+  Pick<StorableUrl, 'state' | 'longUrl' | 'description' | 'contactEmail'> & {
+    file: GoUploadedFile
+  }
 >

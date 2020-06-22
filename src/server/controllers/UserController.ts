@@ -60,7 +60,14 @@ export class UserController implements UserControllerInterface {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, longUrl, shortUrl, state }: UrlEditRequest = req.body
+    const {
+      userId,
+      longUrl,
+      shortUrl,
+      state,
+      description,
+      contactEmail,
+    }: UrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
       res.badRequest(jsonMessage('Only single file uploads are supported.'))
@@ -78,6 +85,8 @@ export class UserController implements UserControllerInterface {
         longUrl,
         state: urlState,
         file,
+        contactEmail,
+        description,
       })
       res.ok(url)
     } catch (error) {

@@ -319,7 +319,7 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
 }
 
 // API call to update description and contact email
-const applyLinkInformation = (shortUrl: string) => (
+const updateUrlInformation = (shortUrl: string) => (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
@@ -624,5 +624,5 @@ export default {
   replaceFile,
   setEditedContactEmail,
   setEditedDescription,
-  applyLinkInformation,
+  updateUrlInformation,
 }
