@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { Url, UrlType } from '../models/url'
 import { Clicks } from '../models/statistics/clicks'
-import { HeatMap } from '../models/statistics/heatmap'
+import { WeekDayClicks } from '../models/statistics/weekday'
 import { Devices } from '../models/statistics/devices'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
@@ -13,7 +13,7 @@ import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
-import { getUtcDate } from '../util/time'
+import { getLocalTime } from '../util/time'
 import { getDeviceType } from '../util/device-type'
 
 const { Public, Private } = FileVisibility
@@ -144,19 +144,19 @@ export class UrlRepository implements UrlRepositoryInterface {
   public updateClickStatistics: (shortUrl: string) => Promise<void> = async (
     shortUrl,
   ) => {
-    const time = getUtcDate()
+    const time = getLocalTime()
     const [clickStats] = await Clicks.findOrCreate({
-      where: { shortUrl, epochHours: time.hoursfromEpochUTC },
+      where: { shortUrl, date: time.date },
     })
     clickStats.increment('clicks')
   }
 
-  public updateDayStatistics: (shortUrl: string) => Promise<void> = async (
+  public updateWeekdayStatistics: (shortUrl: string) => Promise<void> = async (
     shortUrl,
   ) => {
-    const time = getUtcDate()
-    const [clickStats] = await HeatMap.findOrCreate({
-      where: { shortUrl, sgtDay: time.dayOfWeekSGT },
+    const time = getLocalTime()
+    const [clickStats] = await WeekDayClicks.findOrCreate({
+      where: { shortUrl, weekday: time.weekday },
     })
     clickStats.increment('clicks')
   }
@@ -182,7 +182,7 @@ export class UrlRepository implements UrlRepositoryInterface {
 
     if (urlExists) {
       const updatingClicks = this.updateClickStatistics(shortUrl)
-      const updatingDays = this.updateDayStatistics(shortUrl)
+      const updatingDays = this.updateWeekdayStatistics(shortUrl)
       const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
       await Promise.all([updatingClicks, updatingDays, updatingDevices])
     } else {

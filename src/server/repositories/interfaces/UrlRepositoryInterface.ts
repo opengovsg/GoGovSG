@@ -61,7 +61,7 @@ export interface UrlRepositoryInterface {
    * @param shortUrl The relevant short url.
    * @returns Promise that resolves to be empty.
    */
-  updateDayStatistics: (shortUrl: string) => Promise<void>
+  updateWeekdayStatistics: (shortUrl: string) => Promise<void>
 
   /**
    * Asynchronously updates the relevant short link's device statistics.

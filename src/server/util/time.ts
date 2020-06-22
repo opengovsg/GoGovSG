@@ -1,79 +1,60 @@
 import moment from 'moment'
 import 'moment-timezone'
 
-import { StorageDay } from '../repositories/enums'
-
-export type UtcDate = {
-  dayOfWeekSGT: StorageDay
-  hoursfromEpochUTC: number
+export type Time = {
+  /**
+   * Number representing a day of the week.
+   *
+   * 0: Sunday.
+   * 1: Monday.
+   * 2: Tuesday.
+   * 3: Wednesday.
+   * 4: Thursday.
+   * 5: Friday.
+   * 6: Saturday.
+   */
+  weekday: number
+  /**
+   * Number representing the hours into the day in local time.
+   */
+  hours: number
+  /**
+   * Date representation rounded down to the nearest day.
+   */
+  date: string
 }
 
 /**
  * Get the time now in Singapore time.
  */
 function getLocalDate(): moment.Moment {
-  return moment.tz('Asia/Singapore')
+  const time = moment.tz('Asia/Singapore')
+  return time
 }
 
 /**
- * Returns the number from epoch, with all decimals truncated.
+ * Get the local date string in the yyyy-MM-DD format.
  */
-function getHoursFromEpoch(): number {
-  const epochSeconds = getLocalDate().unix()
-  const epochHours = Math.floor(epochSeconds / (60 * 60))
-  return epochHours
-}
-
-/**
- * Maps the day of the week in number, into a enum value that our database table can consume.
- *
- * @param day Number representing the day of the week.
- */
-function mapDayToWeekEnum(day: number): StorageDay {
-  if (day < 0 || day > 7) throw Error('Invalid day invalid provided.')
-  switch (day) {
-    case 0:
-      return StorageDay.Sunday
-    case 1:
-      return StorageDay.Monday
-    case 2:
-      return StorageDay.Tuesday
-    case 3:
-      return StorageDay.Wednesday
-    case 4:
-      return StorageDay.Thursday
-    case 5:
-      return StorageDay.Friday
-    case 6:
-      return StorageDay.Saturday
-    default:
-      throw Error('Invalid day invalid provided.')
-  }
+function getLocalDayGroup(): string {
+  return getLocalDate().format('yyyy-MM-DD')
 }
 
 /**
  * Retrieves the day of the week as a number.
  */
-function getDayOfWeek(): number {
+function getLocalWeekday(): number {
   return getLocalDate().days()
-}
-
-/**
- * Retrieves the day of the week as a StorageWeekState.
- */
-function getWeekEnumDay(): StorageDay {
-  const day = getDayOfWeek()
-  return mapDayToWeekEnum(day)
 }
 
 /**
  * Retrieves the current UTC date information for statistics.
  */
-export function getUtcDate(): UtcDate {
+export function getLocalTime(): Time {
   return {
-    dayOfWeekSGT: getWeekEnumDay(),
-    hoursfromEpochUTC: getHoursFromEpoch(),
+    weekday: getLocalWeekday(),
+    hours: getLocalDate().hours(),
+    date: getLocalDayGroup(),
   }
 }
 
-export default { getUtcDate }
+export default { getLocalTime }
