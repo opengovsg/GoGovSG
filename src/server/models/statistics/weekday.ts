@@ -50,4 +50,12 @@ export const WeekDayClicks = <WeekdayClicksTypeStatic>sequelize.define(
       defaultValue: 0,
     },
   },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ['shortUrl', 'weekday', 'hours'],
+      },
+    ],
+  },
 )

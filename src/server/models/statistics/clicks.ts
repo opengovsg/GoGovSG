@@ -15,20 +15,31 @@ type ClicksTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): ClicksType
 }
 
-export const Clicks = <ClicksTypeStatic>sequelize.define('daily_stats', {
-  shortUrl: {
-    type: Sequelize.STRING,
-    primaryKey: true,
-    validate: {
-      is: /^[a-z0-9-]+$/,
+export const Clicks = <ClicksTypeStatic>sequelize.define(
+  'daily_stats',
+  {
+    shortUrl: {
+      type: Sequelize.STRING,
+      primaryKey: true,
+      validate: {
+        is: /^[a-z0-9-]+$/,
+      },
+    },
+    date: {
+      type: Sequelize.DATEONLY,
+      primaryKey: true,
+    },
+    clicks: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0,
     },
   },
-  date: {
-    type: Sequelize.DATEONLY,
-    primaryKey: true,
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ['shortUrl', 'date'],
+      },
+    ],
   },
-  clicks: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0,
-  },
-})
+)
