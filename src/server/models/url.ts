@@ -100,6 +100,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
     description: {
       type: Sequelize.TEXT,
       allowNull: false,
+      defaultValue: '',
     },
   },
   {

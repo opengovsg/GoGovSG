@@ -53,7 +53,7 @@ export const urlEditSchema = Joi.object({
     file: Joi.object().keys().required(),
   }),
   state: Joi.string().allow(ACTIVE, INACTIVE).only(),
-  description: Joi.string().max(LINK_DESCRIPTION_MAX_LENGTH),
+  description: Joi.string().allow('').max(LINK_DESCRIPTION_MAX_LENGTH),
   contactEmail: Joi.string()
     .allow(null)
     .custom((email: string, helpers) => {
