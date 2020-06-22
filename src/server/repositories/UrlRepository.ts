@@ -141,7 +141,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     await url.increment('clicks')
   }
 
-  public updateClickStatistics: (shortUrl: string) => Promise<void> = async (
+  public updateDailyStatistics: (shortUrl: string) => Promise<void> = async (
     shortUrl,
   ) => {
     const time = getLocalTime()
@@ -174,14 +174,14 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
-  public updateDailyStatistics: (
+  public updateLinkStatistics: (
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {
     const urlExists = Boolean(await Url.findOne({ where: { shortUrl } }))
 
     if (urlExists) {
-      const updatingClicks = this.updateClickStatistics(shortUrl)
+      const updatingClicks = this.updateDailyStatistics(shortUrl)
       const updatingDays = this.updateWeekdayStatistics(shortUrl)
       const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
       await Promise.all([updatingClicks, updatingDays, updatingDevices])

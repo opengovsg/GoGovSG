@@ -53,7 +53,7 @@ export interface UrlRepositoryInterface {
    * @param shortUrl The relevant short url.
    * @returns Promise that resolves to be empty.
    */
-  updateClickStatistics: (shortUrl: string) => Promise<void>
+  updateDailyStatistics: (shortUrl: string) => Promise<void>
 
   /**
    * Asynchronously updates the relevant short link's week map statistics.
@@ -78,5 +78,5 @@ export interface UrlRepositoryInterface {
    * @param shortUrl The relevant short url.
    * @returns Promise that resolves to be empty.
    */
-  updateDailyStatistics: (shortUrl: string, userAgent: string) => Promise<void>
+  updateLinkStatistics: (shortUrl: string, userAgent: string) => Promise<void>
 }

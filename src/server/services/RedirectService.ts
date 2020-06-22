@@ -52,7 +52,7 @@ export class RedirectService implements RedirectServiceInterface {
 
     // Update click statistics for link.
     this.urlRepository
-      .updateDailyStatistics(shortUrl, userAgent)
+      .updateLinkStatistics(shortUrl, userAgent)
       .catch((error) =>
         logger.error(`Unable to update link statistics: ${error}`),
       )
