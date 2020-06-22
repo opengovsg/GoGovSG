@@ -143,16 +143,17 @@ export class UrlRepository implements UrlRepositoryInterface {
     offset: number,
   ) => Promise<UrlsPaginated> = async (query, limit, offset) => {
     // TODO: Make this maintainable
+    const { tableName } = Url
 
     // Warning: This expression has to be EXACTLY the same as the one used in the index
     // or else the index will not be used leading to unnecessarily long query times.
     const urlVector = `
-      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+      setweight(to_tsvector('english', ${tableName}."shortUrl"), 'A') ||
+      setweight(to_tsvector('english', coalesce(${tableName}."description", '')), 'B')
     `
     const rawCountQuery = `
     SELECT count(*)
-      FROM urls, plainto_tsquery($query) query
+      FROM ${tableName}, plainto_tsquery($query) query
       WHERE query @@ (${urlVector})
     `
     const [{ count: countString }] = await sequelize.query(rawCountQuery, {
@@ -166,10 +167,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     const count = parseInt(countString, 10)
 
     const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
-    const rankingAlgorithm = `${textRanking} * log(urls.clicks + 1)`
+    const rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
     const rawQuery = `
-      SELECT urls.*
-      FROM urls, plainto_tsquery($query) query
+      SELECT ${tableName}.*
+      FROM ${tableName}, plainto_tsquery($query) query
       WHERE query @@ (${urlVector})
       ORDER BY (${rankingAlgorithm}) desc
       limit $limit
