@@ -90,7 +90,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
     },
     contactEmail: {
       type: Sequelize.TEXT,
-      allowNull: true,
+      allowNull: false,
       validate: {
         isEmail: true,
         isLowercase: true,
@@ -99,7 +99,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
     },
     description: {
       type: Sequelize.TEXT,
-      allowNull: true,
+      allowNull: false,
     },
   },
   {
@@ -182,11 +182,11 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
   },
   contactEmail: {
     type: Sequelize.TEXT,
-    allowNull: true,
+    allowNull: false,
   },
   description: {
     type: Sequelize.TEXT,
-    allowNull: true,
+    allowNull: false,
   },
 })
 

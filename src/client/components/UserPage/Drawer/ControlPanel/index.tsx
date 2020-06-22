@@ -458,104 +458,100 @@ export default function ControlPanel() {
             wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
-          <Hidden xlUp>
-            <Divider className={classes.dividerInformation} />
-            <Typography
-              variant="h3"
-              className={classes.linkInformationHeader}
-              color="primary"
-            >
-              Link information
-            </Typography>
-            <Typography variant="body2" className={classes.linkInformationDesc}>
-              The information you enter below will be displayed on our Go Search
-              page (coming soon), and the error page if users are unable to
-              access your short link.
-            </Typography>
-            <ConfigOption
-              title={contactEmailHelp}
-              titleVariant="body2"
-              titleClassName={classes.regularText}
-              leading={
+          <Divider className={classes.dividerInformation} />
+          <Typography
+            variant="h3"
+            className={classes.linkInformationHeader}
+            color="primary"
+          >
+            Link information
+          </Typography>
+          <Typography variant="body2" className={classes.linkInformationDesc}>
+            The information you enter below will be displayed on our Go Search
+            page (coming soon), and the error page if users are unable to access
+            your short link.
+          </Typography>
+          <ConfigOption
+            title={contactEmailHelp}
+            titleVariant="body2"
+            titleClassName={classes.regularText}
+            leading={
+              <DrawerTextField
+                value={editedContactEmail}
+                onChange={(event) =>
+                  shortLinkDispatch?.setEditContactEmail(event.target.value)
+                }
+                placeholder=""
+                helperText={
+                  isContactEmailValid
+                    ? ''
+                    : `This doesn't look like a valid ${i18next.t(
+                        'general.emailDomain',
+                      )} email.`
+                }
+                error={!isContactEmailValid}
+              />
+            }
+            trailing={<></>}
+            wrapTrailing={isMobileView}
+            trailingPosition={TrailingPosition.none}
+          />
+          <ConfigOption
+            title={linkDescriptionHelp}
+            titleVariant="body2"
+            titleClassName={classes.regularText}
+            leading={
+              <>
                 <DrawerTextField
-                  value={editedContactEmail}
+                  value={editedDescription}
                   onChange={(event) =>
-                    shortLinkDispatch?.setEditContactEmail(event.target.value)
+                    shortLinkDispatch?.setEditDescription(
+                      event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+                    )
                   }
+                  error={editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH}
                   placeholder=""
                   helperText={
-                    isContactEmailValid
-                      ? ''
-                      : `This doesn't look like a valid ${i18next.t(
-                          'general.emailDomain',
-                        )} email.`
+                    editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH
+                      ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
+                      : undefined
                   }
-                  error={!isContactEmailValid}
+                  multiline
+                  rows={2}
+                  rowsMax={isMobileView ? 5 : undefined}
+                  FormHelperTextProps={{ className: classes.characterCount }}
                 />
+                <CollapsibleMessage
+                  type={CollapsibleMessageType.Error}
+                  visible={
+                    editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
+                  }
+                  position={CollapsibleMessagePosition.Static}
+                  timeout={0}
+                >
+                  {`${editedDescription.length}/200`}
+                </CollapsibleMessage>
+              </>
+            }
+            trailing={<></>}
+            wrapTrailing={isMobileView}
+            trailingPosition={TrailingPosition.none}
+          />
+          <div className={classes.saveLinkInformationButtonWrapper}>
+            <TrailingButton
+              disabled={
+                editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH ||
+                (editedContactEmail === originalContactEmail &&
+                  editedDescription === originalDescription) ||
+                !isContactEmailValid
               }
-              trailing={<></>}
-              wrapTrailing={isMobileView}
-              trailingPosition={TrailingPosition.none}
-            />
-            <ConfigOption
-              title={linkDescriptionHelp}
-              titleVariant="body2"
-              titleClassName={classes.regularText}
-              leading={
-                <>
-                  <DrawerTextField
-                    value={editedDescription}
-                    onChange={(event) =>
-                      shortLinkDispatch?.setEditDescription(
-                        event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
-                      )
-                    }
-                    error={
-                      editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
-                    }
-                    placeholder=""
-                    helperText={
-                      editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH
-                        ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
-                        : undefined
-                    }
-                    multiline
-                    rows={2}
-                    rowsMax={isMobileView ? 5 : undefined}
-                    FormHelperTextProps={{ className: classes.characterCount }}
-                  />
-                  <CollapsibleMessage
-                    type={CollapsibleMessageType.Error}
-                    visible={
-                      editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
-                    }
-                    position={CollapsibleMessagePosition.Static}
-                    timeout={0}
-                  >
-                    {`${editedDescription.length}/200`}
-                  </CollapsibleMessage>
-                </>
-              }
-              trailing={<></>}
-              wrapTrailing={isMobileView}
-              trailingPosition={TrailingPosition.none}
-            />
-            <div className={classes.saveLinkInformationButtonWrapper}>
-              <TrailingButton
-                disabled={
-                  editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH ||
-                  (editedContactEmail === originalContactEmail &&
-                    editedDescription === originalDescription) ||
-                  !isContactEmailValid
-                }
-                fullWidth={isMobileView}
-                variant={isMobileView ? 'contained' : 'outlined'}
-                onClick={shortLinkDispatch?.applyEditInformation}
-              >
-                Save
-              </TrailingButton>
-            </div>
-          </Hidden>
+              fullWidth={isMobileView}
+              variant={isMobileView ? 'contained' : 'outlined'}
+              onClick={shortLinkDispatch?.applyEditInformation}
+            >
+              Save
+            </TrailingButton>
+          </div>
           <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
         </DrawerMargin>
