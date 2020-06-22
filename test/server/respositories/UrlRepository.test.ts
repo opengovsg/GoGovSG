@@ -18,8 +18,8 @@ jest.mock('../../../src/server/models/statistics/clicks', () => ({
   Clicks: clicksModelMock,
 }))
 
-jest.mock('../../../src/server/models/statistics/heatmap', () => ({
-  HeatMap: heatMapModelMock,
+jest.mock('../../../src/server/models/statistics/weekday', () => ({
+  WeekdayClicks: heatMapModelMock,
 }))
 
 jest.mock('../../../src/server/models/statistics/devices', () => ({

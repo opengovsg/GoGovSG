@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { Url, UrlType } from '../models/url'
 import { Clicks } from '../models/statistics/clicks'
-import { WeekDayClicks } from '../models/statistics/weekday'
+import { WeekdayClicks } from '../models/statistics/weekday'
 import { Devices } from '../models/statistics/devices'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
@@ -155,7 +155,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     shortUrl,
   ) => {
     const time = getLocalTime()
-    const [clickStats] = await WeekDayClicks.findOrCreate({
+    const [clickStats] = await WeekdayClicks.findOrCreate({
       where: { shortUrl, weekday: time.weekday, hours: time.hours },
     })
     clickStats.increment('clicks')
