@@ -3,7 +3,7 @@ import { parse } from 'url'
 
 import blacklist from '../../server/resources/blacklist'
 
-export const WHITELIST = [new RegExp('^http://localhost:4572')]
+export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
 export const URL_OPTS: ValidatorJS.IsURLOptions = {
   protocols: ['https'],
