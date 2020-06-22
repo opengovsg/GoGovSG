@@ -253,15 +253,12 @@ const getUrlsForUser = (): ThunkAction<
 
   if (isOk) {
     json.urls.forEach((url: UrlType) => {
-      url.createdAt = moment(url.createdAt) // eslint-disable-line no-param-reassign
-        .tz('Singapore')
-        .format('D MMM YYYY')
-      // eslint-disable-next-line no-param-reassign
+      /* eslint-disable no-param-reassign */
+      url.createdAt = moment(url.createdAt).tz('Singapore').format('D MMM YYYY')
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
-      // eslint-disable-next-line no-param-reassign
       url.editedContactEmail = url.contactEmail
-      // eslint-disable-next-line no-param-reassign
       url.editedDescription = url.description
+      /* eslint-enable no-param-reassign */
     })
     dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
     dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
