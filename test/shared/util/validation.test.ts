@@ -3,14 +3,14 @@ import { ogHostname } from '../../../src/server/config'
 
 describe('Test whiteliste check', () => {
   test('localstack url is whitelisted', () => {
-    const url = 'http://localhost:4572'
+    const url = 'http://localhost:4566'
     expect(validation.isWhitelisted(url)).toBe(true)
   })
 })
 
 describe('Test blacklist check', () => {
   test('localstack url is not blacklisted', () => {
-    const url = 'http://localhost:4572'
+    const url = 'http://localhost:4566'
     expect(validation.isBlacklisted(url)).toBe(false)
   })
 
@@ -32,12 +32,12 @@ describe('Test https check', () => {
   })
 
   test('localstack url fails check by default', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isHttps(url)).toBe(false)
   })
 
   test('localstack url passes check with whitelist', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isHttps(url, true)).toBe(true)
   })
 })
@@ -59,12 +59,12 @@ describe('Test valid url check', () => {
   })
 
   test('localstack url fails check by default', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url)).toBe(false)
   })
 
   test('localstack url passes check with whitelist', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url, true)).toBe(true)
   })
 })
