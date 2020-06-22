@@ -85,8 +85,8 @@ export class UserController implements UserControllerInterface {
         longUrl,
         state: urlState,
         file,
-        contactEmail,
-        description,
+        contactEmail: contactEmail?.trim().toLowerCase(),
+        description: description?.trim(),
       })
       res.ok(url)
     } catch (error) {
