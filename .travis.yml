@@ -66,3 +66,15 @@ deploy:
     zip_file: '$TAG.zip'
     on:
       branch: $PRODUCTION_BRANCH
+
+  - provider: elasticbeanstalk
+    skip_cleanup: true
+    access_key_id: $AWS_ACCESS_KEY_ID
+    secret_access_key: $AWS_SECRET_ACCESS_KEY
+    region: $AWS_EB_REGION
+    app: $AWS_EB_APP_UAT
+    env: $AWS_EB_ENV_UAT
+    bucket_name: $AWS_EB_BUCKET_UAT
+    zip_file: '$TAG.zip'
+    on:
+      branch: $UAT_BRANCH
