@@ -12,7 +12,7 @@ import {
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
 
 export type UrlStats = UrlType & {
-  DeviceClicks: DevicesType
+  DeviceClicks?: DevicesType
   DailyClicks: ClicksType[]
   WeekdayClicks: WeekdayClicksType[]
 }
@@ -40,10 +40,10 @@ export class LinkStatisticsRepository
       const urlStats = url as UrlStats
 
       const deviceClicks = {
-        desktopClicks: urlStats.DeviceClicks.desktop,
-        tabletClicks: urlStats.DeviceClicks.tablet,
-        mobileClicks: urlStats.DeviceClicks.mobile,
-        otherClicks: urlStats.DeviceClicks.others,
+        desktopClicks: urlStats.DeviceClicks?.desktop ?? 0,
+        tabletClicks: urlStats.DeviceClicks?.tablet ?? 0,
+        mobileClicks: urlStats.DeviceClicks?.mobile ?? 0,
+        otherClicks: urlStats.DeviceClicks?.others ?? 0,
       } as DeviceClicksInterface
 
       const dailyClicks = urlStats.DailyClicks.map((clicks) => {
