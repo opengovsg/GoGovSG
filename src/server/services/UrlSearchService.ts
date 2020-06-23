@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 import { DependencyIds } from '../constants'
 import { UrlsPaginated } from '../repositories/types'
+import { SearchResultsSortOrder } from '../repositories/enums'
 
 @injectable()
 export class UrlSearchService {
