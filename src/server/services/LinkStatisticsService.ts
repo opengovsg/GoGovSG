@@ -14,11 +14,11 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
 
   public constructor(
     @inject(DependencyIds.userRepository)
-    urlRepository: UserRepositoryInterface,
+    userRepository: UserRepositoryInterface,
     @inject(DependencyIds.linkStatisticsRepository)
     linkStatisticsRepository: LinkStatisticsRepositoryInterface,
   ) {
-    this.userRepository = urlRepository
+    this.userRepository = userRepository
     this.linkStatisticsRepository = linkStatisticsRepository
   }
 
