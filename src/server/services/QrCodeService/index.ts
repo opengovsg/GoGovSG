@@ -24,7 +24,7 @@ const readFile = util.promisify(fs.readFile)
 @injectable()
 export class QrCodeService implements QrCodeServiceInterface {
   // Build base QR code string without logo.
-  public makeQrCode: (url: string) => Promise<string> = (url) => {
+  private makeQrCode: (url: string) => Promise<string> = (url) => {
     return QRCode.toString(url, {
       type: 'svg',
       margin: 0,
@@ -36,7 +36,7 @@ export class QrCodeService implements QrCodeServiceInterface {
   }
 
   // Build QR code string with GoGovSg logo.
-  public makeGoQrCode: (url: string) => Promise<[Buffer, number]> = async (
+  private makeGoQrCode: (url: string) => Promise<[Buffer, number]> = async (
     url,
   ) => {
     // Splits lines by 36 characters each.
