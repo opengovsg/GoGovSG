@@ -9,6 +9,7 @@ export interface UrlSearchServiceInterface {
    * @param  {string} query
    * @param  {number} limit Number of results to return.
    * @param  {number} offset The number of top results to skip.
+   * @param  {SearchResultsSortOrder} order The sorting rule for search results.
    * @returns Promise of total no. Of search results and the results on the current page.
    */
   plainTextSearch: (
