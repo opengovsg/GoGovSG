@@ -14,9 +14,9 @@ User.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
 UrlHistory.belongsTo(User, { foreignKey: { allowNull: false } })
 
 // A Url record can have various rows of relevant statistics.
-Url.hasMany(Clicks, { foreignKey: 'shortUrl' })
-Url.hasOne(WeekdayClicks, { foreignKey: 'shortUrl' })
-Url.hasOne(Devices, { foreignKey: 'shortUrl' })
+Url.hasMany(Clicks, { foreignKey: 'shortUrl', as: 'DailyClicks' })
+Url.hasMany(WeekdayClicks, { foreignKey: 'shortUrl', as: 'WeekdayClicks' })
+Url.hasOne(Devices, { foreignKey: 'shortUrl', as: 'DeviceClicks' })
 Clicks.belongsTo(Url, { foreignKey: 'shortUrl' })
 WeekdayClicks.belongsTo(Url, { foreignKey: 'shortUrl' })
 Devices.belongsTo(Url, { foreignKey: 'shortUrl' })

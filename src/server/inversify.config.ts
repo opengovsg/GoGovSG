@@ -29,6 +29,7 @@ import { LogoutController } from './controllers/LogoutController'
 import { UrlManagementService } from './services/UrlManagementService'
 import { UserController } from './controllers/UserController'
 import { QrCodeService } from './services/QrCodeService'
+import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -63,6 +64,10 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
+  bindIfUnbound(
+    DependencyIds.linkStatisticsRepository,
+    LinkStatisticsRepository,
+  )
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 
