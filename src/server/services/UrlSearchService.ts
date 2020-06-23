@@ -15,10 +15,11 @@ export class UrlSearchService {
 
   public plainTextSearch: (
     query: string,
+    order: SearchResultsSortOrder,
     limit: number,
     offset: number,
-  ) => Promise<UrlsPaginated> = (query, limit, offset) => {
-    return this.urlRepository.plainTextSearch(query, limit, offset)
+  ) => Promise<UrlsPaginated> = (query, order, limit, offset) => {
+    return this.urlRepository.plainTextSearch(query, order, limit, offset)
   }
 }
 

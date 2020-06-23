@@ -5,9 +5,11 @@ import rateLimit from 'express-rate-limit'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
 import { SearchControllerInterface } from '../controllers/interfaces/SearchControllerInterface'
+import { SearchResultsSortOrder } from '../repositories/enums'
 
 const urlSearchRequestSchema = Joi.object({
   query: Joi.string().required(),
+  order: Joi.string().allow(Object.values(SearchResultsSortOrder)),
   limit: Joi.number(),
   offset: Joi.number(),
 })

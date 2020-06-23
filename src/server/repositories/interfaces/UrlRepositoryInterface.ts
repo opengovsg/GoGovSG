@@ -1,4 +1,5 @@
 import { StorableFile, StorableUrl, UrlsPaginated } from '../types'
+import { SearchResultsSortOrder } from '../enums'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -54,10 +55,12 @@ export interface UrlRepositoryInterface {
    * @param  {string} query The search query in plain text.
    * @param  {number} limit Number of results to return.
    * @param  {number} offset The number of top results to skip.
+   * @param  {SearchResultsSortOrder} order The sorting rule for search results.
    * @returns Promise of total no. Of search results and the results on the current page.
    */
   plainTextSearch: (
     query: string,
+    order: SearchResultsSortOrder,
     limit: number,
     offset: number,
   ) => Promise<UrlsPaginated>

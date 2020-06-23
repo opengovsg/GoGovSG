@@ -9,7 +9,7 @@ import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl, UrlsPaginated } from './types'
-import { StorableUrlState } from './enums'
+import { SearchResultsSortOrder, StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 
 const { Public, Private } = FileVisibility
@@ -139,9 +139,10 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   public plainTextSearch: (
     query: string,
+    order: SearchResultsSortOrder,
     limit: number,
     offset: number,
-  ) => Promise<UrlsPaginated> = async (query, limit, offset) => {
+  ) => Promise<UrlsPaginated> = async (query, order, limit, offset) => {
     // TODO: Make this maintainable
     const { tableName } = Url
 
@@ -166,8 +167,24 @@ export class UrlRepository implements UrlRepositoryInterface {
 
     const count = parseInt(countString, 10)
 
-    const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
-    const rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
+    let rankingAlgorithm
+
+    switch (order) {
+      case SearchResultsSortOrder.Relevance:
+        {
+          const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
+          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
+        }
+        break
+      case SearchResultsSortOrder.Recency:
+        rankingAlgorithm = `${tableName}.createdAt`
+        break
+      case SearchResultsSortOrder.Popularity:
+        rankingAlgorithm = `${tableName}.clicks`
+        break
+      default:
+        throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
+    }
     const rawQuery = `
       SELECT ${tableName}.*
       FROM ${tableName}, plainto_tsquery($query) query

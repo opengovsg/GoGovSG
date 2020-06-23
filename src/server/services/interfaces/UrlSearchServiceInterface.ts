@@ -1,4 +1,5 @@
 import { UrlsPaginated } from '../../repositories/types'
+import { SearchResultsSortOrder } from '../../repositories/enums'
 
 export interface UrlSearchServiceInterface {
   /**
@@ -12,6 +13,7 @@ export interface UrlSearchServiceInterface {
    */
   plainTextSearch: (
     query: string,
+    order: SearchResultsSortOrder,
     limit?: number,
     offset?: number,
   ) => Promise<UrlsPaginated>
