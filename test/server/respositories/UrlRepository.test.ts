@@ -14,7 +14,7 @@ jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
 }))
 
-jest.mock('../../../src/server/models/statistics/clicks', () => ({
+jest.mock('../../../src/server/models/statistics/daily', () => ({
   Clicks: clicksModelMock,
 }))
 

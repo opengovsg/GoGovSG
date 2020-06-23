@@ -1,7 +1,7 @@
 import { sequelize } from '../util/sequelize'
 import { Url, UrlHistory } from './url'
 import { User } from './user'
-import { Clicks } from './statistics/clicks'
+import { Clicks } from './statistics/daily'
 import { WeekdayClicks } from './statistics/weekday'
 import { Devices } from './statistics/devices'
 

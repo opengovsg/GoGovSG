@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify'
 import { Url, UrlType } from '../models/url'
-import { Clicks } from '../models/statistics/clicks'
+import { Clicks } from '../models/statistics/daily'
 import { WeekdayClicks } from '../models/statistics/weekday'
 import { Devices } from '../models/statistics/devices'
 import { NotFoundError } from '../util/error'
