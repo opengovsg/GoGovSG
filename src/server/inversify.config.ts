@@ -29,6 +29,8 @@ import { LogoutController } from './controllers/LogoutController'
 import { UrlManagementService } from './services/UrlManagementService'
 import { UserController } from './controllers/UserController'
 import { QrCodeService } from './services/QrCodeService'
+import { LinkStatisticsController } from './controllers/LinkStatisticsController'
+import { LinkStatisticsService } from './services/LinkStatisticsService'
 import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
 
 function bindIfUnbound<T>(
@@ -64,6 +66,12 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
+
+  bindIfUnbound(
+    DependencyIds.linkStatisticsController,
+    LinkStatisticsController,
+  )
+  bindIfUnbound(DependencyIds.linkStatisticsService, LinkStatisticsService)
   bindIfUnbound(
     DependencyIds.linkStatisticsRepository,
     LinkStatisticsRepository,
