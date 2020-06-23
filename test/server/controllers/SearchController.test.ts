@@ -1,0 +1,55 @@
+import httpMock from 'node-mocks-http'
+import sinon from 'sinon'
+import { SearchController } from '../../../src/server/controllers/SearchController'
+import { UrlSearchServiceMock } from '../mocks/services/UrlSearchService'
+import { SearchResultsSortOrder } from '../../../src/server/repositories/enums'
+
+const urlSearchService = new UrlSearchServiceMock()
+const controller = new SearchController(urlSearchService)
+const searchSpy = jest.spyOn(urlSearchService, 'plainTextSearch')
+
+/**
+ * Unit test for search controller.
+ */
+describe('SearchController unit test', () => {
+  beforeEach(() => {
+    searchSpy.mockClear()
+  })
+  it('should return search results from service', async () => {
+    const okSpy = sinon.fake()
+    const req = httpMock.createRequest({
+      params: {
+        query: 'moh',
+        order: 'relevance',
+        limit: 10,
+        offset: 0,
+      },
+    })
+    const res = httpMock.createResponse() as any
+    res.ok = okSpy
+    await controller.urlSearchPlainText(req, res)
+    expect(res.ok.called).toBeTruthy()
+    expect(urlSearchService.plainTextSearch).toBeCalledWith(
+      'moh',
+      SearchResultsSortOrder.Relevance,
+      10,
+      0,
+    )
+    // clicks information should be stripped
+    expect(res.ok.lastCall.args[0]).toStrictEqual({
+      urls: [
+        {
+          shortUrl: 'test-moh',
+          longUrl: 'https://www.moh.gov.sg/covid-19',
+          state: 'ACTIVE',
+          isFile: false,
+          createdAt: '2020-04-17T09:10:07.491Z',
+          updatedAt: '2020-06-09T10:07:07.557Z',
+          description: '',
+          contactEmail: null,
+        },
+      ],
+      count: 0,
+    })
+  })
+})

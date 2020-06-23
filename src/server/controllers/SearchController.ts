@@ -48,7 +48,7 @@ export class SearchController implements SearchControllerInterface {
       const processedUrls = urls.map(({ clicks, ...url }) => url)
 
       res.ok({
-        processedUrls,
+        urls: processedUrls,
         count,
       })
     } catch (error) {
