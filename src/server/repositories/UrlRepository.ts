@@ -188,7 +188,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const rawQuery = `
       SELECT ${tableName}.*
       FROM ${tableName}, plainto_tsquery($query) query
-      WHERE query @@ (${urlVector})
+      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
       ORDER BY (${rankingAlgorithm}) desc
       limit $limit
       offset $offset`
