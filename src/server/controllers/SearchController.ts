@@ -35,23 +35,11 @@ export class SearchController implements SearchControllerInterface {
       limit = 10000,
       offset = 0,
     } = req.query as UrlSearchRequest
-    let searchOrder
-    try {
-      searchOrder =
-        SearchResultsSortOrder[order as keyof typeof SearchResultsSortOrder]
-    } catch {
-      logger.warn(jsonMessage(`Invalid search request order type: ${order}`))
-    }
-
-    if (!searchOrder) {
-      res.badRequest(jsonMessage('Invalid search order type'))
-      return
-    }
 
     try {
       const { urls, count } = await this.urlSearchService.plainTextSearch(
         query,
-        searchOrder,
+        order as SearchResultsSortOrder,
         limit,
         offset,
       )

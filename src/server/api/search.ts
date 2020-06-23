@@ -9,7 +9,10 @@ import { SearchResultsSortOrder } from '../repositories/enums'
 
 const urlSearchRequestSchema = Joi.object({
   query: Joi.string().required(),
-  order: Joi.string().allow(Object.values(SearchResultsSortOrder)),
+  order: Joi.string()
+    .required()
+    .allow(...Object.values(SearchResultsSortOrder))
+    .only(),
   limit: Joi.number(),
   offset: Joi.number(),
 })
