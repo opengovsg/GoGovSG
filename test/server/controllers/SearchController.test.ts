@@ -18,7 +18,7 @@ describe('SearchController unit test', () => {
   it('should return search results from service', async () => {
     const okSpy = sinon.fake()
     const req = httpMock.createRequest({
-      params: {
+      query: {
         query: 'moh',
         order: 'relevance',
         limit: 10,
