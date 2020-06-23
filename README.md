@@ -171,7 +171,7 @@ Babel requires plugins to do the transformation. Presets are the set of plugins 
 1. **entry:** entry: ./src/client/index.js is where the application starts executing and webpack starts bundling.
     Note: babel-polyfill is added to support async/await. Read more [here](https://babeljs.io/docs/en/babel-polyfill#usage-in-node-browserify-webpack).
 2. **output path and filename:** the target directory and the filename for the bundled output
-3. **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. CSS files are passed through [css-loaders](https://github.com/webpack-contrib/css-loader) and [style-loaders](https://github.com/webpack-contrib/style-loader) to load and bundle CSS files. Fonts and images are loaded through url-loader.
+3. **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. Fonts and images are loaded through [file-loader](https://github.com/webpack-contrib/file-loader).
 4. **Dev Server:** Configurations for the webpack-dev-server which will be described in coming section.
 5. **plugins:** [clean-webpack-plugin](https://github.com/johnagan/clean-webpack-plugin) is a webpack plugin to remove the build folder(s) before building. [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) simplifies creation of HTML files to serve your webpack bundles. It loads the template (public/index.html) and injects the output bundle.
 
