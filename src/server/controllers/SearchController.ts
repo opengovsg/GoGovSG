@@ -36,8 +36,11 @@ export class SearchController implements SearchControllerInterface {
         offset,
       )
 
+      // Specific click counts are classified for certain government links
+      const processedUrls = urls.map(({ clicks, ...url }) => url)
+
       res.ok({
-        urls,
+        processedUrls,
         count,
       })
     } catch (error) {
