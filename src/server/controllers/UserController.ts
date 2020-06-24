@@ -44,6 +44,7 @@ export class UserController implements UserControllerInterface {
     try {
       await this.urlManagementService.createUrl(userId, shortUrl, longUrl, file)
       res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
+      return
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
@@ -80,6 +81,7 @@ export class UserController implements UserControllerInterface {
         file,
       })
       res.ok(url)
+      return
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
@@ -107,6 +109,7 @@ export class UserController implements UserControllerInterface {
         newUserEmail,
       )
       res.ok(url)
+      return
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
@@ -151,6 +154,7 @@ export class UserController implements UserControllerInterface {
         count,
       } = await this.urlManagementService.getUrlsWithConditions(queryConditions)
       res.ok({ urls, count })
+      return
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(error.message)

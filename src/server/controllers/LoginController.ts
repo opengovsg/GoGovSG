@@ -45,6 +45,7 @@ export class LoginController implements LoginControllerInterface {
       await this.authService.generateOtp(email)
     } catch (error) {
       res.serverError(jsonMessage(error.message))
+      return
     }
 
     res.ok(jsonMessage('OTP generated and sent.'))
@@ -60,6 +61,7 @@ export class LoginController implements LoginControllerInterface {
       const user = await this.authService.verifyOtp(email, otp)
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
+      return
     } catch (error) {
       if (error instanceof InvalidOtpError) {
         res.unauthorized(
