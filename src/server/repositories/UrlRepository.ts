@@ -176,7 +176,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         }
         break
       case SearchResultsSortOrder.Recency:
-        rankingAlgorithm = `${tableName}.createdAt`
+        rankingAlgorithm = `${tableName}."createdAt"`
         break
       case SearchResultsSortOrder.Popularity:
         rankingAlgorithm = `${tableName}.clicks`

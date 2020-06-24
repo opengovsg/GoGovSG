@@ -161,7 +161,7 @@ describe('UrlRepository tests', () => {
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
       setweight(to_tsvector('english', urls."description"), 'B')
     ) AND state = 'ACTIVE'
-      ORDER BY (urls.createdAt) desc
+      ORDER BY (urls."createdAt") desc
       limit $limit
       offset $offset`,
         {
