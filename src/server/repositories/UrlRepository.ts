@@ -152,7 +152,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       where: { shortUrl, date: time.date },
       transaction,
     })
-    clickStats.increment('clicks', { transaction })
+    await clickStats.increment('clicks', { transaction })
   }
 
   public updateWeekdayStatistics: (
@@ -164,7 +164,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       where: { shortUrl, weekday: time.weekday, hours: time.hours },
       transaction,
     })
-    clickStats.increment('clicks', { transaction })
+    await clickStats.increment('clicks', { transaction })
   }
 
   public updateDeviceStatistics: (
@@ -178,7 +178,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         where: { shortUrl },
         transaction,
       })
-      clickStats.increment(deviceType!, { transaction })
+      await clickStats.increment(deviceType!, { transaction })
     }
   }
 
