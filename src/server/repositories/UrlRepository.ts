@@ -1,4 +1,6 @@
+import { Transaction } from 'sequelize/types'
 import { inject, injectable } from 'inversify'
+
 import { Url, UrlType } from '../models/url'
 import { Clicks } from '../models/statistics/daily'
 import { WeekdayClicks } from '../models/statistics/weekday'
@@ -6,7 +8,7 @@ import { Devices } from '../models/statistics/devices'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
-import { transaction } from '../util/sequelize'
+import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
@@ -47,7 +49,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     properties: { userId: number; shortUrl: string; longUrl?: string },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
-    const newUrl = await transaction(async (t) => {
+    const newUrl = await sequelize.transaction(async (t) => {
       const url = Url.create(
         {
           ...properties,
@@ -80,7 +82,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       )
     }
 
-    const newUrl: UrlType = await transaction(async (t) => {
+    const newUrl: UrlType = await sequelize.transaction(async (t) => {
       if (!url.isFile) {
         await url.update(changes, { transaction: t })
       } else {
@@ -128,49 +130,55 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
-  public incrementClick: (shortUrl: string) => Promise<void> = async (
-    shortUrl,
-  ) => {
-    const url = await Url.findOne({ where: { shortUrl } })
+  public incrementClick: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, transaction) => {
+    const url = await Url.findOne({ where: { shortUrl }, transaction })
     if (!url) {
       throw new NotFoundError(
         `shortUrl not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-
-    await url.increment('clicks')
+    await url.increment('clicks', { transaction })
   }
 
-  public updateDailyStatistics: (shortUrl: string) => Promise<void> = async (
-    shortUrl,
-  ) => {
+  public updateDailyStatistics: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, transaction) => {
     const time = getLocalTime()
     const [clickStats] = await Clicks.findOrCreate({
       where: { shortUrl, date: time.date },
+      transaction,
     })
-    clickStats.increment('clicks')
+    clickStats.increment('clicks', { transaction })
   }
 
-  public updateWeekdayStatistics: (shortUrl: string) => Promise<void> = async (
-    shortUrl,
-  ) => {
+  public updateWeekdayStatistics: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, transaction) => {
     const time = getLocalTime()
     const [clickStats] = await WeekdayClicks.findOrCreate({
       where: { shortUrl, weekday: time.weekday, hours: time.hours },
+      transaction,
     })
-    clickStats.increment('clicks')
+    clickStats.increment('clicks', { transaction })
   }
 
   public updateDeviceStatistics: (
     shortUrl: string,
     userAgent: string,
-  ) => Promise<void> = async (shortUrl, userAgent) => {
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, userAgent, transaction) => {
     const deviceType = getDeviceType(userAgent)
     if (deviceType) {
       const [clickStats] = await Devices.findOrCreate({
         where: { shortUrl },
+        transaction,
       })
-      clickStats.increment(deviceType!)
+      clickStats.increment(deviceType!, { transaction })
     }
   }
 
@@ -178,16 +186,14 @@ export class UrlRepository implements UrlRepositoryInterface {
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {
-    const incrementClick = this.incrementClick(shortUrl)
-    const updatingClicks = this.updateDailyStatistics(shortUrl)
-    const updatingDays = this.updateWeekdayStatistics(shortUrl)
-    const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
-    await Promise.all([
-      incrementClick,
-      updatingClicks,
-      updatingDays,
-      updatingDevices,
-    ])
+    sequelize.transaction((t) => {
+      return Promise.all([
+        this.incrementClick(shortUrl, t),
+        this.updateDailyStatistics(shortUrl, t),
+        this.updateWeekdayStatistics(shortUrl, t),
+        this.updateDeviceStatistics(shortUrl, userAgent, t),
+      ])
+    })
   }
 
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
