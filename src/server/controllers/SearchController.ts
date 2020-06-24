@@ -44,13 +44,11 @@ export class SearchController implements SearchControllerInterface {
         offset,
       )
 
-      // Specific click counts are classified for certain government links
-      const processedUrls = urls.map(({ clicks, ...url }) => url)
-
       res.ok({
-        urls: processedUrls,
+        urls,
         count,
       })
+      return
     } catch (error) {
       logger.error(`Error searching urls: ${error}`)
       res.serverError(jsonMessage('Error retrieving URLs for search'))

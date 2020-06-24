@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 import { DependencyIds } from '../constants'
-import { UrlsPaginated } from '../repositories/types'
+import { UrlsPublicPaginated } from '../repositories/types'
 import { SearchResultsSortOrder } from '../repositories/enums'
 
 @injectable()
@@ -19,8 +19,17 @@ export class UrlSearchService {
     order: SearchResultsSortOrder,
     limit: number,
     offset: number,
-  ) => Promise<UrlsPaginated> = (query, order, limit, offset) => {
-    return this.urlRepository.plainTextSearch(query, order, limit, offset)
+  ) => Promise<UrlsPublicPaginated> = async (query, order, limit, offset) => {
+    const {
+      urls: privateUrls,
+      count,
+    } = await this.urlRepository.plainTextSearch(query, order, limit, offset)
+
+    return {
+      // Specific click counts are classified for certain government links
+      urls: privateUrls.map(({ clicks, ...url }) => url),
+      count,
+    }
   }
 }
 

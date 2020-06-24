@@ -4,7 +4,7 @@ import {
   SearchResultsSortOrder,
   StorableUrlState,
 } from '../../../../src/server/repositories/enums'
-import { UrlsPaginated } from '../../../../src/server/repositories/types'
+import { UrlsPublicPaginated } from '../../../../src/server/repositories/types'
 
 @injectable()
 export class UrlSearchServiceMock implements UrlSearchServiceInterface {
@@ -13,7 +13,7 @@ export class UrlSearchServiceMock implements UrlSearchServiceInterface {
     order: SearchResultsSortOrder,
     limit?: number,
     offset?: number,
-  ) => Promise<UrlsPaginated> = () => {
+  ) => Promise<UrlsPublicPaginated> = () => {
     return Promise.resolve({
       urls: [
         {
@@ -25,7 +25,6 @@ export class UrlSearchServiceMock implements UrlSearchServiceInterface {
           updatedAt: '2020-06-09T10:07:07.557Z',
           description: '',
           contactEmail: null,
-          clicks: 10000,
         },
       ],
       count: 0,

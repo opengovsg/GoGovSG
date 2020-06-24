@@ -1,4 +1,4 @@
-import { UrlsPaginated } from '../../repositories/types'
+import { UrlsPublicPaginated } from '../../repositories/types'
 import { SearchResultsSortOrder } from '../../repositories/enums'
 
 export interface UrlSearchServiceInterface {
@@ -17,5 +17,5 @@ export interface UrlSearchServiceInterface {
     order: SearchResultsSortOrder,
     limit?: number,
     offset?: number,
-  ) => Promise<UrlsPaginated>
+  ) => Promise<UrlsPublicPaginated>
 }
