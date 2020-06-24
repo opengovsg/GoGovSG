@@ -43,14 +43,7 @@ export class RedirectService implements RedirectServiceInterface {
     // Find longUrl to redirect to
     const longUrl = await this.urlRepository.getLongUrl(shortUrl)
 
-    // Update clicks in database
-    this.urlRepository
-      .incrementClick(shortUrl)
-      .catch((error) =>
-        logger.error(`Unable to increment click count: ${error}`),
-      )
-
-    // Update click statistics for link.
+    // Update clicks and click statistics in database.
     this.urlRepository
       .updateLinkStatistics(shortUrl, userAgent)
       .catch((error) =>

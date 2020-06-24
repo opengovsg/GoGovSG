@@ -42,6 +42,7 @@ export interface UrlRepositoryInterface {
 
   /**
    * Asynchronously increment the number of clicks in the database.
+   *
    * @param {string} shortUrl
    * @returns Promise that resolves to be empty.
    */

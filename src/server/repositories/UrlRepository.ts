@@ -178,10 +178,16 @@ export class UrlRepository implements UrlRepositoryInterface {
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {
+    const incrementClick = this.incrementClick(shortUrl)
     const updatingClicks = this.updateDailyStatistics(shortUrl)
     const updatingDays = this.updateWeekdayStatistics(shortUrl)
     const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
-    await Promise.all([updatingClicks, updatingDays, updatingDevices])
+    await Promise.all([
+      incrementClick,
+      updatingClicks,
+      updatingDays,
+      updatingDevices,
+    ])
   }
 
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
