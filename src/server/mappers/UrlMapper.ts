@@ -19,6 +19,8 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
       isFile: urlType.isFile,
       createdAt: urlType.createdAt,
       updatedAt: urlType.updatedAt,
+      description: urlType.description,
+      contactEmail: urlType.contactEmail,
     }
   }
 }

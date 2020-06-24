@@ -16,6 +16,8 @@ import {
   RESET_USER_STATE,
   ResetUserStateAction,
   SET_CREATE_SHORT_LINK_ERROR,
+  SET_EDITED_CONTACT_EMAIL,
+  SET_EDITED_DESCRIPTION,
   SET_EDITED_LONG_URL,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
@@ -26,6 +28,8 @@ import {
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
   SetCreateShortLinkErrorAction,
+  SetEditedContactEmailAction,
+  SetEditedDescriptionAction,
   SetEditedLongUrlAction,
   SetIsUploadingAction,
   SetLastCreatedLinkAction,
@@ -88,6 +92,28 @@ const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
 ) => ({
   type: SET_IS_UPLOADING,
   payload,
+})
+
+const setEditedContactEmail: (
+  shortUrl: string,
+  editedContactEmail: string,
+) => SetEditedContactEmailAction = (shortUrl, editedContactEmail) => ({
+  type: SET_EDITED_CONTACT_EMAIL,
+  payload: {
+    shortUrl,
+    editedContactEmail,
+  },
+})
+
+const setEditedDescription: (
+  shortUrl: string,
+  editedDescription: string,
+) => SetEditedDescriptionAction = (shortUrl, editedDescription) => ({
+  type: SET_EDITED_DESCRIPTION,
+  payload: {
+    shortUrl,
+    editedDescription,
+  },
 })
 
 const setCreateShortLinkError: (
@@ -227,11 +253,12 @@ const getUrlsForUser = (): ThunkAction<
 
   if (isOk) {
     json.urls.forEach((url: UrlType) => {
-      url.createdAt = moment(url.createdAt) // eslint-disable-line no-param-reassign
-        .tz('Singapore')
-        .format('D MMM YYYY')
-      // eslint-disable-next-line no-param-reassign
+      /* eslint-disable no-param-reassign */
+      url.createdAt = moment(url.createdAt).tz('Singapore').format('D MMM YYYY')
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
+      url.editedContactEmail = url.contactEmail
+      url.editedDescription = url.description
+      /* eslint-enable no-param-reassign */
     })
     dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
     dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
@@ -273,6 +300,45 @@ const updateLongUrl = (shortUrl: string, longUrl: string) => (
   }
 
   return patch('/api/user/url', { longUrl, shortUrl }).then((response) => {
+    if (response.ok) {
+      dispatch<void>(getUrlsForUser())
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage('URL is updated.'),
+      )
+      return null
+    }
+
+    return response.json().then((json) => {
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
+      return null
+    })
+  })
+}
+
+// API call to update description and contact email
+const updateUrlInformation = (shortUrl: string) => (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetErrorMessageAction | SetSuccessMessageAction
+  >,
+  getState: GetReduxState,
+) => {
+  const { user } = getState()
+  const url = user.urls.filter(
+    (urlToCheck) => urlToCheck.shortUrl === shortUrl,
+  )[0]
+  if (!url) {
+    dispatch<SetErrorMessageAction>(
+      rootActions.setErrorMessage('Url not found.'),
+    )
+    return null
+  }
+  return patch('/api/user/url', {
+    contactEmail: url.editedContactEmail ? url.editedContactEmail : null,
+    description: url.editedDescription,
+    shortUrl,
+  }).then((response) => {
     if (response.ok) {
       dispatch<void>(getUrlsForUser())
       dispatch<SetSuccessMessageAction>(
@@ -553,4 +619,7 @@ export default {
   setCreateShortLinkError,
   setUrlFilter,
   replaceFile,
+  setEditedContactEmail,
+  setEditedDescription,
+  updateUrlInformation,
 }

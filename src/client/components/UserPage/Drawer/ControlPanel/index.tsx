@@ -10,6 +10,7 @@ import {
   useTheme,
   useMediaQuery,
   CircularProgress,
+  Typography,
 } from '@material-ui/core'
 
 import DrawerActions from './util/reducers'
@@ -33,6 +34,8 @@ import {
   CollapsibleMessageType,
   CollapsibleMessagePosition,
 } from '../../../CollapsibleMessage/types'
+import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../../../shared/constants'
+import i18next from 'i18next'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -66,6 +69,22 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 68,
       },
     },
+    dividerAnalytics: {
+      marginTop: 50,
+      marginBottom: 50,
+      [theme.breakpoints.up('md')]: {
+        marginTop: 50,
+        marginBottom: 68,
+      },
+    },
+    dividerInformation: {
+      marginTop: 50,
+      marginBottom: 50,
+      [theme.breakpoints.up('md')]: {
+        marginTop: 73,
+        marginBottom: 50,
+      },
+    },
     activeText: {
       color: '#6d9067',
     },
@@ -79,10 +98,14 @@ const useStyles = makeStyles((theme) =>
       width: '14px',
       verticalAlign: 'middle',
     },
-    ownershipTooltip: {
-      margin: theme.spacing(1.5, 1, 1.5, 1),
+    drawerTooltip: {
+      // margin: theme.spacing(1.5, 1, 1.5, 1),
       whiteSpace: 'nowrap',
       maxWidth: 'unset',
+      [theme.breakpoints.up('md')]: {
+        marginTop: '-12px',
+        padding: '16px',
+      },
     },
     topBar: {
       width: '100%',
@@ -108,6 +131,24 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 0,
       },
     },
+    characterCount: {
+      marginLeft: 2,
+      marginTop: 9,
+    },
+    linkInformationHeader: {
+      marginBottom: theme.spacing(1.25),
+    },
+    linkInformationDesc: {
+      marginBottom: theme.spacing(3),
+      fontWeight: 400,
+    },
+    saveLinkInformationButtonWrapper: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      [theme.breakpoints.up('md')]: {
+        paddingTop: 9,
+      },
+    },
   }),
 )
 
@@ -128,18 +169,29 @@ export default function ControlPanel() {
     modalDispatch({ type: DrawerActions.setUploadFileError, payload: error })
 
   // Fetch short link state and dispatches from redux store through our helper hook.
-  const { shortLinkState, shortLinkDispatch, isUploading } = useShortLink(
-    drawerStates.relevantShortLink!,
-  )
+  const {
+    shortLinkState,
+    shortLinkDispatch,
+    isUploading,
+    emailValidator,
+  } = useShortLink(drawerStates.relevantShortLink!)
 
   // Manage values in our text fields.
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
   const editedLongUrl = shortLinkState?.editedLongUrl || ''
+  const editedContactEmail = shortLinkState?.editedContactEmail || ''
+  const editedDescription = shortLinkState?.editedDescription || ''
   const [pendingOwner, setPendingOwner] = useState<string>('')
+  const originalDescription = shortLinkState?.description || ''
+  const originalContactEmail = shortLinkState?.contactEmail || ''
+  const isContactEmailValid =
+    !editedContactEmail || emailValidator.match(editedContactEmail)
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
     shortLinkDispatch?.setEditLongUrl(originalLongUrl)
+    shortLinkDispatch?.setEditDescription(originalDescription)
+    shortLinkDispatch?.setEditContactEmail(originalContactEmail)
     setPendingOwner('')
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
@@ -165,12 +217,50 @@ export default function ControlPanel() {
         title="Links can only be transferred to an existing Go.gov.sg user"
         arrow
         placement="top"
-        classes={{ tooltip: classes.ownershipTooltip }}
+        classes={{ tooltip: classes.drawerTooltip }}
       >
         <img
           className={classes.ownershipHelpIcon}
           src={helpIcon}
           alt="Ownership help"
+          draggable={false}
+        />
+      </Tooltip>
+    </>
+  )
+
+  const contactEmailHelp = (
+    <>
+      Contact email{' '}
+      <Tooltip
+        title="Enter an email which users can contact if they have queries about your short link."
+        arrow
+        placement="top"
+        classes={{ tooltip: classes.drawerTooltip }}
+      >
+        <img
+          className={classes.ownershipHelpIcon}
+          src={helpIcon}
+          alt="Contact help"
+          draggable={false}
+        />
+      </Tooltip>
+    </>
+  )
+
+  const linkDescriptionHelp = (
+    <>
+      Link description{' '}
+      <Tooltip
+        title="Link descriptions have a maximum character count of 200."
+        arrow
+        placement="top"
+        classes={{ tooltip: classes.drawerTooltip }}
+      >
+        <img
+          className={classes.ownershipHelpIcon}
+          src={helpIcon}
+          alt="Description help"
           draggable={false}
         />
       </Tooltip>
@@ -184,7 +274,7 @@ export default function ControlPanel() {
         title="Original file will be replaced after you select file. Maximum file size is 10mb."
         arrow
         placement="top"
-        classes={{ tooltip: classes.ownershipTooltip }}
+        classes={{ tooltip: classes.drawerTooltip }}
       >
         <img
           className={classes.ownershipHelpIcon}
@@ -368,7 +458,101 @@ export default function ControlPanel() {
             wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
-          <Divider className={classes.divider} />
+          <Divider className={classes.dividerInformation} />
+          <Typography
+            variant="h3"
+            className={classes.linkInformationHeader}
+            color="primary"
+          >
+            Link information
+          </Typography>
+          <Typography variant="body2" className={classes.linkInformationDesc}>
+            The information you enter below will be displayed on our Go Search
+            page (coming soon), and the error page if users are unable to access
+            your short link.
+          </Typography>
+          <ConfigOption
+            title={contactEmailHelp}
+            titleVariant="body2"
+            titleClassName={classes.regularText}
+            leading={
+              <DrawerTextField
+                value={editedContactEmail}
+                onChange={(event) =>
+                  shortLinkDispatch?.setEditContactEmail(event.target.value)
+                }
+                placeholder=""
+                helperText={
+                  isContactEmailValid
+                    ? ''
+                    : `This doesn't look like a valid ${i18next.t(
+                        'general.emailDomain',
+                      )} email.`
+                }
+                error={!isContactEmailValid}
+              />
+            }
+            trailing={<></>}
+            wrapTrailing={isMobileView}
+            trailingPosition={TrailingPosition.none}
+          />
+          <ConfigOption
+            title={linkDescriptionHelp}
+            titleVariant="body2"
+            titleClassName={classes.regularText}
+            leading={
+              <>
+                <DrawerTextField
+                  value={editedDescription}
+                  onChange={(event) =>
+                    shortLinkDispatch?.setEditDescription(
+                      event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+                    )
+                  }
+                  error={editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH}
+                  placeholder=""
+                  helperText={
+                    editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH
+                      ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
+                      : undefined
+                  }
+                  multiline
+                  rows={2}
+                  rowsMax={isMobileView ? 5 : undefined}
+                  FormHelperTextProps={{ className: classes.characterCount }}
+                />
+                <CollapsibleMessage
+                  type={CollapsibleMessageType.Error}
+                  visible={
+                    editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
+                  }
+                  position={CollapsibleMessagePosition.Static}
+                  timeout={0}
+                >
+                  {`${editedDescription.length}/200`}
+                </CollapsibleMessage>
+              </>
+            }
+            trailing={<></>}
+            wrapTrailing={isMobileView}
+            trailingPosition={TrailingPosition.none}
+          />
+          <div className={classes.saveLinkInformationButtonWrapper}>
+            <TrailingButton
+              disabled={
+                editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH ||
+                (editedContactEmail === originalContactEmail &&
+                  editedDescription === originalDescription) ||
+                !isContactEmailValid
+              }
+              fullWidth={isMobileView}
+              variant={isMobileView ? 'contained' : 'outlined'}
+              onClick={shortLinkDispatch?.applyEditInformation}
+            >
+              Save
+            </TrailingButton>
+          </div>
+          <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
         </DrawerMargin>
       </main>

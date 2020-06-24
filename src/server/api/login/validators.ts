@@ -1,14 +1,5 @@
 import * as Joi from '@hapi/joi'
-import validator from 'validator'
-import { emailValidator } from '../../config'
-
-/**
- * Checks if an email is valid and whether it follows a specified regex pattern.
- * @param email The email to be validated.
- */
-function isValidGovEmail(email: string) {
-  return validator.isEmail(email) && emailValidator.match(email)
-}
+import { isValidGovEmail } from '../../util/email'
 
 export const otpVerificationSchema = Joi.object({
   email: Joi.string()

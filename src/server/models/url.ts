@@ -9,7 +9,7 @@ import {
 } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { DEV_ENV, ogHostname } from '../config'
+import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 
 interface UrlBaseType extends IdType {
@@ -17,6 +17,8 @@ interface UrlBaseType extends IdType {
   readonly longUrl: string
   readonly state: StorableUrlState
   readonly isFile: boolean
+  readonly contactEmail: string | null
+  readonly description: string
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
@@ -85,6 +87,20 @@ export const Url = <UrlTypeStatic>sequelize.define(
     isFile: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
+    },
+    contactEmail: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+      validate: {
+        isEmail: true,
+        isLowercase: true,
+        is: emailValidator.makeRe(),
+      },
+    },
+    description: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+      defaultValue: '',
     },
   },
   {
@@ -165,6 +181,14 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
     type: Sequelize.BOOLEAN,
     allowNull: false,
   },
+  contactEmail: {
+    type: Sequelize.TEXT,
+    allowNull: true,
+  },
+  description: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
 })
 
 /**
@@ -183,6 +207,8 @@ const writeToUrlHistory = async (
       urlShortUrl: urlObj.shortUrl,
       longUrl: urlObj.longUrl,
       isFile: urlObj.isFile,
+      contactEmail: urlObj.contactEmail,
+      description: urlObj.description,
     },
     {
       transaction: options.transaction,
