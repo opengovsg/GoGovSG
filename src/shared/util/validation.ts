@@ -58,3 +58,7 @@ export function isCircularRedirects(url: string, hostname?: string): boolean {
   if (!hostname) return false
   return parse(url).hostname === hostname
 }
+
+export function isPrintableAscii(string: string): boolean {
+  return /^[\x20-\x7F]*$/.test(string)
+}

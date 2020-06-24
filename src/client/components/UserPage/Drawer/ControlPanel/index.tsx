@@ -25,7 +25,10 @@ import TrailingButton from './widgets/TrailingButton'
 import GoSwitch from './widgets/GoSwitch'
 import useShortLink from './util/shortlink'
 import { removeHttpsProtocol } from '../../../../util/url'
-import { isValidLongUrl } from '../../../../../shared/util/validation'
+import {
+  isValidLongUrl,
+  isPrintableAscii,
+} from '../../../../../shared/util/validation'
 import DownloadButton from './widgets/DownloadButton'
 import helpIcon from '../../../../assets/help-icon.svg'
 import FileInputField from '../../Widgets/FileInputField'
@@ -186,6 +189,9 @@ export default function ControlPanel() {
   const originalContactEmail = shortLinkState?.contactEmail || ''
   const isContactEmailValid =
     !editedContactEmail || emailValidator.match(editedContactEmail)
+  const isDescriptionValid =
+    editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH &&
+    isPrintableAscii(editedDescription)
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
@@ -509,10 +515,10 @@ export default function ControlPanel() {
                       event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
                     )
                   }
-                  error={editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH}
+                  error={!isDescriptionValid}
                   placeholder=""
                   helperText={
-                    editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH
+                    isDescriptionValid
                       ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
                       : undefined
                   }
@@ -523,13 +529,13 @@ export default function ControlPanel() {
                 />
                 <CollapsibleMessage
                   type={CollapsibleMessageType.Error}
-                  visible={
-                    editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH
-                  }
+                  visible={!isDescriptionValid}
                   position={CollapsibleMessagePosition.Static}
                   timeout={0}
                 >
-                  {`${editedDescription.length}/200`}
+                  {isPrintableAscii(editedDescription)
+                    ? `${editedDescription.length}/200`
+                    : 'Only ASCII characters are allowed.'}
                 </CollapsibleMessage>
               </>
             }
@@ -540,7 +546,7 @@ export default function ControlPanel() {
           <div className={classes.saveLinkInformationButtonWrapper}>
             <TrailingButton
               disabled={
-                editedDescription.length > LINK_DESCRIPTION_MAX_LENGTH ||
+                !isDescriptionValid ||
                 (editedContactEmail === originalContactEmail &&
                   editedDescription === originalDescription) ||
                 !isContactEmailValid
