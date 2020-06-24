@@ -178,18 +178,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {
-    const urlExists = Boolean(await Url.findOne({ where: { shortUrl } }))
-
-    if (urlExists) {
-      const updatingClicks = this.updateDailyStatistics(shortUrl)
-      const updatingDays = this.updateWeekdayStatistics(shortUrl)
-      const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
-      await Promise.all([updatingClicks, updatingDays, updatingDevices])
-    } else {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
-    }
+    const updatingClicks = this.updateDailyStatistics(shortUrl)
+    const updatingDays = this.updateWeekdayStatistics(shortUrl)
+    const updatingDevices = this.updateDeviceStatistics(shortUrl, userAgent)
+    await Promise.all([updatingClicks, updatingDays, updatingDevices])
   }
 
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
