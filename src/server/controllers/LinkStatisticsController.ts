@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
+import jsonMessage from '../util/json'
 import { DependencyIds } from '../constants'
 import { LinkStatisticsControllerInterface } from './interfaces/LinkStatisticsControllerInterface'
 import { LinkStatisticsServiceInterface } from '../services/interfaces/LinkStatisticsServiceInterface'
@@ -22,15 +23,27 @@ export class LinkStatisticsController
     req: Request,
     res: Response,
   ) => Promise<void> = async (req, res) => {
-    const shortUrl = req.query.url
-    if (!shortUrl) res.json(null)
+    const shortUrl = req.query.url as string
+    if (!shortUrl) {
+      res.notFound(jsonMessage('Short url does not exist'))
+      return
+    }
     const user = req.session?.user as UserType
-    if (!user) res.json(null)
-    const linkStats = await this.linkStatisticsService.getLinkStatistics(
-      user.id,
-      shortUrl,
-    )
-    res.json(linkStats)
+    if (!user) {
+      res.unauthorized(jsonMessage('User session does not exist'))
+      return
+    }
+    try {
+      const linkStats = await this.linkStatisticsService.getLinkStatistics(
+        user.id,
+        shortUrl,
+      )
+      res.status(200).json(linkStats)
+      return
+    } catch (error) {
+      res.notFound(jsonMessage(error.message))
+      return
+    }
   }
 }
 

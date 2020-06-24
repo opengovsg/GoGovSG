@@ -5,6 +5,7 @@ import { LinkStatisticsServiceInterface } from './interfaces/LinkStatisticsServi
 import { LinkStatisticsRepositoryInterface } from '../repositories/interfaces/LinkStatisticsRepositoryInterface'
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
+import { NotFoundError } from '../util/error'
 
 @injectable()
 export class LinkStatisticsService implements LinkStatisticsServiceInterface {
@@ -36,7 +37,9 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
       userId,
       shortUrl,
     ))
-    if (!userOwnsLink) return null
+    if (!userOwnsLink) {
+      throw new NotFoundError('User does not own this short url')
+    }
     return this.linkStatisticsRepository.findByShortUrl(shortUrl)
   }
 }
