@@ -143,7 +143,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     limit: number,
     offset: number,
   ) => Promise<UrlsPaginated> = async (query, order, limit, offset) => {
-    // TODO: Make this maintainable
     const { tableName } = Url
 
     // Warning: This expression has to be EXACTLY the same as the one used in the index
@@ -153,7 +152,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       setweight(to_tsvector('english', coalesce(${tableName}."description", '')), 'B')
     `
     const rawCountQuery = `
-    SELECT count(*)
+      SELECT count(*)
       FROM ${tableName}, plainto_tsquery($query) query
       WHERE query @@ (${urlVector})
     `
