@@ -1,3 +1,5 @@
+/* eslint-disable class-methods-use-this */
+
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
@@ -151,61 +153,26 @@ export class UrlRepository implements UrlRepositoryInterface {
       setweight(to_tsvector('english', ${tableName}."shortUrl"), 'A') ||
       setweight(to_tsvector('english', ${tableName}."description"), 'B')
     `
-    const rawCountQuery = `
-      SELECT count(*)
-      FROM ${tableName}, plainto_tsquery($query) query
-      WHERE query @@ (${urlVector})
-    `
-    const [{ count: countString }] = await sequelize.query(rawCountQuery, {
-      bind: {
-        query,
-      },
-      raw: true,
-      type: QueryTypes.SELECT,
-    })
+    const count = await this.getPlainTextSearchResultsCount(
+      tableName,
+      urlVector,
+      query,
+    )
 
-    const count = parseInt(countString, 10)
+    const rankingAlgorithm = this.getRankingAlgorithm(
+      order,
+      urlVector,
+      tableName,
+    )
 
-    let rankingAlgorithm
-
-    switch (order) {
-      case SearchResultsSortOrder.Relevance:
-        {
-          // The 3rd argument passed into ts_rank_cd represents
-          // the normalization option that specifies whether and how
-          // a document's rank should impact its rank.
-          // 1 divides the rank by 1 + the logarithm of the document length
-          const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
-          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
-        }
-        break
-      case SearchResultsSortOrder.Recency:
-        rankingAlgorithm = `${tableName}."createdAt"`
-        break
-      case SearchResultsSortOrder.Popularity:
-        rankingAlgorithm = `${tableName}.clicks`
-        break
-      default:
-        throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
-    }
-    const rawQuery = `
-      SELECT ${tableName}.*
-      FROM ${tableName}, plainto_tsquery($query) query
-      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
-      ORDER BY (${rankingAlgorithm}) desc
-      limit $limit
-      offset $offset`
-
-    const urlsModel = (await sequelize.query(rawQuery, {
-      bind: {
-        limit,
-        offset,
-        query,
-      },
-      type: QueryTypes.SELECT,
-      model: Url,
-      mapToModel: true,
-    })) as Array<UrlType>
+    const urlsModel = await this.getRelevantUrls(
+      tableName,
+      urlVector,
+      rankingAlgorithm,
+      limit,
+      offset,
+      query,
+    )
 
     const urls = urlsModel.map((urlType) =>
       this.urlMapper.persistenceToDto(urlType),
@@ -273,6 +240,84 @@ export class UrlRepository implements UrlRepositoryInterface {
         else resolve()
       })
     })
+  }
+
+  private async getRelevantUrls(
+    tableName: string,
+    urlVector: string,
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    query: string,
+  ) {
+    const rawQuery = `
+      SELECT ${tableName}.*
+      FROM ${tableName}, plainto_tsquery($query) query
+      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
+      ORDER BY (${rankingAlgorithm}) desc
+      limit $limit
+      offset $offset`
+    const urlsModel = (await sequelize.query(rawQuery, {
+      bind: {
+        limit,
+        offset,
+        query,
+      },
+      type: QueryTypes.SELECT,
+      model: Url,
+      mapToModel: true,
+    })) as Array<UrlType>
+    return urlsModel
+  }
+
+  private getRankingAlgorithm(
+    order: SearchResultsSortOrder,
+    urlVector: string,
+    tableName: string,
+  ) {
+    let rankingAlgorithm
+    switch (order) {
+      case SearchResultsSortOrder.Relevance:
+        {
+          // The 3rd argument passed into ts_rank_cd represents
+          // the normalization option that specifies whether and how
+          // a document's rank should impact its rank. It works as a bit mask.
+          // 1 divides the rank by 1 + the logarithm of the document length
+          const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
+          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
+        }
+        break
+      case SearchResultsSortOrder.Recency:
+        rankingAlgorithm = `${tableName}."createdAt"`
+        break
+      case SearchResultsSortOrder.Popularity:
+        rankingAlgorithm = `${tableName}.clicks`
+        break
+      default:
+        throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
+    }
+    return rankingAlgorithm
+  }
+
+  private async getPlainTextSearchResultsCount(
+    tableName: string,
+    urlVector: string,
+    query: string,
+  ) {
+    const rawCountQuery = `
+      SELECT count(*)
+      FROM ${tableName}, plainto_tsquery($query) query
+      WHERE query @@ (${urlVector})
+    `
+    const [{ count: countString }] = await sequelize.query(rawCountQuery, {
+      bind: {
+        query,
+      },
+      raw: true,
+      type: QueryTypes.SELECT,
+    })
+    const count = parseInt(countString, 10)
+    return count
   }
 }
 
