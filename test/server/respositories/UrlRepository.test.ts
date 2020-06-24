@@ -54,6 +54,9 @@ describe('UrlRepository tests', () => {
   })
 
   describe('plainTextSearch tests', () => {
+    beforeEach(() => {
+      mockQuery.mockClear()
+    })
     it('should call sequelize.query with correct raw query and params and return the results', async () => {
       await expect(
         repository.plainTextSearch(
@@ -109,6 +112,76 @@ describe('UrlRepository tests', () => {
           type: QueryTypes.SELECT,
         },
       )
+    })
+
+    it('should call sequelize.query with correct ordering when relevance order is input', async () => {
+      await repository.plainTextSearch(
+        'query',
+        SearchResultsSortOrder.Relevance,
+        10000,
+        0,
+      )
+
+      expect(mockQuery).toBeCalledWith(
+        `
+      SELECT urls.*
+      FROM urls, plainto_tsquery($query) query
+      WHERE query @@ (
+      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+    ) AND state = 'ACTIVE'
+      ORDER BY (ts_rank_cd(
+      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+    , query, 1) * log(urls.clicks + 1)) desc
+      limit $limit
+      offset $offset`,
+        {
+          bind: { limit: 10000, offset: 0, query: 'query' },
+          mapToModel: true,
+          model: expect.any(Object),
+          type: QueryTypes.SELECT,
+        },
+      )
+    })
+
+    it('should call sequelize.query with correct ordering when recency order is input', async () => {
+      await repository.plainTextSearch(
+        'query',
+        SearchResultsSortOrder.Recency,
+        10000,
+        0,
+      )
+
+      expect(mockQuery).toBeCalledWith(
+        `
+      SELECT urls.*
+      FROM urls, plainto_tsquery($query) query
+      WHERE query @@ (
+      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+    ) AND state = 'ACTIVE'
+      ORDER BY (urls.createdAt) desc
+      limit $limit
+      offset $offset`,
+        {
+          bind: { limit: 10000, offset: 0, query: 'query' },
+          mapToModel: true,
+          model: expect.any(Object),
+          type: QueryTypes.SELECT,
+        },
+      )
+    })
+
+    it('should throw when incorrect sort order is input', async () => {
+      await expect(
+        repository.plainTextSearch(
+          'query',
+          'a' as SearchResultsSortOrder,
+          10000,
+          0,
+        ),
+      ).rejects.toThrowError()
     })
   })
 })
