@@ -535,7 +535,7 @@ export default function ControlPanel() {
                 >
                   {isPrintableAscii(editedDescription)
                     ? `${editedDescription.length}/200`
-                    : 'Only ASCII characters are allowed.'}
+                    : 'Description should only contain alphanumeric characters and symbols.'}
                 </CollapsibleMessage>
               </>
             }
