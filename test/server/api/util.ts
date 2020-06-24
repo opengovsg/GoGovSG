@@ -105,7 +105,7 @@ export function createRequestWithEmailAndOtp(email: any, otp: any): Request {
   })
 }
 
-const sequelizeMock = new SequelizeMock()
+export const sequelizeMock = new SequelizeMock()
 
 export const urlModelMock = sequelizeMock.define('url', {
   shortUrl: 'a',
@@ -115,11 +115,17 @@ export const urlModelMock = sequelizeMock.define('url', {
   increment: () => {},
 })
 
-export const clicksModelMock = sequelizeMock.define('click_stats', {})
+export const clicksModelMock = sequelizeMock.define('daily_stats', {
+  increment: () => {},
+})
 
-export const heatMapModelMock = sequelizeMock.define('day_stats', {})
+export const heatMapModelMock = sequelizeMock.define('weekday_stats', {
+  increment: () => {},
+})
 
-export const devicesModelMock = sequelizeMock.define('devices_stats', {})
+export const devicesModelMock = sequelizeMock.define('devices_stats', {
+  increment: () => {},
+})
 
 export const mockTransaction = sequelizeMock.transaction
 

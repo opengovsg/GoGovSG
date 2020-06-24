@@ -8,6 +8,7 @@ import {
   isAnalyticsLogged,
   mockTransaction,
   redisMockClient,
+  sequelizeMock,
   urlModelMock,
 } from '../api/util'
 import { S3InterfaceMock } from '../mocks/services/aws'
@@ -40,7 +41,7 @@ jest.mock('../../../src/server/models/statistics/daily', () => ({
 }))
 
 jest.mock('../../../src/server/models/statistics/weekday', () => ({
-  HeatMap: heatMapModelMock,
+  WeekdayClicks: heatMapModelMock,
 }))
 
 jest.mock('../../../src/server/models/statistics/devices', () => ({
@@ -52,6 +53,7 @@ jest.mock('../../../src/server/redis', () => ({
 }))
 
 jest.mock('../../../src/server/util/sequelize', () => ({
+  sequelize: sequelizeMock,
   transaction: mockTransaction,
 }))
 
@@ -132,7 +134,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
     expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(200)
     expect(res._getRedirectUrl()).toBe('')
@@ -163,7 +165,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
     expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
@@ -185,7 +187,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
     expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
@@ -201,7 +203,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
     expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
@@ -251,7 +253,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa')
+    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
     expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
