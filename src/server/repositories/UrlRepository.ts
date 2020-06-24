@@ -171,6 +171,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     switch (order) {
       case SearchResultsSortOrder.Relevance:
         {
+          // The 3rd argument passed into ts_rank_cd represents
+          // the normalization option that specifies whether and how
+          // a document's rank should impact its rank.
+          // 1 divides the rank by 1 + the logarithm of the document length
           const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
           rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
         }
