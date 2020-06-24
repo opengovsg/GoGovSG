@@ -149,7 +149,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     // or else the index will not be used leading to unnecessarily long query times.
     const urlVector = `
       setweight(to_tsvector('english', ${tableName}."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(${tableName}."description", '')), 'B')
+      setweight(to_tsvector('english', ${tableName}."description"), 'B')
     `
     const rawCountQuery = `
       SELECT count(*)

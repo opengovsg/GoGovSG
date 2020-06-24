@@ -88,7 +88,7 @@ describe('UrlRepository tests', () => {
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+      setweight(to_tsvector('english', urls."description"), 'B')
     )
     `,
         { bind: { query: 'query' }, raw: true, type: QueryTypes.SELECT },
@@ -100,7 +100,7 @@ describe('UrlRepository tests', () => {
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+      setweight(to_tsvector('english', urls."description"), 'B')
     ) AND state = 'ACTIVE'
       ORDER BY (urls.clicks) desc
       limit $limit
@@ -128,11 +128,11 @@ describe('UrlRepository tests', () => {
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+      setweight(to_tsvector('english', urls."description"), 'B')
     ) AND state = 'ACTIVE'
       ORDER BY (ts_rank_cd(
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+      setweight(to_tsvector('english', urls."description"), 'B')
     , query, 1) * log(urls.clicks + 1)) desc
       limit $limit
       offset $offset`,
@@ -159,7 +159,7 @@ describe('UrlRepository tests', () => {
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', coalesce(urls."description", '')), 'B')
+      setweight(to_tsvector('english', urls."description"), 'B')
     ) AND state = 'ACTIVE'
       ORDER BY (urls.createdAt) desc
       limit $limit
