@@ -71,6 +71,7 @@ router.get(
       res.set('Filename', goShortLink)
       res.contentType(format)
       res.end(buffer)
+      return
     })
   },
 )

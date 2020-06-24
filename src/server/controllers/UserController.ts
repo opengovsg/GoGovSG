@@ -48,12 +48,15 @@ export class UserController implements UserControllerInterface {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
-      } else if (error instanceof AlreadyExistsError) {
-        res.badRequest(jsonMessage(error.message, MessageType.ShortUrlError))
-      } else {
-        logger.error(`Error creating short URL:\t${error}`)
-        res.badRequest(jsonMessage('Server error.'))
+        return
       }
+      if (error instanceof AlreadyExistsError) {
+        res.badRequest(jsonMessage(error.message, MessageType.ShortUrlError))
+        return
+      }
+      logger.error(`Error creating short URL:\t${error}`)
+      res.badRequest(jsonMessage('Server error.'))
+      return
     }
   }
 
@@ -85,10 +88,11 @@ export class UserController implements UserControllerInterface {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
-      } else {
-        logger.error(`Error editing URL:\t${error}`)
-        res.badRequest(jsonMessage(`Unable to edit short link "${shortUrl}"`))
+        return
       }
+      logger.error(`Error editing URL:\t${error}`)
+      res.badRequest(jsonMessage(`Unable to edit short link "${shortUrl}"`))
+      return
     }
   }
 
@@ -113,12 +117,15 @@ export class UserController implements UserControllerInterface {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
-      } else if (error instanceof AlreadyOwnLinkError) {
-        res.badRequest(jsonMessage(error.message))
-      } else {
-        logger.error(`Error transferring ownership of short URL:\t${error}`)
-        res.badRequest(jsonMessage('An error has occured'))
+        return
       }
+      if (error instanceof AlreadyOwnLinkError) {
+        res.badRequest(jsonMessage(error.message))
+        return
+      }
+      logger.error(`Error transferring ownership of short URL:\t${error}`)
+      res.badRequest(jsonMessage('An error has occured'))
+      return
     }
   }
 
@@ -158,9 +165,10 @@ export class UserController implements UserControllerInterface {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.notFound(error.message)
-      } else {
-        res.serverError(jsonMessage('Error retrieving URLs for user'))
+        return
       }
+      res.serverError(jsonMessage('Error retrieving URLs for user'))
+      return
     }
   }
 }

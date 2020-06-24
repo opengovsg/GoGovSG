@@ -93,6 +93,7 @@ export class RedirectController implements RedirectControllerInterface {
       }
 
       res.status(404).render(ERROR_404_PATH, { shortUrl })
+      return
     }
   }
 

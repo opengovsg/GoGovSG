@@ -132,6 +132,7 @@ initDb()
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
       res.status(404).render('404.error.ejs', { shortUrl })
+      return
     })
 
     const errorHandler: express.ErrorRequestHandler = (
@@ -147,6 +148,7 @@ initDb()
         return
       }
       res.status(500).render('500.error.ejs')
+      return
     }
     app.use(errorHandler)
 

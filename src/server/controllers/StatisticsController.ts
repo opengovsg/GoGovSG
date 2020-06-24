@@ -20,6 +20,7 @@ export class StatisticsController implements StatisticsControllerInterface {
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
     res.status(200).json(await this.statisticsService.getGlobalStatistics())
+    return
   }
 }
 
