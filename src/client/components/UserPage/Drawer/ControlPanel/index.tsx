@@ -258,7 +258,7 @@ export default function ControlPanel() {
     <>
       Link description{' '}
       <Tooltip
-        title="Link descriptions have a maximum character count of 200."
+        title="Write a description that will help users understand what your short link is for."
         arrow
         placement="top"
         classes={{ tooltip: classes.drawerTooltip }}
@@ -516,7 +516,7 @@ export default function ControlPanel() {
                     )
                   }
                   error={!isDescriptionValid}
-                  placeholder=""
+                  placeholder="Tip: Include your agency name to tell users who this link belongs to."
                   helperText={
                     isDescriptionValid
                       ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
