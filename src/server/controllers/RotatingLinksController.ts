@@ -9,6 +9,7 @@ export class RotatingLinksController
   implements RotatingLinksControllerInterface {
   getRotatingLinks(_: Express.Request, res: Express.Response): void {
     res.send(linksToRotate)
+    return
   }
 }
 
