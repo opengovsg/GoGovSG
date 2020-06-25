@@ -17,39 +17,28 @@ type DevicesTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): DevicesType
 }
 
-export const Devices = <DevicesTypeStatic>sequelize.define(
-  'devices_stats',
-  {
-    shortUrl: {
-      type: Sequelize.STRING,
-      primaryKey: true,
-      validate: {
-        is: /^[a-z0-9-]+$/,
-      },
-    },
-    mobile: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
-    tablet: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
-    desktop: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
-    },
-    others: {
-      type: Sequelize.INTEGER,
-      defaultValue: 0,
+export const Devices = <DevicesTypeStatic>sequelize.define('devices_stats', {
+  shortUrl: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    validate: {
+      is: /^[a-z0-9-]+$/,
     },
   },
-  {
-    indexes: [
-      {
-        unique: true,
-        fields: ['shortUrl'],
-      },
-    ],
+  mobile: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
   },
-)
+  tablet: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
+  desktop: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
+  others: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
+})
