@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize/types'
 import { inject, injectable } from 'inversify'
 
+import { container } from '../util/inversify'
 import { Url, UrlType } from '../models/url'
 import { Clicks } from '../models/statistics/daily'
 import { WeekdayClicks } from '../models/statistics/weekday'
@@ -16,7 +17,7 @@ import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { getLocalTime } from '../util/time'
-import { getDeviceType } from '../util/device-type'
+import { DeviceCheckServiceInterface } from '../services/interfaces/DeviceCheckServiceInterface'
 
 const { Public, Private } = FileVisibility
 /**
@@ -172,7 +173,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     userAgent: string,
     transaction?: Transaction,
   ) => Promise<void> = async (shortUrl, userAgent, transaction) => {
-    const deviceType = getDeviceType(userAgent)
+    const deviceCheck = container.get<DeviceCheckServiceInterface>(
+      DependencyIds.deviceCheckService,
+    )
+    const deviceType = deviceCheck.getDeviceType(userAgent)
     if (deviceType) {
       const [clickStats] = await Devices.findOrCreate({
         where: { shortUrl },

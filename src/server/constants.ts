@@ -30,6 +30,7 @@ export const DependencyIds = {
   linkStatisticsController: Symbol.for('linkStatisticsController'),
   linkStatisticsService: Symbol.for('linkStatisticsService'),
   linkStatisticsRepository: Symbol.for('linkStatisticsRepository'),
+  deviceCheckService: Symbol.for('deviceCheckService'),
 }
 
 export default DependencyIds

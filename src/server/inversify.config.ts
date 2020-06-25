@@ -32,6 +32,7 @@ import { QrCodeService } from './services/QrCodeService'
 import { LinkStatisticsController } from './controllers/LinkStatisticsController'
 import { LinkStatisticsService } from './services/LinkStatisticsService'
 import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
+import { DeviceCheckService } from './services/DeviceCheckService'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -66,6 +67,7 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
+  bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
 
   bindIfUnbound(
     DependencyIds.linkStatisticsController,
