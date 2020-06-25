@@ -10,6 +10,11 @@ type ShortUrlProperty = {
   shortUrl: string
 }
 
+type LinkInformationProperties = {
+  contactEmail: string
+  description: string
+}
+
 type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 
 type NewUserEmailProperty = {
@@ -31,4 +36,5 @@ export type OwnershipTransferRequest = ShortUrlOperationProperty &
 
 export type UrlEditRequest = ShortUrlOperationProperty &
   OptionalStateProperty &
-  OptionalLongUrlProperty
+  OptionalLongUrlProperty &
+  Partial<LinkInformationProperties>

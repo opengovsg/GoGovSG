@@ -26,6 +26,7 @@ export class LoginController implements LoginControllerInterface {
     res: Express.Response,
   ) => void = (_, res) => {
     res.send(loginMessage)
+    return
   }
 
   public getEmailDomains: (
@@ -33,6 +34,7 @@ export class LoginController implements LoginControllerInterface {
     res: Express.Response,
   ) => void = (_, res) => {
     res.send(validEmailDomainGlobExpression)
+    return
   }
 
   public generateOtp: (
@@ -45,9 +47,11 @@ export class LoginController implements LoginControllerInterface {
       await this.authService.generateOtp(email)
     } catch (error) {
       res.serverError(jsonMessage(error.message))
+      return
     }
 
     res.ok(jsonMessage('OTP generated and sent.'))
+    return
   }
 
   public verifyOtp: (
@@ -60,6 +64,7 @@ export class LoginController implements LoginControllerInterface {
       const user = await this.authService.verifyOtp(email, otp)
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
+      return
     } catch (error) {
       if (error instanceof InvalidOtpError) {
         res.unauthorized(
@@ -67,11 +72,14 @@ export class LoginController implements LoginControllerInterface {
             `OTP hash verification failed, ${error.retries} attempt(s) remaining.`,
           ),
         )
-      } else if (error instanceof NotFoundError) {
-        res.unauthorized(jsonMessage('OTP expired/not found.'))
-      } else {
-        res.serverError(jsonMessage(error.message))
+        return
       }
+      if (error instanceof NotFoundError) {
+        res.unauthorized(jsonMessage('OTP expired/not found.'))
+        return
+      }
+      res.serverError(jsonMessage(error.message))
+      return
     }
   }
 
@@ -84,9 +92,10 @@ export class LoginController implements LoginControllerInterface {
     if (user) {
       const response = { ...jsonMessage('Logged in'), user }
       res.ok(response)
-    } else {
-      res.notFound(jsonMessage('User session not found'))
+      return
     }
+    res.notFound(jsonMessage('User session not found'))
+    return
   }
 }
 

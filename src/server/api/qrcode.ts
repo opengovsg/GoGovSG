@@ -2,9 +2,9 @@ import Express from 'express'
 import Joi from '@hapi/joi'
 import { createValidator } from 'express-joi-validation'
 
-import { ogUrl } from '../config'
-import createGoQrCode from '../util/qrcode'
 import ImageFormat from '../../shared/util/image-format'
+import { ogUrl } from '../config'
+import { QrCodeServiceInterface } from '../services/interfaces/QrCodeServiceInterface'
 import { isValidShortUrl } from '../../shared/util/validation'
 import { container } from '../util/inversify'
 import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
@@ -61,12 +61,17 @@ router.get(
     // Append base url to short link before creating the qr.
     const goShortLink = `${ogUrl}/${url}`
 
+    const qrCodeService = container.get<QrCodeServiceInterface>(
+      DependencyIds.qrCodeService,
+    )
+
     // Creates the QR code and sends it to the client.
-    createGoQrCode(goShortLink, format).then((buffer) => {
+    qrCodeService.createGoQrCode(goShortLink, format).then((buffer) => {
       // Provides callee a proposed filename for image.
       res.set('Filename', goShortLink)
       res.contentType(format)
       res.end(buffer)
+      return
     })
   },
 )

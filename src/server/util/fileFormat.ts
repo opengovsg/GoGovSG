@@ -17,5 +17,3 @@ export function addFileExtension(fileName: string, extension: string): string {
 
   return `${fileName}.${extension}`
 }
-
-export default getFileExtension

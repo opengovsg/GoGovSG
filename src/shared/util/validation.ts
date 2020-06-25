@@ -3,7 +3,7 @@ import { parse } from 'url'
 
 import blacklist from '../../server/resources/blacklist'
 
-export const WHITELIST = [new RegExp('^http://localhost:4572')]
+export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
 export const URL_OPTS: ValidatorJS.IsURLOptions = {
   protocols: ['https'],
@@ -57,4 +57,9 @@ export function isValidLongUrl(
 export function isCircularRedirects(url: string, hostname?: string): boolean {
   if (!hostname) return false
   return parse(url).hostname === hostname
+}
+
+export function isPrintableAscii(string: string): boolean {
+  // Only accepts characters from 0x20 to 0x7F
+  return /^[\x20-\x7F]*$/.test(string)
 }

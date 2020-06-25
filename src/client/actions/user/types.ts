@@ -25,6 +25,24 @@ export const SET_IS_UPLOADING = 'SET_IS_UPLOADING'
 export const SET_UPLOAD_FILE_ERROR = 'SET_UPLOAD_FILE_ERROR'
 export const SET_CREATE_SHORT_LINK_ERROR = 'SET_CREATE_SHORT_LINK_ERROR'
 export const SET_LAST_CREATED_LINK = 'SET_LAST_CREATED_LINK'
+export const SET_EDITED_CONTACT_EMAIL = 'SET_EDITED_CONTACT_EMAIL'
+export const SET_EDITED_DESCRIPTION = 'SET_EDITED_DESCRIPTION'
+
+export type SetEditedContactEmailAction = {
+  type: typeof SET_EDITED_CONTACT_EMAIL
+  payload: {
+    shortUrl: string
+    editedContactEmail: string
+  }
+}
+
+export type SetEditedDescriptionAction = {
+  type: typeof SET_EDITED_DESCRIPTION
+  payload: {
+    shortUrl: string
+    editedDescription: string
+  }
+}
 
 export type SetLastCreatedLinkAction = {
   type: typeof SET_LAST_CREATED_LINK
@@ -143,3 +161,5 @@ export type UserActionType =
   | SetUploadFileErrorAction
   | SetLastCreatedLinkAction
   | SetUrlFilterAction
+  | SetEditedContactEmailAction
+  | SetEditedDescriptionAction

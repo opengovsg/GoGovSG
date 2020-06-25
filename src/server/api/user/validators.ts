@@ -1,7 +1,13 @@
 import * as Joi from '@hapi/joi'
 import { ACTIVE, INACTIVE } from '../../models/types'
 import blacklist from '../../resources/blacklist'
-import { isHttps, isValidShortUrl } from '../../../shared/util/validation'
+import {
+  isHttps,
+  isPrintableAscii,
+  isValidShortUrl,
+} from '../../../shared/util/validation'
+import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../shared/constants'
+import { isValidGovEmail } from '../../util/email'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
@@ -51,6 +57,25 @@ export const urlEditSchema = Joi.object({
     file: Joi.object().keys().required(),
   }),
   state: Joi.string().allow(ACTIVE, INACTIVE).only(),
+  description: Joi.string()
+    .allow('')
+    .max(LINK_DESCRIPTION_MAX_LENGTH)
+    .custom((description: string, helpers) => {
+      if (!isPrintableAscii(description)) {
+        return helpers.message({
+          custom: 'Description must only contain ASCII characters.',
+        })
+      }
+      return description
+    }),
+  contactEmail: Joi.string()
+    .allow(null)
+    .custom((email: string, helpers) => {
+      if (!isValidGovEmail(email)) {
+        return helpers.message({ custom: 'Not a valid gov email or null' })
+      }
+      return email
+    }),
 }).oxor('longUrl', 'files')
 
 export const ownershipTransferSchema = Joi.object({

@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 
+import { IMinimatch } from 'minimatch'
 import userActions from '../../../../../actions/user'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
 import { UrlType } from '../../../../../reducers/user/types'
@@ -26,6 +27,9 @@ export default function useShortLink(shortLink: string) {
   const isUploading = useSelector<GoGovReduxState, boolean>(
     (state) => state.user.isUploading,
   )
+  const emailValidator = useSelector<GoGovReduxState, IMinimatch>(
+    (state) => state.login.emailValidator,
+  )
   const dispatch = useDispatch()
   const dispatchOptions = {
     toggleStatus: () =>
@@ -33,11 +37,20 @@ export default function useShortLink(shortLink: string) {
     setEditLongUrl: (editedUrl: string) => {
       dispatch(userActions.setEditedLongUrl(shortLink, editedUrl))
     },
+    setEditDescription: (editedDesc: string) => {
+      dispatch(userActions.setEditedDescription(shortLink, editedDesc))
+    },
+    setEditContactEmail: (editedContactEmail: string) => {
+      dispatch(userActions.setEditedContactEmail(shortLink, editedContactEmail))
+    },
     applyEditLongUrl: (editedUrl: string) => {
       if (!isValidLongUrl(editedUrl)) {
         throw new Error('Attempt to save an invalid long url.')
       }
       dispatch(userActions.updateLongUrl(shortLink, editedUrl))
+    },
+    applyEditInformation: () => {
+      dispatch(userActions.updateUrlInformation(shortLink))
     },
     applyNewOwner: (newOwner: string, onSuccess: () => void) => {
       dispatch(userActions.transferOwnership(shortLink, newOwner, onSuccess))
@@ -54,5 +67,6 @@ export default function useShortLink(shortLink: string) {
     shortLinkState: shortLink ? urlState : undefined,
     shortLinkDispatch: shortLink ? dispatchOptions : undefined,
     isUploading,
+    emailValidator,
   }
 }

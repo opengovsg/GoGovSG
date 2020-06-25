@@ -3,14 +3,14 @@ import { ogHostname } from '../../../src/server/config'
 
 describe('Test whiteliste check', () => {
   test('localstack url is whitelisted', () => {
-    const url = 'http://localhost:4572'
+    const url = 'http://localhost:4566'
     expect(validation.isWhitelisted(url)).toBe(true)
   })
 })
 
 describe('Test blacklist check', () => {
   test('localstack url is not blacklisted', () => {
-    const url = 'http://localhost:4572'
+    const url = 'http://localhost:4566'
     expect(validation.isBlacklisted(url)).toBe(false)
   })
 
@@ -32,12 +32,12 @@ describe('Test https check', () => {
   })
 
   test('localstack url fails check by default', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isHttps(url)).toBe(false)
   })
 
   test('localstack url passes check with whitelist', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isHttps(url, true)).toBe(true)
   })
 })
@@ -59,12 +59,12 @@ describe('Test valid url check', () => {
   })
 
   test('localstack url fails check by default', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url)).toBe(false)
   })
 
   test('localstack url passes check with whitelist', () => {
-    const url = 'http://localhost:4572/local-bucket/file1.pdf'
+    const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url, true)).toBe(true)
   })
 })
@@ -129,5 +129,23 @@ describe('Test circular directs check', () => {
   test('og url passes check', () => {
     const url = `https://${ogHostname}.com/abc`
     expect(validation.isCircularRedirects(url)).toBe(false)
+  })
+})
+
+describe('test isPrintableAscii', () => {
+  it('should return false on non-english language characters', () => {
+    expect(validation.isPrintableAscii('在一个风和日丽的早上')).toBeFalsy()
+    expect(validation.isPrintableAscii('விக்சன')).toBeFalsy()
+    expect(
+      validation.isPrintableAscii('在一个风和日丽的早上, test'),
+    ).toBeFalsy()
+  })
+
+  it('should return true on printable ascii characters', () => {
+    expect(validation.isPrintableAscii('test description')).toBeTruthy()
+    expect(
+      validation.isPrintableAscii("!@#$%^&*()~`-=[];',./\\/*-+"),
+    ).toBeTruthy()
+    expect(validation.isPrintableAscii('aAbBcC')).toBeTruthy()
   })
 })

@@ -8,6 +8,10 @@ export type UrlType = {
   state: UrlState
   updatedAt: string
   userId: number
+  description: string
+  editedDescription: string
+  contactEmail: string
+  editedContactEmail: string
 }
 
 export type UserState = {

@@ -114,6 +114,11 @@ export default responsiveFontSizes(
           backgroundColor: '#f9f9f9',
         },
       },
+      MuiInputBase: {
+        input: {
+          fontSize: '14px',
+        },
+      },
       MuiCssBaseline: {
         '@global': {
           // Used for crest symbol in government masthead.

@@ -8,6 +8,7 @@ import { SentryControllerInterface } from './interfaces/SentryControllerInterfac
 export class SentryController implements SentryControllerInterface {
   getSentryDns(_: Express.Request, res: Express.Response) {
     res.send(sentryDns)
+    return
   }
 }
 
