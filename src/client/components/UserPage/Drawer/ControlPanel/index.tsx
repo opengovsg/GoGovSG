@@ -152,6 +152,9 @@ const useStyles = makeStyles((theme) =>
         paddingTop: 9,
       },
     },
+    hotlink: {
+      color: '#384a51',
+    },
   }),
 )
 
@@ -239,7 +242,7 @@ export default function ControlPanel() {
     <>
       Contact email{' '}
       <Tooltip
-        title="Enter an email which users can contact if they have queries about your short link."
+        title="Enter an email which the public can contact if they have queries about your short link."
         arrow
         placement="top"
         classes={{ tooltip: classes.drawerTooltip }}
@@ -473,9 +476,11 @@ export default function ControlPanel() {
             Link information
           </Typography>
           <Typography variant="body2" className={classes.linkInformationDesc}>
-            The information you enter below will be displayed on our Go Search
-            page (coming soon), and the error page if users are unable to access
-            your short link.
+            The information you enter below will be displayed on our{' '}
+            <a href="https://go.gov.sg/go-search" className={classes.hotlink}>
+              <b>Go Search page (coming soon)</b>
+            </a>
+            , and the error page if users are unable to access your short link.
           </Typography>
           <ConfigOption
             title={contactEmailHelp}
