@@ -131,3 +131,21 @@ describe('Test circular directs check', () => {
     expect(validation.isCircularRedirects(url)).toBe(false)
   })
 })
+
+describe('test isPrintableAscii', () => {
+  it('should return false on non-english language characters', () => {
+    expect(validation.isPrintableAscii('在一个风和日丽的早上')).toBeFalsy()
+    expect(validation.isPrintableAscii('விக்சன')).toBeFalsy()
+    expect(
+      validation.isPrintableAscii('在一个风和日丽的早上, test'),
+    ).toBeFalsy()
+  })
+
+  it('should return true on printable ascii characters', () => {
+    expect(validation.isPrintableAscii('test description')).toBeTruthy()
+    expect(
+      validation.isPrintableAscii("!@#$%^&*()~`-=[];',./\\/*-+"),
+    ).toBeTruthy()
+    expect(validation.isPrintableAscii('aAbBcC')).toBeTruthy()
+  })
+})
