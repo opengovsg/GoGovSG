@@ -33,7 +33,15 @@ export class LinkStatisticsRepository
       include: [
         { model: Devices, as: 'DeviceClicks' },
         { model: Clicks, as: 'DailyClicks' },
-        { model: WeekdayClicks, as: 'WeekdayClicks' },
+        {
+          model: WeekdayClicks,
+          as: 'WeekdayClicks',
+        },
+      ],
+      order: [
+        [{ model: Clicks, as: 'DailyClicks' }, 'date', 'ASC'],
+        [{ model: WeekdayClicks, as: 'WeekdayClicks' }, 'weekday', 'ASC'],
+        [{ model: WeekdayClicks, as: 'WeekdayClicks' }, 'hours', 'ASC'],
       ],
     })
     if (url) {
