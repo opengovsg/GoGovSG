@@ -516,7 +516,7 @@ export default function ControlPanel() {
                     )
                   }
                   error={!isDescriptionValid}
-                  placeholder="Tip: Include your agency name to tell users who this link belongs to."
+                  placeholder="Tip: Include your agency name to inform the public who this link belongs to."
                   helperText={
                     isDescriptionValid
                       ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
