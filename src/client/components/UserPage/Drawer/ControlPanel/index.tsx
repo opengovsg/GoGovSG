@@ -258,7 +258,7 @@ export default function ControlPanel() {
     <>
       Link description{' '}
       <Tooltip
-        title="Write a description that will help users understand what your short link is for."
+        title="Write a description that will help the public understand what your short link is for."
         arrow
         placement="top"
         classes={{ tooltip: classes.drawerTooltip }}
