@@ -60,5 +60,6 @@ export function isCircularRedirects(url: string, hostname?: string): boolean {
 }
 
 export function isPrintableAscii(string: string): boolean {
+  // Only accepts characters from 0x20 to 0x7F
   return /^[\x20-\x7F]*$/.test(string)
 }
