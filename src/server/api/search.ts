@@ -6,6 +6,8 @@ import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
 import { SearchControllerInterface } from '../controllers/interfaces/SearchControllerInterface'
 import { SearchResultsSortOrder } from '../repositories/enums'
+import getIp from '../util/request'
+import { logger } from '../config'
 
 const urlSearchRequestSchema = Joi.object({
   query: Joi.string().required(),
@@ -18,6 +20,9 @@ const urlSearchRequestSchema = Joi.object({
 })
 
 const apiLimiter = rateLimit({
+  keyGenerator: (req) => getIp(req) as string,
+  onLimitReached: (req) =>
+    logger.warn(`Rate limit reached for IP Address: ${getIp(req)}`),
   windowMs: 1000, // 1 second
   max: 20,
 })
