@@ -254,9 +254,9 @@ export class UrlRepository implements UrlRepositoryInterface {
       SELECT ${tableName}.*
       FROM ${tableName}, plainto_tsquery($query) query
       WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
-      ORDER BY (${rankingAlgorithm}) desc
-      limit $limit
-      offset $offset`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT $limit
+      OFFSET $offset`
     const urlsModel = (await sequelize.query(rawQuery, {
       bind: {
         limit,

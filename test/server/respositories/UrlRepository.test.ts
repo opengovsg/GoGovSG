@@ -102,9 +102,9 @@ describe('UrlRepository tests', () => {
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
       setweight(to_tsvector('english', urls."description"), 'B')
     ) AND state = 'ACTIVE'
-      ORDER BY (urls.clicks) desc
-      limit $limit
-      offset $offset`,
+      ORDER BY (urls.clicks) DESC
+      LIMIT $limit
+      OFFSET $offset`,
         {
           bind: { limit: 100, offset: 0, query: 'query' },
           mapToModel: true,
@@ -133,9 +133,9 @@ describe('UrlRepository tests', () => {
       ORDER BY (ts_rank_cd(
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
       setweight(to_tsvector('english', urls."description"), 'B')
-    , query, 1) * log(urls.clicks + 1)) desc
-      limit $limit
-      offset $offset`,
+    , query, 1) * log(urls.clicks + 1)) DESC
+      LIMIT $limit
+      OFFSET $offset`,
         {
           bind: { limit: 100, offset: 0, query: 'query' },
           mapToModel: true,
@@ -161,9 +161,9 @@ describe('UrlRepository tests', () => {
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
       setweight(to_tsvector('english', urls."description"), 'B')
     ) AND state = 'ACTIVE'
-      ORDER BY (urls."createdAt") desc
-      limit $limit
-      offset $offset`,
+      ORDER BY (urls."createdAt") DESC
+      LIMIT $limit
+      OFFSET $offset`,
         {
           bind: { limit: 100, offset: 0, query: 'query' },
           mapToModel: true,
