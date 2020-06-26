@@ -32,7 +32,7 @@ export class SearchController implements SearchControllerInterface {
     const {
       query,
       order,
-      limit = 10000,
+      limit = 100,
       offset = 0,
     } = req.query as UrlSearchRequest
 

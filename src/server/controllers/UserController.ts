@@ -150,8 +150,8 @@ export class UserController implements UserControllerInterface {
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
     const { userId } = req.body
-    let { limit = 10000, searchText = '' } = req.query
-    limit = Math.min(10000, limit)
+    let { limit = 1000, searchText = '' } = req.query
+    limit = Math.min(1000, limit)
     searchText = searchText.toLowerCase()
     const {
       offset = 0,

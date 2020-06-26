@@ -62,7 +62,7 @@ describe('UrlRepository tests', () => {
         repository.plainTextSearch(
           'query',
           SearchResultsSortOrder.Popularity,
-          10000,
+          100,
           0,
         ),
       ).resolves.toStrictEqual({
@@ -106,7 +106,7 @@ describe('UrlRepository tests', () => {
       limit $limit
       offset $offset`,
         {
-          bind: { limit: 10000, offset: 0, query: 'query' },
+          bind: { limit: 100, offset: 0, query: 'query' },
           mapToModel: true,
           model: expect.any(Object),
           type: QueryTypes.SELECT,
@@ -118,7 +118,7 @@ describe('UrlRepository tests', () => {
       await repository.plainTextSearch(
         'query',
         SearchResultsSortOrder.Relevance,
-        10000,
+        100,
         0,
       )
 
@@ -137,7 +137,7 @@ describe('UrlRepository tests', () => {
       limit $limit
       offset $offset`,
         {
-          bind: { limit: 10000, offset: 0, query: 'query' },
+          bind: { limit: 100, offset: 0, query: 'query' },
           mapToModel: true,
           model: expect.any(Object),
           type: QueryTypes.SELECT,
@@ -149,7 +149,7 @@ describe('UrlRepository tests', () => {
       await repository.plainTextSearch(
         'query',
         SearchResultsSortOrder.Recency,
-        10000,
+        100,
         0,
       )
 
@@ -165,7 +165,7 @@ describe('UrlRepository tests', () => {
       limit $limit
       offset $offset`,
         {
-          bind: { limit: 10000, offset: 0, query: 'query' },
+          bind: { limit: 100, offset: 0, query: 'query' },
           mapToModel: true,
           model: expect.any(Object),
           type: QueryTypes.SELECT,
@@ -178,7 +178,7 @@ describe('UrlRepository tests', () => {
         repository.plainTextSearch(
           'query',
           'a' as SearchResultsSortOrder,
-          10000,
+          100,
           0,
         ),
       ).rejects.toThrowError()

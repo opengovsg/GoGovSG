@@ -72,7 +72,7 @@ describe('SearchController unit test', () => {
     expect(urlSearchService.plainTextSearch).toBeCalledWith(
       'moh',
       SearchResultsSortOrder.Relevance,
-      10000,
+      100,
       0,
     )
     // clicks information should be stripped
