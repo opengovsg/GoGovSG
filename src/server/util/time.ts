@@ -27,34 +27,34 @@ export type Time = {
 /**
  * Get the time now in Singapore time.
  */
-function getLocalDate(): moment.Moment {
-  const time = moment.tz('Asia/Singapore')
+function getLocalDate(offsetDays: number): moment.Moment {
+  const time = moment.tz('Asia/Singapore').add(offsetDays, 'days')
   return time
 }
 
 /**
  * Get the local date string in the yyyy-MM-DD format.
+ *
+ * @param offsetDays The number of days after the time now.
  */
-function getLocalDayGroup(): string {
-  return getLocalDate().format('yyyy-MM-DD')
+export function getLocalDayGroup(offsetDays: number = 0): string {
+  return getLocalDate(offsetDays).format('yyyy-MM-DD')
 }
 
 /**
  * Retrieves the day of the week as a number.
  */
-function getLocalWeekday(): number {
-  return getLocalDate().days()
+export function getLocalWeekday(offsetDays: number = 0): number {
+  return getLocalDate(offsetDays).days()
 }
 
 /**
  * Retrieves the current UTC date information for statistics.
  */
-export function getLocalTime(): Time {
+export function getLocalTime(offsetDays: number = 0): Time {
   return {
-    weekday: getLocalWeekday(),
-    hours: getLocalDate().hours(),
-    date: getLocalDayGroup(),
+    weekday: getLocalWeekday(offsetDays),
+    hours: getLocalDate(offsetDays).hours(),
+    date: getLocalDayGroup(offsetDays),
   }
 }
-
-export default { getLocalTime }

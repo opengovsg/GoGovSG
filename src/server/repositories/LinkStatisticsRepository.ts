@@ -1,4 +1,6 @@
 import { injectable } from 'inversify'
+import { Op } from 'sequelize'
+
 import { Url, UrlType } from '../models/url'
 import { Clicks, ClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
@@ -10,6 +12,7 @@ import {
   WeekdayClicksInterface,
 } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
+import { getLocalDayGroup } from '../util/time'
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -32,7 +35,16 @@ export class LinkStatisticsRepository
       where: { shortUrl },
       include: [
         { model: Devices, as: 'DeviceClicks' },
-        { model: Clicks, as: 'DailyClicks' },
+        {
+          model: Clicks,
+          as: 'DailyClicks',
+          where: {
+            date: {
+              // To retrieve a range from today, and up to 6 days ago inclusive.
+              [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
+            },
+          },
+        },
         {
           model: WeekdayClicks,
           as: 'WeekdayClicks',
