@@ -89,7 +89,7 @@ describe('UrlRepository tests', () => {
       WHERE query @@ (
       setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
       setweight(to_tsvector('english', urls."description"), 'B')
-    )
+    ) AND state = 'ACTIVE'
     `,
         { bind: { query: 'query' }, raw: true, type: QueryTypes.SELECT },
       )

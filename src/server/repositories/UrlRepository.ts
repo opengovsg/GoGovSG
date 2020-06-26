@@ -307,7 +307,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const rawCountQuery = `
       SELECT count(*)
       FROM ${tableName}, plainto_tsquery($query) query
-      WHERE query @@ (${urlVector})
+      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
     `
     const [{ count: countString }] = await sequelize.query(rawCountQuery, {
       bind: {
