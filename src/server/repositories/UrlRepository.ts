@@ -281,7 +281,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         {
           // The 3rd argument passed into ts_rank_cd represents
           // the normalization option that specifies whether and how
-          // a document's rank should impact its rank. It works as a bit mask.
+          // a document's length should impact its rank. It works as a bit mask.
           // 1 divides the rank by 1 + the logarithm of the document length
           const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
           rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
