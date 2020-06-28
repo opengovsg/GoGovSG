@@ -105,27 +105,103 @@ export function createRequestWithEmailAndOtp(email: any, otp: any): Request {
   })
 }
 
+export class MockSequelizeTransaction {
+  fn: Function | null
+
+  constructor() {
+    this.fn = null
+  }
+
+  transaction(fn: () => Promise<void>): Promise<void> {
+    this.fn = fn
+    return Promise.resolve()
+  }
+}
+
 export const sequelizeMock = new SequelizeMock()
 
-export const urlModelMock = sequelizeMock.define('url', {
-  shortUrl: 'a',
-  longUrl: 'aa',
-  state: ACTIVE,
-  clicks: 0,
-  increment: () => {},
-})
+export const urlModelMock = sequelizeMock.define(
+  'url',
+  {
+    shortUrl: 'a',
+    longUrl: 'aa',
+    state: ACTIVE,
+    clicks: 8,
+  },
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
 
-export const clicksModelMock = sequelizeMock.define('daily_stats', {
-  increment: () => {},
-})
+export const clicksModelMock = sequelizeMock.define(
+  'daily_stats',
+  [
+    {
+      shortUrl: 'a',
+      date: '2020-06-28',
+      clicks: 4,
+    },
+    {
+      shortUrl: 'a',
+      date: '2020-06-25',
+      clicks: 2,
+    },
+    {
+      shortUrl: 'a',
+      date: '2020-06-21',
+      clicks: 2,
+    },
+  ],
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
 
-export const heatMapModelMock = sequelizeMock.define('weekday_stats', {
-  increment: () => {},
-})
+export const heatMapModelMock = sequelizeMock.define(
+  'weekday_stats',
+  [
+    {
+      shortUrl: 'a',
+      weekday: 0,
+      clicks: 4,
+    },
+    {
+      shortUrl: 'a',
+      weekday: 6,
+      clicks: 4,
+    },
+    {
+      shortUrl: 'a',
+      weekday: 2,
+      clicks: 4,
+    },
+  ],
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
 
-export const devicesModelMock = sequelizeMock.define('devices_stats', {
-  increment: () => {},
-})
+export const devicesModelMock = sequelizeMock.define(
+  'devices_stats',
+  {
+    shortUrl: 'a',
+    mobile: 3,
+    tablet: 1,
+    desktop: 4,
+    others: 0,
+  },
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
 
 export const mockTransaction = sequelizeMock.transaction
 

@@ -1,11 +1,6 @@
-import { Transaction } from 'sequelize/types'
 import { inject, injectable } from 'inversify'
 
-import { container } from '../util/inversify'
 import { Url, UrlType } from '../models/url'
-import { Clicks } from '../models/statistics/daily'
-import { WeekdayClicks } from '../models/statistics/weekday'
-import { Devices } from '../models/statistics/devices'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
@@ -16,8 +11,6 @@ import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
-import { getLocalTime } from '../util/time'
-import { DeviceCheckServiceInterface } from '../services/interfaces/DeviceCheckServiceInterface'
 
 const { Public, Private } = FileVisibility
 /**
@@ -129,75 +122,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       )
       return longUrl
     }
-  }
-
-  public incrementClick: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const url = await Url.findOne({ where: { shortUrl }, transaction })
-    if (!url) {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
-    }
-    await url.increment('clicks', { transaction })
-  }
-
-  public updateDailyStatistics: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const time = getLocalTime()
-    const [clickStats] = await Clicks.findOrCreate({
-      where: { shortUrl, date: time.date },
-      transaction,
-    })
-    await clickStats.increment('clicks', { transaction })
-  }
-
-  public updateWeekdayStatistics: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const time = getLocalTime()
-    const [clickStats] = await WeekdayClicks.findOrCreate({
-      where: { shortUrl, weekday: time.weekday, hours: time.hours },
-      transaction,
-    })
-    await clickStats.increment('clicks', { transaction })
-  }
-
-  public updateDeviceStatistics: (
-    shortUrl: string,
-    userAgent: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, userAgent, transaction) => {
-    const deviceCheck = container.get<DeviceCheckServiceInterface>(
-      DependencyIds.deviceCheckService,
-    )
-    const deviceType = deviceCheck.getDeviceType(userAgent)
-    if (deviceType) {
-      const [clickStats] = await Devices.findOrCreate({
-        where: { shortUrl },
-        transaction,
-      })
-      await clickStats.increment(deviceType!, { transaction })
-    }
-  }
-
-  public updateLinkStatistics: (
-    shortUrl: string,
-    userAgent: string,
-  ) => Promise<void> = async (shortUrl, userAgent) => {
-    sequelize.transaction((t) => {
-      return Promise.all([
-        this.incrementClick(shortUrl, t),
-        this.updateDailyStatistics(shortUrl, t),
-        this.updateWeekdayStatistics(shortUrl, t),
-        this.updateDeviceStatistics(shortUrl, userAgent, t),
-      ])
-    })
   }
 
   private invalidateCache: (shortUrl: string) => Promise<void> = async (

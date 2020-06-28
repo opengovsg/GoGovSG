@@ -7,7 +7,9 @@ import { LinkStatisticsInterface } from '../../../../src/shared/interfaces/link-
 @injectable()
 export class MockLinkStatisticsRepository
   implements LinkStatisticsRepositoryInterface {
-  findByShortUrl(_: string): Promise<LinkStatisticsInterface | null> {
+  findByShortUrl: (
+    shortUrl: string,
+  ) => Promise<LinkStatisticsInterface | null> = () => {
     return Promise.resolve({
       deviceClicks: {
         desktopClicks: 1,
@@ -19,6 +21,27 @@ export class MockLinkStatisticsRepository
       weekdayClicks: [{ weekday: 2, hours: 23, clicks: 1 }],
     })
   }
+
+  incrementClick: (
+    shortUrl: string,
+    transaction?: import('sequelize/types').Transaction,
+  ) => Promise<void> = () => Promise.resolve()
+
+  updateDailyStatistics: (
+    shortUrl: string,
+    transaction?: import('sequelize/types').Transaction,
+  ) => Promise<void> = () => Promise.resolve()
+
+  updateWeekdayStatistics: (
+    shortUrl: string,
+    transaction?: import('sequelize/types').Transaction,
+  ) => Promise<void> = () => Promise.resolve()
+
+  updateDeviceStatistics: (
+    shortUrl: string,
+    userAgent: string,
+    transaction?: import('sequelize/types').Transaction,
+  ) => Promise<void> = () => Promise.resolve()
 }
 
 export default MockLinkStatisticsRepository

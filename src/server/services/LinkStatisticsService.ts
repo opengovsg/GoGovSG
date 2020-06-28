@@ -6,7 +6,6 @@ import { LinkStatisticsRepositoryInterface } from '../repositories/interfaces/Li
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
 import { NotFoundError } from '../util/error'
-import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
 import { logger } from '../config'
 import { sequelize } from '../util/sequelize'
 
@@ -16,19 +15,14 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
 
   private linkStatisticsRepository: LinkStatisticsRepositoryInterface
 
-  private urlRepository: UrlRepositoryInterface
-
   public constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
     @inject(DependencyIds.linkStatisticsRepository)
     linkStatisticsRepository: LinkStatisticsRepositoryInterface,
-    @inject(DependencyIds.urlRepository)
-    urlRepository: UrlRepositoryInterface,
   ) {
     this.userRepository = userRepository
     this.linkStatisticsRepository = linkStatisticsRepository
-    this.urlRepository = urlRepository
   }
 
   updateLinkStatistics: (
@@ -38,10 +32,14 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
     sequelize
       .transaction((t) => {
         return Promise.all([
-          this.urlRepository.incrementClick(shortUrl, t),
-          this.urlRepository.updateDailyStatistics(shortUrl, t),
-          this.urlRepository.updateWeekdayStatistics(shortUrl, t),
-          this.urlRepository.updateDeviceStatistics(shortUrl, userAgent, t),
+          this.linkStatisticsRepository.incrementClick(shortUrl, t),
+          this.linkStatisticsRepository.updateDailyStatistics(shortUrl, t),
+          this.linkStatisticsRepository.updateWeekdayStatistics(shortUrl, t),
+          this.linkStatisticsRepository.updateDeviceStatistics(
+            shortUrl,
+            userAgent,
+            t,
+          ),
         ])
       })
       .catch((error) =>

@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import { Url, UrlType } from '../models/url'
 import { Clicks, ClicksType } from '../models/statistics/daily'
@@ -12,7 +12,11 @@ import {
   WeekdayClicksInterface,
 } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
-import { getLocalDayGroup } from '../util/time'
+import { getLocalDayGroup, getLocalTime } from '../util/time'
+import { NotFoundError } from '../util/error'
+import { container } from '../util/inversify'
+import { DeviceCheckServiceInterface } from '../services/interfaces/DeviceCheckServiceInterface'
+import { DependencyIds } from '../constants'
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -23,11 +27,6 @@ export type UrlStats = UrlType & {
 @injectable()
 export class LinkStatisticsRepository
   implements LinkStatisticsRepositoryInterface {
-  /**
-   * Retrieves link statistics for a specified short link.
-   *
-   * @param shortUrl The target short url to retrieve link statistics.
-   */
   public findByShortUrl: (
     shortUrl: string,
   ) => Promise<LinkStatisticsInterface | null> = async (shortUrl) => {
@@ -88,6 +87,61 @@ export class LinkStatisticsRepository
       } as LinkStatisticsInterface
     }
     return null
+  }
+
+  public incrementClick: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, transaction) => {
+    const url = await Url.findOne({ where: { shortUrl }, transaction })
+    if (!url) {
+      throw new NotFoundError(
+        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+      )
+    }
+    await url.increment('clicks', { transaction })
+  }
+
+  public updateDailyStatistics: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, transaction) => {
+    const time = getLocalTime()
+    const [clickStats] = await Clicks.findOrCreate({
+      where: { shortUrl, date: time.date },
+      transaction,
+    })
+    await clickStats.increment('clicks', { transaction })
+  }
+
+  public updateWeekdayStatistics: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, transaction) => {
+    const time = getLocalTime()
+    const [clickStats] = await WeekdayClicks.findOrCreate({
+      where: { shortUrl, weekday: time.weekday, hours: time.hours },
+      transaction,
+    })
+    await clickStats.increment('clicks', { transaction })
+  }
+
+  public updateDeviceStatistics: (
+    shortUrl: string,
+    userAgent: string,
+    transaction?: Transaction,
+  ) => Promise<void> = async (shortUrl, userAgent, transaction) => {
+    const deviceCheck = container.get<DeviceCheckServiceInterface>(
+      DependencyIds.deviceCheckService,
+    )
+    const deviceType = deviceCheck.getDeviceType(userAgent)
+    if (deviceType) {
+      const [clickStats] = await Devices.findOrCreate({
+        where: { shortUrl },
+        transaction,
+      })
+      await clickStats.increment(deviceType!, { transaction })
+    }
   }
 }
 
