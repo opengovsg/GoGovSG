@@ -1,6 +1,13 @@
+import SequelizeMock from 'sequelize-mock'
+
 import { LinkStatisticsService } from '../../../src/server/services/LinkStatisticsService'
 import { MockLinkStatisticsRepository } from '../mocks/repositories/LinkStatisticsRepository'
 import { MockUserRepository } from '../mocks/repositories/UserRepository'
+import { MockUrlRepository } from '../mocks/repositories/UrlRepository'
+
+jest.mock('../../../src/server/util/sequelize', () => ({
+  sequelize: new SequelizeMock(),
+}))
 
 /**
  * Unit tests for StatisticService.
@@ -11,6 +18,7 @@ describe('LinkStatisticService tests', () => {
       const service = new LinkStatisticsService(
         new MockUserRepository(),
         new MockLinkStatisticsRepository(),
+        new MockUrlRepository(),
       )
       await expect(
         service.getLinkStatistics(123, 'hello'),
