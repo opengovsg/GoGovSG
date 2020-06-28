@@ -17,7 +17,16 @@ export class LinkStatisticsServiceMock
     userId: number,
     shortUrl: string,
   ) => Promise<LinkStatisticsInterface> = () => {
-    return Promise.resolve({} as LinkStatisticsInterface)
+    return Promise.resolve({
+      deviceClicks: {
+        desktopClicks: 1,
+        tabletClicks: 2,
+        mobileClicks: 3,
+        otherClicks: 4,
+      },
+      dailyClicks: [],
+      weekdayClicks: [],
+    } as LinkStatisticsInterface)
   }
 }
 

@@ -25,12 +25,12 @@ export class LinkStatisticsController
   ) => Promise<void> = async (req, res) => {
     const shortUrl = req.query.url as string
     if (!shortUrl) {
-      res.notFound(jsonMessage('Short url does not exist'))
+      res.status(404).send(jsonMessage('Short url does not exist'))
       return
     }
     const user = req.session?.user as UserType
     if (!user) {
-      res.unauthorized(jsonMessage('User session does not exist'))
+      res.status(401).send(jsonMessage('User session does not exist'))
       return
     }
     try {
@@ -41,7 +41,7 @@ export class LinkStatisticsController
       res.status(200).json(linkStats)
       return
     } catch (error) {
-      res.notFound(jsonMessage(error.message))
+      res.status(404).send(jsonMessage(error.message))
       return
     }
   }
