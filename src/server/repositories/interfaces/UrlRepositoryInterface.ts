@@ -84,12 +84,4 @@ export interface UrlRepositoryInterface {
     userAgent: string,
     transaction?: Transaction,
   ) => Promise<void>
-
-  /**
-   * Asynchronously upserts the relevant short link's statistics.
-   *
-   * @param shortUrl The relevant short url.
-   * @returns Promise that resolves to be empty.
-   */
-  updateLinkStatistics: (shortUrl: string, userAgent: string) => Promise<void>
 }

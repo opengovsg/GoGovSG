@@ -31,6 +31,8 @@ import { logger } from '../config'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { CrawlerCheckServiceInterface } from '../../../src/server/services/interfaces/CrawlerCheckServiceInterface'
 import { CrawlerCheckService } from '../../../src/server/services/CrawlerCheckService'
+import { LinkStatisticsServiceInterface } from '../../../src/server/services/interfaces/LinkStatisticsServiceInterface'
+import { LinkStatisticsServiceMock } from '../mocks/services/LinkStatisticsService'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -59,7 +61,11 @@ jest.mock('../../../src/server/util/sequelize', () => ({
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 const repository = new UrlRepository(new S3InterfaceMock(), new UrlMapper())
-const incrementClicksSpy = jest.spyOn(repository, 'incrementClick')
+const linkStatisticsServiceMock = new LinkStatisticsServiceMock()
+const updateStatisticsSpy = jest.spyOn(
+  linkStatisticsServiceMock,
+  'updateLinkStatistics',
+)
 const dbFindOneSpy = jest.spyOn(urlModelMock, 'findOne')
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
@@ -87,6 +93,9 @@ function mockDbEmpty() {
  * Redirect API integration tests. I.E UrlRepository is not mocked but redis and sequelize are.
  */
 describe('redirect API tests', () => {
+  const userAgent =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+
   beforeEach(() => {
     container
       .bind<CookieArrayReducerServiceInterface>(DependencyIds.cookieReducer)
@@ -106,12 +115,15 @@ describe('redirect API tests', () => {
     container
       .bind<CrawlerCheckServiceInterface>(DependencyIds.crawlerCheckService)
       .to(CrawlerCheckService)
+    container
+      .bind<LinkStatisticsServiceInterface>(DependencyIds.linkStatisticsService)
+      .toConstantValue(linkStatisticsServiceMock)
     redisMockClient.flushall()
   })
   afterEach(() => {
     container.unbindAll()
     loggerErrorSpy.mockClear()
-    incrementClicksSpy.mockClear()
+    updateStatisticsSpy.mockClear()
     dbFindOneSpy.mockClear()
     cacheGetSpy.mockClear()
   })
@@ -125,8 +137,7 @@ describe('redirect API tests', () => {
     redisMockClient.set('aaa', 'aa')
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    req.headers['user-agent'] =
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+    req.headers['user-agent'] = userAgent
 
     const cookieSpy = jest.spyOn(cookieReducer, 'writeShortlinkToCookie')
 
@@ -134,8 +145,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
-    expect(incrementClicksSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
+    expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(200)
     expect(res._getRedirectUrl()).toBe('')
     expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
@@ -156,8 +167,7 @@ describe('redirect API tests', () => {
     redisMockClient.set('aaa', 'aa')
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
-    req.headers['user-agent'] =
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
+    req.headers['user-agent'] = userAgent
 
     const cookieSpy = jest.spyOn(cookieReducer, 'writeShortlinkToCookie')
 
@@ -165,8 +175,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
-    expect(incrementClicksSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
+    expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
     expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
@@ -187,8 +197,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
-    expect(incrementClicksSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
+    expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
@@ -203,10 +213,10 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
-    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
+    expect(updateStatisticsSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
 
     expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
@@ -221,26 +231,9 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledTimes(0)
+    expect(updateStatisticsSpy).toBeCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
-  })
-
-  test('url does exists in cache but not db', async () => {
-    const req = createRequestWithShortUrl('Aaa')
-    const res = httpMocks.createResponse()
-
-    redisMockClient.set('aaa', 'aa')
-    mockDbEmpty()
-
-    await container
-      .get<RedirectController>(DependencyIds.redirectController)
-      .redirect(req, res)
-
-    expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('aa')
-
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url does exists in db but cache is down', async () => {
@@ -253,10 +246,10 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(incrementClicksSpy).toBeCalledWith('aaa', {})
-    expect(incrementClicksSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
+    expect(updateStatisticsSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
 
     expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
@@ -271,26 +264,10 @@ describe('redirect API tests', () => {
     await container
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
-    expect(incrementClicksSpy).toBeCalledTimes(0)
+    expect(updateStatisticsSpy).toBeCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
     expect(logger.error).toBeCalled()
-  })
-
-  test('url in cache and db is down', async () => {
-    const req = createRequestWithShortUrl('Aaa')
-    const res = httpMocks.createResponse()
-
-    mockDbDown()
-    redisMockClient.set('aaa', 'aa')
-
-    await container
-      .get<RedirectController>(DependencyIds.redirectController)
-      .redirect(req, res)
-    expect(res.statusCode).toBe(302)
-    expect(res._getRedirectUrl()).toBe('aa')
-
-    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url not in db and cache is down', async () => {
@@ -337,5 +314,38 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
     expect(res.statusCode).toBe(404)
+  })
+
+  test('url does exists in cache but not db', async () => {
+    const req = createRequestWithShortUrl('Aaa')
+    const res = httpMocks.createResponse()
+
+    redisMockClient.set('aaa', 'aa')
+    mockDbEmpty()
+
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
+
+    expect(res.statusCode).toBe(302)
+    expect(res._getRedirectUrl()).toBe('aa')
+
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
+  })
+
+  test('url in cache and db is down', async () => {
+    const req = createRequestWithShortUrl('Aaa')
+    const res = httpMocks.createResponse()
+
+    mockDbDown()
+    redisMockClient.set('aaa', 'aa')
+
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .redirect(req, res)
+    expect(res.statusCode).toBe(302)
+    expect(res._getRedirectUrl()).toBe('aa')
+
+    expect(isAnalyticsLogged(req, res, 'aaa', 'aa')).toBeTruthy()
   })
 })
