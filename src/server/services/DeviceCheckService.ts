@@ -6,7 +6,7 @@ import {
   DeviceType,
 } from './interfaces/DeviceCheckServiceInterface'
 
-const BOTS_USER_AGENTS = /facebookexternalhit|Facebot|Slackbot|TelegramBot|WhatsApp|Twitterbot|Pinterest|Postman|url/
+const BOTS_USER_AGENTS = /bot|facebookexternalhit|Facebot|Slackbot|TelegramBot|WhatsApp|Twitterbot|Pinterest|Postman|url/
 
 @injectable()
 export class DeviceCheckService implements DeviceCheckServiceInterface {
@@ -16,7 +16,10 @@ export class DeviceCheckService implements DeviceCheckServiceInterface {
 
     // Desktop browsers and bots do not get categorized by ua-parser.
     if (!deviceType) {
-      return !userAgent.match(BOTS_USER_AGENTS) ? 'desktop' : 'others'
+      if (parser.getEngine && !userAgent.match(BOTS_USER_AGENTS)) {
+        return 'desktop'
+      }
+      return 'others'
     }
 
     // Possible types:
