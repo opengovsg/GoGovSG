@@ -117,10 +117,6 @@ initDb()
     app.use(morgan(MORGAN_LOG_FORMAT))
 
     // API configuration
-    app.use((_, res, next) => {
-      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH')
-      next()
-    })
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
     app.use(
       '/:shortUrl([a-zA-Z0-9-]+)',
