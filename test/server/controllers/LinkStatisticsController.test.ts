@@ -29,7 +29,20 @@ describe('LinkStatisticsController test', () => {
     })
   })
 
-  test('unauthenticated user', async () => {
+  test('authenticated user with no short url', async () => {
+    const req = createRequestWithShortUrl('')
+    const res = httpMocks.createResponse()
+    const responseSpy = jest.spyOn(res, 'status')
+    req.session!.user = userCredentials
+
+    res.on('end', async () => {
+      await controller.getLinkStatistics(req, res)
+      expect(serviceSpy).not.toHaveBeenCalled()
+      expect(responseSpy).toBeCalledWith(404)
+    })
+  })
+
+  test('unauthenticated user with short url', async () => {
     const req = createRequestWithShortUrl('')
     const res = httpMocks.createResponse()
     const responseSpy = jest.spyOn(res, 'status')
@@ -42,7 +55,7 @@ describe('LinkStatisticsController test', () => {
     })
   })
 
-  test('authenticated user', async () => {
+  test('authenticated user with short url', async () => {
     const req = createRequestWithShortUrl('')
     const res = httpMocks.createResponse()
     const responseSpy = jest.spyOn(res, 'status')
