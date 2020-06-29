@@ -1,10 +1,9 @@
-
 import { QueryTypes } from 'sequelize'
 import {
-  mockQuery,
   clicksModelMock,
   devicesModelMock,
   heatMapModelMock,
+  mockQuery,
   mockTransaction,
   redisMockClient,
   urlModelMock,
