@@ -44,5 +44,6 @@ function preprocess(
 /* Register protected endpoints */
 router.use('/user', userGuard, preprocess, require('./user'))
 router.use('/qrcode', userGuard, require('./qrcode'))
+router.use('/link-stats', userGuard, require('./link-statistics'))
 
 export default router

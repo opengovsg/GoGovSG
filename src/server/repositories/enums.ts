@@ -6,4 +6,4 @@ export enum StorableUrlState {
   Inactive = 'INACTIVE',
 }
 
-export default StorableUrlState
+export default { StorableUrlState }
