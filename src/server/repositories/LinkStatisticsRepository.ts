@@ -1,16 +1,12 @@
 import { injectable } from 'inversify'
 import { Op, Transaction } from 'sequelize'
+import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
 import { Clicks, ClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
 import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
-import {
-  DailyClicksInterface,
-  DeviceClicksInterface,
-  LinkStatisticsInterface,
-  WeekdayClicksInterface,
-} from '../../shared/interfaces/link-statistics'
+import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
 import { getLocalDayGroup, getLocalTime } from '../util/time'
 import { NotFoundError } from '../util/error'
@@ -58,26 +54,22 @@ export class LinkStatisticsRepository
     if (url) {
       const urlStats = url as UrlStats
 
-      const deviceClicks = {
-        desktopClicks: urlStats.DeviceClicks?.desktop ?? 0,
-        tabletClicks: urlStats.DeviceClicks?.tablet ?? 0,
-        mobileClicks: urlStats.DeviceClicks?.mobile ?? 0,
-        otherClicks: urlStats.DeviceClicks?.others ?? 0,
-      } as DeviceClicksInterface
+      const deviceClicks = urlStats.DeviceClicks
+        ? _.pick(urlStats.DeviceClicks.toJSON(), [
+            'desktop',
+            'tablet',
+            'mobile',
+            'others',
+          ])
+        : // Fallback if device statistics is never updated.
+          { desktop: 0, tablet: 0, mobile: 0, others: 0 }
 
       const dailyClicks = urlStats.DailyClicks.map((clicks) => {
-        return {
-          date: clicks.date,
-          clicks: clicks.clicks,
-        } as DailyClicksInterface
+        return _.pick(clicks, ['date', 'clicks'])
       })
 
       const weekdayClicks = urlStats.WeekdayClicks.map((clicks) => {
-        return {
-          weekday: clicks.weekday,
-          hours: clicks.hours,
-          clicks: clicks.clicks,
-        } as WeekdayClicksInterface
+        return _.pick(clicks, ['weekday', 'hours', 'clicks'])
       })
 
       return {
