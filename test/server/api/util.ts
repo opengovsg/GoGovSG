@@ -205,6 +205,28 @@ export const devicesModelMock = sequelizeMock.define(
 
 export const mockTransaction = sequelizeMock.transaction
 
+export const mockQuery = jest.fn()
+
+mockQuery.mockImplementation((query: string) => {
+  if (query.includes('count(*)')) {
+    return [{ count: 10 }]
+  }
+  return [
+    {
+      shortUrl: 'a',
+      longUrl: 'aa',
+      state: ACTIVE,
+      clicks: 0,
+      increment: () => {},
+      isFile: false,
+      createdAt: 'fakedate',
+      updatedAt: 'fakedate',
+      description: 'desc',
+      contactEmail: 'aa@aa.com',
+    },
+  ]
+})
+
 export const userModelMock = {
   findOrCreate: ({ where: { email } }: { where: { email: string } }) =>
     Promise.resolve([

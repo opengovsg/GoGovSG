@@ -6,4 +6,8 @@ export enum StorableUrlState {
   Inactive = 'INACTIVE',
 }
 
-export default { StorableUrlState }
+export enum SearchResultsSortOrder {
+  Relevance = 'relevance',
+  Popularity = 'popularity',
+  Recency = 'recency',
+}

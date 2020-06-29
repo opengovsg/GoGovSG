@@ -29,6 +29,8 @@ import { LogoutController } from './controllers/LogoutController'
 import { UrlManagementService } from './services/UrlManagementService'
 import { UserController } from './controllers/UserController'
 import { QrCodeService } from './services/QrCodeService'
+import { SearchController } from './controllers/SearchController'
+import { UrlSearchService } from './services/UrlSearchService'
 import { LinkStatisticsController } from './controllers/LinkStatisticsController'
 import { LinkStatisticsService } from './services/LinkStatisticsService'
 import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
@@ -67,6 +69,8 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
+  bindIfUnbound(DependencyIds.searchController, SearchController)
+  bindIfUnbound(DependencyIds.urlSearchService, UrlSearchService)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
 
   bindIfUnbound(
