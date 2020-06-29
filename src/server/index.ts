@@ -97,6 +97,7 @@ initDb()
         saveUninitialized: false, // do not save new sessions that have not been modified
         cookie: {
           httpOnly: true,
+          sameSite: 'strict',
           ...cookieSettings,
         },
         ...sessionSettings,
