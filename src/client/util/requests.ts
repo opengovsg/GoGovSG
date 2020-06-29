@@ -7,7 +7,7 @@ export const postJson = (
 ) => {
   const opts = options || {
     method: 'POST',
-    mode: 'cors',
+    mode: 'same-origin',
     cache: 'no-cache',
     headers: {
       'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export const postFormData = (
 ) => {
   const opts = options || {
     method: 'POST',
-    mode: 'cors',
+    mode: 'same-origin',
     cache: 'no-cache',
     credentials: 'include',
     body: data,
@@ -40,7 +40,7 @@ export const patch = (
 ) => {
   const opts = options || {
     method: 'PATCH',
-    mode: 'cors',
+    mode: 'same-origin',
     cache: 'no-cache',
     headers: {
       'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const patchFormData = (
 ) => {
   const opts = options || {
     method: 'PATCH',
-    mode: 'cors',
+    mode: 'same-origin',
     cache: 'no-cache',
     credentials: 'include',
     body: data,
@@ -71,7 +71,7 @@ export const patchFormData = (
 export const get = (url: string, options?: RequestInit) => {
   const opts = options || {
     method: 'GET',
-    mode: 'cors',
+    mode: 'same-origin',
     cache: 'no-cache',
     credentials: 'include',
   }

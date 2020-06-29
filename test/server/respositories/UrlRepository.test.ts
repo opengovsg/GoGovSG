@@ -1,6 +1,10 @@
+
 import { QueryTypes } from 'sequelize'
 import {
   mockQuery,
+  clicksModelMock,
+  devicesModelMock,
+  heatMapModelMock,
   mockTransaction,
   redisMockClient,
   urlModelMock,
@@ -12,6 +16,18 @@ import { SearchResultsSortOrder } from '../../../src/server/repositories/enums'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/daily', () => ({
+  Clicks: clicksModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/weekday', () => ({
+  WeekdayClicks: heatMapModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/devices', () => ({
+  Devices: devicesModelMock,
 }))
 
 jest.mock('../../../src/server/redis', () => ({

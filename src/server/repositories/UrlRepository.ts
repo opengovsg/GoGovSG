@@ -6,7 +6,7 @@ import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
-import { sequelize, transaction } from '../util/sequelize'
+import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
@@ -45,7 +45,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     properties: { userId: number; shortUrl: string; longUrl?: string },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
-    const newUrl = await transaction(async (t) => {
+    const newUrl = await sequelize.transaction(async (t) => {
       const url = Url.create(
         {
           ...properties,
@@ -78,7 +78,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       )
     }
 
-    const newUrl: UrlType = await transaction(async (t) => {
+    const newUrl: UrlType = await sequelize.transaction(async (t) => {
       if (!url.isFile) {
         await url.update(changes, { transaction: t })
       } else {
