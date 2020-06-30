@@ -153,15 +153,29 @@ img {
 .top-half {
   background: #384a51;
   height: 55vh;
-
+  position: relative;
 }
 
 .top-half-content {
   text-align: center;
   color: #ffffff;
+  position: absolute;
+  bottom: 85px;
+  transform: translateX(-50%);
+  left: 50%;
 }
 
 .top-half-content h3 {
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+}
+
+.top-half-content p {
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.top-half-content img {
+  width: 100%;
+  max-width: 512px;
 }
