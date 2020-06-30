@@ -27,6 +27,12 @@ export const DependencyIds = {
   urlManagementService: Symbol.for('urlManagementService'),
   userController: Symbol.for('userController'),
   qrCodeService: Symbol.for('qrCodeService'),
+  urlSearchService: Symbol.for('urlSearchService'),
+  searchController: Symbol.for('searchController'),
+  linkStatisticsController: Symbol.for('linkStatisticsController'),
+  linkStatisticsService: Symbol.for('linkStatisticsService'),
+  linkStatisticsRepository: Symbol.for('linkStatisticsRepository'),
+  deviceCheckService: Symbol.for('deviceCheckService'),
 }
 
 export default DependencyIds

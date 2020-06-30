@@ -1,14 +1,17 @@
+/* eslint-disable class-methods-use-this */
+
 import { inject, injectable } from 'inversify'
+import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
-import { transaction } from '../util/sequelize'
+import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
-import { StorableFile, StorableUrl } from './types'
-import { StorableUrlState } from './enums'
+import { StorableFile, StorableUrl, UrlsPaginated } from './types'
+import { SearchResultsSortOrder, StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 
 const { Public, Private } = FileVisibility
@@ -42,7 +45,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     properties: { userId: number; shortUrl: string; longUrl?: string },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
-    const newUrl = await transaction(async (t) => {
+    const newUrl = await sequelize.transaction(async (t) => {
       const url = Url.create(
         {
           ...properties,
@@ -75,7 +78,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       )
     }
 
-    const newUrl: UrlType = await transaction(async (t) => {
+    const newUrl: UrlType = await sequelize.transaction(async (t) => {
       if (!url.isFile) {
         await url.update(changes, { transaction: t })
       } else {
@@ -136,6 +139,51 @@ export class UrlRepository implements UrlRepositoryInterface {
     await url.increment('clicks')
   }
 
+  public plainTextSearch: (
+    query: string,
+    order: SearchResultsSortOrder,
+    limit: number,
+    offset: number,
+  ) => Promise<UrlsPaginated> = async (query, order, limit, offset) => {
+    const { tableName } = Url
+
+    // Warning: This expression has to be EXACTLY the same as the one used in the index
+    // or else the index will not be used leading to unnecessarily long query times.
+    const urlVector = `
+      setweight(to_tsvector('english', ${tableName}."shortUrl"), 'A') ||
+      setweight(to_tsvector('english', ${tableName}."description"), 'B')
+    `
+    const count = await this.getPlainTextSearchResultsCount(
+      tableName,
+      urlVector,
+      query,
+    )
+
+    const rankingAlgorithm = this.getRankingAlgorithm(
+      order,
+      urlVector,
+      tableName,
+    )
+
+    const urlsModel = await this.getRelevantUrls(
+      tableName,
+      urlVector,
+      rankingAlgorithm,
+      limit,
+      offset,
+      query,
+    )
+
+    const urls = urlsModel.map((urlType) =>
+      this.urlMapper.persistenceToDto(urlType),
+    )
+
+    return {
+      count,
+      urls,
+    }
+  }
+
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
     shortUrl,
   ) => {
@@ -192,6 +240,84 @@ export class UrlRepository implements UrlRepositoryInterface {
         else resolve()
       })
     })
+  }
+
+  private async getRelevantUrls(
+    tableName: string,
+    urlVector: string,
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    query: string,
+  ) {
+    const rawQuery = `
+      SELECT ${tableName}.*
+      FROM ${tableName}, plainto_tsquery($query) query
+      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT $limit
+      OFFSET $offset`
+    const urlsModel = (await sequelize.query(rawQuery, {
+      bind: {
+        limit,
+        offset,
+        query,
+      },
+      type: QueryTypes.SELECT,
+      model: Url,
+      mapToModel: true,
+    })) as Array<UrlType>
+    return urlsModel
+  }
+
+  private getRankingAlgorithm(
+    order: SearchResultsSortOrder,
+    urlVector: string,
+    tableName: string,
+  ) {
+    let rankingAlgorithm
+    switch (order) {
+      case SearchResultsSortOrder.Relevance:
+        {
+          // The 3rd argument passed into ts_rank_cd represents
+          // the normalization option that specifies whether and how
+          // a document's length should impact its rank. It works as a bit mask.
+          // 1 divides the rank by 1 + the logarithm of the document length
+          const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
+          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
+        }
+        break
+      case SearchResultsSortOrder.Recency:
+        rankingAlgorithm = `${tableName}."createdAt"`
+        break
+      case SearchResultsSortOrder.Popularity:
+        rankingAlgorithm = `${tableName}.clicks`
+        break
+      default:
+        throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
+    }
+    return rankingAlgorithm
+  }
+
+  private async getPlainTextSearchResultsCount(
+    tableName: string,
+    urlVector: string,
+    query: string,
+  ) {
+    const rawCountQuery = `
+      SELECT count(*)
+      FROM ${tableName}, plainto_tsquery($query) query
+      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
+    `
+    const [{ count: countString }] = await sequelize.query(rawCountQuery, {
+      bind: {
+        query,
+      },
+      raw: true,
+      type: QueryTypes.SELECT,
+    })
+    const count = parseInt(countString, 10)
+    return count
   }
 }
 

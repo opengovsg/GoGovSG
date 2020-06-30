@@ -42,6 +42,13 @@ export type UserUrlsQueryConditions = {
   isFile: boolean | undefined
 }
 
+export type UrlsPublicPaginated = {
+  count: number
+  urls: Array<UrlPublic>
+}
+
+export type UrlPublic = Omit<StorableUrl, 'clicks'>
+
 export type UrlsPaginated = {
   count: number
   urls: Array<StorableUrl>
