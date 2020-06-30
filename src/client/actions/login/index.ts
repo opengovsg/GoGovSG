@@ -178,6 +178,14 @@ const getOTPEmail = () => (
         successAction()
         return null
       }
+      if (response.status === 401) {
+        // Unauthorized
+        errorAction()
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(response.statusText),
+        )
+        return null
+      }
       return response.json().then((json) => {
         const { message } = json
         errorAction()
