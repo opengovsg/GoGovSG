@@ -150,3 +150,18 @@ img {
   padding: 6px 30px;
 }
 
+.top-half {
+  background: #384a51;
+  height: 55vh;
+
+}
+
+.top-half-content {
+  text-align: center;
+  color: #ffffff;
+}
+
+.top-half-content h3 {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
