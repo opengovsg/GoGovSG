@@ -42,8 +42,13 @@ export class UserController implements UserControllerInterface {
     }
 
     try {
-      await this.urlManagementService.createUrl(userId, shortUrl, longUrl, file)
-      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
+      const result = await this.urlManagementService.createUrl(
+        userId,
+        shortUrl,
+        longUrl,
+        file,
+      )
+      res.ok(result)
       return
     } catch (error) {
       if (error instanceof NotFoundError) {
