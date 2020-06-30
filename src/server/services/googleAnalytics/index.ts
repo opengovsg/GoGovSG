@@ -1,5 +1,5 @@
 import express from 'express'
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 import request from 'request'
 import { gaTrackingId, logger, ogUrl } from '../../config'
 import getIp from '../../util/request'
