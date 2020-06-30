@@ -13,37 +13,11 @@
 </head>
 
 <body>
-    <main id="main-container">
-        <div id="main-message">
-            <a href="/">
-                <!-- go logo -->
-                <img src="./assets/transition-page/icons/go-logo.svg" draggable="false" />
-            </a>
-            <div class="divider"></div>
-            <h3>Check your browser to make sure you’re accessing a <span class="emphasize-text-color">gov.sg</span>
-                link.
-            </h3>
-            <p>You are visiting a page at <span class="semi-bold-text"><%= rootDomain _%></span>.</p>
-            <!-- Use double-quotes to avoid templating issue as per RFC3986 (https://tools.ietf.org/html/rfc3986#appendix-C) -->
-            <button data-href="<%- escapedLongUrl %>" id='main-button'>
-                <div id="main-button-content">
-                    <p>Proceed to your page</p>
-                    <!-- button right arrow icon -->
-                    <img src="./assets/transition-page/icons/icon-arrow-right.svg" draggable="false" />
-                </div>
-            </button>
-        </div>
-    </main>
-    <div id="page-banner">
-        <div id="page-banner-content">
-            <!-- banner info icon -->
-            <img src="./assets/transition-page/icons/icon-info.svg" draggable="false" />
-            <p>You will only be shown this page the first time you access this short link.</p>
-        </div>
-    </div>
+
     <!-- Global Site Tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaTrackingId %>"></script>
     <script src="./assets/transition-page/js/gtag.js"></script>
 </body>
 
 </html>
+
