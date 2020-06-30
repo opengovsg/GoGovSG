@@ -7,7 +7,7 @@ import { DependencyIds } from '../../constants'
 
 const router: Express.Router = Express.Router()
 
-const validator = createValidator({ passError: true })
+const authValidator = createValidator({ passError: false, statusCode: 401 })
 
 const loginController = container.get<LoginControllerInterface>(
   DependencyIds.loginController,
@@ -25,7 +25,7 @@ router.get('/emaildomains', loginController.getEmailDomains)
  */
 router.post(
   '/otp',
-  validator.body(otpGenerationSchema),
+  authValidator.body(otpGenerationSchema),
   loginController.generateOtp,
 )
 
@@ -34,7 +34,7 @@ router.post(
  */
 router.post(
   '/verify',
-  validator.body(otpVerificationSchema),
+  authValidator.body(otpVerificationSchema),
   loginController.verifyOtp,
 )
 
