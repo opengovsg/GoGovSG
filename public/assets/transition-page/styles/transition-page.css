@@ -181,6 +181,13 @@ img {
   max-width: 512px;
 }
 
+.browser-image {
+  background-image: url(../images/browser-desktop.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 160px;
+}
+
 @media only screen and (max-width: 512px) {
   .top-half-content {
     width: 80%;
@@ -192,5 +199,10 @@ img {
 
   .top-half-content p {
     line-height: 20px;
+  }
+
+  .browser-image {
+    background-image: url(../images/browser-mobile.svg);
+    height: 120px;
   }
 }
