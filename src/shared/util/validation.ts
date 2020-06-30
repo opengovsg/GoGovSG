@@ -5,7 +5,7 @@ import blacklist from '../../server/resources/blacklist'
 
 export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
-export const URL_OPTS: ValidatorJS.IsURLOptions = {
+export const URL_OPTS: validator.IsURLOptions = {
   protocols: ['https'],
   require_tld: true,
   require_protocol: true,
