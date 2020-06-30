@@ -7,6 +7,8 @@ body {
   /* Do not use default window margins. */
   margin: 0 !important;
   padding: 0 !important;
+  height: 100vh;
+  min-height: 650px;
 }
 
 button {
@@ -153,7 +155,7 @@ img {
 .top-half {
   background: #384a51;
   height: 55vh;
-  min-height: 450px;
+  min-height: 380px;
   position: relative;
 }
 
@@ -161,7 +163,7 @@ img {
   text-align: center;
   color: #ffffff;
   position: absolute;
-  bottom: 85px;
+  bottom: 65px;
   transform: translateX(-50%);
   left: 50%;
 }
@@ -188,6 +190,47 @@ img {
   height: 160px;
 }
 
+.proceed-button {
+  background: #8ca6ad;
+  box-shadow: 0 0 20px rgba(56, 74, 81, 0.5);
+  border-radius: 40px;
+  color: #ffffff;
+  border: none;
+  padding: 12px 25px;
+  font-size: 14px;
+  font-weight: 500;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  cursor: pointer;
+  display: flex;
+  outline: none;
+}
+
+.proceed-button img {
+  margin-left: 6px;
+}
+
+.bottom-half {
+  text-align: center;
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+}
+
+.bottom-half img {
+  margin-bottom: 24px;
+}
+
+.bottom-half p {
+  color: #bbbbbb;
+  font-size: 13px;
+  line-height: 13px;
+}
+
 @media only screen and (max-width: 512px) {
   .top-half-content {
     width: 80%;
@@ -204,5 +247,9 @@ img {
   .browser-image {
     background-image: url(../images/browser-mobile.svg);
     height: 120px;
+  }
+
+  .bottom-half {
+    bottom: 30px;
   }
 }
