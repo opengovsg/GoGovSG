@@ -9,6 +9,7 @@ router.use('/login', require('./login'))
 router.use('/stats', require('./statistics'))
 router.use('/sentry', require('./sentry'))
 router.use('/links', require('./links'))
+router.use('/search', require('./search'))
 
 /**
  * To protect private user routes.
@@ -44,5 +45,6 @@ function preprocess(
 /* Register protected endpoints */
 router.use('/user', userGuard, preprocess, require('./user'))
 router.use('/qrcode', userGuard, require('./qrcode'))
+router.use('/link-stats', userGuard, require('./link-statistics'))
 
 export default router
