@@ -1,6 +1,6 @@
 import express from 'express'
 import { v4 as uuidv4 } from 'uuid'
-import request from 'request'
+import fetch from 'cross-fetch'
 import { gaTrackingId, logger, ogUrl } from '../../config'
 import getIp from '../../util/request'
 import IGaPageViewForm from './types/IGaPageViewForm'
@@ -83,10 +83,16 @@ export function sendTpServedEvent(req: express.Request, shortUrl: string) {
     el: shortUrl, // Event label.
   }
 
-  request.post(gaEndpoint, { form }, (err, httpResponse, body) => {
-    if (err) {
+  const body = new URLSearchParams((form as unknown) as Record<string, string>)
+
+  fetch(gaEndpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  }).then((response) => {
+    if (!response.ok) {
       logger.error(
-        `GA tracking failure:\tError: ${err}\thttpResponse: ${httpResponse}\t body:${body}`,
+        `GA tracking failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
       )
     }
   })
@@ -121,10 +127,16 @@ export function sendPageViewHit(
     ;[form.ul] = (req.headers['accept-language'] as string).split(',')
   }
 
-  request.post(gaEndpoint, { form }, (err, httpResponse, body) => {
-    if (err) {
+  const body = new URLSearchParams((form as unknown) as Record<string, string>)
+
+  fetch(gaEndpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  }).then((response) => {
+    if (!response.ok) {
       logger.error(
-        `GA tracking failure:\tError: ${err}\thttpResponse: ${httpResponse}\t body:${body}`,
+        `GA tracking failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
       )
     }
   })
