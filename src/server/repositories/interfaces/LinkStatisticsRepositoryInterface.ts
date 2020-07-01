@@ -14,42 +14,45 @@ export interface LinkStatisticsRepositoryInterface {
    * Asynchronously increment the number of clicks in the database.
    *
    * @param {string} shortUrl
-   * @returns Promise that resolves to be empty.
+   * @returns {Promise<boolean>} Indicates if the update was successful.
    */
-  incrementClick: (shortUrl: string, transaction?: Transaction) => Promise<void>
+  incrementClick: (
+    shortUrl: string,
+    transaction?: Transaction,
+  ) => Promise<boolean>
 
   /**
    * Asynchronously upserts the relevant short link's statistics.
    *
    * @param shortUrl The relevant short url.
-   * @returns Promise that resolves to be empty.
+   * @returns {Promise<boolean>} Indicates if the update was successful.
    */
   updateDailyStatistics: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<void>
+  ) => Promise<boolean>
 
   /**
    * Asynchronously updates the relevant short link's week map statistics.
    *
    * @param shortUrl The relevant short url.
-   * @returns Promise that resolves to be empty.
+   * @returns {Promise<boolean>} Indicates if the update was successful.
    */
   updateWeekdayStatistics: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<void>
+  ) => Promise<boolean>
 
   /**
    * Asynchronously updates the relevant short link's device statistics.
    *
    * @param shortUrl The relevant short url.
    * @param userAgent The relevant user agent string to parse device type.
-   * @returns Promise that resolves to be empty.
+   * @returns {Promise<boolean>} Indicates if the update was successful.
    */
   updateDeviceStatistics: (
     shortUrl: string,
     userAgent: string,
     transaction?: Transaction,
-  ) => Promise<void>
+  ) => Promise<boolean>
 }

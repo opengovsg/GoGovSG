@@ -1,7 +1,8 @@
 import { injectable } from 'inversify'
-import { Op, Transaction } from 'sequelize'
+import { Op, Sequelize, Transaction } from 'sequelize'
 import _ from 'lodash'
 
+import { logger } from '../config'
 import { Url, UrlType } from '../models/url'
 import { Clicks, ClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
@@ -84,56 +85,93 @@ export class LinkStatisticsRepository
   public incrementClick: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const url = await Url.findOne({ where: { shortUrl }, transaction })
-    if (!url) {
+  ) => Promise<boolean> = async (shortUrl, transaction) => {
+    // Disable hooks to avoid tripping the beforeBulkUpdate rejection
+    const [affectedRowCount] = await Url.update(
+      { clicks: Sequelize.literal('clicks + 1') },
+      { where: { shortUrl }, returning: false, hooks: false, transaction },
+    )
+    if (!affectedRowCount) {
       throw new NotFoundError(
         `shortUrl not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-    await url.increment('clicks', { transaction })
+    return affectedRowCount > 0
   }
 
   public updateDailyStatistics: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
+  ) => Promise<boolean> = async (shortUrl, transaction) => {
     const time = getLocalTime()
-    const [clickStats] = await Clicks.findOrCreate({
-      where: { shortUrl, date: time.date },
-      transaction,
-    })
-    await clickStats.increment('clicks', { transaction })
+    const [affectedRowCount] = await Clicks.update(
+      { clicks: Sequelize.literal('clicks + 1') },
+      { where: { shortUrl, date: time.date }, returning: false, transaction },
+    )
+    return (
+      affectedRowCount > 0 ||
+      Boolean(
+        await Clicks.create(
+          { shortUrl, date: time.date, clicks: 1 },
+          { transaction },
+        ),
+      )
+    )
   }
 
   public updateWeekdayStatistics: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
+  ) => Promise<boolean> = async (shortUrl, transaction) => {
     const time = getLocalTime()
-    const [clickStats] = await WeekdayClicks.findOrCreate({
-      where: { shortUrl, weekday: time.weekday, hours: time.hours },
-      transaction,
-    })
-    await clickStats.increment('clicks', { transaction })
+    const [affectedRowCount] = await WeekdayClicks.update(
+      { clicks: Sequelize.literal('clicks + 1') },
+      {
+        where: { shortUrl, weekday: time.weekday, hours: time.hours },
+        returning: false,
+        transaction,
+      },
+    )
+    return (
+      affectedRowCount > 0 ||
+      Boolean(
+        await WeekdayClicks.create(
+          { shortUrl, weekday: time.weekday, hours: time.hours, clicks: 1 },
+          { transaction },
+        ),
+      )
+    )
   }
 
   public updateDeviceStatistics: (
     shortUrl: string,
     userAgent: string,
     transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, userAgent, transaction) => {
+  ) => Promise<boolean> = async (shortUrl, userAgent, transaction) => {
     const deviceCheck = container.get<DeviceCheckServiceInterface>(
       DependencyIds.deviceCheckService,
     )
     const deviceType = deviceCheck.getDeviceType(userAgent)
     if (deviceType) {
-      const [clickStats] = await Devices.findOrCreate({
-        where: { shortUrl },
-        transaction,
-      })
-      await clickStats.increment(deviceType!, { transaction })
+      const deviceTypeStr = deviceType!
+
+      const [affectedRowCount] = await Devices.update(
+        { [deviceTypeStr]: Sequelize.literal(`${deviceTypeStr} + 1`) },
+        { where: { shortUrl }, returning: false, transaction },
+      )
+
+      return (
+        affectedRowCount > 0 ||
+        Boolean(
+          await Devices.create(
+            { shortUrl, [deviceTypeStr]: 1 },
+            { transaction },
+          ),
+        )
+      )
     }
+    logger.warn(`Unknown device for user agent ${userAgent}`)
+    return false
   }
 }
 

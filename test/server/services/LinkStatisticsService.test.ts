@@ -1,10 +1,10 @@
 import { MockSequelizeTransaction } from '../api/util'
 
-const sequelize = new MockSequelizeTransaction()
-
 import { MockLinkStatisticsRepository } from '../mocks/repositories/LinkStatisticsRepository'
 import { MockUserRepository } from '../mocks/repositories/UserRepository'
 import { LinkStatisticsService } from '../../../src/server/services/LinkStatisticsService'
+
+const sequelize = new MockSequelizeTransaction()
 
 jest.mock('../../../src/server/util/sequelize', () => ({
   sequelize,
@@ -64,14 +64,10 @@ describe('LinkStatisticService tests', () => {
       const transactionItem = 'hello'
       if (sequelize.fn) sequelize.fn(transactionItem)
 
-      expect(incrementClickSpy).toBeCalledWith('a', transactionItem)
-      expect(updateDailyStatisticsSpy).toBeCalledWith('a', transactionItem)
-      expect(updateWeekdayStatisticsSpy).toBeCalledWith('a', transactionItem)
-      expect(updateDeviceStatisticsSpy).toBeCalledWith(
-        'a',
-        userAgent,
-        transactionItem,
-      )
+      expect(incrementClickSpy).toBeCalledWith('a')
+      expect(updateDailyStatisticsSpy).toBeCalledWith('a')
+      expect(updateWeekdayStatisticsSpy).toBeCalledWith('a')
+      expect(updateDeviceStatisticsSpy).toBeCalledWith('a', userAgent)
     })
   })
 })
