@@ -4,9 +4,8 @@ import fetch from 'cross-fetch'
 import { gaTrackingId, logger, ogUrl } from '../../config'
 import getIp from '../../util/request'
 import IGaPageViewForm from './types/IGaPageViewForm'
-import IGaEventForm from './types/IGaEventForm'
 import IGaCoreForm from './types/IGaCoreForm'
-import { EventAction, EventCategory, GaHitVariant } from './types/enum'
+import { GaHitVariant } from './types/enum'
 
 const gaEndpoint = 'https://www.google-analytics.com/collect'
 
@@ -70,32 +69,6 @@ export function getCoreFields(req: express.Request, type: GaHitVariant) {
     t: type, // Hit type.
   }
   return coreForm
-}
-
-export function sendTpServedEvent(req: express.Request, shortUrl: string) {
-  const coreFields = getCoreFields(req, GaHitVariant.EVENT)
-  if (!coreFields) return
-
-  const form: IGaEventForm = {
-    ...coreFields,
-    ec: EventCategory.TRANSITION_PAGE, // Event Category.
-    ea: EventAction.SERVED, // Event Action.
-    el: shortUrl, // Event label.
-  }
-
-  const body = new URLSearchParams((form as unknown) as Record<string, string>)
-
-  fetch(gaEndpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
-  }).then((response) => {
-    if (!response.ok) {
-      logger.error(
-        `GA tracking failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
-      )
-    }
-  })
 }
 
 /**

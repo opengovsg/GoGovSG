@@ -8,7 +8,6 @@ export enum EventCategory {
 }
 
 export enum EventAction {
-  SERVED = 'served',
   LOADED = 'loaded',
   PROCEEDED = 'proceeded',
 }

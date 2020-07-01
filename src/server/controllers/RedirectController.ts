@@ -41,8 +41,8 @@ export class RedirectController implements RedirectControllerInterface {
       return
     }
 
+    // Find longUrl to redirect to.
     try {
-      // Find longUrl to redirect to
       const {
         longUrl,
         visitedUrls,
@@ -53,24 +53,20 @@ export class RedirectController implements RedirectControllerInterface {
         req.get('user-agent') || '',
       )
 
-      req.session!.visits = visitedUrls
+      const logRedirect = () => {
+        this.analyticsLogger.logRedirectAnalytics(
+          req,
+          res,
+          shortUrl.toLowerCase(),
+          longUrl,
+        )
+      }
 
-      this.analyticsLogger.logRedirectAnalytics(
-        req,
-        res,
-        shortUrl.toLowerCase(),
-        longUrl,
-      )
+      req.session!.visits = visitedUrls
 
       if (redirectType === RedirectType.TransitionPage) {
         // Extract root domain from long url.
         const rootDomain: string = parseDomain(longUrl)
-
-        this.analyticsLogger.logTransitionPageServed(
-          req,
-          res,
-          shortUrl.toLowerCase(),
-        )
 
         res.status(200).render(TRANSITION_PATH, {
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
@@ -80,9 +76,11 @@ export class RedirectController implements RedirectControllerInterface {
           gaOnLoad: EventAction.LOADED,
           gaOnProceed: EventAction.PROCEEDED,
         })
+        logRedirect()
         return
       }
       res.status(302).redirect(longUrl)
+      logRedirect()
       return
     } catch (error) {
       if (!(error instanceof NotFoundError)) {
