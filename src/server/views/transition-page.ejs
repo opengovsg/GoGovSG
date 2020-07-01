@@ -24,21 +24,36 @@
         <div class="top-half-content">
             <h3>Before you proceed...</h3>
             <p>Check your address bar to make sure you’re accessing a gov.sg link.</p>
-            <div class="browser-image"></div>
+            <div class="browser-image">
+                <div class="links">go.gov.sg/<span class="element"></span></div>
+            </div>
         </div>
         <button class="proceed-button" onclick="proceedToDestination()">
             Proceed to <%= rootDomain %>
-            <img src="./assets/transition-page/icons/icon-arrow-right.svg" alt="arrow right"/>
+            <img src="./assets/transition-page/icons/icon-arrow-right.svg" alt="arrow right" />
         </button>
     </div>
     <div class="bottom-half">
-        <img src="./assets/transition-page/icons/go-logo.svg" alt="go logo"/>
+        <img src="./assets/transition-page/icons/go-logo.svg" alt="go logo" />
         <p>You will only be shown this page the first time you access this short link.</p>
     </div>
     <!-- Global Site Tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaTrackingId %>"></script>
+    <!-- For typing animation -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+    <script>
+        // For rotating links on graphic.
+        var rotatingLinks = ['whatsapp', 'sppr']
+        var options = {
+            strings: rotatingLinks,
+            typeSpeed: 100,
+            backDelay: 1000,
+            smartBackspace: false,
+            loop: true
+        }
+        var typed = new Typed('.element', options);
+    </script>
     <script src="./assets/transition-page/js/gtag.js"></script>
 </body>
 
 </html>
-

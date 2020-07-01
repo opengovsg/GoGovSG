@@ -187,7 +187,17 @@ img {
   background-image: url(../images/browser-desktop.svg);
   background-repeat: no-repeat;
   background-position: center;
+  max-width: 100%;
   height: 160px;
+  text-align: start;
+}
+
+.links {
+  width: 100%;
+  height: 160px;
+  padding-top: 88.4px;
+  padding-left: 188px;
+  color: #000000;
 }
 
 .proceed-button {
@@ -245,7 +255,7 @@ img {
   }
 
   .browser-image {
-    background-image: url(../images/browser-mobile.svg);
+    background-image: url(../images/browser-desktop.svg);
     height: 120px;
   }
 
