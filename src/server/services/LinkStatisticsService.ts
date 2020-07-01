@@ -7,7 +7,6 @@ import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics
 import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
 import { NotFoundError } from '../util/error'
 import { logger } from '../config'
-import { sequelize } from '../util/sequelize'
 
 @injectable()
 export class LinkStatisticsService implements LinkStatisticsServiceInterface {
@@ -29,22 +28,14 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
     shortUrl: string,
     userAgent: string,
   ) => Promise<void> = async (shortUrl, userAgent) => {
-    sequelize
-      .transaction((t) => {
-        return Promise.all([
-          this.linkStatisticsRepository.incrementClick(shortUrl, t),
-          this.linkStatisticsRepository.updateDailyStatistics(shortUrl, t),
-          this.linkStatisticsRepository.updateWeekdayStatistics(shortUrl, t),
-          this.linkStatisticsRepository.updateDeviceStatistics(
-            shortUrl,
-            userAgent,
-            t,
-          ),
-        ])
-      })
-      .catch((error) =>
-        logger.error(`Unable to update link statistics: ${error}`),
-      )
+    Promise.all([
+      this.linkStatisticsRepository.incrementClick(shortUrl),
+      this.linkStatisticsRepository.updateDailyStatistics(shortUrl),
+      this.linkStatisticsRepository.updateWeekdayStatistics(shortUrl),
+      this.linkStatisticsRepository.updateDeviceStatistics(shortUrl, userAgent),
+    ]).catch((error) =>
+      logger.error(`Unable to update link statistics: ${error}`),
+    )
   }
 
   getLinkStatistics: (

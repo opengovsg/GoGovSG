@@ -25,23 +25,23 @@ export class MockLinkStatisticsRepository
   incrementClick: (
     shortUrl: string,
     transaction?: import('sequelize/types').Transaction,
-  ) => Promise<void> = () => Promise.resolve()
+  ) => Promise<boolean> = () => Promise.resolve(true)
 
   updateDailyStatistics: (
     shortUrl: string,
     transaction?: import('sequelize/types').Transaction,
-  ) => Promise<void> = () => Promise.resolve()
+  ) => Promise<boolean> = () => Promise.resolve(true)
 
   updateWeekdayStatistics: (
     shortUrl: string,
     transaction?: import('sequelize/types').Transaction,
-  ) => Promise<void> = () => Promise.resolve()
+  ) => Promise<boolean> = () => Promise.resolve(true)
 
   updateDeviceStatistics: (
     shortUrl: string,
     userAgent: string,
     transaction?: import('sequelize/types').Transaction,
-  ) => Promise<void> = () => Promise.resolve()
+  ) => Promise<boolean> = () => Promise.resolve(true)
 }
 
 export default MockLinkStatisticsRepository
