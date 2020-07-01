@@ -82,10 +82,9 @@ export class RedirectService implements RedirectServiceInterface {
     return {
       longUrl,
       visitedUrls: newVisits,
-      redirectType: RedirectType.TransitionPage,
-      // redirectType: renderTransitionPage
-      //   ? RedirectType.TransitionPage
-      //   : RedirectType.Direct,
+      redirectType: renderTransitionPage
+        ? RedirectType.TransitionPage
+        : RedirectType.Direct,
     }
   }
 
