@@ -4,8 +4,6 @@ import { MockLinkStatisticsRepository } from '../mocks/repositories/LinkStatisti
 import { MockUserRepository } from '../mocks/repositories/UserRepository'
 import { LinkStatisticsService } from '../../../src/server/services/LinkStatisticsService'
 
-const sequelize = new MockSequelizeTransaction()
-
 jest.mock('../../../src/server/util/sequelize', () => ({
   sequelize: new Sequelize(),
 }))
