@@ -47,4 +47,10 @@ router.use('/user', userGuard, preprocess, require('./user'))
 router.use('/qrcode', userGuard, require('./qrcode'))
 router.use('/link-stats', userGuard, require('./link-statistics'))
 
+const ERROR_404_PATH = '404.error.ejs'
+
+router.use((_, res) => {
+  res.status(404).render(ERROR_404_PATH)
+})
+
 export default router
