@@ -27,6 +27,7 @@ export type UserState = {
   createShortLinkError?: string | null
   uploadFileError?: string | null
   lastCreatedLink?: string
+  message: string | null
 }
 
 export type UrlTableConfig = {

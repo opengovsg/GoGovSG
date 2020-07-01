@@ -90,4 +90,6 @@ router.get(
   userController.getUrlsWithConditions,
 )
 
+router.get('/message', userController.getUserMessage)
+
 export = router
