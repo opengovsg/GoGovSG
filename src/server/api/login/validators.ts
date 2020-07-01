@@ -7,7 +7,7 @@ export const otpVerificationSchema = Joi.object({
     .custom((email: string, helpers) => {
       if (!isValidGovEmail(email)) {
         logger.error(
-          `OTP generation request rejected due to invalid email:\t${email}`,
+          `OTP verification request rejected due to invalid email:\t${email}`,
         )
         return helpers.message({ custom: 'Not a valid gov email' })
       }
@@ -22,7 +22,7 @@ export const otpGenerationSchema = Joi.object({
     .custom((email: string, helpers) => {
       if (!isValidGovEmail(email)) {
         logger.error(
-          `OTP verification request rejected due to invalid email:\t${email}`,
+          `OTP generation request rejected due to invalid email:\t${email}`,
         )
         return helpers.message({
           custom: 'Invalid email provided. Email domain is not whitelisted.',
