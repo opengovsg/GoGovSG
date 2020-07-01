@@ -35,4 +35,4 @@ export const DependencyIds = {
   deviceCheckService: Symbol.for('deviceCheckService'),
 }
 
-export default DependencyIds
+export const ERROR_404_PATH = '404.error.ejs'

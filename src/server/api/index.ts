@@ -1,5 +1,6 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
+import { ERROR_404_PATH } from '../constants'
 
 const router = Express.Router()
 
@@ -46,5 +47,9 @@ function preprocess(
 router.use('/user', userGuard, preprocess, require('./user'))
 router.use('/qrcode', userGuard, require('./qrcode'))
 router.use('/link-stats', userGuard, require('./link-statistics'))
+
+router.use((_, res) => {
+  res.status(404).render(ERROR_404_PATH)
+})
 
 export default router

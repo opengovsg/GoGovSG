@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import { gaTrackingId, logger } from '../config'
 import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
-import { DependencyIds } from '../constants'
+import { DependencyIds, ERROR_404_PATH } from '../constants'
 import { AnalyticsLogger } from '../services/analyticsLogger'
 import { RedirectControllerInterface } from './interfaces/RedirectControllerInterface'
 import { RedirectService } from '../services/RedirectService'
@@ -13,7 +13,6 @@ import {
   EventCategory,
 } from '../services/googleAnalytics/types/enum'
 
-const ERROR_404_PATH = '404.error.ejs'
 const TRANSITION_PATH = 'transition-page.ejs'
 
 @injectable()
