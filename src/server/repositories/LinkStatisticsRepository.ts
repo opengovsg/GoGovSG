@@ -2,18 +2,14 @@ import { injectable } from 'inversify'
 import { Op, Sequelize, Transaction } from 'sequelize'
 import _ from 'lodash'
 
-import { logger } from '../config'
 import { Url, UrlType } from '../models/url'
 import { Clicks, ClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
 import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
-import { getLocalDayGroup, getLocalTime } from '../util/time'
+import { getLocalDayGroup } from '../util/time'
 import { NotFoundError } from '../util/error'
-import { container } from '../util/inversify'
-import { DeviceCheckServiceInterface } from '../services/interfaces/DeviceCheckServiceInterface'
-import { DependencyIds } from '../constants'
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -85,11 +81,11 @@ export class LinkStatisticsRepository
   public incrementClick: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<boolean> = async (shortUrl, transaction) => {
+  ) => Promise<boolean> = async (shortUrl) => {
     // Disable hooks to avoid tripping the beforeBulkUpdate rejection
     const [affectedRowCount] = await Url.update(
       { clicks: Sequelize.literal('clicks + 1') },
-      { where: { shortUrl }, returning: false, hooks: false, transaction },
+      { where: { shortUrl }, returning: false, hooks: false },
     )
     if (!affectedRowCount) {
       throw new NotFoundError(
@@ -97,81 +93,6 @@ export class LinkStatisticsRepository
       )
     }
     return affectedRowCount > 0
-  }
-
-  public updateDailyStatistics: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<boolean> = async (shortUrl, transaction) => {
-    const time = getLocalTime()
-    const [affectedRowCount] = await Clicks.update(
-      { clicks: Sequelize.literal('clicks + 1') },
-      { where: { shortUrl, date: time.date }, returning: false, transaction },
-    )
-    return (
-      affectedRowCount > 0 ||
-      Boolean(
-        await Clicks.create(
-          { shortUrl, date: time.date, clicks: 1 },
-          { transaction },
-        ),
-      )
-    )
-  }
-
-  public updateWeekdayStatistics: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<boolean> = async (shortUrl, transaction) => {
-    const time = getLocalTime()
-    const [affectedRowCount] = await WeekdayClicks.update(
-      { clicks: Sequelize.literal('clicks + 1') },
-      {
-        where: { shortUrl, weekday: time.weekday, hours: time.hours },
-        returning: false,
-        transaction,
-      },
-    )
-    return (
-      affectedRowCount > 0 ||
-      Boolean(
-        await WeekdayClicks.create(
-          { shortUrl, weekday: time.weekday, hours: time.hours, clicks: 1 },
-          { transaction },
-        ),
-      )
-    )
-  }
-
-  public updateDeviceStatistics: (
-    shortUrl: string,
-    userAgent: string,
-    transaction?: Transaction,
-  ) => Promise<boolean> = async (shortUrl, userAgent, transaction) => {
-    const deviceCheck = container.get<DeviceCheckServiceInterface>(
-      DependencyIds.deviceCheckService,
-    )
-    const deviceType = deviceCheck.getDeviceType(userAgent)
-    if (deviceType) {
-      const deviceTypeStr = deviceType!
-
-      const [affectedRowCount] = await Devices.update(
-        { [deviceTypeStr]: Sequelize.literal(`${deviceTypeStr} + 1`) },
-        { where: { shortUrl }, returning: false, transaction },
-      )
-
-      return (
-        affectedRowCount > 0 ||
-        Boolean(
-          await Devices.create(
-            { shortUrl, [deviceTypeStr]: 1 },
-            { transaction },
-          ),
-        )
-      )
-    }
-    logger.warn(`Unknown device for user agent ${userAgent}`)
-    return false
   }
 }
 

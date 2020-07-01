@@ -1,13 +1,11 @@
-import { MockSequelizeTransaction } from '../api/util'
+import Sequelize from 'sequelize-mock'
 
 import { MockLinkStatisticsRepository } from '../mocks/repositories/LinkStatisticsRepository'
 import { MockUserRepository } from '../mocks/repositories/UserRepository'
 import { LinkStatisticsService } from '../../../src/server/services/LinkStatisticsService'
 
-const sequelize = new MockSequelizeTransaction()
-
 jest.mock('../../../src/server/util/sequelize', () => ({
-  sequelize,
+  sequelize: new Sequelize(),
 }))
 
 const linkStatisticRepository = new MockLinkStatisticsRepository()
@@ -16,9 +14,6 @@ const service = new LinkStatisticsService(
   new MockUserRepository(),
   linkStatisticRepository,
 )
-
-const userAgent =
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15'
 
 /**
  * Unit tests for StatisticService.
@@ -46,28 +41,10 @@ describe('LinkStatisticService tests', () => {
       linkStatisticRepository,
       'incrementClick',
     )
-    const updateDailyStatisticsSpy = jest.spyOn(
-      linkStatisticRepository,
-      'updateDailyStatistics',
-    )
-    const updateWeekdayStatisticsSpy = jest.spyOn(
-      linkStatisticRepository,
-      'updateWeekdayStatistics',
-    )
-    const updateDeviceStatisticsSpy = jest.spyOn(
-      linkStatisticRepository,
-      'updateDeviceStatistics',
-    )
 
     test('should update relevant tables with same transaction', async () => {
-      await service.updateLinkStatistics('a', userAgent)
-      const transactionItem = 'hello'
-      if (sequelize.fn) sequelize.fn(transactionItem)
-
+      await service.updateLinkStatistics('a')
       expect(incrementClickSpy).toBeCalledWith('a')
-      expect(updateDailyStatisticsSpy).toBeCalledWith('a')
-      expect(updateWeekdayStatisticsSpy).toBeCalledWith('a')
-      expect(updateDeviceStatisticsSpy).toBeCalledWith('a', userAgent)
     })
   })
 })

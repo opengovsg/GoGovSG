@@ -24,15 +24,11 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
     this.linkStatisticsRepository = linkStatisticsRepository
   }
 
-  updateLinkStatistics: (
-    shortUrl: string,
-    userAgent: string,
-  ) => Promise<void> = async (shortUrl, userAgent) => {
+  updateLinkStatistics: (shortUrl: string) => Promise<void> = async (
+    shortUrl,
+  ) => {
     Promise.all([
       this.linkStatisticsRepository.incrementClick(shortUrl),
-      this.linkStatisticsRepository.updateDailyStatistics(shortUrl),
-      this.linkStatisticsRepository.updateWeekdayStatistics(shortUrl),
-      this.linkStatisticsRepository.updateDeviceStatistics(shortUrl, userAgent),
     ]).catch((error) =>
       logger.error(`Unable to update link statistics: ${error}`),
     )
