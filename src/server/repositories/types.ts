@@ -47,7 +47,10 @@ export type UrlsPublicPaginated = {
   urls: Array<UrlPublic>
 }
 
-export type UrlPublic = Omit<StorableUrl, 'clicks'>
+export type UrlPublic = Pick<
+  StorableUrl,
+  'shortUrl' | 'longUrl' | 'description' | 'contactEmail'
+>
 
 export type UrlsPaginated = {
   count: number

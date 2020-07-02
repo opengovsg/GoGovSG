@@ -27,6 +27,7 @@ import {
   SET_UPLOAD_FILE_ERROR,
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SET_USER_MESSAGE,
   SetCreateShortLinkErrorAction,
   SetEditedContactEmailAction,
   SetEditedDescriptionAction,
@@ -39,6 +40,7 @@ import {
   SetUploadFileErrorAction,
   SetUrlFilterAction,
   SetUrlTableConfigAction,
+  SetUserMessageAction,
   TOGGLE_URL_STATE_SUCCESS,
   ToggleUrlStateSuccessAction,
   UPDATE_URL_COUNT,
@@ -163,6 +165,23 @@ const updateUrlCount: (urlCount: number) => UpdateUrlCountAction = (
   type: UPDATE_URL_COUNT,
   payload: urlCount,
 })
+
+const setUserMessage: (payload: string) => SetUserMessageAction = (
+  payload,
+) => ({ type: SET_USER_MESSAGE, payload })
+
+const getUserMessage = (): ThunkAction<
+  void,
+  GoGovReduxState,
+  void,
+  UserActionType
+> => async (dispatch: Dispatch<SetUserMessageAction>) => {
+  const response = await get('/api/user/message')
+  if (response.ok) {
+    const text = await response.text()
+    if (text) dispatch(setUserMessage(text))
+  }
+}
 
 async function handleError(
   dispatch: Dispatch<
@@ -621,5 +640,6 @@ export default {
   replaceFile,
   setEditedContactEmail,
   setEditedDescription,
+  getUserMessage,
   updateUrlInformation,
 }

@@ -136,6 +136,7 @@ export const emailValidator = new minimatch.Minimatch(
   },
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
+export const userMessage = process.env.USER_MESSAGE
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 
@@ -167,5 +168,7 @@ export const bucketEndpoint =
   process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
 export const accessEndpoint =
   process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
+
+export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS

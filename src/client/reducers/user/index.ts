@@ -16,6 +16,7 @@ import {
   SET_UPLOAD_FILE_ERROR,
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SET_USER_MESSAGE,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
   UserActionType,
@@ -40,6 +41,7 @@ const initialState: UserState = {
     ...initialSortConfig,
   },
   urlCount: 0,
+  message: null,
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
@@ -49,6 +51,11 @@ const user: (state: UserState, action: UserActionType) => UserState = (
   let nextState: Partial<UserState> = {}
 
   switch (action.type) {
+    case SET_USER_MESSAGE:
+      nextState = {
+        message: action.payload,
+      }
+      break
     case SET_LAST_CREATED_LINK:
       nextState = {
         lastCreatedLink: action.payload,
