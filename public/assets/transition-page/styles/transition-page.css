@@ -184,6 +184,9 @@ img {
 }
 
 .browser-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-image: url(../images/browser.svg);
   background-repeat: no-repeat;
   background-position: center;
@@ -198,10 +201,20 @@ img {
 
 .links {
   width: 100%;
-  height: 160px;
+  height: 140px;
   padding-top: 88.4px;
   padding-left: 188px;
   color: #000000;
+}
+
+.phishing {
+  position: relative;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 17px;
+  color: #ffffff;
+  text-decoration-line: underline;
 }
 
 .proceed-button {
@@ -262,6 +275,7 @@ img {
     padding-top: 83.6px;
     padding-left: 120px;
     font-size: 12px;
+    height: 120px;
   }
 
   .top-half-content p {
