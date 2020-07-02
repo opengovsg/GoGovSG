@@ -27,6 +27,7 @@ const mapDispatchToProps = (dispatch) => ({
   getUrlsForUser: () => dispatch(userActions.getUrlsForUser()),
   getEmailValidator: () =>
     dispatch(loginActions.getEmailValidationGlobExpression()),
+  getUserMessage: () => dispatch(userActions.getUserMessage()),
 })
 
 /**
@@ -41,9 +42,11 @@ const UserPage = ({
   getUrlsForUser,
   getEmailValidator,
   emailValidator,
+  getUserMessage,
 }) => {
   const fetchingUrls = useSelector((state) => state.user.isFetchingUrls)
   const urlCount = useSelector((state) => state.user.urlCount)
+  const message = useSelector((state) => state.user.message)
   const urlsFiltered = useIsFiltered()
 
   useEffect(() => {
@@ -51,6 +54,9 @@ const UserPage = ({
       getUrlsForUser()
       if (!emailValidator) {
         getEmailValidator()
+      }
+      if (message === null) {
+        getUserMessage()
       }
     }
   }, [])

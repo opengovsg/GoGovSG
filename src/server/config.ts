@@ -136,6 +136,7 @@ export const emailValidator = new minimatch.Minimatch(
   },
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
+export const userMessage = process.env.USER_MESSAGE
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 

@@ -27,6 +27,12 @@ export const SET_CREATE_SHORT_LINK_ERROR = 'SET_CREATE_SHORT_LINK_ERROR'
 export const SET_LAST_CREATED_LINK = 'SET_LAST_CREATED_LINK'
 export const SET_EDITED_CONTACT_EMAIL = 'SET_EDITED_CONTACT_EMAIL'
 export const SET_EDITED_DESCRIPTION = 'SET_EDITED_DESCRIPTION'
+export const SET_USER_MESSAGE = 'SET_USER_MESSAGE'
+
+export type SetUserMessageAction = {
+  type: typeof SET_USER_MESSAGE
+  payload: string
+}
 
 export type SetEditedContactEmailAction = {
   type: typeof SET_EDITED_CONTACT_EMAIL
@@ -163,3 +169,4 @@ export type UserActionType =
   | SetUrlFilterAction
   | SetEditedContactEmailAction
   | SetEditedDescriptionAction
+  | SetUserMessageAction
