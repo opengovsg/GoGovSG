@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Op, Transaction } from 'sequelize'
+import { Op, Sequelize, Transaction } from 'sequelize'
 import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
@@ -8,11 +8,8 @@ import { Devices, DevicesType } from '../models/statistics/devices'
 import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
-import { getLocalDayGroup, getLocalTime } from '../util/time'
+import { getLocalDayGroup } from '../util/time'
 import { NotFoundError } from '../util/error'
-import { container } from '../util/inversify'
-import { DeviceCheckServiceInterface } from '../services/interfaces/DeviceCheckServiceInterface'
-import { DependencyIds } from '../constants'
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -84,56 +81,18 @@ export class LinkStatisticsRepository
   public incrementClick: (
     shortUrl: string,
     transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const url = await Url.findOne({ where: { shortUrl }, transaction })
-    if (!url) {
+  ) => Promise<boolean> = async (shortUrl) => {
+    // Disable hooks to avoid tripping the beforeBulkUpdate rejection
+    const [affectedRowCount] = await Url.update(
+      { clicks: Sequelize.literal('clicks + 1') },
+      { where: { shortUrl }, returning: false, hooks: false },
+    )
+    if (!affectedRowCount) {
       throw new NotFoundError(
         `shortUrl not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-    await url.increment('clicks', { transaction })
-  }
-
-  public updateDailyStatistics: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const time = getLocalTime()
-    const [clickStats] = await Clicks.findOrCreate({
-      where: { shortUrl, date: time.date },
-      transaction,
-    })
-    await clickStats.increment('clicks', { transaction })
-  }
-
-  public updateWeekdayStatistics: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, transaction) => {
-    const time = getLocalTime()
-    const [clickStats] = await WeekdayClicks.findOrCreate({
-      where: { shortUrl, weekday: time.weekday, hours: time.hours },
-      transaction,
-    })
-    await clickStats.increment('clicks', { transaction })
-  }
-
-  public updateDeviceStatistics: (
-    shortUrl: string,
-    userAgent: string,
-    transaction?: Transaction,
-  ) => Promise<void> = async (shortUrl, userAgent, transaction) => {
-    const deviceCheck = container.get<DeviceCheckServiceInterface>(
-      DependencyIds.deviceCheckService,
-    )
-    const deviceType = deviceCheck.getDeviceType(userAgent)
-    if (deviceType) {
-      const [clickStats] = await Devices.findOrCreate({
-        where: { shortUrl },
-        transaction,
-      })
-      await clickStats.increment(deviceType!, { transaction })
-    }
+    return affectedRowCount > 0
   }
 }
 

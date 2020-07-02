@@ -6,10 +6,7 @@ import { LinkStatisticsInterface } from '../../../../src/shared/interfaces/link-
 @injectable()
 export class LinkStatisticsServiceMock
   implements LinkStatisticsServiceInterface {
-  updateLinkStatistics: (
-    shortUrl: string,
-    userAgent: string,
-  ) => Promise<void> = () => {
+  updateLinkStatistics: (shortUrl: string) => Promise<void> = () => {
     return Promise.resolve()
   }
 
