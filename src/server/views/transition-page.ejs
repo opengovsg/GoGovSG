@@ -15,7 +15,7 @@
 
 <body>
     <div class="sgds-masthead masthead-root">
-        <a href="https://www.gov.sg" target="_blank">
+        <a href="https://www.gov.sg" target="_blank" rel=”noreferrer noopener”>
             <span class="sgds-icon sgds-icon-sg-crest"></span>
             <span class="is-text">A Singapore Government Agency Website</span>
         </a>
@@ -26,11 +26,18 @@
             <p>Check your address bar to make sure you’re accessing a gov.sg link.</p>
             <div class="browser-image">
                 <div class="links">go.gov.sg/<span class="element"></span></div>
-                <a class="phishing" href="">Learn about our anti-phishing efforts</a>
+                <a
+                    class="phishing"
+                    href="https://go.gov.sg/go-antiphishing"
+                    target="_blank"
+                    rel=”noreferrer noopener”
+                >
+                    Learn about our anti-phishing efforts
+                </a>
             </div>
         </div>
         <button class="proceed-button" onclick="proceedToDestination()">
-            Proceed to <%= rootDomain %>
+            Click to proceed
             <img src="./assets/transition-page/icons/icon-arrow-right.svg" alt="arrow right" />
         </button>
     </div>
