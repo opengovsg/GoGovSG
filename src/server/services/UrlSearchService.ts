@@ -27,7 +27,14 @@ export class UrlSearchService {
 
     return {
       // Specific click counts are classified for certain government links
-      urls: privateUrls.map(({ clicks, ...url }) => url),
+      urls: privateUrls.map(
+        ({ longUrl, shortUrl, contactEmail, description }) => ({
+          longUrl,
+          shortUrl,
+          contactEmail,
+          description,
+        }),
+      ),
       count,
     }
   }

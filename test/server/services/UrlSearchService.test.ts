@@ -1,9 +1,6 @@
 import { UrlSearchService } from '../../../src/server/services/UrlSearchService'
 import { UrlRepositoryMock } from '../mocks/repositories/UrlRepository'
-import {
-  SearchResultsSortOrder,
-  StorableUrlState,
-} from '../../../src/server/repositories/enums'
+import { SearchResultsSortOrder } from '../../../src/server/repositories/enums'
 
 /**
  * Unit tests for UrlSearchService.
@@ -25,13 +22,8 @@ describe('UrlSearchService tests', () => {
           {
             shortUrl: 'test-moh',
             longUrl: 'https://www.moh.gov.sg/covid-19',
-            state: StorableUrlState.Active,
-            isFile: false,
-            createdAt: '2020-04-17T09:10:07.491Z',
-            updatedAt: '2020-06-09T10:07:07.557Z',
             description: '',
             contactEmail: null,
-            // No clicks property
           },
         ],
         count: 0,

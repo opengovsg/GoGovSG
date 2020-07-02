@@ -15,7 +15,7 @@ import {
   NotFoundError,
 } from '../util/error'
 import { MessageType } from '../../shared/util/messages'
-import { logger } from '../config'
+import { logger, userMessage } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 
 @injectable()
@@ -42,8 +42,13 @@ export class UserController implements UserControllerInterface {
     }
 
     try {
-      await this.urlManagementService.createUrl(userId, shortUrl, longUrl, file)
-      res.ok(jsonMessage(`Short link "${shortUrl}" has been updated`))
+      const result = await this.urlManagementService.createUrl(
+        userId,
+        shortUrl,
+        longUrl,
+        file,
+      )
+      res.ok(result)
       return
     } catch (error) {
       if (error instanceof NotFoundError) {
@@ -186,6 +191,14 @@ export class UserController implements UserControllerInterface {
       res.serverError(jsonMessage('Error retrieving URLs for user'))
       return
     }
+  }
+
+  public getUserMessage: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (_, res) => {
+    res.send(userMessage)
+    return
   }
 }
 

@@ -30,6 +30,7 @@ services:
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
+      - USER_MESSAGE=User message test
       - AWS_S3_BUCKET=local-bucket
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
       - AWS_ACCESS_KEY_ID=foobar
