@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize/types'
 
 import { LinkStatisticsInterface } from '../../../shared/interfaces/link-statistics'
+import { DeviceType } from '../../services/interfaces/DeviceCheckServiceInterface'
 
 export interface LinkStatisticsRepositoryInterface {
   /**
@@ -20,4 +21,11 @@ export interface LinkStatisticsRepositoryInterface {
     shortUrl: string,
     transaction?: Transaction,
   ) => Promise<boolean>
+
+  /**
+   * Update link statistics of the specified short url.
+   *
+   * @param shortUrl The short url statistics to update.
+   */
+  updateLinkStatistics: (shortUrl: string, device: DeviceType) => void
 }

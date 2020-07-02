@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Op, Sequelize, Transaction } from 'sequelize'
+import { Op, QueryTypes, Sequelize, Transaction } from 'sequelize'
 import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
@@ -10,6 +10,8 @@ import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
 import { getLocalDayGroup } from '../util/time'
 import { NotFoundError } from '../util/error'
+import { sequelize } from '../util/sequelize'
+import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -93,6 +95,17 @@ export class LinkStatisticsRepository
       )
     }
     return affectedRowCount > 0
+  }
+
+  public updateLinkStatistics: (
+    shortUrl: string,
+    device: DeviceType,
+  ) => void = (shortUrl, device) => {
+    // Creates or modifies an existing function.
+    const rawFunction = `
+      SELECT updatedLinkStatistics('${shortUrl}', '${device}')
+    `
+    return sequelize.query(rawFunction, { type: QueryTypes.SELECT })
   }
 }
 
