@@ -168,6 +168,6 @@ export const bucketEndpoint =
 export const accessEndpoint =
   process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
 
-export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 20
+export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS
