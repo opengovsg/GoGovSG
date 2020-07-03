@@ -56,10 +56,16 @@ export class RedirectController implements RedirectControllerInterface {
       const logRedirect = () => {
         this.analyticsLogger.logRedirectAnalytics(
           req,
-          res,
           shortUrl.toLowerCase(),
           longUrl,
         )
+      }
+
+      const generatedCookie = this.analyticsLogger.generateCookie(
+        req.headers.cookie,
+      )
+      if (generatedCookie) {
+        res.cookie(...generatedCookie)
       }
 
       req.session!.visits = visitedUrls

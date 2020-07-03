@@ -30,10 +30,10 @@ function parseCookies(cookie: string | undefined): CookieData {
  * Else return null.
  */
 export function generateCookie(
-  req: express.Request,
+  cookie?: string,
 ): [string, string, { maxAge: number }] | null {
   // Get ga cookie from request headers cookie
-  const { gaClientId } = parseCookies(req.headers.cookie)
+  const { gaClientId } = parseCookies(cookie)
 
   // if cookie is not found, set the cookie
   if (!gaClientId) {
