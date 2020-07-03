@@ -109,7 +109,7 @@ if (DEV_ENV) {
     },
     port: process.env.SES_PORT as string,
     pool: true,
-    maxMessages: Infinity,
+    maxMessages: 100,
     maxConnections: 20,
   }
 }
