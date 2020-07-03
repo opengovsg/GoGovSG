@@ -154,7 +154,7 @@ describe('redirect API tests', () => {
       'aaa',
     )
 
-    expect(isAnalyticsLogged(req,'aaa', 'aa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
     cookieSpy.mockClear()
   })
 
@@ -184,7 +184,7 @@ describe('redirect API tests', () => {
       'aaa',
     )
 
-    expect(isAnalyticsLogged(req,'aaa', 'aa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
     cookieSpy.mockClear()
   })
 
@@ -202,7 +202,7 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req,'aaa', 'aa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url does not exist in cache but does in db', async () => {
@@ -330,7 +330,7 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req,'aaa', 'aa')).toBeTruthy()
+    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
   })
 
   test('url in cache and db is down', async () => {
