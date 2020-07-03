@@ -13,25 +13,30 @@ export interface AnalyticsLogger {
    */
   logRedirectAnalytics: (
     req: Express.Request,
-    res: Express.Response,
     shortUrl: string,
     longUrl: string,
   ) => void
+
+  generateCookie: (
+    cookie?: string,
+  ) => [string, string, { maxAge: number }] | null
 }
 
 @injectable()
 export class GaLogger implements AnalyticsLogger {
   logRedirectAnalytics: (
     req: Express.Request,
-    res: Express.Response,
     shortUrl: string,
     longUrl: string,
-  ) => void = (req, res, shortUrl, longUrl) => {
+  ) => void = (req, shortUrl, longUrl) => {
     if (!gaTrackingId) return
-    const cookie = generateCookie(req)
-    if (cookie) {
-      res.cookie(...cookie)
-    }
     sendPageViewHit(req, shortUrl, longUrl)
+  }
+
+  generateCookie: (
+    cookie?: string,
+  ) => [string, string, { maxAge: number }] | null = (cookie) => {
+    if (!gaTrackingId) return null
+    return generateCookie(cookie)
   }
 }

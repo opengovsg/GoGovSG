@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import httpMocks from 'node-mocks-http'
 import redisMock from 'redis-mock'
 import SequelizeMock from 'sequelize-mock'
@@ -30,7 +30,6 @@ export function getOtpCache(): OtpRepositoryInterface {
  */
 export function isAnalyticsLogged(
   req: Request,
-  res: Response,
   shortUrl: string,
   longUrl: string,
 ): boolean {
@@ -39,7 +38,6 @@ export function isAnalyticsLogged(
   ) as AnalyticsLoggerMock
   return (
     logger.lastReq === req &&
-    logger.lastRes === res &&
     logger.lastShortUrl === shortUrl &&
     logger.lastLongUrl === longUrl
   )
