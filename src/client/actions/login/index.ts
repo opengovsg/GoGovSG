@@ -1,7 +1,8 @@
-import { IMinimatch, Minimatch } from 'minimatch'
+import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import {
+  EmailValidatorType,
   GET_OTP_EMAIL_ERROR,
   GET_OTP_EMAIL_PENDING,
   GET_OTP_EMAIL_SUCCESS,
@@ -64,9 +65,12 @@ const setEmail: (payload: string) => SetEmailAction = (payload) => ({
   payload,
 })
 
-const setEmailValidator: (payload: IMinimatch) => SetEmailValidatorAction = (
+const setEmailValidator: (
+  payload: EmailValidatorType,
+) => SetEmailValidatorAction = (payload) => ({
+  type: SET_EMAIL_VALIDATOR,
   payload,
-) => ({ type: SET_EMAIL_VALIDATOR, payload })
+})
 
 const setOTP: (payload: string) => SetOtpAction = (payload) => ({
   type: SET_OTP,
@@ -114,13 +118,17 @@ const getEmailValidationGlobExpression = () => (
   get('/api/login/emaildomains').then((response) => {
     if (response.ok) {
       response.text().then((expression) => {
-        const validator = new Minimatch(expression, {
+        const globValidator = new Minimatch(expression, {
           noext: true,
           noglobstar: true,
           nobrace: true,
           nonegate: true,
         })
-        dispatch<SetEmailValidatorAction>(setEmailValidator(validator))
+        dispatch<SetEmailValidatorAction>(
+          setEmailValidator((email: string) => {
+            return globValidator.match(email)
+          }),
+        )
       })
     }
   })
