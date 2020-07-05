@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { IMinimatch } from 'minimatch'
 import userActions from '../../../../../actions/user'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
 import { UrlType } from '../../../../../reducers/user/types'
 import { GoGovReduxState } from '../../../../../reducers/types'
+import { EmailValidatorType } from '../../../../../actions/login/types'
 
 export type ShortLinkState = [
   UrlType | undefined,
@@ -27,7 +27,7 @@ export default function useShortLink(shortLink: string) {
   const isUploading = useSelector<GoGovReduxState, boolean>(
     (state) => state.user.isUploading,
   )
-  const emailValidator = useSelector<GoGovReduxState, IMinimatch>(
+  const emailValidator = useSelector<GoGovReduxState, EmailValidatorType>(
     (state) => state.login.emailValidator,
   )
   const dispatch = useDispatch()

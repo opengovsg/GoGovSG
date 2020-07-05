@@ -10,7 +10,6 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import { Minimatch } from 'minimatch'
 import { Redirect } from 'react-router-dom'
 
 import loginActions from '~/actions/login'
@@ -140,7 +139,7 @@ const LoginPage = ({
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
-    const emailError = () => !!email && !emailValidator.match(email)
+    const emailError = () => !!email && !emailValidator(email)
 
     const emailFormAttr = {
       id: 'email',
@@ -246,7 +245,7 @@ LoginPage.propTypes = {
   setEmail: PropTypes.func.isRequired,
   setOTP: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
-  emailValidator: PropTypes.instanceOf(Minimatch).isRequired,
+  emailValidator: PropTypes.func.isRequired,
   variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
 }
 
