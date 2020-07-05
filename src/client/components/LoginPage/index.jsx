@@ -245,7 +245,7 @@ LoginPage.propTypes = {
   setEmail: PropTypes.func.isRequired,
   setOTP: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
-  emailValidator: PropTypes.func.isRequired, // TODO - Warning: Failed prop type: Invalid prop `emailValidator` of type `object` supplied to `LoginPage`, expected `function`
+  emailValidator: PropTypes.func.isRequired,
   variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
 }
 

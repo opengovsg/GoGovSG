@@ -34,7 +34,7 @@ import { loginFormVariants } from '../../util/types'
 import { get, postJson } from '../../util/requests'
 import userActions from '../user'
 import rootActions from '../root'
-import { defaultEmailValidationGlobExpression } from '../../reducers/login'
+import { defaultEmailValidator } from '../../reducers/login'
 import { WipeUserStateAction } from '../user/types'
 import { GetReduxState } from '../types'
 import { GoGovReduxState } from '../../reducers/types'
@@ -116,7 +116,7 @@ const getEmailValidationGlobExpression = () => (
 ) => {
   const { login } = getState()
   const { emailValidator } = login
-  if (emailValidator !== defaultEmailValidationGlobExpression) return
+  if (emailValidator !== defaultEmailValidator) return
   get('/api/login/emaildomains').then((response) => {
     if (response.ok) {
       response.text().then((expression) => {

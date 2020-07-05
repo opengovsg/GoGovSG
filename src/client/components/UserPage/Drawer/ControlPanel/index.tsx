@@ -191,7 +191,7 @@ export default function ControlPanel() {
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
   const isContactEmailValid =
-    !editedContactEmail || emailValidator.match(editedContactEmail)
+    !editedContactEmail || emailValidator(editedContactEmail)
   const isDescriptionValid =
     editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH &&
     isPrintableAscii(editedDescription)
