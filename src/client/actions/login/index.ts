@@ -1,6 +1,8 @@
 import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
+import validator from 'validator'
+
 import {
   EmailValidatorType,
   GET_OTP_EMAIL_ERROR,
@@ -126,7 +128,10 @@ const getEmailValidationGlobExpression = () => (
         })
         dispatch<SetEmailValidatorAction>(
           setEmailValidator((email: string) => {
-            return globValidator.match(email)
+            return (
+              globValidator.match(email) &&
+              validator.isEmail(email, { allow_utf8_local_part: false })
+            )
           }),
         )
       })
