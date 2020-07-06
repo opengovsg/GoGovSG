@@ -1,5 +1,4 @@
-import { Minimatch } from 'minimatch'
-
+import validator from 'validator'
 import {
   GET_OTP_EMAIL_ERROR,
   GET_OTP_EMAIL_PENDING,
@@ -18,11 +17,12 @@ import {
 import { loginFormVariants } from '../../util/types'
 import { LoginState } from './types'
 
-export const defaultEmailValidationGlobExpression = new Minimatch('*')
+export const defaultEmailValidator = (email: string) =>
+  validator.isEmail(email, { allow_utf8_local_part: false })
 
 const initialState: LoginState = {
   email: '',
-  emailValidator: defaultEmailValidationGlobExpression,
+  emailValidator: defaultEmailValidator,
   otp: '',
   user: {},
   isLoggedIn: false,
