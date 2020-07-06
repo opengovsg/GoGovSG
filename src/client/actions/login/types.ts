@@ -1,5 +1,3 @@
-import { IMinimatch } from 'minimatch'
-
 export const GET_OTP_EMAIL_SUCCESS = 'GET_OTP_EMAIL_SUCCESS'
 export const GET_OTP_EMAIL_PENDING = 'GET_OTP_EMAIL_PENDING'
 export const GET_OTP_EMAIL_ERROR = 'GET_OTP_EMAIL_ERROR'
@@ -51,9 +49,11 @@ export type SetEmailAction = {
   payload: string
 }
 
+export type EmailValidatorType = (email: string) => Boolean
+
 export type SetEmailValidatorAction = {
   type: typeof SET_EMAIL_VALIDATOR
-  payload: IMinimatch
+  payload: EmailValidatorType
 }
 
 export type IsLoggedInSuccessAction = {
