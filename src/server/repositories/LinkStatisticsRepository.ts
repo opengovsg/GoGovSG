@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Op, QueryTypes, Sequelize, Transaction } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
@@ -9,7 +9,6 @@ import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
 import { getLocalDayGroup } from '../util/time'
-import { NotFoundError } from '../util/error'
 import { sequelize } from '../util/sequelize'
 import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
 import { rawFunctionName } from '../models/functions/updateLinkStatistics'
@@ -79,23 +78,6 @@ export class LinkStatisticsRepository
       } as LinkStatisticsInterface
     }
     return null
-  }
-
-  public incrementClick: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<boolean> = async (shortUrl) => {
-    // Disable hooks to avoid tripping the beforeBulkUpdate rejection
-    const [affectedRowCount] = await Url.update(
-      { clicks: Sequelize.literal('clicks + 1') },
-      { where: { shortUrl }, returning: false, hooks: false },
-    )
-    if (!affectedRowCount) {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
-    }
-    return affectedRowCount > 0
   }
 
   public updateLinkStatistics: (
