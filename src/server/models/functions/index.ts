@@ -6,12 +6,19 @@ import {
   updateLinkStatistics,
 } from './updateLinkStatistics'
 
-// Removes any previous implementations of link statistics.
-sequelize.query(dropLinkStatistics, {
-  type: QueryTypes.RAW,
-})
+/**
+ * Syncs database functions.
+ */
+export async function syncFunctions() {
+  // Removes any previous implementations of link statistics.
+  await sequelize.query(dropLinkStatistics, {
+    type: QueryTypes.RAW,
+  })
 
-// Initialises the link statistics database function.
-sequelize.query(updateLinkStatistics, {
-  type: QueryTypes.RAW,
-})
+  // Initialises the link statistics database function.
+  await sequelize.query(updateLinkStatistics, {
+    type: QueryTypes.RAW,
+  })
+}
+
+export default syncFunctions
