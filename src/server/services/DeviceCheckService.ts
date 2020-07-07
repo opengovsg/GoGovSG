@@ -16,7 +16,8 @@ export class DeviceCheckService implements DeviceCheckServiceInterface {
 
     // Desktop browsers and bots do not get categorized by ua-parser.
     if (!deviceType) {
-      if (parser.getEngine && !userAgent.match(BOTS_USER_AGENTS)) {
+      const engine = parser.getEngine()
+      if (engine.name && engine.version && !userAgent.match(BOTS_USER_AGENTS)) {
         return 'desktop'
       }
       return 'others'
