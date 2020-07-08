@@ -8,12 +8,6 @@ import { WeekdayClicks } from '../statistics/weekday'
  */
 export const rawFunctionName = 'update_link_statistics'
 
-/**
- * This query drops the previous implementation of updateLinkStatistics.
- * This is useful as functions cannot be automatically replaced when parameter datatypes changes.
- */
-export const dropLinkStatistics = `DROP FUNCTION IF EXISTS ${rawFunctionName};`
-
 // Get the relevant table names from their models.
 const urlTable = Url.getTableName()
 const devicesTable = Devices.getTableName()
