@@ -3,11 +3,6 @@ import { Clicks } from '../statistics/daily'
 import { Devices } from '../statistics/devices'
 import { WeekdayClicks } from '../statistics/weekday'
 
-/**
- * Name of the link statistics update SQL function.
- */
-export const rawFunctionName = 'update_link_statistics'
-
 // Get the relevant table names from their models.
 const urlTable = Url.getTableName()
 const devicesTable = Devices.getTableName()
@@ -17,7 +12,7 @@ const weekdayTable = WeekdayClicks.getTableName()
 /**
  * This function is used to update the relevant link statistics tables, when called.
  */
-export const updateLinkStatistics = `CREATE OR REPLACE FUNCTION ${rawFunctionName} (inputShortUrl text, device text)
+export const updateLinkStatistics = `CREATE OR REPLACE FUNCTION update_link_statistics (inputShortUrl text, device text)
 RETURNS void AS $$
 BEGIN
 -- Update total clicks.

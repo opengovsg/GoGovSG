@@ -11,7 +11,6 @@ import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRe
 import { getLocalDayGroup } from '../util/time'
 import { sequelize } from '../util/sequelize'
 import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
-import { rawFunctionName } from '../models/functions/updateLinkStatistics'
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -86,7 +85,7 @@ export class LinkStatisticsRepository
   ) => void = (shortUrl, device) => {
     // Creates or modifies an existing function.
     const rawFunction = `
-      SELECT ${rawFunctionName}('${shortUrl}', '${device}')
+      SELECT update_link_statistics('${shortUrl}', '${device}')
     `
     return sequelize.query(rawFunction, { type: QueryTypes.SELECT })
   }
