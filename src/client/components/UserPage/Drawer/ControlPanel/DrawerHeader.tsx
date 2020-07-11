@@ -13,9 +13,6 @@ import CopyButton from '../../Widgets/CopyButton'
 const useStyles = makeStyles((theme) =>
   createStyles({
     drawerTitleDiv: {
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'space-between',
       marginBottom: theme.spacing(6.5),
       marginTop: theme.spacing(1.5),
       [theme.breakpoints.up('md')]: {
@@ -23,11 +20,8 @@ const useStyles = makeStyles((theme) =>
         marginTop: 0,
       },
     },
-    copyLinkDiv: {
-      display: 'flex',
-    },
-    copyIcon: {
-      marginRight: 5,
+    copyButtonWrapper: {
+      marginLeft: -8,
     },
     headerText: {
       marginBottom: '6px',
@@ -53,11 +47,12 @@ export default function DrawerHeader() {
       >
         Edit link
       </Typography>
-      <CopyButton
-        shortUrl={shortUrl}
-        buttonText={'Copy short link'}
-        iconSize={20}
-      />
+      <div className={classes.copyButtonWrapper}>
+        <CopyButton
+          shortUrl={shortUrl}
+          iconSize={20}
+        />
+      </div>
     </div>
   )
 }

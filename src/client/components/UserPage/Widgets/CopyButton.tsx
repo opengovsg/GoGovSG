@@ -29,21 +29,28 @@ const useStyles = makeStyles(() =>
 
 export type CopyButtonProps = {
   shortUrl: string
-  buttonText: string
+  buttonText?: string // if omitted, defaults to the url to copy
   iconSize: number
   variant?: TypographyVariant
   stopPropagation?: boolean
 }
 
-export default function CopyButton(props: CopyButtonProps) {
-  const classes = useStyles({ iconSize: props.iconSize })
+export default function CopyButton({
+  iconSize,
+  buttonText,
+  shortUrl,
+  stopPropagation,
+  variant,
+}: CopyButtonProps) {
+  const classes = useStyles({ iconSize })
+  const urlToCopy = `${document.location.protocol}//${document.location.host}/${shortUrl}`
+
   return (
     <OnClickTooltip tooltipText="Short link copied">
       <Button
         onClick={(e) => {
-          const urlToCopy = `${document.location.protocol}//${document.location.host}/${props.shortUrl}`
           copy(urlToCopy)
-          if (props.stopPropagation) {
+          if (stopPropagation) {
             e.stopPropagation()
           }
         }}
@@ -54,8 +61,8 @@ export default function CopyButton(props: CopyButtonProps) {
             src={copyIcon}
             alt="Copy short link"
           />
-          <Typography variant={props.variant || 'subtitle2'}>
-            {props.buttonText}
+          <Typography variant={variant || 'subtitle2'}>
+            {buttonText || urlToCopy}
           </Typography>
         </div>
       </Button>
