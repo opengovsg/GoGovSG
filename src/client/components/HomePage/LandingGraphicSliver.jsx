@@ -5,10 +5,10 @@ import {
   Hidden,
   Link,
   Typography,
-  useMediaQuery as UseMediaQuery,
-  useTheme as UseTheme,
   createStyles,
   makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 import Section from '../Section'
 import { ApplyAppMargins, IgnoreAppRightMargins } from '../AppMargins'
@@ -102,10 +102,10 @@ const useStyles = makeStyles((theme) =>
 
 const LandingGraphicSliver = () => {
   const classes = useStyles()
-  const topPaddingMultipler = () => {
-    const theme = UseTheme()
-    const isMediumWidth = UseMediaQuery(theme.breakpoints.up('md'))
-    const isDesktopWidth = UseMediaQuery(theme.breakpoints.up('lg'))
+  const useTopPaddingMultipler = () => {
+    const theme = useTheme()
+    const isMediumWidth = useMediaQuery(theme.breakpoints.up('md'))
+    const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
     if (isMediumWidth) {
       return 1
     }
@@ -119,7 +119,7 @@ const LandingGraphicSliver = () => {
     <div className={classes.pageHeightContainer}>
       <Section
         backgroundType="dark"
-        topMultiplier={topPaddingMultipler()}
+        topMultiplier={useTopPaddingMultipler()}
         bottomMultiplier={0}
       >
         <div className={classes.container}>
