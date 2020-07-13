@@ -59,7 +59,14 @@ const UserPage = ({
         getUserMessage()
       }
     }
-  }, [])
+  }, [
+    emailValidator,
+    getEmailValidator,
+    getUrlsForUser,
+    isLoggedIn,
+    message,
+    getUserMessage,
+  ])
 
   if (isLoggedIn) {
     return (
