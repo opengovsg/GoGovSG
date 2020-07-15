@@ -17,6 +17,7 @@ const urlTable = Url.getTableName()
 const devicesTable = Devices.getTableName()
 const clicksTable = Clicks.getTableName()
 const weekdayTable = WeekdayClicks.getTableName()
+const timeZone = 'Asia/Singapore'
 
 /**
  * This function is used to update the relevant link statistics tables, when called.
@@ -51,12 +52,12 @@ ELSIF device='others' THEN
 END IF;
 -- Update daily clicks.
 INSERT INTO "${clicksTable}" ("shortUrl", "date", "clicks", "createdAt", "updatedAt")
-VALUES (inputShortUrl, current_timestamp::date, 1, current_timestamp, current_timestamp)
+VALUES (inputShortUrl, date(current_timestamp at time zone '${timeZone}'), 1, current_timestamp, current_timestamp)
 ON CONFLICT ("shortUrl", "date")
 DO UPDATE SET "clicks" = "${clicksTable}"."clicks" + 1;
 -- Update weekday clicks.
 INSERT INTO "${weekdayTable}" ("shortUrl", "weekday", "hours", "clicks", "createdAt", "updatedAt")
-VALUES (inputShortUrl, extract(dow from current_timestamp), extract(hour from current_timestamp), 1, current_timestamp, current_timestamp)
+VALUES (inputShortUrl, extract(dow from date(current_timestamp at time zone '${timeZone}')), extract(hour from current_timestamp at time zone '${timeZone}'), 1, current_timestamp, current_timestamp)
 ON CONFLICT ("shortUrl", "weekday", "hours")
 DO UPDATE SET "clicks" = "${weekdayTable}"."clicks" + 1;
 END; $$ LANGUAGE plpgsql;
