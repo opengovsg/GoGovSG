@@ -49,7 +49,7 @@ export class RedirectService implements RedirectServiceInterface {
     const longUrl = await this.urlRepository.getLongUrl(shortUrl)
 
     // Update clicks and click statistics in database.
-    this.linkStatisticsService.updateLinkStatistics(shortUrl)
+    this.linkStatisticsService.updateLinkStatistics(shortUrl, userAgent)
 
     if (this.crawlerCheckService.isCrawler(userAgent)) {
       return {

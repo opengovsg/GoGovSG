@@ -4,6 +4,7 @@ import { User } from './user'
 import { Clicks } from './statistics/daily'
 import { WeekdayClicks } from './statistics/weekday'
 import { Devices } from './statistics/devices'
+import { syncFunctions } from './functions'
 
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
@@ -26,4 +27,5 @@ Devices.belongsTo(Url, { foreignKey: 'shortUrl' })
  */
 export default async () => {
   await sequelize.sync()
+  await syncFunctions()
 }

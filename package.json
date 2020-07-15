@@ -14,7 +14,7 @@
     "postbuild": "copyfiles -u 1 src/server/views/**/* build && copyfiles -u 4 src/server/services/QrCodeService/assets/**/* build/server/services/QrCodeService",
     "start": "node build/server/index.js",
     "client-dev": "webpack-dev-server --mode development --host 0.0.0.0 --devtool inline-source-map --hot",
-    "server-dev": "ts-node-dev --respawn --transpileOnly --inspect=0.0.0.0 -- src/server/index.ts",
+    "server-dev": "ts-node-dev --poll --respawn --transpileOnly --inspect=0.0.0.0 -- src/server/index.ts",
     "docker-dev": "concurrently \"npm run server-dev\" \"npm run client-dev\"",
     "dev": "docker-compose -f docker-compose.yml up --build",
     "test": "jest --collectCoverage",
