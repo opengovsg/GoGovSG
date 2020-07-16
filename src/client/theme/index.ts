@@ -240,6 +240,11 @@ export default responsiveFontSizes(
           },
         },
       },
+      MuiDivider: {
+        root: {
+          backgroundColor: '#e8e8e8',
+        },
+      },
     },
   }),
 )

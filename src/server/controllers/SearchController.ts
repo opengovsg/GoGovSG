@@ -5,7 +5,7 @@ import { DependencyIds } from '../constants'
 import { logger } from '../config'
 import jsonMessage from '../util/json'
 import { SearchControllerInterface } from './interfaces/SearchControllerInterface'
-import { SearchResultsSortOrder } from '../repositories/enums'
+import { SearchResultsSortOrder } from '../../shared/search'
 
 type UrlSearchRequest = {
   query: string

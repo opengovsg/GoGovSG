@@ -1,17 +1,20 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Redirect, withRouter } from 'react-router-dom'
+import { /* Redirect, */ withRouter } from 'react-router-dom'
 
+import { useMediaQuery, useTheme } from '@material-ui/core'
 import homeActions from '~/actions/home'
 import loginActions from '~/actions/login'
-import { USER_PAGE } from '~/util/types'
+// import { USER_PAGE } from '~/util/types'
 import TrustedBySliver from './TrustedBySliver'
 import StatisticsSliver from './StatisticsSliver'
 import DescriptionSliver from './FeatureListSliver'
 import Section from '../Section'
-import LandingGraphicSliver from './LandingGraphicSliver'
+import LandingGraphicSilver from './LandingGraphicSilver'
+import IntegratedSearchLandingGraphic from './IntegratedSearchLandingGraphic'
 import BaseLayout from '../BaseLayout'
+import { IS_SEARCH_HIDDEN } from '../../util/config'
 
 const mapDispatchToProps = (dispatch) => ({
   getLinksToRotate: () => dispatch(homeActions.getLinksToRotate()),
@@ -26,7 +29,9 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const HomePage = (props) => {
-  const { isLoggedIn } = props
+  // const { isLoggedIn } = props
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
   useEffect(() => {
     const { getLinksToRotate, getIsLoggedIn } = props
@@ -34,19 +39,23 @@ const HomePage = (props) => {
     getIsLoggedIn()
   })
 
-  if (isLoggedIn) {
-    return (
-      <Redirect
-        to={{
-          pathname: USER_PAGE,
-        }}
-      />
-    )
-  }
+  // if (isLoggedIn) {
+  //   return (
+  //     <Redirect
+  //       to={{
+  //         pathname: USER_PAGE,
+  //       }}
+  //     />
+  //   )
+  // }
 
   return (
-    <BaseLayout>
-      <LandingGraphicSliver />
+    <BaseLayout headerBackgroundType={isMobileView ? '#f9f9f9' : 'light'}>
+      {IS_SEARCH_HIDDEN ? (
+        <LandingGraphicSilver />
+      ) : (
+        <IntegratedSearchLandingGraphic />
+      )}
       <div id="landing-bottom">
         <Section backgroundType="light">
           <TrustedBySliver />

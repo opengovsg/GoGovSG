@@ -5,9 +5,9 @@ import rateLimit from 'express-rate-limit'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
 import { SearchControllerInterface } from '../controllers/interfaces/SearchControllerInterface'
-import { SearchResultsSortOrder } from '../repositories/enums'
 import getIp from '../util/request'
 import { logger } from '../config'
+import { SearchResultsSortOrder } from '../../shared/search'
 
 const urlSearchRequestSchema = Joi.object({
   query: Joi.string().required(),

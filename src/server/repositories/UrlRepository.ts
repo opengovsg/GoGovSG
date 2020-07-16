@@ -11,8 +11,9 @@ import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import { StorableFile, StorableUrl, UrlsPaginated } from './types'
-import { SearchResultsSortOrder, StorableUrlState } from './enums'
+import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
+import { SearchResultsSortOrder } from '../../shared/search'
 
 const { Public, Private } = FileVisibility
 /**

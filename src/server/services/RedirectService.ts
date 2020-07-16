@@ -7,6 +7,7 @@ import { RedirectServiceInterface } from './interfaces/RedirectServiceInterface'
 import { RedirectResult, RedirectType } from './types'
 import { CookieArrayReducerServiceInterface } from './CookieArrayReducerService'
 import { LinkStatisticsServiceInterface } from './interfaces/LinkStatisticsServiceInterface'
+import { ogUrl } from '../config'
 
 @injectable()
 export class RedirectService implements RedirectServiceInterface {
@@ -37,7 +38,13 @@ export class RedirectService implements RedirectServiceInterface {
     shortUrl: string,
     pastVisits: string[],
     userAgent: string,
-  ) => Promise<RedirectResult> = async (rawShortUrl, pastVisits, userAgent) => {
+    referrer: string,
+  ) => Promise<RedirectResult> = async (
+    rawShortUrl,
+    pastVisits,
+    userAgent,
+    referrer,
+  ) => {
     // Short link must consist of valid characters
     if (RedirectService.isValidShortUrl(rawShortUrl)) {
       throw new NotFoundError('Invalid Url')
@@ -49,7 +56,7 @@ export class RedirectService implements RedirectServiceInterface {
     const longUrl = await this.urlRepository.getLongUrl(shortUrl)
 
     // Update clicks and click statistics in database.
-    this.linkStatisticsService.updateLinkStatistics(shortUrl, userAgent)
+    this.linkStatisticsService.updateLinkStatistics(shortUrl)
 
     if (this.crawlerCheckService.isCrawler(userAgent)) {
       return {
@@ -59,10 +66,14 @@ export class RedirectService implements RedirectServiceInterface {
       }
     }
 
-    const renderTransitionPage = !this.cookieArrayReducerService.userHasVisitedShortlink(
-      pastVisits,
-      shortUrl,
-    )
+    const isFromTrustedPage = referrer.startsWith(ogUrl)
+
+    const renderTransitionPage =
+      !this.cookieArrayReducerService.userHasVisitedShortlink(
+        pastVisits,
+        shortUrl,
+      ) && !isFromTrustedPage
+
     const newVisits = this.cookieArrayReducerService.writeShortlinkToCookie(
       pastVisits,
       shortUrl,

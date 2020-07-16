@@ -13,11 +13,17 @@ import {
 } from '@material-ui/core'
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.svg'
+import GoLogoLight from '~/assets/go-main-logo-light.svg'
 import loginActions from '../../actions/login'
 import Section from '../Section'
 import logoutIcon from './assets/logout-icon.svg'
 import helpIcon from '../../assets/help-icon.svg'
 import feedbackIcon from './assets/feedback-icon.svg'
+import githubIcon from './assets/github-icon.svg'
+import signinIcon from './assets/signin-icon.svg'
+import { SEARCH_PAGE } from '../../util/types'
+import SearchIcon from '../widgets/SearchIcon'
+import { IS_SEARCH_HIDDEN } from '../../util/config'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -54,6 +60,12 @@ const useStyles = makeStyles((theme) =>
       width: '140px',
       minWidth: '90px',
       order: 10,
+      color: (props) => (props.isLightItems ? '#384A51' : 'white'),
+      background: (props) =>
+        props.isLightItems ? 'white' : theme.palette.primary.main,
+    },
+    signInIcon: {
+      paddingLeft: theme.spacing(0.5),
     },
     toolbarLogo: {
       maxWidth: '130px',
@@ -63,6 +75,16 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       width: '100%',
       height: '100%',
+    },
+    headerButton: {
+      filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
+      // this class is not mobile first by default as padding should not be set
+      // when it is not mobile.
+      [theme.breakpoints.down('xs')]: {
+        paddingLeft: 0,
+        paddingRight: 0,
+        minWidth: theme.spacing(6),
+      },
     },
   }),
 )
@@ -76,15 +98,25 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
+  const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
-  const isMobileVariant = useMediaQuery(theme.breakpoints.down('xs'))
-  const classes = useStyles({ isLoggedIn })
+  const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
+  const classes = useStyles({ isLoggedIn, isLightItems })
 
   const headers = [
+    {
+      text: 'GoSearch',
+      link: SEARCH_PAGE,
+      internalLink: true,
+      public: true,
+      component: <SearchIcon size={24} />,
+      hidden: IS_SEARCH_HIDDEN,
+    },
     {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
+      icon: githubIcon,
     },
     {
       text: 'FAQ',
@@ -116,46 +148,71 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
       <img src={logoutIcon} alt="Sign out" />
     </Button>
   ) : (
-    <Button
-      href="/#/login"
-      size="large"
-      color="primary"
-      variant="contained"
-      className={classes.appBarSignInBtn}
-    >
-      Sign in
-    </Button>
+    <>
+      <Hidden smDown>
+        <Button
+          href="/#/login"
+          size="large"
+          variant="contained"
+          color={isLightItems ? 'default' : 'primary'}
+          className={classes.appBarSignInBtn}
+        >
+          Sign in
+        </Button>
+      </Hidden>
+      <Hidden mdUp>
+        <Button href="/#/login" size="large" className={classes.headerButton}>
+          Sign in
+          <img
+            src={signinIcon}
+            alt="Sign in icon"
+            className={classes.signInIcon}
+            aria-hidden
+          />
+        </Button>
+      </Hidden>
+    </>
   )
 
   return (
-    <Section backgroundType={backgroundType} verticalMultiplier={0}>
+    <Section
+      backgroundType={backgroundType}
+      verticalMultiplier={0}
+      shadow={!isLoggedIn && isMobileVariant}
+    >
       <AppBar position="static" color="transparent" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <a href="/#/" className={classes.toolbarLogo}>
-            <img src={GoLogo} className={classes.logo} alt="GoGovSG Logo" />
+            <img
+              src={isLightItems ? GoLogoLight : GoLogo}
+              className={classes.logo}
+              alt="GoGovSG Logo"
+            />
           </a>
           <span className={classes.rowSpace} />
           {headers.map(
             (header) =>
-              (header.public ? !isLoggedIn : isLoggedIn) && (
+              (header.public ? !isLoggedIn : isLoggedIn) &&
+              !header.hidden && (
                 <Button
-                  href={header.link}
-                  target="_blank"
+                  href={header.internalLink ? `/#${header.link}` : header.link}
+                  target={header.internalLink ? '' : '_blank'}
                   color="primary"
                   size="large"
                   variant="text"
                   key={header.text}
+                  className={classes.headerButton}
                   style={
                     isMobileVariant && header.mobileOrder
                       ? { order: header.mobileOrder }
                       : {}
                   }
                 >
-                  {isMobileVariant && header.icon ? (
+                  {isMobileVariant && header.icon && (
                     <img src={header.icon} alt={header.text} />
-                  ) : (
-                    header.text
                   )}
+                  {isMobileVariant && header.component}
+                  {!isMobileVariant && header.text}
                 </Button>
               ),
           )}
