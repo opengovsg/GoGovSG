@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) =>
     },
     topBar: {
       width: '100%',
-      height: '110px',
+      height: 110 + 33 /* 33px for copy button's height */,
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       backgroundColor: '#f9f9f9',
       position: 'absolute',

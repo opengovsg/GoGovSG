@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme) =>
 
 const LandingGraphicSliver = () => {
   const classes = useStyles()
-  const topPaddingMultipler = () => {
+  const useTopPaddingMultipler = () => {
     const theme = useTheme()
     const isMediumWidth = useMediaQuery(theme.breakpoints.up('md'))
     const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
@@ -119,7 +119,7 @@ const LandingGraphicSliver = () => {
     <div className={classes.pageHeightContainer}>
       <Section
         backgroundType="dark"
-        topMultiplier={topPaddingMultipler()}
+        topMultiplier={useTopPaddingMultipler()}
         bottomMultiplier={0}
       >
         <div className={classes.container}>

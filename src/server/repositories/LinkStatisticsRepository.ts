@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { Op, Sequelize, Transaction } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
@@ -9,7 +9,59 @@ import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
 import { getLocalDayGroup } from '../util/time'
-import { NotFoundError } from '../util/error'
+import { sequelize } from '../util/sequelize'
+import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
+
+// Get the relevant table names from their models.
+const urlTable = Url.getTableName()
+const devicesTable = Devices.getTableName()
+const clicksTable = Clicks.getTableName()
+const weekdayTable = WeekdayClicks.getTableName()
+const timeZone = 'Asia/Singapore'
+
+/**
+ * This function is used to update the relevant link statistics tables, when called.
+ */
+export const updateLinkStatistics = `CREATE OR REPLACE FUNCTION update_link_statistics (inputShortUrl text, device text)
+RETURNS void AS $$
+BEGIN
+-- Update total clicks.
+UPDATE "${urlTable}" SET "clicks" = "${urlTable}"."clicks" + 1
+WHERE "shortUrl" = inputShortUrl;
+-- Update devices clicks.
+IF device='mobile' THEN
+  INSERT INTO "${devicesTable}" ("shortUrl", "mobile", "tablet", "desktop", "others", "createdAt", "updatedAt")
+  VALUES (inputShortUrl, 1, 0, 0, 0, current_timestamp, current_timestamp)
+  ON CONFLICT ("shortUrl")
+  DO UPDATE SET "mobile" = "${devicesTable}"."mobile" + 1;
+ELSIF device='tablet' THEN
+  INSERT INTO "${devicesTable}" ("shortUrl", "mobile", "tablet", "desktop", "others", "createdAt", "updatedAt")
+  VALUES (inputShortUrl, 0, 1, 0, 0, current_timestamp, current_timestamp)
+  ON CONFLICT ("shortUrl")
+  DO UPDATE SET "tablet" = "${devicesTable}"."tablet" + 1;
+ELSIF device='desktop' THEN
+  INSERT INTO "${devicesTable}" ("shortUrl", "mobile", "tablet", "desktop", "others", "createdAt", "updatedAt")
+  VALUES (inputShortUrl, 0, 0, 1, 0, current_timestamp, current_timestamp)
+  ON CONFLICT ("shortUrl")
+  DO UPDATE SET "desktop" = "${devicesTable}"."desktop" + 1;
+ELSIF device='others' THEN
+  INSERT INTO "${devicesTable}" ("shortUrl", "mobile", "tablet", "desktop", "others", "createdAt", "updatedAt")
+  VALUES (inputShortUrl, 0, 0, 0, 1, current_timestamp, current_timestamp)
+  ON CONFLICT ("shortUrl")
+  DO UPDATE SET "others" = "${devicesTable}"."others" + 1;
+END IF;
+-- Update daily clicks.
+INSERT INTO "${clicksTable}" ("shortUrl", "date", "clicks", "createdAt", "updatedAt")
+VALUES (inputShortUrl, date(current_timestamp at time zone '${timeZone}'), 1, current_timestamp, current_timestamp)
+ON CONFLICT ("shortUrl", "date")
+DO UPDATE SET "clicks" = "${clicksTable}"."clicks" + 1;
+-- Update weekday clicks.
+INSERT INTO "${weekdayTable}" ("shortUrl", "weekday", "hours", "clicks", "createdAt", "updatedAt")
+VALUES (inputShortUrl, extract(dow from date(current_timestamp at time zone '${timeZone}')), extract(hour from current_timestamp at time zone '${timeZone}'), 1, current_timestamp, current_timestamp)
+ON CONFLICT ("shortUrl", "weekday", "hours")
+DO UPDATE SET "clicks" = "${weekdayTable}"."clicks" + 1;
+END; $$ LANGUAGE plpgsql;
+`
 
 export type UrlStats = UrlType & {
   DeviceClicks?: DevicesType
@@ -78,21 +130,15 @@ export class LinkStatisticsRepository
     return null
   }
 
-  public incrementClick: (
+  public updateLinkStatistics: (
     shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<boolean> = async (shortUrl) => {
-    // Disable hooks to avoid tripping the beforeBulkUpdate rejection
-    const [affectedRowCount] = await Url.update(
-      { clicks: Sequelize.literal('clicks + 1') },
-      { where: { shortUrl }, returning: false, hooks: false },
-    )
-    if (!affectedRowCount) {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
-    }
-    return affectedRowCount > 0
+    device: DeviceType,
+  ) => void = (shortUrl, device) => {
+    // Creates or modifies an existing function.
+    const rawFunction = `
+      SELECT update_link_statistics('${shortUrl}', '${device}')
+    `
+    return sequelize.query(rawFunction, { type: QueryTypes.SELECT })
   }
 }
 

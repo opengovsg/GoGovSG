@@ -134,7 +134,7 @@ const LoginPage = ({
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [getEmailValidator, setLoginInfoMessage])
 
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]

@@ -3,6 +3,7 @@
 import { injectable } from 'inversify'
 import { LinkStatisticsRepositoryInterface } from '../../../../src/server/repositories/interfaces/LinkStatisticsRepositoryInterface'
 import { LinkStatisticsInterface } from '../../../../src/shared/interfaces/link-statistics'
+import { DeviceType } from '../../../../src/server/services/interfaces/DeviceCheckServiceInterface'
 
 @injectable()
 export class MockLinkStatisticsRepository
@@ -27,21 +28,8 @@ export class MockLinkStatisticsRepository
     transaction?: import('sequelize/types').Transaction,
   ) => Promise<boolean> = () => Promise.resolve(true)
 
-  updateDailyStatistics: (
-    shortUrl: string,
-    transaction?: import('sequelize/types').Transaction,
-  ) => Promise<boolean> = () => Promise.resolve(true)
-
-  updateWeekdayStatistics: (
-    shortUrl: string,
-    transaction?: import('sequelize/types').Transaction,
-  ) => Promise<boolean> = () => Promise.resolve(true)
-
-  updateDeviceStatistics: (
-    shortUrl: string,
-    userAgent: string,
-    transaction?: import('sequelize/types').Transaction,
-  ) => Promise<boolean> = () => Promise.resolve(true)
+  updateLinkStatistics: (shortUrl: string, device: DeviceType) => void = () =>
+    Promise.resolve(true)
 }
 
 export default MockLinkStatisticsRepository

@@ -8,7 +8,7 @@ export interface LinkStatisticsServiceInterface {
    * @param userAgent The user agent string from the http request.
    * @returns Promise that resolves to be empty.
    */
-  updateLinkStatistics(shortUrl: string): Promise<void>
+  updateLinkStatistics(shortUrl: string, userAgent: string): Promise<void>
 
   /**
    * Retrieves the link statistics for a specified link.

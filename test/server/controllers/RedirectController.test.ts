@@ -145,7 +145,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa')
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
     expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(200)
     expect(res._getRedirectUrl()).toBe('')
@@ -175,7 +175,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa')
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
     expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
@@ -197,7 +197,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa')
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
     expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
@@ -216,7 +216,7 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
     expect(updateStatisticsSpy).toBeCalledTimes(1)
-    expect(updateStatisticsSpy).toBeCalledWith('aaa')
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
 
     expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
   })
@@ -249,7 +249,7 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
     expect(updateStatisticsSpy).toBeCalledTimes(1)
-    expect(updateStatisticsSpy).toBeCalledWith('aaa')
+    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
 
     expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
   })
