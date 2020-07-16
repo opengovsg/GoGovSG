@@ -1,8 +1,8 @@
 export interface DeviceClicksInterface {
-  desktopClicks: number
-  tabletClicks: number
-  mobileClicks: number
-  otherClicks: number
+  desktop: number
+  tablet: number
+  mobile: number
+  other: number
 }
 
 export interface DailyClicksInterface {

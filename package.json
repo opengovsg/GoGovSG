@@ -72,6 +72,7 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
     "react-typed": "^1.2.0",
+    "react-vis": "^1.11.7",
     "redis": "^3.0.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
