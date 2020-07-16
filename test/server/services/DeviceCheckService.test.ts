@@ -17,6 +17,10 @@ describe('DeviceCheckService tests', () => {
       ).toStrictEqual('others')
     })
 
+    test('empty user agent are classified as others', () => {
+      expect(service.getDeviceType('')).toStrictEqual('others')
+    })
+
     describe('I am not a bot', () => {
       test('example mac user agent', () => {
         expect(

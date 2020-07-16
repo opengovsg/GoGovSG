@@ -1,5 +1,5 @@
 // Specifies the list of sites shortened urls are prohibited from redirecting to.
-export = [
+export default [
   'rebrand.ly',
   'bit.ly',
   'goo.gl',

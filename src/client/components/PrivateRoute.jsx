@@ -11,7 +11,7 @@ const PrivateRoute = (props) => {
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn)
   useEffect(() => {
     dispatch(loginActions.isLoggedIn())
-  }, [])
+  }, [dispatch])
 
   return (
     <Route

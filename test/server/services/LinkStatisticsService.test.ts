@@ -3,6 +3,7 @@ import Sequelize from 'sequelize-mock'
 import { MockLinkStatisticsRepository } from '../mocks/repositories/LinkStatisticsRepository'
 import { MockUserRepository } from '../mocks/repositories/UserRepository'
 import { LinkStatisticsService } from '../../../src/server/services/LinkStatisticsService'
+import { DeviceCheckServiceMock } from '../mocks/services/DeviceCheckService'
 
 jest.mock('../../../src/server/util/sequelize', () => ({
   sequelize: new Sequelize(),
@@ -11,6 +12,7 @@ jest.mock('../../../src/server/util/sequelize', () => ({
 const linkStatisticRepository = new MockLinkStatisticsRepository()
 
 const service = new LinkStatisticsService(
+  new DeviceCheckServiceMock(),
   new MockUserRepository(),
   linkStatisticRepository,
 )
@@ -37,14 +39,14 @@ describe('LinkStatisticService tests', () => {
   })
 
   describe('updateLinkStatistics tests', () => {
-    const incrementClickSpy = jest.spyOn(
+    const updateLinkStatisticsSpy = jest.spyOn(
       linkStatisticRepository,
-      'incrementClick',
+      'updateLinkStatistics',
     )
 
     test('should update relevant tables with same transaction', async () => {
-      await service.updateLinkStatistics('a')
-      expect(incrementClickSpy).toBeCalledWith('a')
+      await service.updateLinkStatistics('a', '')
+      expect(updateLinkStatisticsSpy).toBeCalledWith('a', 'desktop')
     })
   })
 })
