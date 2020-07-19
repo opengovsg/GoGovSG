@@ -101,11 +101,9 @@ function LinkStatisticsGraphs() {
 
   if (!Boolean(linkStatistics.contents)) {
     return (
-      <div className={classes.root}>
-        <Typography variant="body1">
-          There is no statistics to show right now.
-        </Typography>
-      </div>
+      <Typography variant="body1">
+        There is no statistics to show right now.
+      </Typography>
     )
   }
 

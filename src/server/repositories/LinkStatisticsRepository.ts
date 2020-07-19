@@ -123,11 +123,15 @@ export class LinkStatisticsRepository
         return _.pick(clicks, ['weekday', 'hours', 'clicks'])
       })
 
-      return {
-        deviceClicks,
-        dailyClicks,
-        weekdayClicks,
-      } as LinkStatisticsInterface
+      if (Object.values(deviceClicks).some((val) => val !== 0)) {
+        return {
+          deviceClicks,
+          dailyClicks,
+          weekdayClicks,
+        } as LinkStatisticsInterface
+      }
+      // There is no statistics to show yet.
+      return null
     }
     return null
   }
