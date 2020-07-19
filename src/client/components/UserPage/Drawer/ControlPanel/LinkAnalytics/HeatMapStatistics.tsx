@@ -44,8 +44,9 @@ export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
   const containerEl = useRef<HTMLDivElement>(null)
   const windowSize = useWindowSize()
 
-  const minClicks = Math.min(...props.weekdayClicks.map((el) => el.clicks))
-  const maxClicks = Math.max(...props.weekdayClicks.map((el) => el.clicks))
+  const clicks = processInputStatistics(props.weekdayClicks)
+  const minClicks = Math.min(...clicks.map((el) => el.color))
+  const maxClicks = Math.max(...clicks.map((el) => el.color))
 
   useEffect(() => {
     if (containerEl != null && containerEl.current != null) {
@@ -73,7 +74,7 @@ export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
           <HeatmapSeries
             className="heatmap-statistics"
             colorRange={['#CDDCE0', '#2F4B62']}
-            data={processInputStatistics(props.weekdayClicks) as any[]}
+            data={clicks as any[]}
             style={{
               stroke: 'white',
               strokeWidth: '2px',

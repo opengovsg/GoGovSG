@@ -59,6 +59,7 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
                   autoSkip: true,
                   maxTicksLimit: 5,
                   padding: 5,
+                  min: 0,
                   callback: (label: number): string | undefined => {
                     // Prevents decimals on the y-axis.
                     if (Math.floor(label) === label) {
