@@ -13,10 +13,10 @@ export class MockLinkStatisticsRepository
   ) => Promise<LinkStatisticsInterface | null> = () => {
     return Promise.resolve({
       deviceClicks: {
-        desktopClicks: 1,
-        tabletClicks: 0,
-        mobileClicks: 0,
-        otherClicks: 0,
+        desktop: 1,
+        tablet: 0,
+        mobile: 0,
+        other: 0,
       },
       dailyClicks: [{ date: '2020-06-23', clicks: 1 }],
       weekdayClicks: [{ weekday: 2, hours: 23, clicks: 1 }],

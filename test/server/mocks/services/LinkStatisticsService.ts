@@ -16,10 +16,10 @@ export class LinkStatisticsServiceMock
   ) => Promise<LinkStatisticsInterface> = () => {
     return Promise.resolve({
       deviceClicks: {
-        desktopClicks: 1,
-        tabletClicks: 2,
-        mobileClicks: 3,
-        otherClicks: 4,
+        desktop: 1,
+        tablet: 2,
+        mobile: 3,
+        other: 4,
       },
       dailyClicks: [],
       weekdayClicks: [],
