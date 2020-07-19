@@ -2,9 +2,9 @@ import React from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
 import { DeviceClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
-import FlexibleBar from './widgets/FlexibleBar'
-import DeviceLegend from './widgets/DeviceLegend'
-import BaseStatisticsLayout from './BaseStatisticLayout'
+import FlexibleBar from './widgets/DeviceStatistics/FlexibleBar'
+import DeviceLegend from './widgets/DeviceStatistics/DeviceLegend'
+import BaseStatisticsLayout from './BaseStatisticsLayout'
 
 export type ProcessedStatistic = {
   label: string
@@ -47,10 +47,11 @@ const useStyles = makeStyles(() => ({
   },
   legendRoot: {
     display: 'flex',
+    justifyContent: 'center',
   },
   legend: {
     marginRight: 40,
-    '&last-child': {
+    '&:last-child': {
       marginRight: 0,
     },
   },

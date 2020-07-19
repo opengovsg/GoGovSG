@@ -1,10 +1,17 @@
 import React from 'react'
-import { Typography, createStyles, makeStyles, CircularProgress } from '@material-ui/core'
+import {
+  Typography,
+  createStyles,
+  makeStyles,
+  CircularProgress,
+} from '@material-ui/core'
 
 import { useDrawerState } from '../..'
 import { useStatistics } from './util/statistics'
 import DeviceStatistics from './DeviceStatistics'
 import { LinkStatisticsInterface } from '../../../../../../shared/interfaces/link-statistics'
+import DailyStatistics from './DailyStatistics'
+import HeatMapStatistics from './HeatMapStatistics'
 
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({
@@ -112,6 +119,8 @@ function Graphs(props: GraphsProps) {
   return (
     <div className={classes.root}>
       <DeviceStatistics deviceClicks={props.data.deviceClicks} />
+      <DailyStatistics dailyClicks={props.data.dailyClicks} />
+      <HeatMapStatistics weekdayClicks={props.data.weekdayClicks} />
     </div>
   )
 }
