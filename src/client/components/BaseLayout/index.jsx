@@ -45,6 +45,7 @@ const BaseLayout = ({
   headerBackgroundType,
   withFooter,
   children,
+  hideAuth,
 }) => {
   const classes = useStyles()
   const path = useLocation().pathname
@@ -56,7 +57,12 @@ const BaseLayout = ({
       <Masthead />
       {path === USER_PAGE && isIE && <BannerForIE />}
       {path === USER_PAGE && message && <Banner text={message} />}
-      {withHeader && <BaseLayoutHeader backgroundType={headerBackgroundType} />}
+      {withHeader && (
+        <BaseLayoutHeader
+          backgroundType={headerBackgroundType}
+          hideAuth={hideAuth}
+        />
+      )}
       <div className={classes.layout}>{children}</div>
       {withFooter && <BaseLayoutFooter />}
     </>
@@ -67,12 +73,14 @@ BaseLayout.propTypes = {
   withHeader: PropTypes.bool,
   headerBackgroundType: PropTypes.string,
   withFooter: PropTypes.bool,
+  hideAuth: PropTypes.bool,
 }
 
 BaseLayout.defaultProps = {
   withHeader: true,
   headerBackgroundType: 'dark',
   withFooter: true,
+  hideAuth: false,
 }
 
 export default BaseLayout

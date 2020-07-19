@@ -35,6 +35,10 @@ const useStyles = makeStyles(() =>
       height: '100vh',
       overflowY: 'auto',
       zIndex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1,
+      '-ms-flex': '1 1 auto',
     },
   }),
 )
@@ -176,7 +180,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
 
   return (
     <div className={classes.root}>
-      <BaseLayout headerBackgroundType="darkest">
+      <BaseLayout headerBackgroundType="darkest" hideAuth>
         <SearchHeader
           onQueryChange={onQueryChange}
           query={pendingQuery}

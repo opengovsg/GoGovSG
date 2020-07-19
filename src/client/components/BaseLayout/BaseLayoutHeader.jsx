@@ -97,7 +97,7 @@ const mapDispatchToProps = (dispatch) => ({
   logout: () => dispatch(loginActions.logout()),
 })
 
-const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
+const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout, hideAuth }) => {
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
   const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
@@ -216,7 +216,7 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout }) => {
                 </Button>
               ),
           )}
-          {appBarBtn}
+          {!hideAuth && appBarBtn}
         </Toolbar>
       </AppBar>
     </Section>
@@ -227,6 +227,11 @@ BaseLayoutHeader.propTypes = {
   backgroundType: PropTypes.string.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
+  hideAuth: PropTypes.bool,
+}
+
+BaseLayoutHeader.defaultProps = {
+  hideAuth: false,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BaseLayoutHeader)
