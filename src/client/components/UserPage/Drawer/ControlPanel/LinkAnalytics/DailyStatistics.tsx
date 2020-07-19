@@ -59,7 +59,7 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
                   autoSkip: true,
                   maxTicksLimit: 5,
                   padding: 5,
-                  userCallback: (label: number): string | undefined => {
+                  callback: (label: number): string | undefined => {
                     // Prevents decimals on the y-axis.
                     if (Math.floor(label) === label) {
                       return compactNumberFormatter(label)
@@ -85,7 +85,8 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
             },
             xPadding: 20,
             yPadding: 10,
-            defaultFontFamily: "'IBM Plex Sans', sans-serif",
+            bodyFontFamily: "'IBM Plex Sans', sans-serif",
+            titleFontFamily: "'IBM Plex Sans', sans-serif",
             titleFontSize: 14,
             bodyFontSize: 14,
             backgroundColor: '#384A51',
