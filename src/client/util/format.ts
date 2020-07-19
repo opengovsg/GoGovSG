@@ -38,6 +38,7 @@ export function compactNumberFormatter(numberToFormat: number): string {
     if (numberToFormat >= 1_000_000_000_000) return 't'
     if (numberToFormat >= 1_000_000_000) return 'b'
     if (numberToFormat >= 1_000_000) return 'm'
+    if (numberToFormat >= 1_000) return 'k'
     return ''
   }
   let compactNumber = numberToFormat

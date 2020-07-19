@@ -19,7 +19,7 @@ export class LinkStatisticsServiceMock
         desktop: 1,
         tablet: 2,
         mobile: 3,
-        other: 4,
+        others: 4,
       },
       dailyClicks: [],
       weekdayClicks: [],

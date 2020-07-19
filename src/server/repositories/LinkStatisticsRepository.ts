@@ -88,6 +88,8 @@ export class LinkStatisticsRepository
               [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
             },
           },
+          // As previously accessed links can be inactive for over a week.
+          required: false,
         },
         {
           model: WeekdayClicks,

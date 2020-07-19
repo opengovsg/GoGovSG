@@ -16,7 +16,7 @@ export class MockLinkStatisticsRepository
         desktop: 1,
         tablet: 0,
         mobile: 0,
-        other: 0,
+        others: 0,
       },
       dailyClicks: [{ date: '2020-06-23', clicks: 1 }],
       weekdayClicks: [{ weekday: 2, hours: 23, clicks: 1 }],

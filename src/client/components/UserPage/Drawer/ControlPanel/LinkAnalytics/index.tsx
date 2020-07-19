@@ -79,6 +79,10 @@ const useLinkStatisticsGraphsStyles = makeStyles(() => ({
   root: {
     margin: 20,
   },
+  circularProgress: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 }))
 
 function LinkStatisticsGraphs() {
@@ -90,13 +94,19 @@ function LinkStatisticsGraphs() {
   if (!Boolean(linkStatistics.status)) {
     return (
       <div className={classes.root}>
-        <CircularProgress />
+        <CircularProgress className={classes.circularProgress} />
       </div>
     )
   }
 
   if (!Boolean(linkStatistics.contents)) {
-    return <div className={classes.root}></div>
+    return (
+      <div className={classes.root}>
+        <Typography variant="body1">
+          There is no statistics to show right now.
+        </Typography>
+      </div>
+    )
   }
 
   return <Graphs data={linkStatistics.contents!} />
