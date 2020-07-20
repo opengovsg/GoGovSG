@@ -6,12 +6,12 @@ import redisMock from 'redis-mock'
 import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
 import AnalyticsLoggerMock from '../mocks/services/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
 import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
-import { createPageViewHit } from '../../../src/server/services/googleAnalytics'
-import IGaPageViewForm from '../../../src/server/services/googleAnalytics/types/IGaPageViewForm'
+import { createPageViewHit } from '../../../src/server/services/analytics'
+import IGaPageViewForm from '../../../src/server/services/analytics/types/IGaPageViewForm'
+import { AnalyticsLoggerService } from '../../../src/server/services/interfaces/AnalyticsLoggerService'
 
 /**
  * Retrieves the currently binded OtpCache in the Inversify container.
@@ -35,8 +35,8 @@ export function expectAnalyticsLogged(
   shortUrl: string,
   longUrl: string,
 ): void {
-  const logger = container.get<AnalyticsLogger<IGaPageViewForm>>(
-    DependencyIds.analyticsLogging,
+  const logger = container.get<AnalyticsLoggerService<IGaPageViewForm>>(
+    DependencyIds.analyticsLoggerService,
   ) as AnalyticsLoggerMock
   expect(logger.lastPageViewHit).toEqual(
     createPageViewHit(req, shortUrl, longUrl),

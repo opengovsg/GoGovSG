@@ -16,7 +16,6 @@ import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlRepositoryInterface } from '../../../src/server/repositories/interfaces/UrlRepositoryInterface'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
 import AnalyticsLoggerMock from '../mocks/services/analytics'
 
 import { CookieArrayReducerServiceInterface } from '../../../src/server/services/interfaces/CookieArrayReducerServiceInterface'
@@ -33,6 +32,8 @@ import { CrawlerCheckServiceInterface } from '../../../src/server/services/inter
 import { CrawlerCheckService } from '../../../src/server/services/CrawlerCheckService'
 import { LinkStatisticsServiceInterface } from '../../../src/server/services/interfaces/LinkStatisticsServiceInterface'
 import { LinkStatisticsServiceMock } from '../mocks/services/LinkStatisticsService'
+import { AnalyticsLoggerService } from '../../../src/server/services/interfaces/AnalyticsLoggerService'
+import IGaPageViewForm from '../../../src/server/services/analytics/types/IGaPageViewForm'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -104,7 +105,9 @@ describe('redirect API tests', () => {
       .bind<UrlRepositoryInterface>(DependencyIds.urlRepository)
       .toConstantValue(repository)
     container
-      .bind<AnalyticsLogger>(DependencyIds.analyticsLogging)
+      .bind<AnalyticsLoggerService<IGaPageViewForm>>(
+        DependencyIds.analyticsLoggerService,
+      )
       .to(AnalyticsLoggerMock)
     container
       .bind<RedirectServiceInterface>(DependencyIds.redirectService)

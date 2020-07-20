@@ -1,10 +1,10 @@
 import { injectable } from 'inversify'
-import { AnalyticsLogger } from '../../../../src/server/services/analyticsLogger'
-import IGaPageViewForm from '../../../../src/server/services/googleAnalytics/types/IGaPageViewForm'
+import IGaPageViewForm from '../../../../src/server/services/analytics/types/IGaPageViewForm'
+import { AnalyticsLoggerService } from '../../../../src/server/services/interfaces/AnalyticsLoggerService'
 
 @injectable()
 export default class AnalyticsLoggerMock
-  implements AnalyticsLogger<IGaPageViewForm> {
+  implements AnalyticsLoggerService<IGaPageViewForm> {
   lastPageViewHit?: IGaPageViewForm
 
   logRedirectAnalytics = (pageViewHit: IGaPageViewForm) => {
