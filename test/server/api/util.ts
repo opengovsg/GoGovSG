@@ -10,6 +10,7 @@ import { AnalyticsLogger } from '../../../src/server/services/analyticsLogger'
 import AnalyticsLoggerMock from '../mocks/services/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
 import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
+import { createPageViewHit } from '../../../src/server/services/googleAnalytics'
 
 /**
  * Retrieves the currently binded OtpCache in the Inversify container.
@@ -36,6 +37,9 @@ export function isAnalyticsLogged(
   const logger = container.get<AnalyticsLogger>(
     DependencyIds.analyticsLogging,
   ) as AnalyticsLoggerMock
+  expect(logger.lastPageViewHit).toEqual(
+    createPageViewHit(req, shortUrl, longUrl),
+  )
   return (
     logger.lastReq === req &&
     logger.lastShortUrl === shortUrl &&

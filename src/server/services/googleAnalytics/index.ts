@@ -72,16 +72,18 @@ export function getCoreFields(req: express.Request, type: GaHitVariant) {
 }
 
 /**
- * Send POST request to Google Analytics Measurement Protocol
+ * Create a request to Google Analytics Measurement Protocol
  * of hit type 'pageview'.
  */
-export function sendPageViewHit(
+export function createPageViewHit(
   req: express.Request,
   shortUrl: string,
   longUrl: string,
 ) {
   const coreFields = getCoreFields(req, GaHitVariant.PAGE_VIEW)
-  if (!coreFields) return
+  if (!coreFields) {
+    return null
+  }
 
   // Populate post data.
   const form: IGaPageViewForm = {
@@ -98,6 +100,22 @@ export function sendPageViewHit(
   // User language.
   if (req.headers['accept-language']) {
     ;[form.ul] = (req.headers['accept-language'] as string).split(',')
+  }
+  return form
+}
+
+/**
+ * Send POST request to Google Analytics Measurement Protocol
+ * of hit type 'pageview'.
+ */
+export function sendPageViewHit(
+  req: express.Request,
+  shortUrl: string,
+  longUrl: string,
+) {
+  const form = createPageViewHit(req, shortUrl, longUrl)
+  if (!form) {
+    return
   }
 
   const body = new URLSearchParams((form as unknown) as Record<string, string>)
