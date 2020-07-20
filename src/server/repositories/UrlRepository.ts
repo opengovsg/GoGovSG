@@ -5,7 +5,12 @@ import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import { logger, redirectExpiry } from '../config'
+import {
+  logger,
+  redirectExpiry,
+  searchDescriptionWeight,
+  searchShortUrlWeight,
+} from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -273,7 +278,7 @@ export class UrlRepository implements UrlRepositoryInterface {
           // the normalization option that specifies whether and how
           // a document's length should impact its rank. It works as a bit mask.
           // 1 divides the rank by 1 + the logarithm of the document length
-          const textRanking = `ts_rank_cd(${urlSearchVector}, query, 1)`
+          const textRanking = `ts_rank_cd('{${searchShortUrlWeight}, ${searchDescriptionWeight}, 0, 0}', ${urlSearchVector}, query, 1)`
           rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
         }
         break
