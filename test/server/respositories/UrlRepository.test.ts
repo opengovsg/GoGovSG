@@ -145,7 +145,7 @@ describe('UrlRepository tests', () => {
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
 ) AND urls.state = 'ACTIVE' AND urls.description != ''
-      ORDER BY (ts_rank_cd('{1, 0.4, 0, 0}',
+      ORDER BY (ts_rank_cd('{0, 0, 0.4, 1.0}',
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
 , query, 1) * log(urls.clicks + 1)) DESC
