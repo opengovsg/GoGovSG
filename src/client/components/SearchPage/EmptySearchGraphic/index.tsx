@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: '76px',
       position: 'relative',
       right: theme.spacing(5),
+      zIndex: -1,
     },
     emptyStateBodyText: {
       marginTop: '8px',
