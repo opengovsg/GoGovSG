@@ -29,6 +29,17 @@ export class RedirectController implements RedirectControllerInterface {
     this.analyticsLogger = analyticsLogger
   }
 
+  private logRedirect: (
+    req: Express.Request,
+    shortUrl: string,
+    longUrl: string,
+  ) => void = (req, shortUrl, longUrl) => {
+    const pageViewHit = createPageViewHit(req, shortUrl.toLowerCase(), longUrl)
+    if (pageViewHit) {
+      this.analyticsLogger.logRedirectAnalytics(pageViewHit)
+    }
+  }
+
   public redirect: (
     req: Express.Request,
     res: Express.Response,
@@ -54,17 +65,6 @@ export class RedirectController implements RedirectControllerInterface {
         req.get('referrer') || '',
       )
 
-      const logRedirect = () => {
-        const pageViewHit = createPageViewHit(
-          req,
-          shortUrl.toLowerCase(),
-          longUrl,
-        )
-        if (pageViewHit) {
-          this.analyticsLogger.logRedirectAnalytics(pageViewHit)
-        }
-      }
-
       const generatedCookie = this.analyticsLogger.generateCookie(
         req.headers.cookie,
       )
@@ -86,11 +86,11 @@ export class RedirectController implements RedirectControllerInterface {
           gaOnLoad: EventAction.LOADED,
           gaOnProceed: EventAction.PROCEEDED,
         })
-        logRedirect()
+        this.logRedirect(req, shortUrl, longUrl)
         return
       }
       res.status(302).redirect(longUrl)
-      logRedirect()
+      this.logRedirect(req, shortUrl, longUrl)
       return
     } catch (error) {
       if (!(error instanceof NotFoundError)) {
