@@ -11,6 +11,7 @@ import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
 import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
+import { urlSearchVector } from './search'
 
 interface UrlBaseType extends IdType {
   readonly shortUrl: string
@@ -149,6 +150,22 @@ export const Url = <UrlTypeStatic>sequelize.define(
       {
         unique: false,
         fields: ['userId'],
+      },
+      {
+        name: 'urls_weighted_search_idx',
+        unique: false,
+        using: 'GIN',
+        fields: [
+          // Type definition on sequelize seems to be inaccurate.
+          // @ts-ignore
+          Sequelize.literal(`(${urlSearchVector})`),
+        ],
+        where: {
+          state: ACTIVE,
+          description: {
+            [Sequelize.Op.ne]: '',
+          },
+        },
       },
     ],
   },
