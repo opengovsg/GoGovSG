@@ -94,7 +94,12 @@ const mapDispatchToProps = (dispatch) => ({
   logout: () => dispatch(loginActions.logout()),
 })
 
-const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout, hideAuth }) => {
+const BaseLayoutHeader = ({
+  backgroundType,
+  isLoggedIn,
+  logout,
+  hideNavButtons,
+}) => {
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
   const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
@@ -179,33 +184,36 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout, hideAuth }) => {
             />
           </a>
           <span className={classes.rowSpace} />
-          {headers.map(
-            (header) =>
-              (header.public ? !isLoggedIn : isLoggedIn) &&
-              !header.hidden && (
-                <Button
-                  href={header.internalLink ? `/#${header.link}` : header.link}
-                  target={header.internalLink ? '' : '_blank'}
-                  color="primary"
-                  size="large"
-                  variant="text"
-                  key={header.text}
-                  className={classes.headerButton}
-                  style={
-                    isMobileVariant && header.mobileOrder
-                      ? { order: header.mobileOrder }
-                      : {}
-                  }
-                >
-                  {isMobileVariant && header.icon && (
-                    <img src={header.icon} alt={header.text} />
-                  )}
-                  {isMobileVariant && header.component}
-                  {!isMobileVariant && header.text}
-                </Button>
-              ),
-          )}
-          {!hideAuth && appBarBtn}
+          {!hideNavButtons &&
+            headers.map(
+              (header) =>
+                (header.public ? !isLoggedIn : isLoggedIn) &&
+                !header.hidden && (
+                  <Button
+                    href={
+                      header.internalLink ? `/#${header.link}` : header.link
+                    }
+                    target={header.internalLink ? '' : '_blank'}
+                    color="primary"
+                    size="large"
+                    variant="text"
+                    key={header.text}
+                    className={classes.headerButton}
+                    style={
+                      isMobileVariant && header.mobileOrder
+                        ? { order: header.mobileOrder }
+                        : {}
+                    }
+                  >
+                    {isMobileVariant && header.icon && (
+                      <img src={header.icon} alt={header.text} />
+                    )}
+                    {isMobileVariant && header.component}
+                    {!isMobileVariant && header.text}
+                  </Button>
+                ),
+            )}
+          {!hideNavButtons && appBarBtn}
         </Toolbar>
       </AppBar>
     </Section>
@@ -216,11 +224,11 @@ BaseLayoutHeader.propTypes = {
   backgroundType: PropTypes.string.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
-  hideAuth: PropTypes.bool,
+  hideNavButtons: PropTypes.bool,
 }
 
 BaseLayoutHeader.defaultProps = {
-  hideAuth: false,
+  hideNavButtons: false,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BaseLayoutHeader)

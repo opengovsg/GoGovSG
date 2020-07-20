@@ -45,7 +45,7 @@ const BaseLayout = ({
   headerBackgroundType,
   withFooter,
   children,
-  hideAuth,
+  hideNavButtons,
 }) => {
   const classes = useStyles()
   const path = useLocation().pathname
@@ -60,7 +60,7 @@ const BaseLayout = ({
       {withHeader && (
         <BaseLayoutHeader
           backgroundType={headerBackgroundType}
-          hideAuth={hideAuth}
+          hideNavButtons={hideNavButtons}
         />
       )}
       <div className={classes.layout}>{children}</div>
@@ -73,14 +73,14 @@ BaseLayout.propTypes = {
   withHeader: PropTypes.bool,
   headerBackgroundType: PropTypes.string,
   withFooter: PropTypes.bool,
-  hideAuth: PropTypes.bool,
+  hideNavButtons: PropTypes.bool,
 }
 
 BaseLayout.defaultProps = {
   withHeader: true,
   headerBackgroundType: 'dark',
   withFooter: true,
-  hideAuth: false,
+  hideNavButtons: false,
 }
 
 export default BaseLayout

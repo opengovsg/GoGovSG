@@ -180,7 +180,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
 
   return (
     <div className={classes.root}>
-      <BaseLayout headerBackgroundType="darkest" hideAuth>
+      <BaseLayout headerBackgroundType="darkest" hideNavButtons>
         <SearchHeader
           onQueryChange={onQueryChange}
           query={pendingQuery}

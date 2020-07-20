@@ -5,7 +5,12 @@ import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import { logger, redirectExpiry } from '../config'
+import {
+  logger,
+  redirectExpiry,
+  searchDescriptionWeight,
+  searchShortUrlWeight,
+} from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -14,8 +19,10 @@ import { StorableFile, StorableUrl, UrlsPaginated } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
+import { urlSearchConditions, urlSearchVector } from '../models/search'
 
 const { Public, Private } = FileVisibility
+
 /**
  * A url repository that handles access to the data store of Urls.
  * The following implementation uses Sequelize, AWS S3 and Redis.
@@ -148,23 +155,11 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) => Promise<UrlsPaginated> = async (query, order, limit, offset) => {
     const { tableName } = Url
 
-    // Warning: This expression has to be EXACTLY the same as the one used in the index
-    // or else the index will not be used leading to unnecessarily long query times.
-    const urlVector = `
-      setweight(to_tsvector('english', ${tableName}."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', ${tableName}."description"), 'B')
-    `
-    const count = await this.getPlainTextSearchResultsCount(
-      tableName,
-      urlVector,
-      query,
-    )
+    const urlVector = urlSearchVector
 
-    const rankingAlgorithm = this.getRankingAlgorithm(
-      order,
-      urlVector,
-      tableName,
-    )
+    const count = await this.getPlainTextSearchResultsCount(tableName, query)
+
+    const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
 
     const urlsModel = await this.getRelevantUrls(
       tableName,
@@ -254,7 +249,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const rawQuery = `
       SELECT ${tableName}.*
       FROM ${tableName}, plainto_tsquery($query) query
-      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
+      WHERE query @@ (${urlVector}) AND ${urlSearchConditions}
       ORDER BY (${rankingAlgorithm}) DESC
       LIMIT $limit
       OFFSET $offset`
@@ -273,7 +268,6 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private getRankingAlgorithm(
     order: SearchResultsSortOrder,
-    urlVector: string,
     tableName: string,
   ) {
     let rankingAlgorithm
@@ -284,7 +278,7 @@ export class UrlRepository implements UrlRepositoryInterface {
           // the normalization option that specifies whether and how
           // a document's length should impact its rank. It works as a bit mask.
           // 1 divides the rank by 1 + the logarithm of the document length
-          const textRanking = `ts_rank_cd(${urlVector}, query, 1)`
+          const textRanking = `ts_rank_cd('{0, 0, ${searchDescriptionWeight}, ${searchShortUrlWeight}}',${urlSearchVector}, query, 1)`
           rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
         }
         break
@@ -302,13 +296,12 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private async getPlainTextSearchResultsCount(
     tableName: string,
-    urlVector: string,
     query: string,
   ) {
     const rawCountQuery = `
       SELECT count(*)
       FROM ${tableName}, plainto_tsquery($query) query
-      WHERE query @@ (${urlVector}) AND state = '${StorableUrlState.Active}'
+      WHERE query @@ (${urlSearchVector}) AND ${urlSearchConditions}
     `
     const [{ count: countString }] = await sequelize.query(rawCountQuery, {
       bind: {
