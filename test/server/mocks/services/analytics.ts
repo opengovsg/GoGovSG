@@ -1,28 +1,14 @@
 import { injectable } from 'inversify'
-import Express from 'express'
 import { AnalyticsLogger } from '../../../../src/server/services/analyticsLogger'
-import { createPageViewHit } from '../../../../src/server/services/googleAnalytics'
 import IGaPageViewForm from '../../../../src/server/services/googleAnalytics/types/IGaPageViewForm'
 
 @injectable()
-export default class AnalyticsLoggerMock implements AnalyticsLogger {
-  lastReq?: Express.Request
+export default class AnalyticsLoggerMock
+  implements AnalyticsLogger<IGaPageViewForm> {
+  lastPageViewHit?: IGaPageViewForm
 
-  lastShortUrl?: string
-
-  lastLongUrl?: string
-
-  lastPageViewHit?: IGaPageViewForm | null
-
-  logRedirectAnalytics = (
-    req: Express.Request,
-    shortUrl: string,
-    longUrl: string,
-  ) => {
-    this.lastReq = req
-    this.lastShortUrl = shortUrl
-    this.lastLongUrl = longUrl
-    this.lastPageViewHit = createPageViewHit(req, shortUrl, longUrl)
+  logRedirectAnalytics = (pageViewHit: IGaPageViewForm) => {
+    this.lastPageViewHit = pageViewHit
   }
 
   generateCookie: (

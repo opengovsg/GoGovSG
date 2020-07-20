@@ -11,6 +11,7 @@ import AnalyticsLoggerMock from '../mocks/services/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
 import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
 import { createPageViewHit } from '../../../src/server/services/googleAnalytics'
+import IGaPageViewForm from '../../../src/server/services/googleAnalytics/types/IGaPageViewForm'
 
 /**
  * Retrieves the currently binded OtpCache in the Inversify container.
@@ -29,21 +30,16 @@ export function getOtpCache(): OtpRepositoryInterface {
  * @param  {string} longUrl The long url that is returned to the client.
  * @returns Boolean.
  */
-export function isAnalyticsLogged(
+export function expectAnalyticsLogged(
   req: Request,
   shortUrl: string,
   longUrl: string,
-): boolean {
-  const logger = container.get<AnalyticsLogger>(
+): void {
+  const logger = container.get<AnalyticsLogger<IGaPageViewForm>>(
     DependencyIds.analyticsLogging,
   ) as AnalyticsLoggerMock
   expect(logger.lastPageViewHit).toEqual(
     createPageViewHit(req, shortUrl, longUrl),
-  )
-  return (
-    logger.lastReq === req &&
-    logger.lastShortUrl === shortUrl &&
-    logger.lastLongUrl === longUrl
   )
 }
 

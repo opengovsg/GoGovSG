@@ -1,21 +1,16 @@
-import Express from 'express'
 import { injectable } from 'inversify'
-import { generateCookie, sendPageViewHit } from './googleAnalytics'
-import { gaTrackingId } from '../config'
+import fetch from 'cross-fetch'
+import { gaTrackingId, logger } from '../config'
+import IGaPageViewForm from './googleAnalytics/types/IGaPageViewForm'
+import { generateCookie } from './googleAnalytics'
 
-export interface AnalyticsLogger {
+const gaEndpoint = 'https://www.google-analytics.com/collect'
+
+export interface AnalyticsLogger<T> {
   /**
-   *
-   * @param {Object} req Express request object.
-   * @param {Object} res Express response object.
-   * @param {String} shortUrl Short url of link.
-   * @param {String} longUrl  Long url of link.
+   * @param {T} pageViewHit - A page view request payload.
    */
-  logRedirectAnalytics: (
-    req: Express.Request,
-    shortUrl: string,
-    longUrl: string,
-  ) => void
+  logRedirectAnalytics: (pageViewHit: T) => void
 
   generateCookie: (
     cookie?: string,
@@ -23,14 +18,27 @@ export interface AnalyticsLogger {
 }
 
 @injectable()
-export class GaLogger implements AnalyticsLogger {
-  logRedirectAnalytics: (
-    req: Express.Request,
-    shortUrl: string,
-    longUrl: string,
-  ) => void = (req, shortUrl, longUrl) => {
+export class GaLogger implements AnalyticsLogger<IGaPageViewForm> {
+  logRedirectAnalytics: (pageViewHit: IGaPageViewForm) => void = (
+    pageViewHit,
+  ) => {
     if (!gaTrackingId) return
-    sendPageViewHit(req, shortUrl, longUrl)
+
+    const body = new URLSearchParams(
+      (pageViewHit as unknown) as Record<string, string>,
+    )
+
+    fetch(gaEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    }).then((response) => {
+      if (!response.ok) {
+        logger.error(
+          `GA tracking failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
+        )
+      }
+    })
   }
 
   generateCookie: (

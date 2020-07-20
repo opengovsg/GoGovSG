@@ -12,6 +12,8 @@ import {
   EventAction,
   EventCategory,
 } from '../services/googleAnalytics/types/enum'
+import { createPageViewHit } from '../services/googleAnalytics'
+import IGaPageViewForm from '../services/googleAnalytics/types/IGaPageViewForm'
 
 const TRANSITION_PATH = 'transition-page.ejs'
 
@@ -19,11 +21,12 @@ const TRANSITION_PATH = 'transition-page.ejs'
 export class RedirectController implements RedirectControllerInterface {
   private redirectService: RedirectService
 
-  private analyticsLogger: AnalyticsLogger
+  private analyticsLogger: AnalyticsLogger<IGaPageViewForm>
 
   public constructor(
     @inject(DependencyIds.redirectService) redirectService: RedirectService,
-    @inject(DependencyIds.analyticsLogging) analyticsLogger: AnalyticsLogger,
+    @inject(DependencyIds.analyticsLogging)
+    analyticsLogger: AnalyticsLogger<IGaPageViewForm>,
   ) {
     this.redirectService = redirectService
     this.analyticsLogger = analyticsLogger
@@ -55,11 +58,14 @@ export class RedirectController implements RedirectControllerInterface {
       )
 
       const logRedirect = () => {
-        this.analyticsLogger.logRedirectAnalytics(
+        const pageViewHit = createPageViewHit(
           req,
           shortUrl.toLowerCase(),
           longUrl,
         )
+        if (pageViewHit) {
+          this.analyticsLogger.logRedirectAnalytics(pageViewHit)
+        }
       }
 
       const generatedCookie = this.analyticsLogger.generateCookie(

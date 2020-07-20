@@ -4,8 +4,8 @@ import {
   clicksModelMock,
   createRequestWithShortUrl,
   devicesModelMock,
+  expectAnalyticsLogged,
   heatMapModelMock,
-  isAnalyticsLogged,
   mockTransaction,
   redisMockClient,
   sequelizeMock,
@@ -154,7 +154,7 @@ describe('redirect API tests', () => {
       'aaa',
     )
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
     cookieSpy.mockClear()
   })
 
@@ -184,7 +184,7 @@ describe('redirect API tests', () => {
       'aaa',
     )
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
     cookieSpy.mockClear()
   })
 
@@ -202,7 +202,7 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
   })
 
   test('url does not exist in cache but does in db', async () => {
@@ -218,7 +218,7 @@ describe('redirect API tests', () => {
     expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
   })
 
   test('url does not exist in neither cache nor db', async () => {
@@ -251,7 +251,7 @@ describe('redirect API tests', () => {
     expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
   })
 
   test('both db and cache down', async () => {
@@ -330,7 +330,7 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
   })
 
   test('url in cache and db is down', async () => {
@@ -346,6 +346,6 @@ describe('redirect API tests', () => {
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
 
-    expect(isAnalyticsLogged(req, 'aaa', 'aa')).toBeTruthy()
+    expectAnalyticsLogged(req, 'aaa', 'aa')
   })
 })

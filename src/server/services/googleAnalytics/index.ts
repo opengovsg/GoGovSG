@@ -1,13 +1,10 @@
 import express from 'express'
 import { v4 as uuidv4 } from 'uuid'
-import fetch from 'cross-fetch'
-import { gaTrackingId, logger, ogUrl } from '../../config'
+import { gaTrackingId, ogUrl } from '../../config'
 import getIp from '../../util/request'
 import IGaPageViewForm from './types/IGaPageViewForm'
 import IGaCoreForm from './types/IGaCoreForm'
 import { GaHitVariant } from './types/enum'
-
-const gaEndpoint = 'https://www.google-analytics.com/collect'
 
 type CookieData = {
   [_: string]: string
@@ -82,7 +79,7 @@ export function createPageViewHit(
 ) {
   const coreFields = getCoreFields(req, GaHitVariant.PAGE_VIEW)
   if (!coreFields) {
-    return null
+    return undefined
   }
 
   // Populate post data.
@@ -102,33 +99,4 @@ export function createPageViewHit(
     ;[form.ul] = (req.headers['accept-language'] as string).split(',')
   }
   return form
-}
-
-/**
- * Send POST request to Google Analytics Measurement Protocol
- * of hit type 'pageview'.
- */
-export function sendPageViewHit(
-  req: express.Request,
-  shortUrl: string,
-  longUrl: string,
-) {
-  const form = createPageViewHit(req, shortUrl, longUrl)
-  if (!form) {
-    return
-  }
-
-  const body = new URLSearchParams((form as unknown) as Record<string, string>)
-
-  fetch(gaEndpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
-  }).then((response) => {
-    if (!response.ok) {
-      logger.error(
-        `GA tracking failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
-      )
-    }
-  })
 }
