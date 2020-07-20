@@ -196,7 +196,7 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
  */
 const writeToUrlHistory = async (
   url: UrlType,
-  options: Sequelize.Options & { transaction: Sequelize.Transaction },
+  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
 ): Promise<UrlHistoryType> => {
   const urlObj = url.toJSON() as UrlType & { userId: Number }
 
