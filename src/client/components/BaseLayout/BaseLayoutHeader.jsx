@@ -21,9 +21,6 @@ import helpIcon from '../../assets/help-icon.svg'
 import feedbackIcon from './assets/feedback-icon.svg'
 import githubIcon from './assets/github-icon.svg'
 import signinIcon from './assets/signin-icon.svg'
-import { SEARCH_PAGE } from '../../util/types'
-import SearchIcon from '../widgets/SearchIcon'
-import { IS_SEARCH_HIDDEN } from '../../util/config'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -104,14 +101,6 @@ const BaseLayoutHeader = ({ backgroundType, isLoggedIn, logout, hideAuth }) => {
   const classes = useStyles({ isLoggedIn, isLightItems })
 
   const headers = [
-    {
-      text: 'GoSearch',
-      link: SEARCH_PAGE,
-      internalLink: true,
-      public: true,
-      component: <SearchIcon size={24} />,
-      hidden: IS_SEARCH_HIDDEN,
-    },
     {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
