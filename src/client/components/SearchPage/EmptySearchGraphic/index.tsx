@@ -5,6 +5,7 @@ import {
   makeStyles,
   useMediaQuery,
   useTheme,
+  Hidden,
 } from '@material-ui/core'
 import emptyStateGraphic from '../assets/empty-state-graphic.svg'
 
@@ -22,6 +23,8 @@ const useStyles = makeStyles((theme) =>
     emptyStateGraphic: {
       marginTop: '48px',
       marginBottom: '76px',
+      position: 'relative',
+      right: theme.spacing(5),
     },
     emptyStateBodyText: {
       marginTop: '8px',
@@ -40,15 +43,15 @@ const EmptyStateGraphic: FunctionComponent = () => {
         What link are you looking for?
       </Typography>
       <Typography variant="body1" className={classes.emptyStateBodyText}>
-        Type in a keyword to get started.
-        <br />
-        E.g. Covid-19
+        Type in a keyword to get started.{' '}
+        <Hidden mdUp>
+          <br />
+        </Hidden>
+        e.g. Covid-19
       </Typography>
-      <img
-        src={emptyStateGraphic}
-        alt="empty search graphic"
-        className={classes.emptyStateGraphic}
-      />
+      <div className={classes.emptyStateGraphic}>
+        <img src={emptyStateGraphic} alt="empty search graphic" />
+      </div>
     </div>
   )
 }
