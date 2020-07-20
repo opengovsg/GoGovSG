@@ -11,7 +11,7 @@ import {
 import { S3InterfaceMock } from '../mocks/services/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
-import { SearchResultsSortOrder } from '../../../src/server/repositories/enums'
+import { SearchResultsSortOrder } from '../../../src/shared/search'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,

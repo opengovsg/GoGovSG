@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { Collapse, Grid, IconButton, Paper } from '@material-ui/core'
-import SortPanel from './SortPanel'
+import { Grid } from '@material-ui/core'
+import SortPanel from '../../../../widgets/SortPanel'
 import userActions from '../../../../../actions/user'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
 import { SortDirection } from '../../../../../reducers/user/types'
 import { initialSortConfig } from '../../../../../constants/user'
-
-import CloseIcon from '../../../../widgets/CloseIcon'
+import CollapsingPanel from '../../../../widgets/CollapsingPanel'
 import useStyles from './styles'
 
 const mapDispatchToProps = (dispatch) => ({
@@ -28,6 +27,17 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(userActions.getUrlsForUser())
   },
 })
+
+const sortOptions = [
+  {
+    label: 'Most number of visits',
+    key: 'clicks',
+  },
+  {
+    label: 'Date of creation',
+    key: 'createdAt',
+  },
+]
 
 const FilterSortPanel = ({
   isOpen,
@@ -95,32 +105,30 @@ const FilterSortPanel = ({
   }
 
   return (
-    <Collapse
-      in={isOpen}
-      className={classes.collapse}
-      classes={{ wrapper: classes.collapseWrapper }}
-      timeout={100}
+    <CollapsingPanel
+      isOpen={isOpen}
+      onClose={onClose}
+      className={classes.collapsingPanel}
     >
-      <Paper className={classes.root}>
-        <IconButton className={classes.closeIcon} onClick={onClose}>
-          <CloseIcon size={20} />
-        </IconButton>
-        <Grid
-          container
-          style={{
-            paddingTop: '32px',
-            paddingBottom: '48px',
-          }}
-        >
-          <SortPanel onChoose={setOrderBy} currentlyChosen={orderBy} />
-          <FilterPanel {...filterConfig} />
-          <FilterSortPanelFooter
-            onApply={changeSortAndFilterHandler}
-            onReset={reset}
-          />
-        </Grid>
-      </Paper>
-    </Collapse>
+      <Grid
+        container
+        style={{
+          paddingTop: '32px',
+          paddingBottom: '48px',
+        }}
+      >
+        <SortPanel
+          onChoose={setOrderBy}
+          currentlyChosen={orderBy}
+          options={sortOptions}
+        />
+        <FilterPanel {...filterConfig} />
+        <FilterSortPanelFooter
+          onApply={changeSortAndFilterHandler}
+          onReset={reset}
+        />
+      </Grid>
+    </CollapsingPanel>
   )
 }
 

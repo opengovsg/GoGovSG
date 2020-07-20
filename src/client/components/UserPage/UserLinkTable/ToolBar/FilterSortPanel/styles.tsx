@@ -140,5 +140,8 @@ export default makeStyles((theme) =>
         width: '100%',
       },
     },
+    collapsingPanel: {
+      width: '100%',
+    },
   }),
 )
