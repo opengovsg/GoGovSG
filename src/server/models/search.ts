@@ -16,11 +16,18 @@ export const urlSearchVector = `
 export const urlSearchConditions = `urls.state = '${StorableUrlState.Active}' AND urls.description != ''`
 
 const dropIndex = `DROP INDEX IF EXISTS ${INDEX_NAME};`
-const createIndex = `CREATE INDEX urls_weighted_search_idx ON urls USING gin ((${urlSearchVector}))
+const createIndex = `CREATE INDEX IF NOT EXISTS urls_weighted_search_idx ON urls USING gin ((${urlSearchVector}))
     WHERE ${urlSearchConditions};`
 
 export async function syncSearchIndex() {
-  await sequelize.query(`${dropIndex} ${createIndex}`, {
-    type: QueryTypes.RAW,
-  })
+  await sequelize.query(
+    `
+  BEGIN;
+  ${dropIndex}
+  ${createIndex}
+  COMMIT;`,
+    {
+      type: QueryTypes.RAW,
+    },
+  )
 }
