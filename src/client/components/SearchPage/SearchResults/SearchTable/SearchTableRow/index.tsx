@@ -109,6 +109,11 @@ const useStyles = makeStyles((theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
     },
+    contactEmailClickable: {
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
   }),
 )
 
@@ -147,7 +152,15 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
       <TableCell className={classes.contactEmailCell} key="emailCell">
         <Typography
           variant={isMobileView ? 'caption' : 'body2'}
-          className={classes.contactEmailText}
+          className={`${classes.contactEmailText} ${
+            url.contactEmail ? classes.contactEmailClickable : ''
+          }`}
+          onClick={(e) => {
+            if (url.contactEmail) {
+              window.location.href = `mailto:${url.contactEmail}`
+              e.stopPropagation()
+            }
+          }}
         >
           {url.contactEmail || 'No contact specified'}
         </Typography>

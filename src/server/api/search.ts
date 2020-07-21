@@ -28,7 +28,7 @@ const apiLimiter = rateLimit({
 })
 
 const router = Express.Router()
-const validator = createValidator()
+const validator = createValidator({ passError: true })
 const searchController = container.get<SearchControllerInterface>(
   DependencyIds.searchController,
 )
