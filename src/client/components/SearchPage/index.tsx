@@ -38,6 +38,7 @@ const useStyles = makeStyles(() =>
       display: 'flex',
       flexDirection: 'column',
       flexGrow: 1,
+      flexShrink: 0,
       '-ms-flex': '1 1 auto',
     },
   }),

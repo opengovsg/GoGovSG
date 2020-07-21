@@ -8,6 +8,11 @@ import {
   Hidden,
 } from '@material-ui/core'
 import emptyStateGraphic from '../assets/empty-state-graphic.svg'
+import useAppMargins from '../../AppMargins/appMargins'
+
+type EmptySearchGraphicStyleProps = {
+  appMargins: number
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -16,6 +21,8 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       marginTop: theme.spacing(8),
       alignItems: 'center',
+      maxWidth: (props: EmptySearchGraphicStyleProps) =>
+        `calc(${theme.spacing(180)}px - ${props.appMargins}px)`,
       [theme.breakpoints.up('md')]: {
         marginTop: theme.spacing(16),
       },
@@ -35,7 +42,8 @@ const useStyles = makeStyles((theme) =>
 )
 
 const EmptyStateGraphic: FunctionComponent = () => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (

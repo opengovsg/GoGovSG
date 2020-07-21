@@ -50,6 +50,12 @@ const useStyles = makeStyles((theme) =>
       boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.25)',
       borderRadius: '5px',
       border: 0,
+      paddingRight: 0,
+      paddingLeft: 0,
+      [theme.breakpoints.up('md')]: {
+        paddingRight: theme.spacing(2),
+        paddingLeft: theme.spacing(2),
+      },
     },
     searchInputNested: {
       [theme.breakpoints.up('md')]: {

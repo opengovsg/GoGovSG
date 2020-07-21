@@ -162,7 +162,9 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
             }
           }}
         >
-          {url.contactEmail || 'No contact specified'}
+          {!!url.contactEmail
+            ? `For enquiries: ${url.contactEmail}`
+            : 'No contact specified'}
         </Typography>
       </TableCell>
     </TableRow>

@@ -1,5 +1,11 @@
 import React, { FunctionComponent } from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import {
+  Typography,
+  createStyles,
+  makeStyles,
+  useTheme,
+  useMediaQuery,
+} from '@material-ui/core'
 import { ApplyAppMargins } from '../../AppMargins'
 import GoSearchInput from '../../widgets/GoSearchInput'
 import { SearchResultsSortOrder } from '../../../../shared/search'
@@ -11,10 +17,6 @@ type SearchHeaderProps = {
   onClearQuery: () => void
   sortOrder: SearchResultsSortOrder
   query: string
-}
-
-type SearchHeaderStyleProps = {
-  appMargins: number
 }
 
 const useStyles = makeStyles((theme) =>
@@ -29,8 +31,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       position: 'relative',
       top: '22px',
-      maxWidth: (props: SearchHeaderStyleProps) =>
-        `calc(${theme.spacing(180)}px - ${props.appMargins}px)`,
+      maxWidth: theme.spacing(180),
       [theme.breakpoints.up('md')]: {
         top: '35px',
       },
@@ -49,14 +50,18 @@ const SearchHeader: FunctionComponent<SearchHeaderProps> = ({
   sortOrder,
   query,
 }: SearchHeaderProps) => {
-  const appMargins = useAppMargins()
-  const classes = useStyles({ appMargins })
+  const classes = useStyles()
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <div className={classes.headerWrapper}>
       <ApplyAppMargins>
         <div className={classes.headerContent}>
-          <Typography variant="h2" className={classes.headerText}>
-            GoSearch
+          <Typography
+            variant={isMobileView ? 'h4' : 'h2'}
+            className={classes.headerText}
+          >
+            Search go.gov.sg links
           </Typography>
           <GoSearchInput
             showAdornments
