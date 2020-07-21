@@ -7,10 +7,8 @@ import {
   StorableUrl,
   UrlsPaginated,
 } from '../../../../src/server/repositories/types'
-import {
-  SearchResultsSortOrder,
-  StorableUrlState,
-} from '../../../../src/server/repositories/enums'
+import { StorableUrlState } from '../../../../src/server/repositories/enums'
+import { SearchResultsSortOrder } from '../../../../src/shared/search'
 
 @injectable()
 export class UrlRepositoryMock implements UrlRepositoryInterface {

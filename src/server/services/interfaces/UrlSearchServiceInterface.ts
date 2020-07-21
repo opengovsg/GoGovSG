@@ -1,5 +1,5 @@
 import { UrlsPublicPaginated } from '../../repositories/types'
-import { SearchResultsSortOrder } from '../../repositories/enums'
+import { SearchResultsSortOrder } from '../../../shared/search'
 
 export interface UrlSearchServiceInterface {
   /**

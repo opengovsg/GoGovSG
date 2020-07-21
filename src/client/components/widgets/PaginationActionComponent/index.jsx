@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid, IconButton, createStyles, makeStyles } from '@material-ui/core'
-import arrowLeftIcon from '../../../assets/arrow-left-icon.svg'
-import arrowRightIcon from '../../../assets/arrow-right-icon.svg'
+import arrowLeftIcon from '../../../assets/icons/arrow-left-icon.svg'
+import arrowRightIcon from '../../../assets/icons/arrow-right-icon.svg'
 
 const useStyles = makeStyles(() =>
   createStyles({

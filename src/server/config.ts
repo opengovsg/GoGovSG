@@ -172,3 +172,9 @@ export const accessEndpoint =
 export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS
+
+// Search variables
+export const searchShortUrlWeight =
+  Number(process.env.SEARCH_SHORT_URL_WEIGHT) || 1.0
+export const searchDescriptionWeight =
+  Number(process.env.SEARCH_DESCRIPTION_WEIGHT) || 0.4

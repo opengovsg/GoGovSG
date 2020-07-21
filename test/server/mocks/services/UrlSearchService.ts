@@ -1,10 +1,8 @@
 import { injectable } from 'inversify'
 import { UrlSearchServiceInterface } from '../../../../src/server/services/interfaces/UrlSearchServiceInterface'
-import {
-  SearchResultsSortOrder,
-  StorableUrlState,
-} from '../../../../src/server/repositories/enums'
+import { StorableUrlState } from '../../../../src/server/repositories/enums'
 import { UrlsPublicPaginated } from '../../../../src/server/repositories/types'
+import { SearchResultsSortOrder } from '../../../../src/shared/search'
 
 @injectable()
 export class UrlSearchServiceMock implements UrlSearchServiceInterface {

@@ -118,7 +118,7 @@ const LandingGraphicSliver = () => {
   return (
     <div className={classes.pageHeightContainer}>
       <Section
-        backgroundType="dark"
+        backgroundType="light"
         topMultiplier={useTopPaddingMultipler()}
         bottomMultiplier={0}
       >

@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 
 import { container } from './util/inversify'
-import { GaLogger } from './services/analyticsLogger'
+import GaLoggerService from './services/GaLoggerService'
 import { DependencyIds } from './constants'
 import { CookieArrayReducerService } from './services/CookieArrayReducerService'
 import { OtpRepository } from './repositories/OtpRepository'
@@ -50,7 +50,7 @@ export default () => {
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
-  bindIfUnbound(DependencyIds.analyticsLogging, GaLogger)
+  bindIfUnbound(DependencyIds.analyticsLoggerService, GaLoggerService)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducerService)
   bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)

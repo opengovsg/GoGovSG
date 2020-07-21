@@ -11,7 +11,7 @@ import {
 import { S3InterfaceMock } from '../mocks/services/aws'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
-import { SearchResultsSortOrder } from '../../../src/server/repositories/enums'
+import { SearchResultsSortOrder } from '../../../src/shared/search'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -102,9 +102,9 @@ describe('UrlRepository tests', () => {
       SELECT count(*)
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
-      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', urls."description"), 'B')
-    ) AND state = 'ACTIVE'
+  setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+  setweight(to_tsvector('english', urls."description"), 'B')
+) AND urls.state = 'ACTIVE' AND urls.description != ''
     `,
         { bind: { query: 'query' }, raw: true, type: QueryTypes.SELECT },
       )
@@ -114,9 +114,9 @@ describe('UrlRepository tests', () => {
       SELECT urls.*
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
-      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', urls."description"), 'B')
-    ) AND state = 'ACTIVE'
+  setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+  setweight(to_tsvector('english', urls."description"), 'B')
+) AND urls.state = 'ACTIVE' AND urls.description != ''
       ORDER BY (urls.clicks) DESC
       LIMIT $limit
       OFFSET $offset`,
@@ -142,13 +142,13 @@ describe('UrlRepository tests', () => {
       SELECT urls.*
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
-      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', urls."description"), 'B')
-    ) AND state = 'ACTIVE'
-      ORDER BY (ts_rank_cd(
-      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', urls."description"), 'B')
-    , query, 1) * log(urls.clicks + 1)) DESC
+  setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+  setweight(to_tsvector('english', urls."description"), 'B')
+) AND urls.state = 'ACTIVE' AND urls.description != ''
+      ORDER BY (ts_rank_cd('{0, 0, 0.4, 1}',
+  setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+  setweight(to_tsvector('english', urls."description"), 'B')
+, query, 1) * log(urls.clicks + 1)) DESC
       LIMIT $limit
       OFFSET $offset`,
         {
@@ -173,9 +173,9 @@ describe('UrlRepository tests', () => {
       SELECT urls.*
       FROM urls, plainto_tsquery($query) query
       WHERE query @@ (
-      setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
-      setweight(to_tsvector('english', urls."description"), 'B')
-    ) AND state = 'ACTIVE'
+  setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
+  setweight(to_tsvector('english', urls."description"), 'B')
+) AND urls.state = 'ACTIVE' AND urls.description != ''
       ORDER BY (urls."createdAt") DESC
       LIMIT $limit
       OFFSET $offset`,

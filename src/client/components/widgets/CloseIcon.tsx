@@ -5,22 +5,21 @@ type CloseIconProps = {
   color?: string
 }
 
-const originalSize = 24
-
 const CloseIcon: FunctionComponent<CloseIconProps> = ({
-  size = originalSize,
+  size = 24,
   color = '#BBB',
-}) => {
-  const offset = (originalSize - size) / 2
+}: CloseIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={24}
+      height={24}
       fill="none"
-      viewBox={`${offset} ${offset} ${originalSize - offset} ${
-        originalSize - offset
-      }`}
+      style={{
+        height: `${size}px`,
+        width: `${size}px`,
+      }}
+      viewBox="0 0 24 24"
     >
       <path
         fill={color}

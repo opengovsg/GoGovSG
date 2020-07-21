@@ -5,5 +5,6 @@ export interface RedirectServiceInterface {
     shortUrl: string,
     pastVisits: string[],
     userAgent: string,
+    referrer: string,
   ): Promise<RedirectResult>
 }

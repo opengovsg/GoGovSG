@@ -1,5 +1,5 @@
 import { StorableFile, StorableUrl, UrlsPaginated } from '../types'
-import { SearchResultsSortOrder } from '../enums'
+import { SearchResultsSortOrder } from '../../../shared/search'
 
 /**
  * A url repository that handles access to the data store of Urls.

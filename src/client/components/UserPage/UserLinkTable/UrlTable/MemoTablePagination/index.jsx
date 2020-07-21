@@ -2,7 +2,7 @@ import React from 'react'
 import { TablePagination } from '@material-ui/core'
 import isMatch from 'lodash/isMatch'
 import useAppMargins from '../../../../AppMargins/appMargins'
-import PaginationActionComponent from './PaginationActionComponent'
+import PaginationActionComponent from '../../../../widgets/PaginationActionComponent'
 import useStyles from './styles'
 
 // Prevents re-render if pagination did not change.
