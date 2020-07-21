@@ -19,6 +19,10 @@ type SearchHeaderProps = {
   query: string
 }
 
+type SearchHeaderStyleProps = {
+  appMargins: number
+}
+
 const useStyles = makeStyles((theme) =>
   createStyles({
     headerWrapper: {
@@ -52,7 +56,7 @@ const SearchHeader: FunctionComponent<SearchHeaderProps> = ({
   query,
 }: SearchHeaderProps) => {
   const appMargins = useAppMargins()
-  const classes = useStyles(appMargins)
+  const classes = useStyles({ appMargins })
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
