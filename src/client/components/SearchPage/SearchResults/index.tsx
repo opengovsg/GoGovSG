@@ -62,7 +62,9 @@ const SearchResults: FunctionComponent<SearchResultsProps> = ({
           variant={isMobileView ? 'h5' : 'h3'}
           className={classes.resultsHeaderText}
         >
-          {`Showing ${resultsCount} links for “${query}”`}
+          {`Showing ${resultsCount} link${
+            resultsCount > 1 ? 's' : ''
+          } for “${query}”`}
         </Typography>
       </ApplyAppMargins>
       {!!resultsCount && (
