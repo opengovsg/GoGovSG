@@ -9,7 +9,6 @@ import {
 import { ApplyAppMargins } from '../../AppMargins'
 import GoSearchInput from '../../widgets/GoSearchInput'
 import { SearchResultsSortOrder } from '../../../../shared/search'
-import useAppMargins from '../../AppMargins/appMargins'
 
 type SearchHeaderProps = {
   onQueryChange: (query: string) => void

@@ -134,7 +134,6 @@ const GoSearchInput: FunctionComponent<GoSearchInputProps> = ({
           variant="outlined"
           InputProps={{
             className: classes.searchInput,
-            // disableUnderline: true,
             startAdornment: (
               <div className={classes.searchInputIcon}>
                 <SearchIcon size={isMobileView ? 16 : 30} />
