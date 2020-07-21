@@ -4,14 +4,13 @@ import { gaTrackingId, logger } from '../config'
 import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
 import { DependencyIds, ERROR_404_PATH } from '../constants'
-import { AnalyticsLogger } from '../services/analyticsLogger'
+import { AnalyticsLoggerService } from '../services/interfaces/AnalyticsLoggerService'
 import { RedirectControllerInterface } from './interfaces/RedirectControllerInterface'
 import { RedirectService } from '../services/RedirectService'
 import { RedirectType } from '../services/types'
-import {
-  EventAction,
-  EventCategory,
-} from '../services/googleAnalytics/types/enum'
+import { EventAction, EventCategory } from '../services/analytics/types/enum'
+import { createPageViewHit } from '../services/analytics'
+import IGaPageViewForm from '../services/analytics/types/IGaPageViewForm'
 
 const TRANSITION_PATH = 'transition-page.ejs'
 
@@ -19,14 +18,26 @@ const TRANSITION_PATH = 'transition-page.ejs'
 export class RedirectController implements RedirectControllerInterface {
   private redirectService: RedirectService
 
-  private analyticsLogger: AnalyticsLogger
+  private analyticsLogger: AnalyticsLoggerService<IGaPageViewForm>
 
   public constructor(
     @inject(DependencyIds.redirectService) redirectService: RedirectService,
-    @inject(DependencyIds.analyticsLogging) analyticsLogger: AnalyticsLogger,
+    @inject(DependencyIds.analyticsLoggerService)
+    analyticsLogger: AnalyticsLoggerService<IGaPageViewForm>,
   ) {
     this.redirectService = redirectService
     this.analyticsLogger = analyticsLogger
+  }
+
+  private logRedirect: (
+    req: Express.Request,
+    shortUrl: string,
+    longUrl: string,
+  ) => void = (req, shortUrl, longUrl) => {
+    const pageViewHit = createPageViewHit(req, shortUrl.toLowerCase(), longUrl)
+    if (pageViewHit) {
+      this.analyticsLogger.logRedirectAnalytics(pageViewHit)
+    }
   }
 
   public redirect: (
@@ -54,14 +65,6 @@ export class RedirectController implements RedirectControllerInterface {
         req.get('referrer') || '',
       )
 
-      const logRedirect = () => {
-        this.analyticsLogger.logRedirectAnalytics(
-          req,
-          shortUrl.toLowerCase(),
-          longUrl,
-        )
-      }
-
       const generatedCookie = this.analyticsLogger.generateCookie(
         req.headers.cookie,
       )
@@ -83,11 +86,11 @@ export class RedirectController implements RedirectControllerInterface {
           gaOnLoad: EventAction.LOADED,
           gaOnProceed: EventAction.PROCEEDED,
         })
-        logRedirect()
+        this.logRedirect(req, shortUrl, longUrl)
         return
       }
       res.status(302).redirect(longUrl)
-      logRedirect()
+      this.logRedirect(req, shortUrl, longUrl)
       return
     } catch (error) {
       if (!(error instanceof NotFoundError)) {
