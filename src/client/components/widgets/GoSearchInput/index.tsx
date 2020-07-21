@@ -125,12 +125,13 @@ const GoSearchInput: FunctionComponent<GoSearchInputProps> = ({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           onKeyPress={onKeyPress}
+          variant="outlined"
           InputProps={{
             className: classes.searchInput,
-            disableUnderline: true,
+            // disableUnderline: true,
             startAdornment: (
               <div className={classes.searchInputIcon}>
-                <SearchIcon size={isMobileView ? 16 : 24} />
+                <SearchIcon size={isMobileView ? 16 : 30} />
               </div>
             ),
             endAdornment: (
