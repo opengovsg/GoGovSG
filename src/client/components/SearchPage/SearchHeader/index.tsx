@@ -9,6 +9,7 @@ import {
 import { ApplyAppMargins } from '../../AppMargins'
 import GoSearchInput from '../../widgets/GoSearchInput'
 import { SearchResultsSortOrder } from '../../../../shared/search'
+import useAppMargins from '../../AppMargins/appMargins'
 
 type SearchHeaderProps = {
   onQueryChange: (query: string) => void
@@ -30,7 +31,8 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       position: 'relative',
       top: '22px',
-      maxWidth: theme.spacing(180),
+      maxWidth: (props: SearchHeaderStyleProps) =>
+        `calc(${theme.spacing(180)}px - ${props.appMargins}px)`,
       [theme.breakpoints.up('md')]: {
         top: '35px',
       },
@@ -49,7 +51,8 @@ const SearchHeader: FunctionComponent<SearchHeaderProps> = ({
   sortOrder,
   query,
 }: SearchHeaderProps) => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles(appMargins)
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
