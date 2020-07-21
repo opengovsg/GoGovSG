@@ -23,8 +23,8 @@ const useStyles = makeStyles(() =>
           '-ms-flex': '1 1 auto',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
           minHeight: '100vh',
+          overflow: 'hidden',
         },
       },
       a: {
@@ -45,6 +45,7 @@ const BaseLayout = ({
   headerBackgroundType,
   withFooter,
   children,
+  hideNavButtons,
 }) => {
   const classes = useStyles()
   const path = useLocation().pathname
@@ -56,7 +57,12 @@ const BaseLayout = ({
       <Masthead />
       {path === USER_PAGE && isIE && <BannerForIE />}
       {path === USER_PAGE && message && <Banner text={message} />}
-      {withHeader && <BaseLayoutHeader backgroundType={headerBackgroundType} />}
+      {withHeader && (
+        <BaseLayoutHeader
+          backgroundType={headerBackgroundType}
+          hideNavButtons={hideNavButtons}
+        />
+      )}
       <div className={classes.layout}>{children}</div>
       {withFooter && <BaseLayoutFooter />}
     </>
@@ -67,12 +73,14 @@ BaseLayout.propTypes = {
   withHeader: PropTypes.bool,
   headerBackgroundType: PropTypes.string,
   withFooter: PropTypes.bool,
+  hideNavButtons: PropTypes.bool,
 }
 
 BaseLayout.defaultProps = {
   withHeader: true,
   headerBackgroundType: 'dark',
   withFooter: true,
+  hideNavButtons: false,
 }
 
 export default BaseLayout

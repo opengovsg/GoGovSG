@@ -9,6 +9,7 @@ import HomePage from '~/components/HomePage'
 import LoginPage from '~/components/LoginPage'
 import UserPage from '~/components/UserPage'
 import NotFoundPage from '~/components/NotFoundPage'
+import SearchPage from '~/components/SearchPage'
 import MessageSnackbar from '~/components/MessageSnackbar'
 import ScrollToTop from './ScrollToTop'
 
@@ -19,7 +20,13 @@ import '~/assets/favicon/apple-touch-icon.png'
 import '~/assets/favicon/favicon-16x16.png'
 import '~/assets/favicon/favicon-32x32.png'
 
-import { HOME_PAGE, LOGIN_PAGE, NOT_FOUND_PAGE, USER_PAGE } from '~/util/types'
+import {
+  HOME_PAGE,
+  LOGIN_PAGE,
+  NOT_FOUND_PAGE,
+  SEARCH_PAGE,
+  USER_PAGE,
+} from '~/util/types'
 import theme from '../../theme'
 
 const Root = ({ store }) => (
@@ -29,6 +36,7 @@ const Root = ({ store }) => (
         <ScrollToTop>
           <Switch>
             <Route exact path={HOME_PAGE} component={HomePage} />
+            <Route exact path={SEARCH_PAGE} component={SearchPage} />
             <Route path={LOGIN_PAGE} component={LoginPage} />
             <PrivateRoute path={USER_PAGE} component={UserPage} />
             <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />

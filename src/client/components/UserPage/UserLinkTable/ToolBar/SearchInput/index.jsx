@@ -16,8 +16,8 @@ import FilterSortPanel from '../FilterSortPanel'
 import userActions from '../../../../../actions/user'
 
 import filterSortIcon from '../assets/filtersort-icon.svg'
-import searchIcon from '../assets/search-icon.svg'
 import useSearchInputHeight from './searchInputHeight'
+import SearchIcon from '../../../../widgets/SearchIcon'
 
 const mapDispatchToProps = (dispatch) => {
   const debouncedUpdateSearchText = debounce(
@@ -130,7 +130,7 @@ const SearchInput = React.memo(({ updateSearchText }) => {
             classes: { input: classes.input },
             startAdornment: (
               <InputAdornment position="start">
-                <img src={searchIcon} alt="Search icon" />
+                <SearchIcon size={16} />
               </InputAdornment>
             ),
             endAdornment: (

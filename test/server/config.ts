@@ -44,4 +44,6 @@ jest.mock('../../src/server/config', () => ({
   s3Bucket: 'file-staging.go.gov.sg',
   linksToRotate: 'testlink1,testlink2,testlink3',
   sentryDns: 'mocksentry.com',
+  searchShortUrlWeight: 1,
+  searchDescriptionWeight: 0.4,
 }))

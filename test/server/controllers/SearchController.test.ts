@@ -2,8 +2,8 @@ import httpMock from 'node-mocks-http'
 import sinon from 'sinon'
 import { SearchController } from '../../../src/server/controllers/SearchController'
 import { UrlSearchServiceMock } from '../mocks/services/UrlSearchService'
-import { SearchResultsSortOrder } from '../../../src/server/repositories/enums'
 import { logger } from '../config'
+import { SearchResultsSortOrder } from '../../../src/shared/search'
 
 const urlSearchService = new UrlSearchServiceMock()
 const controller = new SearchController(urlSearchService)
