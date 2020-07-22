@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         paddingTop: theme.spacing(5.5),
       },
+      [theme.breakpoints.up(1440)]: {
+        marginLeft: () => 0,
+      },
     },
     tableRow: {
       display: 'flex',
@@ -86,6 +89,9 @@ const useStyles = makeStyles((theme) =>
       WebkitBoxOrient: 'vertical',
       wordBreak: 'keep-all',
       marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
+      [theme.breakpoints.up(1440)]: {
+        marginLeft: () => 0,
+      },
     },
     contactEmailCell: {
       display: 'inline-flex',

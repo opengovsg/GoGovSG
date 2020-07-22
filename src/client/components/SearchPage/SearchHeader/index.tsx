@@ -35,8 +35,9 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       position: 'relative',
       top: '22px',
+      margin: '0 auto',
       maxWidth: (props: SearchHeaderStyleProps) =>
-        `calc(${theme.spacing(180)}px - ${props.appMargins}px)`,
+        theme.spacing(180) - 2 * props.appMargins,
       [theme.breakpoints.up('md')]: {
         top: '35px',
       },
