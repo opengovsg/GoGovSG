@@ -11,11 +11,16 @@ import {
   urlSchema,
 } from './validators'
 import { UserControllerInterface } from '../../controllers/interfaces/UserControllerInterface'
+import { FileCheckControllerInterface } from '../../controllers/interfaces/FileCheckControllerInterface'
 
 const router = Express.Router()
 
 const userController = container.get<UserControllerInterface>(
   DependencyIds.userController,
+)
+
+const fileCheckController = container.get<FileCheckControllerInterface>(
+  DependencyIds.fileCheckController,
 )
 
 const fileUploadMiddleware = fileUpload({
@@ -56,6 +61,7 @@ router.post(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
+  fileCheckController.checkFile,
   validator.body(urlSchema),
   userController.createUrl,
 )
@@ -77,6 +83,7 @@ router.patch(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
+  fileCheckController.checkFile,
   validator.body(urlEditSchema),
   userController.updateUrl,
 )

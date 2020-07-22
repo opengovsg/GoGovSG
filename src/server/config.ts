@@ -20,15 +20,15 @@ const STATISTICS_EXPIRY: number =
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
-  'DB_URI', // Main SQL database used with Sequelize
-  'OG_URL', // Origin Url
-  'REDIS_OTP_URI', // Cache for storing OTP hashes
-  'REDIS_SESSION_URI', // Cache for storing session info
-  'REDIS_REDIRECT_URI', // Cache for short links
-  'REDIS_STAT_URI', // Cache for statistics (user, link, and click counts)
-  'SESSION_SECRET',
-  'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
-  'AWS_S3_BUCKET', // For file.go.gov.sg uploads
+  // 'DB_URI', // Main SQL database used with Sequelize
+  // 'OG_URL', // Origin Url
+  // 'REDIS_OTP_URI', // Cache for storing OTP hashes
+  // 'REDIS_SESSION_URI', // Cache for storing session info
+  // 'REDIS_REDIRECT_URI', // Cache for short links
+  // 'REDIS_STAT_URI', // Cache for statistics (user, link, and click counts)
+  // 'SESSION_SECRET',
+  // 'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
+  // 'AWS_S3_BUCKET', // For file.go.gov.sg uploads
 ]
 
 // AWS Simple Email Service
@@ -162,6 +162,8 @@ export const sessionSettings: SessionSettings = {
   secret: process.env.SESSION_SECRET as string,
   name: 'gogovsg',
 }
+
+export const virusTotalKey: string | undefined = process.env.VIRUS_TOTAL_KEY
 
 // LocalStack variables.
 export const bucketEndpoint =
