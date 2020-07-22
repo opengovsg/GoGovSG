@@ -54,6 +54,11 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       marginBottom: theme.spacing(6),
     },
+    contactEmailLink: {
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
   }),
 )
 
@@ -92,7 +97,18 @@ const InfoDrawer: FunctionComponent<InfoDrawerProps> = ({
             </Typography>
             <Divider className={classes.divider} />
             <Typography variant="caption" className={classes.contactEmailText}>
-              {selectedUrl?.contactEmail || 'No contact specified'}
+              <a
+                href={
+                  selectedUrl?.contactEmail
+                    ? `mailto:${selectedUrl?.contactEmail}`
+                    : undefined
+                }
+                className={`${classes.contactEmailText} ${
+                  selectedUrl?.contactEmail ? classes.contactEmailLink : ''
+                }`}
+              >
+                {selectedUrl?.contactEmail || 'No contact specified'}
+              </a>
             </Typography>
           </>
         </ApplyAppMargins>

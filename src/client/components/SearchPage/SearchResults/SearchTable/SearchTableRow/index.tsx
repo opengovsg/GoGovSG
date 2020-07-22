@@ -7,6 +7,7 @@ import {
   makeStyles,
   useMediaQuery,
   useTheme,
+  Hidden,
 } from '@material-ui/core'
 import { UrlTypePublic } from '../../../../../reducers/search/types'
 import useAppMargins from '../../../../AppMargins/appMargins'
@@ -32,7 +33,9 @@ const useStyles = makeStyles((theme) =>
         `calc(100vw - ${props.appMargins}px * 2)`,
       marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
       paddingTop: theme.spacing(4),
+      flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
+        width: '50%',
         paddingTop: theme.spacing(5.5),
       },
       [theme.breakpoints.up(1440)]: {
@@ -88,8 +91,13 @@ const useStyles = makeStyles((theme) =>
       WebkitLineClamp: 2,
       WebkitBoxOrient: 'vertical',
       wordBreak: 'keep-all',
-      marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
-      [theme.breakpoints.up(1440)]: {
+      height: theme.spacing(5),
+      marginTop: theme.spacing(2.5),
+      [theme.breakpoints.up('md')]: {
+        WebkitLineClamp: 3,
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(3.5),
+        height: theme.spacing(7.5),
         marginLeft: () => 0,
       },
     },
@@ -102,10 +110,12 @@ const useStyles = makeStyles((theme) =>
       paddingLeft: (props: SearchTableRowStyleProps) => props.appMargins,
       paddingBottom: theme.spacing(4),
       [theme.breakpoints.up('md')]: {
-        paddingTop: theme.spacing(0.5),
+        paddingTop: theme.spacing(5.5),
         paddingBottom: theme.spacing(0.5),
-        paddingLeft: theme.spacing(28),
+        paddingRight: () => 0,
+        paddingLeft: () => '10%',
         width: '40%',
+        flexDirection: 'column',
       },
     },
     contactEmailText: {
@@ -115,7 +125,13 @@ const useStyles = makeStyles((theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
     },
+    contactEmailLink: {
+      color: '#767676',
+    },
     contactEmailClickable: {
+      [theme.breakpoints.up('md')]: {
+        marginTop: theme.spacing(1),
+      },
       '&:hover': {
         textDecoration: 'underline',
       },
@@ -142,11 +158,9 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
           variant={isMobileView ? 'body2' : 'h5'}
           className={classes.shortLinkText}
         >
-          <span className={classes.domainText}>go.gov.sg/</span>
+          <span className={classes.domainText}>{document.location.host}/</span>
           {url.shortUrl}
         </Typography>
-      </TableCell>
-      <TableCell className={classes.descriptionCell} key="descriptionCell">
         <Typography
           color="primary"
           variant="body2"
@@ -156,6 +170,11 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
         </Typography>
       </TableCell>
       <TableCell className={classes.contactEmailCell} key="emailCell">
+        <Hidden smDown>
+          <Typography variant="body2" className={classes.contactEmailText}>
+            For enquiries, contact:
+          </Typography>
+        </Hidden>
         <Typography
           variant={isMobileView ? 'caption' : 'body2'}
           className={`${classes.contactEmailText} ${
@@ -163,12 +182,16 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
           }`}
           onClick={(e) => {
             if (url.contactEmail) {
-              window.location.href = `mailto:${url.contactEmail}`
               e.stopPropagation()
             }
           }}
         >
-          {url.contactEmail || 'No contact specified'}
+          <a
+            href={url.contactEmail ? `mailto:${url.contactEmail}` : undefined}
+            className={classes.contactEmailLink}
+          >
+            {url.contactEmail || '-'}
+          </a>
         </Typography>
       </TableCell>
     </TableRow>
