@@ -107,7 +107,7 @@
     "@types/helmet": "0.0.47",
     "@types/jest": "^26.0.5",
     "@types/jsdom": "^16.2.3",
-    "@types/lodash": "^4.14.157",
+    "@types/lodash": "^4.14.158",
     "@types/moment-timezone": "^0.5.13",
     "@types/morgan": "^1.9.1",
     "@types/nanoid": "^2.1.0",
