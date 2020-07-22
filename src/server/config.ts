@@ -167,6 +167,8 @@ export const cspOnlyReportViolations =
   process.env.CSP_ONLY_REPORT_VIOLATIONS === 'true'
 export const cspReportUri = process.env.CSP_REPORT_URI
 
+export const virusTotalKey: string | undefined = process.env.VIRUS_TOTAL_KEY
+
 // LocalStack variables.
 export const bucketEndpoint =
   process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
