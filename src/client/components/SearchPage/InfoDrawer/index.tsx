@@ -21,6 +21,7 @@ type InfoDrawerProps = {
 const useStyles = makeStyles((theme) =>
   createStyles({
     shortLinkText: {
+      color: theme.palette.text.primary,
       textAlign: 'start',
       marginTop: theme.spacing(4),
       marginBottom: theme.spacing(4),
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) =>
       wordBreak: 'break-all',
     },
     shortUrlButton: {
+      width: '100%',
       justifyContent: 'flex-start',
     },
     content: {
@@ -68,25 +70,25 @@ const InfoDrawer: FunctionComponent<InfoDrawerProps> = ({
 }: InfoDrawerProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const enterUrl = () => {
-    if (!selectedUrl) {
-      return
-    }
-    window.location.assign(
-      `${document.location.protocol}//${document.location.host}/${selectedUrl.shortUrl}`,
-    )
-  }
   return (
     <BottomDrawer open={!!selectedUrl} onClose={onClose}>
       <div className={classes.content}>
-        <ButtonBase className={classes.shortUrlButton} onClick={enterUrl}>
-          <ApplyAppMargins>
-            <Typography variant="body2" className={classes.shortLinkText}>
-              <span className={classes.domainText}>go.gov.sg/</span>
-              {selectedUrl?.shortUrl}
-            </Typography>
-          </ApplyAppMargins>
-        </ButtonBase>
+        <a
+          href={
+            selectedUrl
+              ? `${document.location.protocol}//${document.location.host}/${selectedUrl.shortUrl}`
+              : undefined
+          }
+        >
+          <ButtonBase className={classes.shortUrlButton}>
+            <ApplyAppMargins>
+              <Typography variant="body2" className={classes.shortLinkText}>
+                <span className={classes.domainText}>go.gov.sg/</span>
+                {selectedUrl?.shortUrl}
+              </Typography>
+            </ApplyAppMargins>
+          </ButtonBase>
+        </a>
         <Divider className={classes.dividerTop} />
         <ApplyAppMargins>
           <>

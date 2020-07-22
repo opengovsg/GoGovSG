@@ -148,53 +148,63 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
-    <TableRow
-      className={classes.tableRow}
-      onClick={() => onClickUrl(url.shortUrl)}
-      key={url.shortUrl}
+    <a
+      href={
+        isMobileView
+          ? undefined
+          : `${document.location.protocol}//${document.location.host}/${url.shortUrl}`
+      }
     >
-      <TableCell className={classes.shortLinkCell} key="shortUrlCell">
-        <Typography
-          variant={isMobileView ? 'body2' : 'h5'}
-          className={classes.shortLinkText}
-        >
-          <span className={classes.domainText}>{document.location.host}/</span>
-          {url.shortUrl}
-        </Typography>
-        <Typography
-          color="primary"
-          variant="body2"
-          className={classes.descriptionText}
-        >
-          {url.description ? url.description : 'No information available.'}
-        </Typography>
-      </TableCell>
-      <TableCell className={classes.contactEmailCell} key="emailCell">
-        <Hidden smDown>
-          <Typography variant="body2" className={classes.contactEmailText}>
-            For enquiries, contact:
-          </Typography>
-        </Hidden>
-        <Typography
-          variant={isMobileView ? 'caption' : 'body2'}
-          className={`${classes.contactEmailText} ${
-            url.contactEmail ? classes.contactEmailClickable : ''
-          }`}
-          onClick={(e) => {
-            if (url.contactEmail) {
-              e.stopPropagation()
-            }
-          }}
-        >
-          <a
-            href={url.contactEmail ? `mailto:${url.contactEmail}` : undefined}
-            className={classes.contactEmailLink}
+      <TableRow
+        className={classes.tableRow}
+        onClick={() => onClickUrl(url.shortUrl)}
+        key={url.shortUrl}
+      >
+        <TableCell className={classes.shortLinkCell} key="shortUrlCell">
+          <Typography
+            variant={isMobileView ? 'body2' : 'h5'}
+            className={classes.shortLinkText}
           >
-            {url.contactEmail || '-'}
-          </a>
-        </Typography>
-      </TableCell>
-    </TableRow>
+            <span className={classes.domainText}>
+              {document.location.host}/
+            </span>
+            {url.shortUrl}
+          </Typography>
+          <Typography
+            color="primary"
+            variant="body2"
+            className={classes.descriptionText}
+          >
+            {url.description ? url.description : 'No information available.'}
+          </Typography>
+        </TableCell>
+        <TableCell className={classes.contactEmailCell} key="emailCell">
+          <Hidden smDown>
+            <Typography variant="body2" className={classes.contactEmailText}>
+              For enquiries, contact:
+            </Typography>
+          </Hidden>
+          <Typography
+            variant={isMobileView ? 'caption' : 'body2'}
+            className={`${classes.contactEmailText} ${
+              url.contactEmail ? classes.contactEmailClickable : ''
+            }`}
+            onClick={(e) => {
+              if (url.contactEmail) {
+                e.stopPropagation()
+              }
+            }}
+          >
+            <a
+              href={url.contactEmail ? `mailto:${url.contactEmail}` : undefined}
+              className={classes.contactEmailLink}
+            >
+              {url.contactEmail || '-'}
+            </a>
+          </Typography>
+        </TableCell>
+      </TableRow>
+    </a>
   )
 }
 
