@@ -248,7 +248,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) {
     const rawQuery = `
       SELECT ${tableName}.*
-      FROM ${tableName}, plainto_tsquery($query) query
+      FROM ${tableName}, plainto_tsquery('english', $query) query
       WHERE query @@ (${urlVector}) AND ${urlSearchConditions}
       ORDER BY (${rankingAlgorithm}) DESC
       LIMIT $limit
@@ -300,7 +300,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) {
     const rawCountQuery = `
       SELECT count(*)
-      FROM ${tableName}, plainto_tsquery($query) query
+      FROM ${tableName}, plainto_tsquery('english', $query) query
       WHERE query @@ (${urlSearchVector}) AND ${urlSearchConditions}
     `
     const [{ count: countString }] = await sequelize.query(rawCountQuery, {

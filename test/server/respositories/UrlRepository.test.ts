@@ -100,7 +100,7 @@ describe('UrlRepository tests', () => {
       expect(mockQuery).toBeCalledWith(
         `
       SELECT count(*)
-      FROM urls, plainto_tsquery($query) query
+      FROM urls, plainto_tsquery('english', $query) query
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
@@ -112,7 +112,7 @@ describe('UrlRepository tests', () => {
       expect(mockQuery).toBeCalledWith(
         `
       SELECT urls.*
-      FROM urls, plainto_tsquery($query) query
+      FROM urls, plainto_tsquery('english', $query) query
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
@@ -140,7 +140,7 @@ describe('UrlRepository tests', () => {
       expect(mockQuery).toBeCalledWith(
         `
       SELECT urls.*
-      FROM urls, plainto_tsquery($query) query
+      FROM urls, plainto_tsquery('english', $query) query
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
@@ -171,7 +171,7 @@ describe('UrlRepository tests', () => {
       expect(mockQuery).toBeCalledWith(
         `
       SELECT urls.*
-      FROM urls, plainto_tsquery($query) query
+      FROM urls, plainto_tsquery('english', $query) query
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
