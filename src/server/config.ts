@@ -164,6 +164,7 @@ export const sessionSettings: SessionSettings = {
 }
 
 export const virusTotalKey: string | undefined = process.env.VIRUS_TOTAL_KEY
+export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
 
 // LocalStack variables.
 export const bucketEndpoint =
