@@ -12,17 +12,10 @@ if (cloudmersiveKey) {
 const api = new ScanApi()
 
 @injectable()
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["hasVirus"] }] */
 export class CloudmersiveVirusScanService implements VirusScanServiceInterface {
-  public async hasVirus(file: fileUpload.UploadedFile): Promise<boolean> {
-    if (!cloudmersiveKey) {
-      logger.warn(
-        `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
-      )
-      return false
-    }
+  scanFilePromise = (file: Buffer): Promise<boolean> => {
     return new Promise((res, rej) => {
-      api.scanFile(file.data, (err, data) => {
+      api.scanFile(file, (err, data) => {
         if (err) {
           logger.error(`Error when scanning file via Cloudmersive: ${err}`)
           return rej(err)
@@ -30,6 +23,16 @@ export class CloudmersiveVirusScanService implements VirusScanServiceInterface {
         return res(!data.CleanResult)
       })
     })
+  }
+
+  public async hasVirus(file: fileUpload.UploadedFile): Promise<boolean> {
+    if (!cloudmersiveKey) {
+      logger.warn(
+        `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
+      )
+      return false
+    }
+    return this.scanFilePromise(file.data)
   }
 }
 
