@@ -13,7 +13,7 @@ const api = new ScanApi()
 
 @injectable()
 export class CloudmersiveVirusScanService implements VirusScanServiceInterface {
-  scanFilePromise = (file: Buffer): Promise<boolean> => {
+  private static scanFilePromise = (file: Buffer): Promise<boolean> => {
     return new Promise((res, rej) => {
       api.scanFile(file, (err, data) => {
         if (err) {
@@ -25,14 +25,16 @@ export class CloudmersiveVirusScanService implements VirusScanServiceInterface {
     })
   }
 
-  public async hasVirus(file: fileUpload.UploadedFile): Promise<boolean> {
+  public hasVirus: (file: fileUpload.UploadedFile) => Promise<boolean> = async (
+    file,
+  ) => {
     if (!cloudmersiveKey) {
       logger.warn(
         `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
       )
       return false
     }
-    return this.scanFilePromise(file.data)
+    return CloudmersiveVirusScanService.scanFilePromise(file.data)
   }
 }
 
