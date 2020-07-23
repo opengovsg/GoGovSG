@@ -35,7 +35,8 @@ import { LinkStatisticsController } from './controllers/LinkStatisticsController
 import { LinkStatisticsService } from './services/LinkStatisticsService'
 import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
 import { DeviceCheckService } from './services/DeviceCheckService'
-import { VirusScanService } from './services/VirusScanService'
+// import { VirusScanService } from './services/VirusScanService'
+import { CloudmersiveVirusScanService } from './services/CloudmersiveVirusScanService'
 import { FileCheckController } from './controllers/FileCheckController'
 
 function bindIfUnbound<T>(
@@ -75,7 +76,8 @@ export default () => {
   bindIfUnbound(DependencyIds.urlSearchService, UrlSearchService)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
 
-  bindIfUnbound(DependencyIds.virusScanService, VirusScanService)
+  // bindIfUnbound(DependencyIds.virusScanService, VirusScanService)
+  bindIfUnbound(DependencyIds.virusScanService, CloudmersiveVirusScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
 
   bindIfUnbound(
