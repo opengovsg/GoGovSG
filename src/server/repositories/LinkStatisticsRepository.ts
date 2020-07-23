@@ -64,6 +64,7 @@ END; $$ LANGUAGE plpgsql;
 `
 
 export type UrlStats = UrlType & {
+  Url: UrlType
   DeviceClicks?: DevicesType
   DailyClicks: ClicksType[]
   WeekdayClicks: WeekdayClicksType[]
@@ -105,6 +106,8 @@ export class LinkStatisticsRepository
     if (url) {
       const urlStats = url as UrlStats
 
+      const totalClicks = url.clicks
+
       const deviceClicks = urlStats.DeviceClicks
         ? _.pick(urlStats.DeviceClicks.toJSON(), [
             'desktop',
@@ -125,6 +128,7 @@ export class LinkStatisticsRepository
 
       if (Object.values(deviceClicks).some((val) => val !== 0)) {
         return {
+          totalClicks,
           deviceClicks,
           dailyClicks,
           weekdayClicks,

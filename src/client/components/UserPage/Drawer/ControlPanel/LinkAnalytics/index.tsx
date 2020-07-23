@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Typography,
   createStyles,
   makeStyles,
   CircularProgress,
+  Tabs,
+  Tab,
+  useTheme,
+  Divider,
+  Hidden,
 } from '@material-ui/core'
 
 import { useDrawerState } from '../..'
@@ -110,10 +115,48 @@ function LinkStatisticsGraphs() {
   return <Graphs data={linkStatistics.contents!} />
 }
 
+export type TabPanelProps = {
+  children?: React.ReactNode
+  dir?: string
+  index: any
+  value: any
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Typography>{children}</Typography>}
+    </div>
+  )
+}
+
 const useStyles = makeStyles(() => ({
   root: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  tabRoot: {
+    border: 'solid 1px #CDDCE0',
+    borderRadius: 3,
+  },
+  tabSection: {
+    display: 'flex',
+  },
+  totalClicks: {
+    marginLeft: 'auto',
+    marginRight: 39,
+    alignSelf: 'center',
+  },
+  tabBar: {
+    marginTop: 46,
   },
 }))
 
@@ -123,12 +166,44 @@ export type GraphsProps = {
 
 function Graphs(props: GraphsProps) {
   const classes = useStyles()
+  const theme = useTheme()
+  const [tabValue, setTabValue] = useState<number>(0)
+
+  const handleChange = (_: React.ChangeEvent<{}>, newValue: number) => {
+    setTabValue(newValue)
+  }
 
   return (
     <div className={classes.root}>
-      <DeviceStatistics deviceClicks={props.data.deviceClicks} />
-      <DailyStatistics dailyClicks={props.data.dailyClicks} />
-      <HeatMapStatistics weekdayClicks={props.data.weekdayClicks} />
+      <div className={classes.tabRoot}>
+        <div className={classes.tabSection}>
+          <Tabs
+            value={tabValue}
+            onChange={handleChange}
+            className={classes.tabBar}
+            indicatorColor={'primary'}
+          >
+            <Tab label="Devices" />
+            <Tab label="Clicks" />
+            <Tab label="Traffic" />
+          </Tabs>
+          <Hidden smDown>
+            <Typography variant="h6" className={classes.totalClicks}>
+              {`${props.data.totalClicks} total clicks`}
+            </Typography>
+          </Hidden>
+        </div>
+        <Divider />
+        <TabPanel value={tabValue} index={0} dir={theme.direction}>
+          <DeviceStatistics deviceClicks={props.data.deviceClicks} />
+        </TabPanel>
+        <TabPanel value={tabValue} index={1} dir={theme.direction}>
+          <DailyStatistics dailyClicks={props.data.dailyClicks} />
+        </TabPanel>
+        <TabPanel value={tabValue} index={2} dir={theme.direction}>
+          <HeatMapStatistics weekdayClicks={props.data.weekdayClicks} />
+        </TabPanel>
+      </div>
     </div>
   )
 }

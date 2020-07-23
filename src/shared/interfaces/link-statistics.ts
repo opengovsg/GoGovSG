@@ -17,6 +17,7 @@ export interface WeekdayClicksInterface {
 }
 
 export interface LinkStatisticsInterface {
+  totalClicks: number
   deviceClicks: DeviceClicksInterface
   dailyClicks: DailyClicksInterface[]
   weekdayClicks: WeekdayClicksInterface[]

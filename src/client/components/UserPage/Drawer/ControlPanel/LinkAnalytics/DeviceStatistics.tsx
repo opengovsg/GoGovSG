@@ -47,7 +47,6 @@ const useStyles = makeStyles(() => ({
   },
   legendRoot: {
     display: 'flex',
-    justifyContent: 'center',
   },
   legend: {
     marginRight: 40,
