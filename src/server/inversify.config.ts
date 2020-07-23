@@ -35,6 +35,11 @@ import { LinkStatisticsController } from './controllers/LinkStatisticsController
 import { LinkStatisticsService } from './services/LinkStatisticsService'
 import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
 import { DeviceCheckService } from './services/DeviceCheckService'
+
+import {
+  DEFAULT_ALLOWED_FILE_EXTENSIONS,
+  FileTypeFilterService,
+} from './services/FileTypeFilterService'
 import { CloudmersiveVirusScanService } from './services/CloudmersiveVirusScanService'
 import { FileCheckController } from './controllers/FileCheckController'
 
@@ -75,6 +80,10 @@ export default () => {
   bindIfUnbound(DependencyIds.urlSearchService, UrlSearchService)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
 
+  container
+    .bind(DependencyIds.allowedFileExtensions)
+    .toConstantValue(DEFAULT_ALLOWED_FILE_EXTENSIONS)
+  bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
   bindIfUnbound(DependencyIds.virusScanService, CloudmersiveVirusScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
 
