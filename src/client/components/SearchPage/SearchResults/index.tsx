@@ -28,10 +28,6 @@ type SearchResultsProps = {
   query: string
 }
 
-type SearchResultsStyleProps = {
-  appMargins: number
-}
-
 const useStyles = makeStyles((theme) =>
   createStyles({
     resultsHeaderText: {
@@ -41,18 +37,11 @@ const useStyles = makeStyles((theme) =>
       },
     },
     tableWrapper: {
-      width: (_: SearchResultsStyleProps) => '100%',
+      width: '100%',
       margin: '0 auto',
       minHeight: theme.spacing(40),
       [theme.breakpoints.up(1440)]: {
-        width: (props: SearchResultsStyleProps) =>
-          `${theme.spacing(180) - 2 * props.appMargins}px`,
-      },
-    },
-    ignoreMargin: {
-      [theme.breakpoints.up(1440)]: {
-        marginLeft: 0,
-        marginRight: 0,
+        width: theme.spacing(180),
       },
     },
   }),
@@ -75,7 +64,7 @@ const SearchResults: FunctionComponent<SearchResultsProps> = ({
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <div className={classes.tableWrapper}>
-      <ApplyAppMargins className={classes.ignoreMargin}>
+      <ApplyAppMargins>
         <Typography
           variant={isMobileView ? 'h5' : 'h3'}
           className={classes.resultsHeaderText}

@@ -10,8 +10,8 @@ import {
   Typography,
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import linkIcon from '../../assets/link-icon.svg'
-import fileIcon from '../../assets/file-icon.svg'
+import linkIcon from '../../../../../assets/icons/link-icon.svg'
+import fileIcon from '../../../../../assets/icons/file-icon.svg'
 import clickCountIcon from '../../assets/click-count-icon.svg'
 
 import useAppMargins from '../../../../AppMargins/appMargins'

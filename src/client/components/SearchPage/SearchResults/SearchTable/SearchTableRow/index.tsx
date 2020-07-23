@@ -11,6 +11,9 @@ import {
 } from '@material-ui/core'
 import { UrlTypePublic } from '../../../../../reducers/search/types'
 import useAppMargins from '../../../../AppMargins/appMargins'
+import linkIcon from '../../../../../assets/icons/link-icon.svg'
+import fileIcon from '../../../../../assets/icons/file-icon.svg'
+import mailIcon from '../../../assets/mail-icon.svg'
 
 type SearchTableRowProps = {
   url: UrlTypePublic
@@ -29,17 +32,17 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: theme.spacing(0.5),
       borderBottom: 'none',
       margin: 0,
-      maxWidth: (props: SearchTableRowStyleProps) =>
-        `calc(100vw - ${props.appMargins}px * 2)`,
       marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
       paddingTop: theme.spacing(4),
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
-        width: '50%',
+        width: '55%',
         paddingTop: theme.spacing(5.5),
-      },
-      [theme.breakpoints.up(1440)]: {
+        paddingRight: () => '10%',
         marginLeft: () => 0,
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '60%',
       },
     },
     tableRow: {
@@ -112,10 +115,12 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         paddingTop: theme.spacing(5.5),
         paddingBottom: theme.spacing(0.5),
-        paddingRight: () => 0,
-        paddingLeft: () => '10%',
-        width: '40%',
+        paddingLeft: () => 0,
+        width: '29%',
         flexDirection: 'column',
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '25%',
       },
     },
     contactEmailText: {
@@ -134,6 +139,23 @@ const useStyles = makeStyles((theme) =>
       },
       '&:hover': {
         textDecoration: 'underline',
+      },
+    },
+    linkIconCell: {
+      [theme.breakpoints.up('md')]: {
+        paddingTop: theme.spacing(5.5),
+        paddingRight: theme.spacing(1.5),
+        marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
+      },
+    },
+    mailIconCell: {
+      [theme.breakpoints.up('md')]: {
+        marginTop: theme.spacing(0.25),
+        paddingTop: theme.spacing(5.5),
+        paddingLeft: 0,
+        paddingRight: theme.spacing(1),
+        marginLeft: 0,
+        marginRight: 0,
       },
     },
   }),
@@ -160,6 +182,15 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
         onClick={() => onClickUrl(url.shortUrl)}
         key={url.shortUrl}
       >
+        <Hidden smDown>
+          <TableCell className={classes.linkIconCell}>
+            <img
+              // className={classes.icon}
+              src={url.isFile ? fileIcon : linkIcon}
+              alt={url.isFile ? 'File' : 'Link'}
+            />
+          </TableCell>
+        </Hidden>
         <TableCell className={classes.shortLinkCell} key="shortUrlCell">
           <Typography
             variant={isMobileView ? 'body2' : 'h5'}
@@ -178,6 +209,12 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
             {url.description ? url.description : 'No information available.'}
           </Typography>
         </TableCell>
+
+        <Hidden smDown>
+          <TableCell className={classes.mailIconCell}>
+            <img src={mailIcon} alt={'mail'} />
+          </TableCell>
+        </Hidden>
         <TableCell className={classes.contactEmailCell} key="emailCell">
           <Hidden smDown>
             <Typography variant="body2" className={classes.contactEmailText}>
