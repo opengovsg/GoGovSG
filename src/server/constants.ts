@@ -33,6 +33,8 @@ export const DependencyIds = {
   linkStatisticsService: Symbol.for('linkStatisticsService'),
   linkStatisticsRepository: Symbol.for('linkStatisticsRepository'),
   deviceCheckService: Symbol.for('deviceCheckService'),
+  allowedFileExtensions: Symbol.for('allowedFileExtensions'),
+  fileTypeFilterService: Symbol.for('fileTypeFilterService'),
   virusScanService: Symbol.for('virusScanService'),
   fileCheckController: Symbol.for('fileCheckController'),
 }

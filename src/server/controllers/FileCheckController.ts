@@ -4,16 +4,22 @@ import { inject, injectable } from 'inversify'
 import jsonMessage from '../util/json'
 import { FileCheckControllerInterface } from './interfaces/FileCheckControllerInterface'
 import { DependencyIds } from '../constants'
+import { FileTypeFilterServiceInterface } from '../services/interfaces/FileTypeFilterServiceInterface'
 import { VirusScanServiceInterface } from '../services/interfaces/VirusScanServiceInterface'
 
 @injectable()
 export class FileCheckController implements FileCheckControllerInterface {
+  private fileTypeFilterService: FileTypeFilterServiceInterface
+
   private virusScanService: VirusScanServiceInterface
 
   public constructor(
+    @inject(DependencyIds.fileTypeFilterService)
+    fileTypeFilterService: FileTypeFilterServiceInterface,
     @inject(DependencyIds.virusScanService)
     virusScanService: VirusScanServiceInterface,
   ) {
+    this.fileTypeFilterService = fileTypeFilterService
     this.virusScanService = virusScanService
   }
 
@@ -30,6 +36,11 @@ export class FileCheckController implements FileCheckControllerInterface {
     }
 
     if (file) {
+      if (!(await this.fileTypeFilterService.hasAllowedType(file))) {
+        res.badRequest(jsonMessage('File type disallowed.'))
+        return
+      }
+
       try {
         const hasVirus = await this.virusScanService.hasVirus(file)
         if (hasVirus) {
