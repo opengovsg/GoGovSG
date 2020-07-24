@@ -15,6 +15,7 @@ export class LinkStatisticsServiceMock
     shortUrl: string,
   ) => Promise<LinkStatisticsInterface> = () => {
     return Promise.resolve({
+      totalClicks: 1,
       deviceClicks: {
         desktop: 1,
         tablet: 2,

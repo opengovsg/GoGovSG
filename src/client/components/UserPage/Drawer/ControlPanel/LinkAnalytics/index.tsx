@@ -18,6 +18,10 @@ import { LinkStatisticsInterface } from '../../../../../../shared/interfaces/lin
 import DailyStatistics from './DailyStatistics'
 import HeatMapStatistics from './HeatMapStatistics'
 
+import devicesLogo from './assets/devices-logo.svg'
+import clicksLogo from './assets/chart-logo.svg'
+import trafficLogo from './assets/traffic-logo.svg'
+
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({
     dialogTitleDiv: {
@@ -158,6 +162,19 @@ const useStyles = makeStyles(() => ({
   tabBar: {
     marginTop: 46,
   },
+  tab: {
+    display: 'flex',
+    alignContent: 'center',
+  },
+  tabIcon: {
+    width: 15,
+    marginRight: 6.67,
+  },
+  tabIconDisabled: {
+    width: 15,
+    marginRight: 6.67,
+    opacity: 0.7,
+  },
 }))
 
 export type GraphsProps = {
@@ -173,6 +190,13 @@ function Graphs(props: GraphsProps) {
     setTabValue(newValue)
   }
 
+  const getIconStyle = (index: number) => {
+    if (tabValue === index) {
+      return classes.tabIcon
+    }
+    return classes.tabIconDisabled
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.tabRoot}>
@@ -183,9 +207,27 @@ function Graphs(props: GraphsProps) {
             className={classes.tabBar}
             indicatorColor={'primary'}
           >
-            <Tab label="Devices" />
-            <Tab label="Clicks" />
-            <Tab label="Traffic" />
+            <Tab
+              label={
+                <div className={classes.tab}>
+                  <img src={devicesLogo} className={getIconStyle(0)} /> Devices
+                </div>
+              }
+            />
+            <Tab
+              label={
+                <div className={classes.tab}>
+                  <img src={clicksLogo} className={getIconStyle(1)} /> Clicks
+                </div>
+              }
+            />
+            <Tab
+              label={
+                <div className={classes.tab}>
+                  <img src={trafficLogo} className={getIconStyle(2)} /> Traffic
+                </div>
+              }
+            />
           </Tabs>
           <Hidden smDown>
             <Typography variant="h6" className={classes.totalClicks}>

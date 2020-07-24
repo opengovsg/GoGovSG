@@ -26,6 +26,7 @@ describe('LinkStatisticService tests', () => {
       await expect(
         service.getLinkStatistics(123, 'hello'),
       ).resolves.toStrictEqual({
+        totalClicks: 1,
         deviceClicks: {
           desktop: 1,
           tablet: 0,
