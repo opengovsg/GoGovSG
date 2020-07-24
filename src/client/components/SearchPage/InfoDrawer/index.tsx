@@ -10,6 +10,7 @@ import { ApplyAppMargins } from '../../AppMargins'
 import useAppMargins from '../../AppMargins/appMargins'
 import BottomDrawer from '../../widgets/BottomDrawer'
 import { UrlTypePublic } from '../../../reducers/search/types'
+import mailIcon from '../assets/mail-icon.svg'
 
 type InfoDrawerProps = {
   onClose: () => void
@@ -43,9 +44,13 @@ const useStyles = makeStyles((theme) =>
       minHeight: '100px',
     },
     contactEmailText: {
-      color: '#767676',
+      color: theme.palette.text.primary,
       fontWeight: 400,
       wordBreak: 'break-all',
+    },
+    contactEmailPrefixText: {
+      color: '#767676',
+      marginBottom: theme.spacing(1),
     },
     shortUrlButton: {
       width: '100%',
@@ -60,6 +65,9 @@ const useStyles = makeStyles((theme) =>
       '&:hover': {
         textDecoration: 'underline',
       },
+    },
+    emailIcon: {
+      marginRight: theme.spacing(1),
     },
   }),
 )
@@ -99,18 +107,32 @@ const InfoDrawer: FunctionComponent<InfoDrawerProps> = ({
             </Typography>
             <Divider className={classes.divider} />
             <Typography variant="caption" className={classes.contactEmailText}>
-              <a
-                href={
-                  selectedUrl?.contactEmail
-                    ? `mailto:${selectedUrl?.contactEmail}`
-                    : undefined
-                }
-                className={`${classes.contactEmailText} ${
-                  selectedUrl?.contactEmail ? classes.contactEmailLink : ''
-                }`}
-              >
-                {selectedUrl?.contactEmail || 'No contact specified'}
-              </a>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div>
+                  <img
+                    src={mailIcon}
+                    alt="email"
+                    className={classes.emailIcon}
+                  />
+                </div>
+                <div>
+                  <div className={classes.contactEmailPrefixText}>
+                    For enquiries, contact:
+                  </div>
+                  <a
+                    href={
+                      selectedUrl?.contactEmail
+                        ? `mailto:${selectedUrl?.contactEmail}`
+                        : undefined
+                    }
+                    className={`${classes.contactEmailText} ${
+                      selectedUrl?.contactEmail ? classes.contactEmailLink : ''
+                    }`}
+                  >
+                    {selectedUrl?.contactEmail || '-'}
+                  </a>
+                </div>
+              </div>
             </Typography>
           </>
         </ApplyAppMargins>
