@@ -40,7 +40,7 @@ export default React.memo(
           </>
         )}
         {options.map((option) => (
-          <Grid item className={classes.sortButtonGrid}>
+          <Grid item className={classes.sortButtonGrid} key={option.key}>
             <SortButton
               onClick={() => onChoose(option.key)}
               columnLabel={option.label}
