@@ -144,11 +144,13 @@ We have yet to setup travis to automate these steps:
 Use the following SQL functions defined in [scripts folder](scripts/) to safely transfer link ownership.
 
 To transfer a single link to a new email address (must be lowercase):
+
 ```sql
 SELECT migrate_url_to_user('the-short-link', 'new_email@domain.com');
 ```
 
 To transfer all links belonging to an account to another account, specify the email accounts of both (must be in lowercase):
+
 ```sql
 SELECT migrate_user_links('from@domain.com','to@domain.com');
 ```
