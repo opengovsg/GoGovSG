@@ -28,7 +28,7 @@ export function HeatmapLegendItem(props: HeatmapLegendItemProps) {
   return <div className={classes.itemRoot} />
 }
 
-const useHeatmapLegendStyles = makeStyles(() => ({
+const useHeatmapLegendStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     maxWidth: 500,
@@ -37,12 +37,33 @@ const useHeatmapLegendStyles = makeStyles(() => ({
   },
   row: {
     display: 'flex',
+    maxWidth: 500,
     justifyContent: 'center',
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   ticks: {
     display: 'flex',
     justifyContent: 'space-between',
     paddingTop: 4,
+  },
+  tickLeading: {
+    width: 0,
+    display: 'flex',
+    justifyContent: 'start',
+    fontSize: theme.typography.caption.fontSize,
+  },
+  tick: {
+    width: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    fontSize: theme.typography.caption.fontSize,
+  },
+  tickTrailing: {
+    width: 0,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    fontSize: theme.typography.caption.fontSize,
   },
 }))
 
@@ -59,6 +80,17 @@ export function HeatmapLegend(props: HeatmapLegendProps) {
   const minmid = (min + mid) / 2
   const midmax = (mid + max) / 2
   const ticks = [min, minmid, mid, midmax, max]
+  const ticksCount = 5
+
+  const getTickStyle = (index: number, length: number) => {
+    if (index == 0) {
+      return classes.tickLeading
+    } else if (index >= length - 1) {
+      return classes.tickTrailing
+    }
+    return classes.tick
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.row}>
@@ -68,9 +100,13 @@ export function HeatmapLegend(props: HeatmapLegendProps) {
         <HeatmapLegendItem color={'#2F4B62'} />
       </div>
       <div className={classes.ticks}>
-        {ticks.map((tick) => (
-          <div>{compactNumberFormatter(tick)}</div>
-        ))}
+        {ticks.map((tick, id) => {
+          return (
+            <div className={getTickStyle(id, ticksCount)} key={tick}>
+              {compactNumberFormatter(tick)}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

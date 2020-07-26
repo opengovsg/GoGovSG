@@ -10,6 +10,7 @@ const useStyles = makeStyles(() => ({
   topRow: {
     display: 'flex',
     alignItems: 'center',
+    marginBottom: 2,
   },
   dot: {
     width: 11,
@@ -19,7 +20,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: (props: StyleProps) => props.dotColor,
   },
   label: {
-    fontSize: 10,
+    fontSize: 12,
   },
 }))
 

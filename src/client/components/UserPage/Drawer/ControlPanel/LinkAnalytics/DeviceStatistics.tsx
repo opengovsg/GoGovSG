@@ -36,7 +36,7 @@ function getFormattedPercent(count: number, total: number): number {
   return Math.round(percent * 10) / 10
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   devicesRoot: {
     display: 'flex',
     height: 30,
@@ -47,11 +47,21 @@ const useStyles = makeStyles(() => ({
   },
   legendRoot: {
     display: 'flex',
+    justifyContent: 'space-between',
+    [theme.breakpoints.up('sm')]: {
+      justifyContent: 'unset',
+    },
   },
   legend: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     marginRight: 40,
     '&:last-child': {
       marginRight: 0,
+    },
+    [theme.breakpoints.up('sm')]: {
+      alignItems: 'unset',
     },
   },
 }))

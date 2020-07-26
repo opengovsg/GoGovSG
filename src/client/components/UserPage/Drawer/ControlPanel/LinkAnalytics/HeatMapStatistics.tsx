@@ -7,6 +7,7 @@ import useWindowSize from './util/window-size'
 import { getZeroedHeatMap, getWeekRange, getDayRange } from './util/date-range'
 import { WeekdayClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
 import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
+import { useTheme } from '@material-ui/core'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -26,7 +27,8 @@ const processInputStatistics = (rawStatistics: WeekdayClicksInterface[]) => {
       .filter(
         (item) =>
           item.x == hourMapping[statistics.hours] &&
-          item.y == weekdayMapping[statistics.weekday],
+          // In order to move Sunday, represented by index 0, to the final index.
+          item.y == weekdayMapping[(statistics.weekday + 6) % 7],
       )
       .forEach((filteredItem) => (filteredItem.color = statistics.clicks))
   })
@@ -39,6 +41,7 @@ export type HeatMapStatisticsProps = {
 
 export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
   const classes = useStyles()
+  const theme = useTheme()
 
   const [width, setWidth] = useState<number>(0)
   const containerEl = useRef<HTMLDivElement>(null)
@@ -46,7 +49,8 @@ export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
 
   const clicks = processInputStatistics(props.weekdayClicks)
   const minClicks = Math.min(...clicks.map((el) => el.color))
-  const maxClicks = Math.max(...clicks.map((el) => el.color))
+  // Round up to next multiple of 4.
+  const maxClicks = Math.ceil(Math.max(...clicks.map((el) => el.color)) / 4) * 4
 
   useEffect(() => {
     if (containerEl != null && containerEl.current != null) {
@@ -69,11 +73,21 @@ export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
           <XAxis
             orientation="top"
             tickValues={['12am', '6am', '12pm', '6pm']}
+            style={{
+              fill: theme.palette.primary.main,
+              fontSize: theme.typography.caption.fontSize,
+            }}
           />
-          <YAxis />
+          <YAxis
+            style={{
+              fill: theme.palette.primary.main,
+              fontSize: theme.typography.caption.fontSize,
+            }}
+          />
           <HeatmapSeries
             className="heatmap-statistics"
             colorRange={['#CDDCE0', '#2F4B62']}
+            colorDomain={[minClicks, maxClicks]}
             data={clicks as any[]}
             style={{
               stroke: 'white',

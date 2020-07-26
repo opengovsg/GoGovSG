@@ -31,7 +31,7 @@ export const useDateRangeWith = (
 }
 
 export const getWeekRange = () => {
-  return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 }
 
 export const getDayRange = () => {

@@ -49,13 +49,22 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
                   display: false,
                 },
                 ticks: {
+                  fontFamily: "'IBM Plex Sans', sans-serif",
+                  fontSize: 12,
+                  fontColor: '#456682',
                   padding: 8,
+                  callback: (label: string): string | undefined => {
+                    return moment(label, 'D MMM').format('ddd')
+                  },
                 },
               },
             ],
             yAxes: [
               {
                 ticks: {
+                  fontFamily: "'IBM Plex Sans', sans-serif",
+                  fontSize: 12,
+                  fontColor: '#456682',
                   autoSkip: true,
                   maxTicksLimit: 5,
                   padding: 5,
@@ -81,16 +90,22 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
               },
               label: (tooltipItem: any) => {
                 const label = tooltipItem.yLabel
-                return `${label} clicks`
+                return `${label} total clicks`
               },
             },
             xPadding: 20,
-            yPadding: 10,
-            bodyFontFamily: "'IBM Plex Sans', sans-serif",
+            yPadding: 20,
             titleFontFamily: "'IBM Plex Sans', sans-serif",
-            titleFontSize: 14,
+            bodyFontFamily: "'IBM Plex Sans', sans-serif",
+            titleFontSize: 10,
             bodyFontSize: 14,
-            backgroundColor: '#384A51',
+            titleFontColor: '#456682',
+            bodyFontColor: '#456682',
+            titleFontStyle: 'normal',
+            bodyFontStyle: 'bold',
+            backgroundColor: '#FFFFFF',
+            borderColor: '#2F4B62',
+            borderWidth: 0.2,
             displayColors: false,
           },
         }}
