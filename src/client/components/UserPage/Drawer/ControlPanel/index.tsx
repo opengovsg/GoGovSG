@@ -479,7 +479,7 @@ export default function ControlPanel() {
           <Typography variant="body2" className={classes.linkInformationDesc}>
             The information you enter below will be displayed on our{' '}
             <a href="https://go.gov.sg/go-search" className={classes.hotlink}>
-              <u>Go Search page (coming soon)</u>
+              <u>GoSearch page (coming soon)</u>
             </a>
             , and the error page if users are unable to access your short link.
           </Typography>
