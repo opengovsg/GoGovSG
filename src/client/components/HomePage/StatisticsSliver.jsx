@@ -108,7 +108,7 @@ const StatisticsSliver = (props) => {
           className={classes.stats}
         >
           {statisticsToShow.map((stat) => (
-            <Grid item>
+            <Grid item key={stat.label}>
               <Card className={classes.card}>
                 <CardContent className={classes.cardContent}>
                   <Typography color="primary" variant="h4">
