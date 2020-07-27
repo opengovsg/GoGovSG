@@ -1,4 +1,4 @@
-import generate from 'nanoid/async/generate'
+import { customAlphabet } from 'nanoid'
 
 const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
 const LENGTH = 6
@@ -9,9 +9,7 @@ const LENGTH = 6
  * of length 6 after 1 million URLs have been generated is
  * (1e6 / (36^6) = 0.000459, or one in 2176.
  */
-export async function generateShortUrl() {
-  return generate(ALPHABET, LENGTH)
-}
+export const generateShortUrl = customAlphabet(ALPHABET, LENGTH)
 
 /**
  * Strips http or https from url string.
