@@ -40,7 +40,6 @@ import {
 } from '../../../CollapsibleMessage/types'
 import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../../../shared/constants'
 import i18next from 'i18next'
-import querystring from 'querystring'
 import { SEARCH_PAGE } from '../../../../util/types'
 
 const useStyles = makeStyles((theme) =>
@@ -553,13 +552,8 @@ export default function ControlPanel() {
             <Link
               target="_blank"
               href={
-                !originalDescription && originalDescription == editedDescription
-                  ? `/#${SEARCH_PAGE}?${querystring.stringify({
-                      query: [
-                        shortLinkState?.shortUrl,
-                        originalDescription,
-                      ].join(' '),
-                    })}`
+                isDescriptionValid && isContactEmailValid && editedDescription
+                  ? `/#${SEARCH_PAGE}`
                   : undefined
               }
               className={classes.previewButton}
@@ -567,19 +561,22 @@ export default function ControlPanel() {
               <TrailingButton
                 disabled={
                   !isDescriptionValid ||
-                  !isContactEmailValid
+                  !isContactEmailValid ||
+                  !editedDescription
                 }
                 fullWidth={isMobileView}
                 variant="outlined"
                 onClick={() => {
-                  if (editedContactEmail === originalContactEmail &&
-                    editedDescription === originalDescription) {
-                      return
-                    }
-                    shortLinkDispatch?.applyEditInformation()
+                  if (
+                    editedContactEmail === originalContactEmail &&
+                    editedDescription === originalDescription
+                  ) {
+                    return
+                  }
+                  shortLinkDispatch?.applyEditInformation()
                 }}
               >
-                Save and Preview
+                Save & Preview
               </TrailingButton>
             </Link>
             <TrailingButton

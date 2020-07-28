@@ -185,7 +185,6 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
         <Hidden smDown>
           <TableCell className={classes.linkIconCell}>
             <img
-              // className={classes.icon}
               src={url.isFile ? fileIcon : linkIcon}
               alt={url.isFile ? 'File' : 'Link'}
             />
