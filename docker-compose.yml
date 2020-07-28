@@ -35,6 +35,7 @@ services:
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
+      - CSP_ONLY_REPORT_VIOLATIONS=true
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
