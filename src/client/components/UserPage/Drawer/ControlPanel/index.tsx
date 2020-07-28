@@ -41,6 +41,7 @@ import {
 import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../../../shared/constants'
 import i18next from 'i18next'
 import { SEARCH_PAGE } from '../../../../util/types'
+import BetaTag from '../../../widgets/BetaTag'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -140,8 +141,20 @@ const useStyles = makeStyles((theme) =>
       marginLeft: 2,
       marginTop: 9,
     },
-    linkInformationHeader: {
+    linkInformationHeaderWrapper: {
+      display: 'flex',
+      alignItems: 'center',
       marginBottom: theme.spacing(1.25),
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
+        marginRight: theme.spacing(1),
+      },
+    },
+    linkInformationHeader: {
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
+        marginRight: theme.spacing(1),
+      },
     },
     linkInformationDesc: {
       marginBottom: theme.spacing(3),
@@ -468,13 +481,16 @@ export default function ControlPanel() {
             trailingPosition={TrailingPosition.end}
           />
           <Divider className={classes.dividerInformation} />
-          <Typography
-            variant="h3"
-            className={classes.linkInformationHeader}
-            color="primary"
-          >
-            Link information
-          </Typography>
+          <div className={classes.linkInformationHeaderWrapper}>
+            <Typography
+              variant="h3"
+              className={classes.linkInformationHeader}
+              color="primary"
+            >
+              Link information
+            </Typography>
+            <BetaTag />
+          </div>
           <Typography variant="body2" className={classes.linkInformationDesc}>
             The information you enter below will be displayed on our{' '}
             <a href="https://go.gov.sg/go-search" className={classes.hotlink}>
@@ -560,23 +576,13 @@ export default function ControlPanel() {
             >
               <TrailingButton
                 disabled={
-                  !isDescriptionValid ||
-                  !isContactEmailValid ||
-                  !editedDescription
+                  !originalDescription ||
+                  originalDescription != editedDescription
                 }
                 fullWidth={isMobileView}
                 variant="outlined"
-                onClick={() => {
-                  if (
-                    editedContactEmail === originalContactEmail &&
-                    editedDescription === originalDescription
-                  ) {
-                    return
-                  }
-                  shortLinkDispatch?.applyEditInformation()
-                }}
               >
-                Save & Preview
+                Preview
               </TrailingButton>
             </Link>
             <TrailingButton

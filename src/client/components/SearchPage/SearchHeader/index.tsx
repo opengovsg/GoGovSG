@@ -10,6 +10,7 @@ import { ApplyAppMargins } from '../../AppMargins'
 import GoSearchInput from '../../widgets/GoSearchInput'
 import { SearchResultsSortOrder } from '../../../../shared/search'
 import useAppMargins from '../../AppMargins/appMargins'
+import BetaTag from '../../widgets/BetaTag'
 
 type SearchHeaderProps = {
   onQueryChange: (query: string) => void
@@ -42,9 +43,18 @@ const useStyles = makeStyles((theme) =>
         top: '35px',
       },
     },
-    headerText: {
+    headerTextWrapper: {
       color: '#f9f9f9',
       marginBottom: theme.spacing(3),
+      display: 'flex',
+      alignItems: 'center',
+    },
+    headerText: {
+      flexShrink: 0,
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up('md')]: {
+        marginRight: theme.spacing(1),
+      },
     },
   }),
 )
@@ -64,12 +74,15 @@ const SearchHeader: FunctionComponent<SearchHeaderProps> = ({
     <div className={classes.headerWrapper}>
       <ApplyAppMargins>
         <div className={classes.headerContent}>
-          <Typography
-            variant={isMobileView ? 'h4' : 'h2'}
-            className={classes.headerText}
-          >
-            Search go.gov.sg links
-          </Typography>
+          <div className={classes.headerTextWrapper}>
+            <Typography
+              variant={isMobileView ? 'h4' : 'h2'}
+              className={classes.headerText}
+            >
+              Search go.gov.sg links
+            </Typography>
+            <BetaTag />
+          </div>
           <GoSearchInput
             showAdornments
             onQueryChange={onQueryChange}
