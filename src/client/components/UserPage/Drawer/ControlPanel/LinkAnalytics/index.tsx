@@ -154,11 +154,6 @@ const useStyles = makeStyles(() => ({
   tabSection: {
     display: 'flex',
   },
-  totalClicks: {
-    marginLeft: 'auto',
-    marginRight: 39,
-    alignSelf: 'center',
-  },
   tabBar: {
     marginTop: 46,
   },
@@ -174,6 +169,29 @@ const useStyles = makeStyles(() => ({
     width: 15,
     marginRight: 6.67,
     opacity: 0.7,
+  },
+  totalClicks: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: 'auto',
+  },
+  totalClicksMobile: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  totalClicksIcon: {
+    height: 18,
+    marginRight: 12,
+  },
+  totalClicksIconMobile: {
+    width: 10.67,
+    height: 12,
+    marginRight: 7.67,
+  },
+  totalClicksText: {
+    marginLeft: 0,
+    marginRight: 39,
+    alignSelf: 'center',
   },
 }))
 
@@ -198,54 +216,73 @@ function Graphs(props: GraphsProps) {
   }
 
   return (
-    <div className={classes.root}>
-      <div className={classes.tabRoot}>
-        <div className={classes.tabSection}>
-          <Tabs
-            value={tabValue}
-            onChange={handleChange}
-            className={classes.tabBar}
-            indicatorColor={'primary'}
+    <>
+      <Hidden mdUp>
+        <div className={classes.totalClicksMobile}>
+          <img src={clicksLogo} className={classes.totalClicksIconMobile} />
+          <Typography
+            variant="body2"
+            color="primary"
+            className={classes.totalClicksText}
           >
-            <Tab
-              label={
-                <div className={classes.tab}>
-                  <img src={devicesLogo} className={getIconStyle(0)} /> Devices
-                </div>
-              }
-            />
-            <Tab
-              label={
-                <div className={classes.tab}>
-                  <img src={clicksLogo} className={getIconStyle(1)} /> Clicks
-                </div>
-              }
-            />
-            <Tab
-              label={
-                <div className={classes.tab}>
-                  <img src={trafficLogo} className={getIconStyle(2)} /> Traffic
-                </div>
-              }
-            />
-          </Tabs>
-          <Hidden smDown>
-            <Typography variant="h6" className={classes.totalClicks}>
-              {`${props.data.totalClicks} total clicks`}
-            </Typography>
-          </Hidden>
+            {`${props.data.totalClicks} total clicks`}
+          </Typography>
         </div>
-        <Divider />
-        <TabPanel value={tabValue} index={0} dir={theme.direction}>
-          <DeviceStatistics deviceClicks={props.data.deviceClicks} />
-        </TabPanel>
-        <TabPanel value={tabValue} index={1} dir={theme.direction}>
-          <DailyStatistics dailyClicks={props.data.dailyClicks} />
-        </TabPanel>
-        <TabPanel value={tabValue} index={2} dir={theme.direction}>
-          <HeatMapStatistics weekdayClicks={props.data.weekdayClicks} />
-        </TabPanel>
+      </Hidden>
+      <div className={classes.root}>
+        <div className={classes.tabRoot}>
+          <div className={classes.tabSection}>
+            <Tabs
+              value={tabValue}
+              onChange={handleChange}
+              className={classes.tabBar}
+              indicatorColor={'primary'}
+            >
+              <Tab
+                label={
+                  <div className={classes.tab}>
+                    <img src={devicesLogo} className={getIconStyle(0)} />{' '}
+                    Devices
+                  </div>
+                }
+              />
+              <Tab
+                label={
+                  <div className={classes.tab}>
+                    <img src={clicksLogo} className={getIconStyle(1)} /> Clicks
+                  </div>
+                }
+              />
+              <Tab
+                label={
+                  <div className={classes.tab}>
+                    <img src={trafficLogo} className={getIconStyle(2)} />{' '}
+                    Traffic
+                  </div>
+                }
+              />
+            </Tabs>
+            <Hidden smDown>
+              <div className={classes.totalClicks}>
+                <img src={clicksLogo} className={classes.totalClicksIcon} />
+                <Typography variant="h6" className={classes.totalClicksText}>
+                  {`${props.data.totalClicks} total clicks`}
+                </Typography>
+              </div>
+            </Hidden>
+          </div>
+          <Divider />
+          <TabPanel value={tabValue} index={0} dir={theme.direction}>
+            <DeviceStatistics deviceClicks={props.data.deviceClicks} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={1} dir={theme.direction}>
+            <DailyStatistics dailyClicks={props.data.dailyClicks} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2} dir={theme.direction}>
+            <HeatMapStatistics weekdayClicks={props.data.weekdayClicks} />
+          </TabPanel>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
