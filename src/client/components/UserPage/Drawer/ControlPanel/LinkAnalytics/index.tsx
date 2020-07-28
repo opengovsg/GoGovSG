@@ -21,6 +21,7 @@ import HeatMapStatistics from './HeatMapStatistics'
 import devicesLogo from './assets/devices-logo.svg'
 import clicksLogo from './assets/chart-logo.svg'
 import trafficLogo from './assets/traffic-logo.svg'
+import BetaTag from '../../../../widgets/BetaTag'
 
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({
@@ -37,6 +38,11 @@ const useLinkAnalyticsStyles = makeStyles((theme) =>
     copyIcon: {
       marginRight: 5,
     },
+    linkAnalyticsTitle: {
+      display: 'flex',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
     linkAnalyticsDiv: {
       display: 'flex',
       flexDirection: 'column',
@@ -48,7 +54,7 @@ const useLinkAnalyticsStyles = makeStyles((theme) =>
       textAlign: 'center',
     },
     titleText: {
-      marginBottom: 10,
+      marginRight: 16,
     },
     subtitleText: {
       marginBottom: 20,
@@ -69,9 +75,12 @@ export default function LinkAnalytics() {
 
   return (
     <div className={classes.linkAnalyticsDiv}>
-      <Typography className={classes.titleText} variant="h3" color="primary">
-        Link analytics
-      </Typography>
+      <div id="link-analytics" className={classes.linkAnalyticsTitle}>
+        <Typography className={classes.titleText} variant="h3" color="primary">
+          Link analytics
+        </Typography>
+        <BetaTag />
+      </div>
       <Typography
         className={classes.subtitleText}
         variant="body1"
