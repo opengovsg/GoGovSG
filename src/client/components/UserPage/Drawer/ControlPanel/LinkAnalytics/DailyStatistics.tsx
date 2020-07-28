@@ -1,9 +1,9 @@
 import React from 'react'
 import { Line } from 'react-chartjs-2'
+import moment from 'moment'
 
 import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { DailyClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
-import moment from 'moment'
 import { useDateRangeWith } from './util/date-range'
 import { compactNumberFormatter } from '../../../../../util/format'
 

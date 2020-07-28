@@ -1,6 +1,8 @@
 import React from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import Typography from '@material-ui/core/Typography'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
+import { useTheme } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,7 +18,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   title: {
-    width: '100%',
+    width: '70%',
+    [theme.breakpoints.up('sm')]: {
+      width: '100%',
+    },
   },
   divider: {
     marginTop: 15,
@@ -37,9 +42,15 @@ export type BaseStatisticsLayoutProps = {
 
 export default function BaseStatisticsLayout(props: BaseStatisticsLayoutProps) {
   const classes = useStyles()
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
   return (
     <div className={classes.root}>
-      <Typography color="primary" variant="h4" className={classes.title}>
+      <Typography
+        color="primary"
+        variant={isMobileView ? 'h6' : 'h4'}
+        className={classes.title}
+      >
         {props.title}
       </Typography>
       <div className={classes.divider} />

@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { XYPlot, XAxis, YAxis, HeatmapSeries } from 'react-vis'
-
-import BaseStatisticsLayout from './BaseStatisticsLayout'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import { useTheme, useMediaQuery } from '@material-ui/core'
+
+import {
+  getZeroedHeatMap,
+  getWeekRange,
+  getDayRange,
+  HeatMapDataPoint,
+} from './util/date-range'
+import BaseStatisticsLayout from './BaseStatisticsLayout'
 import useWindowSize from './util/window-size'
-import { getZeroedHeatMap, getWeekRange, getDayRange } from './util/date-range'
-import { WeekdayClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
 import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
-import { useTheme } from '@material-ui/core'
+import { WeekdayClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,6 +40,12 @@ const processInputStatistics = (rawStatistics: WeekdayClicksInterface[]) => {
   return zeroed
 }
 
+const flipChart = (data: HeatMapDataPoint[]): HeatMapDataPoint[] => {
+  return data.map((point) => {
+    return { x: point.y, y: point.x, color: point.color } as HeatMapDataPoint
+  })
+}
+
 export type HeatMapStatisticsProps = {
   weekdayClicks: WeekdayClicksInterface[]
 }
@@ -42,12 +53,19 @@ export type HeatMapStatisticsProps = {
 export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
   const classes = useStyles()
   const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
 
   const [width, setWidth] = useState<number>(0)
   const containerEl = useRef<HTMLDivElement>(null)
   const windowSize = useWindowSize()
 
-  const clicks = processInputStatistics(props.weekdayClicks)
+  let clicks = processInputStatistics(props.weekdayClicks)
+
+  // Flip axes in mobile view.
+  if (isMobileView) {
+    clicks = flipChart(clicks)
+  }
+
   const minClicks = Math.min(...clicks.map((el) => el.color))
   // Round up to next multiple of 4.
   const maxClicks = Math.ceil(Math.max(...clicks.map((el) => el.color)) / 4) * 4
@@ -63,16 +81,20 @@ export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
       <div ref={containerEl} className={classes.root}>
         <XYPlot
           width={Math.max(width, 275)}
-          height={Math.max(width * 0.5, 275)}
+          height={isMobileView ? 500 : Math.max(width * 0.5, 275)}
           margin={{ left: 50, top: 32 }}
           xType="ordinal"
-          xDomain={getDayRange()}
+          xDomain={isMobileView ? getWeekRange() : getDayRange()}
           yType="ordinal"
-          yDomain={getWeekRange().reverse()}
+          yDomain={
+            isMobileView ? getDayRange().reverse() : getWeekRange().reverse()
+          }
         >
           <XAxis
             orientation="top"
-            tickValues={['12am', '6am', '12pm', '6pm']}
+            tickValues={
+              !isMobileView ? ['12am', '6am', '12pm', '6pm'] : undefined
+            }
             style={{
               fill: theme.palette.primary.main,
               fontSize: theme.typography.caption.fontSize,
