@@ -24,6 +24,7 @@ describe('UrlSearchService tests', () => {
             longUrl: 'https://www.moh.gov.sg/covid-19',
             description: '',
             contactEmail: null,
+            isFile: false,
           },
         ],
         count: 0,
