@@ -70,7 +70,7 @@ export default function LinkAnalytics() {
   return (
     <div className={classes.linkAnalyticsDiv}>
       <Typography className={classes.titleText} variant="h3" color="primary">
-        Click history
+        Link analytics
       </Typography>
       <Typography
         className={classes.subtitleText}
