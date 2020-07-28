@@ -77,7 +77,8 @@ export default function LinkAnalytics() {
         variant="body1"
         color="primary"
       >
-        View real-time analytics of your link, and sort by time period.
+        View real-time analytics of your link, and sort by time period (coming
+        soon).
       </Typography>
       <LinkStatisticsGraphs />
     </div>

@@ -37,7 +37,7 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
   const filledData = useDateRangeWith(props.dailyClicks, 7)
   const data = processData(filledData)
   return (
-    <BaseStatisticsLayout title="How many users have visited your link?">
+    <BaseStatisticsLayout title="How many users have visited your link in the past week?">
       <Line
         data={data}
         legend={{ display: false }}

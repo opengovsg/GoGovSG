@@ -22,6 +22,7 @@ function processStatistics(data: DeviceClicksInterface): ProcessedStatistic[] {
     { label: 'Desktop', count: data.desktop, color: '#384A51' },
     { label: 'Tablet', count: data.tablet, color: '#8CA6AD' },
     { label: 'Mobile', count: data.mobile, color: '#CDDCE0' },
+    { label: 'Others', count: data.others, color: '#E8E8E8' },
   ]
 }
 
@@ -56,12 +57,12 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginRight: 40,
-    '&:last-child': {
-      marginRight: 0,
-    },
     [theme.breakpoints.up('sm')]: {
+      marginRight: 40,
       alignItems: 'unset',
+      '&:last-child': {
+        marginRight: 0,
+      },
     },
   },
 }))
