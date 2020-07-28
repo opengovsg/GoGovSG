@@ -566,13 +566,20 @@ export default function ControlPanel() {
             >
               <TrailingButton
                 disabled={
-                  !originalDescription ||
-                  originalDescription != editedDescription
+                  !isDescriptionValid ||
+                  !isContactEmailValid
                 }
                 fullWidth={isMobileView}
                 variant="outlined"
+                onClick={() => {
+                  if (editedContactEmail === originalContactEmail &&
+                    editedDescription === originalDescription) {
+                      return
+                    }
+                    shortLinkDispatch?.applyEditInformation()
+                }}
               >
-                Preview
+                Save and Preview
               </TrailingButton>
             </Link>
             <TrailingButton
