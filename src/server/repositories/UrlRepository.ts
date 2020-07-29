@@ -196,7 +196,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   /**
-   * Retrieves the long url which the short url redisrects to
+   * Retrieves the long url which the short url redirects to
    * from the database.
    * @param  {string} shortUrl Short url.
    * @returns The long url that the short url redirects to.
@@ -216,7 +216,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   /**
-   * Retrieves the long url which the short url redisrects to
+   * Retrieves the long url which the short url redirects to
    * from the cache.
    * @param  {string} shortUrl Short url.
    * @returns The long url that the short url redirects to.
