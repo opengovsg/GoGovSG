@@ -28,7 +28,7 @@ export default function TrailingButton(
   return (
     <Button
       {...props}
-      className={classes.trailingButton}
+      className={`${props.className} ${classes.trailingButton}`}
       color="primary"
       size="large"
       onClick={props.onClick}

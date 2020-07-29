@@ -10,6 +10,7 @@ import { ApplyAppMargins } from '../../AppMargins'
 import useAppMargins from '../../AppMargins/appMargins'
 import BottomDrawer from '../../widgets/BottomDrawer'
 import { UrlTypePublic } from '../../../reducers/search/types'
+import mailIcon from '../assets/mail-icon.svg'
 
 type InfoDrawerProps = {
   onClose: () => void
@@ -21,6 +22,7 @@ type InfoDrawerProps = {
 const useStyles = makeStyles((theme) =>
   createStyles({
     shortLinkText: {
+      color: theme.palette.text.primary,
       textAlign: 'start',
       marginTop: theme.spacing(4),
       marginBottom: theme.spacing(4),
@@ -42,17 +44,30 @@ const useStyles = makeStyles((theme) =>
       minHeight: '100px',
     },
     contactEmailText: {
-      color: '#767676',
+      color: theme.palette.text.primary,
       fontWeight: 400,
       wordBreak: 'break-all',
     },
+    contactEmailPrefixText: {
+      color: '#767676',
+      marginBottom: theme.spacing(1),
+    },
     shortUrlButton: {
+      width: '100%',
       justifyContent: 'flex-start',
     },
     content: {
       display: 'flex',
       flexDirection: 'column',
       marginBottom: theme.spacing(6),
+    },
+    contactEmailLink: {
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
+    emailIcon: {
+      marginRight: theme.spacing(1),
     },
   }),
 )
@@ -63,25 +78,25 @@ const InfoDrawer: FunctionComponent<InfoDrawerProps> = ({
 }: InfoDrawerProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const enterUrl = () => {
-    if (!selectedUrl) {
-      return
-    }
-    window.location.assign(
-      `${document.location.protocol}//${document.location.host}/${selectedUrl.shortUrl}`,
-    )
-  }
   return (
     <BottomDrawer open={!!selectedUrl} onClose={onClose}>
       <div className={classes.content}>
-        <ButtonBase className={classes.shortUrlButton} onClick={enterUrl}>
-          <ApplyAppMargins>
-            <Typography variant="body2" className={classes.shortLinkText}>
-              <span className={classes.domainText}>go.gov.sg/</span>
-              {selectedUrl?.shortUrl}
-            </Typography>
-          </ApplyAppMargins>
-        </ButtonBase>
+        <a
+          href={
+            selectedUrl
+              ? `${document.location.protocol}//${document.location.host}/${selectedUrl.shortUrl}`
+              : undefined
+          }
+        >
+          <ButtonBase className={classes.shortUrlButton}>
+            <ApplyAppMargins>
+              <Typography variant="body2" className={classes.shortLinkText}>
+                <span className={classes.domainText}>go.gov.sg/</span>
+                {selectedUrl?.shortUrl}
+              </Typography>
+            </ApplyAppMargins>
+          </ButtonBase>
+        </a>
         <Divider className={classes.dividerTop} />
         <ApplyAppMargins>
           <>
@@ -92,7 +107,32 @@ const InfoDrawer: FunctionComponent<InfoDrawerProps> = ({
             </Typography>
             <Divider className={classes.divider} />
             <Typography variant="caption" className={classes.contactEmailText}>
-              {selectedUrl?.contactEmail || 'No contact specified'}
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div>
+                  <img
+                    src={mailIcon}
+                    alt="email"
+                    className={classes.emailIcon}
+                  />
+                </div>
+                <div>
+                  <div className={classes.contactEmailPrefixText}>
+                    For enquiries, contact:
+                  </div>
+                  <a
+                    href={
+                      selectedUrl?.contactEmail
+                        ? `mailto:${selectedUrl?.contactEmail}`
+                        : undefined
+                    }
+                    className={`${classes.contactEmailText} ${
+                      selectedUrl?.contactEmail ? classes.contactEmailLink : ''
+                    }`}
+                  >
+                    {selectedUrl?.contactEmail || '-'}
+                  </a>
+                </div>
+              </div>
             </Typography>
           </>
         </ApplyAppMargins>

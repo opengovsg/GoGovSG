@@ -1,8 +1,8 @@
 export interface DeviceClicksInterface {
-  desktopClicks: number
-  tabletClicks: number
-  mobileClicks: number
-  otherClicks: number
+  desktop: number
+  tablet: number
+  mobile: number
+  others: number
 }
 
 export interface DailyClicksInterface {
@@ -17,6 +17,7 @@ export interface WeekdayClicksInterface {
 }
 
 export interface LinkStatisticsInterface {
+  totalClicks: number
   deviceClicks: DeviceClicksInterface
   dailyClicks: DailyClicksInterface[]
   weekdayClicks: WeekdayClicksInterface[]

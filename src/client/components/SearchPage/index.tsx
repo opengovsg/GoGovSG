@@ -162,10 +162,6 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const onClickUrl = (shortUrl: string) => {
     if (isMobileView) {
       setSelectedShortUrl(shortUrl)
-    } else {
-      window.location.assign(
-        `${document.location.protocol}//${document.location.host}/${shortUrl}`,
-      )
     }
   }
 

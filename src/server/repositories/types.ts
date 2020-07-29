@@ -49,7 +49,7 @@ export type UrlsPublicPaginated = {
 
 export type UrlPublic = Pick<
   StorableUrl,
-  'shortUrl' | 'longUrl' | 'description' | 'contactEmail'
+  'shortUrl' | 'longUrl' | 'description' | 'contactEmail' | 'isFile'
 >
 
 export type UrlsPaginated = {
