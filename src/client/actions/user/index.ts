@@ -426,9 +426,11 @@ const setEditedLongUrl: (
 
 // For generating a random short URL
 const setRandomShortUrl = () => (dispatch: Dispatch<SetRandomShortUrlAction>) =>
-  dispatch<SetRandomShortUrlAction>({
-    type: SET_RANDOM_SHORT_URL,
-    payload: generateShortUrl(),
+  generateShortUrl().then((randomUrl) => {
+    dispatch<SetRandomShortUrlAction>({
+      type: SET_RANDOM_SHORT_URL,
+      payload: randomUrl,
+    })
   })
 
 const isToggleUrlStateSuccess: (payload: {
