@@ -7,9 +7,13 @@ import {
   makeStyles,
   useMediaQuery,
   useTheme,
+  Hidden,
 } from '@material-ui/core'
 import { UrlTypePublic } from '../../../../../reducers/search/types'
 import useAppMargins from '../../../../AppMargins/appMargins'
+import linkIcon from '../../../../../assets/icons/link-icon.svg'
+import fileIcon from '../../../../../assets/icons/file-icon.svg'
+import mailIcon from '../../../assets/mail-icon.svg'
 
 type SearchTableRowProps = {
   url: UrlTypePublic
@@ -28,12 +32,17 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: theme.spacing(0.5),
       borderBottom: 'none',
       margin: 0,
-      maxWidth: (props: SearchTableRowStyleProps) =>
-        `calc(100vw - ${props.appMargins}px * 2)`,
       marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
       paddingTop: theme.spacing(4),
+      flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
+        width: '55%',
         paddingTop: theme.spacing(5.5),
+        paddingRight: () => '10%',
+        marginLeft: () => 0,
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '60%',
       },
     },
     tableRow: {
@@ -85,7 +94,15 @@ const useStyles = makeStyles((theme) =>
       WebkitLineClamp: 2,
       WebkitBoxOrient: 'vertical',
       wordBreak: 'keep-all',
-      marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
+      height: theme.spacing(5),
+      marginTop: theme.spacing(2.5),
+      [theme.breakpoints.up('md')]: {
+        WebkitLineClamp: 3,
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(3.5),
+        height: theme.spacing(7.5),
+        marginLeft: () => 0,
+      },
     },
     contactEmailCell: {
       display: 'inline-flex',
@@ -96,10 +113,14 @@ const useStyles = makeStyles((theme) =>
       paddingLeft: (props: SearchTableRowStyleProps) => props.appMargins,
       paddingBottom: theme.spacing(4),
       [theme.breakpoints.up('md')]: {
-        paddingTop: theme.spacing(0.5),
+        paddingTop: theme.spacing(5.5),
         paddingBottom: theme.spacing(0.5),
-        paddingLeft: theme.spacing(28),
-        width: '40%',
+        paddingLeft: () => 0,
+        width: '29%',
+        flexDirection: 'column',
+      },
+      [theme.breakpoints.up('lg')]: {
+        width: '25%',
       },
     },
     contactEmailText: {
@@ -109,9 +130,32 @@ const useStyles = makeStyles((theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
     },
+    contactEmailLink: {
+      color: '#767676',
+    },
     contactEmailClickable: {
+      [theme.breakpoints.up('md')]: {
+        marginTop: theme.spacing(1),
+      },
       '&:hover': {
         textDecoration: 'underline',
+      },
+    },
+    linkIconCell: {
+      [theme.breakpoints.up('md')]: {
+        paddingTop: theme.spacing(5.5),
+        paddingRight: theme.spacing(1.5),
+        marginLeft: (props: SearchTableRowStyleProps) => props.appMargins,
+      },
+    },
+    mailIconCell: {
+      [theme.breakpoints.up('md')]: {
+        marginTop: theme.spacing(0.25),
+        paddingTop: theme.spacing(5.5),
+        paddingLeft: 0,
+        paddingRight: theme.spacing(1),
+        marginLeft: 0,
+        marginRight: 0,
       },
     },
   }),
@@ -126,46 +170,77 @@ const SearchTableRow: FunctionComponent<SearchTableRowProps> = ({
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
-    <TableRow
-      className={classes.tableRow}
-      onClick={() => onClickUrl(url.shortUrl)}
-      key={url.shortUrl}
+    <a
+      href={
+        isMobileView
+          ? undefined
+          : `${document.location.protocol}//${document.location.host}/${url.shortUrl}`
+      }
     >
-      <TableCell className={classes.shortLinkCell} key="shortUrlCell">
-        <Typography
-          variant={isMobileView ? 'body2' : 'h5'}
-          className={classes.shortLinkText}
-        >
-          <span className={classes.domainText}>go.gov.sg/</span>
-          {url.shortUrl}
-        </Typography>
-      </TableCell>
-      <TableCell className={classes.descriptionCell} key="descriptionCell">
-        <Typography
-          color="primary"
-          variant="body2"
-          className={classes.descriptionText}
-        >
-          {url.description ? url.description : 'No information available.'}
-        </Typography>
-      </TableCell>
-      <TableCell className={classes.contactEmailCell} key="emailCell">
-        <Typography
-          variant={isMobileView ? 'caption' : 'body2'}
-          className={`${classes.contactEmailText} ${
-            url.contactEmail ? classes.contactEmailClickable : ''
-          }`}
-          onClick={(e) => {
-            if (url.contactEmail) {
-              window.location.href = `mailto:${url.contactEmail}`
-              e.stopPropagation()
-            }
-          }}
-        >
-          {url.contactEmail || 'No contact specified'}
-        </Typography>
-      </TableCell>
-    </TableRow>
+      <TableRow
+        className={classes.tableRow}
+        onClick={() => onClickUrl(url.shortUrl)}
+        key={url.shortUrl}
+      >
+        <Hidden smDown>
+          <TableCell className={classes.linkIconCell}>
+            <img
+              src={url.isFile ? fileIcon : linkIcon}
+              alt={url.isFile ? 'File' : 'Link'}
+            />
+          </TableCell>
+        </Hidden>
+        <TableCell className={classes.shortLinkCell} key="shortUrlCell">
+          <Typography
+            variant={isMobileView ? 'body2' : 'h5'}
+            className={classes.shortLinkText}
+          >
+            <span className={classes.domainText}>
+              {document.location.host}/
+            </span>
+            {url.shortUrl}
+          </Typography>
+          <Typography
+            color="primary"
+            variant="body2"
+            className={classes.descriptionText}
+          >
+            {url.description ? url.description : 'No information available.'}
+          </Typography>
+        </TableCell>
+
+        <Hidden smDown>
+          <TableCell className={classes.mailIconCell}>
+            <img src={mailIcon} alt={'mail'} />
+          </TableCell>
+        </Hidden>
+        <TableCell className={classes.contactEmailCell} key="emailCell">
+          <Hidden smDown>
+            <Typography variant="body2" className={classes.contactEmailText}>
+              For enquiries, contact:
+            </Typography>
+          </Hidden>
+          <Typography
+            variant={isMobileView ? 'caption' : 'body2'}
+            className={`${classes.contactEmailText} ${
+              url.contactEmail ? classes.contactEmailClickable : ''
+            }`}
+            onClick={(e) => {
+              if (url.contactEmail) {
+                e.stopPropagation()
+              }
+            }}
+          >
+            <a
+              href={url.contactEmail ? `mailto:${url.contactEmail}` : undefined}
+              className={classes.contactEmailLink}
+            >
+              {url.contactEmail || '-'}
+            </a>
+          </Typography>
+        </TableCell>
+      </TableRow>
+    </a>
   )
 }
 

@@ -103,6 +103,17 @@ export function createRequestWithEmailAndOtp(email: any, otp: any): Request {
   })
 }
 
+/**
+ * Creates a mock request with mock file in request body.
+ * @param  {any} user
+ * @returns A mock Request with mock file.
+ */
+export function createRequestWithFile(file: any): Request {
+  return httpMocks.createRequest({
+    files: { file },
+  })
+}
+
 export class MockSequelizeTransaction {
   fn: Function | null
 

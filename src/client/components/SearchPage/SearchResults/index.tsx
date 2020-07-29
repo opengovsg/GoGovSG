@@ -9,6 +9,7 @@ import {
 import { ApplyAppMargins } from '../../AppMargins'
 import SearchTable from './SearchTable'
 import { UrlTypePublic } from '../../../reducers/search/types'
+import useAppMargins from '../../AppMargins/appMargins'
 
 type SearchResultsProps = {
   searchResults: Array<UrlTypePublic>
@@ -36,7 +37,12 @@ const useStyles = makeStyles((theme) =>
       },
     },
     tableWrapper: {
+      width: '100%',
+      margin: '0 auto',
       minHeight: theme.spacing(40),
+      [theme.breakpoints.up(1440)]: {
+        width: theme.spacing(180),
+      },
     },
   }),
 )
@@ -52,7 +58,8 @@ const SearchResults: FunctionComponent<SearchResultsProps> = ({
   onClickUrl,
   query,
 }: SearchResultsProps) => {
-  const classes = useStyles()
+  const appMargins = useAppMargins()
+  const classes = useStyles({ appMargins })
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (

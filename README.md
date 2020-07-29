@@ -16,13 +16,15 @@ The official Singapore government link shortener.
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
     - [Deploying](#deploying)
   - [Pre-release](#pre-release)
-  - [Documentation](#documentation)
+  - [Operations](#operations)
+    - [Transferring links to a new owner or email address](#transferring-links-to-a-new-owner-or-email-address)
+  - [Developer Documentation](#developer-documentation)
     - [Folder Structure](#folder-structure)
     - [Babel](#babel)
     - [ESLint](#eslint)
     - [Webpack](#webpack)
     - [Webpack dev server](#webpack-dev-server)
-    - [Nodemon](#nodemon)
+    - [ts-node-dev](#ts-node-dev)
     - [Express](#express)
     - [Concurrently](#concurrently)
     - [VSCode + ESLint](#vscode--eslint)
@@ -135,7 +137,25 @@ We have yet to setup travis to automate these steps:
 - Update credits [opengovsg/credits-generator](https://github.com/opengovsg/credits-generator)
 - Upload pdf to S3 bucket
 
-## Documentation
+## Operations
+
+### Transferring links to a new owner or email address
+
+Use the following SQL functions defined in [scripts folder](scripts/) to safely transfer link ownership.
+
+To transfer a single link to a new email address (must be lowercase):
+
+```sql
+SELECT migrate_url_to_user('the-short-link', 'new_email@domain.com');
+```
+
+To transfer all links belonging to an account to another account, specify the email accounts of both (must be in lowercase):
+
+```sql
+SELECT migrate_user_links('from@domain.com','to@domain.com');
+```
+
+## Developer Documentation
 
 ### Folder Structure
 

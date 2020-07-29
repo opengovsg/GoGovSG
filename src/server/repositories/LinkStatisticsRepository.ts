@@ -64,6 +64,7 @@ END; $$ LANGUAGE plpgsql;
 `
 
 export type UrlStats = UrlType & {
+  Url: UrlType
   DeviceClicks?: DevicesType
   DailyClicks: ClicksType[]
   WeekdayClicks: WeekdayClicksType[]
@@ -88,6 +89,8 @@ export class LinkStatisticsRepository
               [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
             },
           },
+          // As previously accessed links can be inactive for over a week.
+          required: false,
         },
         {
           model: WeekdayClicks,
@@ -102,6 +105,8 @@ export class LinkStatisticsRepository
     })
     if (url) {
       const urlStats = url as UrlStats
+
+      const totalClicks = url.clicks
 
       const deviceClicks = urlStats.DeviceClicks
         ? _.pick(urlStats.DeviceClicks.toJSON(), [
@@ -121,11 +126,16 @@ export class LinkStatisticsRepository
         return _.pick(clicks, ['weekday', 'hours', 'clicks'])
       })
 
-      return {
-        deviceClicks,
-        dailyClicks,
-        weekdayClicks,
-      } as LinkStatisticsInterface
+      if (Object.values(deviceClicks).some((val) => val !== 0)) {
+        return {
+          totalClicks,
+          deviceClicks,
+          dailyClicks,
+          weekdayClicks,
+        } as LinkStatisticsInterface
+      }
+      // There is no statistics to show yet.
+      return null
     }
     return null
   }

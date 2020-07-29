@@ -3,6 +3,8 @@ export const THRESHOLD_VAL = 9_999_999
 
 /**
  * Takes in a number and format in into a compact form without rounding.
+ * This method takes reference to a constant threshold value, and only compact
+ * values that exceed this threshold.
  *
  * @param numberToFormat Number to format.
  * @returns The formatted string with the compact notations.
@@ -17,6 +19,27 @@ export function numberUnitFormatter(numberToFormat: number): string {
   if (numberToFormat <= THRESHOLD_VAL) {
     const numberFormatter = new Intl.NumberFormat('en-US')
     return numberFormatter.format(numberToFormat)
+  }
+  let compactNumber = numberToFormat
+  while (compactNumber >= 1_000) {
+    compactNumber = Math.floor(compactNumber / 1_000)
+  }
+  return compactNumber + getNotation()
+}
+
+/**
+ * Takes in a number and format in into a compact form without rounding.
+ *
+ * @param numberToFormat Number to format.
+ * @returns The formatted string with the compact notations.
+ */
+export function compactNumberFormatter(numberToFormat: number): string {
+  const getNotation = () => {
+    if (numberToFormat >= 1_000_000_000_000) return 't'
+    if (numberToFormat >= 1_000_000_000) return 'b'
+    if (numberToFormat >= 1_000_000) return 'm'
+    if (numberToFormat >= 1_000) return 'k'
+    return ''
   }
   let compactNumber = numberToFormat
   while (compactNumber >= 1_000) {
