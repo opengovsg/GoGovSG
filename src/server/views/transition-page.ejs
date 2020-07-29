@@ -25,7 +25,7 @@
             </h3>
             <p>You are visiting a page at <span class="semi-bold-text"><%= rootDomain _%></span>.</p>
             <!-- Use double-quotes to avoid templating issue as per RFC3986 (https://tools.ietf.org/html/rfc3986#appendix-C) -->
-            <button onclick='proceedToDestination("<%- escapedLongUrl %>")'>
+            <button data-href="<%- escapedLongUrl %>" id='main-button'>
                 <div id="main-button-content">
                     <p>Proceed to your page</p>
                     <!-- button right arrow icon -->

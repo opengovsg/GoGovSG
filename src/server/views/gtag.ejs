@@ -21,3 +21,9 @@ function proceedToDestination(url) {
     }
     window.location = url
 }
+
+(function() {
+    document.getElementById('main-button').addEventListener('click', function (e) {
+        proceedToDestination(document.getElementById('main-button').getAttribute('data-href'))
+    })
+})()

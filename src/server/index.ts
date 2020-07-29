@@ -74,7 +74,7 @@ if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
 }
 if (sentryDns) {
-  connectSrc.push(sentryDns)
+  connectSrc.push(parseDomain(sentryDns))
 }
 
 const app = express()
@@ -83,9 +83,9 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", 'fonts.googleapis.com'],
+      styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
       fontSrc: ["'self'", 'fonts.gstatic.com'],
-      imgSrc: ["'self'", 'www.google-analytics.com'],
+      imgSrc: ["'self'", 'data:', 'www.google-analytics.com'],
       scriptSrc: [
         "'self'",
         'www.google-analytics.com',
@@ -141,9 +141,7 @@ initDb()
         ...sessionSettings,
       } as session.SessionOptions),
       // application/json
-      cspOnlyReportViolations
-        ? bodyParser.json({ type: ['json', 'application/csp-report'] })
-        : bodyParser.json(),
+      bodyParser.json(),
     ]
 
     const redirectSpecificMiddleware = [
