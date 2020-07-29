@@ -163,10 +163,6 @@ export const sessionSettings: SessionSettings = {
   name: 'gogovsg',
 }
 
-export const cspOnlyReportViolations =
-  process.env.CSP_ONLY_REPORT_VIOLATIONS === 'true'
-export const cspReportUri = process.env.CSP_REPORT_URI
-
 export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
 
 // LocalStack variables.
