@@ -37,7 +37,9 @@ export class UserController implements UserControllerInterface {
     const file = req.files?.file
 
     if (Array.isArray(file)) {
-      res.badRequest(jsonMessage('Only single file uploads are supported.'))
+      res.unprocessableEntity(
+        jsonMessage('Only single file uploads are supported.'),
+      )
       return
     }
 
@@ -79,7 +81,9 @@ export class UserController implements UserControllerInterface {
     }: UrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
-      res.badRequest(jsonMessage('Only single file uploads are supported.'))
+      res.unprocessableEntity(
+        jsonMessage('Only single file uploads are supported.'),
+      )
       return
     }
 
