@@ -31,13 +31,15 @@ export class FileCheckController implements FileCheckControllerInterface {
     const file = req.files?.file
 
     if (Array.isArray(file)) {
-      res.badRequest(jsonMessage('Only single file uploads are supported.'))
+      res.unprocessableEntity(
+        jsonMessage('Only single file uploads are supported.'),
+      )
       return
     }
 
     if (file) {
       if (!(await this.fileTypeFilterService.hasAllowedType(file))) {
-        res.badRequest(jsonMessage('File type disallowed.'))
+        res.unsupportedMediaType(jsonMessage('File type disallowed.'))
         return
       }
 

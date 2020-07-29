@@ -34,13 +34,13 @@ describe('FileCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const next = jest.fn()
 
-    res.badRequest = badRequest
+    res.unprocessableEntity = badRequest
 
     await controller.checkFile(req, res, next)
 
     expect(hasAllowedType).not.toHaveBeenCalled()
     expect(hasVirus).not.toHaveBeenCalled()
-    expect(res.badRequest).toHaveBeenCalled()
+    expect(res.unprocessableEntity).toHaveBeenCalled()
     expect(next).not.toHaveBeenCalled()
   })
 
@@ -50,13 +50,13 @@ describe('FileCheckController test', () => {
     const next = jest.fn()
 
     hasAllowedType.mockResolvedValue(false)
-    res.badRequest = badRequest
+    res.unsupportedMediaType = badRequest
 
     await controller.checkFile(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).not.toHaveBeenCalled()
-    expect(res.badRequest).toHaveBeenCalled()
+    expect(res.unsupportedMediaType).toHaveBeenCalled()
     expect(next).not.toHaveBeenCalled()
   })
 
