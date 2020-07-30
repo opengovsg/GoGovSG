@@ -13,6 +13,7 @@ import { createPageViewHit } from '../services/analytics'
 import IGaPageViewForm from '../services/analytics/types/IGaPageViewForm'
 
 const TRANSITION_PATH = 'transition-page.ejs'
+const GTAG_PATH = 'gtag.ejs'
 
 @injectable()
 export class RedirectController implements RedirectControllerInterface {
@@ -38,6 +39,21 @@ export class RedirectController implements RedirectControllerInterface {
     if (pageViewHit) {
       this.analyticsLogger.logRedirectAnalytics(pageViewHit)
     }
+  }
+
+  public gtagForTransitionPage: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (_, res) => {
+    res
+      .status(200)
+      .header('content-type', 'text/javascript')
+      .render(GTAG_PATH, {
+        gaTrackingId,
+        gaEventType: EventCategory.TRANSITION_PAGE,
+        gaOnLoad: EventAction.LOADED,
+        gaOnProceed: EventAction.PROCEEDED,
+      })
   }
 
   public redirect: (
@@ -82,9 +98,6 @@ export class RedirectController implements RedirectControllerInterface {
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
           rootDomain,
           gaTrackingId,
-          gaEventType: EventCategory.TRANSITION_PAGE,
-          gaOnLoad: EventAction.LOADED,
-          gaOnProceed: EventAction.PROCEEDED,
         })
         this.logRedirect(req, shortUrl, longUrl)
         return

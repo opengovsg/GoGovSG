@@ -24,7 +24,8 @@
                 link.
             </h3>
             <p>You are visiting a page at <span class="semi-bold-text"><%= rootDomain _%></span>.</p>
-            <button onclick="proceedToDestination()">
+            <!-- Use double-quotes to avoid templating issue as per RFC3986 (https://tools.ietf.org/html/rfc3986#appendix-C) -->
+            <button data-href="<%- escapedLongUrl %>" id='main-button'>
                 <div id="main-button-content">
                     <p>Proceed to your page</p>
                     <!-- button right arrow icon -->
@@ -42,33 +43,7 @@
     </div>
     <!-- Global Site Tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaTrackingId %>"></script>
-    <script>
-
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        // Skip page hit and send transition-page loaded event to GA.
-        gtag('config', '<%= gaTrackingId %>', { 'send_page_view': false });
-        gtag('event', '<%= gaOnLoad %>', {
-            'event_category': '<%= gaEventType %>'
-        });
-
-        // Ensures that proceeded event sends at most once.
-        var proceedIsLogged = false
-
-        function proceedToDestination() {
-            // Logs transition-page proceeded event to GA.
-            if (!proceedIsLogged) {
-                proceedIsLogged = true
-                gtag('event', '<%= gaOnProceed %>', {
-                    'event_category': '<%= gaEventType %>'
-                });
-            }
-            // Use double-quotes to avoid templating issue as per RFC3986 (https://tools.ietf.org/html/rfc3986#appendix-C)
-            window.location = "<%- escapedLongUrl %>"
-        }
-    </script>
+    <script src="./assets/transition-page/js/gtag.js"></script>
 </body>
 
 </html>
