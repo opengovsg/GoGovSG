@@ -161,7 +161,7 @@
     "lint-staged": "^10.2.11",
     "node-mocks-http": "^1.8.1",
     "prettier": "^2.0.5",
-    "redis-mock": "^0.49.0",
+    "redis-mock": "^0.50.0",
     "sequelize-mock": "^0.10.2",
     "sinon": "^9.0.2",
     "ts-jest": "^26.1.4",
