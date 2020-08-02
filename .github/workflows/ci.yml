@@ -41,7 +41,7 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci
-      - run: npm run test:ci
+      - run: npm run test
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
