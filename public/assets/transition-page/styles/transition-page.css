@@ -157,8 +157,6 @@ img {
   height: 55vh;
   min-height: 380px;
   position: relative;
-  display: flex;
-  justify-content: center;
 }
 
 .top-half-content {
@@ -166,6 +164,8 @@ img {
   color: #ffffff;
   position: absolute;
   bottom: 65px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .top-half-content h3 {
@@ -193,7 +193,7 @@ img {
   background-size: contain;
   max-width: 100%;
   height: 160px;
-  text-align: start;
+  text-align: left;
   margin-left: auto;
   margin-right: auto;
   min-width: 300px;
