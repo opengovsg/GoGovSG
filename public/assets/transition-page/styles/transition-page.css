@@ -178,9 +178,8 @@ img {
   margin-bottom: 24px;
 }
 
-.top-half-content img {
-  width: 100%;
-  max-width: 512px;
+.loading-image {
+  width: 100px;
 }
 
 .browser-image {
