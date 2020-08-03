@@ -100,28 +100,6 @@ button {
   background-color: #384a51;
 }
 
-#main-button-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#main-button-content p,
-img {
-  fill: #ffffff;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0;
-  margin: 0;
-}
-
-#main-button-content img {
-  width: 20px;
-  height: 20px;
-  margin-left: 5px;
-}
-
 @media only screen and (min-width: 960px) {
   body {
     flex-direction: column-reverse;
@@ -214,28 +192,6 @@ img {
   line-height: 17px;
   color: #ffffff;
   text-decoration-line: underline;
-}
-
-.proceed-button {
-  background: #8ca6ad;
-  box-shadow: 0 0 20px rgba(56, 74, 81, 0.5);
-  border-radius: 40px;
-  color: #ffffff;
-  border: none;
-  padding: 12px 25px;
-  font-size: 14px;
-  font-weight: 500;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  cursor: pointer;
-  display: flex;
-  outline: none;
-}
-
-.proceed-button img {
-  margin-left: 6px;
 }
 
 .bottom-half {
