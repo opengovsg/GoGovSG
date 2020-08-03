@@ -96,7 +96,7 @@ export class RedirectController implements RedirectControllerInterface {
 
         res.status(200).render(TRANSITION_PATH, {
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
-          rotatingLinks: JSON.stringify(linksToRotate),
+          rotatingLinks: JSON.stringify(linksToRotate) || '',
           rootDomain,
           gaTrackingId,
         })
