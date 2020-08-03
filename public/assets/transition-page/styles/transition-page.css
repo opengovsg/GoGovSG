@@ -184,16 +184,6 @@ button {
   color: #000000;
 }
 
-.phishing {
-  position: relative;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 13px;
-  line-height: 17px;
-  color: #ffffff;
-  text-decoration-line: underline;
-}
-
 .bottom-half {
   text-align: center;
   position: absolute;
