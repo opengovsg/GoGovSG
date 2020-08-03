@@ -186,6 +186,14 @@ button {
 
 .bottom-half {
   text-align: center;
+}
+
+.bottom-half > p {
+  margin-top: 45px;
+  font-size: 13px;
+}
+
+.footer {
   position: absolute;
   bottom: 70px;
   left: 50%;
@@ -193,11 +201,11 @@ button {
   width: 80%;
 }
 
-.bottom-half img {
+.footer img {
   margin-bottom: 24px;
 }
 
-.bottom-half p {
+.footer p {
   color: #bbbbbb;
   font-size: 13px;
   line-height: 13px;
@@ -228,7 +236,7 @@ button {
     line-height: 20px;
   }
 
-  .bottom-half {
+  .footer {
     bottom: 30px;
   }
 }
