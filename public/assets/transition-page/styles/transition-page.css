@@ -151,7 +151,9 @@ button {
   margin-bottom: 6px;
 }
 
-.top-half-content p {
+.top-half-content a {
+  display: block;
+  color: white;
   font-size: 16px;
   margin-bottom: 24px;
 }
@@ -232,7 +234,7 @@ button {
     height: 120px;
   }
 
-  .top-half-content p {
+  .top-half-content a {
     line-height: 20px;
   }
 
@@ -252,7 +254,7 @@ button {
     margin-right: 8px;
   }
 
-  .top-half-content p {
+  .top-half-content a {
     margin-left: 8px;
     margin-right: 8px;
   }
