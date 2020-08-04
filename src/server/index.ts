@@ -175,7 +175,7 @@ initDb()
     // API configuration
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
     app.get(
-      '/assets/transition-page/js/gtag.js',
+      '/assets/transition-page/js/redirect.js',
       redirectController.gtagForTransitionPage,
     )
     app.use(

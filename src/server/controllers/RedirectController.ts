@@ -13,7 +13,7 @@ import { createPageViewHit } from '../services/analytics'
 import IGaPageViewForm from '../services/analytics/types/IGaPageViewForm'
 
 const TRANSITION_PATH = 'transition-page.ejs'
-const GTAG_PATH = 'gtag.ejs'
+const GTAG_PATH = 'redirect.ejs'
 
 @injectable()
 export class RedirectController implements RedirectControllerInterface {
