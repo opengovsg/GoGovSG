@@ -11,7 +11,7 @@ gtag('event', '<%= gaOnLoad %>', {
 // Ensures that proceeded event sends at most once.
 var proceedIsLogged = false
 
-function proceedToDestination(url) {
+function proceedToDestination() {
     // Logs transition-page proceeded event to GA.
     if (!proceedIsLogged) {
         proceedIsLogged = true
@@ -19,11 +19,26 @@ function proceedToDestination(url) {
             'event_category': '<%= gaEventType %>'
         });
     }
-    window.location = url
+    window.location = document.getElementById('url').getAttribute('data-href')
 }
 
-(function() {
-    document.getElementById('main-button').addEventListener('click', function (e) {
-        proceedToDestination(document.getElementById('main-button').getAttribute('data-href'))
-    })
-})()
+var secondsUntilRedirect = 8
+
+function handlePlural() {
+    if (secondsUntilRedirect == 1) {
+        document.getElementById('s').textContent = ''
+    } else {
+        document.getElementById('s').textContent = 's'
+    }
+}
+
+var intervalId = setInterval(function(){
+    secondsUntilRedirect -= 1
+    document.getElementById('countdown-seconds').textContent = secondsUntilRedirect
+    handlePlural()
+    if (secondsUntilRedirect > 0) {
+        return
+    }
+    clearInterval(intervalId)
+    proceedToDestination()
+}, 1000)
