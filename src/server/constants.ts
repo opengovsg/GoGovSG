@@ -37,6 +37,8 @@ export const DependencyIds = {
   fileTypeFilterService: Symbol.for('fileTypeFilterService'),
   virusScanService: Symbol.for('virusScanService'),
   fileCheckController: Symbol.for('fileCheckController'),
+  urlThreatScanService: Symbol.for('urlThreatScanService'),
+  urlCheckController: Symbol.for('urlCheckController'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
