@@ -213,6 +213,13 @@ button {
   line-height: 13px;
 }
 
+@media only screen and (max-width: 768px) {
+  .links {
+    padding-top: 73px;
+    padding-left: 148px;
+  }
+}
+
 @media only screen and (max-width: 512px) {
   .top-half-content {
     bottom: -58px;
