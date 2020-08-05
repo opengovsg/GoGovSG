@@ -2,129 +2,14 @@ body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   font-family: 'IBM Plex Sans', sans-serif;
-  color: #384a51;
   overflow-wrap: break-word;
   /* Do not use default window margins. */
   margin: 0 !important;
   padding: 0 !important;
-  height: 100vh;
-  min-height: 650px;
+  height: 100%;
+  min-height: 100vh;
+  background: #f9f9f9;
 }
-
-button {
-  font-family: inherit;
-}
-
-.emphasize-text-color {
-  color: #456682 !important;
-}
-
-.semi-bold-text {
-  font-weight: 500 !important;
-}
-
-.divider {
-  height: 1px;
-  background-color: #e8e8e8;
-  margin-top: 20.8px;
-  margin-bottom: 30px;
-}
-
-#page-banner {
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 61px;
-  width: 100%;
-  background-color: #f9f9f9;
-}
-
-#page-banner-content {
-  display: flex;
-  align-items: flex-start;
-  padding-left: 30px;
-  padding-right: 30px;
-}
-
-#page-banner-content img {
-  fill: #384a51;
-  min-width: 18px;
-  min-height: 18px;
-  margin-right: 5.3px;
-}
-
-#page-banner-content p {
-  font-size: 13px;
-  padding: 0;
-  margin: 0;
-}
-
-#main-container {
-  margin-top: min(106px, 12vh);
-  margin-bottom: min(106px, calc(12vh + 61px));
-  display: flex;
-  justify-content: center;
-  margin-left: 57px;
-  margin-right: 57px;
-}
-
-#main-message h3 {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.36;
-  color: #384a51;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#main-message p {
-  margin-top: 15px;
-  margin-bottom: 30px;
-}
-
-#main-message button {
-  width: 211px;
-  height: 44px;
-  border-radius: 40px;
-  border: solid 1px #456682;
-  background-color: #456682;
-  /* Styles adopted by MUI contained buttons. */
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  cursor: pointer;
-  outline: 0;
-}
-
-#main-message button:hover {
-  background-color: #384a51;
-}
-
-@media only screen and (min-width: 960px) {
-  body {
-    flex-direction: column-reverse;
-    justify-content: flex-end;
-  }
-
-  #main-message h3 {
-    font-size: 22px;
-  }
-
-  #main-container {
-    margin-top: 174px;
-    margin-bottom: 113px;
-  }
-
-  #page-banner {
-    top: 0;
-  }
-
-  #page-banner-content {
-    align-items: center;
-  }
-}
-
-/* New transition page stuff */
 
 .masthead-root {
   padding: 6px 30px;
@@ -188,6 +73,7 @@ button {
 
 .bottom-half {
   text-align: center;
+  min-height: 250px;
 }
 
 .bottom-half > p {
