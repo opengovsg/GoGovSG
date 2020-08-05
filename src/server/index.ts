@@ -85,7 +85,12 @@ app.use(
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
       fontSrc: ["'self'", 'fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'www.google-analytics.com'],
+      imgSrc: [
+        "'self'",
+        'data:',
+        'www.google-analytics.com',
+        'www.googletagmanager.com',
+      ],
       scriptSrc: [
         "'self'",
         'www.google-analytics.com',
