@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 
-import querystring from 'querystring'
+import querystring, { ParsedUrlQueryInput } from 'querystring'
 import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
@@ -217,7 +217,7 @@ async function handleError(
 
 // retrieve urls based on query object
 const getUrls: (
-  queryObj: object,
+  queryObj: ParsedUrlQueryInput,
 ) => Promise<{
   json: { urls: Array<UrlType>; count: number; message?: string }
   isOk: boolean

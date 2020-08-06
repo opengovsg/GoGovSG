@@ -18,7 +18,15 @@ bindInversifyDependencies()
 import api from './api'
 
 // Logger configuration
-import { cookieSettings, logger, sessionSettings, trustProxy } from './config'
+import {
+  cookieSettings,
+  cspOnlyReportViolations,
+  cspReportUri,
+  logger,
+  sentryDns,
+  sessionSettings,
+  trustProxy,
+} from './config'
 
 // Services
 const SessionStore = connectRedis(session)
@@ -35,6 +43,7 @@ import { container } from './util/inversify'
 import { DependencyIds } from './constants'
 import { Mailer } from './services/email'
 import { RedirectControllerInterface } from './controllers/interfaces/RedirectControllerInterface'
+import parseDomain from './util/domain'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -60,8 +69,51 @@ const MORGAN_LOG_FORMAT =
   ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
   '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
+const connectSrc = ["'self'", 'www.google-analytics.com']
+if (cspReportUri) {
+  connectSrc.push(parseDomain(cspReportUri))
+}
+if (sentryDns) {
+  connectSrc.push(parseDomain(sentryDns))
+}
+
 const app = express()
 app.use(helmet())
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'fonts.googleapis.com',
+        'cdn.jsdelivr.net/npm/sgds-govtech@1.3.13/',
+      ],
+      fontSrc: [
+        "'self'",
+        'fonts.gstatic.com',
+        'cdn.jsdelivr.net/npm/sgds-govtech@1.3.13/',
+      ],
+      imgSrc: [
+        "'self'",
+        'data:',
+        'www.google-analytics.com',
+        'www.googletagmanager.com',
+      ],
+      scriptSrc: [
+        "'self'",
+        'www.google-analytics.com',
+        'www.googletagmanager.com',
+      ],
+      connectSrc,
+      frameAncestors: ["'self'"],
+      ...(cspReportUri ? { reportUri: cspReportUri } : {}),
+      upgradeInsecureRequests: true,
+    },
+    reportOnly: cspOnlyReportViolations,
+  }),
+)
+
 initDb()
   .then(() => {
     logger.info('Database initialised.')
@@ -117,14 +169,19 @@ initDb()
     // Log http requests
     app.use(morgan(MORGAN_LOG_FORMAT))
 
+    const redirectController = container.get<RedirectControllerInterface>(
+      DependencyIds.redirectController,
+    )
     // API configuration
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
+    app.get(
+      '/assets/transition-page/js/redirect.js',
+      redirectController.gtagForTransitionPage,
+    )
     app.use(
       '/:shortUrl([a-zA-Z0-9-]+)',
       ...redirectSpecificMiddleware,
-      container.get<RedirectControllerInterface>(
-        DependencyIds.redirectController,
-      ).redirect,
+      redirectController.redirect,
     ) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)

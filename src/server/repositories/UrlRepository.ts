@@ -180,6 +180,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
+  /**
+   * Invalidates the redirect entry on the cache for the input
+   * short url.
+   * @param  {string} shortUrl The short url to invalidate.
+   */
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
     shortUrl,
   ) => {
@@ -190,6 +195,12 @@ export class UrlRepository implements UrlRepositoryInterface {
     })
   }
 
+  /**
+   * Retrieves the long url which the short url redirects to
+   * from the database.
+   * @param  {string} shortUrl Short url.
+   * @returns The long url that the short url redirects to.
+   */
   private getLongUrlFromDatabase: (
     shortUrl: string,
   ) => Promise<string> = async (shortUrl) => {
@@ -204,6 +215,12 @@ export class UrlRepository implements UrlRepositoryInterface {
     return url.longUrl
   }
 
+  /**
+   * Retrieves the long url which the short url redirects to
+   * from the cache.
+   * @param  {string} shortUrl Short url.
+   * @returns The long url that the short url redirects to.
+   */
   private getLongUrlFromCache: (shortUrl: string) => Promise<string> = (
     shortUrl,
   ) => {
@@ -226,6 +243,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     )
   }
 
+  /**
+   * Caches the input short url to long url mapping in redis cache.
+   * @param  {string} shortUrl Short url.
+   * @param  {string} longUrl Long url.
+   */
   private cacheShortUrl: (
     shortUrl: string,
     longUrl: string,
@@ -238,6 +260,16 @@ export class UrlRepository implements UrlRepositoryInterface {
     })
   }
 
+  /**
+   * Retrieves relevant urls from database based on the input search parameters.
+   * @param  {string} tableName Name of the database table to retrieve from.
+   * @param  {string} urlVector Vector representation of url.
+   * @param  {string} rankingAlgorithm The ranking algorithm to be used.
+   * @param  {number} limit Maximum number of results to be retrieved.
+   * @param  {number} offset Number of results to ignore.
+   * @param  {string} query The search query.
+   * @returns Relevant urls in an array.
+   */
   private async getRelevantUrls(
     tableName: string,
     urlVector: string,
@@ -245,7 +277,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     limit: number,
     offset: number,
     query: string,
-  ) {
+  ): Promise<Array<UrlType>> {
     const rawQuery = `
       SELECT ${tableName}.*
       FROM ${tableName}, plainto_tsquery('english', $query) query
@@ -266,10 +298,17 @@ export class UrlRepository implements UrlRepositoryInterface {
     return urlsModel
   }
 
+  /**
+   * Generates the ranking algorithm to be used in the ORDER BY clause in the
+   * SQL statement based on the input sort order.
+   * @param  {SearchResultsSortOrder} order
+   * @param  {string} tableName
+   * @returns The clause as a string.
+   */
   private getRankingAlgorithm(
     order: SearchResultsSortOrder,
     tableName: string,
-  ) {
+  ): string {
     let rankingAlgorithm
     switch (order) {
       case SearchResultsSortOrder.Relevance:
@@ -294,10 +333,17 @@ export class UrlRepository implements UrlRepositoryInterface {
     return rankingAlgorithm
   }
 
+  /**
+   * Retrieves the number of urls that match the plain text search
+   * query.
+   * @param  {string} tableName Name of the table urls are stored in.
+   * @param  {string} query Search query.
+   * @returns Number of matching urls.
+   */
   private async getPlainTextSearchResultsCount(
     tableName: string,
     query: string,
-  ) {
+  ): Promise<number> {
     const rawCountQuery = `
       SELECT count(*)
       FROM ${tableName}, plainto_tsquery('english', $query) query
