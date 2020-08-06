@@ -83,8 +83,17 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
-      fontSrc: ["'self'", 'fonts.gstatic.com'],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        'fonts.googleapis.com',
+        'cdn.jsdelivr.net/npm/sgds-govtech@1.3.13/',
+      ],
+      fontSrc: [
+        "'self'",
+        'fonts.gstatic.com',
+        'cdn.jsdelivr.net/npm/sgds-govtech@1.3.13/',
+      ],
       imgSrc: [
         "'self'",
         'data:',
@@ -166,7 +175,7 @@ initDb()
     // API configuration
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
     app.get(
-      '/assets/transition-page/js/gtag.js',
+      '/assets/transition-page/js/redirect.js',
       redirectController.gtagForTransitionPage,
     )
     app.use(

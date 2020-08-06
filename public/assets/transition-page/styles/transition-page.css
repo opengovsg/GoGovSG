@@ -2,144 +2,163 @@ body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   font-family: 'IBM Plex Sans', sans-serif;
-  color: #384a51;
   overflow-wrap: break-word;
   /* Do not use default window margins. */
   margin: 0 !important;
   padding: 0 !important;
+  height: 100%;
+  min-height: 100vh;
+  background: #f9f9f9;
 }
 
-button {
-  font-family: inherit;
+.masthead-root {
+  padding: 6px 30px;
 }
 
-.emphasize-text-color {
-  color: #456682 !important;
+.top-half {
+  background: #384a51;
+  height: 50vh;
+  min-height: 380px;
+  position: relative;
 }
 
-.semi-bold-text {
-  font-weight: 500 !important;
-}
-
-.divider {
-  height: 1px;
-  background-color: #e8e8e8;
-  margin-top: 20.8px;
-  margin-bottom: 30px;
-}
-
-#page-banner {
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 61px;
-  width: 100%;
-  background-color: #f9f9f9;
-}
-
-#page-banner-content {
-  display: flex;
-  align-items: flex-start;
-  padding-left: 30px;
-  padding-right: 30px;
-}
-
-#page-banner-content img {
-  fill: #384a51;
-  min-width: 18px;
-  min-height: 18px;
-  margin-right: 5.3px;
-}
-
-#page-banner-content p {
-  font-size: 13px;
-  padding: 0;
-  margin: 0;
-}
-
-#main-container {
-  margin-top: min(106px, 12vh);
-  margin-bottom: min(106px, calc(12vh + 61px));
-  display: flex;
-  justify-content: center;
-  margin-left: 57px;
-  margin-right: 57px;
-}
-
-#main-message h3 {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.36;
-  color: #384a51;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-#main-message p {
-  margin-top: 15px;
-  margin-bottom: 30px;
-}
-
-#main-message button {
-  width: 211px;
-  height: 44px;
-  border-radius: 40px;
-  border: solid 1px #456682;
-  background-color: #456682;
-  /* Styles adopted by MUI contained buttons. */
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  cursor: pointer;
-  outline: 0;
-}
-
-#main-message button:hover {
-  background-color: #384a51;
-}
-
-#main-button-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#main-button-content p,
-img {
-  fill: #ffffff;
+.top-half-content {
+  text-align: center;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0;
-  margin: 0;
+  position: absolute;
+  bottom: -56px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-#main-button-content img {
-  width: 20px;
-  height: 20px;
-  margin-left: 5px;
+.top-half-content h3 {
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
-@media only screen and (min-width: 960px) {
-  body {
-    flex-direction: column-reverse;
-    justify-content: flex-end;
+.top-half-content a {
+  display: block;
+  color: white;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.loading-image {
+  width: 100px;
+}
+
+.browser-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url(../images/browser.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  max-width: 100%;
+  height: 140px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 300px;
+}
+
+.links {
+  width: 100%;
+  height: 140px;
+  padding-top: 75px;
+  padding-left: 165px;
+  color: #000000;
+}
+
+.bottom-half {
+  text-align: center;
+  min-height: 250px;
+}
+
+.bottom-half > p {
+  margin-top: 45px;
+  font-size: 13px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+}
+
+.footer img {
+  margin-bottom: 24px;
+}
+
+.footer p {
+  color: #bbbbbb;
+  font-size: 13px;
+  line-height: 13px;
+}
+
+@media only screen and (max-width: 768px) {
+  .links {
+    padding-top: 73px;
+    padding-left: 148px;
+  }
+}
+
+@media only screen and (max-width: 512px) {
+  .top-half-content {
+    bottom: -58px;
+    width: 80%;
   }
 
-  #main-message h3 {
-    font-size: 22px;
+  .top-half-content h3 {
+    margin-bottom: 16px;
   }
 
-  #main-container {
-    margin-top: 174px;
-    margin-bottom: 113px;
+  .browser-image {
+    width: 300px;
   }
 
-  #page-banner {
-    top: 0;
+  .links {
+    padding-top: 73px;
+    padding-left: 115px;
+    font-size: 12px;
+    height: 120px;
   }
 
-  #page-banner-content {
-    align-items: center;
+  .top-half-content a {
+    line-height: 20px;
+  }
+
+  .footer {
+    bottom: 30px;
+  }
+}
+
+@media only screen and (max-width: 374px) {
+  .top-half-content {
+    width: 100%;
+  }
+
+  .top-half-content h3 {
+    margin-bottom: 16px;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  .top-half-content a {
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  .browser-image {
+    width: 300px;
+  }
+
+  .links {
+    padding-top: 73px;
+    padding-left: 115px;
+    font-size: 12px;
   }
 }
