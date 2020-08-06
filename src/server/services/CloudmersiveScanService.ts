@@ -28,7 +28,6 @@ export class CloudmersiveScanService
 
   private static scanUrlPromise: (url: string) => Promise<boolean> = (url) =>
     new Promise((res, rej) => {
-      // @ts-ignore
       api.scanWebsite({ Url: url }, (err, data) => {
         if (err) {
           logger.error(`Error when scanning ${url} via Cloudmersive: ${err}`)
