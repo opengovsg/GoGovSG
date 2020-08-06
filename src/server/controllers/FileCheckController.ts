@@ -6,6 +6,8 @@ import { FileCheckControllerInterface } from './interfaces/FileCheckControllerIn
 import { DependencyIds } from '../constants'
 import { FileTypeFilterServiceInterface } from '../services/interfaces/FileTypeFilterServiceInterface'
 import { VirusScanServiceInterface } from '../services/interfaces/VirusScanServiceInterface'
+import { logger } from '../config'
+import { UserType } from '../models/user'
 
 @injectable()
 export class FileCheckController implements FileCheckControllerInterface {
@@ -46,10 +48,15 @@ export class FileCheckController implements FileCheckControllerInterface {
       try {
         const hasVirus = await this.virusScanService.hasVirus(file)
         if (hasVirus) {
+          const user = req.session?.user as UserType
+          logger.warn(
+            `Malicious link attempt: User ${user?.id} tried to upload ${file.name}`,
+          )
           res.badRequest(jsonMessage('File is likely to be malicious.'))
           return
         }
       } catch (error) {
+        logger.error(error)
         res.serverError(jsonMessage(error.message))
         return
       }
