@@ -56,7 +56,11 @@ export class CloudmersiveScanService
       logger.warn(`No Cloudmersive API key provided. Not scanning url: ${url}`)
       return false
     }
-    return CloudmersiveScanService.scanUrlPromise(url)
+    const isThreat = await CloudmersiveScanService.scanUrlPromise(url)
+    if (isThreat) {
+      logger.info(`Considered threat by Cloudmersive but ignoring: ${url}`)
+    }
+    return false
   }
 }
 
