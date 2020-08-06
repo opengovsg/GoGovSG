@@ -102,7 +102,7 @@
     "@types/bluebird": "^3.5.32",
     "@types/chart.js": "^2.9.23",
     "@types/classnames": "^2.2.10",
-    "@types/cloudmersive-virus-api-client": "^1.1.0",
+    "@types/cloudmersive-virus-api-client": "^1.1.1",
     "@types/connect-redis": "0.0.14",
     "@types/cookie-session": "^2.0.39",
     "@types/d3": "^5.7.2",
