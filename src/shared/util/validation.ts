@@ -54,9 +54,11 @@ export function isValidLongUrl(
 }
 
 // Checks if go short url redirects to go domain.
-export function isCircularRedirects(url: string, hostname?: string): boolean {
-  if (!hostname) return false
-  return parse(url).hostname === hostname
+export function isCircularRedirects(
+  url: string,
+  hostname?: string | null,
+): boolean {
+  return Boolean(hostname) && parse(url).hostname === hostname
 }
 
 export function isPrintableAscii(string: string): boolean {

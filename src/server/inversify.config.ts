@@ -40,8 +40,10 @@ import {
   DEFAULT_ALLOWED_FILE_EXTENSIONS,
   FileTypeFilterService,
 } from './services/FileTypeFilterService'
-import { CloudmersiveVirusScanService } from './services/CloudmersiveVirusScanService'
+import { CloudmersiveScanService } from './services/CloudmersiveScanService'
 import { FileCheckController } from './controllers/FileCheckController'
+
+import { UrlCheckController } from './controllers/UrlCheckController'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -80,12 +82,21 @@ export default () => {
   bindIfUnbound(DependencyIds.urlSearchService, UrlSearchService)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
 
+  const cloudmersiveScanService = new CloudmersiveScanService()
+
   container
     .bind(DependencyIds.allowedFileExtensions)
     .toConstantValue(DEFAULT_ALLOWED_FILE_EXTENSIONS)
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
-  bindIfUnbound(DependencyIds.virusScanService, CloudmersiveVirusScanService)
+  container
+    .bind(DependencyIds.virusScanService)
+    .toConstantValue(cloudmersiveScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
+
+  container
+    .bind(DependencyIds.urlThreatScanService)
+    .toConstantValue(cloudmersiveScanService)
+  bindIfUnbound(DependencyIds.urlCheckController, UrlCheckController)
 
   bindIfUnbound(
     DependencyIds.linkStatisticsController,
