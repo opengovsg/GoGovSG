@@ -168,6 +168,7 @@ export const cspOnlyReportViolations =
 export const cspReportUri = process.env.CSP_REPORT_URI
 
 export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
+export const safeBrowsingKey: string | undefined = process.env.SAFE_BROWSING_KEY
 
 // LocalStack variables.
 export const bucketEndpoint =

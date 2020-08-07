@@ -35,7 +35,11 @@ export class UrlCheckController implements UrlCheckControllerInterface {
           logger.warn(
             `Malicious link attempt: User ${user?.id} tried to link ${shortUrl} to ${longUrl}`,
           )
-          res.badRequest(jsonMessage('Link is likely to be malicious.'))
+          res.badRequest(
+            jsonMessage(
+              'Link is likely to be malicious, please contact us for further assistance',
+            ),
+          )
           return
         }
       } catch (error) {
