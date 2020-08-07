@@ -26,6 +26,7 @@ const requiredVars: string[] = [
   'REDIS_SESSION_URI', // Cache for storing session info
   'REDIS_REDIRECT_URI', // Cache for short links
   'REDIS_STAT_URI', // Cache for statistics (user, link, and click counts)
+  'REDIS_SAFE_BROWSING_URI', // Cache for Safe Browsing threat matches
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
   'AWS_S3_BUCKET', // For file.go.gov.sg uploads
@@ -145,6 +146,8 @@ export const redisOtpUri = process.env.REDIS_OTP_URI as string
 export const redisSessionUri = process.env.REDIS_SESSION_URI as string
 export const redisRedirectUri = process.env.REDIS_REDIRECT_URI as string
 export const redisStatUri = process.env.REDIS_STAT_URI as string
+export const redisSafeBrowsingUri = process.env
+  .REDIS_SAFE_BROWSING_URI as string
 export const getOTP: OtpFunction = otpFunction
 export const transporterOptions: nodemailer.TransporterOptions | null = transporterOpts
 export const trustProxy: boolean = proxy

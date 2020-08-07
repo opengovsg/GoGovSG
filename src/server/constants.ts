@@ -3,6 +3,7 @@ export const DependencyIds = {
   urlMapper: Symbol.for('urlMapper'),
   userMapper: Symbol.for('userMapper'),
   otpMapper: Symbol.for('otpMapper'),
+  safeBrowsingMapper: Symbol.for('safeBrowsingMapper'),
   analyticsLoggerService: Symbol.for('analyticsLoggerService'),
   cookieReducer: Symbol.for('cookieReducer'),
   userRepository: Symbol.for('userRepository'),
@@ -37,6 +38,7 @@ export const DependencyIds = {
   fileTypeFilterService: Symbol.for('fileTypeFilterService'),
   virusScanService: Symbol.for('virusScanService'),
   fileCheckController: Symbol.for('fileCheckController'),
+  safeBrowsingRepository: Symbol.for('safeBrowsingRepository'),
   urlThreatScanService: Symbol.for('urlThreatScanService'),
   urlCheckController: Symbol.for('urlCheckController'),
 }

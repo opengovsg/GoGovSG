@@ -43,6 +43,8 @@ import {
 import { CloudmersiveScanService } from './services/CloudmersiveScanService'
 import { FileCheckController } from './controllers/FileCheckController'
 
+import { SafeBrowsingMapper } from './mappers/SafeBrowsingMapper'
+import { SafeBrowsingRepository } from './repositories/SafeBrowsingRepository'
 import { SafeBrowsingService } from './services/SafeBrowsingService'
 import { UrlCheckController } from './controllers/UrlCheckController'
 
@@ -90,6 +92,8 @@ export default () => {
   bindIfUnbound(DependencyIds.virusScanService, CloudmersiveScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
 
+  bindIfUnbound(DependencyIds.safeBrowsingMapper, SafeBrowsingMapper)
+  bindIfUnbound(DependencyIds.safeBrowsingRepository, SafeBrowsingRepository)
   bindIfUnbound(DependencyIds.urlThreatScanService, SafeBrowsingService)
   bindIfUnbound(DependencyIds.urlCheckController, UrlCheckController)
 

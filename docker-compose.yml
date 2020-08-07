@@ -25,6 +25,7 @@ services:
       - REDIS_SESSION_URI=redis://redis:6379/1
       - REDIS_REDIRECT_URI=redis://redis:6379/2
       - REDIS_STAT_URI=redis://redis:6379/3
+      - REDIS_SAFE_BROWSING_URI=redis://redis:6379/4
       - SESSION_SECRET=thiscouldbeanything
       - GA_TRACKING_ID=UA-139330318-1
       - OG_URL=https://go.gov.sg
