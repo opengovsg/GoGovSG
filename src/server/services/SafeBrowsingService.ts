@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch'
 import { injectable } from 'inversify'
 import { UrlThreatScanServiceInterface } from './interfaces/UrlThreatScanServiceInterface'
-import { logger, safeBrowsingKey } from '../config'
+import { logger, safeBrowsingKey, safeBrowsingLogOnly } from '../config'
 
 const ENDPOINT = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${safeBrowsingKey}`
 
@@ -44,21 +44,25 @@ export class SafeBrowsingService implements UrlThreatScanServiceInterface {
       body: JSON.stringify(request),
     })
     if (!response.ok) {
-      throw new Error(
+      const error = new Error(
         `Safe Browsing failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
       )
+      if (safeBrowsingLogOnly) {
+        logger.error(error)
+      } else {
+        throw error
+      }
     }
     const result = await response.json()
     if (result?.matches) {
+      const prefix = safeBrowsingLogOnly
+        ? 'Considered threat by Safe Browsing but ignoring'
+        : 'Malicious link content'
       logger.warn(
-        `Malicious link content: ${url} yields ${JSON.stringify(
-          result.matches,
-          null,
-          2,
-        )}`,
+        `${prefix}: ${url} yields ${JSON.stringify(result.matches, null, 2)}`,
       )
     }
-    return Boolean(result?.matches)
+    return safeBrowsingLogOnly && Boolean(result?.matches)
   }
 }
 
