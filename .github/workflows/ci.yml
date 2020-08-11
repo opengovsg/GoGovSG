@@ -46,3 +46,14 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  build:
+    name: Build and push
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v1
+        with:
+          repository: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
+          tags: gh-actions-${GITHUB_REF#refs/heads/}-${GITHUB_SHA}
+          push: false
