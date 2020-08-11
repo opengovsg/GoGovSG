@@ -101,7 +101,7 @@ export class UserController implements UserControllerInterface {
     }
 
     try {
-      const url = this.urlManagementService.updateUrl(userId, shortUrl, {
+      const url = await this.urlManagementService.updateUrl(userId, shortUrl, {
         longUrl,
         state: urlState,
         file,
