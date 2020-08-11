@@ -55,5 +55,5 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           repository: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
-          tags: gh-actions-${GITHUB_REF#refs/heads/}-${GITHUB_SHA}
+          tags: gh-actions-${{ github.ref##*/ }}-${{ github.sha }}
           push: false
