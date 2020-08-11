@@ -163,7 +163,7 @@
     "prettier": "^2.0.5",
     "redis-mock": "^0.50.0",
     "sequelize-mock": "^0.10.2",
-    "sinon": "^9.0.2",
+    "sinon": "^9.0.3",
     "ts-jest": "^26.1.4",
     "ts-loader": "^8.0.2",
     "ts-node-dev": "^1.0.0-pre.56",
