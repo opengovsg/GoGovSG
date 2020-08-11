@@ -51,9 +51,13 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Build and push Docker images
         uses: docker/build-push-action@v1
         with:
           repository: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
-          tags: gh-actions-${{ github.ref##*/ }}-${{ github.sha }}
+          tags: gh-actions-${{ steps.extract_branch.outputs.branch }}-${{ github.sha }}
           push: false
