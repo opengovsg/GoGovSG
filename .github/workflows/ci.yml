@@ -58,6 +58,13 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v1
         with:
-          repository: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
-          tags: gh-actions-${{ steps.extract_branch.outputs.branch }}-${{ github.sha }}
+          repository: my-image
           push: false
+      - name: Push to ECR
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ap-southeast-1
+          local-image: my-image
+          image: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg:ghactions-${{ steps.extract_branch.outputs.branch }}-${{ github.sha }}
