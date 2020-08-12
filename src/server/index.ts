@@ -78,39 +78,31 @@ if (sentryDns) {
 }
 
 const app = express()
-app.use(helmet())
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        'fonts.googleapis.com',
-        'cdn.jsdelivr.net/npm/sgds-govtech@1.3.13/',
-      ],
-      fontSrc: [
-        "'self'",
-        'fonts.gstatic.com',
-        'cdn.jsdelivr.net/npm/sgds-govtech@1.3.13/',
-      ],
-      imgSrc: [
-        "'self'",
-        'data:',
-        'www.google-analytics.com',
-        'www.googletagmanager.com',
-      ],
-      scriptSrc: [
-        "'self'",
-        'www.google-analytics.com',
-        'www.googletagmanager.com',
-      ],
-      connectSrc,
-      frameAncestors: ["'self'"],
-      ...(cspReportUri ? { reportUri: cspReportUri } : {}),
-      upgradeInsecureRequests: true,
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
+        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        imgSrc: [
+          "'self'",
+          'data:',
+          'www.google-analytics.com',
+          'www.googletagmanager.com',
+        ],
+        scriptSrc: [
+          "'self'",
+          'www.google-analytics.com',
+          'www.googletagmanager.com',
+        ],
+        connectSrc,
+        frameAncestors: ["'self'"],
+        ...(cspReportUri ? { reportUri: cspReportUri } : {}),
+        upgradeInsecureRequests: [],
+      },
+      reportOnly: cspOnlyReportViolations,
     },
-    reportOnly: cspOnlyReportViolations,
   }),
 )
 

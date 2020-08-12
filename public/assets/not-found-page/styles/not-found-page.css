@@ -36,6 +36,10 @@ img {
   margin-bottom: 54px;
 }
 
+.masthead-root {
+  padding: 6px 30px;
+}
+
 #main-container {
   margin-top: 10vh;
   margin-bottom: 10vh;

@@ -67,3 +67,13 @@ export type GlobalStatistics = {
   clickCount: number
   linkCount: number
 }
+
+/**
+ * Has a cache duration expressed as a human-readable
+ * time interval. An example of this is the threat matches
+ * returned by Google Safe Browsing, which have a cacheDuration
+ * specified as the number of seconds followed by 's'.
+ */
+export type HasCacheDuration = {
+  cacheDuration: string
+}

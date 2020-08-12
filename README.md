@@ -94,6 +94,7 @@ After these have been set up, set the environment variables according to the tab
 |REDIS_SESSION_URI|Yes|Redis connection string, e.g. `redis://redis:6379/1`|
 |REDIS_REDIRECT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/2`|
 |REDIS_STAT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/3`|
+|REDIS_SAFE_BROWSING_URI|Yes|Redis connection string, e.g. `redis://redis:6379/4`|
 |SESSION_SECRET|Yes|For hashing browser sessions, e.g. `change-this`|
 |VALID_EMAIL_GLOB_EXPRESSION|Yes|The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com`|
 |GA_TRACKING_ID|No|The Google Analytics tracking ID, e.g. `UA-12345678-9`|
@@ -103,6 +104,10 @@ After these have been set up, set the environment variables according to the tab
 |SENTRY_PROJECT|No|The relevant Sentry project. e.g. `project-prod`|
 |SENTRY_URL|No|The Sentry url. e.g. `https://sentry.io/`|
 |LOGIN_MESSAGE|No|A text message that will be displayed on the login page as a snackbar.|
+|CSP_REPORT_URI|No|A URI to report CSP violations to.|
+|CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
+|CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|
+|SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|
 
 Trigger the typescript compilation and webpack bundling process by calling `npm run build`.
 
