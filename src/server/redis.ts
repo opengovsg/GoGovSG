@@ -3,6 +3,7 @@ import {
   logger,
   redisOtpUri,
   redisRedirectUri,
+  redisSafeBrowsingUri,
   redisSessionUri,
   redisStatUri,
 } from './config'
@@ -61,4 +62,16 @@ export const statClient = redis
   })
   .on('error', (error) => {
     logger.error(`statClient error:${error}`)
+  })
+
+// For storing computed statistics
+export const safeBrowsingClient = redis
+  .createClient({
+    url: redisSafeBrowsingUri,
+  })
+  .on('connect', () => {
+    logger.info('safeBrowsingClient client connected')
+  })
+  .on('error', (error) => {
+    logger.error(`safeBrowsingClient error:${error}`)
   })
