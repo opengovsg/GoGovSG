@@ -56,7 +56,7 @@ export class FileCheckController implements FileCheckControllerInterface {
           return
         }
       } catch (error) {
-        logger.error(error)
+        logger.error('Unable to check file: ', error)
         res.serverError(jsonMessage(error.message))
         return
       }
