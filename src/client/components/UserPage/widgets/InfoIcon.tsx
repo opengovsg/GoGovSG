@@ -11,7 +11,7 @@ export default ({ color = '#384A51' }: InfoIconProps) => {
       width={24}
       height={24}
       fill="none"
-      viewBox={'0 0 16 16'}
+      viewBox="0 0 16 16"
     >
       <path
         fill={color}

@@ -18,7 +18,7 @@ import useAppMargins from '../../../../AppMargins/appMargins'
 import DrawerActions from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../util/format'
-import CopyButton from '../../../Widgets/CopyButton'
+import CopyButton from '../../../widgets/CopyButton'
 
 type StyleProps = {
   appMargins: number
@@ -217,10 +217,10 @@ export default function EnhancedTableBody() {
               <TableCell className={classes.stateCell}>
                 <CopyButton
                   shortUrl={row.shortUrl}
-                  buttonText={'Copy'}
+                  buttonText="Copy"
                   iconSize={13}
-                  variant={'caption'}
-                  stopPropagation={true}
+                  variant="caption"
+                  stopPropagation
                 />
               </TableCell>
             </Hidden>

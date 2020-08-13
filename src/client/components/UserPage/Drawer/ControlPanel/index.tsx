@@ -32,7 +32,7 @@ import {
 } from '../../../../../shared/util/validation'
 import DownloadButton from './widgets/DownloadButton'
 import helpIcon from '../../../../assets/help-icon.svg'
-import FileInputField from '../../Widgets/FileInputField'
+import FileInputField from '../../widgets/FileInputField'
 import CollapsibleMessage from '../../../CollapsibleMessage'
 import {
   CollapsibleMessageType,
