@@ -10,19 +10,19 @@ import {
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
 
-type PrefixAdormentStylesProps = {
+type PrefixAdornmentStylesProps = {
   textFieldHeight: number
 }
 
 const usePrefixAdornmentStyles = makeStyles(() =>
   createStyles({
-    startAdorment: {
-      minHeight: (props: PrefixAdormentStylesProps) => props.textFieldHeight,
+    startAdornment: {
+      minHeight: (props: PrefixAdornmentStylesProps) => props.textFieldHeight,
       backgroundColor: '#f0f0f0',
       borderRight: 'solid 1px #d8d8d8',
       marginRight: 0,
     },
-    startAdormentText: {
+    startAdornmentText: {
       paddingLeft: 15,
       paddingRight: 26,
     },
@@ -38,8 +38,8 @@ const PrefixAdornment = ({ children }: PrefixAdornmentProps) => {
     textFieldHeight: TEXT_FIELD_HEIGHT,
   })
   return (
-    <InputAdornment className={classes.startAdorment} position="start">
-      <Typography className={classes.startAdormentText} color="textSecondary">
+    <InputAdornment className={classes.startAdornment} position="start">
+      <Typography className={classes.startAdornmentText} color="textSecondary">
         {children}
       </Typography>
     </InputAdornment>
@@ -99,7 +99,7 @@ type TextFieldProps = {
   FormHelperTextProps?: object
 }
 
-export default function DrawerTextField(props: TextFieldProps) {
+export default function PrefixableTextField(props: TextFieldProps) {
   const classes = useTextFieldStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
     multiline: props.multiline,

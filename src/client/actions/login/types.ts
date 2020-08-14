@@ -49,7 +49,7 @@ export type SetEmailAction = {
   payload: string
 }
 
-export type EmailValidatorType = (email: string) => Boolean
+export type EmailValidatorType = (email: string) => boolean
 
 export type SetEmailValidatorAction = {
   type: typeof SET_EMAIL_VALIDATOR
