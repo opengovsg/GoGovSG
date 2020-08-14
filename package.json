@@ -57,7 +57,7 @@
     "i18next": "^19.6.3",
     "inversify": "^5.0.1",
     "jsdom": "^16.4.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "minimatch": "^3.0.4",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
