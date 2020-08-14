@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
   Dialog,
   IconButton,
@@ -12,6 +13,7 @@ import CloseIcon from '../../widgets/CloseIcon'
 import CreateLinkForm from './CreateLinkForm'
 import useFullScreenDialog from './helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
+import userActions from '~/actions/user'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -45,6 +47,14 @@ const useStyles = makeStyles((theme) =>
     },
   }),
 )
+
+const mapStateToProps = (state) => ({
+  createUrlModal: state.user.createUrlModal,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
+})
 
 const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
   const isFullScreenDialog = useFullScreenDialog()
@@ -86,6 +96,8 @@ const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
 
 CreateUrlModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
+  createUrlModal: PropTypes.bool.isRequired,
+  closeCreateUrlModal: PropTypes.func.isRequired,
 }
 
-export default CreateUrlModal
+export default connect(mapStateToProps, mapDispatchToProps)(CreateUrlModal)
