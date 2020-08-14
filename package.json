@@ -115,7 +115,7 @@
     "@types/jest": "^26.0.9",
     "@types/jsdom": "^16.2.3",
     "@types/lodash": "^4.14.159",
-    "@types/moment-timezone": "^0.5.13",
+    "@types/moment-timezone": "^0.5.30",
     "@types/morgan": "^1.9.1",
     "@types/nanoid": "^2.1.0",
     "@types/node": "^14.0.27",
