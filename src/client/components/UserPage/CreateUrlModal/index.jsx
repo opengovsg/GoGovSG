@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
 import {
   Dialog,
   IconButton,
@@ -10,29 +9,9 @@ import {
 } from '@material-ui/core'
 import CloseIcon from '../../widgets/CloseIcon'
 
-import userActions from '../../../actions/user'
 import CreateLinkForm from './CreateLinkForm'
 import useFullScreenDialog from './helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
-
-const mapStateToProps = (state) => ({
-  shortUrl: state.user.shortUrl,
-  longUrl: state.user.longUrl,
-  isUploading: state.user.isUploading,
-  createShortLinkError: state.user.createShortLinkError,
-  uploadFileError: state.user.uploadFileError,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  setShortUrl: (shortUrl) => dispatch(userActions.setShortUrl(shortUrl)),
-  setLongUrl: (longUrl) => dispatch(userActions.setLongUrl(longUrl)),
-  setRandomShortUrl: () => dispatch(userActions.setRandomShortUrl()),
-  uploadFile: (file) => dispatch(userActions.uploadFile(file)),
-  setUploadFileError: (error) =>
-    dispatch(userActions.setUploadFileError(error)),
-  setCreateShortLinkError: (error) =>
-    dispatch(userActions.setCreateShortLinkError(error)),
-})
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -67,22 +46,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const CreateUrlModal = ({
-  createUrlModal,
-  closeCreateUrlModal,
-  onSubmit,
-  shortUrl,
-  setShortUrl,
-  longUrl,
-  setLongUrl,
-  setRandomShortUrl,
-  isUploading,
-  uploadFile,
-  uploadFileError,
-  setUploadFileError,
-  createShortLinkError,
-  setCreateShortLinkError,
-}) => {
+const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
   return (
@@ -115,32 +79,13 @@ const CreateUrlModal = ({
           </div>
         </ModalMargins>
       </div>
-      {/* // TODO: Convert props drilling to redux. */}
-      <CreateLinkForm
-        onSubmitLink={onSubmit}
-        shortUrl={shortUrl}
-        setShortUrl={setShortUrl}
-        longUrl={longUrl}
-        setLongUrl={setLongUrl}
-        setRandomShortUrl={setRandomShortUrl}
-        isUploading={isUploading}
-        onSubmitFile={uploadFile}
-        uploadFileError={uploadFileError}
-        setUploadFileError={setUploadFileError}
-        createShortLinkError={createShortLinkError}
-        setCreateShortLinkError={setCreateShortLinkError}
-      />
+      <CreateLinkForm onSubmitLink={onSubmit} />
     </Dialog>
   )
 }
 
 CreateUrlModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
-  shortUrl: PropTypes.string.isRequired,
-  setShortUrl: PropTypes.func.isRequired,
-  longUrl: PropTypes.string.isRequired,
-  setLongUrl: PropTypes.func.isRequired,
-  setRandomShortUrl: PropTypes.func.isRequired,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateUrlModal)
+export default CreateUrlModal

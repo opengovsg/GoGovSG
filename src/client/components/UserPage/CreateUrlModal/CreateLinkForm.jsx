@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import i18next from 'i18next'
 import {
   Button,
@@ -25,6 +26,7 @@ import { formatBytes } from '../../../util/format'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
 import FileInputField from '../widgets/FileInputField'
+import userActions from '~/actions/user'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
@@ -42,7 +44,26 @@ const FormStartAdorment = ({ children }) => {
   )
 }
 
-export default function CreateLinkForm({
+const mapStateToProps = (state) => ({
+  shortUrl: state.user.shortUrl,
+  longUrl: state.user.longUrl,
+  isUploading: state.user.isUploading,
+  createShortLinkError: state.user.createShortLinkError,
+  uploadFileError: state.user.uploadFileError,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  setShortUrl: (shortUrl) => dispatch(userActions.setShortUrl(shortUrl)),
+  setLongUrl: (longUrl) => dispatch(userActions.setLongUrl(longUrl)),
+  setRandomShortUrl: () => dispatch(userActions.setRandomShortUrl()),
+  onSubmitFile: (file) => dispatch(userActions.uploadFile(file)),
+  setUploadFileError: (error) =>
+    dispatch(userActions.setUploadFileError(error)),
+  setCreateShortLinkError: (error) =>
+    dispatch(userActions.setCreateShortLinkError(error)),
+})
+
+function CreateLinkForm({
   onSubmitLink,
   shortUrl,
   setShortUrl,
@@ -288,4 +309,11 @@ CreateLinkForm.propTypes = {
   longUrl: PropTypes.string.isRequired,
   setLongUrl: PropTypes.func.isRequired,
   setRandomShortUrl: PropTypes.func.isRequired,
+  isUploading: PropTypes.bool.isRequired,
+  uploadFileError: PropTypes.string.isRequired,
+  setUploadFileError: PropTypes.func.isRequired,
+  createShortLinkError: PropTypes.string.isRequired,
+  setCreateShortLinkError: PropTypes.func.isRequired,
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateLinkForm)
