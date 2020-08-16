@@ -4,7 +4,6 @@ import userActions from '../../../../../actions/user'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
 import { UrlType } from '../../../../../reducers/user/types'
 import { GoGovReduxState } from '../../../../../reducers/types'
-import { EmailValidatorType } from '../../../../../actions/login/types'
 
 export type ShortLinkState = [
   UrlType | undefined,
@@ -26,9 +25,6 @@ export default function useShortLink(shortLink: string) {
   const urlState = urls.filter((url: UrlType) => url.shortUrl === shortLink)[0]
   const isUploading = useSelector<GoGovReduxState, boolean>(
     (state) => state.user.isUploading,
-  )
-  const emailValidator = useSelector<GoGovReduxState, EmailValidatorType>(
-    (state) => state.login.emailValidator,
   )
   const dispatch = useDispatch()
   const dispatchOptions = {
@@ -67,6 +63,5 @@ export default function useShortLink(shortLink: string) {
     shortLinkState: shortLink ? urlState : undefined,
     shortLinkDispatch: shortLink ? dispatchOptions : undefined,
     isUploading,
-    emailValidator,
   }
 }
