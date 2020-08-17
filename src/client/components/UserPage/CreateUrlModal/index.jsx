@@ -56,12 +56,14 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
   onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
+  onUploadFile: (file) => dispatch(userActions.uploadFile(file)),
 })
 
 const CreateUrlModal = ({
   createUrlModal,
   closeCreateUrlModal,
   onCreateUrl,
+  onUploadFile,
 }) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
@@ -97,13 +99,14 @@ const CreateUrlModal = ({
           </div>
         </ModalMargins>
       </div>
-      <CreateLinkForm onSubmitLink={onSubmit} />
+      <CreateLinkForm onSubmitLink={onSubmit} onSubmitFile={onUploadFile} />
     </Dialog>
   )
 }
 
 CreateUrlModal.propTypes = {
   onCreateUrl: PropTypes.func.isRequired,
+  onUploadFile: PropTypes.func.isRequired,
   createUrlModal: PropTypes.bool.isRequired,
   closeCreateUrlModal: PropTypes.func.isRequired,
 }
