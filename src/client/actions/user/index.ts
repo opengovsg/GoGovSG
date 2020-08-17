@@ -516,7 +516,6 @@ const urlCreated = (
   )
 }
 
-//
 /**
  * API call to create URL
  * If user is not logged in, the createUrl call returns unauthorized,
