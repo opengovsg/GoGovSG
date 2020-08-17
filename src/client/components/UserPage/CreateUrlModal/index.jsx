@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -67,8 +67,16 @@ const CreateUrlModal = ({
 }) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
+  const [step, setStep] = useState(0)
+  const incrementDecorator = (func) => async (...args) => {
+    const proceed = await func(...args)
+    if (proceed) {
+      setStep(step + 1)
+    }
+  }
   const history = useHistory()
-  const onSubmit = () => onCreateUrl(history)
+  const onSubmitLink = incrementDecorator(() => onCreateUrl(history))
+  const onSubmitFile = incrementDecorator(onUploadFile)
   return (
     <Dialog
       aria-labelledby="createUrlModal"
@@ -99,7 +107,7 @@ const CreateUrlModal = ({
           </div>
         </ModalMargins>
       </div>
-      <CreateLinkForm onSubmitLink={onSubmit} onSubmitFile={onUploadFile} />
+      <CreateLinkForm onSubmitLink={onSubmitLink} onSubmitFile={onSubmitFile} />
     </Dialog>
   )
 }
