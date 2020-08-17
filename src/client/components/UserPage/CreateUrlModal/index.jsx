@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -77,6 +77,9 @@ const CreateUrlModal = ({
   const history = useHistory()
   const onSubmitLink = incrementDecorator(() => onCreateUrl(history))
   const onSubmitFile = incrementDecorator(onUploadFile)
+
+  // Reset step when modal closes and reopens
+  useEffect(() => setStep(0), [createUrlModal])
   return (
     <Dialog
       aria-labelledby="createUrlModal"
