@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import {
   Dialog,
   IconButton,
@@ -54,11 +55,18 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
+  onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
 })
 
-const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
+const CreateUrlModal = ({
+  createUrlModal,
+  closeCreateUrlModal,
+  onCreateUrl,
+}) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
+  const history = useHistory()
+  const onSubmit = () => onCreateUrl(history)
   return (
     <Dialog
       aria-labelledby="createUrlModal"
@@ -95,7 +103,7 @@ const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
 }
 
 CreateUrlModal.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onCreateUrl: PropTypes.func.isRequired,
   createUrlModal: PropTypes.bool.isRequired,
   closeCreateUrlModal: PropTypes.func.isRequired,
 }
