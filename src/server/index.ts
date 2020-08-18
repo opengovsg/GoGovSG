@@ -150,12 +150,25 @@ initDb()
       bodyParser.json(),
     ]
 
+    const removeTrailingSlashes = (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      if (req.originalUrl.substr(-1) === '/') {
+        res.redirect(req.baseUrl)
+        return
+      }
+      next()
+    }
+
     const redirectSpecificMiddleware = [
       cookieSession({
         name: 'visits',
         maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
         secret: sessionSettings.secret,
       }),
+      removeTrailingSlashes,
     ]
 
     // Log http requests
