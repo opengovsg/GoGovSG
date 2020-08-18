@@ -15,7 +15,7 @@ export interface Mailer {
   /**
    * Sends email to SES / Direct transport to send out.
    */
-  mailOTP(email: string, otp: string): Promise<void>
+  mailOTP(email: string, otp: string, ip: string): Promise<void>
 }
 
 @injectable()
@@ -33,7 +33,7 @@ export class MailerNode implements Mailer {
     }
   }
 
-  mailOTP(email: string, otp: string): Promise<void> {
+  mailOTP(email: string, otp: string, ip: string): Promise<void> {
     if (!email || !otp) {
       logger.error('Email or OTP not specified to nodemailer')
       return Promise.resolve()
@@ -42,7 +42,11 @@ export class MailerNode implements Mailer {
     const emailHTML = `Your OTP is <b>${otp}</b>. It will expire in ${Math.floor(
       otpExpiry / 60,
     )} minutes.
-    Please use this to login to your go.gov.sg account. <p>If your OTP does not work, please request for a new OTP.</p>`
+    Please use this to login to your GoGovSG account.
+    <p>If your OTP does not work, please request for a new OTP at https://go.gov.sg on the internet.</p>
+    <p>If you did not make this request, you may ignore this email.</p>
+    <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in to GoGovSG, you may choose to investigate this IP address further.</p>
+    <p>The GoGovSG Support Team</p>`
     const mail: nodemailer.MailOptions = {
       to: email,
       from: 'go.gov.sg <donotreply@mail.go.gov.sg>',
