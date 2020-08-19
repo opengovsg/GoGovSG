@@ -10,7 +10,7 @@ import {
   EmailProperty,
   VerifyOtpRequest,
 } from '../../types/server/controllers/LoginController'
-import { getIp } from '../util/ip'
+import getIp from '../util/request'
 
 @injectable()
 export class LoginController implements LoginControllerInterface {
