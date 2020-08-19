@@ -45,8 +45,7 @@ export class MailerNode implements Mailer {
     Please use this to login to your GoGovSG account.
     <p>If your OTP does not work, please request for a new OTP at https://go.gov.sg on the internet.</p>
     <p>If you did not make this request, you may ignore this email.</p>
-    <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in to GoGovSG, you may choose to investigate this IP address further.</p>
-    <p>The GoGovSG Support Team</p>`
+    <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in to GoGovSG, you may choose to investigate this IP address further.</p>`
     const mail: nodemailer.MailOptions = {
       to: email,
       from: 'go.gov.sg <donotreply@mail.go.gov.sg>',
