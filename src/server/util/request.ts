@@ -1,6 +1,6 @@
 import express from 'express'
 
-export default (req: express.Request) => {
+function getIp(req: express.Request) {
   // Note: headers are case insensitive: https://stackoverflow.com/questions/5258977/are-http-headers-case-sensitive
 
   /**
@@ -8,8 +8,10 @@ export default (req: express.Request) => {
    * header with every request which contains only the origin IP
    * https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-CloudFlare-handle-HTTP-Request-headers-.
    */
-  if (req.header('CF-Connecting-IP')) {
-    return req.header('CF-Connecting-IP')
+  const connectingIp = req.header('CF-Connecting-IP')
+  // string? to string type-guard
+  if (connectingIp) {
+    return connectingIp
   }
 
   /**
@@ -19,3 +21,5 @@ export default (req: express.Request) => {
    */
   return req.ip
 }
+
+export default getIp

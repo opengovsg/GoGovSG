@@ -10,7 +10,6 @@ import {
   useTheme,
   useMediaQuery,
   CircularProgress,
-  Typography,
   Link,
 } from '@material-ui/core'
 
@@ -20,28 +19,23 @@ import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
-import ConfigOption, { TrailingPosition } from './widgets/ConfigOption'
-import DrawerTextField from './widgets/DrawerTextField'
+import ConfigOption, { TrailingPosition } from '../../widgets/ConfigOption'
+import PrefixableTextField from '../../widgets/PrefixableTextField'
 import TrailingButton from './widgets/TrailingButton'
 import GoSwitch from './widgets/GoSwitch'
 import useShortLink from './util/shortlink'
 import { removeHttpsProtocol } from '../../../../util/url'
-import {
-  isValidLongUrl,
-  isPrintableAscii,
-} from '../../../../../shared/util/validation'
+import { isValidLongUrl } from '../../../../../shared/util/validation'
 import DownloadButton from './widgets/DownloadButton'
 import helpIcon from '../../../../assets/help-icon.svg'
-import FileInputField from '../../Widgets/FileInputField'
+import FileInputField from '../../widgets/FileInputField'
 import CollapsibleMessage from '../../../CollapsibleMessage'
 import {
   CollapsibleMessageType,
   CollapsibleMessagePosition,
 } from '../../../CollapsibleMessage/types'
-import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../../../shared/constants'
-import i18next from 'i18next'
 import { SEARCH_PAGE } from '../../../../util/types'
-import BetaTag from '../../../widgets/BetaTag'
+import LinkInfoEditor from '../../widgets/LinkInfoEditor'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -137,33 +131,6 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 0,
       },
     },
-    characterCount: {
-      marginLeft: 2,
-      marginTop: 9,
-    },
-    linkInformationHeaderWrapper: {
-      display: 'flex',
-      alignItems: 'center',
-      marginBottom: theme.spacing(1.25),
-      marginRight: theme.spacing(2),
-      [theme.breakpoints.up('md')]: {
-        marginRight: theme.spacing(1),
-      },
-    },
-    linkInformationHeader: {
-      marginRight: theme.spacing(2),
-      [theme.breakpoints.up('md')]: {
-        marginRight: theme.spacing(1),
-      },
-    },
-    linkInformationDesc: {
-      marginBottom: theme.spacing(3),
-      fontWeight: 400,
-    },
-    linkInformationDescHeader: {
-      fontWeight: 500,
-      marginBottom: theme.spacing(0.5),
-    },
     saveLinkInformationButtonWrapper: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -172,9 +139,6 @@ const useStyles = makeStyles((theme) =>
         flexDirection: 'row',
         paddingTop: 9,
       },
-    },
-    hotlink: {
-      color: '#384a51',
     },
     previewButton: {
       '&:hover': {
@@ -210,7 +174,6 @@ export default function ControlPanel() {
     shortLinkState,
     shortLinkDispatch,
     isUploading,
-    emailValidator,
   } = useShortLink(drawerStates.relevantShortLink!)
 
   // Manage values in our text fields.
@@ -221,11 +184,9 @@ export default function ControlPanel() {
   const [pendingOwner, setPendingOwner] = useState<string>('')
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
-  const isContactEmailValid =
-    !editedContactEmail || emailValidator(editedContactEmail)
-  const isDescriptionValid =
-    editedDescription.length <= LINK_DESCRIPTION_MAX_LENGTH &&
-    isPrintableAscii(editedDescription)
+
+  const [isContactEmailValid, setContactEmailValid] = React.useState(Boolean(originalContactEmail))
+  const [isDescriptionValid, setDescriptionValid] = React.useState(Boolean(originalDescription))
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
@@ -266,26 +227,6 @@ export default function ControlPanel() {
           draggable={false}
         />
       </Tooltip>
-    </>
-  )
-
-  const contactEmailHelp = (
-    <>
-      <span className={classes.linkInformationDescHeader}>Contact email</span>
-      <br />
-      Enter an email which the public can contact if they have queries about
-      your short link.
-    </>
-  )
-
-  const linkDescriptionHelp = (
-    <>
-      <span className={classes.linkInformationDescHeader}>
-        Link description
-      </span>
-      <br />
-      Write a description that will help the public understand what your short
-      link is for.
     </>
   )
 
@@ -364,7 +305,7 @@ export default function ControlPanel() {
                 titleVariant="body2"
                 titleClassName={classes.regularText}
                 leading={
-                  <DrawerTextField
+                  <PrefixableTextField
                     value={editedLongUrl}
                     onChange={(event) =>
                       shortLinkDispatch?.setEditLongUrl(event.target.value)
@@ -458,7 +399,7 @@ export default function ControlPanel() {
             titleVariant="body2"
             titleClassName={classes.regularText}
             leading={
-              <DrawerTextField
+              <PrefixableTextField
                 value={pendingOwner}
                 onChange={(event) => setPendingOwner(event.target.value)}
                 placeholder="Email of link recipient"
@@ -481,88 +422,17 @@ export default function ControlPanel() {
             trailingPosition={TrailingPosition.end}
           />
           <Divider className={classes.dividerInformation} />
-          <div className={classes.linkInformationHeaderWrapper}>
-            <Typography
-              variant="h3"
-              className={classes.linkInformationHeader}
-              color="primary"
-            >
-              Link information
-            </Typography>
-            <BetaTag />
-          </div>
-          <Typography variant="body2" className={classes.linkInformationDesc}>
-            The information you enter below will be displayed on our{' '}
-            <a href="https://go.gov.sg/go-search" className={classes.hotlink}>
-              <u>GoSearch page (coming soon)</u>
-            </a>
-            , and the error page if users are unable to access your short link.
-          </Typography>
-          <ConfigOption
-            title={contactEmailHelp}
-            titleVariant="body2"
-            titleClassName={classes.regularText}
-            leading={
-              <DrawerTextField
-                value={editedContactEmail}
-                onChange={(event) =>
-                  shortLinkDispatch?.setEditContactEmail(event.target.value)
-                }
-                placeholder=""
-                helperText={
-                  isContactEmailValid
-                    ? ''
-                    : `This doesn't look like a valid ${i18next.t(
-                        'general.emailDomain',
-                      )} email.`
-                }
-                error={!isContactEmailValid}
-              />
+          <LinkInfoEditor
+            contactEmail={editedContactEmail} 
+            description={editedDescription}
+            onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)} 
+            onDescriptionChange={(event) =>
+              shortLinkDispatch?.setEditDescription(
+                event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+              )
             }
-            trailing={<></>}
-            wrapTrailing={isMobileView}
-            trailingPosition={TrailingPosition.none}
-          />
-          <ConfigOption
-            title={linkDescriptionHelp}
-            titleVariant="body2"
-            titleClassName={classes.regularText}
-            leading={
-              <>
-                <DrawerTextField
-                  value={editedDescription}
-                  onChange={(event) =>
-                    shortLinkDispatch?.setEditDescription(
-                      event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
-                    )
-                  }
-                  error={!isDescriptionValid}
-                  placeholder="Tip: Include your agency name to inform the public who this link belongs to."
-                  helperText={
-                    isDescriptionValid
-                      ? `${editedDescription.length}/${LINK_DESCRIPTION_MAX_LENGTH}`
-                      : undefined
-                  }
-                  multiline
-                  rows={2}
-                  rowsMax={isMobileView ? 5 : undefined}
-                  FormHelperTextProps={{ className: classes.characterCount }}
-                />
-                <CollapsibleMessage
-                  type={CollapsibleMessageType.Error}
-                  visible={!isDescriptionValid}
-                  position={CollapsibleMessagePosition.Static}
-                  timeout={0}
-                >
-                  {isPrintableAscii(editedDescription)
-                    ? `${editedDescription.length}/200`
-                    : 'Description should only contain alphanumeric characters and symbols.'}
-                </CollapsibleMessage>
-              </>
-            }
-            trailing={<></>}
-            wrapTrailing={isMobileView}
-            trailingPosition={TrailingPosition.none}
+            onContactEmailValidation={setContactEmailValid}
+            onDescriptionValidation={setDescriptionValid}
           />
           <div className={classes.saveLinkInformationButtonWrapper}>
             <Link

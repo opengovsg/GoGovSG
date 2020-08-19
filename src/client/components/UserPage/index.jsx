@@ -17,13 +17,11 @@ import loginActions from '~/actions/login'
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.login.isLoggedIn,
-  createUrlModal: state.user.createUrlModal,
   emailValidator: state.login.emailValidator,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
-  closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
   getUrlsForUser: () => dispatch(userActions.getUrlsForUser()),
   getEmailValidator: () =>
     dispatch(loginActions.getEmailValidationGlobExpression()),
@@ -36,8 +34,6 @@ const mapDispatchToProps = (dispatch) => ({
 const UserPage = ({
   isLoggedIn,
   onCreateUrl,
-  createUrlModal,
-  closeCreateUrlModal,
   history,
   getUrlsForUser,
   getEmailValidator,
@@ -77,11 +73,7 @@ const UserPage = ({
           ) : (
             <UserLinkTable />
           )}
-          <CreateUrlModal
-            createUrlModal={createUrlModal}
-            closeCreateUrlModal={closeCreateUrlModal}
-            onSubmit={() => onCreateUrl(history)}
-          />
+          <CreateUrlModal onSubmit={() => onCreateUrl(history)} />
         </Drawer>
       </BaseLayout>
     )
