@@ -112,7 +112,7 @@
     "@types/file-saver": "^2.0.1",
     "@types/hapi__joi": "^17.1.4",
     "@types/helmet": "0.0.47",
-    "@types/jest": "^26.0.9",
+    "@types/jest": "^26.0.10",
     "@types/jsdom": "^16.2.3",
     "@types/lodash": "^4.14.159",
     "@types/moment-timezone": "^0.5.30",
