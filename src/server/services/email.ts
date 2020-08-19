@@ -3,7 +3,7 @@
 
 import { injectable } from 'inversify'
 import nodemailer from 'nodemailer'
-import { logger, otpExpiry, transporterOptions } from '../config'
+import { logger, ogUrl, otpExpiry, transporterOptions } from '../config'
 
 const directTransport = require('nodemailer-direct-transport')
 
@@ -42,10 +42,9 @@ export class MailerNode implements Mailer {
     const emailHTML = `Your OTP is <b>${otp}</b>. It will expire in ${Math.floor(
       otpExpiry / 60,
     )} minutes.
-    Please use this to login to your GoGovSG account.
-    <p>If your OTP does not work, please request for a new OTP at https://go.gov.sg on the internet.</p>
-    <p>If you did not make this request, you may ignore this email.</p>
-    <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in to GoGovSG, you may choose to investigate this IP address further.</p>`
+    Please use this to login to your account.
+    <p>If your OTP does not work, please request for a new one at ${ogUrl} on the internet.</p>
+    <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in, you may choose to ignore this email or investigate this IP address further.</p>`
     const mail: nodemailer.MailOptions = {
       to: email,
       from: 'go.gov.sg <donotreply@mail.go.gov.sg>',
