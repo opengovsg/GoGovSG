@@ -175,7 +175,7 @@ initDb()
       '/assets/transition-page/js/redirect.js',
       redirectController.gtagForTransitionPage,
     )
-    app.use(
+    app.get(
       '/:shortUrl([a-zA-Z0-9-]+)',
       ...redirectSpecificMiddleware,
       redirectController.redirect,
