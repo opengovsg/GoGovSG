@@ -10,6 +10,7 @@ import {
   EmailProperty,
   VerifyOtpRequest,
 } from '../../types/server/controllers/LoginController'
+import getIp from '../util/request'
 
 @injectable()
 export class LoginController implements LoginControllerInterface {
@@ -44,7 +45,7 @@ export class LoginController implements LoginControllerInterface {
     const { email }: EmailProperty = req.body
 
     try {
-      await this.authService.generateOtp(email)
+      await this.authService.generateOtp(email, getIp(req))
     } catch (error) {
       res.serverError(jsonMessage(error.message))
       return

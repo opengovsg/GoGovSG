@@ -32,7 +32,10 @@ export class AuthService implements AuthServiceInterface {
     this.userRepository = userRepository
   }
 
-  public generateOtp: (email: string) => Promise<void> = async (email) => {
+  public generateOtp: (email: string, ip: string) => Promise<void> = async (
+    email,
+    ip,
+  ) => {
     // Generate otp
     const otp = getOTP()
     try {
@@ -53,7 +56,7 @@ export class AuthService implements AuthServiceInterface {
       }
       // Email out the otp (nodemailer)
       try {
-        await this.mailer.mailOTP(email, otp)
+        await this.mailer.mailOTP(email, otp, ip)
       } catch (error) {
         logger.error(`Error mailing OTP to ${email}: ${error}`)
         throw new Error('Error mailing OTP, please try again later.')

@@ -167,7 +167,7 @@ describe('login middleware tests', () => {
       await container
         .get<LoginController>(DependencyIds.loginController)
         .generateOtp(req, res)
-      expect(spy).toBeCalledWith('aa@open.test.sg', '1')
+      expect(spy).toBeCalledWith('aa@open.test.sg', '1', '1.1.1.1')
       expect(res.ok.called).toBeTruthy()
 
       const cache = getOtpCache() as OtpRepositoryMock

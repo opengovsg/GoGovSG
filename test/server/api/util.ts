@@ -85,6 +85,7 @@ export function createRequestWithEmail(email: any): Request {
     body: {
       email,
     },
+    ip: '1.1.1.1',
   })
 }
 
