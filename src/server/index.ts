@@ -83,8 +83,13 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'fonts.googleapis.com'],
-        fontSrc: ["'self'", 'fonts.gstatic.com'],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'fonts.googleapis.com',
+          'cdn.jsdelivr.net',
+        ],
+        fontSrc: ["'self'", 'fonts.gstatic.com', 'cdn.jsdelivr.net'],
         imgSrc: [
           "'self'",
           'data:',
@@ -170,7 +175,7 @@ initDb()
       '/assets/transition-page/js/redirect.js',
       redirectController.gtagForTransitionPage,
     )
-    app.use(
+    app.get(
       '/:shortUrl([a-zA-Z0-9-]+)',
       ...redirectSpecificMiddleware,
       redirectController.redirect,
