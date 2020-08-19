@@ -6,7 +6,7 @@ export interface AuthServiceInterface {
    * @param  {string} email The email of the user to generate an otp for.
    * @returns Promise that resolves to void.
    */
-  generateOtp(email: string): Promise<void>
+  generateOtp(email: string, ip: string): Promise<void>
 
   /**
    * Verifies that the input otp matches the stored otp for the input email.

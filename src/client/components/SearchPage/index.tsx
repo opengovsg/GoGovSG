@@ -112,6 +112,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
       {
         ...params,
         query: newQuery,
+        currentPage: newQuery === params.query ? params.currentPage : defaultParams.currentPage,
       },
       history,
     )
@@ -122,6 +123,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
       {
         ...params,
         sortOrder: newSortOrder,
+        currentPage: newSortOrder === params.sortOrder ? params.currentPage : defaultParams.currentPage,
       },
       history,
     )

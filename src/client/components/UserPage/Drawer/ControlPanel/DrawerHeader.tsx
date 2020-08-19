@@ -3,12 +3,12 @@ import {
   Typography,
   createStyles,
   makeStyles,
-  useTheme,
   useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 
 import { useDrawerState } from '..'
-import CopyButton from '../../Widgets/CopyButton'
+import CopyButton from '../../widgets/CopyButton'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -48,10 +48,7 @@ export default function DrawerHeader() {
         Edit link
       </Typography>
       <div className={classes.copyButtonWrapper}>
-        <CopyButton
-          shortUrl={shortUrl}
-          iconSize={20}
-        />
+        <CopyButton shortUrl={shortUrl} iconSize={20} />
       </div>
     </div>
   )
