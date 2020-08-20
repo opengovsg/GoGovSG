@@ -176,7 +176,7 @@ initDb()
       redirectController.gtagForTransitionPage,
     )
     app.get(
-      '/:shortUrl([a-zA-Z0-9-]+)',
+      '/:shortUrl([a-zA-Z0-9-]+).?',
       ...redirectSpecificMiddleware,
       redirectController.redirect,
     ) // The Redirect Endpoint
