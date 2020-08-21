@@ -160,8 +160,8 @@ export class UserController implements UserControllerInterface {
   ) => Promise<void> = async (req, res) => {
     const { userId } = req.body
     let { limit = 1000, searchText = '' } = req.query
-    limit = Math.min(1000, limit)
-    searchText = searchText.toLowerCase()
+    limit = Math.min(1000, Number(limit))
+    searchText = searchText.toString().toLowerCase()
     const {
       offset = 0,
       orderBy = 'updatedAt',
@@ -171,13 +171,13 @@ export class UserController implements UserControllerInterface {
     } = req.query
     const queryConditions = {
       limit,
-      offset,
-      orderBy,
-      sortDirection,
+      offset: Number(offset),
+      orderBy: orderBy.toString(),
+      sortDirection: sortDirection.toString(),
       searchText,
       userId,
-      state,
-      isFile,
+      state: state?.toString(),
+      isFile: Boolean(isFile),
     }
     // Find user and paginated urls
     try {
