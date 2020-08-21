@@ -60,7 +60,7 @@ export class RedirectController implements RedirectControllerInterface {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { shortUrl }: { shortUrl: string } = req.params
+    const { shortUrl } = req.params
 
     // Short link must not be null
     if (!shortUrl) {
