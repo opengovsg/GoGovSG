@@ -1,7 +1,8 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import { Hidden, Typography, makeStyles, createStyles } from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../../shared/constants'
+import { useDropzone } from 'react-dropzone'
 
 type FileInputFieldStyleProps = {
   uploadFileError: string | null
@@ -35,9 +36,6 @@ const useStyles = makeStyles((theme) =>
       paddingLeft: '16px',
       display: 'flex',
       alignItems: 'center',
-    },
-    fileInputInvis: {
-      display: 'none',
     },
     leftFileIcon: {
       width: '44px',
@@ -76,8 +74,31 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   className,
 }) => {
   const classes = useStyles({ textFieldHeight, uploadFileError })
+  const onDrop = useCallback((acceptedFiles) => {
+    if (!acceptedFiles) {
+      return
+    }
+
+    const chosenFile = acceptedFiles[0];
+    if (!chosenFile) {
+      return
+    }
+
+    if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
+      setFile(null)
+      setUploadFileError(
+        'File too large, please upload a file smaller than 10mb',
+      )
+      return
+    }
+
+    setUploadFileError(null)
+    setFile(chosenFile)
+  }, [])
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
   return (
-    <div className={`${classes.fileInputWrapper} ${className}`}>
+    <div {...getRootProps({ className: `${classes.fileInputWrapper} ${className || ''}` })}>
       <Hidden smDown>
         <div className={classes.leftFileIcon}>
           <FileIconLarge color="#f9f9f9" />
@@ -87,28 +108,10 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
         <Typography variant="body2" className={classes.fileNameText}>
           {text}
         </Typography>
+
         <input
-          type="file"
+          {...getInputProps()}
           id={inputId}
-          className={classes.fileInputInvis}
-          onChange={(event) => {
-            if (!event.target.files) {
-              return
-            }
-            const chosenFile = event.target.files[0]
-            if (!chosenFile) {
-              return
-            }
-            if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
-              setFile(null)
-              setUploadFileError(
-                'File too large, please upload a file smaller than 10mb',
-              )
-              return
-            }
-            setUploadFileError(null)
-            setFile(chosenFile)
-          }}
         />
         {endAdornment}
       </div>

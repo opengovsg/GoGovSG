@@ -184,7 +184,11 @@ function CreateLinkForm({
               </div>
               <FileInputField
                 textFieldHeight={TEXT_FIELD_HEIGHT}
-                text={file ? file.name : 'No file selected'}
+                text={
+                  file
+                    ? file.name
+                    : 'Drag and drop some files here, or click to select files'
+                }
                 uploadFileError={uploadFileError}
                 inputId="file"
                 setFile={setFile}
