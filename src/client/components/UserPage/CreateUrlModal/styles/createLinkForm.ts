@@ -154,7 +154,6 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       fontWeight: 400,
       display: 'flex',
       alignItems: 'center',
-      paddingRight: theme.spacing(1.5),
     },
     uploadFileInputEndWrapper: {
       display: 'flex',

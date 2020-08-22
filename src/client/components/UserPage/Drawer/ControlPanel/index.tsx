@@ -351,7 +351,7 @@ export default function ControlPanel() {
                   <FileInputField
                     className={classes.fileInputField}
                     uploadFileError={uploadFileError}
-                    textFieldHeight="44px"
+                    fileDropZoneHeight="160px"
                     inputId="replace-file-input"
                     text={originalLongUrl}
                     setFile={(newFile) => {

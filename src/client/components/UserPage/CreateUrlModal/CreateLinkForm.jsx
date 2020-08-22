@@ -30,6 +30,8 @@ import userActions from '~/actions/user'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
+// Height of the droppable area for file upload.
+const FILE_DROP_ZONE_HEIGHT = 160
 
 const FormStartAdorment = ({ children }) => {
   const classes = useCreateLinkFormStyles({
@@ -183,7 +185,7 @@ function CreateLinkForm({
                 </div>
               </div>
               <FileInputField
-                textFieldHeight={TEXT_FIELD_HEIGHT}
+                fileDropZoneHeight={FILE_DROP_ZONE_HEIGHT}
                 text={
                   file
                     ? file.name
@@ -199,19 +201,8 @@ function CreateLinkForm({
                       variant="body2"
                       className={classes.fileSizeText}
                     >
-                      {file ? formatBytes(file.size) : ''}
+                      {file ? `(${formatBytes(file.size)})` : ''}
                     </Typography>
-                    <label htmlFor="file">
-                      <Button
-                        variant="contained"
-                        className={classes.uploadFileButton}
-                        component="span"
-                        color="primary"
-                        disabled={isUploading}
-                      >
-                        Browse
-                      </Button>
-                    </label>
                   </div>
                 }
               />
