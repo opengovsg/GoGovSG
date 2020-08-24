@@ -98,7 +98,9 @@ const CreateUrlModal = ({
               variant={isFullScreenDialog ? 'h6' : 'h3'}
               color="primary"
             >
-              {step === 0 ? 'Create new link' : 'Add description'}
+              {step === 0
+                ? 'Create new link'
+                : "Done! You can now customise your link's visibility"}
             </Typography>
             <IconButton
               className={classes.closeIconButton}
