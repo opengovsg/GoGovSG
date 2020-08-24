@@ -80,7 +80,9 @@ const CreateUrlModal = ({
   const onSubmitFile = incrementDecorator(onUploadFile)
 
   // Reset step when modal closes and reopens
-  useEffect(() => setStep(0), [createUrlModal])
+  useEffect(() => {
+    if (createUrlModal) setStep(0)
+  }, [createUrlModal])
   return (
     <Dialog
       aria-labelledby="createUrlModal"
