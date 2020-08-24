@@ -57,6 +57,7 @@ export const urlEditSchema = Joi.object({
     file: Joi.object().keys().required(),
   }),
   state: Joi.string().allow(ACTIVE, INACTIVE).only(),
+  isSearchable: Joi.boolean(),
   description: Joi.string()
     .allow('')
     .max(LINK_DESCRIPTION_MAX_LENGTH)

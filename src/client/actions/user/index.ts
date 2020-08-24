@@ -275,6 +275,7 @@ const getUrlsForUser = (): ThunkAction<
       /* eslint-disable no-param-reassign */
       url.createdAt = moment(url.createdAt).tz('Singapore').format('D MMM YYYY')
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
+      url.editedIsSearchable = url.isSearchable
       url.editedContactEmail = url.contactEmail
       url.editedDescription = url.description
       /* eslint-enable no-param-reassign */

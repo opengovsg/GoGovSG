@@ -89,6 +89,7 @@ describe('UrlRepository tests', () => {
             state: 'ACTIVE',
             clicks: 0,
             isFile: false,
+            isSearchable: true,
             createdAt: 'fakedate',
             updatedAt: 'fakedate',
             description: 'desc',
@@ -104,7 +105,7 @@ describe('UrlRepository tests', () => {
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
-) AND urls.state = 'ACTIVE' AND urls.description != ''
+) AND urls.state = 'ACTIVE' AND urls."isSearchable"=true
     `,
         { bind: { query: 'query' }, raw: true, type: QueryTypes.SELECT },
       )
@@ -116,7 +117,7 @@ describe('UrlRepository tests', () => {
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
-) AND urls.state = 'ACTIVE' AND urls.description != ''
+) AND urls.state = 'ACTIVE' AND urls."isSearchable"=true
       ORDER BY (urls.clicks) DESC
       LIMIT $limit
       OFFSET $offset`,
@@ -144,7 +145,7 @@ describe('UrlRepository tests', () => {
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
-) AND urls.state = 'ACTIVE' AND urls.description != ''
+) AND urls.state = 'ACTIVE' AND urls."isSearchable"=true
       ORDER BY (ts_rank_cd('{0, 0, 0.4, 1}',
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
@@ -175,7 +176,7 @@ describe('UrlRepository tests', () => {
       WHERE query @@ (
   setweight(to_tsvector('english', urls."shortUrl"), 'A') ||
   setweight(to_tsvector('english', urls."description"), 'B')
-) AND urls.state = 'ACTIVE' AND urls.description != ''
+) AND urls.state = 'ACTIVE' AND urls."isSearchable"=true
       ORDER BY (urls."createdAt") DESC
       LIMIT $limit
       OFFSET $offset`,

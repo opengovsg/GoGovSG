@@ -76,6 +76,7 @@ export class UserController implements UserControllerInterface {
       longUrl,
       shortUrl,
       state,
+      isSearchable,
       description,
       contactEmail,
     }: UrlEditRequest = req.body
@@ -105,6 +106,7 @@ export class UserController implements UserControllerInterface {
         longUrl,
         state: urlState,
         file,
+        isSearchable,
         contactEmail: newContactEmail,
         description: description?.trim(),
       })
