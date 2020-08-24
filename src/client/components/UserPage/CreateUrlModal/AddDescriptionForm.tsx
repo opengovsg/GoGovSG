@@ -9,6 +9,9 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
   const [isContactEmailValid, setIsContactEmailValid] = useState(true)
   const [description, setDescription] = useState('')
   const [isDescriptionValid, setIsDescriptionValid] = useState(true)
+  const [isSearchable, setIsSearchable] = useState(true)
+  const onIsSearchableChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setIsSearchable(event.target.checked)
   const onContactEmailChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setContactEmail(event.target.value)
   const onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -28,6 +31,9 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
           onDescriptionChange={onDescriptionChange}
           onContactEmailValidation={setIsContactEmailValid}
           onDescriptionValidation={setIsDescriptionValid}
+          isSearchable={isSearchable}
+          onIsSearchableChange={onIsSearchableChange}
+          isMountedOnCreateUrlModal
         />
       </ModalMargins>
     </div>
