@@ -14,7 +14,8 @@ import CloseIcon from '../../widgets/CloseIcon'
 import CreateLinkForm from './CreateLinkForm'
 import useFullScreenDialog from './helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
-import userActions from '~/actions/user'
+import userActions from '../../../actions/user'
+import AddDescriptionForm from './AddDescriptionForm'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -112,7 +113,14 @@ const CreateUrlModal = ({
           </div>
         </ModalMargins>
       </div>
-      <CreateLinkForm onSubmitLink={onSubmitLink} onSubmitFile={onSubmitFile} />
+      {step === 0 ? (
+        <CreateLinkForm
+          onSubmitLink={onSubmitLink}
+          onSubmitFile={onSubmitFile}
+        />
+      ) : (
+        <AddDescriptionForm />
+      )}
     </Dialog>
   )
 }
