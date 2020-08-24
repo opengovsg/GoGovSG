@@ -20,6 +20,7 @@ import CollapsibleMessage from '../../CollapsibleMessage'
 import ConfigOption, { TrailingPosition } from './ConfigOption'
 import PrefixableTextField from './PrefixableTextField'
 import { CollapsibleMessageType, CollapsibleMessagePosition } from '../../CollapsibleMessage/types'
+import GoSwitch from './GoSwitch'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -38,6 +39,12 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         marginRight: theme.spacing(1),
       },
+    },
+    activeText: {
+      color: '#6d9067',
+    },
+    inactiveText: {
+      color: '#c85151',
     },
     linkInformationHeader: {
       marginRight: theme.spacing(2),
@@ -60,8 +67,10 @@ const useStyles = makeStyles((theme) =>
 )
 
 type LinkInfoEditorProps = {
+  isSearchable: boolean
   contactEmail: string
   description: string
+  onIsSearchableChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailValidation: (isContactEmailValid: boolean) => void
@@ -69,8 +78,10 @@ type LinkInfoEditorProps = {
 }
 
 export default function LinkInfoEditor({
+  isSearchable,
   contactEmail, 
-  description, 
+  description,
+  onIsSearchableChange, 
   onContactEmailChange,
   onDescriptionChange,
   onContactEmailValidation,
@@ -143,6 +154,40 @@ export default function LinkInfoEditor({
           <u>GoSearch page (coming soon)</u>
         </a>
         , and the error page if users are unable to access your short link.
+      </Typography>
+
+      <Typography
+          variant="h4"
+          className={classes.linkInformationHeader}
+          color="primary"
+        >
+        <ConfigOption
+            title={
+              isSearchable
+                ? (
+                  <>
+                    Your link is <span className={classes.activeText}>visible</span> in
+                    GoSearch results
+                  </>
+                )
+                : (
+                  <>
+                    Your link is <span className={classes.inactiveText}>not visible</span> in
+                    GoSearch results
+                  </>
+                )
+            }
+            titleVariant="h6"
+            titleClassName={isMobileView ? classes.regularText : ''}
+            trailing={
+              <GoSwitch
+                color="primary"
+                checked={isSearchable}
+                onChange={onIsSearchableChange}
+              />
+            }
+            trailingPosition={TrailingPosition.center}
+          />
       </Typography>
       <ConfigOption
         title={contactEmailHelp}

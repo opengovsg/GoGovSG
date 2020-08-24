@@ -18,6 +18,7 @@ import {
   SET_CREATE_SHORT_LINK_ERROR,
   SET_EDITED_CONTACT_EMAIL,
   SET_EDITED_DESCRIPTION,
+  SET_EDITED_IS_SEARCHABLE,
   SET_EDITED_LONG_URL,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
@@ -31,6 +32,7 @@ import {
   SetCreateShortLinkErrorAction,
   SetEditedContactEmailAction,
   SetEditedDescriptionAction,
+  SetEditedIsSearchableAction,
   SetEditedLongUrlAction,
   SetIsUploadingAction,
   SetLastCreatedLinkAction,
@@ -94,6 +96,17 @@ const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
 ) => ({
   type: SET_IS_UPLOADING,
   payload,
+})
+
+const setEditedIsSearchable: (
+  shortUrl: string,
+  editedIsSearchable: boolean,
+) => SetEditedIsSearchableAction = (shortUrl, editedIsSearchable) => ({
+  type: SET_EDITED_IS_SEARCHABLE,
+  payload: {
+    shortUrl,
+    editedIsSearchable,
+  },
 })
 
 const setEditedContactEmail: (
@@ -355,6 +368,7 @@ const updateUrlInformation = (shortUrl: string) => (
     return null
   }
   return patch('/api/user/url', {
+    isSearchable: url.editedIsSearchable,
     contactEmail: url.editedContactEmail ? url.editedContactEmail : null,
     description: url.editedDescription,
     shortUrl,
@@ -639,6 +653,7 @@ export default {
   setCreateShortLinkError,
   setUrlFilter,
   replaceFile,
+  setEditedIsSearchable,
   setEditedContactEmail,
   setEditedDescription,
   getUserMessage,
