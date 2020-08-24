@@ -50,14 +50,16 @@ export class FileCheckController implements FileCheckControllerInterface {
         if (hasVirus) {
           const user = req.session?.user as UserType
           logger.warn(
-            `Malicious link attempt: User ${user?.id} tried to upload ${file.name}`,
+            `Malicious file attempt: User ${user?.id} tried to upload ${file.name}`,
           )
           res.badRequest(jsonMessage('File is likely to be malicious.'))
           return
         }
       } catch (error) {
-        logger.error('Unable to check file: ', error)
-        res.serverError(jsonMessage(error.message))
+        logger.error('Unable to scan file: ', error)
+        res.badRequest(
+          jsonMessage('Your file could not be scanned by antivirus software.'),
+        )
         return
       }
     }

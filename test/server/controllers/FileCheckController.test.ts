@@ -60,20 +60,20 @@ describe('FileCheckController test', () => {
     expect(next).not.toHaveBeenCalled()
   })
 
-  it('returns server error on virus scan failure', async () => {
+  it('returns bad request on virus scan failure', async () => {
     const req = createRequestWithFile(file)
     const res = httpMocks.createResponse() as any
     const next = jest.fn()
 
     hasAllowedType.mockResolvedValue(true)
     hasVirus.mockRejectedValue(false)
-    res.serverError = badRequest
+    res.badRequest = badRequest
 
     await controller.checkFile(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).toHaveBeenCalled()
-    expect(res.serverError).toHaveBeenCalled()
+    expect(res.badRequest).toHaveBeenCalled()
     expect(next).not.toHaveBeenCalled()
   })
 
