@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) =>
     buttonWrapper: {
       display: 'flex',
       justifyContent: 'flex-end',
-      flexDirection: 'column',
+      flexDirection: 'column-reverse',
       [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
         marginBottom: 50,
