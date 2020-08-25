@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Button, createStyles, makeStyles } from '@material-ui/core'
+import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 import LinkInfoEditor from '../widgets/LinkInfoEditor'
 import ModalMargins from './ModalMargins'
 import { patch } from '../../../util/requests'
@@ -10,6 +10,9 @@ import { GoGovReduxState } from '../../../reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    shortUrlText: {
+      marginBottom: 8,
+    },
     buttonWrapper: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -81,11 +84,13 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
 
   return (
     <div>
-      {/* Temporarily suppress unusued variable name error. */}
-      {isContactEmailValid && !isContactEmailValid && isDescriptionValid
-        ? 'hi'
-        : null}
       <ModalMargins>
+        <Typography variant="body2" className={classes.shortUrlText}>
+          <strong>
+            go.gov.sg/
+            {shortUrl}
+          </strong>
+        </Typography>
         <LinkInfoEditor
           contactEmail={contactEmail}
           description={description}
