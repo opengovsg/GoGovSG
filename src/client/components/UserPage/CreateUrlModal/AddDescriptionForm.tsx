@@ -1,10 +1,38 @@
 import React, { useState } from 'react'
+import { Button, createStyles, makeStyles } from '@material-ui/core'
 import LinkInfoEditor from '../widgets/LinkInfoEditor'
 import ModalMargins from './ModalMargins'
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    buttonWrapper: {
+      display: 'flex',
+      justifyContent: 'flex-end',
+      flexDirection: 'column',
+      [theme.breakpoints.up('md')]: {
+        flexDirection: 'row',
+      },
+      marginBottom: 50,
+    },
+    skipButton: {
+      width: '100%',
+      [theme.breakpoints.up('md')]: {
+        maxWidth: 135,
+      },
+    },
+    saveButton: {
+      width: '100%',
+      [theme.breakpoints.up('md')]: {
+        maxWidth: 135,
+      },
+    },
+  }),
+)
 
 type AddDescriptionFormProps = {}
 
 export default function AddDescriptionForm(_: AddDescriptionFormProps) {
+  const classes = useStyles()
   const [contactEmail, setContactEmail] = useState('')
   const [isContactEmailValid, setIsContactEmailValid] = useState(true)
   const [description, setDescription] = useState('')
@@ -35,6 +63,25 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
           onIsSearchableChange={onIsSearchableChange}
           isMountedOnCreateUrlModal
         />
+        <div className={classes.buttonWrapper}>
+          <Button
+            onClick={() => {}}
+            size="large"
+            color="primary"
+            variant="text"
+            className={classes.skipButton}
+          >
+            Skip for now
+          </Button>
+          <Button
+            color="primary"
+            size="large"
+            variant="outlined"
+            className={classes.saveButton}
+          >
+            Save
+          </Button>
+        </div>
       </ModalMargins>
     </div>
   )
