@@ -45,6 +45,10 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
   const onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setDescription(event.target.value)
 
+  const isBothFieldsBlank = contactEmail === '' && description === ''
+  const isContainsInvalidField = !(isContactEmailValid && isDescriptionValid)
+  const isSaveButtonDisabled = isBothFieldsBlank || isContainsInvalidField
+
   return (
     <div>
       {/* Temporarily suppress unusued variable name error. */}
@@ -74,6 +78,7 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
             Skip for now
           </Button>
           <Button
+            disabled={isSaveButtonDisabled}
             color="primary"
             size="large"
             variant="outlined"
