@@ -16,8 +16,9 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
         flexDirection: 'row',
+        marginBottom: 50,
       },
-      marginBottom: 50,
+      marginBottom: 80,
     },
     skipButton: {
       width: '100%',
