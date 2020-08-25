@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 import LinkInfoEditor from '../widgets/LinkInfoEditor'
 import ModalMargins from './ModalMargins'
+import userActions from '../../../actions/user'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -33,6 +35,10 @@ type AddDescriptionFormProps = {}
 
 export default function AddDescriptionForm(_: AddDescriptionFormProps) {
   const classes = useStyles()
+
+  const dispatch = useDispatch()
+  const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
+
   const [contactEmail, setContactEmail] = useState('')
   const [isContactEmailValid, setIsContactEmailValid] = useState(true)
   const [description, setDescription] = useState('')
@@ -69,7 +75,7 @@ export default function AddDescriptionForm(_: AddDescriptionFormProps) {
         />
         <div className={classes.buttonWrapper}>
           <Button
-            onClick={() => {}}
+            onClick={closeCreateUrlModal}
             size="large"
             color="primary"
             variant="text"
