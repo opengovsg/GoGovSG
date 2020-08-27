@@ -140,6 +140,7 @@ export const urlModelMock = sequelizeMock.define(
   },
   {
     instanceMethods: {
+      findOne: () => {},
       increment: () => {},
     },
   },
