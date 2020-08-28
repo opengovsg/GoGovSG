@@ -18,7 +18,6 @@ import {
   SET_CREATE_SHORT_LINK_ERROR,
   SET_EDITED_CONTACT_EMAIL,
   SET_EDITED_DESCRIPTION,
-  SET_EDITED_IS_SEARCHABLE,
   SET_EDITED_LONG_URL,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
@@ -32,7 +31,6 @@ import {
   SetCreateShortLinkErrorAction,
   SetEditedContactEmailAction,
   SetEditedDescriptionAction,
-  SetEditedIsSearchableAction,
   SetEditedLongUrlAction,
   SetIsUploadingAction,
   SetLastCreatedLinkAction,
@@ -96,17 +94,6 @@ const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
 ) => ({
   type: SET_IS_UPLOADING,
   payload,
-})
-
-const setEditedIsSearchable: (
-  shortUrl: string,
-  editedIsSearchable: boolean,
-) => SetEditedIsSearchableAction = (shortUrl, editedIsSearchable) => ({
-  type: SET_EDITED_IS_SEARCHABLE,
-  payload: {
-    shortUrl,
-    editedIsSearchable,
-  },
 })
 
 const setEditedContactEmail: (
@@ -288,7 +275,6 @@ const getUrlsForUser = (): ThunkAction<
       /* eslint-disable no-param-reassign */
       url.createdAt = moment(url.createdAt).tz('Singapore').format('D MMM YYYY')
       url.editedLongUrl = removeHttpsProtocol(url.longUrl)
-      url.editedIsSearchable = url.isSearchable
       url.editedContactEmail = url.contactEmail
       url.editedDescription = url.description
       /* eslint-enable no-param-reassign */
@@ -368,7 +354,6 @@ const updateUrlInformation = (shortUrl: string) => (
     return null
   }
   return patch('/api/user/url', {
-    isSearchable: url.editedIsSearchable,
     contactEmail: url.editedContactEmail ? url.editedContactEmail : null,
     description: url.editedDescription,
     shortUrl,
@@ -467,6 +452,31 @@ const toggleUrlState = (shortUrl: string, state: UrlState) => (
     if (response.ok) {
       dispatch<ToggleUrlStateSuccessAction>(
         isToggleUrlStateSuccess({ shortUrl, toState }),
+      )
+      return null
+    }
+
+    return response.json().then((json) => {
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
+      return null
+    })
+  })
+}
+
+const toggleIsSearchable = (shortUrl: string, isSearchable: boolean) => (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    SetErrorMessageAction | SetSuccessMessageAction
+  >,
+) => {
+  patch('/api/user/url', { shortUrl, isSearchable }).then((response) => {
+    if (response.ok) {
+      dispatch<void>(getUrlsForUser())
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage(
+          `URL is now ${isSearchable ? '' : 'not'} searchable.`,
+        ),
       )
       return null
     }
@@ -653,7 +663,7 @@ export default {
   setCreateShortLinkError,
   setUrlFilter,
   replaceFile,
-  setEditedIsSearchable,
+  toggleIsSearchable,
   setEditedContactEmail,
   setEditedDescription,
   getUserMessage,

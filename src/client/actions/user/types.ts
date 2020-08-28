@@ -25,7 +25,6 @@ export const SET_IS_UPLOADING = 'SET_IS_UPLOADING'
 export const SET_UPLOAD_FILE_ERROR = 'SET_UPLOAD_FILE_ERROR'
 export const SET_CREATE_SHORT_LINK_ERROR = 'SET_CREATE_SHORT_LINK_ERROR'
 export const SET_LAST_CREATED_LINK = 'SET_LAST_CREATED_LINK'
-export const SET_EDITED_IS_SEARCHABLE = 'SET_EDITED_IS_SEARCHABLE'
 export const SET_EDITED_CONTACT_EMAIL = 'SET_EDITED_CONTACT_EMAIL'
 export const SET_EDITED_DESCRIPTION = 'SET_EDITED_DESCRIPTION'
 export const SET_USER_MESSAGE = 'SET_USER_MESSAGE'
@@ -33,14 +32,6 @@ export const SET_USER_MESSAGE = 'SET_USER_MESSAGE'
 export type SetUserMessageAction = {
   type: typeof SET_USER_MESSAGE
   payload: string
-}
-
-export type SetEditedIsSearchableAction = {
-  type: typeof SET_EDITED_IS_SEARCHABLE
-  payload: {
-    shortUrl: string
-    editedIsSearchable: boolean
-  }
 }
 
 export type SetEditedContactEmailAction = {
@@ -176,7 +167,6 @@ export type UserActionType =
   | SetUploadFileErrorAction
   | SetLastCreatedLinkAction
   | SetUrlFilterAction
-  | SetEditedIsSearchableAction
   | SetEditedContactEmailAction
   | SetEditedDescriptionAction
   | SetUserMessageAction

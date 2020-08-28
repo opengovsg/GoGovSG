@@ -30,8 +30,8 @@ export default function useShortLink(shortLink: string) {
   const dispatchOptions = {
     toggleStatus: () =>
       dispatch(userActions.toggleUrlState(shortLink, urlState.state)),
-    setEditIsSearchable: (editedIsSearchable: boolean) => {
-      dispatch(userActions.setEditedIsSearchable(shortLink, editedIsSearchable))
+    toggleIsSearchable: (isSearchable: boolean) => {
+      dispatch(userActions.toggleIsSearchable(shortLink, isSearchable))
     },
     setEditLongUrl: (editedUrl: string) => {
       dispatch(userActions.setEditedLongUrl(shortLink, editedUrl))

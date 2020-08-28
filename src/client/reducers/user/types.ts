@@ -9,7 +9,6 @@ export type UrlType = {
   updatedAt: string
   userId: number
   isSearchable: boolean
-  editedIsSearchable: boolean
   description: string
   editedDescription: string
   contactEmail: string

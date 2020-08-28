@@ -7,7 +7,6 @@ import {
   SET_CREATE_SHORT_LINK_ERROR,
   SET_EDITED_CONTACT_EMAIL,
   SET_EDITED_DESCRIPTION,
-  SET_EDITED_IS_SEARCHABLE,
   SET_EDITED_LONG_URL,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
@@ -108,21 +107,6 @@ const user: (state: UserState, action: UserActionType) => UserState = (
           return {
             ...url,
             editedLongUrl,
-          }
-        }),
-      }
-      break
-    }
-    case SET_EDITED_IS_SEARCHABLE: {
-      const { editedIsSearchable, shortUrl } = action.payload
-      nextState = {
-        urls: state.urls.map((url) => {
-          if (shortUrl !== url.shortUrl) {
-            return url
-          }
-          return {
-            ...url,
-            editedIsSearchable,
           }
         }),
       }
