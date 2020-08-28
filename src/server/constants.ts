@@ -36,6 +36,8 @@ export const DependencyIds = {
   deviceCheckService: Symbol.for('deviceCheckService'),
   allowedFileExtensions: Symbol.for('allowedFileExtensions'),
   fileTypeFilterService: Symbol.for('fileTypeFilterService'),
+  cloudmersiveKey: Symbol.for('cloudmersiveKey'),
+  cloudmersiveClient: Symbol.for('cloudmersiveClient'),
   virusScanService: Symbol.for('virusScanService'),
   fileCheckController: Symbol.for('fileCheckController'),
   safeBrowsingRepository: Symbol.for('safeBrowsingRepository'),
