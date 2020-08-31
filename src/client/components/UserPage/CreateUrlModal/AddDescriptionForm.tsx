@@ -39,9 +39,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-type AddDescriptionFormProps = {}
-
-export default function AddDescriptionForm(_: AddDescriptionFormProps) {
+export default function AddDescriptionForm() {
   const classes = useStyles()
 
   const [contactEmail, setContactEmail] = useState('')
