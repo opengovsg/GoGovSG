@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     shortUrlText: {
       marginBottom: 8,
+      marginTop: 8,
     },
     buttonWrapper: {
       display: 'flex',
