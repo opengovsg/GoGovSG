@@ -24,16 +24,23 @@ export class UrlSearchService {
       urls: privateUrls,
       count,
     } = await this.urlRepository.plainTextSearch(query, order, limit, offset)
-
     return {
       // Specific click counts are classified for certain government links
       urls: privateUrls.map(
-        ({ longUrl, shortUrl, contactEmail, description, isFile }) => ({
+        ({
           longUrl,
           shortUrl,
           contactEmail,
           description,
           isFile,
+          isSearchable,
+        }) => ({
+          longUrl,
+          shortUrl,
+          contactEmail,
+          description,
+          isFile,
+          isSearchable,
         }),
       ),
       count,
