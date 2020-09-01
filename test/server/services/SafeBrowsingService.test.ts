@@ -1,11 +1,13 @@
 /* eslint-disable global-require */
-const get = jest.fn()
-const set = jest.fn()
-const mockFetch = jest.fn()
-
-const url = 'https://google.com'
-
 describe('SafeBrowsingService', () => {
+  const get = jest.fn()
+  const set = jest.fn()
+  const mockFetch = jest.fn()
+
+  const url = 'https://google.com'
+
+  afterAll(jest.resetModules)
+
   describe('without safeBrowsingKey', () => {
     jest.resetModules()
     jest.mock('../../../src/server/config', () => ({
