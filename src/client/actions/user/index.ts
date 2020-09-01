@@ -474,9 +474,7 @@ const toggleIsSearchable = (shortUrl: string, isSearchable: boolean) => (
     if (response.ok) {
       dispatch<void>(getUrlsForUser())
       dispatch<SetSuccessMessageAction>(
-        rootActions.setSuccessMessage(
-          `URL is now ${isSearchable ? '' : 'not'} searchable.`,
-        ),
+        rootActions.setSuccessMessage('Your link visibility has been updated.'),
       )
       return null
     }
