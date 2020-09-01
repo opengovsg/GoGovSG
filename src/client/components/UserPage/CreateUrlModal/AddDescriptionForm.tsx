@@ -85,7 +85,9 @@ export default function AddDescriptionForm() {
 
     if (response.ok) {
       dispatch(userActions.getUrlsForUser())
-      dispatch(rootActions.setSuccessMessage('URL is updated.'))
+      dispatch(
+        rootActions.setSuccessMessage('Your link visibility has been updated.'),
+      )
       setIsSearchable(newIsSearchable)
       return
     }
