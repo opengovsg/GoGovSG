@@ -56,7 +56,6 @@ const mapDispatchToProps = (dispatch) => ({
   setShortUrl: (shortUrl) => dispatch(userActions.setShortUrl(shortUrl)),
   setLongUrl: (longUrl) => dispatch(userActions.setLongUrl(longUrl)),
   setRandomShortUrl: () => dispatch(userActions.setRandomShortUrl()),
-  onSubmitFile: (file) => dispatch(userActions.uploadFile(file)),
   setUploadFileError: (error) =>
     dispatch(userActions.setUploadFileError(error)),
   setCreateShortLinkError: (error) =>
@@ -310,9 +309,9 @@ CreateLinkForm.propTypes = {
   setLongUrl: PropTypes.func.isRequired,
   setRandomShortUrl: PropTypes.func.isRequired,
   isUploading: PropTypes.bool.isRequired,
-  uploadFileError: PropTypes.string.isRequired,
+  uploadFileError: PropTypes.string,
   setUploadFileError: PropTypes.func.isRequired,
-  createShortLinkError: PropTypes.string.isRequired,
+  createShortLinkError: PropTypes.string,
   setCreateShortLinkError: PropTypes.func.isRequired,
 }
 
