@@ -113,7 +113,7 @@
     "@types/hapi__joi": "^17.1.4",
     "@types/helmet": "0.0.48",
     "@types/jest": "^26.0.12",
-    "@types/jsdom": "^16.2.3",
+    "@types/jsdom": "^16.2.4",
     "@types/lodash": "^4.14.161",
     "@types/moment-timezone": "^0.5.30",
     "@types/morgan": "^1.9.1",
