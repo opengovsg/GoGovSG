@@ -134,7 +134,7 @@ export class LinkStatisticsRepository
           weekdayClicks,
         } as LinkStatisticsInterface
       }
-      // There is no statistics to show yet.
+      // There are no statistics to show yet.
       return null
     }
     return null

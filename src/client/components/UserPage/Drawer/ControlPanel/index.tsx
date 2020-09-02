@@ -22,7 +22,7 @@ import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from '../../widgets/ConfigOption'
 import PrefixableTextField from '../../widgets/PrefixableTextField'
 import TrailingButton from './widgets/TrailingButton'
-import GoSwitch from './widgets/GoSwitch'
+import GoSwitch from '../../widgets/GoSwitch'
 import useShortLink from './util/shortlink'
 import { removeHttpsProtocol } from '../../../../util/url'
 import { isValidLongUrl } from '../../../../../shared/util/validation'
@@ -177,6 +177,7 @@ export default function ControlPanel() {
   } = useShortLink(drawerStates.relevantShortLink!)
 
   // Manage values in our text fields.
+  const isSearchable = shortLinkState?.isSearchable || false
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
   const editedLongUrl = shortLinkState?.editedLongUrl || ''
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
@@ -423,8 +424,10 @@ export default function ControlPanel() {
           />
           <Divider className={classes.dividerInformation} />
           <LinkInfoEditor
+            isSearchable={isSearchable}
             contactEmail={editedContactEmail} 
             description={editedDescription}
+            onIsSearchableChange={(event) => shortLinkDispatch?.toggleIsSearchable(event.target.checked)}
             onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)} 
             onDescriptionChange={(event) =>
               shortLinkDispatch?.setEditDescription(
@@ -458,8 +461,10 @@ export default function ControlPanel() {
             <TrailingButton
               disabled={
                 !isDescriptionValid ||
-                (editedContactEmail === originalContactEmail &&
-                  editedDescription === originalDescription) ||
+                (
+                  editedContactEmail === originalContactEmail &&
+                  editedDescription === originalDescription
+                ) ||
                 !isContactEmailValid
               }
               fullWidth={isMobileView}

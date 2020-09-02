@@ -21,7 +21,6 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
   getUrlsForUser: () => dispatch(userActions.getUrlsForUser()),
   getEmailValidator: () =>
     dispatch(loginActions.getEmailValidationGlobExpression()),
@@ -33,8 +32,6 @@ const mapDispatchToProps = (dispatch) => ({
  */
 const UserPage = ({
   isLoggedIn,
-  onCreateUrl,
-  history,
   getUrlsForUser,
   getEmailValidator,
   emailValidator,
@@ -73,7 +70,7 @@ const UserPage = ({
           ) : (
             <UserLinkTable />
           )}
-          <CreateUrlModal onSubmit={() => onCreateUrl(history)} />
+          <CreateUrlModal />
         </Drawer>
       </BaseLayout>
     )

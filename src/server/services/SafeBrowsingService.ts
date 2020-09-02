@@ -11,6 +11,8 @@ const ENDPOINT = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=
 export class SafeBrowsingService implements UrlThreatScanServiceInterface {
   private safeBrowsingRepository: SafeBrowsingRepositoryInterface
 
+  public aFetch: any = fetch
+
   public constructor(
     @inject(DependencyIds.safeBrowsingRepository)
     safeBrowsingRepository: SafeBrowsingRepositoryInterface,
@@ -51,7 +53,7 @@ export class SafeBrowsingService implements UrlThreatScanServiceInterface {
     if (!matches) {
       matches = await this.lookup(url)
     }
-    return safeBrowsingLogOnly && Boolean(matches)
+    return !safeBrowsingLogOnly && Boolean(matches)
   }
 
   private async lookup(url: string) {

@@ -1,30 +1,30 @@
 // Make this a module.
-import http from 'http'
+import { response } from 'express'
 
 export {}
 
 /* eslint-disable func-names */
-http.ServerResponse.prototype.ok = function (content) {
+response.ok = function (content) {
   this.status(200).send(content)
 }
-http.ServerResponse.prototype.created = function (content) {
+response.created = function (content) {
   this.status(201).send(content)
 }
-http.ServerResponse.prototype.badRequest = function (content) {
+response.badRequest = function (content) {
   this.status(400).send(content)
 }
-http.ServerResponse.prototype.unauthorized = function (content) {
+response.unauthorized = function (content) {
   this.status(401).send(content)
 }
-http.ServerResponse.prototype.notFound = function (content) {
+response.notFound = function (content) {
   this.status(404).send(content)
 }
-http.ServerResponse.prototype.unsupportedMediaType = function (content) {
+response.unsupportedMediaType = function (content) {
   this.status(415).send(content)
 }
-http.ServerResponse.prototype.unprocessableEntity = function (content) {
+response.unprocessableEntity = function (content) {
   this.status(422).send(content)
 }
-http.ServerResponse.prototype.serverError = function (content) {
+response.serverError = function (content) {
   this.status(500).send(content)
 }

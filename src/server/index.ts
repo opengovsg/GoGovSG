@@ -69,7 +69,11 @@ const MORGAN_LOG_FORMAT =
   ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
   '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
 
-const connectSrc = ["'self'", 'www.google-analytics.com']
+const connectSrc = [
+  "'self'",
+  'www.google-analytics.com',
+  'stats.g.doubleclick.net',
+]
 if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
 }
@@ -95,6 +99,7 @@ app.use(
           'data:',
           'www.google-analytics.com',
           'www.googletagmanager.com',
+          'stats.g.doubleclick.net',
         ],
         scriptSrc: [
           "'self'",
@@ -176,7 +181,7 @@ initDb()
       redirectController.gtagForTransitionPage,
     )
     app.get(
-      '/:shortUrl([a-zA-Z0-9-]+)',
+      '/:shortUrl([a-zA-Z0-9-]+).?',
       ...redirectSpecificMiddleware,
       redirectController.redirect,
     ) // The Redirect Endpoint
