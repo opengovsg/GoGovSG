@@ -179,7 +179,12 @@ export class UserController implements UserControllerInterface {
       searchText,
       userId,
       state: state?.toString(),
-      isFile: Boolean(isFile),
+      isFile: undefined as boolean | undefined,
+    }
+    if (isFile === 'true') {
+      queryConditions.isFile = true
+    } else if (isFile === 'false') {
+      queryConditions.isFile = false
     }
     // Find user and paginated urls
     try {

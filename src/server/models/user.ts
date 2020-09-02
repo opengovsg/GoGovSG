@@ -85,7 +85,7 @@ export const User = <UserTypeStatic>sequelize.define(
         if (state) {
           whereUrlConditions.state = state
         }
-        if (isFile) {
+        if (isFile !== undefined) {
           whereUrlConditions.isFile = isFile
         }
         return {
