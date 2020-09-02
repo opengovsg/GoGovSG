@@ -189,7 +189,7 @@ function CreateLinkForm({
                 text={
                   file
                     ? file.name
-                    : 'Drag and drop some files here, or click to select files'
+                    : 'Drag and drop your file here, or click to select file'
                 }
                 uploadFileError={uploadFileError}
                 inputId="file"
