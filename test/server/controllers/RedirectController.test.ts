@@ -168,7 +168,11 @@ describe('redirect API tests', () => {
       .bind<CookieArrayReducerServiceInterface>(DependencyIds.cookieReducer)
       .toConstantValue(cookieReducer)
     redisMockClient.set('aaa', 'aa')
+
+    // Feed the controller a cookie parsable by the mock analytics service
+    const cookie = ['gaClientId', 'value', { maxAge: 2 }]
     const req = createRequestWithShortUrl('Aaa')
+    req.headers.cookie = JSON.stringify(cookie)
     const res = httpMocks.createResponse()
     req.headers['user-agent'] = userAgent
 
@@ -181,6 +185,10 @@ describe('redirect API tests', () => {
     expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
     expect(updateStatisticsSpy).toBeCalledTimes(1)
     expect(res.statusCode).toBe(302)
+    expect(res.cookies.gaClientId).toStrictEqual({
+      value: cookie[1],
+      options: cookie[2],
+    })
     expect(res._getRedirectUrl()).toBe('aa')
     expect(cookieReducer.writeShortlinkToCookie).toHaveBeenCalledWith(
       undefined,
@@ -350,5 +358,17 @@ describe('redirect API tests', () => {
     expect(res._getRedirectUrl()).toBe('aa')
 
     expectAnalyticsLogged(req, 'aaa', 'aa')
+  })
+
+  test('retrieval of gtag for transition page', async () => {
+    const req = createRequestWithShortUrl('Aaa')
+    const res = httpMocks.createResponse()
+
+    await container
+      .get<RedirectController>(DependencyIds.redirectController)
+      .gtagForTransitionPage(req, res)
+
+    expect(res._getStatusCode()).toBe(200)
+    expect(res._getHeaders()['content-type']).toBe('text/javascript')
   })
 })

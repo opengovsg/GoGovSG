@@ -11,6 +11,7 @@ type ShortUrlProperty = {
 }
 
 type LinkInformationProperties = {
+  isSearchable: boolean
   contactEmail: string
   description: string
 }

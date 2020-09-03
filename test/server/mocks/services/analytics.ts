@@ -14,7 +14,7 @@ export default class AnalyticsLoggerMock
   generateCookie: (
     cookie?: string,
   ) => [string, string, { maxAge: number }] | null = (cookie) => {
-    if (cookie) return null
+    if (cookie) return JSON.parse(cookie)
     return null
   }
 }

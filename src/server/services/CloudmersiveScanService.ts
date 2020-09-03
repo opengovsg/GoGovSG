@@ -1,23 +1,30 @@
-import fileUpload from 'express-fileupload'
-import { injectable } from 'inversify'
-import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
+import { inject, injectable } from 'inversify'
+import { ScanApi } from 'cloudmersive-virus-api-client'
 import { VirusScanServiceInterface } from './interfaces/VirusScanServiceInterface'
 import { UrlThreatScanServiceInterface } from './interfaces/UrlThreatScanServiceInterface'
-import { cloudmersiveKey, logger } from '../config'
-
-if (cloudmersiveKey) {
-  const client = ApiClient.instance
-  const ApiKey = client.authentications.Apikey
-  ApiKey.apiKey = cloudmersiveKey
-}
-const api = new ScanApi()
+import { logger } from '../config'
+import { DependencyIds } from '../constants'
 
 @injectable()
 export class CloudmersiveScanService
   implements VirusScanServiceInterface, UrlThreatScanServiceInterface {
-  private static scanFilePromise: (file: Buffer) => Promise<boolean> = (file) =>
+  private cloudmersiveKey: string
+
+  private api: ScanApi
+
+  constructor(
+    @inject(DependencyIds.cloudmersiveKey)
+    cloudmersiveKey: string,
+    @inject(DependencyIds.cloudmersiveClient)
+    api: ScanApi,
+  ) {
+    this.cloudmersiveKey = cloudmersiveKey
+    this.api = api
+  }
+
+  private scanFilePromise: (file: Buffer) => Promise<boolean> = (file) =>
     new Promise((res, rej) => {
-      api.scanFile(file, (err, data) => {
+      this.api.scanFile(file, (err, data) => {
         if (err) {
           logger.error(`Error when scanning file via Cloudmersive: ${err}`)
           return rej(err)
@@ -26,9 +33,9 @@ export class CloudmersiveScanService
       })
     })
 
-  private static scanUrlPromise: (url: string) => Promise<boolean> = (url) =>
+  private scanUrlPromise: (url: string) => Promise<boolean> = (url) =>
     new Promise((res, rej) => {
-      api.scanWebsite({ Url: url }, (err, data) => {
+      this.api.scanWebsite({ Url: url }, (err, data) => {
         if (err) {
           logger.error(`Error when scanning ${url} via Cloudmersive: ${err}`)
           logger.error(data)
@@ -38,24 +45,25 @@ export class CloudmersiveScanService
       })
     })
 
-  public hasVirus: (file: fileUpload.UploadedFile) => Promise<boolean> = async (
-    file,
-  ) => {
-    if (!cloudmersiveKey) {
+  public hasVirus: (file: {
+    data: Buffer
+    name: string
+  }) => Promise<boolean> = async (file) => {
+    if (!this.cloudmersiveKey) {
       logger.warn(
         `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
       )
       return false
     }
-    return CloudmersiveScanService.scanFilePromise(file.data)
+    return this.scanFilePromise(file.data)
   }
 
   public isThreat: (url: string) => Promise<boolean> = async (url) => {
-    if (!cloudmersiveKey) {
+    if (!this.cloudmersiveKey) {
       logger.warn(`No Cloudmersive API key provided. Not scanning url: ${url}`)
       return false
     }
-    const isThreat = await CloudmersiveScanService.scanUrlPromise(url)
+    const isThreat = await this.scanUrlPromise(url)
     if (isThreat) {
       logger.info(`Considered threat by Cloudmersive but ignoring: ${url}`)
     }

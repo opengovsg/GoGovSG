@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import {
   Dialog,
   IconButton,
@@ -13,7 +14,8 @@ import CloseIcon from '../../widgets/CloseIcon'
 import CreateLinkForm from './CreateLinkForm'
 import useFullScreenDialog from './helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
-import userActions from '~/actions/user'
+import userActions from '../../../actions/user'
+import AddDescriptionForm from './AddDescriptionForm'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -54,11 +56,33 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
+  onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
+  onUploadFile: (file) => dispatch(userActions.uploadFile(file)),
 })
 
-const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
+const CreateUrlModal = ({
+  createUrlModal,
+  closeCreateUrlModal,
+  onCreateUrl,
+  onUploadFile,
+}) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
+  const [step, setStep] = useState(0)
+  const incrementDecorator = (func) => async (...args) => {
+    const proceed = await func(...args)
+    if (proceed) {
+      setStep(step + 1)
+    }
+  }
+  const history = useHistory()
+  const onSubmitLink = incrementDecorator(() => onCreateUrl(history))
+  const onSubmitFile = incrementDecorator(onUploadFile)
+
+  // Reset step when modal closes and reopens
+  useEffect(() => {
+    if (createUrlModal) setStep(0)
+  }, [createUrlModal])
   return (
     <Dialog
       aria-labelledby="createUrlModal"
@@ -77,7 +101,9 @@ const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
               variant={isFullScreenDialog ? 'h6' : 'h3'}
               color="primary"
             >
-              Create new link
+              {step === 0
+                ? 'Create new link'
+                : "Done! You can now customise your link's visibility"}
             </Typography>
             <IconButton
               className={classes.closeIconButton}
@@ -89,13 +115,21 @@ const CreateUrlModal = ({ createUrlModal, closeCreateUrlModal, onSubmit }) => {
           </div>
         </ModalMargins>
       </div>
-      <CreateLinkForm onSubmitLink={onSubmit} />
+      {step === 0 ? (
+        <CreateLinkForm
+          onSubmitLink={onSubmitLink}
+          onSubmitFile={onSubmitFile}
+        />
+      ) : (
+        <AddDescriptionForm />
+      )}
     </Dialog>
   )
 }
 
 CreateUrlModal.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onCreateUrl: PropTypes.func.isRequired,
+  onUploadFile: PropTypes.func.isRequired,
   createUrlModal: PropTypes.bool.isRequired,
   closeCreateUrlModal: PropTypes.func.isRequired,
 }

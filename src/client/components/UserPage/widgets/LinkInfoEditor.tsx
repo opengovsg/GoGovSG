@@ -19,7 +19,11 @@ import BetaTag from '../../widgets/BetaTag'
 import CollapsibleMessage from '../../CollapsibleMessage'
 import ConfigOption, { TrailingPosition } from './ConfigOption'
 import PrefixableTextField from './PrefixableTextField'
-import { CollapsibleMessageType, CollapsibleMessagePosition } from '../../CollapsibleMessage/types'
+import GoSwitch from './GoSwitch'
+import {
+  CollapsibleMessagePosition,
+  CollapsibleMessageType,
+} from '../../CollapsibleMessage/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -38,6 +42,12 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         marginRight: theme.spacing(1),
       },
+    },
+    activeText: {
+      color: '#6d9067',
+    },
+    inactiveText: {
+      color: '#c85151',
     },
     linkInformationHeader: {
       marginRight: theme.spacing(2),
@@ -60,21 +70,27 @@ const useStyles = makeStyles((theme) =>
 )
 
 type LinkInfoEditorProps = {
+  isSearchable: boolean
   contactEmail: string
   description: string
+  onIsSearchableChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailValidation: (isContactEmailValid: boolean) => void
   onDescriptionValidation: (isDescriptionValid: boolean) => void
+  isMountedOnCreateUrlModal?: boolean
 }
 
 export default function LinkInfoEditor({
-  contactEmail, 
-  description, 
+  isSearchable,
+  contactEmail,
+  description,
+  onIsSearchableChange,
   onContactEmailChange,
   onDescriptionChange,
   onContactEmailValidation,
   onDescriptionValidation,
+  isMountedOnCreateUrlModal,
 }: LinkInfoEditorProps) {
   // Styles used in this component.
   const classes = useStyles()
@@ -85,25 +101,18 @@ export default function LinkInfoEditor({
     (state) => state.login.emailValidator,
   )
 
-  const isContactEmailValid =
-    !contactEmail || emailValidator(contactEmail)
+  const isContactEmailValid = !contactEmail || emailValidator(contactEmail)
   const isDescriptionValid =
     description.length <= LINK_DESCRIPTION_MAX_LENGTH &&
     isPrintableAscii(description)
 
-  useEffect(
-    () => {
-      onContactEmailValidation(isContactEmailValid)
-    },
-    [isContactEmailValid]
-  )
+  useEffect(() => {
+    onContactEmailValidation(isContactEmailValid)
+  }, [isContactEmailValid])
 
-  useEffect(
-    () => {
-      onDescriptionValidation(isDescriptionValid)
-    },
-    [isDescriptionValid]
-  )
+  useEffect(() => {
+    onDescriptionValidation(isDescriptionValid)
+  }, [isDescriptionValid])
 
   const contactEmailHelp = (
     <>
@@ -127,22 +136,59 @@ export default function LinkInfoEditor({
 
   return (
     <>
-      <div className={classes.linkInformationHeaderWrapper}>
-        <Typography
-          variant="h3"
-          className={classes.linkInformationHeader}
-          color="primary"
-        >
-          Link information
-        </Typography>
-        <BetaTag />
-      </div>
+      {/* TODO: Move linkInformationHeaderWrapper back to drawer > control panel */}
+      {!isMountedOnCreateUrlModal && (
+        <div className={classes.linkInformationHeaderWrapper}>
+          <Typography
+            variant="h3"
+            className={classes.linkInformationHeader}
+            color="primary"
+          >
+            Link information
+          </Typography>
+          <BetaTag />
+        </div>
+      )}
       <Typography variant="body2" className={classes.linkInformationDesc}>
         The information you enter below will be displayed on our{' '}
         <a href="https://go.gov.sg/go-search" className={classes.hotlink}>
           <u>GoSearch page (coming soon)</u>
         </a>
         , and the error page if users are unable to access your short link.
+      </Typography>
+
+      <Typography
+          variant="h4"
+          className={classes.linkInformationHeader}
+          color="primary"
+        >
+        <ConfigOption
+            title={
+              isSearchable
+                ? (
+                  <>
+                    Your link is <span className={classes.activeText}>visible</span> in
+                    GoSearch results
+                  </>
+                )
+                : (
+                  <>
+                    Your link is <span className={classes.inactiveText}>not visible</span> in
+                    GoSearch results
+                  </>
+                )
+            }
+            titleVariant="h6"
+            titleClassName={isMobileView ? classes.regularText : ''}
+            trailing={
+              <GoSwitch
+                color="primary"
+                checked={isSearchable}
+                onChange={onIsSearchableChange}
+              />
+            }
+            trailingPosition={TrailingPosition.center}
+          />
       </Typography>
       <ConfigOption
         title={contactEmailHelp}

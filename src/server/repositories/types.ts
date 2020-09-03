@@ -12,6 +12,7 @@ export type StorableUrl = Pick<
   | 'isFile'
   | 'createdAt'
   | 'updatedAt'
+  | 'isSearchable'
   | 'description'
   | 'contactEmail'
 >

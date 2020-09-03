@@ -22,11 +22,9 @@ describe('LinkStatisticsController test', () => {
     const res = httpMocks.createResponse()
     const responseSpy = jest.spyOn(res, 'status')
 
-    res.on('end', async () => {
-      await controller.getLinkStatistics(req, res)
-      expect(serviceSpy).not.toHaveBeenCalled()
-      expect(responseSpy).toBeCalledWith(404)
-    })
+    await controller.getLinkStatistics(req, res)
+    expect(serviceSpy).not.toHaveBeenCalled()
+    expect(responseSpy).toBeCalledWith(404)
   })
 
   test('authenticated user with no short url', async () => {
@@ -35,11 +33,9 @@ describe('LinkStatisticsController test', () => {
     const responseSpy = jest.spyOn(res, 'status')
     req.session!.user = userCredentials
 
-    res.on('end', async () => {
-      await controller.getLinkStatistics(req, res)
-      expect(serviceSpy).not.toHaveBeenCalled()
-      expect(responseSpy).toBeCalledWith(404)
-    })
+    await controller.getLinkStatistics(req, res)
+    expect(serviceSpy).not.toHaveBeenCalled()
+    expect(responseSpy).toBeCalledWith(404)
   })
 
   test('unauthenticated user with short url', async () => {
@@ -48,11 +44,9 @@ describe('LinkStatisticsController test', () => {
     const responseSpy = jest.spyOn(res, 'status')
     req.query.url = 'test'
 
-    res.on('end', async () => {
-      await controller.getLinkStatistics(req, res)
-      expect(serviceSpy).not.toHaveBeenCalled()
-      expect(responseSpy).toBeCalledWith(401)
-    })
+    await controller.getLinkStatistics(req, res)
+    expect(serviceSpy).not.toHaveBeenCalled()
+    expect(responseSpy).toBeCalledWith(401)
   })
 
   test('authenticated user with short url', async () => {
@@ -62,11 +56,9 @@ describe('LinkStatisticsController test', () => {
     req.query.url = 'test'
     req.session!.user = userCredentials
 
-    res.on('end', async () => {
-      await controller.getLinkStatistics(req, res)
-      expect(serviceSpy).toBeCalledWith(userCredentials.id, 'test')
-      expect(responseSpy).toBeCalledWith(200)
-    })
+    await controller.getLinkStatistics(req, res)
+    expect(serviceSpy).toBeCalledWith(userCredentials.id, 'test')
+    expect(responseSpy).toBeCalledWith(200)
   })
 
   test('LinkStatisticsService throws error', async () => {
@@ -80,10 +72,8 @@ describe('LinkStatisticsController test', () => {
       throw Error(':(')
     })
 
-    res.on('end', async () => {
-      await controller.getLinkStatistics(req, res)
-      expect(serviceSpy).toBeCalledWith(userCredentials.id, 'test')
-      expect(responseSpy).toBeCalledWith(404)
-    })
+    await controller.getLinkStatistics(req, res)
+    expect(serviceSpy).toBeCalledWith(userCredentials.id, 'test')
+    expect(responseSpy).toBeCalledWith(404)
   })
 })

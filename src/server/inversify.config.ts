@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk'
 
+import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
 import { container } from './util/inversify'
 import GaLoggerService from './services/GaLoggerService'
 import { DependencyIds } from './constants'
@@ -7,7 +8,13 @@ import { CookieArrayReducerService } from './services/CookieArrayReducerService'
 import { OtpRepository } from './repositories/OtpRepository'
 import { MailerNode } from './services/email'
 import { CryptographyBcrypt } from './services/cryptography'
-import { DEV_ENV, accessEndpoint, bucketEndpoint, s3Bucket } from './config'
+import {
+  DEV_ENV,
+  accessEndpoint,
+  bucketEndpoint,
+  cloudmersiveKey,
+  s3Bucket,
+} from './config'
 import { MailerNoOp } from './services/emaildev'
 import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
@@ -89,6 +96,17 @@ export default () => {
     .bind(DependencyIds.allowedFileExtensions)
     .toConstantValue(DEFAULT_ALLOWED_FILE_EXTENSIONS)
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
+
+  if (cloudmersiveKey) {
+    const client = ApiClient.instance
+    const ApiKey = client.authentications.Apikey
+    ApiKey.apiKey = cloudmersiveKey
+  }
+  const api = new ScanApi()
+
+  container.bind(DependencyIds.cloudmersiveKey).toConstantValue(cloudmersiveKey)
+  container.bind(DependencyIds.cloudmersiveClient).toConstantValue(api)
+
   bindIfUnbound(DependencyIds.virusScanService, CloudmersiveScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
 

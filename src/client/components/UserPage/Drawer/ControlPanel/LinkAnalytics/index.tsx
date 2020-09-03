@@ -121,7 +121,7 @@ function LinkStatisticsGraphs() {
   if (!Boolean(linkStatistics.contents)) {
     return (
       <Typography variant="body1">
-        There is no statistics to show right now.
+        There are no statistics to show right now.
       </Typography>
     )
   }
