@@ -81,7 +81,7 @@ exitIfAnyMissing(requiredVars)
 let otpFunction: OtpFunction | null = null
 let transporterOpts: nodemailer.TransporterOptions | null = null
 let proxy: boolean = true
-let cookieConfig: CookieSettings | null = null
+let cookieConfig = null
 
 if (DEV_ENV) {
   // Only configure things particular to development here
