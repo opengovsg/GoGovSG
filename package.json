@@ -81,7 +81,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.13",
-    "sequelize": "^6.3.4",
+    "sequelize": "^6.3.5",
     "sharp": "^0.26.0",
     "ua-parser-js": "^0.7.21",
     "uuid": "^8.3.0",
