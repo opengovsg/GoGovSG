@@ -80,6 +80,10 @@ jobs:
     needs: [ci, test, build]
     steps:
       - uses: actions/checkout@v2
-      - run: echo "$TAG"
-        env: 
+      - run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          cat Dockerrun.aws.json
+        env:
+          REPO: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
           TAG: ${{needs.build.outputs.tag}}
