@@ -64,3 +64,10 @@ jobs:
           region: ap-southeast-1
           local-image: my-image
           image: gogovsg:ghactions-${{ steps.extract_branch.outputs.branch }}-${{ github.sha }}
+  deploy:
+    name: Deploy to Elastic Beanstalk
+    runs-on: ubuntu-18.04
+    needs: [ci, test, build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "${needs.build.outputs.branch}"
