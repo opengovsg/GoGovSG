@@ -80,10 +80,27 @@ jobs:
     needs: [ci, test, build]
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - name: Package Dockerrun.aws.json
+        run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
           zip -r "deploy.zip" Dockerrun.aws.json
         env:
           REPO: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
-          TAG: ${{needs.build.outputs.tag}}
+          TAG: ${{ needs.build.outputs.tag }}
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo '${TAG}-$(env TZ=Asia/Singapore date "+%Y%m%d%H%M%S")')"
+        id: get_label
+        env:
+          TAG: ${{ needs.build.outputs.tag }}
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v11
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: gosg-stag
+          environment_name: gosg-stag
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
