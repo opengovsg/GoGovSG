@@ -51,12 +51,20 @@ jobs:
     runs-on: ubuntu-18.04
     outputs:
       branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
     steps:
       - uses: actions/checkout@v2
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo 'ghactions-$BRANCH-$SHA')"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
       - run: docker build --tag my-image .
       - name: Push to ECR
         uses: jwalton/gh-ecr-push@v1
@@ -65,13 +73,13 @@ jobs:
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: ap-southeast-1
           local-image: my-image
-          image: gogovsg:ghactions-${{ steps.extract_branch.outputs.branch }}-${{ github.sha }}
+          image: gogovsg:${{steps.extract_tag.outputs.tag}}
   deploy:
     name: Deploy to Elastic Beanstalk
     runs-on: ubuntu-18.04
     needs: [ci, test, build]
     steps:
       - uses: actions/checkout@v2
-      - run: echo "$BRANCH"
+      - run: echo "$TAG"
         env: 
-          BRANCH: ${{needs.build.outputs.branch}}
+          TAG: ${{needs.build.outputs.tag}}
