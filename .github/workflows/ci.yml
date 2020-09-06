@@ -60,7 +60,7 @@ jobs:
         id: extract_branch
       - name: Extract ECR tag
         shell: bash
-        run: echo "##[set-output name=tag;]$(echo 'ghactions-$BRANCH-$SHA')"
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA})"
         id: extract_tag
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
