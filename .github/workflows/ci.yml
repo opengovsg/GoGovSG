@@ -88,12 +88,17 @@ jobs:
         env:
           REPO: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
           TAG: ${{ needs.build.outputs.tag }}
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
       - name: Get Elastic Beanstalk label
         shell: bash
-        run: echo "##[set-output name=label;]$(echo '${TAG}-$(env TZ=Asia/Singapore date "+%Y%m%d%H%M%S")')"
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
         id: get_label
         env:
           TAG: ${{ needs.build.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.output.timestamp }}
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v11
         with:
