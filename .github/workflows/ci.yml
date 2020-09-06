@@ -98,7 +98,7 @@ jobs:
         id: get_label
         env:
           TAG: ${{ needs.build.outputs.tag }}
-          TIMESTAMP: ${{ steps.get_timestamp.output.timestamp }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v11
         with:
