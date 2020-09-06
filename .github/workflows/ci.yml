@@ -49,6 +49,8 @@ jobs:
   build:
     name: Build and push
     runs-on: ubuntu-18.04
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
     steps:
       - uses: actions/checkout@v2
       - name: Extract branch name
@@ -70,4 +72,6 @@ jobs:
     needs: [ci, test, build]
     steps:
       - uses: actions/checkout@v2
-      - run: echo "${needs.build.outputs.branch}"
+      - run: echo "$BRANCH"
+        env: 
+          BRANCH: ${{needs.build.outputs.branch}}
