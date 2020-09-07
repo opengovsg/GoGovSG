@@ -5,11 +5,6 @@ import { isValidLongUrl } from '../../../../../../shared/util/validation'
 import { UrlType } from '../../../../../reducers/user/types'
 import { GoGovReduxState } from '../../../../../reducers/types'
 
-export type ShortLinkState = [
-  UrlType | undefined,
-  ShortLinkDispatch | undefined,
-]
-
 type Dispatch = () => (dispatch: any) => void
 
 export type ShortLinkDispatch = {
@@ -17,6 +12,11 @@ export type ShortLinkDispatch = {
   setEditLongUrl: Dispatch
   applyEditLongUrl: Dispatch
 }
+
+export type ShortLinkState = [
+  UrlType | undefined,
+  ShortLinkDispatch | undefined,
+]
 
 export default function useShortLink(shortLink: string) {
   const urls: UrlType[] = useSelector<GoGovReduxState, UrlType[]>(

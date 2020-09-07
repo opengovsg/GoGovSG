@@ -43,15 +43,15 @@ export type UserUrlsQueryConditions = {
   isFile: boolean | undefined
 }
 
-export type UrlsPublicPaginated = {
-  count: number
-  urls: Array<UrlPublic>
-}
-
 export type UrlPublic = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'description' | 'contactEmail' | 'isFile'
 >
+
+export type UrlsPublicPaginated = {
+  count: number
+  urls: Array<UrlPublic>
+}
 
 export type UrlsPaginated = {
   count: number
