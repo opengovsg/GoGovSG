@@ -1,5 +1,12 @@
 name: ci
 on: ["push"]
+env:
+  PRODUCTION_BRANCH: refs/heads/release
+  STAGING_BRANCH: refs/heads/edge
+  EB_APP_PRODUCTION: gosg-production
+  EB_ENV_PRODUCTION: gosg-production
+  EB_APP_STAGING: gosg-stag
+  EB_ENV_STAGING: gosg-stag
 jobs:
   ci:
     name: CI
