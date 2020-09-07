@@ -53,9 +53,28 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  gatekeep:
+    name: Determine if Build & Deploy is needed
+    outputs:
+      proceed: ${{ steps.determine_proceed.outputs.proceed }}
+    runs-on: ubuntu-18.04
+    steps:
+      - shell: python
+        id: determine_proceed
+        run: |
+          import os
+          ref = os.environ['GITHUB_REF']
+          prod = os.environ['PRODUCTION_BRANCH']
+          stage = os.environ['STAGING_BRANCH']
+          if ref == prod or ref == stage:
+            print('::set-output name=proceed::true')
+          else:
+            print('::set-output name=proceed::false')
   build:
     name: Build and push
     runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
       branch: ${{ steps.extract_branch.outputs.branch }}
       tag: ${{steps.extract_tag.outputs.tag}}
@@ -84,7 +103,8 @@ jobs:
   deploy:
     name: Deploy to Elastic Beanstalk
     runs-on: ubuntu-18.04
-    needs: [ci, test, build]
+    needs: [ci, test, gatekeep, build]
+    if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
       - name: Package Dockerrun.aws.json
