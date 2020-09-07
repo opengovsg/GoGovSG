@@ -106,13 +106,31 @@ jobs:
         env:
           TAG: ${{ needs.build.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_staging = os.environ['EB_ENV_STAGING']
+          eb_app_production = os.environ['EB_APP_PRODUCTION']
+          eb_env_production = os.environ['EB_ENV_PRODUCTION']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env::' + eb_env_staging)
+          elif branch == production:
+            print('::set-output name=eb_app::' + eb_app_production)
+            print('::set-output name=eb_env::' + eb_env_production)
+        id: select_eb_vars
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v11
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: gosg-stag
-          environment_name: gosg-stag
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env }}
           version_label: ${{ steps.get_label.outputs.label }}
           region: ap-southeast-1
           deployment_package: deploy.zip
