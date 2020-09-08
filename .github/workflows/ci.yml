@@ -3,10 +3,13 @@ on: ["push"]
 env:
   PRODUCTION_BRANCH: refs/heads/release
   STAGING_BRANCH: refs/heads/edge
+  UAT_BRANCH: refs/heads/uat
   EB_APP_PRODUCTION: gosg-production
   EB_ENV_PRODUCTION: gosg-production
   EB_APP_STAGING: gosg-stag
   EB_ENV_STAGING: gosg-stag
+  EB_APP_UAT: gosg-uat
+  EB_ENV_UAT: gosg-uat2
   ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPO: gogovsg
 jobs:
@@ -68,7 +71,8 @@ jobs:
           ref = os.environ['GITHUB_REF']
           prod = os.environ['PRODUCTION_BRANCH']
           stage = os.environ['STAGING_BRANCH']
-          if ref == prod or ref == stage:
+          uat = os.environ['UAT_BRANCH']
+          if ref == prod or ref == stage or ref == uat:
             print('::set-output name=proceed::true')
           else:
             print('::set-output name=proceed::false')
@@ -135,16 +139,22 @@ jobs:
           branch = os.environ['GITHUB_REF']
           staging = os.environ['STAGING_BRANCH']
           production = os.environ['PRODUCTION_BRANCH']
+          uat = os.environ['UAT_BRANCH']
           eb_app_staging = os.environ['EB_APP_STAGING']
           eb_env_staging = os.environ['EB_ENV_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
           eb_env_production = os.environ['EB_ENV_PRODUCTION']
+          eb_app_uat = os.environ['EB_APP_UAT']
+          eb_env_uat = os.environ['EB_ENV_UAT']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
             print('::set-output name=eb_env::' + eb_env_staging)
           elif branch == production:
             print('::set-output name=eb_app::' + eb_app_production)
             print('::set-output name=eb_env::' + eb_env_production)
+          elif branch == uat:
+            print('::set-output name=eb_app::' + eb_app_uat)
+            print('::set-output name=eb_env::' + eb_env_uat)
         id: select_eb_vars
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v11
