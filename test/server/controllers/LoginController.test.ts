@@ -1,4 +1,3 @@
-import sinon from 'sinon'
 import httpMocks from 'node-mocks-http'
 import {
   createRequestWithEmail,
@@ -37,7 +36,7 @@ import { AuthService } from '../../../src/server/services/AuthService'
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 
 jest.mock('../../../src/server/services/email', () => ({
-  mailOTP: sinon.fake(),
+  mailOTP: jest.fn(),
 }))
 
 jest.mock('../../../src/server/models/user', () => ({
@@ -48,12 +47,12 @@ const findOrCreateSpy = jest.spyOn(userModelMock, 'findOrCreate')
 
 function getMockResponse(): any {
   return {
-    ok: sinon.fake(),
-    notFound: sinon.fake(),
-    send: sinon.fake(),
-    badRequest: sinon.fake(),
-    serverError: sinon.fake(),
-    unauthorized: sinon.fake(),
+    ok: jest.fn(),
+    notFound: jest.fn(),
+    send: jest.fn(),
+    badRequest: jest.fn(),
+    serverError: jest.fn(),
+    unauthorized: jest.fn(),
   }
 }
 
@@ -91,7 +90,9 @@ describe('login middleware tests', () => {
       container
         .get<LoginController>(DependencyIds.loginController)
         .getIsLoggedIn(req, res)
-      expect(res.ok.lastCall.args[0].user).toBeTruthy()
+      expect(res.ok).toHaveBeenCalledWith(
+        expect.objectContaining({ user: 'fakeUser' }),
+      )
     })
 
     test('session does not contain user', () => {
@@ -101,7 +102,7 @@ describe('login middleware tests', () => {
       container
         .get<LoginController>(DependencyIds.loginController)
         .getIsLoggedIn(req, res)
-      expect(res.notFound.called).toBeTruthy()
+      expect(res.notFound).toHaveBeenCalled()
     })
   })
 
@@ -118,7 +119,7 @@ describe('login middleware tests', () => {
       container
         .get<LoginController>(DependencyIds.loginController)
         .getLoginMessage(req, res)
-      expect(res.send.calledWith('login message')).toBeTruthy()
+      expect(res.send).toHaveBeenCalledWith('login message')
     })
   })
 
@@ -134,7 +135,7 @@ describe('login middleware tests', () => {
       container
         .get<LoginController>(DependencyIds.loginController)
         .getEmailDomains(req, res)
-      expect(res.send.calledWith('*.test.sg')).toBeTruthy()
+      expect(res.send).toHaveBeenCalledWith('*.test.sg')
     })
   })
 
@@ -168,7 +169,7 @@ describe('login middleware tests', () => {
         .get<LoginController>(DependencyIds.loginController)
         .generateOtp(req, res)
       expect(spy).toBeCalledWith('aa@open.test.sg', '1', '1.1.1.1')
-      expect(res.ok.called).toBeTruthy()
+      expect(res.ok).toHaveBeenCalled()
 
       const cache = getOtpCache() as OtpRepositoryMock
       const storedOtp = cache.cache.get('aa@open.test.sg')
@@ -200,7 +201,7 @@ describe('login middleware tests', () => {
         .get<LoginController>(DependencyIds.loginController)
         .generateOtp(req, res)
       expect(spy).toBeCalledTimes(1)
-      expect(res.serverError.called).toBeTruthy()
+      expect(res.serverError).toHaveBeenCalled()
 
       expect(logger.error).toBeCalled()
 
@@ -227,7 +228,7 @@ describe('login middleware tests', () => {
         .get<LoginController>(DependencyIds.loginController)
         .generateOtp(req, res)
       expect(spy).toBeCalledTimes(0)
-      expect(res.serverError.called).toBeTruthy()
+      expect(res.serverError).toHaveBeenCalled()
 
       expect(logger.error).toBeCalled()
 
@@ -272,7 +273,7 @@ describe('login middleware tests', () => {
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
         ).resolves.toBe(null)
         expect(req.session!.user).toEqual('aa@open.test.sg')
-        expect(res.ok.called).toBeTruthy()
+        expect(res.ok).toHaveBeenCalled()
       })
 
       test('valid email, wrong otp and expiring', async () => {
@@ -291,7 +292,7 @@ describe('login middleware tests', () => {
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
         ).resolves.toBe(null)
         expect(req.session!.user).toBeUndefined()
-        expect(res.unauthorized.called).toBeTruthy()
+        expect(res.unauthorized).toHaveBeenCalled()
       })
 
       test('valid email and no otp in cache', async () => {
@@ -306,7 +307,7 @@ describe('login middleware tests', () => {
           getOtpCache().getOtpForEmail('aa@open.test.sg'),
         ).resolves.toBe(null)
         expect(req.session!.user).toBeUndefined()
-        expect(res.unauthorized.called).toBeTruthy()
+        expect(res.unauthorized).toHaveBeenCalled()
       })
 
       test('valid email and wrong otp with retries left', async () => {
@@ -328,7 +329,7 @@ describe('login middleware tests', () => {
           retries: 99,
         })
         expect(req.session!.user).toBeUndefined()
-        expect(res.unauthorized.called).toBeTruthy()
+        expect(res.unauthorized).toHaveBeenCalled()
       })
 
       test('no email and has valid otp in request', async () => {
@@ -350,7 +351,7 @@ describe('login middleware tests', () => {
           retries: 100,
         })
         expect(req.session!.user).toBeUndefined()
-        expect(res.unauthorized.called).toBeTruthy()
+        expect(res.unauthorized).toHaveBeenCalled()
       })
     })
 
@@ -377,7 +378,7 @@ describe('login middleware tests', () => {
         .verifyOtp(req, res)
 
       expect(req.session!.user).toBeUndefined()
-      expect(res.serverError.called).toBeTruthy()
+      expect(res.serverError).toHaveBeenCalled()
 
       expect(logger.error).toBeCalled()
     })
@@ -416,7 +417,7 @@ describe('login middleware tests', () => {
         getOtpCache().getOtpForEmail('aa@open.test.sg'),
       ).resolves.toStrictEqual({ hashedOtp: '1', retries: 100 })
       expect(req.session!.user).toBeUndefined()
-      expect(res.serverError.called).toBeTruthy()
+      expect(res.serverError).toHaveBeenCalled()
 
       expect(logger.error).toBeCalled()
     })
