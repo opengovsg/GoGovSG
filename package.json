@@ -38,7 +38,7 @@
     "body-parser": "^1.18.3",
     "chart.js": "^2.9.3",
     "classnames": "^2.2.6",
-    "cloudmersive-virus-api-client": "^1.1.7",
+    "cloudmersive-virus-api-client": "^1.1.8",
     "connect-redis": "^5.0.0",
     "cookie-session": "^1.4.0",
     "copy-to-clipboard": "^3.3.1",
