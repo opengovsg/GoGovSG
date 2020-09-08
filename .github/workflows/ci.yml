@@ -12,6 +12,14 @@ env:
   EB_ENV_UAT: gosg-uat2
   ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPO: gogovsg
+  SENTRY_URL: https://sentry.io/
+  SENTRY_ORG: gogovsg
+  SENTRY_PROJECT_PRODUCTION: gogovsg-prod
+  SENTRY_PROJECT_STAGING: gogovsg-staging
+  SENTRY_PROJECT_UAT: gogovsg-uat
+  SENTRY_DNS_PRODUCTION: https://a76d61749b824d8fa8ad84eee7ecc882@o372043.ingest.sentry.io/5193500
+  SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
+  SENTRY_DNS_UAT: https://615965e21c624312bcb719de721d950f@o372043.ingest.sentry.io/5286893
 jobs:
   ci:
     name: CI
@@ -97,7 +105,32 @@ jobs:
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
           SHA: ${{ github.sha }}
+      - name: Select Sentry variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          uat = os.environ['UAT_BRANCH']
+          sentry_project_staging = os.environ['SENTRY_PROJECT_STAGING']
+          sentry_dns_staging = os.environ['SENTRY_DNS_STAGING']
+          sentry_project_production = os.environ['SENTRY_PROJECT_PRODUCTION']
+          sentry_dns_production = os.environ['SENTRY_DNS_PRODUCTION']
+          sentry_project_uat = os.environ['SENTRY_PROJECT_UAT']
+          sentry_dns_uat = os.environ['SENTRY_DNS_UAT']
+          if branch == staging:
+            print('::set-env name=SENTRY_PROJECT::' + sentry_project_staging)
+            print('::set-env name=SENTRY_DNS::' + sentry_dns_staging)
+          elif branch == production:
+            print('::set-env name=SENTRY_PROJECT::' + sentry_project_production)
+            print('::set-env name=SENTRY_DNS::' + sentry_dns_production)
+          elif branch == uat:
+            print('::set-env name=SENTRY_PROJECT::' + sentry_project_uat)
+            print('::set-env name=SENTRY_DNS::' + sentry_dns_uat)
       - run: docker build --tag my-image .
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.TEST_SECRET }}
       - name: Push to ECR
         uses: jwalton/gh-ecr-push@v1
         with:
