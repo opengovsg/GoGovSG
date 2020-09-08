@@ -7,6 +7,8 @@ env:
   EB_ENV_PRODUCTION: gosg-production
   EB_APP_STAGING: gosg-stag
   EB_ENV_STAGING: gosg-stag
+  ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
+  ECR_REPO: gogovsg
 jobs:
   ci:
     name: CI
@@ -99,7 +101,7 @@ jobs:
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: ap-southeast-1
           local-image: my-image
-          image: gogovsg:${{steps.extract_tag.outputs.tag}}
+          image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
   deploy:
     name: Deploy to Elastic Beanstalk
     runs-on: ubuntu-18.04
@@ -113,7 +115,7 @@ jobs:
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
           zip -r "deploy.zip" Dockerrun.aws.json
         env:
-          REPO: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com/gogovsg
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build.outputs.tag }}
       - name: Get timestamp
         shell: bash
