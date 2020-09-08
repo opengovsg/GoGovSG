@@ -84,27 +84,27 @@ jobs:
             print('::set-output name=proceed::true')
           else:
             print('::set-output name=proceed::false')
-  build:
-    name: Build and push
+  sentry:
+    name: Upload sourcemap to Sentry
     runs-on: ubuntu-18.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
-    outputs:
-      branch: ${{ steps.extract_branch.outputs.branch }}
-      tag: ${{steps.extract_tag.outputs.tag}}
     steps:
       - uses: actions/checkout@v2
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-      - name: Extract ECR tag
-        shell: bash
-        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA})"
-        id: extract_tag
-        env:
-          BRANCH: ${{ steps.extract_branch.outputs.branch }}
-          SHA: ${{ github.sha }}
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
       - name: Select Sentry variables
         shell: python
         run: |
@@ -128,9 +128,32 @@ jobs:
           elif branch == uat:
             print('::set-env name=SENTRY_PROJECT::' + sentry_project_uat)
             print('::set-env name=SENTRY_DNS::' + sentry_dns_uat)
-      - run: docker build --tag my-image .
+      - name: Upload to Sentry
+        run: npm run build
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.TEST_SECRET }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  build:
+    name: Build and push
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA})"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - run: docker build --tag my-image .
       - name: Push to ECR
         uses: jwalton/gh-ecr-push@v1
         with:
