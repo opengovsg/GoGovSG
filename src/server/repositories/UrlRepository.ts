@@ -74,7 +74,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   public update: (
-    originalUrl: StorableUrl,
+    originalUrl: { shortUrl: string },
     changes: Partial<StorableUrl>,
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
