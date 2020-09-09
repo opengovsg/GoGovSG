@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
 import { injectable } from 'inversify'
-import { Transaction } from 'sequelize/types'
 import { LinkStatisticsRepositoryInterface } from '../../../../src/server/repositories/interfaces/LinkStatisticsRepositoryInterface'
 import { LinkStatisticsInterface } from '../../../../src/shared/interfaces/link-statistics'
 import { DeviceType } from '../../../../src/server/services/interfaces/DeviceCheckServiceInterface'
@@ -24,11 +23,6 @@ export class MockLinkStatisticsRepository
       weekdayClicks: [{ weekday: 2, hours: 23, clicks: 1 }],
     })
   }
-
-  incrementClick: (
-    shortUrl: string,
-    transaction?: Transaction,
-  ) => Promise<boolean> = () => Promise.resolve(true)
 
   updateLinkStatistics: (shortUrl: string, device: DeviceType) => void = () =>
     Promise.resolve(true)

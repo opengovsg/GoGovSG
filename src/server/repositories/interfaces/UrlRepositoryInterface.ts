@@ -42,13 +42,6 @@ export interface UrlRepositoryInterface {
   getLongUrl: (shortUrl: string) => Promise<string>
 
   /**
-   * Asynchronously increment the number of clicks in the database.
-   * @param {string} shortUrl
-   * @returns Promise that resolves to be empty.
-   */
-  incrementClick: (shortUrl: string) => Promise<void>
-
-  /**
    * Performs plain text search on Urls based on their shortUrl and
    * description. The results are ranked in order of relevance based
    * on click count, length and cover density.

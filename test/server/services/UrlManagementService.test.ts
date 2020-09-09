@@ -20,8 +20,6 @@ describe('UrlManagementService', () => {
     findByShortUrl: jest.fn(),
     getLongUrl: jest.fn(),
     plainTextSearch: jest.fn(),
-    // TODO: delete this, not needed
-    incrementClick: async () => {},
   }
 
   const service = new UrlManagementService(userRepository, urlRepository)

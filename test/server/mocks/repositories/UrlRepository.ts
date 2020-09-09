@@ -35,10 +35,6 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     throw new Error('Not implemented')
   }
 
-  incrementClick: (shortUrl: string) => Promise<void> = () => {
-    throw new Error('Not implemented')
-  }
-
   plainTextSearch: (
     query: string,
     order: SearchResultsSortOrder,
