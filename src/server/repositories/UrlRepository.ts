@@ -134,19 +134,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
-  public incrementClick: (shortUrl: string) => Promise<void> = async (
-    shortUrl,
-  ) => {
-    const url = await Url.findOne({ where: { shortUrl } })
-    if (!url) {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
-    }
-
-    await url.increment('clicks')
-  }
-
   public plainTextSearch: (
     query: string,
     order: SearchResultsSortOrder,
