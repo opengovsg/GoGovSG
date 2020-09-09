@@ -1,4 +1,4 @@
-FROM node:12-alpine3.9
+FROM node:14-alpine3.12
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -12,7 +12,7 @@ EXPOSE 8080
 # For dev webpack server only, proxies to localhost:8080
 EXPOSE 3000
 
-RUN apk update && apk add python g++ make ttf-freefont && rm -rf /var/cache/apk/*
+RUN apk update && apk add ttf-freefont && rm -rf /var/cache/apk/*
 
 # Install libraries
 COPY package.json package-lock.json ./

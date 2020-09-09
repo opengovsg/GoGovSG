@@ -1,3 +1,27 @@
+export enum UrlState {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE',
+}
+
+export type UrlTableFilterConfig = {
+  isFile?: boolean
+  state?: UrlState
+}
+
+export enum SortDirection {
+  Descending = 'desc',
+  Ascending = 'asc',
+}
+
+export type UrlTableConfig = {
+  numberOfRows: number
+  pageNumber: number
+  sortDirection: SortDirection
+  orderBy: string
+  searchText: string
+  filter: UrlTableFilterConfig
+}
+
 export type UrlType = {
   clicks: number
   createdAt: string
@@ -29,28 +53,4 @@ export type UserState = {
   uploadFileError?: string | null
   lastCreatedLink?: string
   message: string | null
-}
-
-export type UrlTableConfig = {
-  numberOfRows: number
-  pageNumber: number
-  sortDirection: SortDirection
-  orderBy: string
-  searchText: string
-  filter: UrlTableFilterConfig
-}
-
-export type UrlTableFilterConfig = {
-  isFile?: boolean
-  state?: UrlState
-}
-
-export enum UrlState {
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE',
-}
-
-export enum SortDirection {
-  Descending = 'desc',
-  Ascending = 'asc',
 }

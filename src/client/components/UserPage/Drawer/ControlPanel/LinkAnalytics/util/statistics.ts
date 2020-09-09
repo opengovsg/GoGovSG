@@ -20,11 +20,11 @@ export const useStatistics = (shortUrl: string) => {
     const fetchStatistics = async () => {
       const endpoint = `/api/link-stats?url=${shortUrl}`
       const response = await get(endpoint)
-      const LinkStatistics: LinkStatistics = {
+      const linkStatistics: LinkStatistics = {
         status: response.status,
         contents: await response.json(),
       }
-      setStatistics(LinkStatistics)
+      setStatistics(linkStatistics)
     }
     if (shortUrl) {
       fetchStatistics()

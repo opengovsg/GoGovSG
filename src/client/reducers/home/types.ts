@@ -4,9 +4,9 @@ export type HomeStatistics = {
   clickCount: number | null
 }
 
+export type LinksToRotate = Array<string>
+
 export type HomeState = {
   statistics: HomeStatistics
   linksToRotate?: LinksToRotate
 }
-
-export type LinksToRotate = Array<string>
