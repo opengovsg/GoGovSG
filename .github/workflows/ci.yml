@@ -1,5 +1,8 @@
 name: ci
-on: ["push"]
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
 env:
   PRODUCTION_BRANCH: refs/heads/release
   STAGING_BRANCH: refs/heads/edge
@@ -71,6 +74,7 @@ jobs:
     outputs:
       proceed: ${{ steps.determine_proceed.outputs.proceed }}
     runs-on: ubuntu-18.04
+    if: github.event_name == 'push'
     steps:
       - shell: python
         id: determine_proceed
