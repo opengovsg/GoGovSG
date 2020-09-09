@@ -40,11 +40,12 @@ body {
   display: block;
   color: white;
   font-size: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 35px;
 }
 
 .loading-image {
   width: 100px;
+  margin: 15px 0 15px;
 }
 
 .browser-image {
@@ -79,6 +80,17 @@ body {
 .bottom-half > p {
   margin-top: 45px;
   font-size: 13px;
+}
+
+#skip {
+  display: none;
+  cursor: pointer;
+}
+
+#skip > span {
+  font-size: 13px;
+  color: #456682;
+  text-decoration: underline;
 }
 
 .footer {
