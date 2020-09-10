@@ -159,7 +159,7 @@ jobs:
           SHA: ${{ github.sha }}
       - run: docker build --tag my-image .
       - name: Push to ECR
-        uses: jwalton/gh-ecr-push@v1
+        uses: opengovsg/gh-ecr-push@v1
         with:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -217,7 +217,7 @@ jobs:
             print('::set-output name=eb_env::' + eb_env_uat)
         id: select_eb_vars
       - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v11
+        uses: opengovsg/beanstalk-deploy@v11
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
