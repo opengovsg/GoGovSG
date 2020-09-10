@@ -2,7 +2,6 @@ import Sequelize, { Transaction } from 'sequelize'
 import { databaseUri, dbPoolSize, logger } from '../config'
 
 export const sequelize = new Sequelize.Sequelize(databaseUri, {
-  dialect: 'postgres',
   timezone: '+08:00',
   logging: logger.info.bind(logger),
   pool: {
