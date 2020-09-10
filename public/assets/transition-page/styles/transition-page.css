@@ -82,7 +82,8 @@ body {
 }
 
 #skip {
-  display: none;
+  opacity: 0;
+  display: block;
   cursor: pointer;
 }
 

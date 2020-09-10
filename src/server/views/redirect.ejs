@@ -24,7 +24,8 @@ function proceedToDestination() {
 
 setTimeout(function(){
     var skipButton = document.getElementById('skip')
-    skipButton.style.display = 'block'
+    skipButton.style.opacity = '1'
+    skipButton.style.transition = 'opacity 0.4s'
 }, 2000)
 
 var secondsUntilRedirect = 6
