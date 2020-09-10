@@ -1,0 +1,230 @@
+name: ci
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+env:
+  PRODUCTION_BRANCH: refs/heads/release
+  STAGING_BRANCH: refs/heads/edge
+  UAT_BRANCH: refs/heads/uat
+  EB_APP_PRODUCTION: gosg-production
+  EB_ENV_PRODUCTION: gosg-production
+  EB_APP_STAGING: gosg-stag
+  EB_ENV_STAGING: gosg-stag
+  EB_APP_UAT: gosg-uat
+  EB_ENV_UAT: gosg-uat2
+  ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
+  ECR_REPO: gogovsg
+  SENTRY_URL: https://sentry.io/
+  SENTRY_ORG: gogovsg
+  SENTRY_PROJECT_PRODUCTION: gogovsg-prod
+  SENTRY_PROJECT_STAGING: gogovsg-staging
+  SENTRY_PROJECT_UAT: gogovsg-uat
+  SENTRY_DNS_PRODUCTION: https://a76d61749b824d8fa8ad84eee7ecc882@o372043.ingest.sentry.io/5193500
+  SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
+  SENTRY_DNS_UAT: https://615965e21c624312bcb719de721d950f@o372043.ingest.sentry.io/5286893
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+  test:
+    name: Test
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - run: npm run test
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+  gatekeep:
+    name: Determine if Build & Deploy is needed
+    outputs:
+      proceed: ${{ steps.determine_proceed.outputs.proceed }}
+    runs-on: ubuntu-18.04
+    if: github.event_name == 'push'
+    steps:
+      - shell: python
+        id: determine_proceed
+        run: |
+          import os
+          ref = os.environ['GITHUB_REF']
+          prod = os.environ['PRODUCTION_BRANCH']
+          stage = os.environ['STAGING_BRANCH']
+          uat = os.environ['UAT_BRANCH']
+          if ref == prod or ref == stage or ref == uat:
+            print('::set-output name=proceed::true')
+          else:
+            print('::set-output name=proceed::false')
+  sentry:
+    name: Upload sourcemap to Sentry
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - name: Select Sentry variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          uat = os.environ['UAT_BRANCH']
+          sentry_project_staging = os.environ['SENTRY_PROJECT_STAGING']
+          sentry_dns_staging = os.environ['SENTRY_DNS_STAGING']
+          sentry_project_production = os.environ['SENTRY_PROJECT_PRODUCTION']
+          sentry_dns_production = os.environ['SENTRY_DNS_PRODUCTION']
+          sentry_project_uat = os.environ['SENTRY_PROJECT_UAT']
+          sentry_dns_uat = os.environ['SENTRY_DNS_UAT']
+          if branch == staging:
+            print('::set-env name=SENTRY_PROJECT::' + sentry_project_staging)
+            print('::set-env name=SENTRY_DNS::' + sentry_dns_staging)
+          elif branch == production:
+            print('::set-env name=SENTRY_PROJECT::' + sentry_project_production)
+            print('::set-env name=SENTRY_DNS::' + sentry_dns_production)
+          elif branch == uat:
+            print('::set-env name=SENTRY_PROJECT::' + sentry_project_uat)
+            print('::set-env name=SENTRY_DNS::' + sentry_dns_uat)
+      - name: Upload to Sentry
+        run: npm run build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  build:
+    name: Build and push
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA})"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - run: docker build --tag my-image .
+      - name: Push to ECR
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ap-southeast-1
+          local-image: my-image
+          image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
+  deploy:
+    name: Deploy to Elastic Beanstalk
+    runs-on: ubuntu-18.04
+    needs: [ci, test, gatekeep, build]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          zip -r "deploy.zip" Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build.outputs.tag }}
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
+        id: get_label
+        env:
+          TAG: ${{ needs.build.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          uat = os.environ['UAT_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_staging = os.environ['EB_ENV_STAGING']
+          eb_app_production = os.environ['EB_APP_PRODUCTION']
+          eb_env_production = os.environ['EB_ENV_PRODUCTION']
+          eb_app_uat = os.environ['EB_APP_UAT']
+          eb_env_uat = os.environ['EB_ENV_UAT']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env::' + eb_env_staging)
+          elif branch == production:
+            print('::set-output name=eb_app::' + eb_app_production)
+            print('::set-output name=eb_env::' + eb_env_production)
+          elif branch == uat:
+            print('::set-output name=eb_app::' + eb_app_uat)
+            print('::set-output name=eb_env::' + eb_env_uat)
+        id: select_eb_vars
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v11
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          wait_for_deployment: false
+          wait_for_environment_recovery: false

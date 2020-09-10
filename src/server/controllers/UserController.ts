@@ -6,7 +6,7 @@ import {
   UrlEditRequest,
 } from '../../types/server/controllers/UserController'
 import jsonMessage from '../util/json'
-import { UrlManagementServiceInterface } from '../services/interfaces/UrlManagermentServiceInterface'
+import { UrlManagementServiceInterface } from '../services/interfaces/UrlManagementServiceInterface'
 import { DependencyIds } from '../constants'
 import { UserControllerInterface } from './interfaces/UserControllerInterface'
 import {

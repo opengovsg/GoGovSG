@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify'
-import { UrlManagementServiceInterface } from './interfaces/UrlManagermentServiceInterface'
+import { UrlManagementServiceInterface } from './interfaces/UrlManagementServiceInterface'
 import { UpdateUrlOptions } from './types'
 import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
 import {

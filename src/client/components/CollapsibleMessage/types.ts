@@ -5,6 +5,11 @@ export enum CollapsibleMessageType {
   Success,
 }
 
+export enum CollapsibleMessagePosition {
+  Static = 'static',
+  Absolute = 'absolute',
+}
+
 export type CollapsibleMessageProps = {
   type: CollapsibleMessageType
   visible: boolean
@@ -14,9 +19,4 @@ export type CollapsibleMessageProps = {
 export type CollapsibleMessageStyles = {
   type: CollapsibleMessageType
   position: CollapsibleMessagePosition
-}
-
-export enum CollapsibleMessagePosition {
-  Static = 'static',
-  Absolute = 'absolute',
 }

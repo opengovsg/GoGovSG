@@ -74,7 +74,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   public update: (
-    originalUrl: StorableUrl,
+    originalUrl: { shortUrl: string },
     changes: Partial<StorableUrl>,
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
@@ -132,19 +132,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       )
       return longUrl
     }
-  }
-
-  public incrementClick: (shortUrl: string) => Promise<void> = async (
-    shortUrl,
-  ) => {
-    const url = await Url.findOne({ where: { shortUrl } })
-    if (!url) {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
-    }
-
-    await url.increment('clicks')
   }
 
   public plainTextSearch: (

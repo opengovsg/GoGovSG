@@ -24,11 +24,6 @@ export class MockLinkStatisticsRepository
     })
   }
 
-  incrementClick: (
-    shortUrl: string,
-    transaction?: import('sequelize/types').Transaction,
-  ) => Promise<boolean> = () => Promise.resolve(true)
-
   updateLinkStatistics: (shortUrl: string, device: DeviceType) => void = () =>
     Promise.resolve(true)
 }

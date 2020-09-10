@@ -1,5 +1,4 @@
 import httpMock from 'node-mocks-http'
-import sinon from 'sinon'
 import { SearchController } from '../../../src/server/controllers/SearchController'
 import { UrlSearchServiceMock } from '../mocks/services/UrlSearchService'
 import { logger } from '../config'
@@ -19,7 +18,6 @@ describe('SearchController unit test', () => {
     loggerErrorSpy.mockClear()
   })
   it('should return search results from service', async () => {
-    const okSpy = sinon.fake()
     const req = httpMock.createRequest({
       query: {
         query: 'moh',
@@ -28,10 +26,10 @@ describe('SearchController unit test', () => {
         offset: 0,
       },
     })
-    const res = httpMock.createResponse() as any
+    const res: any = httpMock.createResponse()
+    const okSpy = jest.fn()
     res.ok = okSpy
     await controller.urlSearchPlainText(req, res)
-    expect(res.ok.called).toBeTruthy()
     expect(urlSearchService.plainTextSearch).toBeCalledWith(
       'moh',
       SearchResultsSortOrder.Relevance,
@@ -39,7 +37,8 @@ describe('SearchController unit test', () => {
       0,
     )
     // clicks information should be stripped
-    expect(res.ok.lastCall.args[0]).toStrictEqual({
+    expect(okSpy).toHaveBeenCalled()
+    expect(okSpy).toHaveBeenCalledWith({
       urls: [
         {
           shortUrl: 'test-moh',
@@ -58,17 +57,16 @@ describe('SearchController unit test', () => {
   })
 
   it('should work with default limit and offset', async () => {
-    const okSpy = sinon.fake()
     const req = httpMock.createRequest({
       query: {
         query: 'moh',
         order: 'relevance',
       },
     })
-    const res = httpMock.createResponse() as any
+    const res: any = httpMock.createResponse()
+    const okSpy = jest.fn()
     res.ok = okSpy
     await controller.urlSearchPlainText(req, res)
-    expect(res.ok.called).toBeTruthy()
     expect(urlSearchService.plainTextSearch).toBeCalledWith(
       'moh',
       SearchResultsSortOrder.Relevance,
@@ -76,7 +74,8 @@ describe('SearchController unit test', () => {
       0,
     )
     // clicks information should be stripped
-    expect(res.ok.lastCall.args[0]).toStrictEqual({
+    expect(res.ok).toHaveBeenCalled()
+    expect(res.ok).toHaveBeenCalledWith({
       urls: [
         {
           shortUrl: 'test-moh',
@@ -94,7 +93,6 @@ describe('SearchController unit test', () => {
   })
 
   it('should respond with server error and log the error when service throws', async () => {
-    const serverErrorSpy = sinon.fake()
     const req = httpMock.createRequest({
       query: {
         query: 'moh',
@@ -103,13 +101,14 @@ describe('SearchController unit test', () => {
         offset: 0,
       },
     })
-    const res = httpMock.createResponse() as any
+    const res: any = httpMock.createResponse()
+    const serverErrorSpy = jest.fn()
     res.serverError = serverErrorSpy
     searchSpy.mockImplementationOnce(() => {
       throw new Error('Service error')
     })
     await controller.urlSearchPlainText(req, res)
-    expect(res.serverError.called).toBeTruthy()
+    expect(res.serverError).toHaveBeenCalled()
     expect(urlSearchService.plainTextSearch).toBeCalledWith(
       'moh',
       SearchResultsSortOrder.Relevance,
