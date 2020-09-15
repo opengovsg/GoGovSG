@@ -111,6 +111,10 @@ body {
   line-height: 13px;
 }
 
+.mobile-break {
+  display: none;
+}
+
 @media only screen and (max-width: 768px) {
   .links {
     padding-top: 73px;
@@ -120,7 +124,7 @@ body {
 
 @media only screen and (max-width: 512px) {
   .top-half {
-    height: 30vh;
+    height: 35vh;
   }
 
   .top-half-content {
@@ -155,6 +159,10 @@ body {
 
   .footer {
     bottom: 30px;
+  }
+
+  .mobile-break {
+    display: block;
   }
 }
 
