@@ -315,9 +315,4 @@ CreateLinkForm.propTypes = {
   setCreateShortLinkError: PropTypes.func.isRequired,
 }
 
-CreateLinkForm.defaultProps = {
-  createShortLinkError: 'An error occurred while creating short link',
-  uploadFileError: 'An error occurred while uploading file',
-}
-
 export default connect(mapStateToProps, mapDispatchToProps)(CreateLinkForm)
