@@ -22,6 +22,12 @@ function proceedToDestination() {
     window.location = document.getElementById('url').getAttribute('data-href')
 }
 
+setTimeout(function(){
+    var skipButton = document.getElementById('skip')
+    skipButton.style.opacity = '1'
+    skipButton.style.transition = 'opacity 0.4s'
+}, 2000)
+
 var secondsUntilRedirect = 6
 
 function handlePlural() {
@@ -42,3 +48,9 @@ var intervalId = setInterval(function(){
     clearInterval(intervalId)
     proceedToDestination()
 }, 1000)
+
+;(function() {
+    document.getElementById('skip').addEventListener('click', function (e) {
+        proceedToDestination()
+    })
+})()
