@@ -30,19 +30,6 @@ const apiOtpGeneratorLimiter = rateLimit({
 })
 
 /**
- * Rate limiter for API verifying OTP.
- */
-const apiOtpVerificationLimiter = rateLimit({
-  keyGenerator: (req) => getIp(req) as string,
-  onLimitReached: (req) =>
-    logger.warn(
-      `Rate limit (verifying OTP) reached for IP Address: ${getIp(req)}`,
-    ),
-  windowMs: 60000, // 1 minute
-  max: 5,
-})
-
-/**
  * For the Login message banner.
  */
 router.get('/message', loginController.getLoginMessage)
@@ -64,7 +51,6 @@ router.post(
  */
 router.post(
   '/verify',
-  apiOtpVerificationLimiter,
   authValidator.body(otpVerificationSchema),
   loginController.verifyOtp,
 )
