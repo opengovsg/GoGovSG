@@ -1,9 +1,12 @@
 import Express from 'express'
+import rateLimit from 'express-rate-limit'
 import { createValidator } from 'express-joi-validation'
+import getIp from '../../util/request'
 import { otpGenerationSchema, otpVerificationSchema } from './validators'
 import { container } from '../../util/inversify'
 import { LoginControllerInterface } from '../../controllers/interfaces/LoginControllerInterface'
 import { DependencyIds } from '../../constants'
+import { logger } from '../../config'
 
 const router: Express.Router = Express.Router()
 
@@ -12,6 +15,32 @@ const authValidator = createValidator({ passError: false, statusCode: 401 })
 const loginController = container.get<LoginControllerInterface>(
   DependencyIds.loginController,
 )
+
+/**
+ * Rate limiter for API generating OTP.
+ */
+const apiOtpGeneratorLimiter = rateLimit({
+  keyGenerator: (req) => getIp(req) as string,
+  onLimitReached: (req) =>
+    logger.warn(
+      `Rate limit (generating OTP) reached for IP Address: ${getIp(req)}`,
+    ),
+  windowMs: 60000, // 1 minute
+  max: 5,
+})
+
+/**
+ * Rate limiter for API verifying OTP.
+ */
+const apiOtpVerificationLimiter = rateLimit({
+  keyGenerator: (req) => getIp(req) as string,
+  onLimitReached: (req) =>
+    logger.warn(
+      `Rate limit (verifying OTP) reached for IP Address: ${getIp(req)}`,
+    ),
+  windowMs: 60000, // 1 minute
+  max: 5,
+})
 
 /**
  * For the Login message banner.
@@ -25,6 +54,7 @@ router.get('/emaildomains', loginController.getEmailDomains)
  */
 router.post(
   '/otp',
+  apiOtpGeneratorLimiter,
   authValidator.body(otpGenerationSchema),
   loginController.generateOtp,
 )
@@ -34,6 +64,7 @@ router.post(
  */
 router.post(
   '/verify',
+  apiOtpVerificationLimiter,
   authValidator.body(otpVerificationSchema),
   loginController.verifyOtp,
 )
