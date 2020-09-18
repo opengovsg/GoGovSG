@@ -71,8 +71,8 @@ const MORGAN_LOG_FORMAT =
 
 const connectSrc = [
   "'self'",
-  'www.google-analytics.com',
-  'stats.g.doubleclick.net',
+  'https://www.google-analytics.com/',
+  'https://stats.g.doubleclick.net/',
 ]
 if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
@@ -90,21 +90,26 @@ app.use(
         styleSrc: [
           "'self'",
           "'unsafe-inline'",
-          'fonts.googleapis.com',
-          'cdn.jsdelivr.net',
+          'https://fonts.googleapis.com/',
+          'https://cdn.jsdelivr.net/',
         ],
-        fontSrc: ["'self'", 'fonts.gstatic.com', 'cdn.jsdelivr.net'],
+        fontSrc: [
+          "'self'",
+          'https://fonts.gstatic.com/',
+          'https://cdn.jsdelivr.net/',
+        ],
         imgSrc: [
           "'self'",
           'data:',
-          'www.google-analytics.com',
-          'www.googletagmanager.com',
-          'stats.g.doubleclick.net',
+          'https://www.google-analytics.com/',
+          'https://www.googletagmanager.com/',
+          'https://stats.g.doubleclick.net/',
         ],
         scriptSrc: [
           "'self'",
-          'www.google-analytics.com',
-          'www.googletagmanager.com',
+          'https://www.google-analytics.com/',
+          'https://ssl.google-analytics.com/',
+          'https://www.googletagmanager.com/',
         ],
         connectSrc,
         frameAncestors: ["'self'"],
