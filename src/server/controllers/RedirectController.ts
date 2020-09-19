@@ -133,7 +133,7 @@ export class RedirectController implements RedirectControllerInterface {
     return longUrl.replace(/["]/g, encodeURIComponent)
   }
 
-  private static renderMetaTagDescription(description: string | null) {
+  private static renderMetaTagDescription(description: string) {
     if (!description) {
       return ''
     }

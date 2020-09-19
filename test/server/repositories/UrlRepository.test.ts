@@ -323,6 +323,37 @@ describe('UrlRepository', () => {
     })
   })
 
+  describe('getLongUrlAndDescription', () => {
+    it('should return from db when cache is empty', async () => {
+      await expect(repository.getLongUrlAndDescription('a')).resolves.toEqual({
+        longUrl: 'aa',
+        description: 'bb',
+      })
+    })
+
+    it('should return from cache when cache is filled', async () => {
+      const json = JSON.stringify({ longUrl: 'aaa', description: 'bbb' })
+      redisMockClient.set('a', json)
+      await expect(repository.getLongUrlAndDescription('a')).resolves.toEqual(
+        json,
+      )
+    })
+
+    it('should return from db when cache is down', async () => {
+      cacheGetSpy.mockImplementationOnce((_, callback) => {
+        if (!callback) {
+          return false
+        }
+        callback(new Error('Cache down'), 'Error')
+        return false
+      })
+      await expect(repository.getLongUrlAndDescription('a')).resolves.toEqual({
+        longUrl: 'aa',
+        description: 'bb',
+      })
+    })
+  })
+
   describe('plainTextSearch', () => {
     beforeEach(() => {
       mockQuery.mockClear()

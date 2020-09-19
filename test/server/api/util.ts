@@ -137,6 +137,7 @@ export const urlModelMock = sequelizeMock.define(
     longUrl: 'aa',
     state: ACTIVE,
     clicks: 8,
+    description: 'bb',
   },
   {
     instanceMethods: {

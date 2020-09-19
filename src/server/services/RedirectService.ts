@@ -52,10 +52,11 @@ export class RedirectService implements RedirectServiceInterface {
 
     const shortUrl = rawShortUrl.toLowerCase()
 
-    // Find longUrl to redirect to
-    const longUrl = await this.urlRepository.getLongUrl(shortUrl)
-    // Find description of the shortUrl
-    const description = await this.urlRepository.getDescription(shortUrl)
+    // Find longUrl to redirect to, and description of the shortUrl
+    const {
+      longUrl,
+      description,
+    } = await this.urlRepository.getLongUrlAndDescription(shortUrl)
 
     // Update clicks and click statistics in database.
     this.linkStatisticsService.updateLinkStatistics(shortUrl, userAgent)
