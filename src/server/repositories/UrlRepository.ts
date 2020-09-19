@@ -134,6 +134,25 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
+  /**
+   * Retrieves the description of the short url from the database.
+   * @param  {string} shortUrl Short url.
+   * @returns The description of the short url.
+   */
+  public getDescription: (shortUrl: string) => Promise<string> = async (
+    shortUrl,
+  ) => {
+    const url = await Url.findOne({
+      where: { shortUrl, state: StorableUrlState.Active },
+    })
+    if (!url) {
+      throw new NotFoundError(
+        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+      )
+    }
+    return url.description
+  }
+
   public plainTextSearch: (
     query: string,
     order: SearchResultsSortOrder,

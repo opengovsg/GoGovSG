@@ -42,6 +42,14 @@ export interface UrlRepositoryInterface {
   getLongUrl: (shortUrl: string) => Promise<string>
 
   /**
+   * Looks up the description given a shortUrl from the database.
+   * @param {string} shortUrl The shortUrl.
+   * @returns Promise that resolves to the description.
+   * @throws {NotFoundError}
+   */
+  getDescription: (shortUrl: string) => Promise<string>
+
+  /**
    * Performs plain text search on Urls based on their shortUrl and
    * description. The results are ranked in order of relevance based
    * on click count, length and cover density.
