@@ -307,7 +307,8 @@ describe('UrlRepository', () => {
     })
 
     it('should return from cache when cache is filled', async () => {
-      redisMockClient.set('a', 'aaa')
+      const longUrlAndDescription = { longUrl: 'aaa', description: 'bbb' }
+      redisMockClient.set('a', JSON.stringify(longUrlAndDescription))
       await expect(repository.getLongUrl('a')).resolves.toBe('aaa')
     })
 
@@ -332,10 +333,10 @@ describe('UrlRepository', () => {
     })
 
     it('should return from cache when cache is filled', async () => {
-      const json = JSON.stringify({ longUrl: 'aaa', description: 'bbb' })
-      redisMockClient.set('a', json)
+      const longUrlAndDescription = { longUrl: 'aaa', description: 'bbb' }
+      redisMockClient.set('a', JSON.stringify(longUrlAndDescription))
       await expect(repository.getLongUrlAndDescription('a')).resolves.toEqual(
-        json,
+        longUrlAndDescription,
       )
     })
 
