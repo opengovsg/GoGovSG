@@ -355,12 +355,23 @@ describe('UrlRepository', () => {
     })
 
     it('should return from db when cache value is in the old format (backwards compatible)', async () => {
+      // Added `<any, any>` so that private methods can be spied on.
+      const getLongUrlAndDescriptionFromDatabase = jest.spyOn<any, any>(
+        repository,
+        'getLongUrlAndDescriptionFromDatabase',
+      )
+      const findOne = jest.spyOn(urlModelMock, 'findOne')
+
       // old format - key: short url, value: long url
       redisMockClient.set('a', 'aa')
       const longUrlAndDescription = { longUrl: 'aa', description: 'bb' }
       await expect(repository.getLongUrlAndDescription('a')).resolves.toEqual(
         longUrlAndDescription,
       )
+      expect(getLongUrlAndDescriptionFromDatabase).toHaveBeenCalledWith('a')
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: 'a', state: 'ACTIVE' },
+      })
     })
   })
 
