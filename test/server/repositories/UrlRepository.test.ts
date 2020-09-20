@@ -353,6 +353,15 @@ describe('UrlRepository', () => {
         description: 'bb',
       })
     })
+
+    it('should return from db when cache value is in the old format (backwards compatible)', async () => {
+      // old format - key: short url, value: long url
+      redisMockClient.set('a', 'aa')
+      const longUrlAndDescription = { longUrl: 'aa', description: 'bb' }
+      await expect(repository.getLongUrlAndDescription('a')).resolves.toEqual(
+        longUrlAndDescription,
+      )
+    })
   })
 
   describe('plainTextSearch', () => {
