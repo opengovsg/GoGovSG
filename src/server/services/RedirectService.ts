@@ -52,11 +52,8 @@ export class RedirectService implements RedirectServiceInterface {
 
     const shortUrl = rawShortUrl.toLowerCase()
 
-    // Find longUrl to redirect to, and description of the shortUrl
-    const {
-      longUrl,
-      description,
-    } = await this.urlRepository.getLongUrlAndDescription(shortUrl)
+    // Find longUrl to redirect to
+    const longUrl = await this.urlRepository.getLongUrl(shortUrl)
 
     // Update clicks and click statistics in database.
     this.linkStatisticsService.updateLinkStatistics(shortUrl, userAgent)
@@ -64,7 +61,6 @@ export class RedirectService implements RedirectServiceInterface {
     if (this.crawlerCheckService.isCrawler(userAgent)) {
       return {
         longUrl,
-        description,
         visitedUrls: pastVisits,
         redirectType: RedirectType.Direct,
       }
@@ -85,7 +81,6 @@ export class RedirectService implements RedirectServiceInterface {
 
     return {
       longUrl,
-      description,
       visitedUrls: newVisits,
       redirectType: renderTransitionPage
         ? RedirectType.TransitionPage
