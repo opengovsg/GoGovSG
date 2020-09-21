@@ -19,7 +19,6 @@ describe('UrlManagementService', () => {
     create: jest.fn(),
     findByShortUrl: jest.fn(),
     getLongUrl: jest.fn(),
-    getLongUrlAndDescription: jest.fn(),
     plainTextSearch: jest.fn(),
   }
 

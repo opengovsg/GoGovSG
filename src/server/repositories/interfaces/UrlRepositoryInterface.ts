@@ -32,16 +32,14 @@ export interface UrlRepositoryInterface {
   ): Promise<StorableUrl>
 
   /**
-   * Looks up the longUrl and description given a shortUrl from the cache, falling back
+   * Looks up the longUrl given a shortUrl from the cache, falling back
    * to the database. The cache is re-populated if the database lookup is
    * performed successfully.
    * @param {string} shortUrl The shortUrl.
-   * @returns Promise that resolves to the longUrl and description.
+   * @returns Promise that resolves to the longUrl.
    * @throws {NotFoundError}
    */
-  getLongUrlAndDescription: (
-    shortUrl: string,
-  ) => Promise<{ longUrl: string; description: string }>
+  getLongUrl: (shortUrl: string) => Promise<string>
 
   /**
    * Performs plain text search on Urls based on their shortUrl and

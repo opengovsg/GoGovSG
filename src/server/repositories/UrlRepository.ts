@@ -3,7 +3,7 @@
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
-import { InvalidFormatError, NotFoundError } from '../util/error'
+import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import {
   logger,
@@ -121,25 +121,16 @@ export class UrlRepository implements UrlRepositoryInterface {
   public getLongUrl: (shortUrl: string) => Promise<string> = async (
     shortUrl,
   ) => {
-    const { longUrl } = await this.getLongUrlAndDescription(shortUrl)
-    return longUrl
-  }
-
-  public getLongUrlAndDescription: (
-    shortUrl: string,
-  ) => Promise<{ longUrl: string; description: string }> = async (shortUrl) => {
     try {
       // Cache lookup
-      return await this.getLongUrlAndDescriptionFromCache(shortUrl)
+      return await this.getLongUrlFromCache(shortUrl)
     } catch {
       // Cache failed, look in database
-      const longUrlAndDescription = await this.getLongUrlAndDescriptionFromDatabase(
-        shortUrl,
-      )
-      this.cacheShortUrl(shortUrl, longUrlAndDescription).catch((error) =>
+      const longUrl = await this.getLongUrlFromDatabase(shortUrl)
+      this.cacheShortUrl(shortUrl, longUrl).catch((error) =>
         logger.error(`Unable to cache short URL: ${error}`),
       )
-      return longUrlAndDescription
+      return longUrl
     }
   }
 
@@ -192,14 +183,14 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   /**
-   * Retrieves the long url which the short url redirects to, and description
+   * Retrieves the long url which the short url redirects to
    * from the database.
    * @param  {string} shortUrl Short url.
-   * @returns The long url that the short url redirects to, and description.
+   * @returns The long url that the short url redirects to.
    */
-  private getLongUrlAndDescriptionFromDatabase: (
+  private getLongUrlFromDatabase: (
     shortUrl: string,
-  ) => Promise<{ longUrl: string; description: string }> = async (shortUrl) => {
+  ) => Promise<string> = async (shortUrl) => {
     const url = await Url.findOne({
       where: { shortUrl, state: StorableUrlState.Active },
     })
@@ -208,73 +199,51 @@ export class UrlRepository implements UrlRepositoryInterface {
         `shortUrl not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-
-    return {
-      longUrl: url.longUrl,
-      description: url.description,
-    }
+    return url.longUrl
   }
 
   /**
-   * Retrieves the long url which the short url redirects to, and description
+   * Retrieves the long url which the short url redirects to
    * from the cache.
    * @param  {string} shortUrl Short url.
-   * @returns The long url that the short url redirects to, and description.
+   * @returns The long url that the short url redirects to.
    */
-  private getLongUrlAndDescriptionFromCache: (
-    shortUrl: string,
-  ) => Promise<{ longUrl: string; description: string }> = (shortUrl) => {
+  private getLongUrlFromCache: (shortUrl: string) => Promise<string> = (
+    shortUrl,
+  ) => {
     return new Promise((resolve, reject) =>
-      redirectClient.get(shortUrl, (cacheError, cacheLongUrlAndDescription) => {
+      redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
         if (cacheError) {
           logger.error(`Cache lookup failed unexpectedly:\t${cacheError}`)
           reject(cacheError)
         } else {
-          if (!cacheLongUrlAndDescription) {
+          if (!cacheLongUrl) {
             reject(
               new NotFoundError(
-                `longUrl and description not found in cache:\tshortUrl=${shortUrl}`,
+                `longUrl not found in cache:\tshortUrl=${shortUrl}`,
               ),
             )
           }
-
-          try {
-            const { longUrl, description } = JSON.parse(
-              cacheLongUrlAndDescription,
-            )
-            resolve({ longUrl, description })
-          } catch (ex) {
-            reject(
-              new InvalidFormatError(
-                `Failed to parse json for cached longUrl and description:\tshortUrl=${shortUrl}`,
-              ),
-            )
-          }
+          resolve(cacheLongUrl)
         }
       }),
     )
   }
 
   /**
-   * Caches the input short url to long url and description mapping in redis cache.
+   * Caches the input short url to long url mapping in redis cache.
    * @param  {string} shortUrl Short url.
-   * @param  {longUrl:string;description:string;} longUrlAndDescription Object of long url and description.
+   * @param  {string} longUrl Long url.
    */
   private cacheShortUrl: (
     shortUrl: string,
-    longUrlAndDescription: { longUrl: string; description: string },
-  ) => Promise<void> = (shortUrl, longUrlAndDescription) => {
+    longUrl: string,
+  ) => Promise<void> = (shortUrl, longUrl) => {
     return new Promise((resolve, reject) => {
-      redirectClient.set(
-        shortUrl,
-        JSON.stringify(longUrlAndDescription),
-        'EX',
-        redirectExpiry,
-        (err) => {
-          if (err) reject(err)
-          else resolve()
-        },
-      )
+      redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
     })
   }
 
