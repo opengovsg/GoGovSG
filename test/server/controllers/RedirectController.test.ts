@@ -331,7 +331,8 @@ describe('redirect API tests', () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
 
-    redisMockClient.set('aaa', 'aa')
+    const longUrlAndDescription = { longUrl: 'aa', description: 'bbb' }
+    redisMockClient.set('aaa', JSON.stringify(longUrlAndDescription))
     mockDbEmpty()
 
     await container
@@ -349,7 +350,8 @@ describe('redirect API tests', () => {
     const res = httpMocks.createResponse()
 
     mockDbDown()
-    redisMockClient.set('aaa', 'aa')
+    const longUrlAndDescription = { longUrl: 'aa', description: 'bbb' }
+    redisMockClient.set('aaa', JSON.stringify(longUrlAndDescription))
 
     await container
       .get<RedirectController>(DependencyIds.redirectController)

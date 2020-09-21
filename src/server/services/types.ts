@@ -9,6 +9,7 @@ export enum RedirectType {
 export type RedirectResult = {
   visitedUrls: string[]
   longUrl: string
+  description: string
   redirectType: RedirectType
 }
 

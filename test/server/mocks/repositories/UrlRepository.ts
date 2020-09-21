@@ -35,6 +35,12 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     throw new Error('Not implemented')
   }
 
+  getLongUrlAndDescription: (
+    shortUrl: string,
+  ) => Promise<{ longUrl: string; description: string }> = () => {
+    throw new Error('Not implemented')
+  }
+
   plainTextSearch: (
     query: string,
     order: SearchResultsSortOrder,

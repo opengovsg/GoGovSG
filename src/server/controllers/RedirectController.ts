@@ -1,5 +1,6 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
+import { escape } from 'lodash'
 import { gaTrackingId, logger } from '../config'
 import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
@@ -68,10 +69,11 @@ export class RedirectController implements RedirectControllerInterface {
       return
     }
 
-    // Find longUrl to redirect to.
+    // Find longUrl to redirect to and description.
     try {
       const {
         longUrl,
+        description,
         visitedUrls,
         redirectType,
       } = await this.redirectService.redirectFor(
@@ -95,6 +97,9 @@ export class RedirectController implements RedirectControllerInterface {
         const rootDomain: string = parseDomain(longUrl)
 
         res.status(200).render(TRANSITION_PATH, {
+          metaTagDescription: RedirectController.renderMetaTagDescription(
+            description,
+          ),
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
           rootDomain,
           gaTrackingId,
@@ -126,6 +131,14 @@ export class RedirectController implements RedirectControllerInterface {
    */
   private static encodeLongUrl(longUrl: string) {
     return longUrl.replace(/["]/g, encodeURIComponent)
+  }
+
+  private static renderMetaTagDescription(description: string) {
+    if (!description) {
+      return ''
+    }
+
+    return `<meta name="description" content="${escape(description)}" />`
   }
 }
 

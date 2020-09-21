@@ -8,6 +8,14 @@ export class NotFoundError extends Error {
   }
 }
 
+export class InvalidFormatError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'InvalidFormatError'
+    Object.setPrototypeOf(this, InvalidFormatError.prototype)
+  }
+}
+
 export class InvalidOtpError extends Error {
   public retries: number
 
