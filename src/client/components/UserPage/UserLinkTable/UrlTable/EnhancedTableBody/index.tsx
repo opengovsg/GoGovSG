@@ -110,6 +110,9 @@ const useStyles = makeStyles((theme) => {
     clicksCellContent: {
       width: 118,
     },
+    clicksCellTooltipContent: {
+      display: 'inline-block',
+    },
     rightCell: {
       [theme.breakpoints.up('md')]: {
         textAlign: 'right',
@@ -243,18 +246,20 @@ export default function EnhancedTableBody() {
               </Typography>
             </TableCell>
             <TableCell className={classes.clicksCell}>
-              <Tooltip title={row.clicks} placement="top" arrow>
-                <div className={classes.clicksCellContent}>
-                  <img
-                    className={classes.clicksIcon}
-                    src={clickCountIcon}
-                    alt="Clicks"
-                  />
-                  <Typography variant="caption" className={classes.clicksText}>
-                    {numberUnitFormatter(row.clicks)}
-                  </Typography>
-                </div>
-              </Tooltip>
+              <div className={classes.clicksCellContent}>
+                <Tooltip title={row.clicks} placement="top" arrow>
+                  <div className={classes.clicksCellTooltipContent}>
+                    <img
+                      className={classes.clicksIcon}
+                      src={clickCountIcon}
+                      alt="Clicks"
+                    />
+                    <Typography variant="caption" className={classes.clicksText}>
+                      {numberUnitFormatter(row.clicks)}
+                    </Typography>
+                  </div>
+                </Tooltip>
+              </div>
             </TableCell>
           </TableRow>
         ))}
