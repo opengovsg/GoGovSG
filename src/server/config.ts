@@ -82,6 +82,7 @@ let otpFunction: OtpFunction | null = null
 let transporterOpts: nodemailer.TransporterOptions | null = null
 let proxy: boolean = true
 let cookieConfig = null
+let otpRateLimit = 5
 
 if (DEV_ENV) {
   // Only configure things particular to development here
@@ -92,6 +93,7 @@ if (DEV_ENV) {
     maxAge: 1800000, // milliseconds = 30 min
   }
   proxy = false
+  otpRateLimit = 100
 } else {
   logger.info('Deploying in production mode.')
   otpFunction = generateOTP
@@ -152,6 +154,7 @@ export const getOTP: OtpFunction = otpFunction
 export const transporterOptions: nodemailer.TransporterOptions | null = transporterOpts
 export const trustProxy: boolean = proxy
 export const cookieSettings: CookieSettings = cookieConfig
+export const otpRate = otpRateLimit
 export const cookieSessionMaxSizeBytes =
   Number(process.env.COOKIE_SESSION_MAX_SIZE_BYTES) || 2000
 export const ogUrl = process.env.OG_URL as string
