@@ -47,7 +47,10 @@ export class UrlManagementService implements UrlManagementServiceInterface {
 
     const existsShortUrl = await this.urlRepository.findByShortUrl(shortUrl)
     if (existsShortUrl) {
-      throw new AlreadyExistsError(`Short link "${shortUrl}" already exists`)
+      const owner = await this.userRepository.findUserByUrl(shortUrl)
+      throw new AlreadyExistsError(
+        `Short link "${shortUrl}" is owned by ${owner?.email}`,
+      )
     }
 
     const storableFile: StorableFile | undefined = file

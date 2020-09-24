@@ -10,6 +10,7 @@ describe('UrlManagementService', () => {
     findById: jest.fn(),
     findByEmail: jest.fn(),
     findOneUrlForUser: jest.fn(),
+    findUserByUrl: jest.fn(),
     findUrlsForUser: jest.fn(),
     findOrCreateWithEmail: jest.fn(),
   }
