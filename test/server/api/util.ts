@@ -14,7 +14,7 @@ import IGaPageViewForm from '../../../src/server/services/analytics/types/IGaPag
 import { AnalyticsLoggerService } from '../../../src/server/services/interfaces/AnalyticsLoggerService'
 
 /**
- * Retrieves the currently binded OtpCache in the Inversify container.
+ * Retrieves the currently binded OtpCuserModelMockache in the Inversify container.
  * @returns OtpCache.
  */
 export function getOtpCache(): OtpRepositoryInterface {
@@ -217,6 +217,8 @@ export const devicesModelMock = sequelizeMock.define(
 export const mockTransaction = sequelizeMock.transaction
 
 export const mockQuery = jest.fn()
+
+export const mockDefine = jest.fn()
 
 mockQuery.mockImplementation((query: string) => {
   if (query.includes('count(*)')) {
