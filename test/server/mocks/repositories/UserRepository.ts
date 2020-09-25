@@ -31,11 +31,9 @@ export class MockUserRepository implements UserRepositoryInterface {
   }
 
   findOrCreateWithEmail(email: string): Promise<StorableUser> {
-    console.log('fake user repo')
     this.email = email
     return Promise.resolve({
-      // email: 'test@hello.gov.sg',
-      email: 'otpgo.gov@open.test.sg',
+      email: 'test@hello.gov.sg',
       urls: [],
       id: 1,
     } as StorableUser)
