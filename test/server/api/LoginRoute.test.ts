@@ -23,16 +23,20 @@ import app from './setup'
 
 describe('GET: /api/login/email/domains', () => {
   test('positive test: Should return *.test.sg ', async (done) => {
-    request(app).get('/api/login/emaildomains').expect('*.test.sg').expect(200)
+    const res = await request(app).get('/api/login/emaildomains')
 
+    expect(res.text).toBe('*.test.sg')
+    expect(res.status).toBe(200)
     done()
   })
 })
 
 describe('GET: /api/login/message', () => {
   test('positive test: Should get back a message banner', async (done) => {
-    request(app).get('/api/login/message').expect(200).expect('login message')
+    const res = await request(app).get('/api/login/message')
 
+    expect(res.text).toBe('login message')
+    expect(res.status).toBe(200)
     done()
   })
 })
