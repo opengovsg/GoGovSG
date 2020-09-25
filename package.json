@@ -43,7 +43,7 @@
     "cookie-session": "^1.4.0",
     "copy-to-clipboard": "^3.3.1",
     "cross-fetch": "^3.0.6",
-    "d3": "^6.1.1",
+    "d3": "^6.2.0",
     "ejs": "^3.1.5",
     "express": "^4.16.3",
     "express-fileupload": "^1.2.0",
