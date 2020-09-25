@@ -22,22 +22,18 @@ container
 import app from './setup'
 
 describe('GET: /api/login/email/domains', () => {
-  test('positive test: Should return *.test.sg ', function (done) {
-    request(app)
-      .get('/api/login/emaildomains')
-      .expect('*.test.sg')
-      .expect(200)
-      .end(done)
+  test('positive test: Should return *.test.sg ', async (done) => {
+    request(app).get('/api/login/emaildomains').expect('*.test.sg').expect(200)
+
+    done()
   })
 })
 
 describe('GET: /api/login/message', () => {
-  test('positive test: Should get back a message banner', function (done) {
-    request(app)
-      .get('/api/login/message')
-      .expect(200)
-      .expect('login message')
-      .end(done)
+  test('positive test: Should get back a message banner', async (done) => {
+    request(app).get('/api/login/message').expect(200).expect('login message')
+
+    done()
   })
 })
 
