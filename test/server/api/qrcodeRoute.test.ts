@@ -22,8 +22,8 @@ container
 // Importing setup app
 import app from './setup'
 
-describe('GET: /api/qrcode', () => {
-  test('positive test: Should return a qrcode', async (done) => {
+describe('GET /api/qrcode', () => {
+  test('return a qrcode', async (done) => {
     const ogUrl = 'undefined'
     const url = 'random'
     const format = 'image%2Fpng'

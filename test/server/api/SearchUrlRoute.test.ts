@@ -12,8 +12,8 @@ container
 // Importing setup app
 import app from './setup'
 
-describe('GET: /api/search', () => {
-  test('positive test: Should get search results from utils', async (done) => {
+describe('GET /api/search', () => {
+  test('get search results', async (done) => {
     const limit = 10
     const offset = 0
     const query = 'moh'

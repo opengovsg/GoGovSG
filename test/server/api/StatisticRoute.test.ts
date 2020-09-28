@@ -12,8 +12,8 @@ container
 // Importing setup app
 import app from './setup'
 
-describe('GET: /api/stats', () => {
-  test('positive test: Should get object of statistics', async (done) => {
+describe('GET /api/stats', () => {
+  test('get statistics', async (done) => {
     const res = await request(app).get('/api/stats')
     expect(res.status).toBe(200)
     expect(res.ok).toBe(true)

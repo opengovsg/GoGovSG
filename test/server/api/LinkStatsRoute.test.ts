@@ -25,8 +25,8 @@ container
 // Importing setup app
 import app from './setup'
 
-describe('GET: /api/link-stats', () => {
-  test('positive test: Should get statistics of mocked link', async (done) => {
+describe('GET /api/link-stats', () => {
+  test('get statistics of mocked link', async (done) => {
     const shortUrl = 'random'
     const query = `/api/link-stats?url=${shortUrl}`
 

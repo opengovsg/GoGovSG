@@ -26,10 +26,10 @@ app.use(bodyParser.json())
 
 // Preset response
 function presetResponse(_: Request, res: Response, next: NextFunction): void {
-  res.ok = function (msg) {
+  res.ok = function resOkay(msg) {
     this.status(200).send(msg)
   }
-  res.serverError = function (msg) {
+  res.serverError = function resServerError(msg) {
     this.status(500).send(msg)
   }
   next()
@@ -66,12 +66,12 @@ app.use(primeMock)
 // attach -  Routes to be tested
 app.use('/api', api)
 
-// Redis Mocks
+// Redis Mock
 jest.mock('../../../src/server/redis', () => ({
   otpClient: redisMockClient,
 }))
 
-// Sequelize Mocks
+// Temporary sequelize mock - the goal would be to have a real sequalize instance used here
 jest.mock('../../../src/server/util/sequelize', () => ({
   transaction: mockTransaction,
   sequelize: {
@@ -85,22 +85,22 @@ jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
 }))
 
-// Necessary mocks for app to work
+// Necessary mock for app to work
 jest.mock('../../../src/server/models/statistics/daily', () => ({
   Clicks: clicksModelMock,
 }))
 
-// Necessary mocks for app to work
+// Necessary mock for app to work
 jest.mock('../../../src/server/models/statistics/weekday', () => ({
   WeekdayClicks: heatMapModelMock,
 }))
 
-// Necessary mocks for app to work
+// Necessary mock for app to work
 jest.mock('../../../src/server/models/statistics/devices', () => ({
   Devices: devicesModelMock,
 }))
 
-// Necessary mocks for app to work
+// Necessary mock for app to work
 jest.mock('../../../src/server/services/email', () => ({
   MailerNode: MailerMock,
 }))

@@ -21,8 +21,8 @@ container
 // Importing setup app
 import app from './setup'
 
-describe('GET: /api/login/email/domains', () => {
-  test('positive test: Should return *.test.sg ', async (done) => {
+describe('GET /api/login/email/domains', () => {
+  test('return an email domain', async (done) => {
     const res = await request(app).get('/api/login/emaildomains')
 
     expect(res.text).toBe('*.test.sg')
@@ -31,8 +31,8 @@ describe('GET: /api/login/email/domains', () => {
   })
 })
 
-describe('GET: /api/login/message', () => {
-  test('positive test: Should get back a message banner', async (done) => {
+describe('GET /api/login/message', () => {
+  test('get back message banner', async (done) => {
     const res = await request(app).get('/api/login/message')
 
     expect(res.text).toBe('login message')
@@ -41,8 +41,8 @@ describe('GET: /api/login/message', () => {
   })
 })
 
-describe('POST: /api/login/otp', () => {
-  test('positive test: Should notify the generation of an OTP', async (done) => {
+describe('POST /api/login/otp', () => {
+  test('notify the generation of an OTP', async (done) => {
     const res = await request(app)
       .post('/api/login/otp')
       .send({ email: 'otpgo.gov@open.test.sg' })
@@ -53,8 +53,8 @@ describe('POST: /api/login/otp', () => {
   })
 })
 
-describe('POST: /api/login/verify', () => {
-  test('positive test: Should verify the OTP', async (done) => {
+describe('POST /api/login/verify', () => {
+  test('verify the OTP', async (done) => {
     // Prime cache
     getOtpCache().setOtpForEmail('otpgo.gov@open.test.sg', {
       hashedOtp: '1',
@@ -69,8 +69,8 @@ describe('POST: /api/login/verify', () => {
   })
 })
 
-describe('GET: /api/login/isLoggedIn', () => {
-  test('positive test: Should verify is loggedin', async (done) => {
+describe('GET /api/login/isLoggedIn', () => {
+  test('verify is loggedin', async (done) => {
     const res = await request(app)
       .get('/api/login/isLoggedIn')
       .set('prime', '1')
