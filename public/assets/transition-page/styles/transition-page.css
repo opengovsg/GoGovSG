@@ -101,10 +101,6 @@ body {
   width: 80%;
 }
 
-.footer img {
-  margin-bottom: 24px;
-}
-
 .footer p {
   color: #bbbbbb;
   font-size: 13px;
@@ -159,6 +155,10 @@ body {
 
   .footer {
     bottom: 30px;
+  }
+
+  .footer img {
+    margin-bottom: 24px;
   }
 
   .mobile-break {
