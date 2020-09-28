@@ -16,6 +16,9 @@ response.badRequest = function (content) {
 response.unauthorized = function (content) {
   this.status(401).send(content)
 }
+response.forbidden = function (content) {
+  this.status(403).send(content)
+}
 response.notFound = function (content) {
   this.status(404).send(content)
 }
