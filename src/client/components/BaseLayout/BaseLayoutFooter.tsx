@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Hidden,
   Link,
   Typography,
   createStyles,
@@ -8,18 +7,15 @@ import {
 } from '@material-ui/core'
 import i18next from 'i18next'
 import Section from '../Section'
-import CopyrightWidget from './widgets/CopyrightWidget'
-import BuiltByWidget from './widgets/BuiltByWidget'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     footer: {
       display: 'flex',
       justifyContent: 'space-between',
-    },
-    footerGrid: {
-      display: 'grid',
-      maxWidth: '100%',
+      [theme.breakpoints.down('sm')]: {
+        display: 'grid',
+      },
     },
     appHeaderGroup: {
       gridRow: 1,
@@ -37,7 +33,8 @@ const useStyles = makeStyles((theme) =>
       fontWeight: 400,
     },
     navLinkGroup: {
-      gridRow: 2,
+      gridRow: 1,
+      gridColumn: 2,
       display: 'flex',
       flexDirection: 'column',
       marginBottom: theme.spacing(2),
@@ -49,12 +46,20 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(0),
         alignItems: 'center',
       },
+      [theme.breakpoints.down('sm')]: {
+        display: 'grid',
+        gridRow: 2,
+        gridColumn: 1,
+      },
     },
     navLink: {
       fontSize: '0.75rem',
       marginTop: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
-        marginRight: theme.spacing(3),
+        marginLeft: theme.spacing(3),
+      },
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: 0,
       },
       [theme.breakpoints.up('md')]: {
         marginTop: theme.spacing(0),
@@ -62,13 +67,6 @@ const useStyles = makeStyles((theme) =>
     },
     footerLink: {
       color: theme.palette.primary.dark,
-    },
-    copyright: {
-      gridRow: 4,
-    },
-    copyrightDivider: {
-      marginLeft: theme.spacing(2),
-      marginRight: theme.spacing(2),
     },
     buildByLink: {
       gridRow: 3,
@@ -92,7 +90,6 @@ const BaseLayoutFooter = () => {
   return (
     <Section backgroundType="dark" verticalMultiplier={0.5}>
       <footer className={classes.footer}>
-        <div className={classes.footerGrid}>
           <div className={classes.appHeaderGroup}>
             <Typography
               className={classes.appTitle}
@@ -110,16 +107,7 @@ const BaseLayoutFooter = () => {
               {i18next.t('general.appCatchphrase.noStyle')}
             </Typography>
           </div>
-          <div className={classes.copyright}>
-            <Hidden mdUp>
-              <CopyrightWidget />
-            </Hidden>
-          </div>
           <div className={classes.navLinkGroup}>
-            <Hidden smDown>
-              <CopyrightWidget />
-              <Typography className={classes.copyrightDivider}>|</Typography>
-            </Hidden>
             {footers.map((footer) => (
               <Typography
                 className={classes.navLink}
@@ -136,15 +124,6 @@ const BaseLayoutFooter = () => {
               </Typography>
             ))}
           </div>
-          <div className={classes.buildByLink}>
-            <Hidden mdUp>
-              <BuiltByWidget />
-            </Hidden>
-          </div>
-        </div>
-        <Hidden smDown>
-          <BuiltByWidget />
-        </Hidden>
       </footer>
     </Section>
   )
