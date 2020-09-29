@@ -45,11 +45,10 @@ export class UrlManagementService implements UrlManagementServiceInterface {
       throw new NotFoundError('User not found')
     }
 
-    const existsShortUrl = await this.urlRepository.findByShortUrl(shortUrl)
-    if (existsShortUrl) {
-      const owner = await this.userRepository.findUserByUrl(shortUrl)
+    const owner = await this.userRepository.findUserByUrl(shortUrl)
+    if (owner) {
       throw new AlreadyExistsError(
-        `Short link "${shortUrl}" is owned by ${owner?.email}`,
+        `Short link "${shortUrl}" is owned by ${owner.email}`,
       )
     }
 
