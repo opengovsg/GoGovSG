@@ -56,6 +56,10 @@ export class MockUserRepository implements UserRepositoryInterface {
     } as StorableUrl)
   }
 
+  findUserByUrl(_shortUrl: string): Promise<StorableUser | null> {
+    return Promise.resolve(null)
+  }
+
   findUrlsForUser(conditions: UserUrlsQueryConditions): Promise<UrlsPaginated> {
     this.conditions = conditions
     return Promise.resolve({ count: 0, urls: [] })

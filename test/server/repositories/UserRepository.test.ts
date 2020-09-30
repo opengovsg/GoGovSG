@@ -143,6 +143,32 @@ describe('UserRepository', () => {
     })
   })
 
+  describe('findUserByUrl', () => {
+    const { scope } = userModelMock
+    const findOne = jest.fn()
+
+    beforeEach(() => {
+      scope.mockReset()
+      findOne.mockReset()
+      scope.mockReturnValue({ findOne })
+    })
+
+    it('returns user for url', async () => {
+      const user = {
+        id: 2,
+        email: 'user@agency.gov.sg',
+        Urls: [url],
+      }
+      findOne.mockResolvedValue(user)
+      await expect(userRepo.findUserByUrl(url.shortUrl)).resolves.toStrictEqual(
+        expect.objectContaining({ id: user.id, email: user.email }),
+      )
+      expect(scope).toHaveBeenCalledWith({
+        method: ['includeShortUrl', url.shortUrl],
+      })
+    })
+  })
+
   describe('findUrlsForUser', () => {
     const { scope } = userModelMock
     const findAndCountAll = jest.fn()
