@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import classNames from 'classnames'
-import BuiltByImgLight from '~/assets/built-by-light.svg'
+import LinkedinIcon from '../assets/linkedin-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(1),
     },
     builtByImg: {
-      height: '55px',
+      height: '25px',
       userDrag: 'none',
     },
   }),
@@ -21,17 +21,17 @@ type BuiltByWidgetProps = {
   className?: string
 }
 
-const BuiltByWidget = ({ className }: BuiltByWidgetProps) => {
+const LinkedinWidget = ({ className }: BuiltByWidgetProps) => {
   const classes = useStyles()
   return (
     <div className={classNames(className, classes.builtByLinkGroup)}>
       <Link
-        href={i18next.t('general.links.builtBy')}
+        href={i18next.t('general.links.linkedin')}
         target="_blank"
         style={{ height: '100%' }}
       >
         <img
-          src={BuiltByImgLight}
+          src={LinkedinIcon}
           className={classes.builtByImg}
           alt={i18next.t('general.builtBy')}
         />
@@ -40,4 +40,4 @@ const BuiltByWidget = ({ className }: BuiltByWidgetProps) => {
   )
 }
 
-export default BuiltByWidget
+export default LinkedinWidget

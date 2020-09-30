@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme) =>
             return theme.palette.secondary.dark
           case 'darkest':
             return '#384A51'
+          case 'black':
+            return '#000000'
           default:
             return props.backgroundType
         }

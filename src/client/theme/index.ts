@@ -86,6 +86,7 @@ export default responsiveFontSizes(
       caption: {
         fontSize: '0.8125rem',
         lineHeight: 1.308,
+        color: '#808080',
       },
       button: {
         textTransform: 'none',

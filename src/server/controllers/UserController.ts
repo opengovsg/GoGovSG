@@ -114,7 +114,7 @@ export class UserController implements UserControllerInterface {
       return
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.notFound(jsonMessage(error.message))
+        res.forbidden(jsonMessage(error.message))
         return
       }
       logger.error(`Error editing URL:\t${error}`)

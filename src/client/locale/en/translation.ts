@@ -16,7 +16,8 @@ const translationEn = {
       },
     },
     appSignInPrompt: 'Are you a public officer?',
-    copyright: '© 2020 Open Government Products',
+    copyright: '© 2020 Open Government Products, ',
+    copyrightTag: 'Government Technology Agency of Singapore',
     placeholders: {
       email: 'jane@data.gov.sg',
     },
@@ -27,6 +28,8 @@ const translationEn = {
       terms: 'https://guide.go.gov.sg/termsofuse.html',
       contact: 'https://form.gov.sg/forms/govtech/5c5295edb3d80b0017ac7c81',
       builtBy: 'https://open.gov.sg',
+      linkedin: 'https://sg.linkedin.com/company/open-government-products',
+      facebook: 'https://www.facebook.com/opengovsg',
     },
     builtBy: 'Built by Open Government Products',
   },

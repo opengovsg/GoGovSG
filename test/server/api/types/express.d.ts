@@ -11,7 +11,6 @@ declare global {
       created(content?: Buffer | object | string): void
       badRequest(content?: Buffer | object | string): void
       unauthorized(content?: Buffer | object | string): void
-      forbidden(content?: Buffer | object | string): void
       notFound(content?: Buffer | object | string): void
       unsupportedMediaType(content?: Buffer | object | string): void
       unprocessableEntity(content?: Buffer | object | string): void

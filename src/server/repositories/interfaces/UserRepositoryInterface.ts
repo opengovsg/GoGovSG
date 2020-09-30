@@ -45,6 +45,13 @@ export interface UserRepositoryInterface {
   ): Promise<StorableUrl | null>
 
   /**
+   * Find the user who created a given url.
+   * @param  {string} shortUrl The shortUrl of the Url to find.
+   * @returns Promise that resolves to the user, if any, or null.
+   */
+  findUserByUrl(shortUrl: string): Promise<StorableUser | null>
+
+  /**
    * Find the urls belonging to a user which matches the given query conditions.
    * The total count of rows matching the query (both in and outside the limit) is also returned.
    * @param  {UserUrlsQueryConditions} conditions Query conditions.

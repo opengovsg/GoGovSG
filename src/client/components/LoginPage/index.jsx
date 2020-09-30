@@ -182,7 +182,7 @@ const LoginPage = ({
     ) : null
 
     return (
-      <BaseLayout withHeader={false} withFooter={false}>
+      <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
         <div className={classes.container}>
           <div>
             <Hidden mdDown>

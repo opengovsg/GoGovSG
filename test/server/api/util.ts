@@ -218,6 +218,8 @@ export const mockTransaction = sequelizeMock.transaction
 
 export const mockQuery = jest.fn()
 
+export const mockDefine = jest.fn()
+
 mockQuery.mockImplementation((query: string) => {
   if (query.includes('count(*)')) {
     return [{ count: 10 }]
