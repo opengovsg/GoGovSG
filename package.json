@@ -105,7 +105,7 @@
     "@types/cloudmersive-virus-api-client": "^1.1.1",
     "@types/connect-redis": "0.0.14",
     "@types/cookie-session": "^2.0.39",
-    "@types/d3": "^5.9.2",
+    "@types/d3": "^5.16.1",
     "@types/express": "^4.17.8",
     "@types/express-fileupload": "^1.1.5",
     "@types/express-session": "^1.17.0",
