@@ -12,6 +12,12 @@ const useStyles = makeStyles((theme) =>
     copyrightText: {
       fontSize: '0.75rem',
     },
+    mobileFooter: {
+      display: 'none',
+      [theme.breakpoints.down('sm')]: {
+        display: 'block',
+      },
+    },
   }),
 )
 
@@ -25,10 +31,9 @@ const CopyrightWidget = ({ className }: CopyrightWidgetProps) => {
     <span className={classNames(className, classes.copyright)}>
       <Typography
         variant="caption"
-        color="textPrimary"
         className={classes.copyrightText}
       >
-        {i18next.t('general.copyright')}
+        {i18next.t('general.copyright')} <br className={classes.mobileFooter}/> {i18next.t('general.copyrightTag')}
       </Typography>
     </span>
   )

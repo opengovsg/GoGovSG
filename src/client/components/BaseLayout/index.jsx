@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import Masthead from './Masthead'
 import BaseLayoutHeader from './BaseLayoutHeader'
 import BaseLayoutFooter from './BaseLayoutFooter'
+import BaseLayoutLowFooter from './BaseLayoutLowFooter'
 import useIsIE from './util/ie'
 import BannerForIE from './BannerForIE'
 import { USER_PAGE } from '../../util/types'
@@ -44,6 +45,7 @@ const BaseLayout = ({
   withHeader,
   headerBackgroundType,
   withFooter,
+  withLowFooter,
   children,
   hideNavButtons,
 }) => {
@@ -65,6 +67,7 @@ const BaseLayout = ({
       )}
       <div className={classes.layout}>{children}</div>
       {withFooter && <BaseLayoutFooter />}
+      {withLowFooter && <BaseLayoutLowFooter />}
     </>
   )
 }
@@ -73,6 +76,7 @@ BaseLayout.propTypes = {
   withHeader: PropTypes.bool,
   headerBackgroundType: PropTypes.string,
   withFooter: PropTypes.bool,
+  withLowFooter: PropTypes.bool,
   hideNavButtons: PropTypes.bool,
 }
 
@@ -80,6 +84,7 @@ BaseLayout.defaultProps = {
   withHeader: true,
   headerBackgroundType: 'dark',
   withFooter: true,
+  withLowFooter: true,
   hideNavButtons: false,
 }
 

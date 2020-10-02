@@ -65,6 +65,7 @@ export class LoginController implements LoginControllerInterface {
       const user = await this.authService.verifyOtp(email, otp)
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
+      console.info(`Login success for user:\t${user.email}`)
       return
     } catch (error) {
       if (error instanceof InvalidOtpError) {
@@ -73,10 +74,12 @@ export class LoginController implements LoginControllerInterface {
             `OTP hash verification failed, ${error.retries} attempt(s) remaining.`,
           ),
         )
+        console.info(`Login OTP verification failed for user:\t${email}`)
         return
       }
       if (error instanceof NotFoundError) {
         res.unauthorized(jsonMessage('OTP expired/not found.'))
+        console.info(`Login email not found for user:\t${email}`)
         return
       }
       res.serverError(jsonMessage(error.message))
