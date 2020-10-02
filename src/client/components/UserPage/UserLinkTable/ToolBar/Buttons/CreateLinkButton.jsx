@@ -13,6 +13,8 @@ const useStyles = makeStyles((theme) =>
     createLinkButtonContainer: {
       marginLeft: theme.spacing(1.5),
       flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center',
     },
   }),
 )
