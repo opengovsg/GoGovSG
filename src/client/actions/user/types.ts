@@ -28,10 +28,22 @@ export const SET_LAST_CREATED_LINK = 'SET_LAST_CREATED_LINK'
 export const SET_EDITED_CONTACT_EMAIL = 'SET_EDITED_CONTACT_EMAIL'
 export const SET_EDITED_DESCRIPTION = 'SET_EDITED_DESCRIPTION'
 export const SET_USER_MESSAGE = 'SET_USER_MESSAGE'
+export const SET_USER_ANNOUNCEMENT = 'SET_USER_ANNOUNCEMENT'
 
 export type SetUserMessageAction = {
   type: typeof SET_USER_MESSAGE
   payload: string
+}
+
+export type SetUserAnnouncementAction = {
+  type: typeof SET_USER_ANNOUNCEMENT
+  payload: {
+    message: string | undefined
+    title: string | undefined
+    subtitle: string | undefined
+    url: string | undefined
+    image: string | undefined
+  }
 }
 
 export type SetEditedContactEmailAction = {
@@ -170,3 +182,4 @@ export type UserActionType =
   | SetEditedContactEmailAction
   | SetEditedDescriptionAction
   | SetUserMessageAction
+  | SetUserAnnouncementAction

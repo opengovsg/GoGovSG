@@ -32,6 +32,7 @@ services:
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
       - USER_MESSAGE=User message test
+      - USER_ANNOUNCEMENT=The quick brown fox jumps over a lazy dog;Some title;Subtitle is found here;https://go.gov.sg/;/assets/transition-page/images/browser.svg
       - AWS_S3_BUCKET=local-bucket
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
       - AWS_ACCESS_KEY_ID=foobar

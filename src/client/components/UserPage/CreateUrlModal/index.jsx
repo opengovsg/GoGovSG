@@ -12,7 +12,7 @@ import {
 import CloseIcon from '../../widgets/CloseIcon'
 
 import CreateLinkForm from './CreateLinkForm'
-import useFullScreenDialog from './helpers/fullScreenDialog'
+import useFullScreenDialog from '../helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
 import userActions from '../../../actions/user'
 import AddDescriptionForm from './AddDescriptionForm'
