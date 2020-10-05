@@ -3,6 +3,8 @@ import httpMocks from 'node-mocks-http'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
 import { createRequestWithUser } from '../api/util'
 
+import { UserController } from '../../../src/server/controllers/UserController'
+
 const urlManagementService = {
   createUrl: jest.fn(),
   updateUrl: jest.fn(),
@@ -10,22 +12,10 @@ const urlManagementService = {
   getUrlsWithConditions: jest.fn(),
 }
 
+const userMessage = 'The quick brown fox jumps over a lazy dog'
+
 describe('UserController', () => {
-  const userMessage = 'The quick brown fox jumps over a lazy dog'
-
-  jest.resetModules()
-  jest.mock('../../../src/server/config', () => ({
-    logger: console,
-    userMessage,
-  }))
-
-  const {
-    UserController,
-  } = require('../../../src/server/controllers/UserController')
-
-  afterAll(jest.resetModules)
-
-  const controller = new UserController(urlManagementService)
+  const controller = new UserController(urlManagementService, userMessage)
 
   describe('createUrl', () => {
     it('rejects multiple file uploads', async () => {

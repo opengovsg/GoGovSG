@@ -1,5 +1,6 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
+
 import {
   OwnershipTransferRequest,
   UrlCreationRequest,
@@ -15,18 +16,24 @@ import {
   NotFoundError,
 } from '../util/error'
 import { MessageType } from '../../shared/util/messages'
-import { logger, userMessage } from '../config'
 import { StorableUrlState } from '../repositories/enums'
+
+import { logger } from '../config'
 
 @injectable()
 export class UserController implements UserControllerInterface {
   private urlManagementService: UrlManagementServiceInterface
 
+  private userMessage: string
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementServiceInterface,
+    @inject(DependencyIds.userMessage)
+    userMessage: string,
   ) {
     this.urlManagementService = urlManagementService
+    this.userMessage = userMessage
   }
 
   public createUrl: (
@@ -208,7 +215,7 @@ export class UserController implements UserControllerInterface {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
-    res.send(userMessage)
+    res.send(this.userMessage)
     return
   }
 }

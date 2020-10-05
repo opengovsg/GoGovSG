@@ -43,6 +43,7 @@ export const DependencyIds = {
   safeBrowsingRepository: Symbol.for('safeBrowsingRepository'),
   urlThreatScanService: Symbol.for('urlThreatScanService'),
   urlCheckController: Symbol.for('urlCheckController'),
+  userMessage: Symbol.for('userMessage'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
