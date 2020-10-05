@@ -11,6 +11,7 @@ import {
   useMediaQuery,
   CircularProgress,
   Link,
+  Typography,
 } from '@material-ui/core'
 
 import DrawerActions from './util/reducers'
@@ -36,6 +37,7 @@ import {
 } from '../../../CollapsibleMessage/types'
 import { SEARCH_PAGE } from '../../../../util/types'
 import LinkInfoEditor from '../../widgets/LinkInfoEditor'
+import inProgressGraphic from './assets/in-progress.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -149,6 +151,24 @@ const useStyles = makeStyles((theme) =>
         marginRight: theme.spacing(1),
         marginBottom: 0,
       },
+    },
+    inactiveDesc: {
+      display: 'none'
+    },
+    customInformationHeader: {
+      marginRight: theme.spacing(2),
+    },
+    dividerLinkVisibility: {
+      marginBottom: '50px',
+    },
+    customInformationDesc: {
+      paddingTop: '20px',
+    },
+    emptyStateGraphic: {
+      marginTop: '48px',
+      marginBottom: '76px',
+      textAlign: 'center',
+      zIndex: -1,
     },
   }),
 )
@@ -422,6 +442,7 @@ export default function ControlPanel() {
             wrapTrailing={isMobileView}
             trailingPosition={TrailingPosition.end}
           />
+          <div className={classes.inactiveDesc}>
           <Divider className={classes.dividerInformation} />
           <LinkInfoEditor
             isSearchable={isSearchable}
@@ -473,9 +494,25 @@ export default function ControlPanel() {
             >
               Save
             </TrailingButton>
+            </div>
           </div>
           <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
+          <Divider className={classes.dividerLinkVisibility} />
+            <Typography
+              variant="h3"
+              className={classes.customInformationHeader}
+              color="primary"
+            >
+              Custom Link Visibility
+            </Typography>
+            <Typography variant="body1" className={classes.customInformationDesc}>
+              This section is undergoing construction. Your link description and contact email added{' '}
+              will be kept for future use in our database. We'll keep you updated on any changes.
+          </Typography>
+          <div className={classes.emptyStateGraphic}>
+            <img src={inProgressGraphic} alt="in progress graphic" />
+          </div>
         </DrawerMargin>
       </main>
     </Drawer>

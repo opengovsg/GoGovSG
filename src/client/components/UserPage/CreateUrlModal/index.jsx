@@ -72,7 +72,7 @@ const CreateUrlModal = ({
   const incrementDecorator = (func) => async (...args) => {
     const proceed = await func(...args)
     if (proceed) {
-      setStep(step + 1)
+      closeCreateUrlModal()
     }
   }
   const history = useHistory()
