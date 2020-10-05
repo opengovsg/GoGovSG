@@ -3,6 +3,7 @@ import winston, { createLogger, format, transports } from 'winston'
 import minimatch from 'minimatch'
 import { parse } from 'url'
 import generateOTP, { OtpFunction } from './util/otp'
+import { parseAnnouncementString } from './util/modal'
 
 // Check environment
 export const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
@@ -138,6 +139,16 @@ export const emailValidator = new minimatch.Minimatch(
 )
 export const loginMessage = process.env.LOGIN_MESSAGE
 export const userMessage = process.env.USER_MESSAGE
+/**
+ * A string that embodies the fields to be used in a modal.
+ * This is of the following form:
+ *   <message>;<title>;<subtitle>;<link>;<image>
+ * An example of this is:
+ *   message;title;subtitle;https://go.gov.sg/;/favicon.ico.
+ */
+export const userAnnouncement = parseAnnouncementString(
+  process.env.USER_ANNOUNCEMENT,
+)
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 

@@ -13,9 +13,19 @@ const urlManagementService = {
 }
 
 const userMessage = 'The quick brown fox jumps over a lazy dog'
+const userAnnouncement = {
+  title: 'title',
+  message: 'message',
+  url: 'https://go.gov.sg',
+  image: '/favicon.ico',
+}
 
 describe('UserController', () => {
-  const controller = new UserController(urlManagementService, userMessage)
+  const controller = new UserController(
+    urlManagementService,
+    userMessage,
+    userAnnouncement,
+  )
 
   describe('createUrl', () => {
     it('rejects multiple file uploads', async () => {
@@ -370,5 +380,14 @@ describe('UserController', () => {
     const send = jest.spyOn(res, 'send')
     await controller.getUserMessage(req, res)
     expect(send).toHaveBeenCalledWith(userMessage)
+  })
+
+  it('sends userAnnouncement', async () => {
+    const req = createRequestWithUser(undefined)
+    const res = httpMocks.createResponse()
+    const send = jest.spyOn(res, 'send')
+
+    await controller.getUserAnnouncement(req, res)
+    expect(send).toHaveBeenCalledWith(userAnnouncement)
   })
 })

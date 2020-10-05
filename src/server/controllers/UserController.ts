@@ -20,20 +20,33 @@ import { StorableUrlState } from '../repositories/enums'
 
 import { logger } from '../config'
 
+interface AnnouncementResponse {
+  message?: string
+  title?: string
+  subtitle?: string
+  url?: string
+  image?: string
+}
+
 @injectable()
 export class UserController implements UserControllerInterface {
   private urlManagementService: UrlManagementServiceInterface
 
   private userMessage: string
 
+  private userAnnouncement: AnnouncementResponse
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementServiceInterface,
     @inject(DependencyIds.userMessage)
     userMessage: string,
+    @inject(DependencyIds.userAnnouncement)
+    userAnnouncement: AnnouncementResponse,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
+    this.userAnnouncement = userAnnouncement
   }
 
   public createUrl: (
@@ -216,6 +229,14 @@ export class UserController implements UserControllerInterface {
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
     res.send(this.userMessage)
+    return
+  }
+
+  public getUserAnnouncement: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (_, res) => {
+    res.send(this.userAnnouncement)
     return
   }
 }

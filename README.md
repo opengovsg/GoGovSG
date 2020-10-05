@@ -104,6 +104,8 @@ After these have been set up, set the environment variables according to the tab
 |SENTRY_PROJECT|No|The relevant Sentry project. e.g. `project-prod`|
 |SENTRY_URL|No|The Sentry url. e.g. `https://sentry.io/`|
 |LOGIN_MESSAGE|No|A text message that will be displayed on the login page as a snackbar.|
+|USER_MESSAGE|No|A text message that will be displayed as a banner, once the user has logged in.|
+|USER_ANNOUNCEMENT|No|A string of the form `message;title;subtitle;url;image-path` that will be displayed as a modal once to the user on login.|
 |CSP_REPORT_URI|No|A URI to report CSP violations to.|
 |CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
 |CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|

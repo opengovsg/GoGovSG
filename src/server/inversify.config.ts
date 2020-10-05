@@ -7,8 +7,8 @@ import {
   accessEndpoint,
   bucketEndpoint,
   cloudmersiveKey,
-  logger,
   s3Bucket,
+  userAnnouncement,
   userMessage,
 } from './config'
 
@@ -71,6 +71,9 @@ function bindIfUnbound<T>(
 
 export default () => {
   container.bind(DependencyIds.userMessage).toConstantValue(userMessage)
+  container
+    .bind(DependencyIds.userAnnouncement)
+    .toConstantValue(userAnnouncement)
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
