@@ -1,5 +1,6 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
+
 import {
   OwnershipTransferRequest,
   UrlCreationRequest,
@@ -15,18 +16,37 @@ import {
   NotFoundError,
 } from '../util/error'
 import { MessageType } from '../../shared/util/messages'
-import { logger, userMessage } from '../config'
 import { StorableUrlState } from '../repositories/enums'
+
+import { logger } from '../config'
+
+interface AnnouncementResponse {
+  message?: string
+  title?: string
+  subtitle?: string
+  url?: string
+  image?: string
+}
 
 @injectable()
 export class UserController implements UserControllerInterface {
   private urlManagementService: UrlManagementServiceInterface
 
+  private userMessage: string
+
+  private userAnnouncement: AnnouncementResponse
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementServiceInterface,
+    @inject(DependencyIds.userMessage)
+    userMessage: string,
+    @inject(DependencyIds.userAnnouncement)
+    userAnnouncement: AnnouncementResponse,
   ) {
     this.urlManagementService = urlManagementService
+    this.userMessage = userMessage
+    this.userAnnouncement = userAnnouncement
   }
 
   public createUrl: (
@@ -208,7 +228,15 @@ export class UserController implements UserControllerInterface {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
-    res.send(userMessage)
+    res.send(this.userMessage)
+    return
+  }
+
+  public getUserAnnouncement: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (_, res) => {
+    res.send(this.userAnnouncement)
     return
   }
 }

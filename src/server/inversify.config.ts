@@ -1,6 +1,17 @@
 import AWS from 'aws-sdk'
 
 import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
+
+import {
+  DEV_ENV,
+  accessEndpoint,
+  bucketEndpoint,
+  cloudmersiveKey,
+  s3Bucket,
+  userAnnouncement,
+  userMessage,
+} from './config'
+
 import { container } from './util/inversify'
 import GaLoggerService from './services/GaLoggerService'
 import { DependencyIds } from './constants'
@@ -8,13 +19,7 @@ import { CookieArrayReducerService } from './services/CookieArrayReducerService'
 import { OtpRepository } from './repositories/OtpRepository'
 import { MailerNode } from './services/email'
 import { CryptographyBcrypt } from './services/cryptography'
-import {
-  DEV_ENV,
-  accessEndpoint,
-  bucketEndpoint,
-  cloudmersiveKey,
-  s3Bucket,
-} from './config'
+
 import { MailerNoOp } from './services/emaildev'
 import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
@@ -65,6 +70,11 @@ function bindIfUnbound<T>(
 }
 
 export default () => {
+  container.bind(DependencyIds.userMessage).toConstantValue(userMessage)
+  container
+    .bind(DependencyIds.userAnnouncement)
+    .toConstantValue(userAnnouncement)
+
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)

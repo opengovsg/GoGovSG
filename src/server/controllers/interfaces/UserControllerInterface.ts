@@ -13,4 +13,9 @@ export interface UserControllerInterface {
   ): Promise<void>
 
   getUserMessage(req: Express.Request, res: Express.Response): Promise<void>
+
+  getUserAnnouncement(
+    req: Express.Request,
+    res: Express.Response,
+  ): Promise<void>
 }

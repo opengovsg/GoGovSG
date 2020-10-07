@@ -27,6 +27,7 @@ import {
   SET_UPLOAD_FILE_ERROR,
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SET_USER_ANNOUNCEMENT,
   SET_USER_MESSAGE,
   SetCreateShortLinkErrorAction,
   SetEditedContactEmailAction,
@@ -40,6 +41,7 @@ import {
   SetUploadFileErrorAction,
   SetUrlFilterAction,
   SetUrlTableConfigAction,
+  SetUserAnnouncementAction,
   SetUserMessageAction,
   TOGGLE_URL_STATE_SUCCESS,
   ToggleUrlStateSuccessAction,
@@ -170,6 +172,17 @@ const setUserMessage: (payload: string) => SetUserMessageAction = (
   payload,
 ) => ({ type: SET_USER_MESSAGE, payload })
 
+const setUserAnnouncement: (payload: {
+  message: string
+  title: string
+  subtitle: string
+  url: string
+  image: string
+}) => SetUserAnnouncementAction = (payload) => ({
+  type: SET_USER_ANNOUNCEMENT,
+  payload,
+})
+
 const getUserMessage = (): ThunkAction<
   void,
   GoGovReduxState,
@@ -180,6 +193,19 @@ const getUserMessage = (): ThunkAction<
   if (response.ok) {
     const text = await response.text()
     if (text) dispatch(setUserMessage(text))
+  }
+}
+
+const getUserAnnouncement = (): ThunkAction<
+  void,
+  GoGovReduxState,
+  void,
+  UserActionType
+> => async (dispatch: Dispatch<SetUserAnnouncementAction>) => {
+  const response = await get('/api/user/announcement')
+  if (response.ok) {
+    const payload = await response.json()
+    if (payload) dispatch(setUserAnnouncement(payload))
   }
 }
 
@@ -675,5 +701,6 @@ export default {
   setEditedContactEmail,
   setEditedDescription,
   getUserMessage,
+  getUserAnnouncement,
   updateUrlInformation,
 }

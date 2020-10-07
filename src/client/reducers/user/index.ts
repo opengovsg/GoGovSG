@@ -16,6 +16,7 @@ import {
   SET_UPLOAD_FILE_ERROR,
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SET_USER_ANNOUNCEMENT,
   SET_USER_MESSAGE,
   TOGGLE_URL_STATE_SUCCESS,
   UPDATE_URL_COUNT,
@@ -42,6 +43,7 @@ const initialState: UserState = {
   },
   urlCount: 0,
   message: null,
+  announcement: null,
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
@@ -54,6 +56,11 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case SET_USER_MESSAGE:
       nextState = {
         message: action.payload,
+      }
+      break
+    case SET_USER_ANNOUNCEMENT:
+      nextState = {
+        announcement: action.payload,
       }
       break
     case SET_LAST_CREATED_LINK:
