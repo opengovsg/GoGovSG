@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
       color: theme.palette.secondary.dark,
       '&:hover': {
-        color: theme.palette.primary.dark,
+        backgroundColor: theme.palette.primary.main,
       },
     },
     modalBottom: {
