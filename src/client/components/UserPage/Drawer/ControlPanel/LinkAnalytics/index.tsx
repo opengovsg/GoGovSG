@@ -46,7 +46,7 @@ const useLinkAnalyticsStyles = makeStyles((theme) =>
     linkAnalyticsDiv: {
       display: 'flex',
       flexDirection: 'column',
-      marginBottom: '141px',
+      marginBottom: '60px',
     },
     linkAnalyticsText: {
       marginTop: 20,
