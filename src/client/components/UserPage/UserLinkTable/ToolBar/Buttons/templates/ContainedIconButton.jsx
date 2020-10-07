@@ -5,7 +5,6 @@ import { IconButton, createStyles, makeStyles } from '@material-ui/core'
 const useStyles = makeStyles((theme) =>
   createStyles({
     roundIconButton: {
-      height: '100%',
       width: 'auto',
       backgroundColor: theme.palette.primary.main,
       fill: theme.palette.secondary.dark,

@@ -89,10 +89,11 @@ const StatisticsSliver = (props) => {
     { label: 'CLICKS', number: clickCount },
   ]
 
+  const { loadStats } = props
+  // Call once
   useEffect(() => {
-    const { loadStats } = props
     loadStats()
-  })
+  }, [loadStats])
 
   return (
     <>

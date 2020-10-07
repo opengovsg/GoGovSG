@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom'
 
 import Drawer from './Drawer'
 import CreateUrlModal from './CreateUrlModal'
+import AnnouncementModal from './AnnouncementModal'
 import userActions from '~/actions/user'
 import BaseLayout from '../BaseLayout'
 import UserLinkTable from './UserLinkTable'
@@ -71,6 +72,7 @@ const UserPage = ({
             <UserLinkTable />
           )}
           <CreateUrlModal />
+          <AnnouncementModal />
         </Drawer>
       </BaseLayout>
     )

@@ -3,6 +3,8 @@ import httpMocks from 'node-mocks-http'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
 import { createRequestWithUser } from '../api/util'
 
+import { UserController } from '../../../src/server/controllers/UserController'
+
 const urlManagementService = {
   createUrl: jest.fn(),
   updateUrl: jest.fn(),
@@ -10,22 +12,20 @@ const urlManagementService = {
   getUrlsWithConditions: jest.fn(),
 }
 
+const userMessage = 'The quick brown fox jumps over a lazy dog'
+const userAnnouncement = {
+  title: 'title',
+  message: 'message',
+  url: 'https://go.gov.sg',
+  image: '/favicon.ico',
+}
+
 describe('UserController', () => {
-  const userMessage = 'The quick brown fox jumps over a lazy dog'
-
-  jest.resetModules()
-  jest.mock('../../../src/server/config', () => ({
-    logger: console,
+  const controller = new UserController(
+    urlManagementService,
     userMessage,
-  }))
-
-  const {
-    UserController,
-  } = require('../../../src/server/controllers/UserController')
-
-  afterAll(jest.resetModules)
-
-  const controller = new UserController(urlManagementService)
+    userAnnouncement,
+  )
 
   describe('createUrl', () => {
     it('rejects multiple file uploads', async () => {
@@ -380,5 +380,14 @@ describe('UserController', () => {
     const send = jest.spyOn(res, 'send')
     await controller.getUserMessage(req, res)
     expect(send).toHaveBeenCalledWith(userMessage)
+  })
+
+  it('sends userAnnouncement', async () => {
+    const req = createRequestWithUser(undefined)
+    const res = httpMocks.createResponse()
+    const send = jest.spyOn(res, 'send')
+
+    await controller.getUserAnnouncement(req, res)
+    expect(send).toHaveBeenCalledWith(userAnnouncement)
   })
 })

@@ -53,4 +53,11 @@ export type UserState = {
   uploadFileError?: string | null
   lastCreatedLink?: string
   message: string | null
+  announcement: {
+    message: string | undefined
+    title: string | undefined
+    subtitle: string | undefined
+    url: string | undefined
+    image: string | undefined
+  } | null
 }
