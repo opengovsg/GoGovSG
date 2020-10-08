@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize'
 
+import minimatch from 'minimatch'
 import { ACTIVE, INACTIVE } from './types'
 import {
   isBlacklisted,
@@ -14,6 +15,7 @@ import { StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
 
 interface UrlBaseType extends IdType {
+  readonly userId: number
   readonly shortUrl: string
   readonly longUrl: string
   readonly state: StorableUrlState
@@ -24,6 +26,7 @@ interface UrlBaseType extends IdType {
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
+  readonly userId: number
   readonly clicks: number
   readonly createdAt: string
   readonly updatedAt: string
@@ -32,6 +35,27 @@ export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
 // For sequelize define
 type UrlTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): UrlType
+}
+
+// To change the hard coded email validation
+export const domainValidator = new minimatch.Minimatch('@*.gov.sg', {
+  noext: true,
+  noglobstar: true,
+  nobrace: true,
+  nonegate: true,
+})
+
+// Escape characters
+export const sanitise = (query: string): string => {
+  // check legit domain
+  if (domainValidator.match(query)) {
+    // remove wildcards characters and escape characters
+    const inputRaw = query.replace(/(_|%|\\)/g, '')
+    console.log('raw input must not have %:', inputRaw)
+    return `%${inputRaw}`
+  }
+
+  return ''
 }
 
 export const Url = <UrlTypeStatic>sequelize.define(
@@ -108,6 +132,10 @@ export const Url = <UrlTypeStatic>sequelize.define(
       type: Sequelize.TEXT,
       allowNull: false,
       defaultValue: '',
+    },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
     },
   },
   {

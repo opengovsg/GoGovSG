@@ -1,4 +1,9 @@
-import { StorableFile, StorableUrl, UrlsPaginated } from '../types'
+import {
+  StorableFile,
+  StorableUrl,
+  UrlDirectory,
+  UrlsPaginated,
+} from '../types'
 import { SearchResultsSortOrder } from '../../../shared/search'
 
 /**
@@ -57,4 +62,24 @@ export interface UrlRepositoryInterface {
     limit: number,
     offset: number,
   ) => Promise<UrlsPaginated>
+
+  /**
+   * Performs plain text search on Urls based on their shortUrl and
+   * description. The results are ranked in order of relevance based
+   * on click count, length and cover density.
+   * @param  {string} query The search query in plain text.
+   * @param  {number} limit Number of results to return.
+   * @param  {number} offset The number of top results to skip.
+   * @param  {SearchResultsSortOrder} order The sorting rule for search results.
+   * @returns Promise of total no. Of search results and the results on the current page.
+   */
+  rawDirectorySearch: (
+    query: string,
+    order: SearchResultsSortOrder,
+    limit: number,
+    offset: number,
+    state: string | undefined,
+    isFile: boolean | undefined,
+    isEmail: boolean,
+  ) => Promise<Array<UrlDirectory>>
 }

@@ -15,6 +15,7 @@ export type StorableUrl = Pick<
   | 'isSearchable'
   | 'description'
   | 'contactEmail'
+  | 'userId'
 >
 
 /**
@@ -47,6 +48,18 @@ export type UrlPublic = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'description' | 'contactEmail' | 'isFile'
 >
+
+// to be possibly changed
+export type UrlDirectory = {
+  shortUrl: string
+  userId: string | undefined | number
+  state: string
+}
+
+export type UrlDirectoryPaginated = {
+  count: number
+  urls: Array<UrlDirectory>
+}
 
 export type UrlsPublicPaginated = {
   count: number

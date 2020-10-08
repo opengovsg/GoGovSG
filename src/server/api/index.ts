@@ -13,6 +13,9 @@ router.use('/links', require('./links'))
 router.use('/search', require('./search'))
 router.use('/ga', require('./ga'))
 
+// To be placed with userguard
+router.use('/directory', require('./directory'))
+
 /**
  * To protect private user routes.
  * */

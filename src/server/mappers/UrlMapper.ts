@@ -22,6 +22,7 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
       isSearchable: urlType.isSearchable,
       description: urlType.description,
       contactEmail: urlType.contactEmail,
+      userId: urlType.userId,
     }
   }
 }

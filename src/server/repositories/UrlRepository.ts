@@ -2,7 +2,7 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
-import { Url, UrlType } from '../models/url'
+import { Url, UrlType, sanitise } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import {
@@ -15,7 +15,7 @@ import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
-import { StorableFile, StorableUrl, UrlsPaginated } from './types'
+import { StorableFile, StorableUrl, UrlDirectory, UrlsPaginated } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
@@ -167,6 +167,161 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
+  public rawDirectorySearch: (
+    query: string,
+    order: SearchResultsSortOrder,
+    limit: number,
+    offset: number,
+    state: string | undefined,
+    isFile: boolean | undefined,
+    isEmail: boolean,
+  ) => Promise<Array<UrlDirectory>> = async (
+    query,
+    order,
+    limit,
+    offset,
+    state,
+    isFile,
+    isEmail,
+  ) => {
+    const { tableName } = Url
+
+    const urlVector = urlSearchVector
+
+    const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
+
+    if (isEmail) {
+      const emails = query.toString().split(' ')
+
+      const likeQuery: Array<string> = []
+      emails.forEach((domain) => {
+        likeQuery.push(sanitise(domain))
+      })
+
+      const urlsModel = await this.getRelevantUrlsFromEmail(
+        likeQuery,
+        order,
+        limit,
+        offset,
+        state,
+        isFile,
+      )
+
+      return urlsModel
+    }
+
+    const urlsModel = await this.getRelevantUrlsFromText(
+      urlVector,
+      rankingAlgorithm,
+      limit,
+      offset,
+      query,
+      state,
+      isFile,
+    )
+
+    return urlsModel
+  }
+
+  private async getRelevantUrlsFromEmail(
+    likeQuery: Array<string>,
+    order: string,
+    limit: number,
+    offset: number,
+    state: string | undefined,
+    isFile: boolean | undefined,
+  ): Promise<Array<UrlDirectory>> {
+    // ordering - default = relevance
+    let queryOrder = `"urls"."createdAt"`
+    if (order === 'popularity') queryOrder = `"urls".clicks`
+
+    // isFile - default (if isFile is null) = [true, false]
+    let queryFile = [true, false]
+    if (isFile === true) queryFile = [true]
+    else if (isFile === false) queryFile = [false]
+
+    // state - default (if state is null) = ['ACTIVE', 'INACTIVE']
+    let queryState = ['ACTIVE', 'INACTIVE']
+    if (state === 'ACTIVE') queryState = ['ACTIVE']
+    else if (state === 'INACTIVE') queryState = ['INACTIVE']
+
+    console.log('inside get from email', likeQuery, queryFile, queryState)
+
+    const rawQuery = `
+      SELECT "users"."email", "urls"."shortUrl", "urls"."state"
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
+      AND "urls"."isFile" IN (:queryFile)
+      AND "urls"."state" In (:queryState)
+      ORDER BY ${queryOrder} DESC
+      LIMIT :limit
+      OFFSET :offset`
+
+    const urlsModel = (await sequelize.query(rawQuery, {
+      replacements: {
+        likeQuery,
+        limit,
+        offset,
+        queryFile,
+        queryState,
+      },
+      type: QueryTypes.SELECT,
+      model: Url,
+      raw: true,
+      mapToModel: true,
+    })) as Array<UrlDirectory>
+
+    return urlsModel
+  }
+
+  private async getRelevantUrlsFromText(
+    urlVector: string,
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    query: string,
+    state: string | undefined,
+    isFile: boolean | undefined,
+  ): Promise<Array<UrlDirectory>> {
+    // isFile
+    let queryFile = ''
+    if (isFile === true) queryFile = `AND urls."isFile"=true`
+    else if (isFile === false) queryFile = `AND urls."isFile"=false`
+
+    // state
+    let queryState = ''
+    if (state === 'ACTIVE') queryState = `AND urls.state = 'ACTIVE'`
+    else if (state === 'INACTIVE') queryState = `AND urls.state = 'INACTIVE'`
+
+    const rawQuery = `
+      SELECT "urls"."shortUrl", "users"."email", "urls"."state"
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      JOIN plainto_tsquery('english', $query) query
+      ON query @@ (${urlVector})
+      ${queryFile}
+      ${queryState}
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT $limit
+      OFFSET $offset`
+    const urlsModel = (await sequelize.query(rawQuery, {
+      bind: {
+        limit,
+        offset,
+        query,
+      },
+      raw: true,
+      type: QueryTypes.SELECT,
+      model: Url,
+      mapToModel: true,
+    })) as Array<UrlDirectory>
+
+    return urlsModel
+  }
+
   /**
    * Invalidates the redirect entry on the cache for the input
    * short url.
@@ -297,6 +452,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     tableName: string,
   ): string {
     let rankingAlgorithm
+    console.log('the order is this', order)
     switch (order) {
       case SearchResultsSortOrder.Relevance:
         {
