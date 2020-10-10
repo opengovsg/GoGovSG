@@ -134,7 +134,12 @@ const useStyles = makeStyles((theme) => {
       textTransform: 'capitalize',
     },
     shortUrl: {
-      width: 'calc(100% - 32px)',
+      [theme.breakpoints.up('md')]: {
+        maxWidth: '400px',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: 'calc(100% - 32px)',
+      },
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
@@ -203,9 +208,11 @@ export default function EnhancedTableBody() {
             <TableCell align="left" className={classes.urlCell}>
               <Grid container direction="column">
                 <Grid item className={classes.shortUrlGrid}>
+                <Tooltip title={row.shortUrl} placement="top-start" arrow>
                   <Typography variant="h6" className={classes.shortUrl}>
                     /{row.shortUrl}
                   </Typography>
+                </Tooltip>
                 </Grid>
                 <Hidden smDown>
                   <Grid item className={classes.longUrlGrid}>
