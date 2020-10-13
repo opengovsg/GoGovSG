@@ -14,6 +14,7 @@ import { SearchResultsSortOrder } from '../../../shared/search'
 import { UrlTypePublic } from '../../reducers/search/types'
 import { get } from '../../util/requests'
 import { SEARCH_PAGE } from '../../util/types'
+import { GAevent } from '../gaEvents'
 
 function setSearchResults(payload: {
   count: number
@@ -61,7 +62,7 @@ const getSearchResults = (
     )
     return
   }
-
+  GAevent('SEARCH PAGE', query)
   dispatch(
     setSearchResults({
       count: json.count,

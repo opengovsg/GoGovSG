@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import i18next from 'i18next'
@@ -27,6 +27,7 @@ import CollapsibleMessage from '../../CollapsibleMessage'
 import { CollapsibleMessageType } from '../../CollapsibleMessage/types'
 import FileInputField from '../widgets/FileInputField'
 import userActions from '~/actions/user'
+import { GAevent } from '../../../actions/gaEvents'
 
 // Height of the text field in the create link dialog.
 const TEXT_FIELD_HEIGHT = 44
@@ -91,6 +92,17 @@ function CreateLinkForm({
     (isFile && !!uploadFileError) ||
     isUploading ||
     !!createShortLinkError
+
+  useEffect(() => {
+    if (isFile) {
+      // Google Analytics: click on 'from file' tab
+      GAevent('MODAL PAGE', 'click file tab')
+    } else {
+      // Google Analytics: click on 'from url' tab
+      GAevent('MODAL PAGE', 'click url tab')
+    }
+  }, [isFile])
+
   return (
     <>
       <Hidden smUp>

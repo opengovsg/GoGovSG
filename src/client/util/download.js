@@ -1,7 +1,9 @@
 import { saveAs } from 'file-saver'
+import * as Sentry from '@sentry/browser'
 import rootActions from '~/actions/root'
 import userActions from '~/actions/user'
 import { useIsIE } from '../components/BaseLayout/util/ie'
+import { GAevent } from '../actions/gaEvents'
 
 export const downloadUrls = async (urlCount, tableConfig) => {
   const urlsArr = []
@@ -50,9 +52,17 @@ export const downloadUrls = async (urlCount, tableConfig) => {
           ])
         })
       } else if (!isOk && json) {
+        // Sentry analytics: download links fail
+        Sentry.captureMessage('download links unsuccessful')
+        GAevent('USER PAGE', 'download links', 'unsuccessful')
+
         rootActions.setErrorMessage(json.message)
         return null
       } else {
+        // Sentry analytics: download links fail
+        Sentry.captureMessage('download links unsuccessful')
+        GAevent('USER PAGE', 'download links', 'unsuccessful')
+
         rootActions.setErrorMessage('Error downloading urls.')
         return null
       }
@@ -68,6 +78,9 @@ export const downloadUrls = async (urlCount, tableConfig) => {
   } else {
     saveAs(blob, 'urls.csv')
   }
+
+  // Google Analytics: Download links button events
+  GAevent('USER PAGE', 'download links button', 'successful')
   return null
 }
 

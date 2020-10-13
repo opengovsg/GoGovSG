@@ -4,6 +4,7 @@ import querystring, { ParsedUrlQueryInput } from 'querystring'
 import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
+import * as Sentry from '@sentry/browser'
 import {
   CLOSE_CREATE_URL_MODAL,
   CloseCreateUrlModalAction,
@@ -76,6 +77,7 @@ import {
 import { GetReduxState } from '../types'
 import { GoGovReduxState } from '../../reducers/types'
 import { MessageType } from '../../../shared/util/messages'
+import { GAevent } from '../gaEvents'
 
 const isFetchingUrls: (payload: boolean) => IsFetchingUrlsAction = (
   payload,
@@ -565,6 +567,10 @@ const createUrlOrRedirect = (history: History) => async (
 
   // Test for malformed short URL
   if (!/^[a-z0-9-]/.test(shortUrl)) {
+    // Sentry analytics: create link with url fail
+    Sentry.captureMessage('create link with url unsuccessful')
+    GAevent('MODAL PAGE', 'create link from url', 'unsuccessful')
+
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage(
         'Short links should only consist of a-z, 0-9 and hyphens.',
@@ -580,6 +586,10 @@ const createUrlOrRedirect = (history: History) => async (
   }
 
   if (!isValidUrl(longUrl)) {
+    // Sentry analytics: create link with url fail
+    Sentry.captureMessage('create link with url unsuccessful')
+    GAevent('MODAL PAGE', 'create link from url', 'unsuccessful')
+
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
     )
@@ -589,6 +599,10 @@ const createUrlOrRedirect = (history: History) => async (
   const response = await postJson('/api/user/url', { longUrl, shortUrl })
 
   if (!response.ok) {
+    // Sentry analytics: create link with url fail
+    Sentry.captureMessage('create link with url unsuccessful')
+    GAevent('MODAL PAGE', 'create link from url', 'unsuccessful')
+
     if (response.status === 401) {
       history.push(LOGIN_PAGE)
       return false
@@ -615,6 +629,12 @@ const transferOwnership = (
   patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
     (response) => {
       if (response.ok) {
+        // Google Analytics: Transfer ownership - success and shorturl are combined together to create unique actions
+        GAevent(
+          'TRANSFER LINK OWNERSHIP',
+          'successful',
+          `/${shortUrl.toString()}`,
+        )
         onSuccess()
         dispatch<void>(getUrlsForUser())
         const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
@@ -622,6 +642,14 @@ const transferOwnership = (
           rootActions.setSuccessMessage(successMessage),
         )
       } else {
+        // Sentry analytics: transfer ownership fail
+        Sentry.captureMessage('transfer ownership unsuccessful')
+        GAevent(
+          'TRANSFER LINK OWNERSHIP',
+          'unsuccessful',
+          `/${shortUrl.toString()}`,
+        )
+
         // Otherwise, show error toast with relevant error message.
         response.json().then((json) => {
           dispatch<SetErrorMessageAction>(
@@ -654,6 +682,10 @@ const uploadFile = (file: File) => async (
     user: { shortUrl },
   } = getState()
   if (file == null) {
+    // Sentry analytics: create link with file fail
+    Sentry.captureMessage('create link with file unsuccessful')
+    GAevent('MODAL PAGE', 'create link from file', 'unsuccessful')
+
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('File is missing.'),
     )
@@ -666,6 +698,10 @@ const uploadFile = (file: File) => async (
   const response = await postFormData('/api/user/url', data)
   dispatch<SetIsUploadingAction>(setIsUploading(false))
   if (!response.ok) {
+    // Sentry analytics: create link with file fail
+    Sentry.captureMessage('create link with file unsuccessful')
+    GAevent('MODAL PAGE', 'create link from file', 'unsuccessful')
+
     await handleError(dispatch, response)
     return false
   }
