@@ -166,7 +166,7 @@
     "supertest": "^5.0.0",
     "ts-jest": "^26.4.1",
     "ts-loader": "^8.0.5",
-    "ts-node-dev": "^1.0.0-pre.63",
+    "ts-node-dev": "^1.0.0-pre.65",
     "typescript": "^4.0.3",
     "upng-js": "^2.1.0",
     "webpack": "^4.44.2",
