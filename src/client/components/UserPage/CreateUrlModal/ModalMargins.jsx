@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { createStyles, makeStyles } from '@material-ui/core'
 
 import { ApplyAppMargins } from '../../AppMargins'
-import useFullScreenDialog from './helpers/fullScreenDialog'
+import useFullScreenDialog from '../helpers/fullScreenDialog'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

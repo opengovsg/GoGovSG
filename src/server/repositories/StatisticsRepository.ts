@@ -31,7 +31,8 @@ export class StatisticsRepository implements StatisticsRepositoryInterface {
     }
 
     if (clickCount == null) {
-      clickCount = await Url.sum('clicks')
+      // Replace Nan with 0 if there is no data
+      clickCount = (await Url.sum('clicks')) || 0
       this.trySetCache(CLICK_COUNT_KEY, clickCount.toString())
     }
 
