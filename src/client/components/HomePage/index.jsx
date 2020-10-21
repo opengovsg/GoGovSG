@@ -15,6 +15,7 @@ import LandingGraphicSilver from './LandingGraphicSilver'
 import IntegratedSearchLandingGraphic from './IntegratedSearchLandingGraphic'
 import BaseLayout from '../BaseLayout'
 import { IS_SEARCH_HIDDEN } from '../../util/config'
+import { GAEvent, GAPageView } from '../../actions/ga'
 
 const mapDispatchToProps = (dispatch) => ({
   getLinksToRotate: () => dispatch(homeActions.getLinksToRotate()),
@@ -32,6 +33,12 @@ const HomePage = (props) => {
   const { isLoggedIn } = props
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+
+  // Google Analytics: Home Page
+  useEffect(() => {
+    GAPageView('HOME PAGE')
+    GAEvent('home page', 'Entering home page')
+  }, [])
 
   useEffect(() => {
     const { getLinksToRotate, getIsLoggedIn } = props

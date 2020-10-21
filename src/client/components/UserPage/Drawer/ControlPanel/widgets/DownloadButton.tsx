@@ -13,6 +13,8 @@ import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
 import { get } from '../../../../../util/requests'
+import { GAEvent } from '../../../../../actions/ga'
+import * as Sentry from '@sentry/browser'
 
 // Gets file extension from content-type.
 function getFileExtension(format: ImageFormat) {
@@ -39,6 +41,8 @@ async function downloadServerQrCode(
   )}&format=${encodeURIComponent(format)}`
   const response: Response = await get(endpoint)
   if (response.ok) {
+    // Google Analytics: QR Code generation - actions are stringed by shortlink and format
+    GAEvent('qr code generation', format.toString(), 'succesful')
     // Use filename from response for filename, fallbacks to endpoint.
     const fileName = response.headers.get('Filename') ?? url
     const bodyBlob = await response.blob()
@@ -46,6 +50,10 @@ async function downloadServerQrCode(
       type: response.headers.get('content-type') || format,
     })
     FileSaver.saveAs(blob, `${fileName}.${getFileExtension(format)}`)
+  } else {
+    // Sentry analytics: qr code download fail
+    Sentry.captureMessage(`generate qr code for ${format} unsuccessful`)
+    GAEvent('qr code generation', format.toString(), 'unsuccesful')
   }
 }
 

@@ -43,6 +43,10 @@ const useStyles = makeStyles((theme) =>
       justifyContent: 'center',
       width: '100%',
     },
+    messagePadding: {
+      paddingLeft: theme.spacing(4),
+      paddingRight: theme.spacing(4),
+    },
     closeIconButton: {
       fill: (props) =>
         // @ts-ignore
@@ -174,9 +178,10 @@ export default function AnnouncementModal() {
           alt=""
           src={announcement.image}
         />
-      ) : 
-      (
-        <div className={`${classes.justifyCenter} ${classes.announcementPadding}`} />
+      ) : (
+        <div
+          className={`${classes.justifyCenter} ${classes.announcementPadding}`}
+        />
       )}
       {announcement?.subtitle ? (
         <Typography
@@ -188,7 +193,10 @@ export default function AnnouncementModal() {
         </Typography>
       ) : null}
       {announcement?.message ? (
-        <Typography className={classes.justifyCenter} variant="body2">
+        <Typography
+          className={`${classes.justifyCenter} ${classes.messagePadding}`}
+          variant="body2"
+        >
           {announcement.message}
         </Typography>
       ) : null}

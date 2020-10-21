@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Typography,
   createStyles,
@@ -22,6 +22,7 @@ import devicesLogo from './assets/devices-logo.svg'
 import clicksLogo from './assets/chart-logo.svg'
 import trafficLogo from './assets/traffic-logo.svg'
 import BetaTag from '../../../../widgets/BetaTag'
+import { GAEvent, GAPageView } from '../../../../../actions/ga'
 
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({
@@ -126,7 +127,7 @@ function LinkStatisticsGraphs() {
     )
   }
 
-  return <Graphs data={linkStatistics.contents!} />
+  return <Graphs data={linkStatistics.contents!} shortUrl={shortUrl} />
 }
 
 export type TabPanelProps = {
@@ -207,6 +208,7 @@ const useStyles = makeStyles(() => ({
 
 export type GraphsProps = {
   data: LinkStatisticsInterface
+  shortUrl : string
 }
 
 function Graphs(props: GraphsProps) {
@@ -214,8 +216,29 @@ function Graphs(props: GraphsProps) {
   const theme = useTheme()
   const [tabValue, setTabValue] = useState<number>(0)
 
+  // Map number to type for display
+  const daMap = new Map<Number, string>()
+  daMap.set(0, 'device')
+  daMap.set(1, 'clicks')
+  daMap.set(2, 'traffic')
+
+  useEffect(() => {
+    // Google Analytics: default device page and event on opening drawer
+    GAPageView('DEVICE PAGE')
+    GAEvent('drawer page analytics data', 'device', '/' + props.shortUrl)
+
+    return () => {
+      GAPageView('USER PAGE')
+    }
+  }, [])
+
   const handleChange = (_: React.ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue)
+
+    // Google Analytics: analytics data on device, clicks and traffics
+    const daType:string = daMap.get(newValue) || 'DEVICE PAGE'
+    GAPageView(daType.toUpperCase() + ' PAGE')
+    GAEvent('drawer page analytics data', daType, '/' + props.shortUrl)
   }
 
   const getIconStyle = (index: number) => {

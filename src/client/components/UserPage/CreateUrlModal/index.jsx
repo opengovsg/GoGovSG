@@ -16,6 +16,7 @@ import useFullScreenDialog from '../helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
 import userActions from '../../../actions/user'
 import AddDescriptionForm from './AddDescriptionForm'
+import { GAEvent, GAPageView } from '../../../actions/ga'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -72,6 +73,13 @@ const CreateUrlModal = ({
   const incrementDecorator = (func) => async (...args) => {
     const proceed = await func(...args)
     if (proceed) {
+      if (args.length) {
+        // Google Analytics: create link from file in modal page
+        GAEvent('modal page', 'create link from file', 'successful')
+      } else {
+        // Google Analytics: create link from url in modal page
+        GAEvent('modal page', 'create link from url', 'successful')
+      }
       closeCreateUrlModal()
     }
   }
@@ -81,7 +89,18 @@ const CreateUrlModal = ({
 
   // Reset step when modal closes and reopens
   useEffect(() => {
-    if (createUrlModal) setStep(0)
+    if (createUrlModal) {
+      setStep(0)
+      // Google Analytics: open link creation modal in user page
+      GAPageView('CREATE LINK PAGE')
+      GAEvent('user page', 'open link creation modal')
+
+      return () => {
+        // Google Analytics: close link creation modal in user page
+        GAPageView('USER PAGE')
+      }
+    }
+    return undefined
   }, [createUrlModal])
   return (
     <Dialog
