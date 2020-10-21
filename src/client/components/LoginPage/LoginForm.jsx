@@ -7,6 +7,7 @@ import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { loginFormVariants } from '~/util/types'
 import loginActions from '~/actions/login'
 import TextButton from './widgets/TextButton'
+import { GAEvent, GAPageView } from '../../actions/ga'
 
 const mapDispatchToProps = (dispatch) => ({
   getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
@@ -66,6 +67,11 @@ const LoginForm = ({
       onSubmit={(e) => {
         e.preventDefault()
         submit()
+        // Google Analytics: OTP page, Transition from email > OTP page
+        if (isEmailView) {
+          GAPageView('OTP LOGIN PAGE')
+          GAEvent('login page', 'otp', 'successful')
+        }
       }}
       hidden={hidden}
       autoComplete={autoComplete}

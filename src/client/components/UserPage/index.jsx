@@ -11,6 +11,7 @@ import UserLinkTable from './UserLinkTable'
 import EmptyState from './EmptyState'
 import useIsFiltered from './EmptyState/isFiltered'
 import loginActions from '~/actions/login'
+import { GAEvent, GAPageView } from '../../actions/ga'
 
 /**
  * List URLs belonging to the user in a table.
@@ -61,6 +62,14 @@ const UserPage = ({
     message,
     getUserMessage,
   ])
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      // Google Analytics: User page, to record sign in - act as exit for otp, devices, clicks and traffic page
+      GAPageView('USER PAGE')
+      GAEvent('user page', 'main')
+    }
+  }, [isLoggedIn])
 
   if (isLoggedIn) {
     return (
