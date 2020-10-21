@@ -29,6 +29,7 @@ import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
 import { RedirectService } from './services/RedirectService'
 import { RedirectController } from './controllers/RedirectController'
+import { GaController } from './controllers/GaController'
 import { CrawlerCheckService } from './services/CrawlerCheckService'
 import { StatisticsRepository } from './repositories/StatisticsRepository'
 import { StatisticsService } from './services/StatisticsService'
@@ -85,6 +86,7 @@ export default () => {
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
+  bindIfUnbound(DependencyIds.gaController, GaController)
   bindIfUnbound(DependencyIds.redirectService, RedirectService)
   bindIfUnbound(DependencyIds.crawlerCheckService, CrawlerCheckService)
   bindIfUnbound(DependencyIds.statisticsController, StatisticsController)

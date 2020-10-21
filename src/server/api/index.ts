@@ -11,6 +11,7 @@ router.use('/stats', require('./statistics'))
 router.use('/sentry', require('./sentry'))
 router.use('/links', require('./links'))
 router.use('/search', require('./search'))
+router.use('/ga', require('./ga'))
 
 /**
  * To protect private user routes.
