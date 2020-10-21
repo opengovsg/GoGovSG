@@ -16,18 +16,18 @@ const getGaId = async () => {
   }
 /**
  * Send GA Event to record click - customise the category, action and label name to record multiple uniques per session
- * @param {string} categoryName
- * @param {string} eventName
+ * @param {string} category
+ * @param {string} action
  * @param {string} [label='nothing']
  */
-export const GAEvent = async (categoryName:string, eventName:string, label?: string| undefined) => {
+export const GAEvent = async (category:string, action:string, label: string = 'nothing') => {
     if (!hasInit) {
         await getGaId()
     }
     ReactGA.event({       
-        category: categoryName,  // Required
-        action: eventName,       // Required
-        label: label || 'nothing',       
+        category: category,  // Required
+        action: action,       // Required
+        label: label,       
         value: 10,       
         nonInteraction: false     
     }); 
