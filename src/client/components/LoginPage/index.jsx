@@ -21,7 +21,7 @@ import { get } from '../../util/requests'
 import LoginForm from './LoginForm'
 import Section from '../Section'
 import BaseLayout from '../BaseLayout'
-import { GAevent, GApageView } from '../../actions/gaEvents'
+import { GAEvent, GAPageView } from '../../actions/ga'
 
 const mapDispatchToProps = (dispatch) => ({
   getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
@@ -124,8 +124,8 @@ const LoginPage = ({
 
   useEffect(() => {
     // Google Analytics: Move into login page
-    GApageView('EMAIL LOGIN PAGE')
-    GAevent('LOGIN PAGE', 'email')
+    GAPageView('EMAIL LOGIN PAGE')
+    GAEvent('login page', 'email')
   }, [])
 
   // Display a login message from the server

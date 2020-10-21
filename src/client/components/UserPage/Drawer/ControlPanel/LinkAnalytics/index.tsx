@@ -22,7 +22,7 @@ import devicesLogo from './assets/devices-logo.svg'
 import clicksLogo from './assets/chart-logo.svg'
 import trafficLogo from './assets/traffic-logo.svg'
 import BetaTag from '../../../../widgets/BetaTag'
-import { GAevent, GApageView } from '../../../../../actions/gaEvents'
+import { GAEvent, GAPageView } from '../../../../../actions/ga'
 
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({
@@ -224,11 +224,11 @@ function Graphs(props: GraphsProps) {
 
   useEffect(() => {
     // Google Analytics: default device page and event on opening drawer
-    GApageView('DEVICE PAGE')
-    GAevent('DRAWER PAGE Analytics Data', 'device', '/' + props.shortUrl)
+    GAPageView('DEVICE PAGE')
+    GAEvent('drawer page analytics data', 'device', '/' + props.shortUrl)
 
     return () => {
-      GApageView('USER PAGE')
+      GAPageView('USER PAGE')
     }
   }, [])
 
@@ -237,8 +237,8 @@ function Graphs(props: GraphsProps) {
 
     // Google Analytics: analytics data on device, clicks and traffics
     const daType:string = daMap.get(newValue) || 'DEVICE PAGE'
-    GApageView(daType.toUpperCase() + ' PAGE')
-    GAevent('DRAWER PAGE Analytics Data', daType, '/' + props.shortUrl)
+    GAPageView(daType.toUpperCase() + ' PAGE')
+    GAEvent('drawer page analytics data', daType, '/' + props.shortUrl)
   }
 
   const getIconStyle = (index: number) => {

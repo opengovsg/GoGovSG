@@ -77,7 +77,7 @@ import {
 import { GetReduxState } from '../types'
 import { GoGovReduxState } from '../../reducers/types'
 import { MessageType } from '../../../shared/util/messages'
-import { GAevent } from '../gaEvents'
+import { GAEvent } from '../ga'
 
 const isFetchingUrls: (payload: boolean) => IsFetchingUrlsAction = (
   payload,
@@ -569,7 +569,7 @@ const createUrlOrRedirect = (history: History) => async (
   if (!/^[a-z0-9-]/.test(shortUrl)) {
     // Sentry analytics: create link with url fail
     Sentry.captureMessage('create link with url unsuccessful')
-    GAevent('MODAL PAGE', 'create link from url', 'unsuccessful')
+    GAEvent('modal page', 'create link from url', 'unsuccessful')
 
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage(
@@ -588,7 +588,7 @@ const createUrlOrRedirect = (history: History) => async (
   if (!isValidUrl(longUrl)) {
     // Sentry analytics: create link with url fail
     Sentry.captureMessage('create link with url unsuccessful')
-    GAevent('MODAL PAGE', 'create link from url', 'unsuccessful')
+    GAEvent('modal page', 'create link from url', 'unsuccessful')
 
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
@@ -601,7 +601,7 @@ const createUrlOrRedirect = (history: History) => async (
   if (!response.ok) {
     // Sentry analytics: create link with url fail
     Sentry.captureMessage('create link with url unsuccessful')
-    GAevent('MODAL PAGE', 'create link from url', 'unsuccessful')
+    GAEvent('modal page', 'create link from url', 'unsuccessful')
 
     if (response.status === 401) {
       history.push(LOGIN_PAGE)
@@ -630,8 +630,8 @@ const transferOwnership = (
     (response) => {
       if (response.ok) {
         // Google Analytics: Transfer ownership - success and shorturl are combined together to create unique actions
-        GAevent(
-          'TRANSFER LINK OWNERSHIP',
+        GAEvent(
+          'transfer link ownership',
           'successful',
           `/${shortUrl.toString()}`,
         )
@@ -644,8 +644,8 @@ const transferOwnership = (
       } else {
         // Sentry analytics: transfer ownership fail
         Sentry.captureMessage('transfer ownership unsuccessful')
-        GAevent(
-          'TRANSFER LINK OWNERSHIP',
+        GAEvent(
+          'transfer link ownership',
           'unsuccessful',
           `/${shortUrl.toString()}`,
         )
@@ -684,7 +684,7 @@ const uploadFile = (file: File) => async (
   if (file == null) {
     // Sentry analytics: create link with file fail
     Sentry.captureMessage('create link with file unsuccessful')
-    GAevent('MODAL PAGE', 'create link from file', 'unsuccessful')
+    GAEvent('modal page', 'create link from file', 'unsuccessful')
 
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('File is missing.'),
@@ -700,7 +700,7 @@ const uploadFile = (file: File) => async (
   if (!response.ok) {
     // Sentry analytics: create link with file fail
     Sentry.captureMessage('create link with file unsuccessful')
-    GAevent('MODAL PAGE', 'create link from file', 'unsuccessful')
+    GAEvent('modal page', 'create link from file', 'unsuccessful')
 
     await handleError(dispatch, response)
     return false

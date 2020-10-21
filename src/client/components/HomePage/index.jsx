@@ -15,7 +15,7 @@ import LandingGraphicSilver from './LandingGraphicSilver'
 import IntegratedSearchLandingGraphic from './IntegratedSearchLandingGraphic'
 import BaseLayout from '../BaseLayout'
 import { IS_SEARCH_HIDDEN } from '../../util/config'
-import { GAevent, GApageView } from '../../actions/gaEvents'
+import { GAEvent, GAPageView } from '../../actions/ga'
 
 const mapDispatchToProps = (dispatch) => ({
   getLinksToRotate: () => dispatch(homeActions.getLinksToRotate()),
@@ -36,8 +36,8 @@ const HomePage = (props) => {
 
   // Google Analytics: Home Page
   useEffect(() => {
-    GApageView('HOME PAGE')
-    GAevent('HOME PAGE', 'Entering home page')
+    GAPageView('HOME PAGE')
+    GAEvent('home page', 'Entering home page')
   }, [])
 
   useEffect(() => {

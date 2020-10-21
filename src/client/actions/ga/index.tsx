@@ -14,8 +14,13 @@ const getGaId = async () => {
       }
     })
   }
-// Records clicks - customise action and label name to record multiple uniques per session
-export const GAevent = async (categoryName:string, eventName:string, label?: string| undefined) => {
+/**
+ * Send GA Event to record click - customise the category, action and label name to record multiple uniques per session
+ * @param {string} categoryName
+ * @param {string} eventName
+ * @param {string} [label='nothing']
+ */
+export const GAEvent = async (categoryName:string, eventName:string, label?: string| undefined) => {
     if (!hasInit) {
         await getGaId()
     }
@@ -27,9 +32,12 @@ export const GAevent = async (categoryName:string, eventName:string, label?: str
         nonInteraction: false     
     }); 
 }
-
-// Records clicks and time on page - once per session
-export const GApageView = async (page:string, title?:string) => {   
+/**
+ * Send GA Pageview to record time on page - once per session
+ * @param {string} page
+ * @param {string} [title=undefined]
+ */
+export const GAPageView = async (page:string, title?:string) => {   
     if (!hasInit) {
         await getGaId()
     }

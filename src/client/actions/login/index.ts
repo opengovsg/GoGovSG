@@ -3,7 +3,7 @@ import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import validator from 'validator'
 import * as Sentry from '@sentry/browser'
-import { GAevent } from '../gaEvents'
+import { GAEvent } from '../ga'
 import {
   EmailValidatorType,
   GET_OTP_EMAIL_ERROR,
@@ -263,7 +263,7 @@ const verifyOTP = () => (
       } else {
         // Sentry analytics and Google Analytics: otp fail > sign in fails
         Sentry.captureMessage('submit otp unsuccessful')
-        GAevent('LOGIN PAGE', 'otp', 'unsuccessful')
+        GAEvent('login page', 'otp', 'unsuccessful')
 
         const { message } = json
         dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
