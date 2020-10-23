@@ -30,7 +30,7 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "@material-ui/core": "^4.11.0",
-    "@sentry/browser": "^5.26.0",
+    "@sentry/browser": "^5.27.0",
     "@types/express-rate-limit": "^5.1.0",
     "aws-sdk": "^2.775.0",
     "babel-polyfill": "^6.26.0",
