@@ -37,7 +37,7 @@ type UrlTypeStatic = typeof Sequelize.Model & {
 }
 
 // To change the hard coded email validation
-export const domainValidator = new minimatch.Minimatch('@*.gov.sg', {
+export const domainValidator = new minimatch.Minimatch('*@*.gov.sg', {
   noext: true,
   noglobstar: true,
   nobrace: true,
