@@ -28,11 +28,7 @@ export class DirectorySearchService {
       conditions.isEmail,
     )
 
-    const output = {
-      urls: results,
-      count: results.length,
-    }
-    return output as UrlDirectoryPaginated
+    return results as UrlDirectoryPaginated
   }
 }
 

@@ -5,6 +5,7 @@ import { UrlRepositoryInterface } from '../../../../src/server/repositories/inte
 import {
   StorableFile,
   StorableUrl,
+  UrlDirectoryPaginated,
   UrlsPaginated,
 } from '../../../../src/server/repositories/types'
 import { StorableUrlState } from '../../../../src/server/repositories/enums'
@@ -33,6 +34,28 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
 
   getLongUrl: (shortUrl: string) => Promise<string> = () => {
     throw new Error('Not implemented')
+  }
+
+  rawDirectorySearch: (
+    query: string,
+    order: SearchResultsSortOrder,
+    limit: number,
+    offset: number,
+    state: string | undefined,
+    isFile: boolean | undefined,
+    isEmail: boolean,
+  ) => Promise<UrlDirectoryPaginated> = () => {
+    return Promise.resolve({
+      urls: [
+        {
+          shortUrl: 'test-mom',
+          state: 'ACTIVE',
+          isFile: false,
+          email: 'test@mom.gov.sg',
+        },
+      ],
+      count: 0,
+    })
   }
 
   plainTextSearch: (

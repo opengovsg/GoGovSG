@@ -15,7 +15,6 @@ import { StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
 
 interface UrlBaseType extends IdType {
-  readonly userId: number
   readonly shortUrl: string
   readonly longUrl: string
   readonly state: StorableUrlState
@@ -26,10 +25,10 @@ interface UrlBaseType extends IdType {
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
-  readonly userId: number
   readonly clicks: number
   readonly createdAt: string
   readonly updatedAt: string
+  readonly email: string
 }
 
 // For sequelize define
@@ -51,7 +50,6 @@ export const sanitise = (query: string): string => {
   if (domainValidator.match(query)) {
     // remove wildcards characters and escape characters
     const inputRaw = query.replace(/(_|%|\\)/g, '')
-    console.log('raw input must not have %:', inputRaw)
     return `%${inputRaw}`
   }
 
@@ -132,10 +130,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
       type: Sequelize.TEXT,
       allowNull: false,
       defaultValue: '',
-    },
-    userId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
     },
   },
   {

@@ -15,7 +15,13 @@ import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
-import { StorableFile, StorableUrl, UrlDirectory, UrlsPaginated } from './types'
+import {
+  StorableFile,
+  StorableUrl,
+  UrlDirectory,
+  UrlDirectoryPaginated,
+  UrlsPaginated,
+} from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
@@ -175,7 +181,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     state: string | undefined,
     isFile: boolean | undefined,
     isEmail: boolean,
-  ) => Promise<Array<UrlDirectory>> = async (
+  ) => Promise<UrlDirectoryPaginated> = async (
     query,
     order,
     limit,
@@ -200,7 +206,7 @@ export class UrlRepository implements UrlRepositoryInterface {
 
       const urlsModel = await this.getRelevantUrlsFromEmail(
         likeQuery,
-        order,
+        rankingAlgorithm,
         limit,
         offset,
         state,
@@ -225,45 +231,31 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private async getRelevantUrlsFromEmail(
     likeQuery: Array<string>,
-    order: string,
+    // order: string,
+    rankingAlgorithm: string,
     limit: number,
     offset: number,
     state: string | undefined,
     isFile: boolean | undefined,
-  ): Promise<Array<UrlDirectory>> {
-    // ordering - default = relevance
-    let queryOrder = `"urls"."createdAt"`
-    if (order === 'popularity') queryOrder = `"urls".clicks`
+  ): Promise<UrlDirectoryPaginated> {
+    const queryFile = this.getQueryFileEmail(isFile)
+    const queryState = this.getQueryStateEmail(state)
 
-    // isFile - default (if isFile is null) = [true, false]
-    let queryFile = [true, false]
-    if (isFile === true) queryFile = [true]
-    else if (isFile === false) queryFile = [false]
-
-    // state - default (if state is null) = ['ACTIVE', 'INACTIVE']
-    let queryState = ['ACTIVE', 'INACTIVE']
-    if (state === 'ACTIVE') queryState = ['ACTIVE']
-    else if (state === 'INACTIVE') queryState = ['INACTIVE']
-
-    console.log('inside get from email', likeQuery, queryFile, queryState)
-
+    // to be optimized
     const rawQuery = `
-      SELECT "users"."email", "urls"."shortUrl", "urls"."state"
+      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
       JOIN users
       ON "urls"."userId" = "users"."id"
       AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
       AND "urls"."isFile" IN (:queryFile)
       AND "urls"."state" In (:queryState)
-      ORDER BY ${queryOrder} DESC
-      LIMIT :limit
-      OFFSET :offset`
+      ORDER BY (${rankingAlgorithm}) DESC`
 
+    // Search only once to get both urls and count
     const urlsModel = (await sequelize.query(rawQuery, {
       replacements: {
         likeQuery,
-        limit,
-        offset,
         queryFile,
         queryState,
       },
@@ -273,7 +265,11 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
     })) as Array<UrlDirectory>
 
-    return urlsModel
+    const count = urlsModel.length
+    const ending = Math.min(count, offset + limit)
+    const slicedUrlsModel = urlsModel.slice(offset, ending)
+
+    return { count, urls: slicedUrlsModel }
   }
 
   private async getRelevantUrlsFromText(
@@ -284,19 +280,12 @@ export class UrlRepository implements UrlRepositoryInterface {
     query: string,
     state: string | undefined,
     isFile: boolean | undefined,
-  ): Promise<Array<UrlDirectory>> {
-    // isFile
-    let queryFile = ''
-    if (isFile === true) queryFile = `AND urls."isFile"=true`
-    else if (isFile === false) queryFile = `AND urls."isFile"=false`
-
-    // state
-    let queryState = ''
-    if (state === 'ACTIVE') queryState = `AND urls.state = 'ACTIVE'`
-    else if (state === 'INACTIVE') queryState = `AND urls.state = 'INACTIVE'`
+  ): Promise<UrlDirectoryPaginated> {
+    const queryFile = this.getQueryFileText(isFile)
+    const queryState = this.getQueryStateText(state)
 
     const rawQuery = `
-      SELECT "urls"."shortUrl", "users"."email", "urls"."state"
+      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
       JOIN users
       ON "urls"."userId" = "users"."id"
@@ -304,13 +293,11 @@ export class UrlRepository implements UrlRepositoryInterface {
       ON query @@ (${urlVector})
       ${queryFile}
       ${queryState}
-      ORDER BY (${rankingAlgorithm}) DESC
-      LIMIT $limit
-      OFFSET $offset`
+      ORDER BY (${rankingAlgorithm}) DESC`
+
+    // Search only once to get both urls and count
     const urlsModel = (await sequelize.query(rawQuery, {
       bind: {
-        limit,
-        offset,
         query,
       },
       raw: true,
@@ -319,7 +306,51 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
     })) as Array<UrlDirectory>
 
-    return urlsModel
+    const count = urlsModel.length
+    const ending = Math.min(count, offset + limit)
+    const slicedUrlsModel = urlsModel.slice(offset, ending)
+
+    return { count, urls: slicedUrlsModel }
+  }
+
+  private getQueryFileEmail: (isFile: boolean | undefined) => Array<boolean> = (
+    isFile,
+  ) => {
+    let queryFile = [true, false]
+    if (isFile === true) queryFile = [true]
+    else if (isFile === false) queryFile = [false]
+
+    return queryFile
+  }
+
+  private getQueryStateEmail: (state: string | undefined) => Array<string> = (
+    state,
+  ) => {
+    let queryState = ['ACTIVE', 'INACTIVE']
+    if (state === 'ACTIVE') queryState = ['ACTIVE']
+    else if (state === 'INACTIVE') queryState = ['INACTIVE']
+
+    return queryState
+  }
+
+  private getQueryFileText: (isFile: boolean | undefined) => string = (
+    isFile,
+  ) => {
+    let queryFile = ''
+    if (isFile === true) queryFile = `AND urls."isFile"=true`
+    else if (isFile === false) queryFile = `AND urls."isFile"=false`
+
+    return queryFile
+  }
+
+  private getQueryStateText: (state: string | undefined) => string = (
+    state,
+  ) => {
+    let queryState = ''
+    if (state === 'ACTIVE') queryState = `AND urls.state = 'ACTIVE'`
+    else if (state === 'INACTIVE') queryState = `AND urls.state = 'INACTIVE'`
+
+    return queryState
   }
 
   /**
@@ -452,7 +483,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     tableName: string,
   ): string {
     let rankingAlgorithm
-    console.log('the order is this', order)
     switch (order) {
       case SearchResultsSortOrder.Relevance:
         {

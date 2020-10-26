@@ -1,7 +1,7 @@
 import {
   StorableFile,
   StorableUrl,
-  UrlDirectory,
+  UrlDirectoryPaginated,
   UrlsPaginated,
 } from '../types'
 import { SearchResultsSortOrder } from '../../../shared/search'
@@ -81,5 +81,5 @@ export interface UrlRepositoryInterface {
     state: string | undefined,
     isFile: boolean | undefined,
     isEmail: boolean,
-  ) => Promise<Array<UrlDirectory>>
+  ) => Promise<UrlDirectoryPaginated>
 }

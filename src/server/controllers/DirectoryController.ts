@@ -35,7 +35,7 @@ export class DirectoryController implements DirectoryControllerInterface {
       offset: Number(offset),
       state: state?.toString(),
       isFile: undefined as boolean | undefined,
-      isEmail: undefined as boolean | undefined,
+      isEmail: true, // true as placeholder
     }
 
     // Reassign isFile and isEmail to booleans

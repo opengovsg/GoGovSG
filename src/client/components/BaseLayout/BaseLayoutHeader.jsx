@@ -17,7 +17,9 @@ import GoLogoLight from '~/assets/go-main-logo-light.svg'
 import loginActions from '../../actions/login'
 import Section from '../Section'
 import logoutIcon from './assets/logout-icon.svg'
+import logoutWhiteIcon from './assets/logout-white-icon.svg'
 import helpIcon from '../../assets/help-icon.svg'
+import directoryIcon from './assets/directory-icon.svg'
 import feedbackIcon from './assets/feedback-icon.svg'
 import githubIcon from './assets/github-icon.svg'
 import signinIcon from './assets/signin-icon.svg'
@@ -50,7 +52,8 @@ const useStyles = makeStyles((theme) =>
       flexGrow: 0.85,
     },
     appBarSignOutBtn: {
-      fill: theme.palette.primary.main,
+      // fill: theme.palette.primary.main,
+      color: (props) => (props.isLightItems ? 'white' : '#384A51'),
       order: 10,
     },
     appBarSignInBtn: {
@@ -107,6 +110,14 @@ const BaseLayoutHeader = ({
 
   const headers = [
     {
+      text: 'Directory',
+      link: i18next.t('general.links.directory'),
+      public: false,
+      icon: directoryIcon,
+      mobileOrder: 1,
+      internalLink: true,
+    },
+    {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
@@ -124,7 +135,7 @@ const BaseLayoutHeader = ({
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
-      mobileOrder: 1,
+      mobileOrder: 3,
     },
   ]
 
@@ -132,14 +143,22 @@ const BaseLayoutHeader = ({
     <Button
       onClick={logout}
       size="large"
-      color="primary"
+      color={isLightItems ? 'primary' : 'white'}
       variant="text"
       className={classes.appBarSignOutBtn}
     >
       <Hidden xsDown>
         <strong>Sign out&nbsp;</strong>
       </Hidden>
-      <img src={logoutIcon} alt="Sign out" />
+      {isLightItems ? (
+        <img
+          className={classes.logoutIcon}
+          src={logoutWhiteIcon}
+          alt="Sign out"
+        />
+      ) : (
+        <img className={classes.logoutIcon} src={logoutIcon} alt="Sign out" />
+      )}
     </Button>
   ) : (
     <>

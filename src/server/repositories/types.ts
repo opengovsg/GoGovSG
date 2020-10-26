@@ -15,7 +15,6 @@ export type StorableUrl = Pick<
   | 'isSearchable'
   | 'description'
   | 'contactEmail'
-  | 'userId'
 >
 
 /**
@@ -52,8 +51,9 @@ export type UrlPublic = Pick<
 // to be possibly changed
 export type UrlDirectory = {
   shortUrl: string
-  userId: string | undefined | number
+  email: string
   state: string
+  isFile: boolean
 }
 
 export type UrlDirectoryPaginated = {
