@@ -101,7 +101,7 @@
     "@sentry/webpack-plugin": "^1.13.0",
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.32",
-    "@types/chart.js": "^2.9.26",
+    "@types/chart.js": "^2.9.27",
     "@types/classnames": "^2.2.10",
     "@types/cloudmersive-virus-api-client": "^1.1.1",
     "@types/connect-redis": "0.0.14",
