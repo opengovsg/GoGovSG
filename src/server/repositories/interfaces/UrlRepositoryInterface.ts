@@ -64,13 +64,14 @@ export interface UrlRepositoryInterface {
   ) => Promise<UrlsPaginated>
 
   /**
-   * Performs plain text search on Urls based on their shortUrl and
-   * description. The results are ranked in order of relevance based
-   * on click count, length and cover density.
+   * Performs search for email and plain text search.
    * @param  {string} query The search query in plain text.
-   * @param  {number} limit Number of results to return.
-   * @param  {number} offset The number of top results to skip.
    * @param  {SearchResultsSortOrder} order The sorting rule for search results.
+   * @param  {number} limit The number of results to return.
+   * @param  {number} offset The number of results to skip.
+   * @param  {string | undefined} state The state of the shorturl.
+   * @param  {boolean | undefined} isFile Determines if the shorturl is a file or a link.
+   * @param  {boolean} isEmail Determines the search on email or plain text search.
    * @returns Promise of total no. Of search results and the results on the current page.
    */
   rawDirectorySearch: (

@@ -13,9 +13,6 @@ router.use('/links', require('./links'))
 router.use('/search', require('./search'))
 router.use('/ga', require('./ga'))
 
-// To be placed with userguard
-router.use('/directory', require('./directory'))
-
 /**
  * To protect private user routes.
  * */
@@ -51,6 +48,7 @@ function preprocess(
 router.use('/user', userGuard, preprocess, require('./user'))
 router.use('/qrcode', userGuard, require('./qrcode'))
 router.use('/link-stats', userGuard, require('./link-statistics'))
+router.use('/directory', userGuard, require('./directory'))
 
 router.use((_, res) => {
   res.status(404).render(ERROR_404_PATH)
