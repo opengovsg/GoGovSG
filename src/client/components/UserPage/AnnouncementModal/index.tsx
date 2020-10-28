@@ -34,6 +34,14 @@ const useStyles = makeStyles((theme) =>
     announcementImage: {
       marginTop: theme.spacing(-4),
       marginBottom: theme.spacing(4),
+      [theme.breakpoints.up('sm')]: {
+        maxWidth: 400,
+        maxHeight: 160,
+      },
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 260,
+        maxHeight: 104,
+      },
     },
     announcementPadding: {
       paddingBottom: theme.spacing(4),
@@ -173,11 +181,13 @@ export default function AnnouncementModal() {
         </div>
       )}
       {announcement?.image ? (
-        <img
-          className={`${classes.justifyCenter} ${classes.announcementImage}`}
-          alt=""
-          src={announcement.image}
-        />
+        <div className={classes.justifyCenter}>
+          <img
+            className={classes.announcementImage}
+            alt=""
+            src={announcement.image}
+          />
+        </div>
       ) : (
         <div
           className={`${classes.justifyCenter} ${classes.announcementPadding}`}
