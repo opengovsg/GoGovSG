@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) =>
     emptyStateBodyText: {
       marginTop: '8px',
       textAlign: 'center',
+      padding: '10px',
     },
   }),
 )

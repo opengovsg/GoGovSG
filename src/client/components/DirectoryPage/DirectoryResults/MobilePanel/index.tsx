@@ -49,7 +49,12 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(3),
     },
     shortUrlRow: {
-        display: 'inline-block'
+        display: 'inline-block',
+        maxWidth: '200px',
+        width: '100%',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
     },
     shortUrlInActive: {
         color: "#BBBBBB"

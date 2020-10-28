@@ -15,6 +15,7 @@ import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.svg'
 import GoLogoLight from '~/assets/go-main-logo-light.svg'
 import GoLogoMini from '~/assets/go-main-logo-mini.svg'
+import GoLogoMiniLight from '~/assets/go-main-logo-mini-light.svg'
 import loginActions from '../../actions/login'
 import Section from '../Section'
 import logoutIcon from './assets/logout-icon.svg'
@@ -196,10 +197,13 @@ const BaseLayoutHeader = ({
 
   const getGoLogo = () => {
     if (isLightItems && isMobileVariant) {
-      return GoLogoMini
+      return GoLogoMiniLight
     }
     if (isLightItems) {
       return GoLogoLight
+    }
+    if (!isLightItems && isMobileVariant) {
+      return GoLogoMini
     }
     return GoLogo
   }

@@ -61,7 +61,6 @@ const useStyles = makeStyles((theme) =>
       paddingLeft: 0,
       [theme.breakpoints.up('md')]: {
         paddingRight: theme.spacing(2),
-        paddingLeft: theme.spacing(2),
       },
     },
     searchInputNested: {
@@ -101,14 +100,10 @@ const useStyles = makeStyles((theme) =>
       left: 'auto',
     },
     filterButton: {
-      paddingLeft: theme.spacing(1.5),
-      margin: '10px',
-    },
-    filterDivider: {
-      marginLeft: theme.spacing(0.0),
-      [theme.breakpoints.up('md')]: {
-        marginLeft: theme.spacing(2.0),
-      },
+      height: '100%',
+      paddingLeft: '30px',
+      paddingRight: '30px',
+      borderRadius: '0px'
     },
     filterIcon: {
       paddingLeft: theme.spacing(1.5),
@@ -249,8 +244,8 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
 
                   </div>
                   </Button>
+                  
                     <Divider 
-                      className={classes.filterDivider}
                       orientation="vertical" flexItem />
                   <div className={classes.searchInputIcon}>
                     {getSearchIcon(isEmail, isMobileView)}
