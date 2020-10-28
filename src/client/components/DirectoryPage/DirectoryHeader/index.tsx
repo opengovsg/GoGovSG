@@ -23,6 +23,7 @@ type DirectoryHeaderProps = {
   getFile:(queryFile: string) => void
   getState:(queryState: string) => void
   getEmail:(queryEmail: string) => void
+  setDisablePagination:(disablePagination: boolean) => void
   onApply: () => void
   onReset: () => void
 }
@@ -91,6 +92,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
   getEmail,
   onApply,
   onReset,
+  setDisablePagination,
 }: DirectoryHeaderProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
@@ -118,7 +120,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
           <Hidden xsDown>
             <div className={classes.rightWrapper}>
               <Button 
-                href="/#/login" 
+                href="/#/user" 
                 size="large"
                 variant='text'
                 color='inherit'>
@@ -140,6 +142,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
             getEmail={getEmail}
             onApply={onApply}
             onReset={onReset}
+            setDisablePagination={setDisablePagination}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
                 ;(e.target as any).blur()

@@ -17,6 +17,7 @@ type DirectoryTableProps = {
   ) => void
   currentPage: number
   resultsCount: number
+  disablePagination: boolean
   setUrlInfo: (url:UrlTypePublic) => void
   setOpen: (urlInfo:boolean) => void
 }
@@ -40,6 +41,7 @@ const DirectoryTable: FunctionComponent<DirectoryTableProps> = React.memo(
     rowsPerPage,
     resultsCount,
     currentPage,
+    disablePagination,
     changePageHandler,
     changeRowsPerPageHandler,
     setUrlInfo,
@@ -63,6 +65,7 @@ const DirectoryTable: FunctionComponent<DirectoryTableProps> = React.memo(
             changePageHandler={changePageHandler}
             changeRowsPerPageHandler={changeRowsPerPageHandler}
             resultsCount={resultsCount}
+            disablePagination={disablePagination}
           />
         </TableBody>
       </Table>

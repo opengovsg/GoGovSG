@@ -127,6 +127,7 @@ export interface SessionSettings {
 
 export const validEmailDomainGlobExpression = process.env
   .VALID_EMAIL_GLOB_EXPRESSION as string
+export const domainPattern = `*@${validEmailDomainGlobExpression}`
 export const emailValidator = new minimatch.Minimatch(
   validEmailDomainGlobExpression,
   {

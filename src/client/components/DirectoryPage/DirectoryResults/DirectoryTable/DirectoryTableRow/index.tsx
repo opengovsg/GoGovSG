@@ -68,6 +68,19 @@ const useStyles = makeStyles((theme) =>
         maxWidth: '200px',
       },
     },
+    emailText: {
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      maxWidth: '400px',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: '200px',
+      },
+      textDecoration: 'none',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
     domainTextInactive: {
       color: '#BBBBBB',
       [theme.breakpoints.up('md')]: {
@@ -106,6 +119,7 @@ const useStyles = makeStyles((theme) =>
     },
     IconCell: {
       display: 'inline-flex',
+      verticalAlign: 'middle',
       [theme.breakpoints.up('md')]: {
         paddingRight: theme.spacing(1.5),
         marginLeft: (props: DirectoryTableRowStyleProps) => props.appMargins,
@@ -159,15 +173,24 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
 
 
   const onClickEvent = (e:React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
-    if (!isMobileView) {copy(url.email)
+    if (!isMobileView && url.state === 'ACTIVE') {
       e.stopPropagation()
+      const redirect = window.location.origin + '/' + url.shortUrl
+      window.open(redirect)
+    }
+    else if (isMobileView) {
+      setUrlInfo(url)
+      setOpen(true)
+    }
+  }
+
+  const onClickEmail =  (e:React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    if (!isMobileView) {
+      e.stopPropagation()
+      copy(url.email)
       dispatch<SetSuccessMessageAction>(
         rootActions.setSuccessMessage('Email has been copied'),
       )
-    }
-    else {
-      setUrlInfo(url)
-      setOpen(true)
     }
   }
 
@@ -229,10 +252,11 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
         </Hidden>
         
         <TableCell className={classes.contactEmailCell} key="emailCell">
-        <Typography
+          <Typography
             variant='body2'
-            className={classes.shortLinkText}
-          >            
+            className={classes.emailText}
+            onClick={(e) => onClickEmail(e)}
+            >            
             <div className={classes.IconCell}>
               <img
                 className={classes.personIcon}

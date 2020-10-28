@@ -30,6 +30,7 @@ type GoSearchInputProps = {
   getFile:(queryFile: string) => void
   getState:(queryState: string) => void
   getEmail:(queryEmail: string) => void
+  setDisablePagination:(disablePagination:boolean) => void
   onApply: () => void
   onReset: () => void
 }
@@ -69,6 +70,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     searchInputIcon: {
+      marginTop: '6px',
       marginLeft: theme.spacing(2),
       marginRight: theme.spacing(1),
       [theme.breakpoints.up('md')]: {
@@ -100,12 +102,30 @@ const useStyles = makeStyles((theme) =>
     },
     filterButton: {
       paddingLeft: theme.spacing(1.5),
+      margin: '10px',
     },
     filterDivider: {
-      marginLeft: theme.spacing(1.0),
+      marginLeft: theme.spacing(0.0),
+      [theme.breakpoints.up('md')]: {
+        marginLeft: theme.spacing(2.0),
+      },
     },
     filterIcon: {
       paddingLeft: theme.spacing(1.5),
+      verticalAlign: 'middle',
+      [theme.breakpoints.down('sm')]: {
+        paddingLeft: theme.spacing(0.0),
+      },
+    },
+    buttonWrapper: {
+      width: 'auto',
+      display: 'inline-block',
+      [theme.breakpoints.down('sm')]: {
+        display: 'inline-flex',
+      },
+    },
+    labelWrapper: {
+      verticalAlign: 'middle',
     },
   }),
 )
@@ -122,10 +142,11 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
   getEmail = () => {},
   onApply = () => {},
   onReset = () => {},
+  setDisablePagination = () => {},
 }: GoSearchInputProps) => {
   const [isSortPanelOpen, setIsSortPanelOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
-  const [isEmail, setIsEmail] = useState<boolean>(true)
+  const [isEmail, setIsEmail] = useState<boolean>(false)
   const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
@@ -140,13 +161,25 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
     }
   }, [isEmail])
 
+  // If sort panel is open, set pagination z-index to -1, else reset z-index to 1
+  // this prevent pagination from intersecting with sort panel 
+  useEffect(() => {
+    if (isSortPanelOpen) {
+      setDisablePagination(true)
+    } 
+    else {
+      setDisablePagination(false)
+    }
+
+  }, [isSortPanelOpen])
+
   // Label for the button - requires double conditions
   const getSearchLabel = (isEmail: boolean, isMobileView: boolean) => {
     if (isMobileView && isEmail) {
-      return (<EmailIcon size={isMobileView ? 16 : 30} />)
+      return (<EmailIcon size={20} />)
     } 
     else if (isMobileView && !isEmail) {
-      return (<SearchIcon size={isMobileView ? 16 : 30} />)
+      return (<SearchIcon size={20} />)
     } 
     else if (!isMobileView && isEmail) {
       return 'Email'
@@ -162,10 +195,10 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
       return ''
     } 
     else if (isEmail) {
-      return (<EmailIcon size={isMobileView ? 16 : 30} />)
+      return (<EmailIcon size={isMobileView ? 30 : 30} />)
     }
     else {
-      return (<SearchIcon size={isMobileView ? 16 : 30} />)
+      return (<SearchIcon size={isMobileView ? 30 : 30} />)
     }
   }
 
@@ -176,6 +209,7 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
           setIsSortPanelOpen(false)
         }
         setIsFilterOpen(false)
+        setDisablePagination(false)
       }}
     >
       <div className={classes.root}>
@@ -195,11 +229,26 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
                   <Button
                     className={classes.filterButton}
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  >
-                    {getSearchLabel(isEmail, isMobileView)}
+                  > 
+                  <div className={classes.buttonWrapper}>
+                    {isMobileView? 
+                      getSearchLabel(isEmail, isMobileView)
+                      :
+                      <span className={classes.labelWrapper}>{getSearchLabel(isEmail, isMobileView)}</span>
+                    }
+                    {isMobileView?                    
+                       <ArrowDownIcon 
+                        className={classes.filterIcon}
+                        height={'20'}
+                        width={'20'}/>
+                      :
+                        <ArrowDownIcon 
+                        className={classes.filterIcon}
+                        />
+                      }
+
+                  </div>
                   </Button>
-                  <ArrowDownIcon 
-                      className={classes.filterIcon}/>
                     <Divider 
                       className={classes.filterDivider}
                       orientation="vertical" flexItem />

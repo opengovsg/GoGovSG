@@ -14,6 +14,7 @@ import {
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.svg'
 import GoLogoLight from '~/assets/go-main-logo-light.svg'
+import GoLogoMini from '~/assets/go-main-logo-mini.svg'
 import loginActions from '../../actions/login'
 import Section from '../Section'
 import logoutIcon from './assets/logout-icon.svg'
@@ -75,16 +76,22 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       width: '100%',
       height: '100%',
+      [theme.breakpoints.down('sm')]: {
+        width: 'auto',
+      },
     },
     headerButton: {
       filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
       // this class is not mobile first by default as padding should not be set
       // when it is not mobile.
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.down('xm')]: {
         paddingLeft: 0,
         paddingRight: 0,
         minWidth: theme.spacing(6),
       },
+    },
+    logoutIcon: {
+      width: '24px',
     },
   }),
 )
@@ -187,6 +194,16 @@ const BaseLayoutHeader = ({
     </>
   )
 
+  const getGoLogo = () => {
+    if (isLightItems && isMobileVariant) {
+      return GoLogoMini
+    }
+    if (isLightItems) {
+      return GoLogoLight
+    }
+    return GoLogo
+  }
+
   return (
     <Section
       backgroundType={backgroundType}
@@ -197,7 +214,7 @@ const BaseLayoutHeader = ({
         <Toolbar className={classes.toolbar}>
           <a href="/#/" className={classes.toolbarLogo}>
             <img
-              src={isLightItems ? GoLogoLight : GoLogo}
+              src={getGoLogo()}
               className={classes.logo}
               alt="GoGovSG Logo"
             />

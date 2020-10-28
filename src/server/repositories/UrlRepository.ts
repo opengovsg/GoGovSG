@@ -199,6 +199,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     if (isEmail) {
       const emails = query.toString().split(' ')
 
+      // split email/domains by space into tokens, also reduces injections
       const likeQuery: Array<string> = []
       emails.forEach((domain) => {
         likeQuery.push(sanitise(domain))
@@ -231,7 +232,6 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private async getRelevantUrlsFromEmail(
     likeQuery: Array<string>,
-    // order: string,
     rankingAlgorithm: string,
     limit: number,
     offset: number,

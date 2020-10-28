@@ -49,10 +49,13 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(3),
     },
     shortUrlRow: {
-        display: 'flex'
+        display: 'inline-block'
     },
     shortUrlInActive: {
         color: "#BBBBBB"
+    },
+    stateIcon: {
+        verticalAlign: 'middle'
     },
     stateActive: {
         color: '#6d9067',
@@ -82,6 +85,34 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
             rootActions.setSuccessMessage('Email has been copied'),
         )
       }
+
+    // inactive and active icons/ colors
+    const getMobileIcon = () => {
+        if (url?.state === 'ACTIVE' && url?.isFile) {
+            return (<>
+                        <DirectoryFileIcon className={classes.stateIcon}/>
+                        <span>/{url?.shortUrl}</span>
+                    </>)
+        }
+        else if (url?.state === 'ACTIVE' && !url?.isFile) {
+            return (<>
+                        <DirectoryUrlIcon className={classes.stateIcon}/>
+                        <span>/{url?.shortUrl}</span>
+                    </>)
+        }
+        else if (url?.isFile) {
+            return (<>
+                        <DirectoryFileIcon className={classes.stateIcon} color={'#BBBBBB'}/>
+                        <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
+                    </>)
+        }
+        else {
+            return (<>
+                        <DirectoryUrlIcon className={classes.stateIcon} color={'#BBBBBB'}/>
+                        <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
+                    </>)
+        }
+    }
     
     return(
     <Drawer
@@ -94,26 +125,7 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
         <Typography className={classes.row}
             variant='body2'>
             <div className={classes.shortUrlRow}>
-                {url?.state === 'ACTIVE'?
-                <>
-                    {url?.isFile? 
-                        <DirectoryFileIcon />
-                    :
-                        <DirectoryUrlIcon />
-                    }
-                    <span>/{url?.shortUrl}</span>
-                </>
-                :
-                <>
-                    {url?.isFile? 
-                        <DirectoryFileIcon color={'#BBBBBB'}/>
-                    :
-                        <DirectoryUrlIcon color={'#BBBBBB'}/>
-                    }
-                    <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
-                </>
-                }
-
+                {getMobileIcon()}
                 {url?.state === 'ACTIVE' &&
                     <a href={url?.shortUrl} target='_blank'>
                         <RedirectIcon className={classes.goToIcon}/>

@@ -21,6 +21,7 @@ type DirectoryTablePaginationProps = {
   ) => void
   currentPage: number
   resultsCount: number
+  disablePagination: boolean
 }
 
 type DirectoryTablePaginationStyleProps = {
@@ -30,6 +31,7 @@ type DirectoryTablePaginationStyleProps = {
 const useStyles = makeStyles((theme) =>
   createStyles({
     pagination: {
+      zIndex: -1,
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(6),
       [theme.breakpoints.up('md')]: {
@@ -81,6 +83,7 @@ const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps>
   rowsPerPage,
   resultsCount,
   currentPage,
+  disablePagination,
   changePageHandler,
   changeRowsPerPageHandler,
 }: DirectoryTablePaginationProps) => {
@@ -97,6 +100,7 @@ const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps>
               pageCount={pageCount}
               onChangePage={onChangePage}
               page={page}
+              disablePagination={disablePagination}
             />
           )}
           labelRowsPerPage="Links per page"

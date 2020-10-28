@@ -14,7 +14,7 @@ import { Redirect } from 'react-router-dom'
 
 import loginActions from '~/actions/login'
 import rootActions from '~/actions/root'
-import { USER_PAGE, loginFormVariants } from '~/util/types'
+import { DIRECTORY_PAGE, USER_PAGE, loginFormVariants } from '~/util/types'
 import GoLogo from '../../assets/go-main-logo.svg'
 import LoginGraphics from '../../assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../../util/requests'
@@ -237,8 +237,23 @@ const LoginPage = ({
     )
   }
 
-  // User is logged in, redirect if available
   if (location) {
+    // Nested if conditions to prevent undefine error from object and undefine checks
+    // un-parsed object will give you true even when the proproperty is undefined
+    const parsedLocation = JSON.parse(JSON.stringify(location))
+    if ('state' in parsedLocation) {
+      const { state } = location
+      if (state) {
+        const parsedState = JSON.parse(JSON.stringify(state))
+        if ('previous' in parsedState) {
+          const { previous } = state
+          if (previous === '/directory') {
+            // reset state
+            return <Redirect to={{ pathname: DIRECTORY_PAGE, state: {} }} />
+          }
+        }
+      }
+    }
     return <Redirect to={{ pathname: USER_PAGE, state: { from: location } }} />
   }
   return <Redirect to={{ pathname: USER_PAGE }} />

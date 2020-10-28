@@ -1,11 +1,11 @@
-import React, { FunctionComponent } from 'react'
+import React from 'react'
 
 type SearchIconProps = {
   size: number
   color?: string
 }
 
-const SearchIcon: FunctionComponent<SearchIconProps> = ({
+const SearchIcon = ({
   size,
   color = '#384A51',
 }: SearchIconProps) => {

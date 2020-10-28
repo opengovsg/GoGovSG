@@ -54,7 +54,7 @@ const defaultParams: GoSearchParams = {
   currentPage: 0,
   state: '',
   isFile: '',
-  isEmail: 'true',
+  isEmail: 'false',
 }
 
 const redirectWithParams = (newParams: GoSearchParams, history: History) => {
@@ -90,6 +90,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const [querystate, setQueryState] = useState<string>(defaultParams.state) 
   const [queryEmail, setQueryEmail] = useState<string>(defaultParams.isEmail)
   const [queryOrder, setQueryOrder] = useState<SearchResultsSortOrder>(defaultParams.sortOrder)
+  const [disablePagination, setDisablePagination] = useState<boolean>(false)
 
   const urlParams = querystring.parse(location.search.substring(1)) as Partial<
     GoSearchParams
@@ -270,6 +271,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
           getEmail={setQueryEmail}
           onApply={applyChanges}
           onReset={onResetFilter}
+          setDisablePagination={setDisablePagination}
         />
         {queryToDisplay ? (
           <DirectoryResults
@@ -281,6 +283,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
             changeRowsPerPageHandler={changeRowsPerPageHandler}
             resultsCount={resultsCount}
             query={queryToDisplay}
+            disablePagination={disablePagination}
           />
         ) : (
           <EmptyStateGraphic />
