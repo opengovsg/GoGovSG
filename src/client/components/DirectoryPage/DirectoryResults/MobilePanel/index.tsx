@@ -132,7 +132,7 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
             <div className={classes.shortUrlRow}>
                 {getMobileIcon()}
                 {url?.state === 'ACTIVE' &&
-                    <a href={url?.shortUrl} target='_blank'>
+                    <a href={url?.shortUrl} target='_blank' rel="noopener noreferrer">
                         <RedirectIcon className={classes.goToIcon}/>
                     </a>
                 }

@@ -4,6 +4,7 @@ import {
   UrlDirectoryPaginated,
   UrlsPaginated,
 } from '../types'
+import { DirectoryQueryConditions } from '../../services/interfaces/DirectorySearchServiceInterface'
 import { SearchResultsSortOrder } from '../../../shared/search'
 
 /**
@@ -65,22 +66,10 @@ export interface UrlRepositoryInterface {
 
   /**
    * Performs search for email and plain text search.
-   * @param  {string} query The search query in plain text.
-   * @param  {SearchResultsSortOrder} order The sorting rule for search results.
-   * @param  {number} limit The number of results to return.
-   * @param  {number} offset The number of results to skip.
-   * @param  {string | undefined} state The state of the shorturl.
-   * @param  {boolean | undefined} isFile Determines if the shorturl is a file or a link.
-   * @param  {boolean} isEmail Determines the search on email or plain text search.
+   * @param  {DirectoryQueryConditions} conditions The search query conditions.
    * @returns Promise of total no. Of search results and the results on the current page.
    */
   rawDirectorySearch: (
-    query: string,
-    order: SearchResultsSortOrder,
-    limit: number,
-    offset: number,
-    state: string | undefined,
-    isFile: boolean | undefined,
-    isEmail: boolean,
+    conditions: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated>
 }

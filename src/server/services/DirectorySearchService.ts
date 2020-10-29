@@ -18,15 +18,7 @@ export class DirectorySearchService {
     conditions: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated> = async (conditions) => {
     // find urls from text search and email search
-    const results = await this.urlRepository.rawDirectorySearch(
-      conditions.query,
-      conditions.order,
-      conditions.limit,
-      conditions.offset,
-      conditions.state,
-      conditions.isFile,
-      conditions.isEmail,
-    )
+    const results = await this.urlRepository.rawDirectorySearch(conditions)
 
     return results as UrlDirectoryPaginated
   }

@@ -175,8 +175,8 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
   const onClickEvent = (e:React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
     if (!isMobileView && url.state === 'ACTIVE') {
       e.stopPropagation()
-      const redirect = window.location.origin + '/' + url.shortUrl
-      window.open(redirect)
+      const redirect = `${window.location.origin}/${url.shortUrl}`
+      window.open(redirect,'_blank','noopener noreferrer')
     }
     else if (isMobileView) {
       setUrlInfo(url)

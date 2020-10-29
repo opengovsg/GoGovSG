@@ -26,6 +26,7 @@ import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchConditions, urlSearchVector } from '../models/search'
+import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
 
 const { Public, Private } = FileVisibility
 
@@ -174,70 +175,50 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   public rawDirectorySearch: (
-    query: string,
-    order: SearchResultsSortOrder,
-    limit: number,
-    offset: number,
-    state: string | undefined,
-    isFile: boolean | undefined,
-    isEmail: boolean,
-  ) => Promise<UrlDirectoryPaginated> = async (
-    query,
-    order,
-    limit,
-    offset,
-    state,
-    isFile,
-    isEmail,
-  ) => {
+    conditions: DirectoryQueryConditions,
+  ) => Promise<UrlDirectoryPaginated> = async (conditions) => {
+    const { query, order, limit, offset, state, isFile, isEmail } = conditions
+
     const { tableName } = Url
 
     const urlVector = urlSearchVector
 
     const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
 
-    if (isEmail) {
-      const emails = query.toString().split(' ')
-
-      // split email/domains by space into tokens, also reduces injections
-      const likeQuery: Array<string> = []
-      emails.forEach((domain) => {
-        likeQuery.push(sanitise(domain))
-      })
-
-      const urlsModel = await this.getRelevantUrlsFromEmail(
-        likeQuery,
-        rankingAlgorithm,
-        limit,
-        offset,
-        state,
-        isFile,
-      )
-
-      return urlsModel
-    }
-
-    const urlsModel = await this.getRelevantUrlsFromText(
-      urlVector,
-      rankingAlgorithm,
-      limit,
-      offset,
-      query,
-      state,
-      isFile,
-    )
+    const urlsModel = await (isEmail
+      ? this.getRelevantUrlsFromEmail(
+          query,
+          rankingAlgorithm,
+          limit,
+          offset,
+          state,
+          isFile,
+        )
+      : this.getRelevantUrlsFromText(
+          urlVector,
+          rankingAlgorithm,
+          limit,
+          offset,
+          query,
+          state,
+          isFile,
+        ))
 
     return urlsModel
   }
 
   private async getRelevantUrlsFromEmail(
-    likeQuery: Array<string>,
+    query: string,
     rankingAlgorithm: string,
     limit: number,
     offset: number,
     state: string | undefined,
     isFile: boolean | undefined,
   ): Promise<UrlDirectoryPaginated> {
+    const emails = query.toString().split(' ')
+    // split email/domains by space into tokens, also reduces injections
+    const likeQuery = emails.map(sanitise)
+
     const queryFile = this.getQueryFileEmail(isFile)
     const queryState = this.getQueryStateEmail(state)
 
@@ -283,7 +264,6 @@ export class UrlRepository implements UrlRepositoryInterface {
   ): Promise<UrlDirectoryPaginated> {
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
-
     const rawQuery = `
       SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"

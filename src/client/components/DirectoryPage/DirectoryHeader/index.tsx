@@ -145,7 +145,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
             setDisablePagination={setDisablePagination}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
-                ;(e.target as any).blur()
+                (e.target as any).blur()
                 e.preventDefault()
               }
             }}

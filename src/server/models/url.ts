@@ -1,6 +1,4 @@
 import Sequelize from 'sequelize'
-
-import minimatch from 'minimatch'
 import { ACTIVE, INACTIVE } from './types'
 import {
   isBlacklisted,
@@ -10,7 +8,7 @@ import {
 } from '../../shared/util/validation'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
-import { DEV_ENV, domainPattern, emailValidator, ogHostname } from '../config'
+import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
 
@@ -36,17 +34,10 @@ type UrlTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): UrlType
 }
 
-export const domainValidator = new minimatch.Minimatch(domainPattern, {
-  noext: true,
-  noglobstar: true,
-  nobrace: true,
-  nonegate: true,
-})
-
 // Escape characters
 export const sanitise = (query: string): string => {
   // check legit domain
-  if (domainValidator.match(query)) {
+  if (emailValidator.match(query)) {
     // remove wildcards characters and escape characters
     const inputRaw = query.replace(/(%|\\)/g, '')
     return `%${inputRaw}`

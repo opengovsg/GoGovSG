@@ -35,20 +35,18 @@ export class DirectoryController implements DirectoryControllerInterface {
       offset: Number(offset),
       state: state?.toString(),
       isFile: undefined as boolean | undefined,
-      isEmail: true, // true as placeholder
+      isEmail: isEmail === 'true',
     }
 
-    // Reassign isFile and isEmail to booleans
+    // Reassign isFile to true / false / undefined (take both files and url)
     if (isFile === 'true') {
       queryConditions.isFile = true
     } else if (isFile === 'false') {
       queryConditions.isFile = false
+    } else {
+      queryConditions.isFile = undefined
     }
-    if (isEmail === 'true') {
-      queryConditions.isEmail = true
-    } else if (isEmail === 'false') {
-      queryConditions.isEmail = false
-    }
+
     try {
       const { urls, count } = await this.directorySearchService.plainTextSearch(
         queryConditions,

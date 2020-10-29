@@ -10,6 +10,7 @@ import {
 } from '../../../../src/server/repositories/types'
 import { StorableUrlState } from '../../../../src/server/repositories/enums'
 import { SearchResultsSortOrder } from '../../../../src/shared/search'
+import { DirectoryQueryConditions } from '../../../../src/server/services/interfaces/DirectorySearchServiceInterface'
 
 @injectable()
 export class UrlRepositoryMock implements UrlRepositoryInterface {
@@ -37,21 +38,15 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
   }
 
   rawDirectorySearch: (
-    query: string,
-    order: SearchResultsSortOrder,
-    limit: number,
-    offset: number,
-    state: string | undefined,
-    isFile: boolean | undefined,
-    isEmail: boolean,
+    condition: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated> = () => {
     return Promise.resolve({
       urls: [
         {
-          shortUrl: 'test-mom',
+          shortUrl: 'test-moh',
           state: 'ACTIVE',
           isFile: false,
-          email: 'test@mom.gov.sg',
+          email: 'test@test.gov.sg',
         },
       ],
       count: 0,
