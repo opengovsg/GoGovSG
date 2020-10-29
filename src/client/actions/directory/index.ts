@@ -2,6 +2,7 @@ import { ThunkAction } from 'redux-thunk'
 import { Dispatch } from 'react'
 import querystring from 'querystring'
 import { History } from 'history'
+import * as Sentry from '@sentry/browser'
 import {
   DirectoryActionType,
   SET_DIRECTORY_RESULTS,
@@ -14,6 +15,7 @@ import { SearchResultsSortOrder } from '../../../shared/search'
 import { get } from '../../util/requests'
 import { DIRECTORY_PAGE } from '../../util/types'
 import { UrlTypePublic } from '../../reducers/directory/types'
+import { GAEvent } from '../ga'
 
 function setDirectoryResults(payload: {
   count: number
@@ -60,6 +62,9 @@ const getDirectoryResults = (
   const response = await get(`/api/directory/search?${params}`)
   const json = await response.json()
   if (!response.ok) {
+    // Report error from endpoints
+    GAEvent('directory page', query, 'unsuccessful')
+    Sentry.captureMessage('directory search unsuccessful')
     dispatch(
       rootActions.setErrorMessage(
         json.message || 'Error fetching search results',
@@ -68,6 +73,8 @@ const getDirectoryResults = (
     return
   }
 
+  // replace @ with # because google analytics will stop events from recording potential email lookalike
+  GAEvent('directory page', query.replace(/(@)/g, '#'), 'successful')
   dispatch(
     setDirectoryResults({
       count: json.count,

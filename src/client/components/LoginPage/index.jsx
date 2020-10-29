@@ -124,9 +124,13 @@ const LoginPage = ({
 
   useEffect(() => {
     // Google Analytics: Move into login page
-    GAPageView('EMAIL LOGIN PAGE')
-    GAEvent('login page', 'email')
-  }, [])
+    // Because directory page will redirect to login page first
+    // We need filter that out
+    if (location?.state?.previous !== '/directory') {
+      GAPageView('EMAIL LOGIN PAGE')
+      GAEvent('login page', 'email')
+    }
+  }, [location?.state?.previous])
 
   // Display a login message from the server
   useEffect(() => {
@@ -240,6 +244,10 @@ const LoginPage = ({
   if (location) {
     // ensure redirection back to directory and reset the state
     if (location?.state?.previous === '/directory') {
+      // reason why we record directory here is because going into directory page will always go into login page first
+      // before going into directory page
+      GAEvent('directory page', 'main')
+      GAPageView('DIRECTORY PAGE')
       return <Redirect to={{ pathname: DIRECTORY_PAGE, state: {} }} />
     }
 

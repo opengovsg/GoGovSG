@@ -48,7 +48,8 @@ export class UrlManagementService implements UrlManagementServiceInterface {
     const owner = await this.userRepository.findUserByUrl(shortUrl)
     if (owner) {
       throw new AlreadyExistsError(
-        `Short link "${shortUrl}" is owned by ${owner.email}`,
+        `Short link "${shortUrl}" is used. Click here to find out more`,
+        // `Short link "${shortUrl}" is owned by ${owner.email}`,
       )
     }
 
