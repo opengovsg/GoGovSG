@@ -93,6 +93,7 @@ const useStyles = makeStyles((theme) =>
     },
     logoutIcon: {
       width: '24px',
+    },
     sectionPageSticky: {
       paddingTop: '43px',
     },
