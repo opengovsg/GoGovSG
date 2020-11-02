@@ -2,9 +2,10 @@ import { DirectoryState } from './types'
 import {
   DirectoryActionType,
   SET_DIRECTORY_RESULTS,
+  SET_INITIAL_STATE,
 } from '../../actions/directory/types'
 
-const initialState: DirectoryState = {
+export const initialState: DirectoryState = {
   results: [],
   resultsCount: 0,
   queryForResult: null,
@@ -22,6 +23,9 @@ const directory: (
         results: action.payload.urls,
         queryForResult: action.payload.query,
       }
+      break
+    case SET_INITIAL_STATE:
+      nextState = initialState
       break
     default:
       break

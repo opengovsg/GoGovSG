@@ -117,20 +117,6 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
       ),
     )
 
-  // Reset offset
-  const getFilteredResults = () => 
-    dispatch(
-      directoryActions.getDirectoryResults(
-        query,
-        queryOrder,
-        rowsPerPage,
-        defaultParams.currentPage,
-        querystate,
-        queryFile,
-        queryEmail
-      )
-    )
-
   const resultsCount = useSelector(
     (state: GoGovReduxState) => state.directory.resultsCount,
   )
@@ -193,18 +179,20 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
 
   // Changes when queryEmail changes
   useEffect(() => {
+    setPendingQuery('')
+    dispatch(
+      directoryActions.resetDirectoryResults()
+    )
     redirectWithParams(
       {
-        ...params,
+        ...defaultParams,
         state: querystate,
         isFile: queryFile,
         sortOrder: queryOrder,
         isEmail: queryEmail,
-        currentPage: defaultParams.currentPage,
       },
       history,
     )
-    getFilteredResults()
   }, [queryEmail])
 
   const onClearQuery = () => {
@@ -248,7 +236,6 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   }
 
   const queryToDisplay = (queryForResult || '').trim()
-
   // detect changes in query
   useEffect(() => {
     if (!query) {

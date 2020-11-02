@@ -5,7 +5,9 @@ import { History } from 'history'
 import * as Sentry from '@sentry/browser'
 import {
   DirectoryActionType,
+  ResetDirectoryResultsAction,
   SET_DIRECTORY_RESULTS,
+  SET_INITIAL_STATE,
   SetDirectoryResultsAction,
 } from './types'
 import { GoGovReduxState } from '../../reducers/types'
@@ -25,6 +27,12 @@ function setDirectoryResults(payload: {
   return {
     type: SET_DIRECTORY_RESULTS,
     payload,
+  }
+}
+
+function resetDirectoryResults(): ResetDirectoryResultsAction {
+  return {
+    type: SET_INITIAL_STATE,
   }
 }
 
@@ -103,4 +111,5 @@ export default {
   getDirectoryResults,
   setDirectoryResults,
   redirectToDirectoryPage,
+  resetDirectoryResults,
 }

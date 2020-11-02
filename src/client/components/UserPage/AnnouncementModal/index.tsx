@@ -32,8 +32,17 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
     },
     announcementImage: {
-      marginTop: theme.spacing(-4),
+      width: '600px',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      paddingLeft: '80px',
+      paddingRight: '80px',
+      marginTop: theme.spacing(-6),
       marginBottom: theme.spacing(4),
+      [theme.breakpoints.down('sm')]: {
+        paddingLeft: '0px',
+        paddingRight: '0px',
+      },
     },
     announcementPadding: {
       paddingBottom: theme.spacing(4),
@@ -43,9 +52,19 @@ const useStyles = makeStyles((theme) =>
       justifyContent: 'center',
       width: '100%',
     },
+    justifyCenterImage: {
+      display: 'flex',
+      justifyContent: 'center',
+      width: '600px',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+    },
     messagePadding: {
       paddingLeft: theme.spacing(4),
       paddingRight: theme.spacing(4),
+      whiteSpace: 'pre-line',
+      textAlign: 'center',
     },
     closeIconButton: {
       fill: (props) =>
@@ -174,13 +193,13 @@ export default function AnnouncementModal() {
       )}
       {announcement?.image ? (
         <img
-          className={`${classes.justifyCenter} ${classes.announcementImage}`}
+          className={`${classes.justifyCenterImage} ${classes.announcementImage}`}
           alt=""
           src={announcement.image}
         />
       ) : (
         <div
-          className={`${classes.justifyCenter} ${classes.announcementPadding}`}
+          className={`${classes.justifyCenterImage} ${classes.announcementPadding}`}
         />
       )}
       {announcement?.subtitle ? (
@@ -197,7 +216,8 @@ export default function AnnouncementModal() {
           className={`${classes.justifyCenter} ${classes.messagePadding}`}
           variant="body2"
         >
-          {announcement.message}
+          {/* Enable line break */}
+          {announcement.message.replace(/\\n/g, '\n')}
         </Typography>
       ) : null}
       <div className={`${classes.justifyCenter} ${classes.modalBottom}`}>
@@ -210,7 +230,7 @@ export default function AnnouncementModal() {
             variant="text"
             className={classes.learnMoreButton}
           >
-            Learn More
+            Try it now
           </Button>
         ) : null}
       </div>
