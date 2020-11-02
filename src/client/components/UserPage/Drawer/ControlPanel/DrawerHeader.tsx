@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) =>
     },
     copyButtonWrapper: {
       marginLeft: -8,
+      overflow: 'hidden',
     },
     headerText: {
       marginBottom: '6px',
