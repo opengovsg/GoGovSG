@@ -44,6 +44,7 @@ jobs:
             ${{ runner.OS }}-
       - run: npm ci
       - run: npm run lint
+      - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
       - run: npm run build
   test:
     name: Test
