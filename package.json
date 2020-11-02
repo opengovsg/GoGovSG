@@ -52,7 +52,7 @@
     "express-session": "^1.17.1",
     "file-saver": "^2.0.2",
     "file-type": "^16.0.0",
-    "helmet": "^4.1.1",
+    "helmet": "^4.2.0",
     "history": "^4.10.1",
     "i18next": "^19.8.3",
     "inversify": "^5.0.1",
