@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useLocation } from 'react-router-dom'
 import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
@@ -53,16 +53,41 @@ const BaseLayout = ({
   const path = useLocation().pathname
   const isIE = useIsIE()
   const message = useSelector((state) => state.user.message)
+
+  // To store y-position to trigger useEffect
+  const prevScrollY = useRef(0)
+  const [isSticky, setIsSticky] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      // height of mast
+      if (currentScrollY >= 28) {
+        setIsSticky(true)
+      } else {
+        setIsSticky(false)
+      }
+      prevScrollY.current = currentScrollY
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [prevScrollY])
+
   return (
     <>
       <CssBaseline />
       <Masthead />
-      {path === USER_PAGE && isIE && <BannerForIE />}
-      {path === USER_PAGE && message && <Banner text={message} />}
+      {path === USER_PAGE && isIE && <BannerForIE isSticky={isSticky} />}
+      {path === USER_PAGE && message && (
+        <Banner text={message} isSticky={isSticky} />
+      )}
       {withHeader && (
         <BaseLayoutHeader
           backgroundType={headerBackgroundType}
           hideNavButtons={hideNavButtons}
+          isSticky={isSticky}
         />
       )}
       <div className={classes.layout}>{children}</div>

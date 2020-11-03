@@ -2,7 +2,7 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
-import { Url, UrlType } from '../models/url'
+import { Url, UrlType, sanitise } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import {
@@ -15,11 +15,18 @@ import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
-import { StorableFile, StorableUrl, UrlsPaginated } from './types'
+import {
+  StorableFile,
+  StorableUrl,
+  UrlDirectory,
+  UrlDirectoryPaginated,
+  UrlsPaginated,
+} from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchConditions, urlSearchVector } from '../models/search'
+import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
 
 const { Public, Private } = FileVisibility
 
@@ -165,6 +172,165 @@ export class UrlRepository implements UrlRepositoryInterface {
       count,
       urls,
     }
+  }
+
+  public rawDirectorySearch: (
+    conditions: DirectoryQueryConditions,
+  ) => Promise<UrlDirectoryPaginated> = async (conditions) => {
+    const { query, order, limit, offset, state, isFile, isEmail } = conditions
+
+    const { tableName } = Url
+
+    const urlVector = urlSearchVector
+
+    const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
+
+    const urlsModel = await (isEmail
+      ? this.getRelevantUrlsFromEmail(
+          query,
+          rankingAlgorithm,
+          limit,
+          offset,
+          state,
+          isFile,
+        )
+      : this.getRelevantUrlsFromText(
+          urlVector,
+          rankingAlgorithm,
+          limit,
+          offset,
+          query,
+          state,
+          isFile,
+        ))
+
+    return urlsModel
+  }
+
+  private async getRelevantUrlsFromEmail(
+    query: string,
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    state: string | undefined,
+    isFile: boolean | undefined,
+  ): Promise<UrlDirectoryPaginated> {
+    const emails = query.toString().split(' ')
+    // split email/domains by space into tokens, also reduces injections
+    const likeQuery = emails.map(sanitise)
+
+    const queryFile = this.getQueryFileEmail(isFile)
+    const queryState = this.getQueryStateEmail(state)
+
+    // TODO: optimize the search query, possibly with reverse-email search
+    const rawQuery = `
+      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile"
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
+      AND "urls"."isFile" IN (:queryFile)
+      AND "urls"."state" In (:queryState)
+      ORDER BY (${rankingAlgorithm}) DESC`
+
+    // Search only once to get both urls and count
+    const urlsModel = (await sequelize.query(rawQuery, {
+      replacements: {
+        likeQuery,
+        queryFile,
+        queryState,
+      },
+      type: QueryTypes.SELECT,
+      model: Url,
+      raw: true,
+      mapToModel: true,
+    })) as Array<UrlDirectory>
+
+    const count = urlsModel.length
+    const ending = Math.min(count, offset + limit)
+    const slicedUrlsModel = urlsModel.slice(offset, ending)
+
+    return { count, urls: slicedUrlsModel }
+  }
+
+  private async getRelevantUrlsFromText(
+    urlVector: string,
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    query: string,
+    state: string | undefined,
+    isFile: boolean | undefined,
+  ): Promise<UrlDirectoryPaginated> {
+    const queryFile = this.getQueryFileText(isFile)
+    const queryState = this.getQueryStateText(state)
+    const rawQuery = `
+      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      JOIN plainto_tsquery('english', $query) query
+      ON query @@ (${urlVector})
+      ${queryFile}
+      ${queryState}
+      ORDER BY (${rankingAlgorithm}) DESC`
+
+    // Search only once to get both urls and count
+    const urlsModel = (await sequelize.query(rawQuery, {
+      bind: {
+        query,
+      },
+      raw: true,
+      type: QueryTypes.SELECT,
+      model: Url,
+      mapToModel: true,
+    })) as Array<UrlDirectory>
+
+    const count = urlsModel.length
+    const ending = Math.min(count, offset + limit)
+    const slicedUrlsModel = urlsModel.slice(offset, ending)
+
+    return { count, urls: slicedUrlsModel }
+  }
+
+  private getQueryFileEmail: (isFile: boolean | undefined) => Array<boolean> = (
+    isFile,
+  ) => {
+    let queryFile = [true, false]
+    if (isFile === true) queryFile = [true]
+    else if (isFile === false) queryFile = [false]
+
+    return queryFile
+  }
+
+  private getQueryStateEmail: (state: string | undefined) => Array<string> = (
+    state,
+  ) => {
+    let queryState = ['ACTIVE', 'INACTIVE']
+    if (state === 'ACTIVE') queryState = ['ACTIVE']
+    else if (state === 'INACTIVE') queryState = ['INACTIVE']
+
+    return queryState
+  }
+
+  private getQueryFileText: (isFile: boolean | undefined) => string = (
+    isFile,
+  ) => {
+    let queryFile = ''
+    if (isFile === true) queryFile = `AND urls."isFile"=true`
+    else if (isFile === false) queryFile = `AND urls."isFile"=false`
+
+    return queryFile
+  }
+
+  private getQueryStateText: (state: string | undefined) => string = (
+    state,
+  ) => {
+    let queryState = ''
+    if (state === 'ACTIVE') queryState = `AND urls.state = 'ACTIVE'`
+    else if (state === 'INACTIVE') queryState = `AND urls.state = 'INACTIVE'`
+
+    return queryState
   }
 
   /**

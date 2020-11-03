@@ -92,7 +92,7 @@ const SearchHeader: FunctionComponent<SearchHeaderProps> = ({
             onClearQuery={onClearQuery}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
-                ;(e.target as any).blur()
+                (e.target as any).blur()
                 e.preventDefault()
               }
             }}

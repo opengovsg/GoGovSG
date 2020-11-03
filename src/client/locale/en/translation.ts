@@ -23,6 +23,7 @@ const translationEn = {
     },
     links: {
       contribute: 'https://go.gov.sg/go-opensource',
+      directory: '/directory',
       faq: 'https://guide.go.gov.sg/faq.html',
       privacy: 'https://guide.go.gov.sg/privacy.html',
       terms: 'https://guide.go.gov.sg/termsofuse.html',

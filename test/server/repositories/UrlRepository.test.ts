@@ -7,6 +7,7 @@ import {
   mockQuery,
   mockTransaction,
   redisMockClient,
+  sanitiseMock,
   urlModelMock,
 } from '../api/util'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
@@ -15,9 +16,11 @@ import { SearchResultsSortOrder } from '../../../src/shared/search'
 import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
+import { DirectoryQueryConditions } from '../../../src/server/services/interfaces/DirectorySearchServiceInterface'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
+  sanitise: sanitiseMock,
 }))
 
 jest.mock('../../../src/server/models/statistics/daily', () => ({
@@ -453,6 +456,62 @@ describe('UrlRepository', () => {
           0,
         ),
       ).rejects.toThrowError()
+    })
+  })
+
+  describe('rawDirectorySearch', () => {
+    beforeEach(() => {
+      mockQuery.mockClear()
+    })
+    it('should call sequelize.query that searches for emails', async () => {
+      const conditions: DirectoryQueryConditions = {
+        query: '@test.gov.sg @test2.gov.sg',
+        order: SearchResultsSortOrder.Recency,
+        limit: 100,
+        offset: 0,
+        state: 'ACTIVE',
+        isFile: true,
+        isEmail: true,
+      }
+
+      const repoawait = await repository.rawDirectorySearch(conditions)
+
+      expect(repoawait).toStrictEqual({
+        count: 1,
+        urls: [
+          {
+            shortUrl: 'a',
+            email: 'a@test.gov.sg',
+            isFile: false,
+            state: 'ACTIVE',
+          },
+        ],
+      })
+    })
+
+    it('should call sequelize.query that searches with plain text', async () => {
+      const conditions: DirectoryQueryConditions = {
+        query: 'query',
+        order: SearchResultsSortOrder.Recency,
+        limit: 100,
+        offset: 0,
+        state: 'ACTIVE',
+        isFile: true,
+        isEmail: false,
+      }
+
+      const repoawait = await repository.rawDirectorySearch(conditions)
+      expect(repoawait).toStrictEqual({
+        count: 1,
+        urls: [
+          {
+            email: 'test@test.gov.sg',
+            shortUrl: 'a',
+            state: 'ACTIVE',
+            isFile: false,
+          },
+        ],
+      })
     })
   })
 })

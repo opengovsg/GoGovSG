@@ -37,6 +37,7 @@ export type UrlType = {
   editedDescription: string
   contactEmail: string
   editedContactEmail: string
+  email: string
 }
 
 export type UserState = {

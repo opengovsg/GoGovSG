@@ -5,10 +5,12 @@ import { UrlRepositoryInterface } from '../../../../src/server/repositories/inte
 import {
   StorableFile,
   StorableUrl,
+  UrlDirectoryPaginated,
   UrlsPaginated,
 } from '../../../../src/server/repositories/types'
 import { StorableUrlState } from '../../../../src/server/repositories/enums'
 import { SearchResultsSortOrder } from '../../../../src/shared/search'
+import { DirectoryQueryConditions } from '../../../../src/server/services/interfaces/DirectorySearchServiceInterface'
 
 @injectable()
 export class UrlRepositoryMock implements UrlRepositoryInterface {
@@ -33,6 +35,22 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
 
   getLongUrl: (shortUrl: string) => Promise<string> = () => {
     throw new Error('Not implemented')
+  }
+
+  rawDirectorySearch: (
+    condition: DirectoryQueryConditions,
+  ) => Promise<UrlDirectoryPaginated> = () => {
+    return Promise.resolve({
+      urls: [
+        {
+          shortUrl: 'test-moh',
+          state: 'ACTIVE',
+          isFile: false,
+          email: 'test@test.gov.sg',
+        },
+      ],
+      count: 0,
+    })
   }
 
   plainTextSearch: (
