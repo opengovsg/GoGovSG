@@ -81,8 +81,19 @@ const getDirectoryResults = (
     return
   }
 
-  // replace @ with # because google analytics will stop events from recording potential email lookalike
-  GAEvent('directory page', query.replace(/(@)/g, '#'), 'successful')
+  let filteredQuery = ''
+
+  if (isEmail === 'true') {
+    // split by space, then split each subset by @ and take the last part (domain), then rejoin back the string
+    filteredQuery = query
+      .split(' ')
+      .map((subset) => subset.split('@').slice(-1))
+      .join(' ')
+  } else {
+    // Remove all words that have @ inside to prevent potential email address problem
+    filteredQuery = query.replace('@', ' ')
+  }
+  GAEvent('directory page', filteredQuery, 'successful')
   dispatch(
     setDirectoryResults({
       count: json.count,

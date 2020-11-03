@@ -101,7 +101,7 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
 
   // File check
   useEffect(() => {
-    if ((isIncludeFiles && isIncludeLinks) || (!isIncludeFiles && !isIncludeLinks)) {
+    if (isIncludeFiles === isIncludeLinks) {
       getFile('')
     } 
     else if (isIncludeFiles) {
@@ -114,7 +114,7 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
 
   // State check
   useEffect(() => {
-    if ((isIncludeActive && isIncludeInactive) || (!isIncludeActive && !isIncludeInactive)) {
+    if (isIncludeActive === isIncludeInactive) {
       getState('')
     } 
     else if (isIncludeActive) {

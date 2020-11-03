@@ -125,19 +125,21 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+const noOp = () => {}
+
 const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
   showAdornments,
   query,
-  onQueryChange = () => {},
-  onSortOrderChange = () => {},
-  onClearQuery = () => {},
-  onKeyPress = () => {},
-  getFile = () => {},
-  getState = () => {},
-  getEmail = () => {},
-  onApply = () => {},
-  onReset = () => {},
-  setDisablePagination = () => {},
+  onQueryChange = noOp,
+  onSortOrderChange = noOp,
+  onClearQuery = noOp,
+  onKeyPress = noOp,
+  getFile = noOp,
+  getState = noOp,
+  getEmail = noOp,
+  onApply = noOp,
+  onReset = noOp,
+  setDisablePagination = noOp,
 }: GoSearchInputProps) => {
   const [isSortPanelOpen, setIsSortPanelOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)

@@ -222,7 +222,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const queryFile = this.getQueryFileEmail(isFile)
     const queryState = this.getQueryStateEmail(state)
 
-    // to be optimized
+    // TODO: optimize the search query, possibly with reverse-email search
     const rawQuery = `
       SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
