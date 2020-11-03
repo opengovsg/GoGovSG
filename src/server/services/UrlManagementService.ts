@@ -49,7 +49,6 @@ export class UrlManagementService implements UrlManagementServiceInterface {
     if (owner) {
       throw new AlreadyExistsError(
         `Short link "${shortUrl}" is used. Click here to find out more`,
-        // `Short link "${shortUrl}" is owned by ${owner.email}`,
       )
     }
 
