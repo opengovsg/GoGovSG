@@ -1,4 +1,10 @@
-import { StorableFile, StorableUrl, UrlsPaginated } from '../types'
+import {
+  StorableFile,
+  StorableUrl,
+  UrlDirectoryPaginated,
+  UrlsPaginated,
+} from '../types'
+import { DirectoryQueryConditions } from '../../services/interfaces/DirectorySearchServiceInterface'
 import { SearchResultsSortOrder } from '../../../shared/search'
 
 /**
@@ -57,4 +63,13 @@ export interface UrlRepositoryInterface {
     limit: number,
     offset: number,
   ) => Promise<UrlsPaginated>
+
+  /**
+   * Performs search for email and plain text search.
+   * @param  {DirectoryQueryConditions} conditions The search query conditions.
+   * @returns Promise of total no. Of search results and the results on the current page.
+   */
+  rawDirectorySearch: (
+    conditions: DirectoryQueryConditions,
+  ) => Promise<UrlDirectoryPaginated>
 }

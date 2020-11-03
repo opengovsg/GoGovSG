@@ -14,10 +14,14 @@ import {
 import i18next from 'i18next'
 import GoLogo from '~/assets/go-main-logo.svg'
 import GoLogoLight from '~/assets/go-main-logo-light.svg'
+import GoLogoMini from '~/assets/go-main-logo-mini.svg'
+import GoLogoMiniLight from '~/assets/go-main-logo-mini-light.svg'
 import loginActions from '../../actions/login'
 import Section from '../Section'
 import logoutIcon from './assets/logout-icon.svg'
+import logoutWhiteIcon from './assets/logout-white-icon.svg'
 import helpIcon from '../../assets/help-icon.svg'
+import directoryIcon from './assets/directory-icon.svg'
 import feedbackIcon from './assets/feedback-icon.svg'
 import githubIcon from './assets/github-icon.svg'
 import signinIcon from './assets/signin-icon.svg'
@@ -50,7 +54,8 @@ const useStyles = makeStyles((theme) =>
       flexGrow: 0.85,
     },
     appBarSignOutBtn: {
-      fill: theme.palette.primary.main,
+      // fill: theme.palette.primary.main,
+      color: (props) => (props.isLightItems ? 'white' : '#384A51'),
       order: 10,
     },
     appBarSignInBtn: {
@@ -72,16 +77,22 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       width: '100%',
       height: '100%',
+      [theme.breakpoints.down('sm')]: {
+        width: 'auto',
+      },
     },
     headerButton: {
       filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
       // this class is not mobile first by default as padding should not be set
       // when it is not mobile.
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.down('xm')]: {
         paddingLeft: 0,
         paddingRight: 0,
         minWidth: theme.spacing(6),
       },
+    },
+    logoutIcon: {
+      width: '24px',
     },
     sectionPageSticky: {
       paddingTop: '43px',
@@ -114,6 +125,14 @@ const BaseLayoutHeader = ({
 
   const headers = [
     {
+      text: 'Directory',
+      link: i18next.t('general.links.directory'),
+      public: false,
+      icon: directoryIcon,
+      mobileOrder: 1,
+      internalLink: true,
+    },
+    {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
@@ -131,7 +150,7 @@ const BaseLayoutHeader = ({
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
-      mobileOrder: 1,
+      mobileOrder: 3,
     },
   ]
 
@@ -139,14 +158,22 @@ const BaseLayoutHeader = ({
     <Button
       onClick={logout}
       size="large"
-      color="primary"
+      color={isLightItems ? 'primary' : 'white'}
       variant="text"
       className={classes.appBarSignOutBtn}
     >
       <Hidden xsDown>
         <strong>Sign out&nbsp;</strong>
       </Hidden>
-      <img src={logoutIcon} alt="Sign out" />
+      {isLightItems ? (
+        <img
+          className={classes.logoutIcon}
+          src={logoutWhiteIcon}
+          alt="Sign out"
+        />
+      ) : (
+        <img className={classes.logoutIcon} src={logoutIcon} alt="Sign out" />
+      )}
     </Button>
   ) : (
     <>
@@ -175,6 +202,19 @@ const BaseLayoutHeader = ({
     </>
   )
 
+  const getGoLogo = () => {
+    if (isLightItems && isMobileVariant) {
+      return GoLogoMiniLight
+    }
+    if (isLightItems) {
+      return GoLogoLight
+    }
+    if (!isLightItems && isMobileVariant) {
+      return GoLogoMini
+    }
+    return GoLogo
+  }
+
   return (
     <Section
       backgroundType={backgroundType}
@@ -186,7 +226,7 @@ const BaseLayoutHeader = ({
         <Toolbar className={classes.toolbar}>
           <a href="/#/" className={classes.toolbarLogo}>
             <img
-              src={isLightItems ? GoLogoLight : GoLogo}
+              src={getGoLogo()}
               className={classes.logo}
               alt="GoGovSG Logo"
             />

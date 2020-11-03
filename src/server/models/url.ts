@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize'
-
 import { ACTIVE, INACTIVE } from './types'
 import {
   isBlacklisted,
@@ -27,11 +26,24 @@ export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly clicks: number
   readonly createdAt: string
   readonly updatedAt: string
+  readonly email: string
 }
 
 // For sequelize define
 type UrlTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): UrlType
+}
+
+// Escape characters
+export const sanitise = (query: string): string => {
+  // check legit domain
+  if (emailValidator.match(query)) {
+    // remove wildcards characters and escape characters
+    const inputRaw = query.replace(/(%|\\)/g, '')
+    return `%${inputRaw}`
+  }
+
+  return ''
 }
 
 export const Url = <UrlTypeStatic>sequelize.define(

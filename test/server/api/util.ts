@@ -221,9 +221,32 @@ export const mockQuery = jest.fn()
 export const mockDefine = jest.fn()
 
 mockQuery.mockImplementation((query: string) => {
+  // For rawDirectorySearch -> email
+  if (query.includes('queryFile')) {
+    return [
+      {
+        email: 'a@test.gov.sg',
+        shortUrl: 'a',
+        state: ACTIVE,
+        isFile: false,
+      },
+    ]
+  }
   if (query.includes('count(*)')) {
     return [{ count: 10 }]
   }
+  // For rawDirectorySearch -> plain text
+  if (query.includes('JOIN')) {
+    return [
+      {
+        email: 'test@test.gov.sg',
+        shortUrl: 'a',
+        state: ACTIVE,
+        isFile: false,
+      },
+    ]
+  }
+
   return [
     {
       shortUrl: 'a',
@@ -252,6 +275,10 @@ export const userModelMock = {
       },
       {},
     ]),
+}
+
+export const sanitiseMock = (i: string) => {
+  return i
 }
 
 export const redisMockClient = redisMock.createClient()

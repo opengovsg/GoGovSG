@@ -48,6 +48,19 @@ export type UrlPublic = Pick<
   'shortUrl' | 'longUrl' | 'description' | 'contactEmail' | 'isFile'
 >
 
+// to be possibly changed
+export type UrlDirectory = {
+  shortUrl: string
+  email: string
+  state: string
+  isFile: boolean
+}
+
+export type UrlDirectoryPaginated = {
+  count: number
+  urls: Array<UrlDirectory>
+}
+
 export type UrlsPublicPaginated = {
   count: number
   urls: Array<UrlPublic>

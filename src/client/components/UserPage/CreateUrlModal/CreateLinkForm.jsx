@@ -289,7 +289,9 @@ function CreateLinkForm({
               visible={!!createShortLinkError}
               type={CollapsibleMessageType.Error}
             >
-              {createShortLinkError}
+              <a className={classes.shortLinkError} href="/#/directory">
+                {createShortLinkError}
+              </a>
             </CollapsibleMessage>
           </div>
           <Button

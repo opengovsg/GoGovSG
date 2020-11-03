@@ -14,7 +14,7 @@ import { Redirect } from 'react-router-dom'
 
 import loginActions from '~/actions/login'
 import rootActions from '~/actions/root'
-import { USER_PAGE, loginFormVariants } from '~/util/types'
+import { DIRECTORY_PAGE, USER_PAGE, loginFormVariants } from '~/util/types'
 import GoLogo from '../../assets/go-main-logo.svg'
 import LoginGraphics from '../../assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../../util/requests'
@@ -124,9 +124,13 @@ const LoginPage = ({
 
   useEffect(() => {
     // Google Analytics: Move into login page
-    GAPageView('EMAIL LOGIN PAGE')
-    GAEvent('login page', 'email')
-  }, [])
+    // Because directory page will redirect to login page first
+    // We need filter that out
+    if (location?.state?.previous !== '/directory') {
+      GAPageView('EMAIL LOGIN PAGE')
+      GAEvent('login page', 'email')
+    }
+  }, [location?.state?.previous])
 
   // Display a login message from the server
   useEffect(() => {
@@ -237,8 +241,16 @@ const LoginPage = ({
     )
   }
 
-  // User is logged in, redirect if available
   if (location) {
+    // ensure redirection back to directory and reset the state
+    if (location?.state?.previous === '/directory') {
+      // reason why we record directory here is because going into directory page will always go into login page first
+      // before going into directory page
+      GAEvent('directory page', 'main')
+      GAPageView('DIRECTORY PAGE')
+      return <Redirect to={{ pathname: DIRECTORY_PAGE, state: {} }} />
+    }
+
     return <Redirect to={{ pathname: USER_PAGE, state: { from: location } }} />
   }
   return <Redirect to={{ pathname: USER_PAGE }} />
