@@ -97,6 +97,9 @@ const useStyles = makeStyles((theme) =>
     sectionPageSticky: {
       paddingTop: '43px',
     },
+    sectionPage: {
+      paddingTop: '0px',
+    },
   }),
 )
 
@@ -113,6 +116,7 @@ const BaseLayoutHeader = ({
   isLoggedIn,
   logout,
   hideNavButtons,
+  isSticky,
 }) => {
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
@@ -216,6 +220,7 @@ const BaseLayoutHeader = ({
       backgroundType={backgroundType}
       verticalMultiplier={0}
       shadow={!isLoggedIn && isMobileVariant}
+      className={isSticky ? classes.sectionPageSticky : classes.sectionPage}
     >
       <AppBar position="static" color="transparent" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
@@ -268,10 +273,12 @@ BaseLayoutHeader.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
   logout: PropTypes.func.isRequired,
   hideNavButtons: PropTypes.bool,
+  isSticky: PropTypes.bool,
 }
 
 BaseLayoutHeader.defaultProps = {
   hideNavButtons: false,
+  isSticky: false,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BaseLayoutHeader)
