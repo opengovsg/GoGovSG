@@ -14,6 +14,7 @@ import { GoGovReduxState } from '../../../reducers/types'
 import userActions from '../../../actions/user'
 import useFullScreenDialog from '../helpers/fullScreenDialog'
 import CloseIcon from '../../widgets/CloseIcon'
+import { GAEvent } from '../../../actions/ga'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -229,6 +230,7 @@ export default function AnnouncementModal() {
             size="large"
             variant="text"
             className={classes.learnMoreButton}
+            onClick={()=> {GAEvent('Announcement Page', 'redirected to GoDirectory')}}
           >
             Try it now
           </Button>

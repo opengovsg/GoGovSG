@@ -1,11 +1,23 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 
+type MastheadProps = {
+  isSticky: boolean
+}
+
 const useStyles = makeStyles(() =>
   createStyles({
     masthead: {
       zIndex: 2,
       position: 'relative',
+      backgroundColor: '#f0f0f0',
+      height: 'auto',
+      padding: '4px 0',
+      fontSize: '14px',
+    },
+    mastheadsticky: {
+      zIndex: 2,
+      position: 'absolute',
       backgroundColor: '#f0f0f0',
       height: 'auto',
       padding: '4px 0',
@@ -43,10 +55,10 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-const Masthead = () => {
+const Masthead = ({ isSticky }: MastheadProps) => {
   const classes = useStyles()
   return (
-    <div className={classes.masthead}>
+    <div className={isSticky? classes.mastheadsticky : classes.masthead}>
       <a
         href="https://www.gov.sg"
         target="_blank"

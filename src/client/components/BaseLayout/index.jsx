@@ -60,7 +60,7 @@ const BaseLayout = ({
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = window.pageYOffset
       // height of mast
       if (currentScrollY >= 28) {
         setIsSticky(true)
@@ -78,7 +78,7 @@ const BaseLayout = ({
   return (
     <>
       <CssBaseline />
-      <Masthead />
+      <Masthead isSticky={isSticky} />
       {path === USER_PAGE && isIE && <BannerForIE isSticky={isSticky} />}
       {path === USER_PAGE && message && (
         <Banner text={message} isSticky={isSticky} />

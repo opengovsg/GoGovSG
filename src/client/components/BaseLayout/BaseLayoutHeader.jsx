@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) =>
       width: '24px',
     },
     sectionPageSticky: {
-      paddingTop: '43px',
+      paddingTop: '76px',
     },
     sectionPage: {
       paddingTop: '0px',
