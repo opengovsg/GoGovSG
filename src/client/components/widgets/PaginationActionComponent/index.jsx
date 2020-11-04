@@ -17,6 +17,18 @@ const useStyles = makeStyles(() =>
       height: '100%',
       zIndex: 1,
     },
+    pageSelectGridDirectory: {
+      fontWeight: 500,
+      color: '#767676',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      display: 'flex',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%',
+      zIndex: -1,
+    },
     gridItemHorizontalPadding: {
       '&:first-child': {
         paddingRight: 34,
@@ -28,10 +40,24 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-export default ({ pageCount, onChangePage, page }) => {
+export default ({
+  pageCount,
+  onChangePage,
+  page,
+  disablePagination = false,
+}) => {
   const classes = useStyles()
   return (
-    <Grid container item alignItems="center" className={classes.pageSelectGrid}>
+    <Grid
+      container
+      item
+      alignItems="center"
+      className={
+        disablePagination
+          ? classes.pageSelectGridDirectory
+          : classes.pageSelectGrid
+      }
+    >
       <Grid item className={classes.gridItemHorizontalPadding}>
         <IconButton
           onClick={(event) => onChangePage(event, page - 1)}

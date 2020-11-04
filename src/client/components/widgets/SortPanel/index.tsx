@@ -21,7 +21,6 @@ export default React.memo(
     const classes = useStyles()
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-
     return (
       <Grid container item direction="column">
         {!noHeader && (

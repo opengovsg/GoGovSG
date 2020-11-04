@@ -3,6 +3,7 @@ import { LoginState } from './login/types'
 import { UserState } from './user/types'
 import { RootState } from './root/types'
 import { SearchState } from './search/types'
+import { DirectoryState } from './directory/types'
 
 export type GoGovReduxState = {
   user: UserState
@@ -10,4 +11,5 @@ export type GoGovReduxState = {
   root: RootState
   login: LoginState
   search: SearchState
+  directory: DirectoryState
 }

@@ -21,6 +21,7 @@ describe('UrlManagementService', () => {
     findByShortUrl: jest.fn(),
     getLongUrl: jest.fn(),
     plainTextSearch: jest.fn(),
+    rawDirectorySearch: jest.fn(),
   }
 
   const service = new UrlManagementService(userRepository, urlRepository)

@@ -7,6 +7,7 @@ import loginActions from '~/actions/login'
 
 const PrivateRoute = (props) => {
   const { component: ChildComponent, ...args } = props
+  const { path } = props
   const dispatch = useDispatch()
   const isLoggedIn = useSelector((state) => state.login.isLoggedIn)
   useEffect(() => {
@@ -23,6 +24,7 @@ const PrivateRoute = (props) => {
           <Redirect
             to={{
               pathname: LOGIN_PAGE,
+              state: { previous: path },
             }}
           />
         )

@@ -171,6 +171,13 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
         width: '146px',
       },
     },
+    shortLinkError: {
+      color: 'black',
+      textDecoration: 'none',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
   }),
 )
 
