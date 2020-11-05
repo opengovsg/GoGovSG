@@ -32,7 +32,7 @@
     "@material-ui/core": "^4.11.0",
     "@sentry/browser": "^5.27.2",
     "@types/express-rate-limit": "^5.1.0",
-    "aws-sdk": "^2.784.0",
+    "aws-sdk": "^2.785.0",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
