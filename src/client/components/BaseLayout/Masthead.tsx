@@ -1,12 +1,15 @@
 import React from 'react'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
-
-const useStyles = makeStyles(() =>
+import { Theme, createStyles, makeStyles } from '@material-ui/core'
+type MastheadProps = {
+  isSticky: boolean
+  toStick: object
+}
+const useStyles = makeStyles<Theme, MastheadProps>(() =>
   createStyles({
     masthead: {
       zIndex: 2,
-      position: 'relative',
-      backgroundColor: '#f0f0f0',
+      position: (props) => (props.isSticky && props.toStick)? 'absolute':'relative',
+      backgroundColor: '#F0F0F0',
       height: 'auto',
       padding: '4px 0',
       fontSize: '14px',
@@ -42,9 +45,8 @@ const useStyles = makeStyles(() =>
     },
   }),
 )
-
-const Masthead = () => {
-  const classes = useStyles()
+const Masthead = ({ isSticky, toStick }: MastheadProps) => {
+  const classes = useStyles({ isSticky, toStick })
   return (
     <div className={classes.masthead}>
       <a
@@ -61,5 +63,4 @@ const Masthead = () => {
     </div>
   )
 }
-
 export default Masthead
