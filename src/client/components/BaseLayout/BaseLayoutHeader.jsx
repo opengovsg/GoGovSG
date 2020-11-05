@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) =>
       width: '24px',
     },
     sectionPage: {
-      paddingTop: (props) => (props.isSticky && props.message ? '76px' : '0px'),
+      paddingTop: (props) => (props.isSticky && props.toStick ? '76px' : '0px'),
     },
   }),
 )
@@ -114,12 +114,12 @@ const BaseLayoutHeader = ({
   logout,
   hideNavButtons,
   isSticky,
-  message,
+  toStick,
 }) => {
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
   const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
-  const classes = useStyles({ isLoggedIn, isLightItems, isSticky, message })
+  const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
   const headers = [
     {
       text: 'Directory',

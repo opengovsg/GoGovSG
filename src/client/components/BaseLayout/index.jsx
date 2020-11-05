@@ -54,6 +54,7 @@ const BaseLayout = ({
   const isIE = useIsIE()
   const message = useSelector((state) => state.user.message)
 
+  const toStick = isIE || message
   // To store y-position to trigger useEffect
   const prevScrollY = useRef(0)
   const [isSticky, setIsSticky] = useState(false)
@@ -78,7 +79,7 @@ const BaseLayout = ({
   return (
     <>
       <CssBaseline />
-      <Masthead isSticky={isSticky} message={message} />
+      <Masthead isSticky={isSticky} toStick={toStick} />
       {path === USER_PAGE && isIE && <BannerForIE isSticky={isSticky} />}
       {path === USER_PAGE && message && (
         <Banner text={message} isSticky={isSticky} />
@@ -88,7 +89,7 @@ const BaseLayout = ({
           backgroundType={headerBackgroundType}
           hideNavButtons={hideNavButtons}
           isSticky={isSticky}
-          message={message}
+          toStick={toStick}
         />
       )}
       <div className={classes.layout}>{children}</div>
