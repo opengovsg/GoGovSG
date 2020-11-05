@@ -230,7 +230,7 @@ export default function AnnouncementModal() {
             size="large"
             variant="text"
             className={classes.learnMoreButton}
-            onClick={()=> {GAEvent('Announcement Page', 'redirected to GoDirectory')}}
+            onClick={()=> {GAEvent('Announcement Page', announcement?.title || 'successful' )}}
           >
             Try it now
           </Button>

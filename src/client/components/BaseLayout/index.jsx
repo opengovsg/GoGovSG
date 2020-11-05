@@ -78,7 +78,7 @@ const BaseLayout = ({
   return (
     <>
       <CssBaseline />
-      <Masthead isSticky={isSticky} />
+      <Masthead isSticky={isSticky} message={message} />
       {path === USER_PAGE && isIE && <BannerForIE isSticky={isSticky} />}
       {path === USER_PAGE && message && (
         <Banner text={message} isSticky={isSticky} />
@@ -88,6 +88,7 @@ const BaseLayout = ({
           backgroundType={headerBackgroundType}
           hideNavButtons={hideNavButtons}
           isSticky={isSticky}
+          message={message}
         />
       )}
       <div className={classes.layout}>{children}</div>
