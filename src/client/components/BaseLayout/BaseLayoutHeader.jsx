@@ -94,11 +94,8 @@ const useStyles = makeStyles((theme) =>
     logoutIcon: {
       width: '24px',
     },
-    sectionPageSticky: {
-      paddingTop: '43px',
-    },
     sectionPage: {
-      paddingTop: '0px',
+      paddingTop: (props) => (props.isSticky && props.toStick ? '76px' : '0px'),
     },
   }),
 )
@@ -117,12 +114,12 @@ const BaseLayoutHeader = ({
   logout,
   hideNavButtons,
   isSticky,
+  toStick,
 }) => {
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
   const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
-  const classes = useStyles({ isLoggedIn, isLightItems })
-
+  const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
   const headers = [
     {
       text: 'Directory',
@@ -220,7 +217,7 @@ const BaseLayoutHeader = ({
       backgroundType={backgroundType}
       verticalMultiplier={0}
       shadow={!isLoggedIn && isMobileVariant}
-      className={isSticky ? classes.sectionPageSticky : classes.sectionPage}
+      className={classes.sectionPage}
     >
       <AppBar position="static" color="transparent" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>

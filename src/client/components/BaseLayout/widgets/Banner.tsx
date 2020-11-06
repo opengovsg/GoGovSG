@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, createStyles, Typography } from '@material-ui/core'
+import { Theme, makeStyles, createStyles, Typography } from '@material-ui/core'
 
 import { ApplyAppMargins } from '../../AppMargins'
 
@@ -9,23 +9,12 @@ type BannerForProps = {
   isSticky: boolean
 }
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles<Theme, BannerForProps>((theme) =>
   createStyles({
     bannerContainer: {
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '100%',
-      minHeight: 50,
-      backgroundColor: theme.palette.primary.main,
-      color: '#F9F9F9',
-      paddingTop: 15,
-      paddingBottom: 15,
-    },
-    bannerContainerSticky: {
-      display: 'flex',
-      position: 'fixed',
-      zIndex: 20,
+      position: (props) => props.isSticky? 'fixed' : 'relative',
+      zIndex: (props) => props.isSticky? 20 : 1,
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',
@@ -56,9 +45,9 @@ const useStyles = makeStyles((theme) =>
 )
 
 export default function Banner({ text, icon, isSticky }: BannerForProps) {
-  const classes = useStyles()
+  const classes = useStyles({ text, isSticky })
   return (
-    <div className={isSticky? classes.bannerContainerSticky: classes.bannerContainer}>
+    <div className={classes.bannerContainer}>
       <ApplyAppMargins className={classes.appMargins}>
         <div className={classes.bannerContent}>
           {icon}
