@@ -34,7 +34,7 @@ import {
 import { loginFormVariants } from '../../app/util/types'
 import { get, postJson } from '../../app/util/requests'
 import userActions from '../../user/actions'
-import rootActions from '../../app/components/RootPage/actions'
+import rootActions from '../../app/components/pages/RootPage/actions'
 import { defaultEmailValidator } from '../reducers'
 import { WipeUserStateAction } from '../../user/actions/types'
 import { GetReduxState } from '../../app/actions/types'
@@ -43,7 +43,7 @@ import {
   CloseSnackbarAction,
   SetErrorMessageAction,
   SetSuccessMessageAction,
-} from '../../app/components/RootPage/actions/types'
+} from '../../app/components/pages/RootPage/actions/types'
 
 const isGetOTPSuccess: (email: string) => GetOtpEmailSuccessAction = (
   email,

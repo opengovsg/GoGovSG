@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import BaseLayout from '../BaseLayout'
+import BaseLayout from '../../BaseLayout'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

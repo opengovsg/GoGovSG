@@ -10,17 +10,17 @@ import {
   Divider,
   Button,
 } from '@material-ui/core'
-import CloseIcon from '../../app/components/widgets/CloseIcon'
-import SearchSortIcon from '../../app/components/widgets/SearchSortIcon'
-import SearchIcon from '../../app/components/widgets/SearchIcon'
-import EmailIcon from '../../app/components/widgets/EmailIcon'
-import { sortOptions } from '../constants'
-import { SearchResultsSortOrder } from '../../../shared/search'
+import CloseIcon from '../../../app/components/widgets/CloseIcon'
+import SearchSortIcon from '../../../app/components/widgets/SearchSortIcon'
+import SearchIcon from '../../../app/components/widgets/SearchIcon'
+import EmailIcon from '../../../app/components/widgets/EmailIcon'
+import { sortOptions } from '../../constants'
+import { SearchResultsSortOrder } from '../../../../shared/search'
 import SortDrawer from './SortDrawer'
 import ArrowDownIcon from './SortDrawer/widgets/ArrowDownIcon'
 import FilterDrawer from './FilterDrawer'
 
-type GoSearchInputProps = {
+type DirectoryInputProps = {
   showAdornments?: boolean
   onQueryChange?: (query: string) => void
   onSortOrderChange?: (order: SearchResultsSortOrder) => void
@@ -127,7 +127,7 @@ const useStyles = makeStyles((theme) =>
 
 const noOp = () => {}
 
-const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
+const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
   showAdornments,
   query,
   onQueryChange = noOp,
@@ -140,7 +140,7 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
   onApply = noOp,
   onReset = noOp,
   setDisablePagination = noOp,
-}: GoSearchInputProps) => {
+}: DirectoryInputProps) => {
   const [isSortPanelOpen, setIsSortPanelOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
   const [isEmail, setIsEmail] = useState<boolean>(false)
@@ -313,4 +313,4 @@ const GoDirectoryInput: FunctionComponent<GoSearchInputProps> = ({
   )
 }
 
-export default GoDirectoryInput
+export default DirectoryInput

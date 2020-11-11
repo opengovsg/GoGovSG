@@ -9,13 +9,13 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import CloseIcon from '../../app/components/widgets/CloseIcon'
-import CollapsingPanel from '../../app/components/widgets/CollapsingPanel'
-import { SearchResultsSortOrder } from '../../../shared/search'
-import SortPanel from '../../app/components/widgets/SortPanel'
-import SearchSortIcon from '../../app/components/widgets/SearchSortIcon'
-import SearchIcon from '../../app/components/widgets/SearchIcon'
-import { sortOptions } from '../../search/constants'
+import CloseIcon from '../widgets/CloseIcon'
+import CollapsingPanel from '../widgets/CollapsingPanel'
+import { SearchResultsSortOrder } from '../../../../shared/search'
+import SortPanel from '../widgets/SortPanel'
+import SearchSortIcon from '../widgets/SearchSortIcon'
+import SearchIcon from '../widgets/SearchIcon'
+import { sortOptions } from '../../../search/constants'
 import SortDrawer from './SortDrawer'
 
 type GoSearchInputProps = {

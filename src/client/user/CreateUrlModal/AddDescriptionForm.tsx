@@ -5,7 +5,7 @@ import LinkInfoEditor from '../widgets/LinkInfoEditor'
 import ModalMargins from './ModalMargins'
 import { patch } from '../../app/util/requests'
 import userActions from '../actions'
-import rootActions from '../../app/components/RootPage/actions'
+import rootActions from '../../app/components/pages/RootPage/actions'
 import { GoGovReduxState } from '../../app/reducers/types'
 
 const useStyles = makeStyles((theme) =>

@@ -9,8 +9,8 @@ import {
     Paper,
     Divider,
 } from '@material-ui/core'
-import { SetSuccessMessageAction } from '../../../app/components/RootPage/actions/types'
-import rootActions from '../../../app/components/RootPage/actions'
+import { SetSuccessMessageAction } from '../../../app/components/pages/RootPage/actions/types'
+import rootActions from '../../../app/components/pages/RootPage/actions'
 import useAppMargins from '../../../app/components/AppMargins/appMargins'
 import { UrlTypePublic } from '../../reducers/types'
 import personIcon from '../../assets/person-icon.svg'

@@ -1,7 +1,7 @@
 import { HomeState } from '../../home/reducers/types'
 import { LoginState } from '../../login/reducers/types'
 import { UserState } from '../../user/reducers/types'
-import { RootState } from '../components/RootPage/reducers/types'
+import { RootState } from '../components/pages/RootPage/reducers/types'
 import { SearchState } from '../../search/reducers/types'
 import { DirectoryState } from '../../directory/reducers/types'
 

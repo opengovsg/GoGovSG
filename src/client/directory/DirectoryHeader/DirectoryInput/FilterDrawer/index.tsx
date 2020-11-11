@@ -9,7 +9,7 @@ import {
     Paper,
     Grid,
 } from '@material-ui/core'
-import SortButton from '../../../app/components/widgets/SortPanel/SortButton'
+import SortButton from '../../../../app/components/widgets/SortPanel/SortButton'
 
 type FilterDrawerProps = {
     onClick: (email:boolean) => void

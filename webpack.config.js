@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const SentryCliPlugin = require('@sentry/webpack-plugin')
 
 const outputDirectory = 'dist'
-const srcDirectory = path.join(__dirname, 'src/client')
+const srcDirectory = path.join(__dirname, 'src/client/app')
 
 const requiredSentryEnvVar = [
   process.env.SENTRY_AUTH_TOKEN,

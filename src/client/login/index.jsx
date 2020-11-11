@@ -13,9 +13,9 @@ import {
 import { Redirect } from 'react-router-dom'
 
 import loginActions from './actions'
-import rootActions from '../app/components/RootPage/actions'
+import rootActions from '../app/components/pages/RootPage/actions'
 import { DIRECTORY_PAGE, USER_PAGE, loginFormVariants } from '../app/util/types'
-import GoLogo from '../app/assets/go-main-logo.svg'
+import GoLogo from '../app/assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '../app/assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../app/util/requests'
 import LoginForm from './LoginForm'

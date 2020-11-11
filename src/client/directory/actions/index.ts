@@ -14,8 +14,8 @@ import { GoGovReduxState } from '../../app/reducers/types'
 import {
   RootActionType,
   SetErrorMessageAction,
-} from '../../app/components/RootPage/actions/types'
-import rootActions from '../../app/components/RootPage/actions'
+} from '../../app/components/pages/RootPage/actions/types'
+import rootActions from '../../app/components/pages/RootPage/actions'
 import { SearchResultsSortOrder } from '../../../shared/search'
 import { get } from '../../app/util/requests'
 import { DIRECTORY_PAGE } from '../../app/util/types'

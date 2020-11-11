@@ -9,7 +9,7 @@ import {
   Button,
 } from '@material-ui/core'
 import { ApplyAppMargins } from '../../app/components/AppMargins'
-import GoDirectoryInput from '../GoDirectoryInput'
+import GoDirectoryInput from './DirectoryInput'
 import { SearchResultsSortOrder } from '../../../shared/search'
 import useAppMargins from '../../app/components/AppMargins/appMargins'
 import BetaTag from '../../app/components/widgets/BetaTag'

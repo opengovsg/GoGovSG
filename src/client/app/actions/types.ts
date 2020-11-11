@@ -1,7 +1,7 @@
 import { ThunkDispatch } from 'redux-thunk'
 import { GoGovReduxState } from '../reducers/types'
 import { HomeActionType } from '../../home/actions/types'
-import { RootActionType } from '../components/RootPage/actions/types'
+import { RootActionType } from '../components/pages/RootPage/actions/types'
 import { UserActionType } from '../../user/actions/types'
 import { LoginActionType } from '../../login/actions/types'
 import { SearchActionType } from '../../search/actions/types'

@@ -11,7 +11,7 @@ import IconButton from '@material-ui/core/IconButton'
 import { withStyles } from '@material-ui/core/styles'
 import CheckCircleIcon from './widgets/CheckCircleIcon'
 import CloseIcon from './widgets/CloseIcon'
-import rootActions from './RootPage/actions'
+import rootActions from './pages/RootPage/actions'
 import { snackbarVariants } from '../util/types'
 
 const snackbarStyle = (theme) => ({

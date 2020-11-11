@@ -5,10 +5,10 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import { ApplyAppMargins } from '../../../app/components/AppMargins'
-import useAppMargins from '../../../app/components/AppMargins/appMargins'
-import BottomDrawer from '../../../app/components/widgets/BottomDrawer'
-import SortPanel from '../../../app/components/widgets/SortPanel'
+import { ApplyAppMargins } from '../../AppMargins'
+import useAppMargins from '../../AppMargins/appMargins'
+import BottomDrawer from '../../widgets/BottomDrawer'
+import SortPanel from '../../widgets/SortPanel'
 
 type SortDrawerProps = {
   open: boolean

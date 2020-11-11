@@ -7,7 +7,7 @@ import {
   useMediaQuery,
 } from '@material-ui/core'
 import { ApplyAppMargins } from '../../app/components/AppMargins'
-import GoSearchInput from '../GoSearchInput'
+import GoSearchInput from '../../app/components/GoSearchInput'
 import { SearchResultsSortOrder } from '../../../shared/search'
 import useAppMargins from '../../app/components/AppMargins/appMargins'
 import BetaTag from '../../app/components/widgets/BetaTag'

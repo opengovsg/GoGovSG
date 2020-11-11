@@ -1,4 +1,4 @@
-import { snackbarVariants } from '../../../util/types'
+import { snackbarVariants } from '../../../../util/types'
 import { RootState } from './types'
 import {
   CLOSE_SNACKBAR,

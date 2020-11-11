@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import Section from '../app/components/Section'
 import landingGraphicMain from '../app/assets/landing-page-graphics/integrated-landing-main.svg'
-import GoSearchInput from '../search/GoSearchInput'
+import GoSearchInput from '../app/components/GoSearchInput'
 import searchActions from '../search/actions'
 
 const useStyles = makeStyles((theme) =>

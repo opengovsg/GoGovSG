@@ -56,7 +56,7 @@ import {
   RootActionType,
   SetErrorMessageAction,
   SetSuccessMessageAction,
-} from '../../app/components/RootPage/actions/types'
+} from '../../app/components/pages/RootPage/actions/types'
 import {
   get,
   patch,
@@ -64,7 +64,7 @@ import {
   postFormData,
   postJson,
 } from '../../app/util/requests'
-import rootActions from '../../app/components/RootPage/actions'
+import rootActions from '../../app/components/pages/RootPage/actions'
 import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url'
 import { isValidUrl } from '../../../shared/util/validation'
 import { LOGIN_PAGE } from '../../app/util/types'

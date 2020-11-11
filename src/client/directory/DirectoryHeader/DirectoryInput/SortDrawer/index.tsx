@@ -5,14 +5,14 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import useAppMargins from '../../../app/components/AppMargins/appMargins'
-import BottomDrawer from '../../../app/components/widgets/BottomDrawer'
-import SortPanel from '../../../app/components/widgets/SortPanel'
-import { SearchResultsSortOrder } from '../../../../shared/search'
+import useAppMargins from '../../../../app/components/AppMargins/appMargins'
+import BottomDrawer from '../../../../app/components/widgets/BottomDrawer'
+import SortPanel from '../../../../app/components/widgets/SortPanel'
+import { SearchResultsSortOrder } from '../../../../../shared/search'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
-import CollapsingPanel from '../../../app/components/widgets/CollapsingPanel'
-import { defaultSortOption } from '../../constants'
+import CollapsingPanel from '../../../../app/components/widgets/CollapsingPanel'
+import { defaultSortOption } from '../../../constants'
 
 type SortDrawerProps = {
   open: boolean
