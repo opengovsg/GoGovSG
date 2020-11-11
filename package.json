@@ -165,7 +165,7 @@
     "redis-mock": "^0.54.0",
     "sequelize-mock": "^0.10.2",
     "supertest": "^6.0.1",
-    "ts-jest": "^26.4.3",
+    "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.11",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.5",
