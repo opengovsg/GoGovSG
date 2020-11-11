@@ -4,10 +4,10 @@ import { render } from 'react-dom'
 import { applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
 
-import Root from './components/RootPage'
-import { get } from './util/requests'
-import reducer from './reducers'
-import './i18n'
+import Root from './app/components/RootPage'
+import { get } from './app/util/requests'
+import reducer from './app/reducers'
+import './app/i18n'
 
 // If SENTRY_DNS env var is specified, init sentry.
 get('/api/sentry/').then((response) => {

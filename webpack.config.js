@@ -70,7 +70,7 @@ module.exports = () => {
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         template: './public/index.html',
-        favicon: './src/client/assets/favicon/favicon.ico',
+        favicon: './src/client/app/assets/favicon/favicon.ico',
         chunksSortMode: 'none',
         meta: {
           // Open Graph protocol meta tags
