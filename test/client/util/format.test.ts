@@ -1,7 +1,7 @@
 import {
   THRESHOLD_VAL,
   numberUnitFormatter,
-} from '../../../src/client/util/format'
+} from '../../../src/client/app/util/format'
 
 describe('ones, tens, hundreds are not formatted', () => {
   test('one is 1', () => {
