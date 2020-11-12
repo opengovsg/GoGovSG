@@ -61,6 +61,8 @@ import { SafeBrowsingRepository } from './repositories/SafeBrowsingRepository'
 import { SafeBrowsingService } from './services/SafeBrowsingService'
 import { UrlCheckController } from './controllers/UrlCheckController'
 
+import { Redirect } from './redirect'
+
 function bindIfUnbound<T>(
   dependencyId: symbol,
   impl: { new (...args: any[]): T },
@@ -161,4 +163,6 @@ export default () => {
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
+
+  bindIfUnbound(DependencyIds.redirect, Redirect)
 }

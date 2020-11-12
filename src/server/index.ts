@@ -42,8 +42,8 @@ import getIp from './util/request'
 import { container } from './util/inversify'
 import { DependencyIds } from './constants'
 import { Mailer } from './services/email'
-import { RedirectControllerInterface } from './controllers/interfaces/RedirectControllerInterface'
 import parseDomain from './util/domain'
+import { Redirect } from './redirect'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -176,20 +176,11 @@ initDb()
     // Log http requests
     app.use(morgan(MORGAN_LOG_FORMAT))
 
-    const redirectController = container.get<RedirectControllerInterface>(
-      DependencyIds.redirectController,
-    )
+    const redirect = container.get<Redirect>(DependencyIds.redirect)
+
     // API configuration
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
-    app.get(
-      '/assets/transition-page/js/redirect.js',
-      redirectController.gtagForTransitionPage,
-    )
-    app.get(
-      '/:shortUrl([a-zA-Z0-9-]+).?',
-      ...redirectSpecificMiddleware,
-      redirectController.redirect,
-    ) // The Redirect Endpoint
+    app.use('/', ...redirectSpecificMiddleware, redirect.router) // Attach redirect and gtag transition page endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
       res.status(404).render('404.error.ejs', { shortUrl })
