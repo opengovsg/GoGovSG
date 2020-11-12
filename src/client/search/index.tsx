@@ -17,10 +17,10 @@ import useAppMargins from '../app/components/AppMargins/appMargins'
 import searchActions from './actions'
 import { SEARCH_PAGE } from '../app/util/types'
 import { SearchResultsSortOrder } from '../../shared/search'
-import SearchHeader from './SearchHeader'
-import InfoDrawer from './InfoDrawer'
-import SearchResults from './SearchResults'
-import EmptyStateGraphic from './EmptySearchGraphic'
+import SearchHeader from './components/SearchHeader'
+import InfoDrawer from './components/InfoDrawer'
+import SearchResults from './components/SearchResults'
+import EmptyStateGraphic from './components/EmptySearchGraphic'
 
 type GoSearchParams = {
   query: string

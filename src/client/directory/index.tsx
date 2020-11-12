@@ -14,9 +14,9 @@ import useAppMargins from '../app/components/AppMargins/appMargins'
 import directoryActions from './actions'
 import { DIRECTORY_PAGE } from '../app/util/types'
 import { SearchResultsSortOrder } from '../../shared/search'
-import DirectoryHeader from './DirectoryHeader'
-import DirectoryResults from './DirectoryResults'
-import EmptyStateGraphic from './EmptySearchGraphic'
+import DirectoryHeader from './components/DirectoryHeader'
+import DirectoryResults from './components/DirectoryResults'
+import EmptyStateGraphic from './components/EmptySearchGraphic'
 import { defaultSortOption } from './constants'
 
 type GoSearchParams = {
