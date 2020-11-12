@@ -78,7 +78,7 @@ body {
 
 #skip {
   padding-top: 50px;
-  opacity: 0;
+  opacity: 1;
   display: block;
   cursor: pointer;
 }
