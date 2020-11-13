@@ -9,7 +9,6 @@ import HomePage from '../../../../home'
 import LoginPage from '../../../../login'
 import UserPage from '../../../../user'
 import NotFoundPage from '../NotFoundPage'
-import SearchPage from '../../../../search'
 import DirectoryPage from '../../../../directory'
 import MessageSnackbar from '../../MessageSnackbar'
 import ScrollToTop from './ScrollToTop'
@@ -26,7 +25,6 @@ import {
   HOME_PAGE,
   LOGIN_PAGE,
   NOT_FOUND_PAGE,
-  SEARCH_PAGE,
   USER_PAGE,
 } from '../../../util/types'
 import theme from '../../../theme'
@@ -38,7 +36,6 @@ const Root = ({ store }) => (
         <ScrollToTop>
           <Switch>
             <Route exact path={HOME_PAGE} component={HomePage} />
-            <Route exact path={SEARCH_PAGE} component={SearchPage} />
             <Route path={LOGIN_PAGE} component={LoginPage} />
             <PrivateRoute path={USER_PAGE} component={UserPage} />
             <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
