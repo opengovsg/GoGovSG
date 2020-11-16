@@ -257,7 +257,6 @@ mockQuery.mockImplementation((query: string) => {
       isFile: false,
       createdAt: 'fakedate',
       updatedAt: 'fakedate',
-      isSearchable: true,
       description: 'desc',
       contactEmail: 'aa@aa.com',
     },

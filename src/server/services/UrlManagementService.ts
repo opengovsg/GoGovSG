@@ -78,14 +78,7 @@ export class UrlManagementService implements UrlManagementServiceInterface {
     shortUrl: string,
     options: UpdateUrlOptions,
   ) => Promise<StorableUrl> = async (userId, shortUrl, options) => {
-    const {
-      state,
-      longUrl,
-      file,
-      isSearchable,
-      description,
-      contactEmail,
-    } = options
+    const { state, longUrl, file, description, contactEmail } = options
 
     const url = await this.userRepository.findOneUrlForUser(userId, shortUrl)
 
@@ -103,7 +96,7 @@ export class UrlManagementService implements UrlManagementServiceInterface {
 
     return this.urlRepository.update(
       url,
-      { longUrl, state, isSearchable, description, contactEmail },
+      { longUrl, state, description, contactEmail },
       storableFile,
     )
   }

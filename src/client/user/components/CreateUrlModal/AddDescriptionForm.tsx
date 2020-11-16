@@ -46,7 +46,6 @@ export default function AddDescriptionForm() {
   const [isContactEmailValid, setIsContactEmailValid] = useState(true)
   const [description, setDescription] = useState('')
   const [isDescriptionValid, setIsDescriptionValid] = useState(true)
-  const [isSearchable, setIsSearchable] = useState(true)
   const onContactEmailChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setContactEmail(event.target.value)
   const onDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -74,27 +73,6 @@ export default function AddDescriptionForm() {
     const jsonResponse = await response.json()
     dispatch(rootActions.setErrorMessage(jsonResponse.message))
   }
-  const toggleLinkSearchable = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newIsSearchable = event.target.checked
-    const response = await patch('/api/user/url', {
-      isSearchable: newIsSearchable,
-      shortUrl,
-    })
-
-    if (response.ok) {
-      dispatch(userActions.getUrlsForUser())
-      dispatch(
-        rootActions.setSuccessMessage('Your link visibility has been updated.'),
-      )
-      setIsSearchable(newIsSearchable)
-      return
-    }
-
-    const jsonResponse = await response.json()
-    dispatch(rootActions.setErrorMessage(jsonResponse.message))
-  }
 
   const isBothFieldsBlank = contactEmail === '' && description === ''
   const isContainsInvalidField = !(isContactEmailValid && isDescriptionValid)
@@ -116,8 +94,6 @@ export default function AddDescriptionForm() {
           onDescriptionChange={onDescriptionChange}
           onContactEmailValidation={setIsContactEmailValid}
           onDescriptionValidation={setIsDescriptionValid}
-          isSearchable={isSearchable}
-          onIsSearchableChange={toggleLinkSearchable}
           isMountedOnCreateUrlModal
         />
         <div className={classes.buttonWrapper}>

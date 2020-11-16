@@ -22,7 +22,6 @@ describe('UrlSearchService tests', () => {
           {
             shortUrl: 'test-moh',
             longUrl: 'https://www.moh.gov.sg/covid-19',
-            isSearchable: true,
             description: '',
             contactEmail: null,
             isFile: false,

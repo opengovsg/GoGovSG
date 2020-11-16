@@ -491,29 +491,6 @@ const toggleUrlState = (shortUrl: string, state: UrlState) => (
   })
 }
 
-const toggleIsSearchable = (shortUrl: string, isSearchable: boolean) => (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    SetErrorMessageAction | SetSuccessMessageAction
-  >,
-) => {
-  patch('/api/user/url', { shortUrl, isSearchable }).then((response) => {
-    if (response.ok) {
-      dispatch<void>(getUrlsForUser())
-      dispatch<SetSuccessMessageAction>(
-        rootActions.setSuccessMessage('Your link visibility has been updated.'),
-      )
-      return null
-    }
-
-    return response.json().then((json) => {
-      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
-      return null
-    })
-  })
-}
-
 const openCreateUrlModal: () => OpenCreateUrlModalAction = () => ({
   type: OPEN_CREATE_URL_MODAL,
 })
@@ -733,7 +710,6 @@ export default {
   setCreateShortLinkError,
   setUrlFilter,
   replaceFile,
-  toggleIsSearchable,
   setEditedContactEmail,
   setEditedDescription,
   getUserMessage,

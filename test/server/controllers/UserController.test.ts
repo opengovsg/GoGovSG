@@ -89,7 +89,6 @@ describe('UserController', () => {
     const userId = 2
     const shortUrl = 'abcdef'
     const longUrl = 'https://www.agency.gov.sg'
-    const isSearchable = true
     const description = 'A Description'
 
     it('rejects multiple file uploads', async () => {
@@ -114,7 +113,6 @@ describe('UserController', () => {
           userId,
           shortUrl,
           longUrl,
-          isSearchable,
           description,
         },
       })
@@ -133,7 +131,6 @@ describe('UserController', () => {
           longUrl,
           state: undefined,
           file: undefined,
-          isSearchable,
           contactEmail: undefined,
           description,
         },
@@ -146,7 +143,6 @@ describe('UserController', () => {
           userId,
           shortUrl,
           longUrl,
-          isSearchable,
           description,
           contactEmail: null,
           state: 'ACTIVE',
@@ -167,7 +163,6 @@ describe('UserController', () => {
           longUrl,
           state: StorableUrlState.Active,
           file: undefined,
-          isSearchable,
           contactEmail: null,
           description,
         },
@@ -181,7 +176,6 @@ describe('UserController', () => {
           userId,
           shortUrl,
           longUrl,
-          isSearchable,
           description,
           contactEmail,
           state: 'INACTIVE',
@@ -202,7 +196,6 @@ describe('UserController', () => {
           longUrl,
           state: StorableUrlState.Inactive,
           file: undefined,
-          isSearchable,
           contactEmail,
           description,
         },
