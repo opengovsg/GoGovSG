@@ -167,17 +167,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
         name: 'urls_weighted_search_idx',
         unique: false,
         using: 'GIN',
-        fields: [
-          // Type definition on sequelize seems to be inaccurate.
-          // @ts-ignore
-          Sequelize.literal(`(${urlSearchVector})`),
-        ],
-        where: {
-          state: ACTIVE,
-          description: {
-            [Sequelize.Op.ne]: '',
-          },
-        },
+        fields: [Sequelize.literal(`(${urlSearchVector})`)],
       },
     ],
   },
