@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     titleText: {
-      fontWeight: '600',
+      fontWeight: 600,
       marginBottom: theme.spacing(1.5),
       fontSize: '1.75rem',
       [theme.breakpoints.up('md')]: {
@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) =>
     fillColor: {
       display: 'flex',
       flexDirection: 'column',
-      flexGrow: '1',
+      flexGrow: 1,
       backgroundColor: theme.palette.primary.dark,
       maxHeight: '30vw',
       minHeight: '150px',

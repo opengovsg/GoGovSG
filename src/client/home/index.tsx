@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { Redirect, withRouter } from 'react-router-dom'
+import React, { useEffect, FunctionComponent } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import homeActions from './actions'
@@ -16,23 +15,15 @@ import IntegratedSearchLandingGraphic from './components/IntegratedSearchLanding
 import BaseLayout from '../app/components/BaseLayout'
 import { IS_SEARCH_HIDDEN } from '../app/util/config'
 import { GAEvent, GAPageView } from '../app/util/ga'
+import { GoGovReduxState } from '../app/reducers/types'
 
-const mapDispatchToProps = (dispatch) => ({
-  getLinksToRotate: () => dispatch(homeActions.getLinksToRotate()),
-  getIsLoggedIn: () => dispatch(loginActions.isLoggedIn()),
-})
-
-const mapStateToProps = (state, ownProps) => ({
-  onCreateUrl: ownProps.onCreateUrl,
-  history: ownProps.history,
-  isLoggedIn: state.login.isLoggedIn,
-  linksToRotate: state.home.linksToRotate,
-})
-
-const HomePage = (props) => {
-  const { isLoggedIn } = props
+const HomePage: FunctionComponent = (props) => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const dispatch = useDispatch()
+  const getLinksToRotate = () => dispatch(homeActions.getLinksToRotate())
+  const getIsLoggedIn = () => dispatch(loginActions.isLoggedIn())
+  const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
 
   // Google Analytics: Home Page
   useEffect(() => {
@@ -40,11 +31,11 @@ const HomePage = (props) => {
     GAEvent('home page', 'Entering home page')
   }, [])
 
+  // Initial load
   useEffect(() => {
-    const { getLinksToRotate, getIsLoggedIn } = props
     getLinksToRotate()
     getIsLoggedIn()
-  })
+  }, [])
 
   if (isLoggedIn) {
     return (
@@ -78,11 +69,4 @@ const HomePage = (props) => {
   )
 }
 
-HomePage.propTypes = {
-  history: PropTypes.shape({}).isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
-}
-
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(HomePage),
-)
+export default HomePage
