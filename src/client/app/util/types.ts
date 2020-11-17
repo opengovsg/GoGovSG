@@ -6,14 +6,35 @@ export const NOT_FOUND_PAGE = '/404/:shortUrl'
 export const DIRECTORY_PAGE = '/directory'
 
 export const snackbarVariants = { ERROR: 0, INFO: 1, SUCCESS: 2 }
-export const loginFormVariants = {
-  types: {
-    EMAIL_READY: 'EMAIL_READY',
-    EMAIL_PENDING: 'EMAIL_PENDING',
-    OTP_READY: 'OTP_READY',
-    OTP_PENDING: 'OTP_PENDING',
-    RESEND_OTP_DISABLED: 'RESEND_OTP_DISABLED',
-  },
+
+enum variants {
+  EMAIL_READY = 'EMAIL_READY',
+  EMAIL_PENDING = 'EMAIL_PENDING',
+  OTP_READY = 'OTP_READY',
+  OTP_PENDING = 'OTP_PENDING',
+  RESEND_OTP_DISABLED = 'RESEND_OTP_DISABLED',
+}
+
+type variantsKeysTypes = keyof typeof variants
+export type variantsValueTypes = typeof variants[variantsKeysTypes]
+
+type mapTypes = {
+  [key in variantsKeysTypes]: {
+    inputEnabled: boolean
+    submitEnabled: boolean
+    progressBarShown: boolean
+    resendEnabled: boolean
+  }
+}
+
+type loginFormVariantsTypes = {
+  types: typeof variants
+  map: mapTypes
+  isEmailView: (variant: string) => boolean
+}
+
+export const loginFormVariants: loginFormVariantsTypes = {
+  types: variants,
   map: {
     EMAIL_READY: {
       inputEnabled: true,

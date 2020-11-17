@@ -1,7 +1,12 @@
-import React from 'react'
-import classNames from 'classnames'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
+
+type TextButtonProps = {
+  className?: string,
+  href?: string,
+  disabled?: boolean,
+  onClick?: () => {},
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -16,47 +21,40 @@ const useStyles = makeStyles((theme) =>
         backgroundColor: 'transparent',
       },
     },
+    tag: {
+      display: 'contents',
+    }
   }),
 )
 
-const TextButton = ({
+const TextButton: FunctionComponent<TextButtonProps> = ({
   children,
   className,
   href,
-  target,
   disabled,
   onClick,
-}) => {
+}: PropsWithChildren<TextButtonProps>) => {
   const classes = useStyles()
   return (
-    <Button
-      className={classNames(className, classes.textButton)}
-      href={href}
-      target={target}
-      disabled={disabled}
-      onClick={onClick}
-      variant="text"
-      size="large"
-      disableFocusRipple
-      disableRipple
-    >
-      {children}
-    </Button>
+    <a className={classes.tag} href={href} target="_blank" rel="noopener noreferrer">
+      <Button
+        className={`${className} ${classes.textButton}`}
+        disabled={disabled}
+        onClick={onClick}
+        variant="text"
+        size="large"
+        disableFocusRipple
+        disableRipple
+      >
+        {children}
+      </Button>
+    </a>
   )
-}
-
-TextButton.propTypes = {
-  className: PropTypes.string,
-  href: PropTypes.string,
-  target: PropTypes.string,
-  disabled: PropTypes.bool,
-  onClick: PropTypes.func,
 }
 
 TextButton.defaultProps = {
   className: '',
   href: undefined,
-  target: undefined,
   disabled: undefined,
   onClick: undefined,
 }

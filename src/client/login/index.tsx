@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, FunctionComponent } from 'react'
 import i18next from 'i18next'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Hidden,
   LinearProgress,
@@ -11,7 +10,7 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import { Redirect } from 'react-router-dom'
-
+import { GoGovReduxState } from '../app/reducers/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
 import { DIRECTORY_PAGE, USER_PAGE, loginFormVariants } from '../app/util/types'
@@ -22,25 +21,15 @@ import LoginForm from './components/LoginForm'
 import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
+import { variantsValueTypes } from '../app/util/types'
 
-const mapDispatchToProps = (dispatch) => ({
-  getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
-  verifyOTP: () => dispatch(loginActions.verifyOTP()),
-  setOTP: (otp) => dispatch(loginActions.setOTP(otp)),
-  setEmail: (email) => dispatch(loginActions.setEmail(email)),
-  getEmailValidator: () =>
-    dispatch(loginActions.getEmailValidationGlobExpression()),
-  setLoginInfoMessage: (message) =>
-    dispatch(rootActions.setInfoMessage(message)),
-})
-
-const mapStateToProps = (state, ownProps) => ({
-  isLoggedIn: state.login.isLoggedIn,
-  location: ownProps.location,
-  variant: state.login.formVariant,
-  email: state.login.email,
-  emailValidator: state.login.emailValidator,
-})
+type LoginPageProps = {
+  location?: {
+    state?: {
+      previous: string
+    }
+  },
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -107,20 +96,25 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const LoginPage = ({
+const LoginPage: FunctionComponent<LoginPageProps> = ({
   location,
-  isLoggedIn,
-  getOTPEmail,
-  getEmailValidator,
-  verifyOTP,
-  setEmail,
-  setOTP,
-  email,
-  emailValidator,
-  variant,
-  setLoginInfoMessage,
 }) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
+  const getEmailValidator = dispatch(loginActions.getEmailValidationGlobExpression())
+  const setLoginInfoMessage = (message:string) => dispatch(rootActions.setInfoMessage(message))
+  const emailValidator = useSelector(
+    (state: GoGovReduxState) => state.login.emailValidator
+  )
+  const isLoggedIn = useSelector(
+    (state: GoGovReduxState) => state.login.isLoggedIn
+  )
+  const email = useSelector(
+    (state: GoGovReduxState) => state.login.email
+  )
+  const variant: variantsValueTypes = useSelector(
+    (state: GoGovReduxState) => state.login.formVariant
+  )
 
   useEffect(() => {
     // Google Analytics: Move into login page
@@ -135,10 +129,11 @@ const LoginPage = ({
   // Display a login message from the server
   useEffect(() => {
     let cancelled = false
-    getEmailValidator()
+    dispatch(loginActions.getEmailValidationGlobExpression())
     get('/api/login/message').then((response) => {
       if (response.ok) {
         response.text().then((text) => {
+          console.log(text)
           if (text && !cancelled) setLoginInfoMessage(text)
         })
       }
@@ -146,7 +141,7 @@ const LoginPage = ({
     return () => {
       cancelled = true
     }
-  }, [getEmailValidator, setLoginInfoMessage])
+  }, [getEmailValidator])
 
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
@@ -155,7 +150,7 @@ const LoginPage = ({
 
     const emailFormAttr = {
       id: 'email',
-      submit: getOTPEmail,
+      submit: () => dispatch(loginActions.getOTPEmail()),
       placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
       buttonMessage: 'Sign in',
       textError: emailError,
@@ -166,31 +161,31 @@ const LoginPage = ({
             )} email.`
           : '',
       hidden: !isEmailView,
-      onChange: setEmail,
+      onChange:  (email:string) => dispatch(loginActions.setEmail(email)),
       variant,
       autoComplete: 'on',
     }
 
     const otpFormAttr = {
       id: 'otp',
-      submit: verifyOTP,
+      submit: () => dispatch(loginActions.verifyOTP()),
       titleMessage: 'One time password',
       placeholder: 'e.g. 123456',
       buttonMessage: 'Submit',
       textError: () => false,
       textErrorMessage: () => '',
       hidden: isEmailView,
-      onChange: setOTP,
+      onChange: (otp:string) => dispatch(loginActions.setOTP(otp)),
       variant,
       autoComplete: 'off',
       isEmailView,
     }
 
-    const emailForm = <LoginForm classes={classes} {...emailFormAttr} />
-    const otpForm = <LoginForm classes={classes} {...otpFormAttr} />
+    const emailForm = <LoginForm {...emailFormAttr} />
+    const otpForm = <LoginForm {...otpFormAttr} />
 
     const progressBar = variantMap.progressBarShown ? (
-      <LinearProgress className={classes.progressBar} />
+      <LinearProgress />
     ) : null
 
     return (
@@ -256,21 +251,8 @@ const LoginPage = ({
   return <Redirect to={{ pathname: USER_PAGE }} />
 }
 
-LoginPage.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired,
-  getOTPEmail: PropTypes.func.isRequired,
-  getEmailValidator: PropTypes.func.isRequired,
-  verifyOTP: PropTypes.func.isRequired,
-  location: PropTypes.shape({}),
-  setEmail: PropTypes.func.isRequired,
-  setOTP: PropTypes.func.isRequired,
-  email: PropTypes.string.isRequired,
-  emailValidator: PropTypes.func.isRequired,
-  variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
-}
-
 LoginPage.defaultProps = {
   location: undefined,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+export default LoginPage
