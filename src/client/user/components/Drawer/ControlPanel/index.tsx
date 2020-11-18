@@ -197,7 +197,6 @@ export default function ControlPanel() {
   } = useShortLink(drawerStates.relevantShortLink!)
 
   // Manage values in our text fields.
-  const isSearchable = shortLinkState?.isSearchable || false
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
   const editedLongUrl = shortLinkState?.editedLongUrl || ''
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
@@ -445,10 +444,8 @@ export default function ControlPanel() {
           <div className={classes.inactiveDesc}>
           <Divider className={classes.dividerInformation} />
           <LinkInfoEditor
-            isSearchable={isSearchable}
             contactEmail={editedContactEmail} 
             description={editedDescription}
-            onIsSearchableChange={(event) => shortLinkDispatch?.toggleIsSearchable(event.target.checked)}
             onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)} 
             onDescriptionChange={(event) =>
               shortLinkDispatch?.setEditDescription(

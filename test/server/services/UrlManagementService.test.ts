@@ -109,7 +109,6 @@ describe('UrlManagementService', () => {
     const options = {
       longUrl: 'https://www.agency.gov.sg',
       state: undefined,
-      isSearchable: true,
       description: 'An agency',
       contactEmail: 'contact-us@agency.gov.sg',
     }

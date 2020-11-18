@@ -19,7 +19,6 @@ import BetaTag from '../../app/components/widgets/BetaTag'
 import CollapsibleMessage from '../../app/components/CollapsibleMessage'
 import ConfigOption, { TrailingPosition } from './ConfigOption'
 import PrefixableTextField from './PrefixableTextField'
-import GoSwitch from './GoSwitch'
 import {
   CollapsibleMessagePosition,
   CollapsibleMessageType,
@@ -70,10 +69,8 @@ const useStyles = makeStyles((theme) =>
 )
 
 type LinkInfoEditorProps = {
-  isSearchable: boolean
   contactEmail: string
   description: string
-  onIsSearchableChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onDescriptionChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onContactEmailValidation: (isContactEmailValid: boolean) => void
@@ -82,10 +79,8 @@ type LinkInfoEditorProps = {
 }
 
 export default function LinkInfoEditor({
-  isSearchable,
   contactEmail,
   description,
-  onIsSearchableChange,
   onContactEmailChange,
   onDescriptionChange,
   onContactEmailValidation,
@@ -162,33 +157,6 @@ export default function LinkInfoEditor({
           className={classes.linkInformationHeader}
           color="primary"
         >
-        <ConfigOption
-            title={
-              isSearchable
-                ? (
-                  <>
-                    Your link is <span className={classes.activeText}>visible</span> in
-                    GoSearch results
-                  </>
-                )
-                : (
-                  <>
-                    Your link is <span className={classes.inactiveText}>not visible</span> in
-                    GoSearch results
-                  </>
-                )
-            }
-            titleVariant="h6"
-            titleClassName={isMobileView ? classes.regularText : ''}
-            trailing={
-              <GoSwitch
-                color="primary"
-                checked={isSearchable}
-                onChange={onIsSearchableChange}
-              />
-            }
-            trailingPosition={TrailingPosition.center}
-          />
       </Typography>
       <ConfigOption
         title={contactEmailHelp}

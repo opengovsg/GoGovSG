@@ -32,7 +32,6 @@ export type UrlType = {
   state: UrlState
   updatedAt: string
   userId: number
-  isSearchable: boolean
   description: string
   editedDescription: string
   contactEmail: string

@@ -13,10 +13,7 @@ export type RedirectResult = {
 }
 
 export type UpdateUrlOptions = Partial<
-  Pick<
-    StorableUrl,
-    'state' | 'longUrl' | 'isSearchable' | 'description' | 'contactEmail'
-  > & {
+  Pick<StorableUrl, 'state' | 'longUrl' | 'description' | 'contactEmail'> & {
     file: GoUploadedFile
   }
 >
