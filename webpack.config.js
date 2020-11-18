@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const SentryCliPlugin = require('@sentry/webpack-plugin')
 
 const outputDirectory = 'dist'
-const srcDirectory = path.join(__dirname, 'src/client')
+const srcDirectory = path.join(__dirname, 'src/client/app')
 
 const requiredSentryEnvVar = [
   process.env.SENTRY_AUTH_TOKEN,
@@ -70,7 +70,7 @@ module.exports = () => {
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         template: './public/index.html',
-        favicon: './src/client/assets/favicon/favicon.ico',
+        favicon: './src/client/app/assets/favicon/favicon.ico',
         chunksSortMode: 'none',
         meta: {
           // Open Graph protocol meta tags

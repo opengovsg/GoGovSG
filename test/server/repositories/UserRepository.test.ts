@@ -21,7 +21,6 @@ const url = {
   isFile: false,
   createdAt: Date.now(),
   updatedAt: Date.now(),
-  isSearchable: true,
   description: 'An agency of the Singapore Government',
   contactEmail: 'contact-us@agency.gov.sg',
 }

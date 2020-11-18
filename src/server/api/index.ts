@@ -10,7 +10,6 @@ router.use('/login', require('./login'))
 router.use('/stats', require('./statistics'))
 router.use('/sentry', require('./sentry'))
 router.use('/links', require('./links'))
-router.use('/search', require('./search'))
 router.use('/ga', require('./ga'))
 
 /**
