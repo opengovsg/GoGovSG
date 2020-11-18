@@ -2,9 +2,9 @@ import { createStyles, makeStyles } from '@material-ui/core'
 
 type LinkFormStyles = {
   textFieldHeight: number
-  isFile: boolean
-  uploadFileError: string | null
-  createShortLinkError: string | null
+  isFile?: boolean
+  uploadFileError?: string | null
+  createShortLinkError?: string | null
 }
 
 const useCreateLinkFormStyles = makeStyles((theme) =>

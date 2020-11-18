@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
-import { connect, useSelector } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-
+import { useSelector, useDispatch } from 'react-redux'
 import Drawer from './components/Drawer'
 import CreateUrlModal from './components/CreateUrlModal'
 import AnnouncementModal from './components/AnnouncementModal'
@@ -12,36 +10,23 @@ import EmptyState from './components/EmptyState'
 import useIsFiltered from './components/EmptyState/isFiltered'
 import loginActions from '../login/actions'
 import { GAEvent, GAPageView } from '../app/util/ga'
-
-/**
- * List URLs belonging to the user in a table.
- */
-
-const mapStateToProps = (state) => ({
-  isLoggedIn: state.login.isLoggedIn,
-  emailValidator: state.login.emailValidator,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  getUrlsForUser: () => dispatch(userActions.getUrlsForUser()),
-  getEmailValidator: () =>
-    dispatch(loginActions.getEmailValidationGlobExpression()),
-  getUserMessage: () => dispatch(userActions.getUserMessage()),
-})
+import { GoGovReduxState } from '../app/reducers/types'
 
 /**
  * Show the user page.
  */
 const UserPage = ({
-  isLoggedIn,
-  getUrlsForUser,
-  getEmailValidator,
-  emailValidator,
-  getUserMessage,
 }) => {
-  const fetchingUrls = useSelector((state) => state.user.isFetchingUrls)
-  const urlCount = useSelector((state) => state.user.urlCount)
-  const message = useSelector((state) => state.user.message)
+  const fetchingUrls = useSelector((state: GoGovReduxState) => state.user.isFetchingUrls)
+  const urlCount = useSelector((state: GoGovReduxState) => state.user.urlCount)
+  const message = useSelector((state: GoGovReduxState) => state.user.message)
+  const isLoggedIn =  useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
+  const emailValidator = useSelector((state: GoGovReduxState) => state.login.emailValidator)
+  const dispatch = useDispatch()
+  const getUrlsForUser = () => dispatch(userActions.getUrlsForUser())
+  const getEmailValidator = () => dispatch(loginActions.getEmailValidationGlobExpression())
+  const getUserMessage = () => dispatch(userActions.getUserMessage())
+
   const urlsFiltered = useIsFiltered()
 
   useEffect(() => {
@@ -54,14 +39,7 @@ const UserPage = ({
         getUserMessage()
       }
     }
-  }, [
-    emailValidator,
-    getEmailValidator,
-    getUrlsForUser,
-    isLoggedIn,
-    message,
-    getUserMessage,
-  ])
+  }, [isLoggedIn])
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -90,6 +68,4 @@ const UserPage = ({
   return <div />
 }
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(UserPage),
-)
+export default UserPage

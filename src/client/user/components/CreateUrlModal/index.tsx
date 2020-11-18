@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { History } from 'history'
 import { useHistory } from 'react-router-dom'
 import {
   Dialog,
@@ -10,13 +10,17 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import CloseIcon from '../../../app/components/widgets/CloseIcon'
-
 import CreateLinkForm from './CreateLinkForm'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 import ModalMargins from './ModalMargins'
 import userActions from '../../actions'
 import AddDescriptionForm from './AddDescriptionForm'
 import { GAEvent, GAPageView } from '../../../app/util/ga'
+import { GoGovReduxState } from '../../../app/reducers/types'
+
+type StyleProps = {
+  isFullScreenDialog: boolean,
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -31,7 +35,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(2),
     },
     closeIconButton: {
-      fill: (props) =>
+      fill: (props: StyleProps) =>
         props.isFullScreenDialog ? '#BBBBBB' : theme.palette.primary.dark,
       height: (props) => (props.isFullScreenDialog ? 44 : 30.8),
       width: (props) => (props.isFullScreenDialog ? 44 : 30.8),
@@ -51,26 +55,18 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const mapStateToProps = (state) => ({
-  createUrlModal: state.user.createUrlModal,
-})
+const CreateUrlModal = () => {
+  const createUrlModal = useSelector((state: GoGovReduxState) => state.user.createUrlModal)
+  const dispatch = useDispatch()
+  const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
+  const onCreateUrl = (history: History) => dispatch(userActions.createUrlOrRedirect(history))
+  const onUploadFile = (file: File) => dispatch(userActions.uploadFile(file))
 
-const mapDispatchToProps = (dispatch) => ({
-  closeCreateUrlModal: () => dispatch(userActions.closeCreateUrlModal()),
-  onCreateUrl: (history) => dispatch(userActions.createUrlOrRedirect(history)),
-  onUploadFile: (file) => dispatch(userActions.uploadFile(file)),
-})
-
-const CreateUrlModal = ({
-  createUrlModal,
-  closeCreateUrlModal,
-  onCreateUrl,
-  onUploadFile,
-}) => {
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
   const [step, setStep] = useState(0)
-  const incrementDecorator = (func) => async (...args) => {
+
+  const incrementDecorator = (func: any) => async (...args: any[]) => {
     const proceed = await func(...args)
     if (proceed) {
       if (args.length) {
@@ -83,9 +79,10 @@ const CreateUrlModal = ({
       closeCreateUrlModal()
     }
   }
+
   const history = useHistory()
   const onSubmitLink = incrementDecorator(() => onCreateUrl(history))
-  const onSubmitFile = incrementDecorator(onUploadFile)
+  const onSubmitFile = incrementDecorator(onUploadFile) // test this
 
   // Reset step when modal closes and reopens
   useEffect(() => {
@@ -146,11 +143,4 @@ const CreateUrlModal = ({
   )
 }
 
-CreateUrlModal.propTypes = {
-  onCreateUrl: PropTypes.func.isRequired,
-  onUploadFile: PropTypes.func.isRequired,
-  createUrlModal: PropTypes.bool.isRequired,
-  closeCreateUrlModal: PropTypes.func.isRequired,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreateUrlModal)
+export default CreateUrlModal

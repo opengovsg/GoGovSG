@@ -1,6 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent } from 'react'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
+
+type OvalContainedButtonProps = {
+  href?: string,
+  onClick?: () => {}
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -17,7 +21,10 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function OvalContainedButton({ children, href, onClick }) {
+const OvalContainedButton: FunctionComponent<OvalContainedButtonProps> = ({
+  children,
+  href,
+  onClick }) => {
   const classes = useStyles()
   return (
     <Button
@@ -33,13 +40,9 @@ export default function OvalContainedButton({ children, href, onClick }) {
   )
 }
 
-OvalContainedButton.propTypes = {
-  children: PropTypes.node.isRequired,
-  href: PropTypes.string,
-  onClick: PropTypes.func,
-}
-
 OvalContainedButton.defaultProps = {
   href: undefined,
   onClick: undefined,
 }
+
+export default OvalContainedButton

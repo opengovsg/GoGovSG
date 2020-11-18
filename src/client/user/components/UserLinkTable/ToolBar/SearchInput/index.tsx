@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { connect, useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import {
   Backdrop,
   ClickAwayListener,
@@ -12,32 +12,23 @@ import {
 } from '@material-ui/core'
 import debounce from 'lodash/debounce'
 import FilterSortPanel from '../FilterSortPanel'
-
 import userActions from '../../../../actions'
-
 import filterSortIcon from '../assets/filtersort-icon.svg'
 import useSearchInputHeight from './searchInputHeight'
 import SearchIcon from '../../../../../app/components/widgets/SearchIcon'
+import { UrlTableConfig } from '../../../../reducers/types'
+import { GoGovReduxState } from '../../../../../app/reducers/types'
 
-const mapDispatchToProps = (dispatch) => {
-  const debouncedUpdateSearchText = debounce(
-    () => dispatch(userActions.getUrlsForUser()),
-    500,
-  )
-  return {
-    updateSearchText: (searchText) => {
-      dispatch(userActions.isFetchingUrls(true))
-      dispatch(userActions.setUrlTableConfig({ searchText, pageNumber: 0 }))
-      debouncedUpdateSearchText()
-    },
-  }
+type StyleProps = {
+  searchInputHeight: number
+  textFieldHeight: number
 }
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       display: 'flex',
-      height: (props) => props.searchInputHeight,
+      height: (props: StyleProps) => props.searchInputHeight,
       flex: 1,
       width: 'unset',
       [theme.breakpoints.up('md')]: {
@@ -53,9 +44,9 @@ const useStyles = makeStyles((theme) =>
       },
     },
     input: {
-      flexGrow: '1',
+      flexGrow: 1,
       height: '100%',
-      minHeight: (props) => props.textFieldHeight,
+      minHeight: (props: StyleProps) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
     },
@@ -72,28 +63,34 @@ const useStyles = makeStyles((theme) =>
 )
 
 // Height of the text field in the search input.
-const textFieldHeight = 48
-
-// Prevents re-render if search input did not change.
-const searchInputIsEqual = (prev, next) => {
-  return prev.tableConfig.searchText === next.tableConfig.searchText
-}
+const textFieldHeight = useSearchInputHeight()
 
 // Search Input field.
-const SearchInput = React.memo(({ updateSearchText }) => {
-  const tableConfig = useSelector((state) => state.user.tableConfig)
+const SearchInput = () => {
+  const dispatch = useDispatch()
+  const debouncedUpdateSearchText = debounce(
+    () => dispatch(userActions.getUrlsForUser()),
+    500,
+  )
+  const updateSearchText = (searchText: Partial<UrlTableConfig>) => {
+    dispatch(userActions.isFetchingUrls(true))
+    dispatch(userActions.setUrlTableConfig({ searchText, pageNumber: 0 } as UrlTableConfig))
+    debouncedUpdateSearchText()
+  }
+
+  const tableConfig = useSelector((state: GoGovReduxState) => state.user.tableConfig)
   const searchInputHeight = useSearchInputHeight()
   const classes = useStyles({ textFieldHeight, searchInputHeight })
-  const searchIfChanged = (text) => {
+  const searchIfChanged = (text: Partial<UrlTableConfig>) => {
     if (tableConfig.searchText !== text) {
       updateSearchText(text)
     }
   }
-  const changeSearchTextHandler = (event) => {
-    searchIfChanged(event.target.value)
+  const changeSearchTextHandler = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    searchIfChanged(event.target.value as Partial<UrlTableConfig>)
   }
   const clearSearchTextHandler = () => {
-    searchIfChanged('')
+    searchIfChanged('' as Partial<UrlTableConfig>)
   }
   const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
 
@@ -112,9 +109,10 @@ const SearchInput = React.memo(({ updateSearchText }) => {
           onChange={changeSearchTextHandler}
           onBlur={changeSearchTextHandler}
           onKeyDown={(e) => {
+            const target = e.target as HTMLTextAreaElement
             switch (e.key) {
               case 'Escape':
-                e.target.value = ''
+                target.value = ''
                 clearSearchTextHandler()
                 break
               case 'Enter':
@@ -122,7 +120,7 @@ const SearchInput = React.memo(({ updateSearchText }) => {
               default:
                 return
             }
-            e.target.blur()
+            target.blur()
             e.preventDefault()
           }}
           placeholder="Search links"
@@ -156,6 +154,6 @@ const SearchInput = React.memo(({ updateSearchText }) => {
       </div>
     </ClickAwayListener>
   )
-}, searchInputIsEqual)
+}
 
-export default connect(null, mapDispatchToProps)(SearchInput)
+export default SearchInput

@@ -4,12 +4,12 @@ import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 
 type FileInputFieldStyleProps = {
-  uploadFileError: string | null
+  uploadFileError: string | null | undefined
   textFieldHeight: number | string
 }
 
 type FileInputFieldProps = {
-  uploadFileError: string | null
+  uploadFileError: string | null | undefined
   textFieldHeight: number | string
   text: string
   endAdornment?: JSX.Element

@@ -4,27 +4,38 @@ import isMatch from 'lodash/isMatch'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent'
 import useStyles from './styles'
+import { UrlTableConfig } from '../../../../reducers/types'
 
+type paginationInputIsEqualProps = {
+  tableConfig: UrlTableConfig,
+  urlCount: number,
+}
 // Prevents re-render if pagination did not change.
-const paginationInputIsEqual = (prev, next) =>
+const paginationInputIsEqual = (prev: paginationInputIsEqualProps, next: paginationInputIsEqualProps) =>
   prev.tableConfig.numberOfRows === next.tableConfig.numberOfRows &&
   prev.tableConfig.pageNumber === next.tableConfig.pageNumber &&
   prev.urlCount === next.urlCount
 
+type MemoTablePaginationProps = {
+  urlCount: number,
+  tableConfig: UrlTableConfig,
+  updateUrlTableConfig: (config: UrlTableConfig) => void,
+}
+
 const MemoTablePagination = React.memo(
-  ({ urlCount, tableConfig, updateUrlTableConfig }) => {
+  ({ urlCount, tableConfig, updateUrlTableConfig } : MemoTablePaginationProps) => {
     const appMargins = useAppMargins()
     const classes = useStyles({ appMargins })
 
-    const updateTableIfChanged = (newConfig) => {
+    const updateTableIfChanged = (newConfig: Partial<UrlTableConfig>) => {
       if (!isMatch(tableConfig, newConfig)) {
-        updateUrlTableConfig(newConfig)
+        updateUrlTableConfig(newConfig as UrlTableConfig)
       }
     }
-    const changePageHandler = (_, pageNumber) => {
+    const changePageHandler = (_: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, pageNumber: number) => {
       updateTableIfChanged({ pageNumber })
     }
-    const changeRowsPerPageHandler = (event) => {
+    const changeRowsPerPageHandler = (event: any) => {
       updateTableIfChanged({ numberOfRows: event.target.value, pageNumber: 0 })
     }
 
@@ -60,7 +71,6 @@ const MemoTablePagination = React.memo(
           select: classes.select,
           selectIcon: classes.selectIcon,
         }}
-        labelDisplayedRows={() => {}}
       />
     )
   },
