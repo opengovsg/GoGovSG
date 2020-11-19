@@ -32,7 +32,6 @@ const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
     <a href={href} onClick={onClick}>
       <IconButton
         className={classes.roundIconButton}
-        // onClick={onClick}
       >
         {children}
       </IconButton>

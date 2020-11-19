@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   Backdrop,
@@ -10,7 +10,6 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import debounce from 'lodash/debounce'
 import FilterSortPanel from '../FilterSortPanel'
 import userActions from '../../../../actions'
 import filterSortIcon from '../assets/filtersort-icon.svg'
@@ -68,30 +67,30 @@ const textFieldHeight = useSearchInputHeight()
 // Search Input field.
 const SearchInput = () => {
   const dispatch = useDispatch()
-  const debouncedUpdateSearchText = debounce(
-    () => dispatch(userActions.getUrlsForUser()),
-    500,
-  )
-  const updateSearchText = (searchText: Partial<UrlTableConfig>) => {
-    dispatch(userActions.isFetchingUrls(true))
-    dispatch(userActions.setUrlTableConfig({ searchText, pageNumber: 0 } as UrlTableConfig))
-    debouncedUpdateSearchText()
-  }
+  const [query, setQuery] = useState('')
 
   const tableConfig = useSelector((state: GoGovReduxState) => state.user.tableConfig)
   const searchInputHeight = useSearchInputHeight()
   const classes = useStyles({ textFieldHeight, searchInputHeight })
-  const searchIfChanged = (text: Partial<UrlTableConfig>) => {
-    if (tableConfig.searchText !== text) {
-      updateSearchText(text)
-    }
+
+  
+  const changeSearchTextHandler = (e: string) => {
+    setQuery(e)
   }
-  const changeSearchTextHandler = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    searchIfChanged(event.target.value as Partial<UrlTableConfig>)
+
+  const applySearch = () => {
+    dispatch(userActions.isFetchingUrls(true))
+    dispatch(userActions.setUrlTableConfig({ searchText: query, pageNumber: 0 } as UrlTableConfig))
+    dispatch(userActions.getUrlsForUser())
   }
-  const clearSearchTextHandler = () => {
-    searchIfChanged('' as Partial<UrlTableConfig>)
-  }
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      applySearch()
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [query]);
+
   const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
 
   return (
@@ -105,15 +104,15 @@ const SearchInput = () => {
           autoFocus
           className={classes.searchInput}
           variant="outlined"
-          value={tableConfig.searchText}
-          onChange={changeSearchTextHandler}
-          onBlur={changeSearchTextHandler}
+          value={query}
+          onChange={(e) => changeSearchTextHandler(e.target.value)}
+          onBlur={(e) => changeSearchTextHandler(e.target.value)}
           onKeyDown={(e) => {
             const target = e.target as HTMLTextAreaElement
             switch (e.key) {
               case 'Escape':
                 target.value = ''
-                clearSearchTextHandler()
+                changeSearchTextHandler('')
                 break
               case 'Enter':
                 break

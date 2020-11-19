@@ -82,7 +82,7 @@ const CreateUrlModal = () => {
 
   const history = useHistory()
   const onSubmitLink = incrementDecorator(() => onCreateUrl(history))
-  const onSubmitFile = incrementDecorator(onUploadFile) // test this
+  const onSubmitFile = incrementDecorator(onUploadFile)
 
   // Reset step when modal closes and reopens
   useEffect(() => {
