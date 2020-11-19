@@ -112,6 +112,8 @@ jobs:
       - run: npm ci
       - name: Select Sentry variables
         shell: python
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         run: |
           import os
           branch = os.environ['GITHUB_REF']

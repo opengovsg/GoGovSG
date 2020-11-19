@@ -68,7 +68,6 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           isFile: false,
           createdAt: '2020-04-17T09:10:07.491Z',
           updatedAt: '2020-06-09T10:07:07.557Z',
-          isSearchable: true,
           description: '',
           contactEmail: null,
           clicks: 0,

@@ -7,4 +7,4 @@ export const urlSearchVector = `
   setweight(to_tsvector('english', urls."description"), 'B')
 `
 
-export const urlSearchConditions = `urls.state = '${StorableUrlState.Active}' AND urls."isSearchable"=true`
+export const urlSearchConditions = `urls.state = '${StorableUrlState.Active}' AND urls.description != ''`
