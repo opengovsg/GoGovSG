@@ -17,7 +17,7 @@ const otp = {
 
 describe('otp cache redis test', () => {
   beforeEach(async () => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       redisMockClient.flushall(() => resolve())
     })
   })
