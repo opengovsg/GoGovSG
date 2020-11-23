@@ -1,7 +1,7 @@
 import express from 'express'
 import { inject, injectable } from 'inversify'
 import { DependencyIds } from '../constants'
-import { RedirectControllerInterface } from '../controllers/interfaces/RedirectControllerInterface'
+import { RedirectController } from './RedirectController'
 
 @injectable()
 export class Redirect {
@@ -9,7 +9,7 @@ export class Redirect {
 
   constructor(
     @inject(DependencyIds.redirectController)
-    redirectController: RedirectControllerInterface,
+    redirectController: RedirectController,
   ) {
     this.router = express.Router()
     this.router.get(
@@ -19,5 +19,17 @@ export class Redirect {
     this.router.get('/:shortUrl([a-zA-Z0-9-]+).?', redirectController.redirect)
   }
 }
+export enum RedirectType {
+  Direct,
+  TransitionPage,
+}
+
+export type RedirectResult = {
+  visitedUrls: string[]
+  longUrl: string
+  redirectType: RedirectType
+}
+
+export { RedirectController } from './RedirectController'
 
 export default Redirect

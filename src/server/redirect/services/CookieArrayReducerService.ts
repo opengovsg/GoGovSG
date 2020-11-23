@@ -1,27 +1,6 @@
 import _ from 'lodash'
 import { injectable } from 'inversify'
-import { cookieSessionMaxSizeBytes } from '../config'
-
-/**
- * Herein contains utility functions pertaining to
- * the functionality of the transition page.
- */
-
-/**
- * Utility functions to store and read a user's visit
- * history in the browser cookie.
- */
-export interface CookieArrayReducerServiceInterface {
-  userHasVisitedShortlink: (
-    cookie: string[] | null,
-    shortUrl: string,
-  ) => boolean
-
-  writeShortlinkToCookie: (
-    cookie: string[] | null,
-    shortUrl: string,
-  ) => string[]
-}
+import { cookieSessionMaxSizeBytes } from '../../config'
 
 /**
  * Array implementation of a cookie reducer which tracks an
@@ -32,8 +11,7 @@ export interface CookieArrayReducerServiceInterface {
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
   ["userHasVisitedShortlink", "writeShortlinkToCookie"] }] */
 @injectable()
-export class CookieArrayReducerService
-  implements CookieArrayReducerServiceInterface {
+export class CookieArrayReducerService {
   userHasVisitedShortlink(cookie: string[] | null, shortUrl: string): boolean {
     if (!cookie) return false
     return cookie.includes(shortUrl)
@@ -51,3 +29,5 @@ export class CookieArrayReducerService
     return newCookie
   }
 }
+
+export default CookieArrayReducerService

@@ -6,12 +6,8 @@ import redisMock from 'redis-mock'
 import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import AnalyticsLoggerMock from '../mocks/services/analytics'
 import { ACTIVE } from '../../../src/server/models/types'
 import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
-import { createPageViewHit } from '../../../src/server/services/analytics'
-import IGaPageViewForm from '../../../src/server/services/analytics/types/IGaPageViewForm'
-import { AnalyticsLoggerService } from '../../../src/server/services/interfaces/AnalyticsLoggerService'
 
 /**
  * Retrieves the currently binded OtpCache in the Inversify container.
@@ -19,28 +15,6 @@ import { AnalyticsLoggerService } from '../../../src/server/services/interfaces/
  */
 export function getOtpCache(): OtpRepositoryInterface {
   return container.get<OtpRepositoryInterface>(DependencyIds.otpRepository)
-}
-
-/**
- * Checks if the AnalyticsLogger in the Inversify container has been used to
- * log a redirect instance.
- * @param  {Request} req The request that triggered the redirect.
- * @param  {Response} res The response returned to the client.
- * @param  {string} shortUrl The short url of the request.
- * @param  {string} longUrl The long url that is returned to the client.
- * @returns Boolean.
- */
-export function expectAnalyticsLogged(
-  req: Request,
-  shortUrl: string,
-  longUrl: string,
-): void {
-  const logger = container.get<AnalyticsLoggerService<IGaPageViewForm>>(
-    DependencyIds.analyticsLoggerService,
-  ) as AnalyticsLoggerMock
-  expect(logger.lastPageViewHit).toEqual(
-    createPageViewHit(req, shortUrl, longUrl),
-  )
 }
 
 /**

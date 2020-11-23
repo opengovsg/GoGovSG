@@ -4,27 +4,24 @@ import { gaTrackingId, logger } from '../config'
 import { NotFoundError } from '../util/error'
 import parseDomain from '../util/domain'
 import { DependencyIds, ERROR_404_PATH } from '../constants'
-import { AnalyticsLoggerService } from '../services/interfaces/AnalyticsLoggerService'
-import { RedirectControllerInterface } from './interfaces/RedirectControllerInterface'
-import { RedirectService } from '../services/RedirectService'
-import { RedirectType } from '../services/types'
+import { AnalyticsLoggerService, RedirectService } from './services'
+import { RedirectType } from '.'
 import { EventAction, EventCategory } from '../services/analytics/types/enum'
 import { createPageViewHit } from '../services/analytics'
-import IGaPageViewForm from '../services/analytics/types/IGaPageViewForm'
 
 const TRANSITION_PATH = 'transition-page.ejs'
 const GTAG_PATH = 'redirect.ejs'
 
 @injectable()
-export class RedirectController implements RedirectControllerInterface {
+export class RedirectController {
   private redirectService: RedirectService
 
-  private analyticsLogger: AnalyticsLoggerService<IGaPageViewForm>
+  private analyticsLogger: AnalyticsLoggerService
 
   public constructor(
     @inject(DependencyIds.redirectService) redirectService: RedirectService,
     @inject(DependencyIds.analyticsLoggerService)
-    analyticsLogger: AnalyticsLoggerService<IGaPageViewForm>,
+    analyticsLogger: AnalyticsLoggerService,
   ) {
     this.redirectService = redirectService
     this.analyticsLogger = analyticsLogger

@@ -1,9 +1,8 @@
 import { UAParser } from 'ua-parser-js'
 import { injectable } from 'inversify'
-import { CrawlerCheckServiceInterface } from './interfaces/CrawlerCheckServiceInterface'
 
 @injectable()
-export class CrawlerCheckService implements CrawlerCheckServiceInterface {
+export class CrawlerCheckService {
   public isCrawler: (userAgent: string) => boolean = (userAgent) => {
     const parser = new UAParser(userAgent)
     const result = parser.getResult()
