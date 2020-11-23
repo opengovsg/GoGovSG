@@ -1,13 +1,11 @@
 import React from 'react'
 import * as Sentry from '@sentry/browser'
 import { render } from 'react-dom'
-import { applyMiddleware, createStore } from 'redux'
-import thunk from 'redux-thunk'
 
 import Root from './components/pages/RootPage'
 import { get } from './util/requests'
-import reducer from './reducers'
 import './i18n'
+import { store } from './store'
 
 // If SENTRY_DNS env var is specified, init sentry.
 get('/api/sentry/').then((response) => {
@@ -21,7 +19,5 @@ get('/api/sentry/').then((response) => {
     })
   }
 })
-
-const store = createStore(reducer, applyMiddleware(thunk))
 
 render(<Root store={store} />, document.getElementById('root'))
