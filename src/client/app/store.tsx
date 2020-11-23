@@ -4,9 +4,13 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 
 import rootReducer from './reducers'
 
+const composeEnhancers = composeWithDevTools({
+    trace: true
+})
+
 const store = createStore(
     rootReducer,
-    composeWithDevTools(
+    composeEnhancers(
         applyMiddleware(thunk)
     )
 )
