@@ -4,14 +4,13 @@ import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 
 type StyleProps = {
-  applyLeftMargin?: boolean,
   applyRightMargin?: boolean,
 }
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     modalMargins: {
-      marginLeft: (props: StyleProps) => (props.applyLeftMargin ? theme.spacing(6.25) : 0),
+      marginLeft: theme.spacing(6.25),
       marginRight: (props: StyleProps) =>
         props.applyRightMargin ? theme.spacing(6.25) : 0,
     },
@@ -19,16 +18,14 @@ const useStyles = makeStyles((theme) =>
 )
 
 type ModalMarginsProps = {
-  applyLeftMargin?: boolean,
   applyRightMargin?: boolean
 }
 
 const ModalMargins: FunctionComponent<ModalMarginsProps> = ({
-  applyLeftMargin,
   applyRightMargin,
   children,
 }) => {
-  const classes = useStyles({ applyLeftMargin, applyRightMargin })
+  const classes = useStyles({ applyRightMargin })
   const isFullScreenDialog = useFullScreenDialog()
 
   // Use app margins in full screen dialogs.
@@ -39,7 +36,6 @@ const ModalMargins: FunctionComponent<ModalMarginsProps> = ({
 }
 
 ModalMargins.defaultProps = {
-  applyLeftMargin: true,
   applyRightMargin: true,
 }
 

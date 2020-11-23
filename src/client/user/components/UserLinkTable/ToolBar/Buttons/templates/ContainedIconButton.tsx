@@ -3,7 +3,7 @@ import { IconButton, createStyles, makeStyles } from '@material-ui/core'
 
 type ContainedIconButtonProps = {
   href?: string,
-  onClick?: () => {},
+  onClick?: () => void,
 }
 
 const useStyles = makeStyles((theme) =>
@@ -25,8 +25,9 @@ const useStyles = makeStyles((theme) =>
 
 const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
    children,
-   href,
-   onClick, }) => {
+   href = undefined,
+   onClick = undefined, 
+  }) => {
   const classes = useStyles()
   return (
     <a href={href} onClick={onClick}>
@@ -37,11 +38,6 @@ const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
       </IconButton>
     </a>
   )
-}
-
-ContainedIconButton.defaultProps = {
-  href: undefined,
-  onClick: undefined,
 }
 
 export default ContainedIconButton

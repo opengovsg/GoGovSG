@@ -38,6 +38,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   onSubmitLink,
   onSubmitFile,
 }) => {
+  
   const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
   const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
   const isUploading = useSelector((state: GoGovReduxState) => state.user.isUploading)
@@ -48,8 +49,8 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   const setShortUrl = (shortUrl: string) => dispatch(userActions.setShortUrl(shortUrl))
   const setLongUrl = (longUrl: string) => dispatch(userActions.setLongUrl(longUrl))
   const setRandomShortUrl = () => dispatch(userActions.setRandomShortUrl())
-  const setUploadFileError = (error: string | null) => dispatch(userActions.setUploadFileError(error))
-  const setCreateShortLinkError = (error: string | null) => dispatch(userActions.setCreateShortLinkError(error))
+  const setUploadFileError = (error: string) => dispatch(userActions.setUploadFileError(error))
+  const setCreateShortLinkError = (error: string) => dispatch(userActions.setCreateShortLinkError(error))
 
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState<File|null>(null)
@@ -232,7 +233,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                       className={classes.refreshIcon}
                       onClick={() => {
                         setRandomShortUrl()
-                        setCreateShortLinkError(null)
+                        setCreateShortLinkError('')
                       }}
                       size="small"
                       disabled={isUploading}
@@ -251,7 +252,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               placeholder="your customised link"
               onChange={(event) => {
                 setShortUrl(event.target.value)
-                setCreateShortLinkError(null)
+                setCreateShortLinkError('')
               }}
               value={shortUrl}
               helperText={

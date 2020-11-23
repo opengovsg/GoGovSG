@@ -145,12 +145,12 @@ export type SetIsUploadingAction = {
 
 export type SetUploadFileErrorAction = {
   type: typeof SET_UPLOAD_FILE_ERROR
-  payload: string | null
+  payload: string
 }
 
 export type SetCreateShortLinkErrorAction = {
   type: typeof SET_CREATE_SHORT_LINK_ERROR
-  payload: string | null
+  payload: string
 }
 
 export type SetUrlFilterAction = {

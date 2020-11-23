@@ -3,7 +3,7 @@ import { Button, createStyles, makeStyles } from '@material-ui/core'
 
 type OvalContainedButtonProps = {
   href?: string,
-  onClick?: () => {}
+  onClick?: () => void
 }
 
 const useStyles = makeStyles((theme) =>
@@ -23,8 +23,9 @@ const useStyles = makeStyles((theme) =>
 
 const OvalContainedButton: FunctionComponent<OvalContainedButtonProps> = ({
   children,
-  href,
-  onClick }) => {
+  href = undefined,
+  onClick = undefined,
+}) => {
   const classes = useStyles()
   return (
     <Button
@@ -38,11 +39,6 @@ const OvalContainedButton: FunctionComponent<OvalContainedButtonProps> = ({
       {children}
     </Button>
   )
-}
-
-OvalContainedButton.defaultProps = {
-  href: undefined,
-  onClick: undefined,
 }
 
 export default OvalContainedButton

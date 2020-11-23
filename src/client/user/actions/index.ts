@@ -123,15 +123,15 @@ const setEditedDescription: (
 })
 
 const setCreateShortLinkError: (
-  payload: string | null,
+  payload: string,
 ) => SetCreateShortLinkErrorAction = (payload) => ({
   type: SET_CREATE_SHORT_LINK_ERROR,
   payload,
 })
 
-const setUploadFileError: (
-  payload: string | null,
-) => SetUploadFileErrorAction = (payload) => ({
+const setUploadFileError: (payload: string) => SetUploadFileErrorAction = (
+  payload,
+) => ({
   type: SET_UPLOAD_FILE_ERROR,
   payload,
 })
