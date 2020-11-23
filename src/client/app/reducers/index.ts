@@ -6,7 +6,7 @@ import home from '../../home/reducers'
 import search from '../../search/reducers'
 import directory from '../../directory/reducers'
 
-const reducer = combineReducers({
+const rootReducer = combineReducers({
   login,
   user,
   root,
@@ -14,4 +14,5 @@ const reducer = combineReducers({
   search,
   directory,
 })
-export default reducer
+
+export default rootReducer
