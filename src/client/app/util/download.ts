@@ -2,10 +2,10 @@ import { saveAs } from 'file-saver'
 import * as Sentry from '@sentry/browser'
 import rootActions from '../components/pages/RootPage/actions'
 import userActions from '../../user/actions'
-import { useIsIE } from '../components/BaseLayout/util/ie'
+import useIsIE from '../components/BaseLayout/util/ie'
 import { GAEvent } from './ga'
 
-export const downloadUrls = async (urlCount, tableConfig) => {
+export const downloadUrls = async (urlCount: number, tableConfig: any) => {
   const urlsArr = []
   // set headers to csv
   urlsArr.push([
@@ -56,7 +56,7 @@ export const downloadUrls = async (urlCount, tableConfig) => {
         Sentry.captureMessage('download links unsuccessful')
         GAEvent('user page', 'download links', 'unsuccessful')
 
-        rootActions.setErrorMessage(json.message)
+        rootActions.setErrorMessage(json.message || '')
         return null
       } else {
         // Sentry analytics: download links fail
@@ -66,6 +66,7 @@ export const downloadUrls = async (urlCount, tableConfig) => {
         rootActions.setErrorMessage('Error downloading urls.')
         return null
       }
+      return null
     })
   })
 
@@ -73,7 +74,7 @@ export const downloadUrls = async (urlCount, tableConfig) => {
     type: 'text/csv;charset=utf-8',
   })
 
-  if (useIsIE) {
+  if (useIsIE()) {
     navigator.msSaveBlob(blob, 'urls.csv')
   } else {
     saveAs(blob, 'urls.csv')

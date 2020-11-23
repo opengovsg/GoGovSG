@@ -1,13 +1,20 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 import { ApplyAppMargins } from './AppMargins'
+
+type styleProps = {
+  backgroundType: string
+  verticalMultiplier: number
+  topMultiplier: number
+  bottomMultiplier: number
+  shadow: boolean
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     backgroundType: {
       width: '100%',
-      backgroundColor: (props) => {
+      backgroundColor: (props: styleProps) => {
         switch (props.backgroundType) {
           case 'light':
             return theme.palette.secondary.light
@@ -21,22 +28,31 @@ const useStyles = makeStyles((theme) =>
             return props.backgroundType
         }
       },
-      boxShadow: (props) =>
-        props.shadow ? '0px 1px 1px rgba(216, 216, 216, 0.5)' : 0,
+      boxShadow: (props: styleProps) =>
+        props.shadow ? '0px 1px 1px rgba(216, 216, 216, 0.5)' : '0',
       '@media screen\\0': {
         minHeight: '1px',
       },
     },
     childrenPadding: {
-      paddingTop: (props) =>
+      paddingTop: (props: styleProps) =>
         theme.spacing(8 * props.verticalMultiplier * props.topMultiplier),
-      paddingBottom: (props) =>
+      paddingBottom: (props: styleProps) =>
         theme.spacing(8 * props.verticalMultiplier * props.bottomMultiplier),
     },
   }),
 )
 
-const Section = ({
+type SectionProps = {
+  backgroundType: string,
+  verticalMultiplier?: number,
+  topMultiplier?: number,
+  bottomMultiplier?: number,
+  className?: string,
+  shadow?: boolean,
+}
+
+const Section: FunctionComponent<SectionProps> = ({
   children,
   backgroundType,
   verticalMultiplier = 1,
@@ -59,13 +75,6 @@ const Section = ({
       </ApplyAppMargins>
     </div>
   )
-}
-
-Section.propTypes = {
-  backgroundType: PropTypes.string,
-  verticalMultiplier: PropTypes.number,
-  topMultiplier: PropTypes.number,
-  bottomMultiplier: PropTypes.number,
 }
 
 Section.defaultProps = {
