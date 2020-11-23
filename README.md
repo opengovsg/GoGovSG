@@ -28,6 +28,7 @@ The official Singapore government link shortener.
     - [Express](#express)
     - [Concurrently](#concurrently)
     - [VSCode + ESLint](#vscode--eslint)
+    - [Redux Devtools](#redux-devtools)
 
 ## Introduction
 
@@ -261,3 +262,9 @@ Express is a web application framework for Node.js. It is used to build our back
 ### VSCode + ESLint
 
 [VSCode](https://code.visualstudio.com/) is a lightweight but powerful source code editor. [ESLint](https://eslint.org/) takes care of the code-quality.
+
+### Redux Devtools
+
+Developer Tools to power-up [Redux](https://github.com/reactjs/redux) development workflow.
+
+It can be used as a browser extension (for [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), [Edge](https://microsoftedge.microsoft.com/addons/detail/redux-devtools/nnkgneoiohoecpdiaponcejilbhhikei) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/)), as [a standalone app](https://github.com/zalmoxisus/remotedev-app) or as [a React component](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools) integrated in the client app.
