@@ -145,7 +145,7 @@
     "copyfiles": "^2.4.0",
     "coveralls": "^3.1.0",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.12.1",
+    "eslint": "^7.14.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^6.15.0",
     "eslint-import-resolver-alias": "^1.1.2",
