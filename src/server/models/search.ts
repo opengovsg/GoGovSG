@@ -1,5 +1,3 @@
-import { StorableUrlState } from '../repositories/enums'
-
 // Warning: This expression and conditions has to be EXACTLY the same as the one used in the index
 // or else the index will not be used leading to unnecessarily long query times.
 export const urlSearchVector = `
@@ -7,4 +5,4 @@ export const urlSearchVector = `
   setweight(to_tsvector('english', urls."description"), 'B')
 `
 
-export const urlSearchConditions = `urls.state = '${StorableUrlState.Active}' AND urls.description != ''`
+export default urlSearchVector

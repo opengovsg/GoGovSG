@@ -12,9 +12,7 @@ import StatisticsSliver from './components/StatisticsSliver'
 import DescriptionSliver from './components/FeatureListSliver'
 import Section from '../app/components/Section'
 import LandingGraphicSilver from './components/LandingGraphicSilver'
-import IntegratedSearchLandingGraphic from './components/IntegratedSearchLandingGraphic'
 import BaseLayout from '../app/components/BaseLayout'
-import { IS_SEARCH_HIDDEN } from '../app/util/config'
 import { GAEvent, GAPageView } from '../app/util/ga'
 
 const mapDispatchToProps = (dispatch) => ({
@@ -58,11 +56,7 @@ const HomePage = (props) => {
 
   return (
     <BaseLayout headerBackgroundType={isMobileView ? '#f9f9f9' : 'light'}>
-      {IS_SEARCH_HIDDEN ? (
-        <LandingGraphicSilver />
-      ) : (
-        <IntegratedSearchLandingGraphic />
-      )}
+      <LandingGraphicSilver />
       <div id="landing-bottom">
         <Section backgroundType="light">
           <TrustedBySliver />

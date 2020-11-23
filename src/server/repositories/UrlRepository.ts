@@ -20,12 +20,11 @@ import {
   StorableUrl,
   UrlDirectory,
   UrlDirectoryPaginated,
-  UrlsPaginated,
 } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
-import { urlSearchConditions, urlSearchVector } from '../models/search'
+import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
 
 const { Public, Private } = FileVisibility
@@ -138,39 +137,6 @@ export class UrlRepository implements UrlRepositoryInterface {
         logger.error(`Unable to cache short URL: ${error}`),
       )
       return longUrl
-    }
-  }
-
-  public plainTextSearch: (
-    query: string,
-    order: SearchResultsSortOrder,
-    limit: number,
-    offset: number,
-  ) => Promise<UrlsPaginated> = async (query, order, limit, offset) => {
-    const { tableName } = Url
-
-    const urlVector = urlSearchVector
-
-    const count = await this.getPlainTextSearchResultsCount(tableName, query)
-
-    const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
-
-    const urlsModel = await this.getRelevantUrls(
-      tableName,
-      urlVector,
-      rankingAlgorithm,
-      limit,
-      offset,
-      query,
-    )
-
-    const urls = urlsModel.map((urlType) =>
-      this.urlMapper.persistenceToDto(urlType),
-    )
-
-    return {
-      count,
-      urls,
     }
   }
 
@@ -414,44 +380,6 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   /**
-   * Retrieves relevant urls from database based on the input search parameters.
-   * @param  {string} tableName Name of the database table to retrieve from.
-   * @param  {string} urlVector Vector representation of url.
-   * @param  {string} rankingAlgorithm The ranking algorithm to be used.
-   * @param  {number} limit Maximum number of results to be retrieved.
-   * @param  {number} offset Number of results to ignore.
-   * @param  {string} query The search query.
-   * @returns Relevant urls in an array.
-   */
-  private async getRelevantUrls(
-    tableName: string,
-    urlVector: string,
-    rankingAlgorithm: string,
-    limit: number,
-    offset: number,
-    query: string,
-  ): Promise<Array<UrlType>> {
-    const rawQuery = `
-      SELECT ${tableName}.*
-      FROM ${tableName}, plainto_tsquery('english', $query) query
-      WHERE query @@ (${urlVector}) AND ${urlSearchConditions}
-      ORDER BY (${rankingAlgorithm}) DESC
-      LIMIT $limit
-      OFFSET $offset`
-    const urlsModel = (await sequelize.query(rawQuery, {
-      bind: {
-        limit,
-        offset,
-        query,
-      },
-      type: QueryTypes.SELECT,
-      model: Url,
-      mapToModel: true,
-    })) as Array<UrlType>
-    return urlsModel
-  }
-
-  /**
    * Generates the ranking algorithm to be used in the ORDER BY clause in the
    * SQL statement based on the input sort order.
    * @param  {SearchResultsSortOrder} order
@@ -484,33 +412,6 @@ export class UrlRepository implements UrlRepositoryInterface {
         throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
     }
     return rankingAlgorithm
-  }
-
-  /**
-   * Retrieves the number of urls that match the plain text search
-   * query.
-   * @param  {string} tableName Name of the table urls are stored in.
-   * @param  {string} query Search query.
-   * @returns Number of matching urls.
-   */
-  private async getPlainTextSearchResultsCount(
-    tableName: string,
-    query: string,
-  ): Promise<number> {
-    const rawCountQuery = `
-      SELECT count(*)
-      FROM ${tableName}, plainto_tsquery('english', $query) query
-      WHERE query @@ (${urlSearchVector}) AND ${urlSearchConditions}
-    `
-    const [{ count: countString }] = await sequelize.query(rawCountQuery, {
-      bind: {
-        query,
-      },
-      raw: true,
-      type: QueryTypes.SELECT,
-    })
-    const count = parseInt(countString, 10)
-    return count
   }
 }
 
