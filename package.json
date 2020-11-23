@@ -81,6 +81,7 @@
     "react-vis": "^1.11.7",
     "redis": "^3.0.2",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.3.5",
