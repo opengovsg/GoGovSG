@@ -1,8 +1,8 @@
 import { injectable } from 'inversify'
 import fetch from 'cross-fetch'
-import { gaTrackingId, logger } from '../../config'
-import IGaPageViewForm from '../../services/analytics/types/IGaPageViewForm'
-import { generateCookie } from '../../services/analytics'
+import { gaTrackingId, logger } from '../../../config'
+import IGaPageViewForm from '../../../services/analytics/types/IGaPageViewForm'
+import { generateCookie } from '../../../services/analytics'
 
 const gaEndpoint = 'https://www.google-analytics.com/collect'
 

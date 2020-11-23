@@ -1,6 +1,6 @@
 import express from 'express'
 import { inject, injectable } from 'inversify'
-import { DependencyIds } from '../constants'
+import { DependencyIds } from '../../constants'
 import { RedirectController } from './RedirectController'
 
 @injectable()

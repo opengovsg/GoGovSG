@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import * as analytics from '../../../../src/server/services/analytics'
+import * as analytics from '../../../../../src/server/services/analytics'
 
 describe('AnalyticsLoggerService', () => {
   const gaTrackingId = 'UA-000000-2'
@@ -11,7 +11,7 @@ describe('AnalyticsLoggerService', () => {
     const generateCookie = jest.spyOn(analytics, 'generateCookie')
 
     jest.resetModules()
-    jest.mock('../../../../src/server/config', () => ({
+    jest.mock('../../../../../src/server/config', () => ({
       logger: console,
       gaTrackingId: null,
     }))
@@ -19,7 +19,7 @@ describe('AnalyticsLoggerService', () => {
 
     const {
       default: AnalyticsLoggerService,
-    } = require('../../../../src/server/redirect/services/AnalyticsLoggerService')
+    } = require('../../../../../src/server/modules/redirect/services/AnalyticsLoggerService')
     const service = new AnalyticsLoggerService()
 
     it('does not call GA', () => {
@@ -38,7 +38,7 @@ describe('AnalyticsLoggerService', () => {
     const logger = { error: jest.fn() }
 
     jest.resetModules()
-    jest.mock('../../../../src/server/config', () => ({
+    jest.mock('../../../../../src/server/config', () => ({
       logger,
       gaTrackingId,
     }))
@@ -46,7 +46,7 @@ describe('AnalyticsLoggerService', () => {
 
     const {
       default: AnalyticsLoggerService,
-    } = require('../../../../src/server/redirect/services/AnalyticsLoggerService')
+    } = require('../../../../../src/server/modules/redirect/services/AnalyticsLoggerService')
     const service = new AnalyticsLoggerService()
 
     beforeEach(fetch.mockReset)
@@ -93,14 +93,14 @@ describe('AnalyticsLoggerService', () => {
 
   describe('generateCookie', () => {
     jest.resetModules()
-    jest.mock('../../../../src/server/config', () => ({
+    jest.mock('../../../../../src/server/config', () => ({
       logger: () => {},
       gaTrackingId,
     }))
 
     const {
       default: AnalyticsLoggerService,
-    } = require('../../../../src/server/redirect/services/AnalyticsLoggerService')
+    } = require('../../../../../src/server/modules/redirect/services/AnalyticsLoggerService')
     const service = new AnalyticsLoggerService()
 
     it('returns nothing if gaClientId is set', () => {

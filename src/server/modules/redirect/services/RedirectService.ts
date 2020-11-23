@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify'
-import { UrlRepositoryInterface } from '../../repositories/interfaces/UrlRepositoryInterface'
-import { DependencyIds } from '../../constants'
-import { NotFoundError } from '../../util/error'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
+import { DependencyIds } from '../../../constants'
+import { NotFoundError } from '../../../util/error'
 import { RedirectResult, RedirectType } from '..'
-import { LinkStatisticsServiceInterface } from '../../services/interfaces/LinkStatisticsServiceInterface'
-import { ogUrl } from '../../config'
+import { LinkStatisticsServiceInterface } from '../../../services/interfaces/LinkStatisticsServiceInterface'
+import { ogUrl } from '../../../config'
 import { CookieArrayReducerService, CrawlerCheckService } from '.'
 
 @injectable()

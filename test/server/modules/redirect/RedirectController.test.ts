@@ -9,47 +9,47 @@ import {
   redisMockClient,
   sequelizeMock,
   urlModelMock,
-} from '../api/util'
-import { S3InterfaceMock } from '../mocks/services/aws'
-import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
-import { UrlRepositoryInterface } from '../../../src/server/repositories/interfaces/UrlRepositoryInterface'
-import { container } from '../../../src/server/util/inversify'
-import { DependencyIds } from '../../../src/server/constants'
-import { generateCookie } from '../../../src/server/services/analytics'
+} from '../../api/util'
+import { S3InterfaceMock } from '../../mocks/services/aws'
+import { UrlRepository } from '../../../../src/server/repositories/UrlRepository'
+import { UrlRepositoryInterface } from '../../../../src/server/repositories/interfaces/UrlRepositoryInterface'
+import { container } from '../../../../src/server/util/inversify'
+import { DependencyIds } from '../../../../src/server/constants'
+import { generateCookie } from '../../../../src/server/services/analytics'
 
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
   CrawlerCheckService,
   RedirectService,
-} from '../../../src/server/redirect/services'
-import { RedirectController } from '../../../src/server/redirect'
-import { logger } from '../config'
-import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
-import { LinkStatisticsServiceInterface } from '../../../src/server/services/interfaces/LinkStatisticsServiceInterface'
-import { LinkStatisticsServiceMock } from '../mocks/services/LinkStatisticsService'
+} from '../../../../src/server/modules/redirect/services'
+import { RedirectController } from '../../../../src/server/modules/redirect'
+import { logger } from '../../config'
+import { UrlMapper } from '../../../../src/server/mappers/UrlMapper'
+import { LinkStatisticsServiceInterface } from '../../../../src/server/services/interfaces/LinkStatisticsServiceInterface'
+import { LinkStatisticsServiceMock } from '../../mocks/services/LinkStatisticsService'
 
-jest.mock('../../../src/server/models/url', () => ({
+jest.mock('../../../../src/server/models/url', () => ({
   Url: urlModelMock,
 }))
 
-jest.mock('../../../src/server/models/statistics/daily', () => ({
+jest.mock('../../../../src/server/models/statistics/daily', () => ({
   Clicks: clicksModelMock,
 }))
 
-jest.mock('../../../src/server/models/statistics/weekday', () => ({
+jest.mock('../../../../src/server/models/statistics/weekday', () => ({
   WeekdayClicks: heatMapModelMock,
 }))
 
-jest.mock('../../../src/server/models/statistics/devices', () => ({
+jest.mock('../../../../src/server/models/statistics/devices', () => ({
   Devices: devicesModelMock,
 }))
 
-jest.mock('../../../src/server/redis', () => ({
+jest.mock('../../../../src/server/redis', () => ({
   redirectClient: redisMockClient,
 }))
 
-jest.mock('../../../src/server/util/sequelize', () => ({
+jest.mock('../../../../src/server/util/sequelize', () => ({
   sequelize: sequelizeMock,
   transaction: mockTransaction,
 }))

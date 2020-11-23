@@ -43,7 +43,7 @@ import { container } from './util/inversify'
 import { DependencyIds } from './constants'
 import { Mailer } from './services/email'
 import parseDomain from './util/domain'
-import { Redirect } from './redirect'
+import { Redirect } from './modules/redirect'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 

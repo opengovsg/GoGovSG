@@ -30,8 +30,8 @@ import {
   CookieArrayReducerService,
   CrawlerCheckService,
   RedirectService,
-} from './redirect/services'
-import { Redirect, RedirectController } from './redirect'
+} from './modules/redirect/services'
+import { Redirect, RedirectController } from './modules/redirect'
 import { GaController } from './controllers/GaController'
 import { StatisticsRepository } from './repositories/StatisticsRepository'
 import { StatisticsService } from './services/StatisticsService'
