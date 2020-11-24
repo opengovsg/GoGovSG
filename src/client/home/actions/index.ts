@@ -33,29 +33,17 @@ const getLinksToRotate = () => (
   }
 }
 
-const loadStats = () => (
-  dispatch: Dispatch<LoadStatsAction>,
-  getState: GetReduxState,
-) => {
-  const {
-    home: { statistics },
-  } = getState()
-  if (
-    statistics.userCount === 0 ||
-    statistics.linkCount === 0 ||
-    statistics.clickCount === 0
-  ) {
-    get('/api/stats').then((response) => {
-      if (response.ok) {
-        response.json().then((stats) => {
-          dispatch<LoadStatsAction>({
-            type: LOAD_STATS,
-            payload: stats,
-          })
+const loadStats = () => (dispatch: Dispatch<LoadStatsAction>) => {
+  get('/api/stats').then((response) => {
+    if (response.ok) {
+      response.json().then((stats) => {
+        dispatch<LoadStatsAction>({
+          type: LOAD_STATS,
+          payload: stats,
         })
-      }
-    })
-  }
+      })
+    }
+  })
 }
 
 export default {
