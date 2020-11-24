@@ -78,15 +78,15 @@ const StatisticsSliver: FunctionComponent = () => {
   const { userCount, linkCount, clickCount } = statistics
   // ensure number will never be null
   const statisticsToShow = [
-    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount || 0 },
-    { label: 'SHORT LINKS CREATED', number: linkCount || 0 },
-    { label: 'CLICKS', number: clickCount || 0 },
+    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount},
+    { label: 'SHORT LINKS CREATED', number: linkCount},
+    { label: 'CLICKS', number: clickCount},
   ]
 
   // Call once
   useEffect(() => {
     loadStats()
-  }, [loadStats])
+  }, [])
 
   return (
     <>

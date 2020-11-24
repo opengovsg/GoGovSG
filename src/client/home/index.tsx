@@ -25,14 +25,11 @@ const HomePage: FunctionComponent = (props) => {
   const getIsLoggedIn = () => dispatch(loginActions.isLoggedIn())
   const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
 
-  // Google Analytics: Home Page
+  // Load once on start
   useEffect(() => {
+    // Google Analytics: Home Page
     GAPageView('HOME PAGE')
     GAEvent('home page', 'Entering home page')
-  }, [])
-
-  // Initial load
-  useEffect(() => {
     getLinksToRotate()
     getIsLoggedIn()
   }, [])

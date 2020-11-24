@@ -7,7 +7,11 @@ type RotatingLinksType = {
   prefix: string,
 }
 
-const RotatingLinks: FunctionComponent<RotatingLinksType> = ({ className, strings, prefix }) => {
+const RotatingLinks: FunctionComponent<RotatingLinksType> = ({
+  className='',
+  strings,
+  prefix
+}) => {
   return (
     <main className={className}>
       {prefix}
@@ -20,10 +24,6 @@ const RotatingLinks: FunctionComponent<RotatingLinksType> = ({ className, string
       />
     </main>
   )
-}
-
-RotatingLinks.defaultProps = {
-  className: '',
 }
 
 export default RotatingLinks
