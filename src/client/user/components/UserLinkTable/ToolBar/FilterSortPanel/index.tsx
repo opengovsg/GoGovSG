@@ -100,7 +100,8 @@ const FilterSortPanel: FunctionComponent<FilterSortPanelProps> = ({
       title: orderBy, 
       direction: SortDirection.Descending,
       state: state, 
-      isFile: isFile})
+      isFile: isFile
+    })
     onClose()
   }
   const reset = () => {

@@ -35,8 +35,8 @@ const MemoTablePagination = React.memo(
     const changePageHandler = (_: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, pageNumber: number) => {
       updateTableIfChanged({ pageNumber })
     }
-    const changeRowsPerPageHandler = (event: any) => {
-      updateTableIfChanged({ numberOfRows: event.target.value, pageNumber: 0 })
+    const changeRowsPerPageHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      updateTableIfChanged({ numberOfRows: Number(event.target.value), pageNumber: 0 })
     }
 
     const pageCount = Math.ceil(urlCount / tableConfig.numberOfRows)

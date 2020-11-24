@@ -50,8 +50,8 @@ export type UserState = {
   tableConfig: UrlTableConfig
   isUploading: boolean
   urlCount: number
-  createShortLinkError?: string | null
-  uploadFileError?: string | null
+  createShortLinkError: string | null
+  uploadFileError: string | null
   lastCreatedLink?: string
   message: string | null
   announcement: {

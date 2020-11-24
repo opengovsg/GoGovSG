@@ -44,6 +44,8 @@ const initialState: UserState = {
   urlCount: 0,
   message: null,
   announcement: null,
+  uploadFileError: null,
+  createShortLinkError: null,
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
