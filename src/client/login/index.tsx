@@ -21,7 +21,7 @@ import LoginForm from './components/LoginForm'
 import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
-import { variantsValueTypes } from '../app/util/types'
+import { VariantType } from '../app/util/types'
 
 type LoginPageProps = {
   location?: {
@@ -112,7 +112,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const email = useSelector(
     (state: GoGovReduxState) => state.login.email
   )
-  const variant: variantsValueTypes = useSelector(
+  const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant
   )
 
@@ -161,7 +161,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
             )} email.`
           : '',
       hidden: !isEmailView,
-      onChange:  (email:string) => dispatch(loginActions.setEmail(email)),
+      onChange:  (email: string) => dispatch(loginActions.setEmail(email)),
       variant,
       autoComplete: 'on',
     }
@@ -175,7 +175,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       textError: () => false,
       textErrorMessage: () => '',
       hidden: isEmailView,
-      onChange: (otp:string) => dispatch(loginActions.setOTP(otp)),
+      onChange: (otp: string) => dispatch(loginActions.setOTP(otp)),
       variant,
       autoComplete: 'off',
       isEmailView,

@@ -7,7 +7,7 @@ export const DIRECTORY_PAGE = '/directory'
 
 export const snackbarVariants = { ERROR: 0, INFO: 1, SUCCESS: 2 }
 
-enum variants {
+enum FormState {
   EMAIL_READY = 'EMAIL_READY',
   EMAIL_PENDING = 'EMAIL_PENDING',
   OTP_READY = 'OTP_READY',
@@ -15,11 +15,11 @@ enum variants {
   RESEND_OTP_DISABLED = 'RESEND_OTP_DISABLED',
 }
 
-type variantsKeysTypes = keyof typeof variants
-export type variantsValueTypes = typeof variants[variantsKeysTypes]
+type VariantKey = keyof typeof FormState
+export type VariantType = typeof FormState[VariantKey]
 
-type mapTypes = {
-  [key in variantsKeysTypes]: {
+type VariantFlags = {
+  [key in VariantKey]: {
     inputEnabled: boolean
     submitEnabled: boolean
     progressBarShown: boolean
@@ -27,14 +27,14 @@ type mapTypes = {
   }
 }
 
-type loginFormVariantsTypes = {
-  types: typeof variants
-  map: mapTypes
+type LoginFormVariantsTypes = {
+  types: typeof FormState
+  map: VariantFlags
   isEmailView: (variant: string) => boolean
 }
 
-export const loginFormVariants: loginFormVariantsTypes = {
-  types: variants,
+export const loginFormVariants: LoginFormVariantsTypes = {
+  types: FormState,
   map: {
     EMAIL_READY: {
       inputEnabled: true,

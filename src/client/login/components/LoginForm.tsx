@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { useDispatch } from 'react-redux'
 import i18next from 'i18next'
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
-import { loginFormVariants, variantsValueTypes } from '../../app/util/types'
+import { loginFormVariants, VariantType } from '../../app/util/types'
 import loginActions from '../actions'
 import TextButton from '../widgets/TextButton'
 import { GAEvent, GAPageView } from '../../app/util/ga'
@@ -13,7 +13,7 @@ type LoginFormProps = {
   placeholder: string,
   buttonMessage: string,
   hidden: boolean,
-  variant: variantsValueTypes,
+  variant: VariantType,
   autoComplete: string,
   isEmailView?: boolean,
   onChange: (email: string) => {},
