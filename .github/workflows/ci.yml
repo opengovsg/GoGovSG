@@ -112,8 +112,6 @@ jobs:
       - run: npm ci
       - name: Select Sentry variables
         shell: python
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         run: |
           import os
           branch = os.environ['GITHUB_REF']
@@ -126,15 +124,17 @@ jobs:
           sentry_dns_production = os.environ['SENTRY_DNS_PRODUCTION']
           sentry_project_uat = os.environ['SENTRY_PROJECT_UAT']
           sentry_dns_uat = os.environ['SENTRY_DNS_UAT']
-          if branch == staging:
-            print('::set-env name=SENTRY_PROJECT::' + sentry_project_staging)
-            print('::set-env name=SENTRY_DNS::' + sentry_dns_staging)
-          elif branch == production:
-            print('::set-env name=SENTRY_PROJECT::' + sentry_project_production)
-            print('::set-env name=SENTRY_DNS::' + sentry_dns_production)
-          elif branch == uat:
-            print('::set-env name=SENTRY_PROJECT::' + sentry_project_uat)
-            print('::set-env name=SENTRY_DNS::' + sentry_dns_uat)
+          github_env = os.environ['GITHUB_ENV']
+          with open(github_env, 'a', encoding='utf-8') as file:
+            if branch == staging:
+              file.write(f'SENTRY_PROJECT={sentry_project_staging}\n')
+              file.write(f'SENTRY_DNS={sentry_dns_staging}\n')
+            elif branch == production:
+              file.write(f'SENTRY_PROJECT={sentry_project_production}\n')
+              file.write(f'SENTRY_DNS={sentry_dns_production}\n')
+            elif branch == uat:
+              file.write(f'SENTRY_PROJECT={sentry_project_uat}\n')
+              file.write(f'SENTRY_DNS={sentry_dns_uat}\n')
       - name: Upload to Sentry
         run: npm run build
         env:
