@@ -135,6 +135,8 @@ jobs:
             elif branch == uat:
               file.write(f'SENTRY_PROJECT={sentry_project_uat}\n')
               file.write(f'SENTRY_DNS={sentry_dns_uat}\n')
+      - name: Print env
+        run: echo $SENTRY_PROJECT && echo $SENTRY_DNS
       - name: Upload to Sentry
         run: npm run build
         env:
