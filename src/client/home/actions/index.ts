@@ -41,9 +41,9 @@ const loadStats = () => (
     home: { statistics },
   } = getState()
   if (
-    statistics.userCount === null ||
-    statistics.linkCount === null ||
-    statistics.clickCount === null
+    statistics.userCount === 0 ||
+    statistics.linkCount === 0 ||
+    statistics.clickCount === 0
   ) {
     get('/api/stats').then((response) => {
       if (response.ok) {

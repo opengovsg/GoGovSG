@@ -158,7 +158,7 @@ const LandingGraphicSliver = () => {
               size="large"
               onClick={() =>
                 // ! show to TS that document will never be null
-                document.getElementById('landing-bottom')!.scrollIntoView({ behavior: 'smooth' })
+                document.getElementById('landing-bottom')?.scrollIntoView({ behavior: 'smooth' })
               }
             >
               Learn more
