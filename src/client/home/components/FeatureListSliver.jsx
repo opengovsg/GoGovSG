@@ -63,30 +63,36 @@ const useStyles = makeStyles((theme) =>
 )
 
 const columns = [
-  [
-    {
-      icon: antiPhisingIcon,
-      title: 'Anti-phishing',
-      description: <Trans>homePage.features.antiPhishing.description</Trans>,
-    },
-    {
-      icon: fileSharingIcon,
-      title: 'File sharing',
-      description: <Trans>homePage.features.fileSharing.description</Trans>,
-    },
-  ],
-  [
-    {
-      icon: customisedIcon,
-      title: 'Customised',
-      description: <Trans>homePage.features.customised.description</Trans>,
-    },
-    {
-      icon: analyticsIcon,
-      title: 'Analytics',
-      description: <Trans>homePage.features.analytics.description</Trans>,
-    },
-  ],
+  {
+    id: 1,
+    data: [
+      {
+        icon: antiPhisingIcon,
+        title: 'Anti-phishing',
+        description: <Trans>homePage.features.antiPhishing.description</Trans>,
+      },
+      {
+        icon: fileSharingIcon,
+        title: 'File sharing',
+        description: <Trans>homePage.features.fileSharing.description</Trans>,
+      },
+    ],
+  },
+  {
+    id: 2,
+    data: [
+      {
+        icon: customisedIcon,
+        title: 'Customised',
+        description: <Trans>homePage.features.customised.description</Trans>,
+      },
+      {
+        icon: analyticsIcon,
+        title: 'Analytics',
+        description: <Trans>homePage.features.analytics.description</Trans>,
+      },
+    ],
+  },
 ]
 
 const FeatureListSliver = () => {
@@ -123,13 +129,14 @@ const FeatureListSliver = () => {
       >
         {columns.map((column) => (
           <Grid
+            key={column.id}
             item
             container
             spacing={6}
             direction="column"
             className={classes.columnGrid}
           >
-            {column.map((card) => (
+            {column.data.map((card) => (
               <Grid item key={card.title}>
                 <Card className={classes.card}>
                   <img
