@@ -44,7 +44,11 @@ const HomePage: FunctionComponent = (props) => {
 
   return (
     <BaseLayout headerBackgroundType={isMobileView ? '#f9f9f9' : 'light'}>
+<<<<<<< HEAD
       <LandingGraphicSilver />
+=======
+        <LandingGraphicSilver />
+>>>>>>> refactor(home): remove null
       <div id="landing-bottom">
         <Section backgroundType="light">
           <TrustedBySliver />
