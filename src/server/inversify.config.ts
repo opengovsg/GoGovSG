@@ -31,7 +31,7 @@ import {
   CrawlerCheckService,
   RedirectService,
 } from './modules/redirect/services'
-import { Redirect, RedirectController } from './modules/redirect'
+import { RedirectController } from './modules/redirect'
 import { GaController } from './controllers/GaController'
 import { StatisticsRepository } from './repositories/StatisticsRepository'
 import { StatisticsService } from './services/StatisticsService'
@@ -163,6 +163,4 @@ export default () => {
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
-
-  bindIfUnbound(DependencyIds.redirect, Redirect)
 }

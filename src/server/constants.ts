@@ -46,7 +46,6 @@ export const DependencyIds = {
   urlCheckController: Symbol.for('urlCheckController'),
   userMessage: Symbol.for('userMessage'),
   userAnnouncement: Symbol.for('userAnnouncement'),
-  redirect: Symbol.for('redirect'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
