@@ -26,7 +26,7 @@ const apiOtpGeneratorLimiter = rateLimit({
       `Rate limit (generating OTP) reached for IP Address: ${getIp(req)}`,
     ),
   windowMs: 60000, // 1 minute
-  max: 5,
+  max: 10,
 })
 
 /**

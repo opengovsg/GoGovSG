@@ -1,0 +1,35 @@
+name: Basic TestCafe Workflow
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+env:
+  PRODUCTION_BRANCH: refs/heads/release
+  STAGING_BRANCH: refs/heads/edge
+  UAT_BRANCH: refs/heads/uat
+  EB_APP_PRODUCTION: gosg-production
+  EB_ENV_PRODUCTION: gosg-production
+  EB_APP_STAGING: gosg-stag
+  EB_ENV_STAGING: gosg-stag
+  EB_APP_UAT: gosg-uat
+  EB_ENV_UAT: gosg-uat2
+  ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
+  ECR_REPO: gogovsg
+  SENTRY_URL: https://sentry.io/
+  SENTRY_ORG: gogovsg
+  SENTRY_PROJECT_PRODUCTION: gogovsg-prod
+  SENTRY_PROJECT_STAGING: gogovsg-staging
+  SENTRY_PROJECT_UAT: gogovsg-uat
+  SENTRY_DNS_PRODUCTION: https://a76d61749b824d8fa8ad84eee7ecc882@o372043.ingest.sentry.io/5193500
+  SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
+  SENTRY_DNS_UAT: https://615965e21c624312bcb719de721d950f@o372043.ingest.sentry.io/5286893
+jobs:
+  build:
+    name: Run TestCafe Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install TestCafe from 'npm' and Run Tests
+        uses: DevExpress/testcafe-action@latest
+        with:
+          args: "chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 300000"

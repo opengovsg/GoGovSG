@@ -20,6 +20,8 @@
     "dev": "docker-compose -f docker-compose.yml up --build",
     "test": "jest --collectCoverage",
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
+    "test:e2e": "testcafe chrome ./test/end-to-end/* --debug-on-fail",
+    "e2e-test-ci": "testcafe chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 180000",
     "cz": "git-cz"
   },
   "author": "Open Government Products, GovTech Singapore (https://open.gov.sg)",
@@ -146,7 +148,12 @@
     "copyfiles": "^2.4.1",
     "coveralls": "^3.1.0",
     "cz-conventional-changelog": "^3.3.0",
+<<<<<<< HEAD
     "eslint": "^7.15.0",
+=======
+    "downloads-folder": "^3.0.1",
+    "eslint": "^7.14.0",
+>>>>>>> test: end to end test
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -168,6 +175,7 @@
     "redis-mock": "^0.55.0",
     "sequelize-mock": "^0.10.2",
     "supertest": "^6.0.1",
+    "testcafe": "^1.9.4",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.12",
     "ts-node-dev": "^1.1.1",
