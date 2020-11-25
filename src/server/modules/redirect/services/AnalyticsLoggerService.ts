@@ -1,15 +1,13 @@
 import { injectable } from 'inversify'
 import fetch from 'cross-fetch'
-import { gaTrackingId, logger } from '../config'
-import IGaPageViewForm from './analytics/types/IGaPageViewForm'
-import { generateCookie } from './analytics'
-import { AnalyticsLoggerService } from './interfaces/AnalyticsLoggerService'
+import { gaTrackingId, logger } from '../../../config'
+import IGaPageViewForm from '../../../services/analytics/types/IGaPageViewForm'
+import { generateCookie } from '../../../services/analytics'
 
 const gaEndpoint = 'https://www.google-analytics.com/collect'
 
 @injectable()
-export default class GaLoggerService
-  implements AnalyticsLoggerService<IGaPageViewForm> {
+export class AnalyticsLoggerService {
   logRedirectAnalytics: (pageViewHit: IGaPageViewForm) => void = (
     pageViewHit,
   ) => {
@@ -39,3 +37,5 @@ export default class GaLoggerService
     return generateCookie(cookie)
   }
 }
+
+export default AnalyticsLoggerService

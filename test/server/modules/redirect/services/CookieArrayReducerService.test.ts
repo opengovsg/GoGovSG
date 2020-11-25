@@ -1,6 +1,6 @@
 import generate from 'nanoid/async/generate'
-import { CookieArrayReducerService } from '../../../src/server/services/CookieArrayReducerService'
-import { cookieSessionMaxSizeBytes } from '../../../src/server/config'
+import { CookieArrayReducerService } from '../../../../../src/server/modules/redirect/services'
+import { cookieSessionMaxSizeBytes } from '../../../../../src/server/config'
 
 const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
 const LENGTH = 6

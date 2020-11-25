@@ -1,30 +1,28 @@
 import { inject, injectable } from 'inversify'
-import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
-import { DependencyIds } from '../constants'
-import { NotFoundError } from '../util/error'
-import { CrawlerCheckServiceInterface } from './interfaces/CrawlerCheckServiceInterface'
-import { RedirectServiceInterface } from './interfaces/RedirectServiceInterface'
-import { RedirectResult, RedirectType } from './types'
-import { CookieArrayReducerServiceInterface } from './CookieArrayReducerService'
-import { LinkStatisticsServiceInterface } from './interfaces/LinkStatisticsServiceInterface'
-import { ogUrl } from '../config'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
+import { DependencyIds } from '../../../constants'
+import { NotFoundError } from '../../../util/error'
+import { RedirectResult, RedirectType } from '..'
+import { LinkStatisticsServiceInterface } from '../../../services/interfaces/LinkStatisticsServiceInterface'
+import { ogUrl } from '../../../config'
+import { CookieArrayReducerService, CrawlerCheckService } from '.'
 
 @injectable()
-export class RedirectService implements RedirectServiceInterface {
+export class RedirectService {
   private urlRepository: UrlRepositoryInterface
 
-  private crawlerCheckService: CrawlerCheckServiceInterface
+  private crawlerCheckService: CrawlerCheckService
 
-  private cookieArrayReducerService: CookieArrayReducerServiceInterface
+  private cookieArrayReducerService: CookieArrayReducerService
 
   private linkStatisticsService: LinkStatisticsServiceInterface
 
   public constructor(
     @inject(DependencyIds.urlRepository) urlRepository: UrlRepositoryInterface,
     @inject(DependencyIds.crawlerCheckService)
-    crawlerCheckService: CrawlerCheckServiceInterface,
+    crawlerCheckService: CrawlerCheckService,
     @inject(DependencyIds.cookieReducer)
-    cookieArrayReducerService: CookieArrayReducerServiceInterface,
+    cookieArrayReducerService: CookieArrayReducerService,
     @inject(DependencyIds.linkStatisticsService)
     linkStatisticsService: LinkStatisticsServiceInterface,
   ) {
