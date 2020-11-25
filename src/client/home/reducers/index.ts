@@ -7,9 +7,9 @@ import {
 
 const initialState: HomeState = {
   statistics: {
-    userCount: null,
-    linkCount: null,
-    clickCount: null,
+    userCount: 0,
+    linkCount: 0,
+    clickCount: 0,
   },
 }
 const home = (

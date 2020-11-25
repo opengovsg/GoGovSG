@@ -24,7 +24,7 @@ describe('StatisticsRepository', () => {
   const linkCount = 2
 
   beforeEach(async () => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       redisMockClient.flushall(() => resolve())
     })
     setSpy.mockClear()

@@ -46,4 +46,5 @@ jest.mock('../../src/server/config', () => ({
   sentryDns: 'mocksentry.com',
   searchShortUrlWeight: 1,
   searchDescriptionWeight: 0.4,
+  gaTrackingId: 'UA-000000-2',
 }))

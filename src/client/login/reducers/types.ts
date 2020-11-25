@@ -1,7 +1,5 @@
-import { loginFormVariants } from '../../app/util/types'
+import { VariantType } from '../../app/util/types'
 import { EmailValidatorType } from '../actions/types'
-
-type LoginFormVariantKeys = keyof typeof loginFormVariants.types
 
 export type LoginState = {
   email: string
@@ -11,5 +9,5 @@ export type LoginState = {
     id?: string
   }
   isLoggedIn: boolean
-  formVariant: typeof loginFormVariants.types[LoginFormVariantKeys]
+  formVariant: VariantType
 }

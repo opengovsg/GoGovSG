@@ -61,12 +61,7 @@ const redirectWithParams = (newParams: GoSearchParams, history: History) => {
   
   const queryObject: any = { query: newParams.query }
   for (const [ key, value ] of Object.entries(newParams)) {
-    // Always ensure that the query is populated.
-    if (key === 'query') {
-      if (value && value !== (defaultParams as any)[key]) {
-        queryObject[key] = value
-      }
-    } else {
+    if (value && value !== (defaultParams as any)[key]) {
       queryObject[key] = value
     }
   }
