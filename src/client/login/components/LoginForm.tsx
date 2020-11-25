@@ -1,17 +1,26 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent } from 'react'
 import classNames from 'classnames'
-import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import i18next from 'i18next'
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
-import { loginFormVariants } from '../../app/util/types'
+import { loginFormVariants, VariantType } from '../../app/util/types'
 import loginActions from '../actions'
 import TextButton from '../widgets/TextButton'
 import { GAEvent, GAPageView } from '../../app/util/ga'
 
-const mapDispatchToProps = (dispatch) => ({
-  getOTPEmail: (value) => dispatch(loginActions.getOTPEmail(value)),
-})
+type LoginFormProps = {
+  id: string,
+  placeholder: string,
+  buttonMessage: string,
+  hidden: boolean,
+  variant: VariantType,
+  autoComplete: string,
+  isEmailView?: boolean,
+  onChange: (email: string) => {},
+  textError: () => boolean,
+  textErrorMessage: () => string,
+  submit: () => {},
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -46,21 +55,22 @@ const useStyles = makeStyles((theme) =>
 )
 
 // Form object to request for user's email or OTP
-const LoginForm = ({
+const LoginForm : FunctionComponent<LoginFormProps> = ({
   id,
   placeholder,
-  submit,
-  onChange,
   buttonMessage,
-  textError,
-  textErrorMessage,
   hidden,
   variant,
   autoComplete,
   isEmailView,
-  getOTPEmail,
+  onChange,
+  textError,
+  textErrorMessage,
+  submit,
 }) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
+  const getOTPEmail = () => dispatch(loginActions.getOTPEmail())
   const variantMap = loginFormVariants.map[variant]
   return (
     <form
@@ -122,7 +132,6 @@ const LoginForm = ({
           <TextButton
             className={classes.secondaryButton}
             href={i18next.t('general.links.faq')}
-            target="_blank"
           >
             Need help?
           </TextButton>
@@ -132,22 +141,9 @@ const LoginForm = ({
   )
 }
 
-LoginForm.propTypes = {
-  id: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  submit: PropTypes.func.isRequired,
-  buttonMessage: PropTypes.string.isRequired,
-  textError: PropTypes.func.isRequired,
-  textErrorMessage: PropTypes.func.isRequired,
-  hidden: PropTypes.bool.isRequired,
-  onChange: PropTypes.func.isRequired,
-  variant: PropTypes.oneOf(Object.values(loginFormVariants.types)).isRequired,
-  autoComplete: PropTypes.string.isRequired,
-  isEmailView: PropTypes.bool,
-}
-
+// By default the login page should first request for email
 LoginForm.defaultProps = {
   isEmailView: true,
 }
 
-export default connect(null, mapDispatchToProps)(LoginForm)
+export default LoginForm
