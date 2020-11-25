@@ -1,7 +1,7 @@
 export type HomeStatistics = {
-  userCount: number | null
-  linkCount: number | null
-  clickCount: number | null
+  userCount: number
+  linkCount: number
+  clickCount: number
 }
 
 export type LinksToRotate = Array<string>

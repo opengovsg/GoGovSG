@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     titleText: {
-      fontWeight: '500',
+      fontWeight: 500,
     },
     subtitleText: {
       marginTop: theme.spacing(2),
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) =>
     fillColor: {
       display: 'flex',
       flexDirection: 'column',
-      flexGrow: '1',
+      flexGrow: 1,
       backgroundColor: theme.palette.primary.dark,
       maxHeight: '30vw',
       minHeight: '150px',
@@ -157,9 +157,7 @@ const LandingGraphicSliver = () => {
               color="primary"
               size="large"
               onClick={() =>
-                document
-                  .getElementById('landing-bottom')
-                  .scrollIntoView({ behavior: 'smooth' })
+                document.getElementById('landing-bottom')?.scrollIntoView({ behavior: 'smooth' })
               }
             >
               Learn more

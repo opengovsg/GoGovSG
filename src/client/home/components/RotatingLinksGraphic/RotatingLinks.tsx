@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import Typed from 'react-typed'
 
-const RotatingLinks = ({ className, strings, prefix }) => {
+type RotatingLinksType = {
+  className?: string,
+  strings: string[],
+  prefix: string,
+}
+
+const RotatingLinks: FunctionComponent<RotatingLinksType> = ({
+  className='',
+  strings,
+  prefix
+}) => {
   return (
     <main className={className}>
       {prefix}

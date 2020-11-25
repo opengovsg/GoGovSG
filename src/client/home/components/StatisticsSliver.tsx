@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import React, { useEffect, FunctionComponent } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
   Card,
@@ -13,16 +13,7 @@ import {
 import homeActions from '../actions'
 import numberFormatter from '../../app/util/format'
 import StatisticsGraphic from './StatisticsGraphic'
-
-const mapDispatchToProps = (dispatch) => ({
-  loadStats: () => dispatch(homeActions.loadStats()),
-})
-
-const mapStateToProps = (state, ownProps) => ({
-  onCreateUrl: ownProps.onCreateUrl,
-  history: ownProps.history,
-  statistics: state.home.statistics,
-})
+import { GoGovReduxState } from '../../app/reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -79,21 +70,23 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const StatisticsSliver = (props) => {
+const StatisticsSliver: FunctionComponent = () => {
   const classes = useStyles()
-  const { statistics } = props
+  const dispatch  = useDispatch()
+  const loadStats = () => dispatch(homeActions.loadStats())
+  const statistics = useSelector((state: GoGovReduxState) => state.home.statistics)
   const { userCount, linkCount, clickCount } = statistics
+  // ensure number will never be null
   const statisticsToShow = [
-    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount },
-    { label: 'SHORT LINKS CREATED', number: linkCount },
-    { label: 'CLICKS', number: clickCount },
+    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount},
+    { label: 'SHORT LINKS CREATED', number: linkCount},
+    { label: 'CLICKS', number: clickCount},
   ]
 
-  const { loadStats } = props
   // Call once
   useEffect(() => {
     loadStats()
-  }, [loadStats])
+  }, [])
 
   return (
     <>
@@ -144,4 +137,4 @@ const StatisticsSliver = (props) => {
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StatisticsSliver)
+export default StatisticsSliver
