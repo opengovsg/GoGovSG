@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { useEffect, useRef, useState, FunctionComponent } from 'react'
 import { useLocation } from 'react-router-dom'
 import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
 
@@ -12,6 +11,7 @@ import useIsIE from './util/ie'
 import BannerForIE from './BannerForIE'
 import { USER_PAGE } from '../../util/types'
 import Banner from './widgets/Banner'
+import { GoGovReduxState } from '../../reducers/types'
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -41,20 +41,28 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-const BaseLayout = ({
-  withHeader,
-  headerBackgroundType,
-  withFooter,
-  withLowFooter,
+type BaseLayoutProps = {
+  withHeader?: boolean,
+  headerBackgroundType?: string,
+  withFooter?: boolean,
+  withLowFooter?: boolean,
+  hideNavButtons?: boolean,
+}
+
+const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
+  withHeader = true,
+  headerBackgroundType = 'dark',
+  withFooter = true,
+  withLowFooter = true,
   children,
-  hideNavButtons,
+  hideNavButtons = false,
 }) => {
   const classes = useStyles()
   const path = useLocation().pathname
   const isIE = useIsIE()
-  const message = useSelector((state) => state.user.message)
+  const message = useSelector((state: GoGovReduxState) => state.user.message)
 
-  const toStick = isIE || message
+  const toStick = isIE || !!message 
   // To store y-position to trigger useEffect
   const prevScrollY = useRef(0)
   const [isSticky, setIsSticky] = useState(false)
@@ -97,22 +105,6 @@ const BaseLayout = ({
       {withLowFooter && <BaseLayoutLowFooter />}
     </>
   )
-}
-
-BaseLayout.propTypes = {
-  withHeader: PropTypes.bool,
-  headerBackgroundType: PropTypes.string,
-  withFooter: PropTypes.bool,
-  withLowFooter: PropTypes.bool,
-  hideNavButtons: PropTypes.bool,
-}
-
-BaseLayout.defaultProps = {
-  withHeader: true,
-  headerBackgroundType: 'dark',
-  withFooter: true,
-  withLowFooter: true,
-  hideNavButtons: false,
 }
 
 export default BaseLayout

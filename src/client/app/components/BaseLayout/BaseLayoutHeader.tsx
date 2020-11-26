@@ -1,6 +1,5 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React, { FunctionComponent } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   AppBar,
   Button,
@@ -25,6 +24,14 @@ import directoryIcon from './assets/directory-icon.svg'
 import feedbackIcon from './assets/feedback-icon.svg'
 import githubIcon from './assets/github-icon.svg'
 import signinIcon from './assets/signin-icon.svg'
+import { GoGovReduxState } from '../../reducers/types'
+
+type StyleProps = {
+  isLoggedIn: boolean
+  isLightItems: boolean
+  isSticky: boolean
+  toStick: boolean
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -35,11 +42,11 @@ const useStyles = makeStyles((theme) =>
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
       [theme.breakpoints.up('md')]: {
-        paddingTop: (props) =>
+        paddingTop: (props: StyleProps) =>
           props.isLoggedIn ? theme.spacing(2) : theme.spacing(4),
       },
       [theme.breakpoints.up('lg')]: {
-        paddingTop: (props) =>
+        paddingTop: (props: StyleProps) =>
           props.isLoggedIn ? theme.spacing(2) : theme.spacing(6),
       },
     },
@@ -55,15 +62,15 @@ const useStyles = makeStyles((theme) =>
     },
     appBarSignOutBtn: {
       // fill: theme.palette.primary.main,
-      color: (props) => (props.isLightItems ? 'white' : '#384A51'),
+      color: (props: StyleProps) => (props.isLightItems ? 'white' : '#384A51'),
       order: 10,
     },
     appBarSignInBtn: {
       width: '140px',
       minWidth: '90px',
       order: 10,
-      color: (props) => (props.isLightItems ? '#384A51' : 'white'),
-      background: (props) =>
+      color: (props: StyleProps) => (props.isLightItems ? '#384A51' : 'white'),
+      background: (props: StyleProps) =>
         props.isLightItems ? 'white' : theme.palette.primary.main,
     },
     signInIcon: {
@@ -85,7 +92,7 @@ const useStyles = makeStyles((theme) =>
       filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
       // this class is not mobile first by default as padding should not be set
       // when it is not mobile.
-      [theme.breakpoints.down('xm')]: {
+      [theme.breakpoints.down('xs')]: {
         paddingLeft: 0,
         paddingRight: 0,
         minWidth: theme.spacing(6),
@@ -100,22 +107,22 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const mapStateToProps = (state) => ({
-  isLoggedIn: state.login.isLoggedIn,
-})
+type BaseLayoutHeaderProps = {
+  backgroundType: string
+  hideNavButtons?: boolean
+  isSticky: boolean
+  toStick: boolean
+}
 
-const mapDispatchToProps = (dispatch) => ({
-  logout: () => dispatch(loginActions.logout()),
-})
-
-const BaseLayoutHeader = ({
+const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   backgroundType,
-  isLoggedIn,
-  logout,
   hideNavButtons,
   isSticky,
   toStick,
 }) => {
+  const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
+  const dispatch = useDispatch()
+  const logout = () => dispatch(loginActions.logout())
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
   const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
@@ -155,7 +162,7 @@ const BaseLayoutHeader = ({
     <Button
       onClick={logout}
       size="large"
-      color={isLightItems ? 'primary' : 'white'}
+      color={isLightItems ? 'primary' : 'secondary'}
       variant="text"
       className={classes.appBarSignOutBtn}
     >
@@ -233,7 +240,7 @@ const BaseLayoutHeader = ({
             headers.map(
               (header) =>
                 (header.public ? !isLoggedIn : isLoggedIn) &&
-                !header.hidden && (
+                (
                   <Button
                     href={
                       header.internalLink ? `/#${header.link}` : header.link
@@ -253,7 +260,6 @@ const BaseLayoutHeader = ({
                     {isMobileVariant && header.icon && (
                       <img src={header.icon} alt={header.text} />
                     )}
-                    {isMobileVariant && header.component}
                     {!isMobileVariant && header.text}
                   </Button>
                 ),
@@ -265,17 +271,9 @@ const BaseLayoutHeader = ({
   )
 }
 
-BaseLayoutHeader.propTypes = {
-  backgroundType: PropTypes.string.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
-  logout: PropTypes.func.isRequired,
-  hideNavButtons: PropTypes.bool,
-  isSticky: PropTypes.bool,
-}
-
 BaseLayoutHeader.defaultProps = {
   hideNavButtons: false,
   isSticky: false,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BaseLayoutHeader)
+export default BaseLayoutHeader

@@ -1,5 +1,4 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 import BaseLayout from '../../BaseLayout'
@@ -13,7 +12,15 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const NotFoundPage = ({ match }) => {
+type NotFoundPageProps = {
+  match: {
+    params: {
+      shortUrl: boolean
+    }
+  }
+}
+
+const NotFoundPage: FunctionComponent<NotFoundPageProps> = ({ match }) => {
   const classes = useStyles()
   const { params } = match
   const { shortUrl } = params
@@ -56,8 +63,4 @@ const NotFoundPage = ({ match }) => {
   )
 }
 
-NotFoundPage.propTypes = {
-  classes: PropTypes.shape({}).isRequired,
-  match: PropTypes.shape({}).isRequired,
-}
 export default NotFoundPage

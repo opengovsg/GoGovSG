@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { Grid, IconButton, createStyles, makeStyles } from '@material-ui/core'
 import arrowLeftIcon from '../../../assets/icons/arrow-left-icon.svg'
 import arrowRightIcon from '../../../assets/icons/arrow-right-icon.svg'
@@ -40,7 +40,14 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-export default ({
+type PaginationActionComponentProp = {
+  pageCount: number 
+  onChangePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void
+  page: number
+  disablePagination?: boolean
+}
+
+const PaginationActionComponent: FunctionComponent<PaginationActionComponentProp> = ({
   pageCount,
   onChangePage,
   page,
@@ -80,3 +87,5 @@ export default ({
     </Grid>
   )
 }
+
+export default PaginationActionComponent
