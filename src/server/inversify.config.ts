@@ -13,9 +13,7 @@ import {
 } from './config'
 
 import { container } from './util/inversify'
-import GaLoggerService from './services/GaLoggerService'
 import { DependencyIds } from './constants'
-import { CookieArrayReducerService } from './services/CookieArrayReducerService'
 import { OtpRepository } from './repositories/OtpRepository'
 import { MailerNode } from './services/email'
 import { CryptographyBcrypt } from './services/cryptography'
@@ -27,10 +25,14 @@ import { UserRepository } from './repositories/UserRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
-import { RedirectService } from './services/RedirectService'
-import { RedirectController } from './controllers/RedirectController'
+import {
+  AnalyticsLoggerService,
+  CookieArrayReducerService,
+  CrawlerCheckService,
+  RedirectService,
+} from './modules/redirect/services'
+import { RedirectController } from './modules/redirect'
 import { GaController } from './controllers/GaController'
-import { CrawlerCheckService } from './services/CrawlerCheckService'
 import { StatisticsRepository } from './repositories/StatisticsRepository'
 import { StatisticsService } from './services/StatisticsService'
 import { StatisticsController } from './controllers/StatisticsController'
@@ -42,9 +44,7 @@ import { LogoutController } from './controllers/LogoutController'
 import { UrlManagementService } from './services/UrlManagementService'
 import { UserController } from './controllers/UserController'
 import { QrCodeService } from './services/QrCodeService'
-import { SearchController } from './controllers/SearchController'
 import { DirectoryController } from './controllers/DirectoryController'
-import { UrlSearchService } from './services/UrlSearchService'
 import { DirectorySearchService } from './services/DirectorySearchService'
 import { LinkStatisticsController } from './controllers/LinkStatisticsController'
 import { LinkStatisticsService } from './services/LinkStatisticsService'
@@ -82,7 +82,7 @@ export default () => {
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
-  bindIfUnbound(DependencyIds.analyticsLoggerService, GaLoggerService)
+  bindIfUnbound(DependencyIds.analyticsLoggerService, AnalyticsLoggerService)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducerService)
   bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
@@ -102,8 +102,6 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
-  bindIfUnbound(DependencyIds.searchController, SearchController)
-  bindIfUnbound(DependencyIds.urlSearchService, UrlSearchService)
   bindIfUnbound(DependencyIds.directorySearchService, DirectorySearchService)
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)

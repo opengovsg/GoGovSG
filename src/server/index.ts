@@ -42,8 +42,8 @@ import getIp from './util/request'
 import { container } from './util/inversify'
 import { DependencyIds } from './constants'
 import { Mailer } from './services/email'
-import { RedirectControllerInterface } from './controllers/interfaces/RedirectControllerInterface'
 import parseDomain from './util/domain'
+import { RedirectController } from './modules/redirect'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -176,9 +176,10 @@ initDb()
     // Log http requests
     app.use(morgan(MORGAN_LOG_FORMAT))
 
-    const redirectController = container.get<RedirectControllerInterface>(
+    const redirectController = container.get<RedirectController>(
       DependencyIds.redirectController,
     )
+
     // API configuration
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
     app.get(

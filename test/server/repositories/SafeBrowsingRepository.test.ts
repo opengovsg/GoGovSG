@@ -20,7 +20,7 @@ const matches = [
 
 describe('otp repository redis test', () => {
   beforeEach(async () => {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       redisMockClient.flushall(() => resolve())
     })
     setSpy.mockClear()
