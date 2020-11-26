@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 type SectionProps = {
-  backgroundType: string,
+  backgroundType?: string,
   verticalMultiplier?: number,
   topMultiplier?: number,
   bottomMultiplier?: number,
@@ -54,7 +54,7 @@ type SectionProps = {
 
 const Section: FunctionComponent<SectionProps> = ({
   children,
-  backgroundType,
+  backgroundType = '',
   verticalMultiplier = 1,
   topMultiplier = 1,
   bottomMultiplier = 1,
