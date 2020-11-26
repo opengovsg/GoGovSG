@@ -27,9 +27,10 @@ import {
   USER_PAGE,
 } from '../../../util/types'
 import theme from '../../../theme'
+import { Store } from 'redux'
 
 type RootProps = {
-  store: any
+  store: Store
 }
 
 const Root: FunctionComponent<RootProps> = ({ store }) => (

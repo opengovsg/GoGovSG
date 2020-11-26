@@ -62,7 +62,7 @@ const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
   const isIE = useIsIE()
   const message = useSelector((state: GoGovReduxState) => state.user.message)
 
-  const toStick = isIE || (message? true : false) 
+  const toStick = isIE || !!message 
   // To store y-position to trigger useEffect
   const prevScrollY = useRef(0)
   const [isSticky, setIsSticky] = useState(false)
