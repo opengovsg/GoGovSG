@@ -1,14 +1,10 @@
 import fetch from 'cross-fetch'
 import { ClientFunction } from 'testcafe'
 
-const downloadsFolder = require('downloads-folder')
-
-export const testEmail = 'testcafe1@open.gov.sg'
-// export const downloadPath = '/Downloads/'
-export const downloadPath = downloadsFolder()
+export const testEmail = 'testcafe@open.gov.sg'
 
 // transferEmail must exist in database
-export const transferEmail = 'transfer1@open.gov.sg'
+export const transferEmail = 'transfer@open.gov.sg'
 
 export const getRootLocation = () => {
   return 'http://localhost:3000'

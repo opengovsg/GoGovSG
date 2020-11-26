@@ -1,12 +1,8 @@
-// Just for this file
-declare let require: any
-
 import { Selector } from 'testcafe'
-import { downloadPath, getOtp, getRootLocation, testEmail } from './util/config'
+import { getOtp, getRootLocation, testEmail } from './util/config'
 import {
   createLinkButton,
   createUrlModal,
-  downloadLinkButton,
   fileTab,
   generateUrlImage,
   loginButton,
@@ -23,8 +19,6 @@ import {
   userModalCloseButton,
   validationError,
 } from './util/helpers'
-
-const fs = require('fs')
 
 const location = getRootLocation()
 
@@ -142,7 +136,6 @@ test('The URL searching and download test.', async (t) => {
   /*
    * Searching on the user page search bar shows links that are relevant to the search term.
    */
-  console.log('download path', downloadPath)
   await t
     // Login Procedure
     .click(loginButton)
