@@ -6,7 +6,7 @@ import { otpGenerationSchema, otpVerificationSchema } from './validators'
 import { container } from '../../util/inversify'
 import { LoginControllerInterface } from '../../controllers/interfaces/LoginControllerInterface'
 import { DependencyIds } from '../../constants'
-import { logger } from '../../config'
+import { logger, otpRateLimit } from '../../config'
 
 const router: Express.Router = Express.Router()
 
@@ -26,7 +26,7 @@ const apiOtpGeneratorLimiter = rateLimit({
       `Rate limit (generating OTP) reached for IP Address: ${getIp(req)}`,
     ),
   windowMs: 60000, // 1 minute
-  max: 10,
+  max: otpRateLimit,
 })
 
 /**

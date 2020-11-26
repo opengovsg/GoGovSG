@@ -47,4 +47,5 @@ jest.mock('../../src/server/config', () => ({
   searchShortUrlWeight: 1,
   searchDescriptionWeight: 0.4,
   gaTrackingId: 'UA-000000-2',
+  otpRateLimit: 10,
 }))
