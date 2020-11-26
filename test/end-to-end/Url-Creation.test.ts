@@ -141,7 +141,6 @@ test('The file shortlink based.', async (t) => {
 test('The URL searching and download test.', async (t) => {
   /*
    * Searching on the user page search bar shows links that are relevant to the search term.
-   *  Clicking on the download button downloads all link currently shown in the links table as a .csv file.
    */
   console.log('download path', downloadPath)
   await t
@@ -180,20 +179,6 @@ test('The URL searching and download test.', async (t) => {
     // eslint-disable-next-line
     .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
     .eql(`/${generatedUrlActive}-search`)
-
-  // Delete file beforehand if exists
-  const exists = await fs.existsSync(`${downloadPath}/urls.csv`)
-  if (exists) {
-    await fs.unlinkSync(`${downloadPath}/urls.csv`)
-  }
-  console.log('deleted previous file')
-  await t.click(downloadLinkButton).wait(3000)
-
-  const downloaded = await fs.existsSync(`${downloadPath}/urls.csv`)
-  await t.expect(downloaded).eql(true)
-
-  // Clear file
-  await fs.unlinkSync(`${downloadPath}/urls.csv`)
 })
 
 /*
@@ -201,4 +186,5 @@ test('The URL searching and download test.', async (t) => {
  * It should show an error below the file input when a file larger than 10MB is chosen
  * It should disable the submit button when a file larger than 10MB is chosen
  * It should prevent uploading when a malicious file is submitted
+ * Clicking on the download button downloads all link currently shown in the links table as a .csv file.
  */
