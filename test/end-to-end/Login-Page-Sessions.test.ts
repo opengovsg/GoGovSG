@@ -6,6 +6,12 @@ import {
   getRootLocation,
   testEmail,
 } from './util/config'
+import {
+  emailHelperText,
+  loginButton,
+  resendOtpButton,
+  signInButton,
+} from './util/helpers'
 
 const location = getRootLocation()
 const getLocation = ClientFunction(() => document.location.href)
@@ -14,52 +20,30 @@ const getLocation = ClientFunction(() => document.location.href)
 fixture(`Login Page`).page(`${location}`)
 
 test('Invalid Email that does not end with .gov.sg and should not allow submission', async (t) => {
-  /*
-   * It should respond with invalid email when email does not end with .gov.sg
-   * It should not allow submission when email is invalid
-   */
-
-  const loginButton = Selector('span').withText('Sign in')
-  const signInButton = Selector('button[type="submit"]')
-  const emailHelperText = Selector('#email-helper-text')
-
   await t
     .click(loginButton)
     .typeText('#email', `testcafe@hotmail.com`)
+    // It should respond with invalid email when email does not end with .gov.sg
     .expect(emailHelperText.innerText)
     .eql("This doesn't look like a valid gov.sg email.")
+    // It should not allow submission when email is invalid
     .expect(signInButton.nth(0).hasAttribute('disabled'))
     .ok()
 })
 
 test('Invalid OTP should not log the user in', async (t) => {
-  /*
-   * Invalid OTP should not log the user in
-   */
-
-  const loginButton = Selector('span').withText('Sign in')
-  // there are 2 sign in buttons at the same time!
-  const signInButton = Selector('button[type="submit"]')
-
   await t
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
     .click(signInButton.nth(0))
     .typeText('#otp', '222222')
     .click(signInButton.nth(1))
+    // Invalid OTP should not log the user in
     .expect(Selector('div[role="alert"]').exists)
     .ok()
 })
 
 test('After trying to enter wrong OTP 3 times, it should respond with OTP not found/expired (a new OTP must be requested)', async (t) => {
-  /*
-   * After trying to enter wrong OTP 3 times, it should respond with OTP not found/expired (a new OTP must be requested)
-   */
-
-  const loginButton = Selector('span').withText('Sign in')
-  // there are 2 sign in buttons at the same time!
-  const signInButton = Selector('button[type="submit"]')
-
   await t
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
@@ -69,6 +53,7 @@ test('After trying to enter wrong OTP 3 times, it should respond with OTP not fo
     .click(signInButton.nth(1))
     .click(signInButton.nth(1))
     .click(signInButton.nth(1))
+    // After trying to enter wrong OTP 3 times, it should respond with OTP not found/expired (a new OTP must be requested)
     .expect(Selector('div[role="alert"]').child(0).innerText)
     .eql('OTP expired/not found.')
 })
@@ -76,28 +61,14 @@ test('After trying to enter wrong OTP 3 times, it should respond with OTP not fo
 test.page(`${location}/#/user`)(
   'Visiting/user should redirect to login page when not logged in',
   async (t) => {
-    /*
-     * Visiting /user should redirect to login page when not logged in
-     */
-
-    const currLocation = ClientFunction(() => document.location.href)
-
-    await t.expect(currLocation()).match(/login/)
+    // Visiting /user should redirect to login page when not logged in
+    await t.expect(getLocation()).match(/login/)
   },
 )
 
 test('Valid OTP should log the user in', async (t) => {
-  /*
-   * Valid OTP should log the user in
-   * Shows the homepage if user does not have an existing session
-   * Redirects to /user if user has an existing session (ie logged in previously on the same browser)
-   */
-
-  const loginButton = Selector('span').withText('Sign in')
-  const signInButton = Selector('button[type="submit"]')
-
+  // Shows the homepage if user does not have an existing session
   await t
-    // Login Procedure
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
     .click(signInButton.nth(0))
@@ -107,24 +78,16 @@ test('Valid OTP should log the user in', async (t) => {
   await t
     .typeText('#otp', otp)
     .click(signInButton.nth(1))
+    // Valid OTP should log the user in
     .expect(getLocation())
     .match(/user/)
 
+  // // Redirects to /user if user has an existing session (ie logged in previously on the same browser)
   await t.navigateTo(`${location}`).expect(getLocation()).match(/user/)
 })
 
 test('Resent OTP should log the user in', async (t) => {
-  /*
-   * OTP email should contain requestor's IP address
-   * Resend OTP should send a new OTP to user, and invalidate previous OTP
-   */
-
-  const loginButton = Selector('span').withText('Sign in')
-  const signInButton = Selector('button[type="submit"]')
-  const resendOtpButton = Selector('span').withText('Resend OTP').parent()
-
   await t
-    // Login Procedure
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
     .click(signInButton.nth(0))
@@ -149,3 +112,8 @@ test('Resent OTP should log the user in', async (t) => {
 
   await t.expect(emailIp).eql(myIp)
 })
+
+/*
+ * Unable to test the following
+ * Resend OTP should send a new OTP to user, and invalidate previous OTP
+ */

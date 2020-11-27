@@ -15,6 +15,10 @@ export const longUrlTextField = Selector('input[placeholder="Enter URL"]')
 export const getLocation = ClientFunction(() => document.location.href)
 export const signOutButton = Selector('strong').withText('Sign out').parent()
 
+// Login Page
+export const emailHelperText = Selector('#email-helper-text')
+export const resendOtpButton = Selector('span').withText('Resend OTP').parent()
+
 // Search Page
 export const searchTextField = Selector(
   'input[placeholder="Search all go.gov.sg links"]',

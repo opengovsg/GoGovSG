@@ -1,53 +1,29 @@
 import { ClientFunction } from 'testcafe'
-import { getOtp, getRootLocation, testEmail } from './util/config'
+import { getRootLocation } from './util/config'
 import {
   createLinkButton,
   generateUrlImage,
-  loginButton,
-  loginSuccessAlert,
   longUrlTextField,
   shortUrlTextField,
-  signInButton,
   skipButton,
-  userModal,
-  userModalCloseButton,
 } from './util/helpers'
+import LoginProcedure from './util/Login-Procedure'
 
 const location = getRootLocation()
 const getLocation = ClientFunction(() => document.location.href)
 
 // eslint-disable-next-line no-undef
-fixture(`Transition Page`).page(`${location}`)
+fixture(`Transition Page`)
+  .page(`${location}`)
+  .beforeEach(async (t) => {
+    await LoginProcedure(t)
+  })
 
 test('Transition Page test.', async (t) => {
-  // Testcafe always bypass staging transition page, solution not found yet
-  /*
-   * Drawer should open with the correct long url and state when a short url row is clicked
-   */
-  await t
-    // Login Procedure
-    .click(loginButton)
-    .typeText('#email', `${testEmail}`)
-    .click(signInButton.nth(0))
-
-  const otp = await getOtp()
-
-  await t
-    .typeText('#otp', otp)
-    .click(signInButton.nth(1))
-    .click(loginSuccessAlert)
-
-  // Close announcement modal
-  if (await userModal.exists) {
-    await t.click(userModalCloseButton)
-  }
-  // create link procedure - generate short url - 1
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
-  // Assign the newly generated shortUrl to a selector to cross-check on the table
   const generatedUrlActive = await shortUrlTextField.value
 
-  // create link procedure - create the link
   await t
     .typeText(shortUrlTextField, '-redirect')
     .typeText(longUrlTextField, 'google.com')

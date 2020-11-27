@@ -1,64 +1,40 @@
 import { Selector } from 'testcafe'
-import { getOtp, getRootLocation, testEmail } from './util/config'
+import { getRootLocation } from './util/config'
 import {
   createLinkButton,
   drawer,
   fileTab,
   generateUrlImage,
-  loginButton,
-  loginSuccessAlert,
+  longUrl,
   longUrlTextField,
   shortUrlTextField,
-  signInButton,
   uploadFile,
-  userModal,
-  userModalCloseButton,
 } from './util/helpers'
+import LoginProcedure from './util/Login-Procedure'
 
 const location = getRootLocation()
 
 // eslint-disable-next-line no-undef
-fixture(`User Page`).page(`${location}`)
+fixture(`User Page`)
+  .page(`${location}`)
+  .beforeEach(async (t) => {
+    await LoginProcedure(t)
+  })
 
 test('User Page test.', async (t) => {
-  /*
-   * Drawer should open with the correct long url and state when a short url row is clicked
-   */
-
-  await t
-    // Login Procedure
-    .click(loginButton)
-    .typeText('#email', `${testEmail}`)
-    .click(signInButton.nth(0))
-
-  const otp = await getOtp()
-
-  await t
-    .typeText('#otp', otp)
-    .click(signInButton.nth(1))
-    .click(loginSuccessAlert)
-
-  // Close announcement modal
-  if (await userModal.exists) {
-    await t.click(userModalCloseButton)
-  }
-  // create link procedure - generate short url - 1
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   // Save short url 1 - active link
   const generatedUrlActive = await shortUrlTextField.value
 
-  // create link procedure - proceed to create the link
   await t.typeText(longUrlTextField, 'google.com')
 
-  // if it is the first link to be created, need to click on index 1 button
   if (await createLinkButton.nth(2).exists) {
     await t.click(createLinkButton.nth(2))
   } else {
     await t.click(createLinkButton.nth(1))
   }
 
-  // create link procedure - generate short url - 2
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   // Save short url 2 - inactive link
@@ -66,21 +42,23 @@ test('User Page test.', async (t) => {
   const linkRowInactive = Selector(`h6[title="${generatedUrlInactive}"]`)
   const activeSwitch = Selector('input[type="checkbox"]')
 
-  // create link procedure - proceed to create the link
   await t
     .typeText(longUrlTextField, 'google.com')
     .click(createLinkButton.nth(2))
     .click(linkRowInactive)
+    .expect(longUrl.value)
+    // Drawer should open with the correct long url and state when a short url row is clicked
+    .eql('google.com')
+
+  await t
     .click(activeSwitch)
     .click(drawer.child(2).child('main').child('button'))
 
-  // create link procedure - generate short url - 3
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   // Save short url 3 - file link
   const generatedUrlFile = await shortUrlTextField.value
 
-  // create link procedure - proceed to create the link
   await t
     .click(fileTab)
     .setFilesToUpload(uploadFile, './util/dummyFile.txt')
