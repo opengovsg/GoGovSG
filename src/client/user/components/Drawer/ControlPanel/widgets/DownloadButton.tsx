@@ -5,13 +5,17 @@ import {
   Menu,
   MenuItem,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 import FileSaver from 'file-saver'
+
 
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
+import ConfigOption, { TrailingPosition } from '../../../../widgets/ConfigOption'
 import { get } from '../../../../../app/util/requests'
 import { GAEvent } from '../../../../../app/util/ga'
 import * as Sentry from '@sentry/browser'
@@ -77,6 +81,9 @@ const useStyles = makeStyles(() =>
     menuItemRoot: {
       height: '50%',
     },
+    regularText: {
+      fontWeight: 400,
+    },
   }),
 )
 
@@ -86,6 +93,8 @@ type Option = {
 }
 
 export default function DownloadButton() {
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const classes = useStyles()
   const modalState = useDrawerState()
   const shortLink = modalState.relevantShortLink!
@@ -116,7 +125,7 @@ export default function DownloadButton() {
     },
   ]
 
-  return (
+  const button = (
     <>
       <TrailingButton onClick={handleClick} variant="outlined">
         <div className={classes.textDiv}>Download</div>
@@ -157,5 +166,15 @@ export default function DownloadButton() {
         })}
       </Menu>
     </>
+  )
+
+  return (
+    <ConfigOption
+      title="Download QR Code"
+      titleVariant="h6"
+      titleClassName={isMobileView ? classes.regularText : ''}
+      trailing={{button}}
+      trailingPosition={TrailingPosition.end}
+    />
   )
 }

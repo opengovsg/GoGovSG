@@ -305,13 +305,7 @@ export default function ControlPanel() {
             }
             trailingPosition={TrailingPosition.center}
           />
-          <ConfigOption
-            title="Download QR Code"
-            titleVariant="h6"
-            titleClassName={isMobileView ? classes.regularText : ''}
-            trailing={<DownloadButton />}
-            trailingPosition={TrailingPosition.end}
-          />
+          <DownloadButton />
           <Hidden smDown>
             <div className={classes.textFieldsTopSpacer} />
           </Hidden>
