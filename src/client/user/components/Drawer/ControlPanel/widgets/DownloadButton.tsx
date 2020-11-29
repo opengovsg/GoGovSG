@@ -10,7 +10,6 @@ import {
 } from '@material-ui/core'
 import FileSaver from 'file-saver'
 
-
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
