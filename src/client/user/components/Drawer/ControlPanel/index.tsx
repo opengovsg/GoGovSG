@@ -23,11 +23,11 @@ import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from '../../../widgets/ConfigOption'
 import PrefixableTextField from '../../../widgets/PrefixableTextField'
 import TrailingButton from './widgets/TrailingButton'
-import GoSwitch from '../../../widgets/GoSwitch'
 import useShortLink from './util/shortlink'
 import { removeHttpsProtocol } from '../../../../app/util/url'
 import { isValidLongUrl } from '../../../../../shared/util/validation'
 import DownloadButton from './widgets/DownloadButton'
+import LinkStateText from './widgets/LinkStateText'
 import helpIcon from '../../../../app/assets/help-icon.svg'
 import FileInputField from '../../../widgets/FileInputField'
 import CollapsibleMessage from '../../../../app/components/CollapsibleMessage'
@@ -87,12 +87,6 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 50,
       },
     },
-    activeText: {
-      color: '#6d9067',
-    },
-    inactiveText: {
-      color: '#c85151',
-    },
     regularText: {
       fontWeight: 400,
     },
@@ -120,9 +114,6 @@ const useStyles = makeStyles((theme) =>
     },
     textFieldsTopSpacer: {
       height: theme.spacing(1),
-    },
-    stateSwitch: {
-      marginBottom: theme.spacing(2),
     },
     originalFileLabel: {
       marginBottom: theme.spacing(1),
@@ -217,20 +208,6 @@ export default function ControlPanel() {
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
 
-  const stateTitleActive = (
-    <>
-      Your link is <span className={classes.activeText}>active</span> and
-      publicly accessible
-    </>
-  )
-
-  const stateTitleInactive = (
-    <>
-      Your link is <span className={classes.inactiveText}>inactive</span> and
-      not publicly accessible
-    </>
-  )
-
   const linkOwnershipHelp = (
     <>
       Link owner{' '}
@@ -287,24 +264,7 @@ export default function ControlPanel() {
         </IconButton>
         <DrawerMargin>
           <DrawerHeader />
-          <ConfigOption
-            title={
-              shortLinkState?.state === 'ACTIVE'
-                ? stateTitleActive
-                : stateTitleInactive
-            }
-            titleVariant="h6"
-            titleClassName={isMobileView ? classes.regularText : ''}
-            trailing={
-              <GoSwitch
-                color="primary"
-                checked={shortLinkState?.state === 'ACTIVE'}
-                onChange={shortLinkDispatch?.toggleStatus}
-                className={classes.stateSwitch}
-              />
-            }
-            trailingPosition={TrailingPosition.center}
-          />
+          <LinkStateText />
           <DownloadButton />
           <Hidden smDown>
             <div className={classes.textFieldsTopSpacer} />
@@ -438,9 +398,9 @@ export default function ControlPanel() {
           <div className={classes.inactiveDesc}>
           <Divider className={classes.dividerInformation} />
           <LinkInfoEditor
-            contactEmail={editedContactEmail} 
+            contactEmail={editedContactEmail}
             description={editedDescription}
-            onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)} 
+            onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)}
             onDescriptionChange={(event) =>
               shortLinkDispatch?.setEditDescription(
                 event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
