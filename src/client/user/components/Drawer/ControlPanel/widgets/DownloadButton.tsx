@@ -173,7 +173,7 @@ export default function DownloadButton() {
       title="Download QR Code"
       titleVariant="h6"
       titleClassName={isMobileView ? classes.regularText : ''}
-      trailing={{button}}
+      trailing={button}
       trailingPosition={TrailingPosition.end}
     />
   )
