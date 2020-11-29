@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Drawer,
   createStyles,
@@ -22,21 +22,22 @@ import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from '../../../widgets/ConfigOption'
 import PrefixableTextField from '../../../widgets/PrefixableTextField'
-import TrailingButton from './widgets/TrailingButton'
 import useShortLink from './util/shortlink'
 import { removeHttpsProtocol } from '../../../../app/util/url'
 import { isValidLongUrl } from '../../../../../shared/util/validation'
+import FileInputField from '../../../widgets/FileInputField'
+import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
+import LinkOwnershipField from './widgets/LinkOwnershipField'
+import TrailingButton from './widgets/TrailingButton'
 import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import helpIcon from '../../../../app/assets/help-icon.svg'
-import FileInputField from '../../../widgets/FileInputField'
 import CollapsibleMessage from '../../../../app/components/CollapsibleMessage'
 import {
   CollapsibleMessageType,
   CollapsibleMessagePosition,
 } from '../../../../app/components/CollapsibleMessage/types'
 import { SEARCH_PAGE } from '../../../../app/util/types'
-import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
 import inProgressGraphic from './assets/in-progress.svg'
 
 const useStyles = makeStyles((theme) =>
@@ -144,7 +145,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     inactiveDesc: {
-      display: 'none'
+      display: 'none',
     },
     customInformationHeader: {
       marginRight: theme.spacing(2),
@@ -192,7 +193,6 @@ export default function ControlPanel() {
   const editedLongUrl = shortLinkState?.editedLongUrl || ''
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
   const editedDescription = shortLinkState?.editedDescription || ''
-  const [pendingOwner, setPendingOwner] = useState<string>('')
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
 
@@ -204,28 +204,8 @@ export default function ControlPanel() {
     shortLinkDispatch?.setEditLongUrl(originalLongUrl)
     shortLinkDispatch?.setEditDescription(originalDescription)
     shortLinkDispatch?.setEditContactEmail(originalContactEmail)
-    setPendingOwner('')
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
-
-  const linkOwnershipHelp = (
-    <>
-      Link owner{' '}
-      <Tooltip
-        title="Links can only be transferred to an existing Go.gov.sg user"
-        arrow
-        placement="top"
-        classes={{ tooltip: classes.drawerTooltip }}
-      >
-        <img
-          className={classes.ownershipHelpIcon}
-          src={helpIcon}
-          alt="Ownership help"
-          draggable={false}
-        />
-      </Tooltip>
-    </>
-  )
 
   const replaceFileHelp = (
     <div className={classes.originalFileLabel}>
@@ -368,33 +348,7 @@ export default function ControlPanel() {
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
-          <ConfigOption
-            title={linkOwnershipHelp}
-            titleVariant="body2"
-            titleClassName={classes.regularText}
-            leading={
-              <PrefixableTextField
-                value={pendingOwner}
-                onChange={(event) => setPendingOwner(event.target.value)}
-                placeholder="Email of link recipient"
-                helperText={' '}
-              />
-            }
-            trailing={
-              <TrailingButton
-                onClick={() => {
-                  shortLinkDispatch?.applyNewOwner(pendingOwner, handleClose)
-                }}
-                disabled={!pendingOwner}
-                variant={isMobileView ? 'contained' : 'outlined'}
-                fullWidth={isMobileView}
-              >
-                Transfer
-              </TrailingButton>
-            }
-            wrapTrailing={isMobileView}
-            trailingPosition={TrailingPosition.end}
-          />
+          <LinkOwnershipField closeModal={handleClose} />
           <div className={classes.inactiveDesc}>
           <Divider className={classes.dividerInformation} />
           <LinkInfoEditor
