@@ -6,7 +6,6 @@ import {
   Hidden,
   Divider,
   IconButton,
-  Tooltip,
   useTheme,
   useMediaQuery,
   CircularProgress,
@@ -28,10 +27,10 @@ import { isValidLongUrl } from '../../../../../shared/util/validation'
 import FileInputField from '../../../widgets/FileInputField'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
 import LinkOwnershipField from './widgets/LinkOwnershipField'
+import DrawerTooltip from './widgets/DrawerTooltip'
 import TrailingButton from './widgets/TrailingButton'
 import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
-import helpIcon from '../../../../app/assets/help-icon.svg'
 import CollapsibleMessage from '../../../../app/components/CollapsibleMessage'
 import {
   CollapsibleMessageType,
@@ -90,19 +89,6 @@ const useStyles = makeStyles((theme) =>
     },
     regularText: {
       fontWeight: 400,
-    },
-    ownershipHelpIcon: {
-      width: '14px',
-      verticalAlign: 'middle',
-    },
-    drawerTooltip: {
-      // margin: theme.spacing(1.5, 1, 1.5, 1),
-      whiteSpace: 'nowrap',
-      maxWidth: 'unset',
-      [theme.breakpoints.up('md')]: {
-        marginTop: '-12px',
-        padding: '16px',
-      },
     },
     topBar: {
       width: '100%',
@@ -210,19 +196,12 @@ export default function ControlPanel() {
   const replaceFileHelp = (
     <div className={classes.originalFileLabel}>
       Original file{' '}
-      <Tooltip
-        title="Original file will be replaced after you select file. Maximum file size is 10mb."
-        arrow
-        placement="top"
-        classes={{ tooltip: classes.drawerTooltip }}
-      >
-        <img
-          className={classes.ownershipHelpIcon}
-          src={helpIcon}
-          alt="Replace file help"
-          draggable={false}
-        />
-      </Tooltip>
+      <DrawerTooltip
+        title={
+          'Original file will be replaced after you select file. Maximum file size is 10mb.'
+        }
+        imageAltText={'Replace file help'}
+      />
     </div>
   )
 
