@@ -45,7 +45,6 @@ test('User Page test.', async (t) => {
     .click(createLinkButton.nth(2))
     .click(linkRowInactive)
     .expect(longUrl.value)
-    // Drawer should open with the correct long url and state when a short url row is clicked
     .eql(`${shortUrl}`)
 
   await t
@@ -97,7 +96,6 @@ test('User Page test.', async (t) => {
     .notEql('0px')
 
   // Links should be sorted by their created time in descending order when enabling sort by Date of creation and clicking apply
-  // First is File link , second is inactive link, third is active link
   await t
     .click(dateOfCreationButton)
     .click(applyButton)
@@ -113,8 +111,6 @@ test('User Page test.', async (t) => {
 
   // Inactive links should be filtered out by checking only Active and clicking apply
   // Panel should be closed when apply is clicked
-  // checks with date of creation
-  // No more inactive link
   await t
     .click(filterPanelButton)
     .click(activeButton)
@@ -127,8 +123,6 @@ test('User Page test.', async (t) => {
 
   // Active links should be filtered out by checking only Inactive and clicking apply
   // Panel should be closed and links sorted by created time with no filtering after clicking on reset. All links and files should be visible.
-  // checks with date of creation
-  // Shows inactive link
   await t
     .click(filterPanelButton)
     .click(resetButton) // resets
@@ -140,8 +134,6 @@ test('User Page test.', async (t) => {
     .eql(`/${generatedUrlInactive}`)
 
   // File links should be filtered out by checking only Link and clicking apply
-  // checks with date of creation
-  // No more file link
   await t
     .click(filterPanelButton)
     .click(resetButton) // resets
@@ -153,8 +145,6 @@ test('User Page test.', async (t) => {
     .notEql(`/${generatedUrlFile}`)
 
   // Non-file links should be filtered out by checking only File and clicking apply
-  // checks with date of creation
-  // Shows file link
   await t
     .click(filterPanelButton)
     .click(resetButton) // resets

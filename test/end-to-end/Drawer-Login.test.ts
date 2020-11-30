@@ -156,6 +156,7 @@ test.before(async (t) => {
     // Successful link transfers closes the drawer.
     .expect(drawer.exists)
     .notOk()
+    // It should show a success snackbar when link is transferred to another user.
     .expect(successSnackBar.exists)
     .ok()
 
