@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react'
 
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { loginFormVariants, VariantType } from '../../app/util/types'
-import { GAEvent, GAPageView } from '../../app/util/ga'
 
 type LoginFormProps = {
   id: string,
@@ -11,11 +10,10 @@ type LoginFormProps = {
   hidden: boolean,
   variant: VariantType,
   autoComplete: string,
-  isEmailView?: boolean,
   onChange: (email: string) => {},
   textError: () => boolean,
   textErrorMessage: () => string,
-  submit: () => {},
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
 }
 
 const useStyles = makeStyles((theme) =>
@@ -48,26 +46,17 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
   hidden,
   variant,
   autoComplete,
-  isEmailView,
   onChange,
   textError,
   textErrorMessage,
-  submit,
+  onSubmit,
   children,
 }) => {
   const classes = useStyles()
   const variantMap = loginFormVariants.map[variant]
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        submit()
-        // Google Analytics: OTP page, Transition from email > OTP page
-        if (isEmailView) {
-          GAPageView('OTP LOGIN PAGE')
-          GAEvent('login page', 'otp', 'successful')
-        }
-      }}
+      onSubmit={onSubmit}
       hidden={hidden}
       autoComplete={autoComplete}
     >
@@ -106,11 +95,6 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
       </section>
     </form>
   )
-}
-
-// By default the login page should first request for email
-LoginForm.defaultProps = {
-  isEmailView: true,
 }
 
 export default LoginForm

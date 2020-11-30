@@ -164,7 +164,12 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
 
     const emailFormAttr = {
       id: 'email',
-      submit: () => dispatch(loginActions.getOTPEmail()),
+      onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        dispatch(loginActions.getOTPEmail())
+        GAPageView('OTP LOGIN PAGE')
+        GAEvent('login page', 'otp', 'successful')
+      },
       placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
       buttonMessage: 'Sign in',
       textError: emailError,
@@ -182,7 +187,10 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
 
     const otpFormAttr = {
       id: 'otp',
-      submit: () => dispatch(loginActions.verifyOTP()),
+      onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        dispatch(loginActions.verifyOTP())
+      },
       titleMessage: 'One time password',
       placeholder: 'e.g. 123456',
       buttonMessage: 'Submit',
