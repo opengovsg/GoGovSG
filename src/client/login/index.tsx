@@ -181,13 +181,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       isEmailView,
     }
 
-    const emailForm = <LoginForm {...emailFormAttr} />
-    const otpForm = <LoginForm {...otpFormAttr} />
-
-    const progressBar = variantMap.progressBarShown ? (
-      <LinearProgress />
-    ) : null
-
     return (
       <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
         <div className={classes.container}>
@@ -223,9 +216,11 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
-                    {emailForm}
-                    {otpForm}
-                    {progressBar}
+                    <LoginForm {...emailFormAttr} />
+                    <LoginForm {...otpFormAttr} />
+                    {variantMap.progressBarShown ? (
+                      <LinearProgress />
+                    ) : null}
                   </span>
                 </section>
               </Section>
