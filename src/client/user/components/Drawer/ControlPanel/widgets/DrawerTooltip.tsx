@@ -6,7 +6,6 @@ import helpIcon from '../../../../../app/assets/help-icon.svg'
 const useStyles = makeStyles((theme) =>
   createStyles({
     drawerTooltip: {
-      // margin: theme.spacing(1.5, 1, 1.5, 1),
       whiteSpace: 'nowrap',
       maxWidth: 'unset',
       [theme.breakpoints.up('md')]: {
