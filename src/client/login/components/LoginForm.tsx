@@ -7,7 +7,6 @@ type LoginFormProps = {
   id: string,
   placeholder: string,
   buttonMessage: string,
-  hidden: boolean,
   variant: VariantType,
   autoComplete: string,
   onChange: (email: string) => {},
@@ -43,7 +42,6 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
   id,
   placeholder,
   buttonMessage,
-  hidden,
   variant,
   autoComplete,
   onChange,
@@ -57,7 +55,6 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
   return (
     <form
       onSubmit={onSubmit}
-      hidden={hidden}
       autoComplete={autoComplete}
     >
       <TextField

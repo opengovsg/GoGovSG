@@ -179,7 +179,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
               'general.emailDomain',
             )} email.`
           : '',
-      hidden: !isEmailView,
       onChange:  (email: string) => dispatch(loginActions.setEmail(email)),
       variant,
       autoComplete: 'on',
@@ -196,7 +195,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       buttonMessage: 'Submit',
       textError: () => false,
       textErrorMessage: () => '',
-      hidden: isEmailView,
       onChange: (otp: string) => dispatch(loginActions.setOTP(otp)),
       variant,
       autoComplete: 'off',
