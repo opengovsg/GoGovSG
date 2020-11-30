@@ -1,5 +1,5 @@
 import { Selector } from 'testcafe'
-import { getRootLocation } from './util/config'
+import { rootLocation, shortUrl } from './util/config'
 import {
   createLinkButton,
   drawer,
@@ -12,11 +12,9 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 
-const location = getRootLocation()
-
 // eslint-disable-next-line no-undef
 fixture(`User Page`)
-  .page(`${location}`)
+  .page(`${rootLocation}`)
   .beforeEach(async (t) => {
     await LoginProcedure(t)
   })
@@ -27,7 +25,7 @@ test('User Page test.', async (t) => {
   // Save short url 1 - active link
   const generatedUrlActive = await shortUrlTextField.value
 
-  await t.typeText(longUrlTextField, 'google.com')
+  await t.typeText(longUrlTextField, `${shortUrl}`)
 
   if (await createLinkButton.nth(2).exists) {
     await t.click(createLinkButton.nth(2))
@@ -43,12 +41,12 @@ test('User Page test.', async (t) => {
   const activeSwitch = Selector('input[type="checkbox"]')
 
   await t
-    .typeText(longUrlTextField, 'google.com')
+    .typeText(longUrlTextField, `${shortUrl}`)
     .click(createLinkButton.nth(2))
     .click(linkRowInactive)
     .expect(longUrl.value)
     // Drawer should open with the correct long url and state when a short url row is clicked
-    .eql('google.com')
+    .eql(`${shortUrl}`)
 
   await t
     .click(activeSwitch)
@@ -174,8 +172,3 @@ test('User Page test.', async (t) => {
     .expect(filterPanel.getStyleProperty('height'))
     .eql('0px')
 })
-
-/*
- * Links should be sorted by their number of clicks in descending order when enabling sort by Most number of visits and clicking apply
- * It should reset the table to page 1 when apply is clicked
- */

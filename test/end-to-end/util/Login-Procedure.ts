@@ -1,4 +1,4 @@
-import { getOtp, testEmail } from './config'
+import { otp, testEmail } from './config'
 import {
   loginButton,
   loginSuccessAlert,
@@ -12,10 +12,6 @@ const loginProcedure = async (t) => {
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
     .click(signInButton.nth(0))
-
-  const otp = await getOtp()
-
-  await t
     .typeText('#otp', otp)
     .click(signInButton.nth(1))
     .click(loginSuccessAlert)

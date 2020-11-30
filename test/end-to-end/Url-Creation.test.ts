@@ -1,5 +1,5 @@
 import { Selector } from 'testcafe'
-import { getRootLocation } from './util/config'
+import { invalidShortUrl, rootLocation, shortUrl } from './util/config'
 import {
   createLinkButton,
   createUrlModal,
@@ -16,11 +16,9 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 
-const location = getRootLocation()
-
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
-  .page(`${location}`)
+  .page(`${rootLocation}`)
   .beforeEach(async (t) => {
     await LoginProcedure(t)
   })
@@ -36,7 +34,7 @@ test('The URL based shortlink test.', async (t) => {
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
 
   // It should prevent creation of short urls pointing to long urls hosted on blacklisted domains
-  await t.typeText(longUrlTextField, 'bit.ly')
+  await t.typeText(longUrlTextField, `${invalidShortUrl}`)
 
   if (await createLinkButton.nth(2).exists) {
     await t.click(createLinkButton.nth(2))
@@ -49,7 +47,7 @@ test('The URL based shortlink test.', async (t) => {
   await t
     .click(longUrlTextField)
     .pressKey('ctrl+a delete')
-    .typeText(longUrlTextField, 'google.com')
+    .typeText(longUrlTextField, `${shortUrl}`)
 
   if (await createLinkButton.nth(2).exists) {
     await t.click(createLinkButton.nth(2))
@@ -97,7 +95,7 @@ test('The URL searching test.', async (t) => {
 
   await t
     .typeText(shortUrlTextField, '-search')
-    .typeText(longUrlTextField, 'google.com')
+    .typeText(longUrlTextField, `${shortUrl}`)
     .click(createLinkButton.nth(2))
 
   await t
@@ -108,11 +106,3 @@ test('The URL searching test.', async (t) => {
     .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
     .eql(`/${generatedUrlActive}-search`)
 })
-
-/*
- * Unable to cover the following:
- * It should show an error below the file input when a file larger than 10MB is chosen
- * It should disable the submit button when a file larger than 10MB is chosen
- * It should prevent uploading when a malicious file is submitted
- * Clicking on the download button downloads all link currently shown in the links table as a .csv file.
- */

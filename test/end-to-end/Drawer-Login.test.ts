@@ -1,7 +1,9 @@
 import { Selector } from 'testcafe'
 import {
-  getOtp,
-  getRootLocation,
+  otp,
+  rootLocation,
+  shortUrl,
+  subUrl,
   testEmail,
   transferEmail,
 } from './util/config'
@@ -17,7 +19,6 @@ import {
   linkErrorSnackBar,
   linkTransferField,
   loginButton,
-  loginSuccessAlert,
   longUrl,
   longUrlTextField,
   shortUrlTextField,
@@ -32,22 +33,20 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 
-const location = getRootLocation()
-
 // eslint-disable-next-line no-undef
 fixture(`Drawer Page`)
-  .page(`${location}`)
+  .page(`${rootLocation}`)
   .beforeEach(async (t) => {
     await LoginProcedure(t)
   })
 
-test('The Drawer functionality test.', async (t) => {
+test('Drawer functionality test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrl = await shortUrlTextField.value
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
 
-  await t.typeText(longUrlTextField, 'google.com')
+  await t.typeText(longUrlTextField, `${shortUrl}`)
 
   if (await createLinkButton.nth(2).exists) {
     await t.click(createLinkButton.nth(2))
@@ -61,7 +60,7 @@ test('The Drawer functionality test.', async (t) => {
     .ok()
     // Drawer should open with the correct long url and state when a short url row is clicked
     .expect(longUrl.value)
-    .eql('google.com')
+    .eql(`${shortUrl}`)
 
   await t
     .click(drawer.child(2).child('main').child('button'))
@@ -82,14 +81,14 @@ test('The Drawer functionality test.', async (t) => {
     .typeText(longUrl, 'yahoo.com')
     .click(drawer.child(2).child('main').child('button'))
     .click(linkRow)
-    // Url is reverts to original when user enters a new url, then re-opens the drawer without clicking "save"
+    // Url reverts to original when user enters a new url, then re-opens the drawer without clicking "save"
     .expect(longUrl.value)
     .eql('google.com')
 
   await t
     .click(longUrl)
     .pressKey('ctrl+a delete')
-    .typeText(longUrl, 'yahoo.com')
+    .typeText(longUrl, `${subUrl}`)
     .click(urlSaveButton)
     // It should show a success snackbar when long url is changed
     .expect(urlUpdatedToaster.exists)
@@ -100,7 +99,7 @@ test('The Drawer functionality test.', async (t) => {
     .click(linkRow)
     // Url is updated/saved when user enters a new url, then clicks "save"
     .expect(longUrl.value)
-    .eql('yahoo.com')
+    .eql(`${subUrl}`)
 
   await t
     .click(longUrl)
@@ -120,26 +119,24 @@ test.before(async (t) => {
     .click(loginButton)
     .typeText('#email', `${transferEmail}`)
     .click(signInButton.nth(0))
-
-  const otp = await getOtp()
-
-  await t.typeText('#otp', otp).click(signInButton.nth(1))
+    .typeText('#otp', otp)
+    .click(signInButton.nth(1))
 
   if (await userModal.exists) {
     await t.click(userModalCloseButton)
   }
 
-  await t.click(signOutButton).navigateTo(`${location}`)
+  await t.click(signOutButton).navigateTo(`${rootLocation}`)
 
   await LoginProcedure(t)
-})('The link transfer test - 1.', async (t) => {
+})('Link transfer test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrl = await shortUrlTextField.value
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
 
   await t
-    .typeText(longUrlTextField, 'google.com')
+    .typeText(longUrlTextField, `${shortUrl}`)
     .click(createLinkButton.nth(2))
 
   await t
@@ -172,17 +169,16 @@ test.before(async (t) => {
   await t.expect(successSnackBar.exists).notOk()
 })
 
-test('The link transfer test - 2.', async (t) => {
+test('Link transfer toast test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrl = await shortUrlTextField.value
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
 
   await t
-    .typeText(longUrlTextField, 'google.com')
+    .typeText(longUrlTextField, `${shortUrl}`)
     .click(createLinkButton.nth(2))
 
-  // Unsuccessful link transfers
   await t
     .click(linkRow)
     .typeText(linkTransferField, `${testEmail}`)
@@ -191,10 +187,3 @@ test('The link transfer test - 2.', async (t) => {
   // Toasters to disappear after 5sec
   await t.click(clickAway).wait(5000).expect(successSnackBar.exists).notOk()
 })
-
-/*
- * Unable to cover the following:
- * It should redirect to the amended url immediately when the long url is changed (any caching for that short url is cleared)
- * It should redirect to the amended file immediately when the file is replaced (any caching for that short url is cleared)
- * It should show an error and not amend the file when a file of size >10mb is selected on replace file
- */
