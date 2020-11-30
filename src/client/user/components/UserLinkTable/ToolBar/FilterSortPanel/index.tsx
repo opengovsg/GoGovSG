@@ -1,32 +1,27 @@
-import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import React, { useState, FunctionComponent } from 'react'
+import { useDispatch } from 'react-redux'
 import { Grid } from '@material-ui/core'
 import SortPanel from '../../../../../app/components/widgets/SortPanel'
 import userActions from '../../../../actions'
 import FilterPanel from './FilterPanel'
 import FilterSortPanelFooter from './FilterSortPanelFooter'
-import { SortDirection } from '../../../../reducers/types'
+import { SortDirection, UrlTableConfig, UrlTableFilterConfig, UrlState } from '../../../../reducers/types'
 import { initialSortConfig } from '../../../../constants'
 import CollapsingPanel from '../../../../../app/components/widgets/CollapsingPanel'
 import useStyles from './styles'
 
-const mapDispatchToProps = (dispatch) => ({
-  updateSortAndFilter: (title, direction, state, isFile) => {
-    dispatch(
-      userActions.setUrlTableConfig({
-        orderBy: title,
-        sortDirection: direction,
-      }),
-    )
-    dispatch(
-      userActions.setUrlFilter({
-        state,
-        isFile,
-      }),
-    )
-    dispatch(userActions.getUrlsForUser())
-  },
-})
+type FilterSortPanelProps = {
+  isOpen: boolean,
+  onClose: () => void,
+  tableConfig: UrlTableConfig,
+}
+
+type updateSortAndFilterProps = {
+  title: UrlTableConfig['orderBy'],
+  direction: UrlTableConfig['sortDirection'],
+  state: UrlTableFilterConfig['state'] | undefined,
+  isFile: UrlTableFilterConfig['isFile'] | undefined,
+}
 
 const sortOptions = [
   {
@@ -39,13 +34,28 @@ const sortOptions = [
   },
 ]
 
-const FilterSortPanel = ({
+const FilterSortPanel: FunctionComponent<FilterSortPanelProps> = ({
   isOpen,
   onClose,
   tableConfig,
-  updateSortAndFilter,
 }) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
+  const updateSortAndFilter = ({title, direction, state, isFile}: updateSortAndFilterProps ) => {
+    dispatch(
+      userActions.setUrlTableConfig({
+        orderBy: title,
+        sortDirection: direction,
+      } as UrlTableConfig),
+    )
+    dispatch(
+      userActions.setUrlFilter({
+        state,
+        isFile,
+      }),
+    )
+    dispatch(userActions.getUrlsForUser())
+  }
   const [orderBy, setOrderBy] = useState(tableConfig.orderBy)
   const [isIncludeFiles, setIsIncludeFiles] = useState(
     tableConfig.filter.isFile === true,
@@ -70,8 +80,8 @@ const FilterSortPanel = ({
     setIsIncludeInactive,
   }
   const changeSortAndFilterHandler = () => {
-    let isFile
-    let state
+    let isFile: UrlTableFilterConfig['isFile']
+    let state: UrlTableFilterConfig['state']
     if (isIncludeLinks !== isIncludeFiles) {
       if (isIncludeLinks) {
         isFile = false
@@ -81,12 +91,17 @@ const FilterSortPanel = ({
     }
     if (isIncludeActive !== isIncludeInactive) {
       if (isIncludeActive) {
-        state = 'ACTIVE'
+        state = UrlState.Active
       } else {
-        state = 'INACTIVE'
+        state = UrlState.Inactive
       }
     }
-    updateSortAndFilter(orderBy, SortDirection.Descending, state, isFile)
+    updateSortAndFilter({
+      title: orderBy, 
+      direction: SortDirection.Descending,
+      state: state, 
+      isFile: isFile
+    })
     onClose()
   }
   const reset = () => {
@@ -95,12 +110,12 @@ const FilterSortPanel = ({
     setIsIncludeActive(false)
     setIsIncludeInactive(false)
     setOrderBy(initialSortConfig.orderBy)
-    updateSortAndFilter(
-      initialSortConfig.orderBy,
-      SortDirection.Descending,
-      undefined,
-      undefined,
-    )
+    updateSortAndFilter({
+      title: initialSortConfig.orderBy,
+      direction: SortDirection.Descending,
+      state: undefined,
+      isFile: undefined,
+    })
     onClose()
   }
 
@@ -132,4 +147,4 @@ const FilterSortPanel = ({
   )
 }
 
-export default connect(null, mapDispatchToProps)(FilterSortPanel)
+export default FilterSortPanel

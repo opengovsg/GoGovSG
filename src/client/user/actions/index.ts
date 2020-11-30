@@ -20,6 +20,7 @@ import {
   SET_EDITED_CONTACT_EMAIL,
   SET_EDITED_DESCRIPTION,
   SET_EDITED_LONG_URL,
+  SET_FILE_UPLOAD_STATE,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
   SET_LONG_URL,
@@ -28,12 +29,14 @@ import {
   SET_UPLOAD_FILE_ERROR,
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SET_URL_UPLOAD_STATE,
   SET_USER_ANNOUNCEMENT,
   SET_USER_MESSAGE,
   SetCreateShortLinkErrorAction,
   SetEditedContactEmailAction,
   SetEditedDescriptionAction,
   SetEditedLongUrlAction,
+  SetFileUploadStateAction,
   SetIsUploadingAction,
   SetLastCreatedLinkAction,
   SetLongUrlAction,
@@ -42,6 +45,7 @@ import {
   SetUploadFileErrorAction,
   SetUrlFilterAction,
   SetUrlTableConfigAction,
+  SetUrlUploadStateAction,
   SetUserAnnouncementAction,
   SetUserMessageAction,
   TOGGLE_URL_STATE_SUCCESS,
@@ -78,6 +82,20 @@ import { GetReduxState } from '../../app/actions/types'
 import { GoGovReduxState } from '../../app/reducers/types'
 import { MessageType } from '../../../shared/util/messages'
 import { GAEvent } from '../../app/util/ga'
+
+const setUrlUploadState: (payload: boolean) => SetUrlUploadStateAction = (
+  payload,
+) => ({
+  type: SET_URL_UPLOAD_STATE,
+  payload,
+})
+
+const setFileUploadState: (payload: boolean) => SetFileUploadStateAction = (
+  payload,
+) => ({
+  type: SET_FILE_UPLOAD_STATE,
+  payload,
+})
 
 const isFetchingUrls: (payload: boolean) => IsFetchingUrlsAction = (
   payload,
@@ -123,15 +141,15 @@ const setEditedDescription: (
 })
 
 const setCreateShortLinkError: (
-  payload: string | null,
+  payload: string,
 ) => SetCreateShortLinkErrorAction = (payload) => ({
   type: SET_CREATE_SHORT_LINK_ERROR,
   payload,
 })
 
-const setUploadFileError: (
-  payload: string | null,
-) => SetUploadFileErrorAction = (payload) => ({
+const setUploadFileError: (payload: string) => SetUploadFileErrorAction = (
+  payload,
+) => ({
   type: SET_UPLOAD_FILE_ERROR,
   payload,
 })
@@ -535,6 +553,7 @@ const createUrlOrRedirect = (history: History) => async (
     | SetSuccessMessageAction
     | SetLastCreatedLinkAction
     | SetErrorMessageAction
+    | SetUrlUploadStateAction
   >,
   getState: GetReduxState,
 ) => {
@@ -553,7 +572,8 @@ const createUrlOrRedirect = (history: History) => async (
         'Short links should only consist of a-z, 0-9 and hyphens.',
       ),
     )
-    return false
+    dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+    return
   }
 
   // Append https:// as the protocol is stripped out
@@ -570,7 +590,8 @@ const createUrlOrRedirect = (history: History) => async (
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('URL is invalid.'),
     )
-    return false
+    dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+    return
   }
 
   const response = await postJson('/api/user/url', { longUrl, shortUrl })
@@ -582,14 +603,17 @@ const createUrlOrRedirect = (history: History) => async (
 
     if (response.status === 401) {
       history.push(LOGIN_PAGE)
-      return false
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+    } else {
+      handleError(dispatch, response)
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
     }
-    handleError(dispatch, response)
-    return false
+  } else {
+    GAEvent('modal page', 'create link from url', 'successful')
+    const json = await response.json()
+    urlCreated(dispatch, json.shortUrl)
+    dispatch<SetUrlUploadStateAction>(setUrlUploadState(true))
   }
-  const json = await response.json()
-  urlCreated(dispatch, json.shortUrl)
-  return true
 }
 
 const transferOwnership = (
@@ -642,7 +666,7 @@ const transferOwnership = (
  * @param file
  * @returns Promise<bool> Whether file upload succeeded.
  */
-const uploadFile = (file: File) => async (
+const uploadFile = (file: File | null) => async (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
@@ -652,13 +676,14 @@ const uploadFile = (file: File) => async (
     | SetLastCreatedLinkAction
     | SetErrorMessageAction
     | SetIsUploadingAction
+    | SetFileUploadStateAction
   >,
   getState: GetReduxState,
 ) => {
   const {
     user: { shortUrl },
   } = getState()
-  if (file == null) {
+  if (file === null) {
     // Sentry analytics: create link with file fail
     Sentry.captureMessage('create link with file unsuccessful')
     GAEvent('modal page', 'create link from file', 'unsuccessful')
@@ -666,25 +691,28 @@ const uploadFile = (file: File) => async (
     dispatch<SetErrorMessageAction>(
       rootActions.setErrorMessage('File is missing.'),
     )
-    return false
-  }
-  dispatch<SetIsUploadingAction>(setIsUploading(true))
-  const data = new FormData()
-  data.append('file', file, file.name)
-  data.append('shortUrl', shortUrl)
-  const response = await postFormData('/api/user/url', data)
-  dispatch<SetIsUploadingAction>(setIsUploading(false))
-  if (!response.ok) {
-    // Sentry analytics: create link with file fail
-    Sentry.captureMessage('create link with file unsuccessful')
-    GAEvent('modal page', 'create link from file', 'unsuccessful')
+    dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+  } else {
+    dispatch<SetIsUploadingAction>(setIsUploading(true))
+    const data = new FormData()
+    data.append('file', file, file.name)
+    data.append('shortUrl', shortUrl)
+    const response = await postFormData('/api/user/url', data)
+    dispatch<SetIsUploadingAction>(setIsUploading(false))
+    if (!response.ok) {
+      // Sentry analytics: create link with file fail
+      Sentry.captureMessage('create link with file unsuccessful')
+      GAEvent('modal page', 'create link from file', 'unsuccessful')
 
-    await handleError(dispatch, response)
-    return false
+      await handleError(dispatch, response)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    } else {
+      GAEvent('modal page', 'create link from file', 'successful')
+      const json = await response.json()
+      urlCreated(dispatch, json.shortUrl)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(true))
+    }
   }
-  const json = await response.json()
-  urlCreated(dispatch, json.shortUrl)
-  return true
 }
 
 export default {
@@ -715,4 +743,6 @@ export default {
   getUserMessage,
   getUserAnnouncement,
   updateUrlInformation,
+  setFileUploadState,
+  setUrlUploadState,
 }

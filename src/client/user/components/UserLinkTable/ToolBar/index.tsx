@@ -1,6 +1,5 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-
 import LinkCountHeader from './LinkCountHeader'
 import SearchInput from './SearchInput'
 import CreateLinkButton from './Buttons/CreateLinkButton'
@@ -21,7 +20,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function ToolBar() {
+const ToolBar = () => {
   const classes = useStyles()
   return (
     <div className={classes.toolBar}>
@@ -32,3 +31,5 @@ export default function ToolBar() {
     </div>
   )
 }
+
+export default ToolBar

@@ -1,6 +1,10 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent } from 'react'
 import { IconButton, createStyles, makeStyles } from '@material-ui/core'
+
+type ContainedIconButtonProps = {
+  href?: string,
+  onClick?: () => void,
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -19,28 +23,21 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const ContainedIconButton = ({ children, href, onClick }) => {
+const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
+   children,
+   href = undefined,
+   onClick = undefined, 
+  }) => {
   const classes = useStyles()
   return (
-    <IconButton
-      className={classes.roundIconButton}
-      href={href}
-      onClick={onClick}
-    >
-      {children}
-    </IconButton>
+    <a href={href} onClick={onClick}>
+      <IconButton
+        className={classes.roundIconButton}
+      >
+        {children}
+      </IconButton>
+    </a>
   )
-}
-
-ContainedIconButton.propTypes = {
-  children: PropTypes.node.isRequired,
-  href: PropTypes.string,
-  onClick: PropTypes.func,
-}
-
-ContainedIconButton.defaultProps = {
-  href: undefined,
-  onClick: undefined,
 }
 
 export default ContainedIconButton

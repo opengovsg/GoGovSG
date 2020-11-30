@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React, { useEffect, useState, FunctionComponent } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { History } from 'history'
 import i18next from 'i18next'
 import {
   Button,
@@ -12,7 +13,6 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
-
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
@@ -28,57 +28,37 @@ import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessa
 import FileInputField from '../../widgets/FileInputField'
 import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
+import { GoGovReduxState } from '../../../app/reducers/types'
+import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
 
-// Height of the text field in the create link dialog.
-const TEXT_FIELD_HEIGHT = 44
-
-const FormStartAdorment = ({ children }) => {
-  const classes = useCreateLinkFormStyles({
-    textFieldHeight: TEXT_FIELD_HEIGHT,
-  })
-  return (
-    <InputAdornment className={classes.startAdorment} position="start">
-      <Typography className={classes.startAdormentText} color="textSecondary">
-        {children}
-      </Typography>
-    </InputAdornment>
-  )
+type CreateLinkFormProps = {
+  onSubmitLink: (history: History) => {},
+  onSubmitFile: (file: File | null) => {},
 }
 
-const mapStateToProps = (state) => ({
-  shortUrl: state.user.shortUrl,
-  longUrl: state.user.longUrl,
-  isUploading: state.user.isUploading,
-  createShortLinkError: state.user.createShortLinkError,
-  uploadFileError: state.user.uploadFileError,
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  setShortUrl: (shortUrl) => dispatch(userActions.setShortUrl(shortUrl)),
-  setLongUrl: (longUrl) => dispatch(userActions.setLongUrl(longUrl)),
-  setRandomShortUrl: () => dispatch(userActions.setRandomShortUrl()),
-  setUploadFileError: (error) =>
-    dispatch(userActions.setUploadFileError(error)),
-  setCreateShortLinkError: (error) =>
-    dispatch(userActions.setCreateShortLinkError(error)),
-})
-
-function CreateLinkForm({
+const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   onSubmitLink,
-  shortUrl,
-  setShortUrl,
-  longUrl,
-  setLongUrl,
-  setRandomShortUrl,
-  isUploading,
   onSubmitFile,
-  uploadFileError,
-  setUploadFileError,
-  createShortLinkError,
-  setCreateShortLinkError,
-}) {
+}) => {
+  
+  const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
+  const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
+  const isUploading = useSelector((state: GoGovReduxState) => state.user.isUploading)
+  const createShortLinkError = useSelector((state: GoGovReduxState) => state.user.createShortLinkError)
+  const uploadFileError = useSelector((state: GoGovReduxState) => state.user.uploadFileError)
+
+  const dispatch = useDispatch()
+  const setShortUrl = (shortUrl: string) => dispatch(userActions.setShortUrl(shortUrl))
+  const setLongUrl = (longUrl: string) => dispatch(userActions.setLongUrl(longUrl))
+  const setRandomShortUrl = () => dispatch(userActions.setRandomShortUrl())
+  const setUploadFileError = (error: string) => dispatch(userActions.setUploadFileError(error))
+  const setCreateShortLinkError = (error: string) => dispatch(userActions.setCreateShortLinkError(error))
+
+  const history = useHistory()
+
   const [isFile, setIsFile] = useState(false)
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState<File|null>(null)
+
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
     isFile,
@@ -116,7 +96,7 @@ function CreateLinkForm({
             if (isFile) {
               onSubmitFile(file)
             } else {
-              onSubmitLink()
+              onSubmitLink(history)
             }
           }}
         >
@@ -257,7 +237,7 @@ function CreateLinkForm({
                       className={classes.refreshIcon}
                       onClick={() => {
                         setRandomShortUrl()
-                        setCreateShortLinkError(null)
+                        setCreateShortLinkError('')
                       }}
                       size="small"
                       disabled={isUploading}
@@ -276,7 +256,7 @@ function CreateLinkForm({
               placeholder="your customised link"
               onChange={(event) => {
                 setShortUrl(event.target.value)
-                setCreateShortLinkError(null)
+                setCreateShortLinkError('')
               }}
               value={shortUrl}
               helperText={
@@ -314,19 +294,4 @@ function CreateLinkForm({
   )
 }
 
-CreateLinkForm.propTypes = {
-  onSubmitLink: PropTypes.func.isRequired,
-  onSubmitFile: PropTypes.func.isRequired,
-  shortUrl: PropTypes.string.isRequired,
-  setShortUrl: PropTypes.func.isRequired,
-  longUrl: PropTypes.string.isRequired,
-  setLongUrl: PropTypes.func.isRequired,
-  setRandomShortUrl: PropTypes.func.isRequired,
-  isUploading: PropTypes.bool.isRequired,
-  uploadFileError: PropTypes.string,
-  setUploadFileError: PropTypes.func.isRequired,
-  createShortLinkError: PropTypes.string,
-  setCreateShortLinkError: PropTypes.func.isRequired,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CreateLinkForm)
+export default CreateLinkForm

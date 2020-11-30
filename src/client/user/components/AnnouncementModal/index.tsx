@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import {
   Button,
   Dialog,
@@ -15,6 +14,10 @@ import userActions from '../../actions'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 import CloseIcon from '../../../app/components/widgets/CloseIcon'
 import { GAEvent } from '../../../app/util/ga'
+
+type StyleProps = {
+  isFullScreenDialog: boolean
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -68,19 +71,14 @@ const useStyles = makeStyles((theme) =>
       textAlign: 'center',
     },
     closeIconButton: {
-      fill: (props) =>
-        // @ts-ignore
+      fill: (props: StyleProps) =>
         props.isFullScreenDialog ? '#BBBBBB' : theme.palette.primary.dark,
-      // @ts-ignore
-      height: (props) => (props.isFullScreenDialog ? 44 : 30.8),
-      // @ts-ignore
-      width: (props) => (props.isFullScreenDialog ? 44 : 30.8),
+      height: (props: StyleProps) => (props.isFullScreenDialog ? 44 : 30.8),
+      width: (props: StyleProps) => (props.isFullScreenDialog ? 44 : 30.8),
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
-      // @ts-ignore
-      marginLeft: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
-      // @ts-ignore
-      marginRight: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
+      marginLeft: (props: StyleProps) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
+      marginRight: (props: StyleProps) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
     },
     headerWrapper: {
       background: '#f9f9f9',
@@ -114,7 +112,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function AnnouncementModal() {
+const AnnouncementModal = () => {
   const dispatch = useDispatch()
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
@@ -239,3 +237,5 @@ export default function AnnouncementModal() {
     </Dialog>
   )
 }
+
+export default AnnouncementModal

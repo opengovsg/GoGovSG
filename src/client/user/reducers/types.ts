@@ -1,3 +1,8 @@
+export type UploadState = {
+  urlUpload: boolean
+  fileUpload: boolean
+}
+
 export enum UrlState {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
@@ -49,10 +54,11 @@ export type UserState = {
   tableConfig: UrlTableConfig
   isUploading: boolean
   urlCount: number
-  createShortLinkError?: string | null
-  uploadFileError?: string | null
+  createShortLinkError: string | null
+  uploadFileError: string | null
   lastCreatedLink?: string
   message: string | null
+  uploadState: UploadState
   announcement: {
     message: string | undefined
     title: string | undefined

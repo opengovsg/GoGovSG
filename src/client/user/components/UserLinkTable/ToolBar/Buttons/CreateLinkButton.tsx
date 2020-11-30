@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function CreateLinkButton() {
+const CreateLinkButton = () => {
   const dispatch = useDispatch()
   const openCreateUrlModal = () => dispatch(userActions.openCreateUrlModal())
   const classes = useStyles()
@@ -37,3 +37,5 @@ export default function CreateLinkButton() {
     </span>
   )
 }
+
+export default CreateLinkButton

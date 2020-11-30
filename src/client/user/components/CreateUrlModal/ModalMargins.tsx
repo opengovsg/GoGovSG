@@ -1,26 +1,31 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { FunctionComponent } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
+
+type StyleProps = {
+  applyRightMargin?: boolean,
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     modalMargins: {
-      marginLeft: (props) => (props.applyLeftMargin ? theme.spacing(6.25) : 0),
-      marginRight: (props) =>
+      marginLeft: theme.spacing(6.25),
+      marginRight: (props: StyleProps) =>
         props.applyRightMargin ? theme.spacing(6.25) : 0,
     },
   }),
 )
 
-export default function ModalMargins({
-  children,
-  applyLeftMargin,
+type ModalMarginsProps = {
+  applyRightMargin?: boolean
+}
+
+const ModalMargins: FunctionComponent<ModalMarginsProps> = ({
   applyRightMargin,
-}) {
-  const classes = useStyles({ applyLeftMargin, applyRightMargin })
+  children,
+}) => {
+  const classes = useStyles({ applyRightMargin })
   const isFullScreenDialog = useFullScreenDialog()
 
   // Use app margins in full screen dialogs.
@@ -30,13 +35,8 @@ export default function ModalMargins({
   return <div className={classes.modalMargins}>{children}</div>
 }
 
-ModalMargins.propTypes = {
-  children: PropTypes.node.isRequired,
-  applyLeftMargin: PropTypes.bool,
-  applyRightMargin: PropTypes.bool,
-}
-
 ModalMargins.defaultProps = {
-  applyLeftMargin: true,
   applyRightMargin: true,
 }
+
+export default ModalMargins

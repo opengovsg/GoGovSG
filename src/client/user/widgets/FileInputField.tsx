@@ -15,7 +15,7 @@ type FileInputFieldProps = {
   endAdornment?: JSX.Element
   inputId: string
   setFile: (file: File | null) => void
-  setUploadFileError: (error: string | null) => void
+  setUploadFileError: (error: string) => void
   className?: string
 }
 
@@ -106,7 +106,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
               )
               return
             }
-            setUploadFileError(null)
+            setUploadFileError('')
             setFile(chosenFile)
           }}
         />
