@@ -92,7 +92,7 @@ jobs:
       - name: Install TestCafe from 'npm' and Run Tests
         uses: DevExpress/testcafe-action@latest
         with:
-          args: "chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 180000"
+          args: "chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 240000"
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
