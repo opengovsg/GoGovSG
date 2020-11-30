@@ -124,6 +124,9 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const email = useSelector(
     (state: GoGovReduxState) => state.login.email
   )
+  const otp = useSelector(
+    (state: GoGovReduxState) => state.login.otp
+  )
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant
   )
@@ -182,6 +185,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       onChange:  (email: string) => dispatch(loginActions.setEmail(email)),
       variant,
       autoComplete: 'on',
+      value: email,
     }
 
     const otpFormAttr = {
@@ -199,6 +203,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       variant,
       autoComplete: 'off',
       isEmailView,
+      value: otp,
     }
 
     return (
@@ -236,8 +241,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
-
-                      <LoginForm {...emailFormAttr} hidden={!isEmailView}>
+                      { isEmailView ?
+                      <LoginForm {...emailFormAttr}>
                         <TextButton
                           className={classNames(
                             classes.secondaryButton,
@@ -248,8 +253,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                         >
                           Resend OTP
                         </TextButton>
-                      </LoginForm>
-                      <LoginForm {...otpFormAttr} hidden={isEmailView}>
+                      </LoginForm> :
+                      <LoginForm {...otpFormAttr}>
                         <TextButton
                           className={classes.secondaryButton}
                           href={i18next.t('general.links.faq')}
@@ -257,6 +262,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                           Need help?
                         </TextButton>
                       </LoginForm>
+                      }
 
                     {variantMap.progressBarShown ? (
                       <LinearProgress />
