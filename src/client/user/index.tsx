@@ -15,7 +15,7 @@ import { GoGovReduxState } from '../app/reducers/types'
 /**
  * Show the user page.
  */
-const UserPage = ({}) => {
+const UserPage = () => {
   const fetchingUrls = useSelector(
     (state: GoGovReduxState) => state.user.isFetchingUrls,
   )
