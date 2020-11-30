@@ -8,7 +8,6 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
-  CircularProgress,
   Link,
   Typography,
 } from '@material-ui/core'
@@ -19,22 +18,14 @@ import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
-import ConfigOption, { TrailingPosition } from '../../../widgets/ConfigOption'
 import useShortLink from './util/shortlink'
-import { removeHttpsProtocol } from '../../../../app/util/url'
-import FileInputField from '../../../widgets/FileInputField'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
 import LinkOwnershipField from './widgets/LinkOwnershipField'
-import DrawerTooltip from './widgets/DrawerTooltip'
+import FileEditor from './widgets/FileEditor'
 import TrailingButton from './widgets/TrailingButton'
 import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
-import CollapsibleMessage from '../../../../app/components/CollapsibleMessage'
-import {
-  CollapsibleMessageType,
-  CollapsibleMessagePosition,
-} from '../../../../app/components/CollapsibleMessage/types'
 import { SEARCH_PAGE } from '../../../../app/util/types'
 import inProgressGraphic from './assets/in-progress.svg'
 
@@ -101,15 +92,6 @@ const useStyles = makeStyles((theme) =>
     textFieldsTopSpacer: {
       height: theme.spacing(1),
     },
-    originalFileLabel: {
-      marginBottom: theme.spacing(1),
-    },
-    fileInputField: {
-      marginBottom: theme.spacing(3),
-      [theme.breakpoints.up('md')]: {
-        marginBottom: 0,
-      },
-    },
     saveLinkInformationButtonWrapper: {
       display: 'flex',
       justifyContent: 'flex-end',
@@ -161,20 +143,13 @@ export default function ControlPanel() {
   const drawerIsOpen = drawerStates.controlPanelIsOpen
   const modalDispatch = useDrawerDispatch()
 
-  // Error from attempt to replace file
-  const uploadFileError = drawerStates.uploadFileError
-  const setUploadFileError = (error: string | null) =>
-    modalDispatch({ type: DrawerActions.setUploadFileError, payload: error })
-
   // Fetch short link state and dispatches from redux store through our helper hook.
   const {
     shortLinkState,
     shortLinkDispatch,
-    isUploading,
   } = useShortLink(drawerStates.relevantShortLink!)
 
   // Manage values in our text fields.
-  const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
   const editedDescription = shortLinkState?.editedDescription || ''
   const originalDescription = shortLinkState?.description || ''
@@ -185,23 +160,10 @@ export default function ControlPanel() {
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
-    shortLinkDispatch?.setEditLongUrl(originalLongUrl)
     shortLinkDispatch?.setEditDescription(originalDescription)
     shortLinkDispatch?.setEditContactEmail(originalContactEmail)
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
-
-  const replaceFileHelp = (
-    <div className={classes.originalFileLabel}>
-      Original file{' '}
-      <DrawerTooltip
-        title={
-          'Original file will be replaced after you select file. Maximum file size is 10mb.'
-        }
-        imageAltText={'Replace file help'}
-      />
-    </div>
-  )
 
   return (
     <Drawer
@@ -229,58 +191,7 @@ export default function ControlPanel() {
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
-          {!shortLinkState?.isFile && <LongUrlEditor />}
-          {shortLinkState?.isFile && (
-            <ConfigOption
-              title={replaceFileHelp}
-              titleVariant="body2"
-              titleClassName={classes.regularText}
-              leading={
-                <>
-                  <FileInputField
-                    className={classes.fileInputField}
-                    uploadFileError={uploadFileError}
-                    textFieldHeight="44px"
-                    inputId="replace-file-input"
-                    text={originalLongUrl}
-                    setFile={(newFile) => {
-                      shortLinkDispatch?.replaceFile(
-                        newFile,
-                        setUploadFileError,
-                      )
-                    }}
-                    setUploadFileError={setUploadFileError}
-                  />
-                  <CollapsibleMessage
-                    type={CollapsibleMessageType.Error}
-                    visible={!!uploadFileError}
-                    position={CollapsibleMessagePosition.Absolute}
-                  >
-                    {uploadFileError}
-                  </CollapsibleMessage>
-                </>
-              }
-              trailing={
-                <label htmlFor="replace-file-input">
-                  <TrailingButton
-                    onClick={() => {}}
-                    disabled={isUploading}
-                    variant={isMobileView ? 'contained' : 'outlined'}
-                    fullWidth={isMobileView}
-                    component="span"
-                  >
-                    {isUploading ? (
-                      <CircularProgress color="primary" size={20} />
-                    ) : (
-                      'Replace file'
-                    )}
-                  </TrailingButton>
-                </label>
-              }
-              wrapTrailing={isMobileView}
-              trailingPosition={TrailingPosition.end}
-            />
-          )}
+          {shortLinkState?.isFile ? <FileEditor /> : <LongUrlEditor />}
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>

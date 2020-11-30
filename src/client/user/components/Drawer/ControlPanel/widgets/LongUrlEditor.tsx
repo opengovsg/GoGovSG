@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   createStyles,
   makeStyles,
@@ -33,7 +33,7 @@ export default function LongUrlEditor() {
     drawerStates.relevantShortLink!,
   )
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
-  const editedLongUrl = shortLinkState?.editedLongUrl || ''
+  const [editedLongUrl, setEditedLongUrl] = useState<string>(originalLongUrl)
 
   return (
     <ConfigOption
@@ -43,9 +43,7 @@ export default function LongUrlEditor() {
       leading={
         <PrefixableTextField
           value={editedLongUrl}
-          onChange={(event) =>
-            shortLinkDispatch?.setEditLongUrl(event.target.value)
-          }
+          onChange={(event) => setEditedLongUrl(event.target.value)}
           placeholder="Original link"
           prefix="https://"
           error={!isValidLongUrl(editedLongUrl, true)}
