@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { IconButton, createStyles, makeStyles } from '@material-ui/core'
 
 type ContainedIconButtonProps = {
@@ -27,7 +27,7 @@ const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
   children,
   href = undefined,
   onClick = undefined,
-}) => {
+}: PropsWithChildren<ContainedIconButtonProps>) => {
   const classes = useStyles()
   return (
     <a href={href} onClick={onClick}>

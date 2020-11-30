@@ -40,7 +40,10 @@ export type BaseStatisticsLayoutProps = {
   title: string
 }
 
-export default function BaseStatisticsLayout(props: BaseStatisticsLayoutProps) {
+export default function BaseStatisticsLayout({
+  children,
+  title,
+}: BaseStatisticsLayoutProps) {
   const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
@@ -51,10 +54,10 @@ export default function BaseStatisticsLayout(props: BaseStatisticsLayoutProps) {
         variant={isMobileView ? 'h6' : 'h4'}
         className={classes.title}
       >
-        {props.title}
+        {title}
       </Typography>
       <div className={classes.divider} />
-      {props.children}
+      {children}
     </div>
   )
 }

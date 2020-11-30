@@ -40,12 +40,12 @@ type EmptyStateProps = {
   urlsFiltered: boolean
 }
 
-const EmptyState = (props: EmptyStateProps) => {
-  const classes = useState(props)
+const EmptyState = ({ urlsFiltered }: EmptyStateProps) => {
+  const classes = useState({ urlsFiltered })
   return (
     <div className={classes.emptyStateContainer}>
       <div>
-        {props.urlsFiltered && (
+        {urlsFiltered && (
           <Typography
             className={classes.headerText}
             align="center"
@@ -55,7 +55,7 @@ const EmptyState = (props: EmptyStateProps) => {
             No results found, try expanding your search terms.
           </Typography>
         )}
-        {!props.urlsFiltered && (
+        {!urlsFiltered && (
           <Typography
             className={classes.headerText}
             align="center"
@@ -65,7 +65,7 @@ const EmptyState = (props: EmptyStateProps) => {
             You do not have any short links yet.
           </Typography>
         )}
-        {!props.urlsFiltered && (
+        {!urlsFiltered && (
           <Typography
             className={classes.headerText}
             align="center"
@@ -82,7 +82,7 @@ const EmptyState = (props: EmptyStateProps) => {
         alt="No shortened links yet"
         draggable={false}
       />
-      {!props.urlsFiltered && (
+      {!urlsFiltered && (
         <div className={classes.createButtonDiv}>
           <CreateButton />
         </div>
