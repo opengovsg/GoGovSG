@@ -20,10 +20,8 @@ import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
 import ConfigOption, { TrailingPosition } from '../../../widgets/ConfigOption'
-import PrefixableTextField from '../../../widgets/PrefixableTextField'
 import useShortLink from './util/shortlink'
 import { removeHttpsProtocol } from '../../../../app/util/url'
-import { isValidLongUrl } from '../../../../../shared/util/validation'
 import FileInputField from '../../../widgets/FileInputField'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
 import LinkOwnershipField from './widgets/LinkOwnershipField'
@@ -31,6 +29,7 @@ import DrawerTooltip from './widgets/DrawerTooltip'
 import TrailingButton from './widgets/TrailingButton'
 import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
+import LongUrlEditor from './widgets/LongUrlEditor'
 import CollapsibleMessage from '../../../../app/components/CollapsibleMessage'
 import {
   CollapsibleMessageType,
@@ -176,7 +175,6 @@ export default function ControlPanel() {
 
   // Manage values in our text fields.
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
-  const editedLongUrl = shortLinkState?.editedLongUrl || ''
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
   const editedDescription = shortLinkState?.editedDescription || ''
   const originalDescription = shortLinkState?.description || ''
@@ -231,48 +229,7 @@ export default function ControlPanel() {
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
-          {!shortLinkState?.isFile && (
-            <>
-              <ConfigOption
-                title="Original link"
-                titleVariant="body2"
-                titleClassName={classes.regularText}
-                leading={
-                  <PrefixableTextField
-                    value={editedLongUrl}
-                    onChange={(event) =>
-                      shortLinkDispatch?.setEditLongUrl(event.target.value)
-                    }
-                    placeholder="Original link"
-                    prefix="https://"
-                    error={!isValidLongUrl(editedLongUrl, true)}
-                    helperText={
-                      isValidLongUrl(editedLongUrl, true)
-                        ? ' '
-                        : "This doesn't look like a valid url."
-                    }
-                  />
-                }
-                trailing={
-                  <TrailingButton
-                    disabled={
-                      !isValidLongUrl(editedLongUrl, false) ||
-                      editedLongUrl === originalLongUrl
-                    }
-                    onClick={() =>
-                      shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
-                    }
-                    fullWidth={isMobileView}
-                    variant={isMobileView ? 'contained' : 'outlined'}
-                  >
-                    Save
-                  </TrailingButton>
-                }
-                wrapTrailing={isMobileView}
-                trailingPosition={TrailingPosition.end}
-              />
-            </>
-          )}
+          {!shortLinkState?.isFile && <LongUrlEditor />}
           {shortLinkState?.isFile && (
             <ConfigOption
               title={replaceFileHelp}
