@@ -244,6 +244,14 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                       { isEmailView ?
                       <LoginForm {...emailFormAttr}>
                         <TextButton
+                          className={classes.secondaryButton}
+                          href={i18next.t('general.links.faq')}
+                        >
+                          Need help?
+                        </TextButton>
+                      </LoginForm> :
+                      <LoginForm {...otpFormAttr}>
+                        <TextButton
                           className={classNames(
                             classes.secondaryButton,
                             classes.resendOTPBtn,
@@ -252,14 +260,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                           onClick={getOTPEmail}
                         >
                           Resend OTP
-                        </TextButton>
-                      </LoginForm> :
-                      <LoginForm {...otpFormAttr}>
-                        <TextButton
-                          className={classes.secondaryButton}
-                          href={i18next.t('general.links.faq')}
-                        >
-                          Need help?
                         </TextButton>
                       </LoginForm>
                       }
