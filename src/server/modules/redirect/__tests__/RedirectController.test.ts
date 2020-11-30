@@ -1,66 +1,183 @@
 /* eslint-disable no-underscore-dangle */
 import httpMocks from 'node-mocks-http'
-import {
-  clicksModelMock,
-  createRequestWithShortUrl,
-  devicesModelMock,
-  heatMapModelMock,
-  mockTransaction,
-  redisMockClient,
-  sequelizeMock,
-  urlModelMock,
-} from '../../api/util'
-import { S3InterfaceMock } from '../../mocks/services/aws'
-import { UrlRepository } from '../../../../src/server/repositories/UrlRepository'
-import { UrlRepositoryInterface } from '../../../../src/server/repositories/interfaces/UrlRepositoryInterface'
-import { container } from '../../../../src/server/util/inversify'
-import { DependencyIds } from '../../../../src/server/constants'
-import { generateCookie } from '../../../../src/server/services/analytics'
+import redisMock from 'redis-mock'
+import SequelizeMock from 'sequelize-mock'
+
+import { ACTIVE } from '../../../models/types'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
+import { container } from '../../../util/inversify'
+import { DependencyIds } from '../../../constants'
+import { generateCookie } from '../../../services/analytics'
 
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
   CrawlerCheckService,
   RedirectService,
-} from '../../../../src/server/modules/redirect/services'
-import { RedirectController } from '../../../../src/server/modules/redirect'
-import { logger } from '../../config'
-import { UrlMapper } from '../../../../src/server/mappers/UrlMapper'
-import { LinkStatisticsServiceInterface } from '../../../../src/server/services/interfaces/LinkStatisticsServiceInterface'
-import { LinkStatisticsServiceMock } from '../../mocks/services/LinkStatisticsService'
+} from '../services'
+import { RedirectController } from '..'
+import { logger } from '../../../config'
+import { UrlMapper } from '../../../mappers/UrlMapper'
+import { LinkStatisticsServiceInterface } from '../../../services/interfaces/LinkStatisticsServiceInterface'
 
-jest.mock('../../../../src/server/models/url', () => ({
+const redisMockClient = redisMock.createClient()
+const sequelizeMock = new SequelizeMock()
+
+const urlModelMock = sequelizeMock.define(
+  'url',
+  {
+    shortUrl: 'a',
+    longUrl: 'aa',
+    state: ACTIVE,
+    clicks: 8,
+  },
+  {
+    instanceMethods: {
+      findOne: () => {},
+      increment: () => {},
+    },
+  },
+)
+
+const clicksModelMock = sequelizeMock.define(
+  'daily_stats',
+  [
+    {
+      shortUrl: 'a',
+      date: '2020-06-28',
+      clicks: 4,
+    },
+    {
+      shortUrl: 'a',
+      date: '2020-06-25',
+      clicks: 2,
+    },
+    {
+      shortUrl: 'a',
+      date: '2020-06-21',
+      clicks: 2,
+    },
+  ],
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
+
+const heatMapModelMock = sequelizeMock.define(
+  'weekday_stats',
+  [
+    {
+      shortUrl: 'a',
+      weekday: 0,
+      clicks: 4,
+    },
+    {
+      shortUrl: 'a',
+      weekday: 6,
+      clicks: 4,
+    },
+    {
+      shortUrl: 'a',
+      weekday: 2,
+      clicks: 4,
+    },
+  ],
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
+
+const devicesModelMock = sequelizeMock.define(
+  'devices_stats',
+  {
+    shortUrl: 'a',
+    mobile: 3,
+    tablet: 1,
+    desktop: 4,
+    others: 0,
+  },
+  {
+    instanceMethods: {
+      increment: () => {},
+    },
+  },
+)
+
+const mockTransaction = sequelizeMock.transaction
+
+jest.resetModules()
+
+jest.mock('../../../models/url', () => ({
   Url: urlModelMock,
 }))
 
-jest.mock('../../../../src/server/models/statistics/daily', () => ({
+jest.mock('../../../models/statistics/daily', () => ({
   Clicks: clicksModelMock,
 }))
 
-jest.mock('../../../../src/server/models/statistics/weekday', () => ({
+jest.mock('../../../models/statistics/weekday', () => ({
   WeekdayClicks: heatMapModelMock,
 }))
 
-jest.mock('../../../../src/server/models/statistics/devices', () => ({
+jest.mock('../../../models/statistics/devices', () => ({
   Devices: devicesModelMock,
 }))
 
-jest.mock('../../../../src/server/redis', () => ({
+jest.mock('../../../redis', () => ({
   redirectClient: redisMockClient,
 }))
 
-jest.mock('../../../../src/server/util/sequelize', () => ({
+jest.mock('../../../util/sequelize', () => ({
   sequelize: sequelizeMock,
   transaction: mockTransaction,
 }))
 
+function createRequestWithShortUrl(shortUrl: string | undefined) {
+  return httpMocks.createRequest({
+    params: {
+      shortUrl,
+    },
+    body: {},
+    session: {},
+  })
+}
+
+const {
+  default: UrlRepository,
+} = require('../../../repositories/UrlRepository')
+
+const s3Mock = {
+  setS3ObjectACL: jest.fn().mockRejectedValue(undefined),
+
+  uploadFileToS3: jest.fn().mockRejectedValue(undefined),
+
+  buildFileLongUrl: (key: string) => key,
+
+  getKeyFromLongUrl: (longUrl: string) => longUrl,
+}
+
 const loggerErrorSpy = jest.spyOn(logger, 'error')
-const repository = new UrlRepository(new S3InterfaceMock(), new UrlMapper())
-const linkStatisticsServiceMock = new LinkStatisticsServiceMock()
-const updateStatisticsSpy = jest.spyOn(
-  linkStatisticsServiceMock,
-  'updateLinkStatistics',
-)
+const repository = new UrlRepository(s3Mock, new UrlMapper())
+const linkStatisticsServiceMock = {
+  updateLinkStatistics: jest.fn().mockResolvedValue(undefined),
+
+  getLinkStatistics: jest.fn().mockResolvedValue({
+    totalClicks: 1,
+    deviceClicks: {
+      desktop: 1,
+      tablet: 2,
+      mobile: 3,
+      others: 4,
+    },
+    dailyClicks: [],
+    weekdayClicks: [],
+  }),
+}
+const updateStatisticsSpy = linkStatisticsServiceMock.updateLinkStatistics
 const dbFindOneSpy = jest.spyOn(urlModelMock, 'findOne')
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
@@ -142,6 +259,10 @@ describe('redirect API tests', () => {
     updateStatisticsSpy.mockClear()
     dbFindOneSpy.mockClear()
     cacheGetSpy.mockClear()
+  })
+
+  afterAll(() => {
+    jest.resetModules()
   })
 
   test('url exists in cache and db, real user unvisited', async () => {

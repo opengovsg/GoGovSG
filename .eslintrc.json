@@ -11,6 +11,16 @@
     "browser": true,
     "node": true
   },
+  "overrides": [
+    {
+      "files": [
+        "**/__tests__/*"
+      ],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
   "plugins": ["jsdoc", "prettier", "jest"],
   "rules": {
     "import/extensions": [
