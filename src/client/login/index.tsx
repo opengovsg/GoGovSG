@@ -236,8 +236,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
-                    {isEmailView ?
-                      <LoginForm {...emailFormAttr} >
+
+                      <LoginForm {...emailFormAttr} hidden={!isEmailView}>
                         <TextButton
                           className={classNames(
                             classes.secondaryButton,
@@ -248,8 +248,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                         >
                           Resend OTP
                         </TextButton>
-                      </LoginForm> :
-                      <LoginForm {...otpFormAttr}>
+                      </LoginForm>
+                      <LoginForm {...otpFormAttr} hidden={isEmailView}>
                         <TextButton
                           className={classes.secondaryButton}
                           href={i18next.t('general.links.faq')}
@@ -257,7 +257,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                           Need help?
                         </TextButton>
                       </LoginForm>
-                    }
+
                     {variantMap.progressBarShown ? (
                       <LinearProgress />
                     ) : null}

@@ -13,6 +13,7 @@ type LoginFormProps = {
   textError: () => boolean,
   textErrorMessage: () => string,
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
+  hidden?: boolean
 }
 
 const useStyles = makeStyles((theme) =>
@@ -49,11 +50,13 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
   textErrorMessage,
   onSubmit,
   children,
+  hidden
 }) => {
   const classes = useStyles()
   const variantMap = loginFormVariants.map[variant]
   return (
     <form
+      hidden={hidden}
       onSubmit={onSubmit}
       autoComplete={autoComplete}
     >
