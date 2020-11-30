@@ -4,7 +4,7 @@ import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 
 type StyleProps = {
-  applyRightMargin?: boolean,
+  applyRightMargin?: boolean
 }
 
 const useStyles = makeStyles((theme) =>

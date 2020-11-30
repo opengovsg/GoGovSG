@@ -29,11 +29,9 @@ const CopyrightWidget = ({ className }: CopyrightWidgetProps) => {
   const classes = useStyles()
   return (
     <span className={classNames(className, classes.copyright)}>
-      <Typography
-        variant="caption"
-        className={classes.copyrightText}
-      >
-        {i18next.t('general.copyright')} <br className={classes.mobileFooter}/> {i18next.t('general.copyrightTag')}
+      <Typography variant="caption" className={classes.copyrightText}>
+        {i18next.t('general.copyright')} <br className={classes.mobileFooter} />{' '}
+        {i18next.t('general.copyrightTag')}
       </Typography>
     </span>
   )

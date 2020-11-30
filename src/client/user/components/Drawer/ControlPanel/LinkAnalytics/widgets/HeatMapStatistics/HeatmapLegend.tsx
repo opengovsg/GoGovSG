@@ -85,7 +85,8 @@ export function HeatmapLegend(props: HeatmapLegendProps) {
   const getTickStyle = (index: number, length: number) => {
     if (index == 0) {
       return classes.tickLeading
-    } else if (index >= length - 1) {
+    }
+    if (index >= length - 1) {
       return classes.tickTrailing
     }
     return classes.tick
@@ -94,10 +95,10 @@ export function HeatmapLegend(props: HeatmapLegendProps) {
   return (
     <div className={classes.root}>
       <div className={classes.row}>
-        <HeatmapLegendItem color={'#CDDCE0'} />
-        <HeatmapLegendItem color={'#8CA6AD'} />
-        <HeatmapLegendItem color={'#456682'} />
-        <HeatmapLegendItem color={'#2F4B62'} />
+        <HeatmapLegendItem color="#CDDCE0" />
+        <HeatmapLegendItem color="#8CA6AD" />
+        <HeatmapLegendItem color="#456682" />
+        <HeatmapLegendItem color="#2F4B62" />
       </div>
       <div className={classes.ticks}>
         {ticks.map((tick, id) => {

@@ -1,10 +1,10 @@
-import React, { createContext, useReducer, useContext } from 'react'
+import React, { createContext, useContext, useReducer } from 'react'
 import ControlPanel from './ControlPanel'
 import {
   Action,
   State,
-  initialState,
   drawerReducer,
+  initialState,
 } from './ControlPanel/util/reducers'
 
 function useDrawerController() {

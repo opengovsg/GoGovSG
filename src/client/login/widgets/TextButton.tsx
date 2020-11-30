@@ -2,10 +2,10 @@ import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 
 type TextButtonProps = {
-  className?: string,
-  href?: string,
-  disabled?: boolean,
-  onClick?: () => {},
+  className?: string
+  href?: string
+  disabled?: boolean
+  onClick?: () => {}
 }
 
 const useStyles = makeStyles((theme) =>
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) =>
     },
     tag: {
       display: 'contents',
-    }
+    },
   }),
 )
 
@@ -36,7 +36,12 @@ const TextButton: FunctionComponent<TextButtonProps> = ({
 }: PropsWithChildren<TextButtonProps>) => {
   const classes = useStyles()
   return (
-    <a className={classes.tag} href={href} target="_blank" rel="noopener noreferrer">
+    <a
+      className={classes.tag}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <Button
         className={`${className} ${classes.textButton}`}
         disabled={disabled}

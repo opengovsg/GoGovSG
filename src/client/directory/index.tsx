@@ -1,8 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
-import {
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import querystring from 'querystring'
@@ -58,9 +55,8 @@ const defaultParams: GoSearchParams = {
 }
 
 const redirectWithParams = (newParams: GoSearchParams, history: History) => {
-  
   const queryObject: any = { query: newParams.query }
-  for (const [ key, value ] of Object.entries(newParams)) {
+  for (const [key, value] of Object.entries(newParams)) {
     if (value && value !== (defaultParams as any)[key]) {
       queryObject[key] = value
     }
@@ -82,14 +78,16 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const location = useLocation()
   const [pendingQuery, setPendingQuery] = useState('')
   const [queryFile, setQueryFile] = useState<string>(defaultParams.isFile)
-  const [querystate, setQueryState] = useState<string>(defaultParams.state) 
+  const [querystate, setQueryState] = useState<string>(defaultParams.state)
   const [queryEmail, setQueryEmail] = useState<string>(defaultParams.isEmail)
-  const [queryOrder, setQueryOrder] = useState<SearchResultsSortOrder>(defaultParams.sortOrder)
+  const [queryOrder, setQueryOrder] = useState<SearchResultsSortOrder>(
+    defaultParams.sortOrder,
+  )
   const [disablePagination, setDisablePagination] = useState<boolean>(false)
 
-  const urlParams = querystring.parse(location.search.substring(1)) as Partial<
-    GoSearchParams
-  >
+  const urlParams = querystring.parse(
+    location.search.substring(1),
+  ) as Partial<GoSearchParams>
   const params: GoSearchParams = {
     ...defaultParams,
     ...urlParams,
@@ -122,7 +120,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     (state: GoGovReduxState) => state.directory.results,
   )
 
-  let pageCount = Math.ceil(resultsCount / rowsPerPage)
+  const pageCount = Math.ceil(resultsCount / rowsPerPage)
 
   const onQueryChange = (newQuery: string) => {
     setPendingQuery(newQuery)
@@ -134,7 +132,10 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
         isFile: queryFile,
         isEmail: queryEmail,
         sortOrder: queryOrder,
-        currentPage: newQuery === params.query ? params.currentPage : defaultParams.currentPage,
+        currentPage:
+          newQuery === params.query
+            ? params.currentPage
+            : defaultParams.currentPage,
       },
       history,
     )
@@ -142,7 +143,11 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
 
   // When applying changes after filtering order, file type and state
   const applyChanges = () => {
-    if (!(queryFile === params.isFile) || !(querystate === params.state) || !(queryOrder === params.sortOrder)) {
+    if (
+      !(queryFile === params.isFile) ||
+      !(querystate === params.state) ||
+      !(queryOrder === params.sortOrder)
+    ) {
       redirectWithParams(
         {
           ...params,
@@ -157,15 +162,19 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     }
   }
 
-  //reset
+  // reset
   const onResetFilter = () => {
     // Ensure same differences will not be pushed to history
-    if (!(queryFile === defaultParams.isFile) || !(querystate === defaultParams.state) || !(queryOrder === defaultParams.sortOrder)) {
+    if (
+      !(queryFile === defaultParams.isFile) ||
+      !(querystate === defaultParams.state) ||
+      !(queryOrder === defaultParams.sortOrder)
+    ) {
       redirectWithParams(
         {
           ...defaultParams,
-          query: query,
-          isEmail: queryEmail
+          query,
+          isEmail: queryEmail,
         },
         history,
       )
@@ -175,9 +184,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   // Changes when queryEmail changes
   useEffect(() => {
     setPendingQuery('')
-    dispatch(
-      directoryActions.resetDirectoryResults()
-    )
+    dispatch(directoryActions.resetDirectoryResults())
     redirectWithParams(
       {
         ...defaultParams,

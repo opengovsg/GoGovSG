@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, createStyles } from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 
 import cautionLogo from './assets/ie-banner-caution.svg'
 import Banner from './widgets/Banner'
@@ -24,5 +24,5 @@ export default function BannerForIE({ isSticky }: BannerForIEProps) {
   const icon = (
     <img className={classes.icon} src={cautionLogo} draggable={false} />
   )
-  return <Banner icon={icon} text={BANNER_TEXT} isSticky={isSticky}/>
+  return <Banner icon={icon} text={BANNER_TEXT} isSticky={isSticky} />
 }

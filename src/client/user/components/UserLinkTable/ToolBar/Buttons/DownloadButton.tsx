@@ -20,10 +20,12 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-const DownloadButton = ()  => {
+const DownloadButton = () => {
   const classes = useStyles()
   const urlCount = useSelector((state: GoGovReduxState) => state.user.urlCount)
-  const tableConfig = useSelector((state: GoGovReduxState) => state.user.tableConfig)
+  const tableConfig = useSelector(
+    (state: GoGovReduxState) => state.user.tableConfig,
+  )
 
   return (
     // Only shown when actions are not minified.

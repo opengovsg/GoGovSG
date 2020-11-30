@@ -9,7 +9,8 @@ const useStyles = makeStyles(() =>
   createStyles({
     masthead: {
       zIndex: 2,
-      position: (props: MastheadProps) => (props.isSticky && props.toStick)? 'absolute':'relative',
+      position: (props: MastheadProps) =>
+        props.isSticky && props.toStick ? 'absolute' : 'relative',
       backgroundColor: '#F0F0F0',
       height: 'auto',
       padding: '4px 0',

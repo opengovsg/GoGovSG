@@ -7,11 +7,11 @@ import RotatingLinks from './RotatingLinks'
 import { GoGovReduxState } from '../../../app/reducers/types'
 
 type styleProps = {
-  heightToWidthRatio: number,
-  linkBoxWidthToImageWidth: number,
-  linkBoxHeightToImageWidth: number,
-  rotatingLinkLeftMarginToLinkBox: number,
-  targetImageWidthPx: number,
+  heightToWidthRatio: number
+  linkBoxWidthToImageWidth: number
+  linkBoxHeightToImageWidth: number
+  rotatingLinkLeftMarginToLinkBox: number
+  targetImageWidthPx: number
 }
 
 const useStyles = makeStyles((theme) =>
@@ -51,7 +51,8 @@ const useStyles = makeStyles((theme) =>
       width: (props: styleProps) => `${props.linkBoxWidthToImageWidth * 100}vw`,
       maxWidth: (props: styleProps) =>
         `${props.linkBoxWidthToImageWidth * props.targetImageWidthPx}px`,
-      height: (props: styleProps) => `${props.linkBoxHeightToImageWidth * 100}vw`,
+      height: (props: styleProps) =>
+        `${props.linkBoxHeightToImageWidth * 100}vw`,
       maxHeight: (props: styleProps) =>
         `${props.linkBoxHeightToImageWidth * props.targetImageWidthPx}px`,
       fontSize: 'min(3.25vw, 26px)',
@@ -84,7 +85,9 @@ const RotatingLinksGraphic = () => {
     // Specifies max width of the graphic in px.
     targetImageWidthPx: 765,
   })
-  const linksToRotate =useSelector((state:GoGovReduxState) => state.home.linksToRotate) 
+  const linksToRotate = useSelector(
+    (state: GoGovReduxState) => state.home.linksToRotate,
+  )
   return (
     <div className={classes.heroContainer}>
       <img

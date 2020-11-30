@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { XYPlot, XAxis, YAxis, HeatmapSeries } from 'react-vis'
+import React, { useEffect, useRef, useState } from 'react'
+import { HeatmapSeries, XAxis, XYPlot, YAxis } from 'react-vis'
 import makeStyles from '@material-ui/core/styles/makeStyles'
-import { useTheme, useMediaQuery } from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@material-ui/core'
 
 import {
-  getZeroedHeatMap,
-  getWeekRange,
-  getDayRange,
   HeatMapDataPoint,
+  getDayRange,
+  getWeekRange,
+  getZeroedHeatMap,
 } from './util/date-range'
 import BaseStatisticsLayout from './BaseStatisticsLayout'
 import useWindowSize from './util/window-size'

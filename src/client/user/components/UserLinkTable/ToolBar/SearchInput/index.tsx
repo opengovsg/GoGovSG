@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Backdrop,
   ClickAwayListener,
@@ -69,27 +69,33 @@ const SearchInput = () => {
   const dispatch = useDispatch()
   const [query, setQuery] = useState('')
 
-  const tableConfig = useSelector((state: GoGovReduxState) => state.user.tableConfig)
+  const tableConfig = useSelector(
+    (state: GoGovReduxState) => state.user.tableConfig,
+  )
   const searchInputHeight = useSearchInputHeight()
   const classes = useStyles({ textFieldHeight, searchInputHeight })
 
-  
   const changeSearchTextHandler = (e: string) => {
     setQuery(e)
   }
 
   const applySearch = () => {
     dispatch(userActions.isFetchingUrls(true))
-    dispatch(userActions.setUrlTableConfig({ searchText: query, pageNumber: 0 } as UrlTableConfig))
+    dispatch(
+      userActions.setUrlTableConfig({
+        searchText: query,
+        pageNumber: 0,
+      } as UrlTableConfig),
+    )
     dispatch(userActions.getUrlsForUser())
   }
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       applySearch()
-    }, 500);
-    return () => clearTimeout(timeoutId);
-  }, [query]);
+    }, 500)
+    return () => clearTimeout(timeoutId)
+  }, [query])
 
   const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
 

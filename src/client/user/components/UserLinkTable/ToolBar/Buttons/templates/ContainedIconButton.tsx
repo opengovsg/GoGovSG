@@ -2,8 +2,8 @@ import React, { FunctionComponent } from 'react'
 import { IconButton, createStyles, makeStyles } from '@material-ui/core'
 
 type ContainedIconButtonProps = {
-  href?: string,
-  onClick?: () => void,
+  href?: string
+  onClick?: () => void
 }
 
 const useStyles = makeStyles((theme) =>
@@ -24,18 +24,14 @@ const useStyles = makeStyles((theme) =>
 )
 
 const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
-   children,
-   href = undefined,
-   onClick = undefined, 
-  }) => {
+  children,
+  href = undefined,
+  onClick = undefined,
+}) => {
   const classes = useStyles()
   return (
     <a href={href} onClick={onClick}>
-      <IconButton
-        className={classes.roundIconButton}
-      >
-        {children}
-      </IconButton>
+      <IconButton className={classes.roundIconButton}>{children}</IconButton>
     </a>
   )
 }

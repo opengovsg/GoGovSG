@@ -109,7 +109,7 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
             displayColors: false,
           },
         }}
-      ></Line>
+      />
     </BaseStatisticsLayout>
   )
 }

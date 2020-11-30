@@ -120,7 +120,9 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   isSticky,
   toStick,
 }) => {
-  const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
+  const isLoggedIn = useSelector(
+    (state: GoGovReduxState) => state.login.isLoggedIn,
+  )
   const dispatch = useDispatch()
   const logout = () => dispatch(loginActions.logout())
   const isLightItems = backgroundType === 'darkest'
@@ -239,8 +241,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
           {!hideNavButtons &&
             headers.map(
               (header) =>
-                (header.public ? !isLoggedIn : isLoggedIn) &&
-                (
+                (header.public ? !isLoggedIn : isLoggedIn) && (
                   <Button
                     href={
                       header.internalLink ? `/#${header.link}` : header.link

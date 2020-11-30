@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 // Form object to request for user's email or OTP
-const LoginForm : FunctionComponent<LoginFormProps> = ({
+const LoginForm: FunctionComponent<LoginFormProps> = ({
   id,
   placeholder,
   buttonMessage,

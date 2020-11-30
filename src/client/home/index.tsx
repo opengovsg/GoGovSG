@@ -1,4 +1,4 @@
-import React, { useEffect, FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
@@ -21,7 +21,9 @@ const HomePage: FunctionComponent = (props) => {
   const dispatch = useDispatch()
   const getLinksToRotate = () => dispatch(homeActions.getLinksToRotate())
   const getIsLoggedIn = () => dispatch(loginActions.isLoggedIn())
-  const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
+  const isLoggedIn = useSelector(
+    (state: GoGovReduxState) => state.login.isLoggedIn,
+  )
 
   // Load once on start
   useEffect(() => {

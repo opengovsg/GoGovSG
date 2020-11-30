@@ -1,8 +1,8 @@
 import {
   Switch,
+  SwitchProps,
   createStyles,
   makeStyles,
-  SwitchProps,
 } from '@material-ui/core'
 import React from 'react'
 

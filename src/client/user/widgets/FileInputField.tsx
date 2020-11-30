@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react'
-import { Hidden, Typography, makeStyles, createStyles } from '@material-ui/core'
+import { Hidden, Typography, createStyles, makeStyles } from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 

@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme) =>
 const UrlTable = () => {
   const classes = useStyles()
   const urlCount = useSelector((state: GoGovReduxState) => state.user.urlCount)
-  const tableConfig = useSelector((state: GoGovReduxState) => state.user.tableConfig)
+  const tableConfig = useSelector(
+    (state: GoGovReduxState) => state.user.tableConfig,
+  )
   const dispatch = useDispatch()
   const updateUrlTableConfig = (config: UrlTableConfig) => {
     dispatch(userActions.setUrlTableConfig(config))

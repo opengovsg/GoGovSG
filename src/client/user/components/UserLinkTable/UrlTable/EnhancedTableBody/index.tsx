@@ -208,11 +208,11 @@ export default function EnhancedTableBody() {
             <TableCell align="left" className={classes.urlCell}>
               <Grid container direction="column">
                 <Grid item className={classes.shortUrlGrid}>
-                <Tooltip title={row.shortUrl} placement="top-start" arrow>
-                  <Typography variant="h6" className={classes.shortUrl}>
-                    /{row.shortUrl}
-                  </Typography>
-                </Tooltip>
+                  <Tooltip title={row.shortUrl} placement="top-start" arrow>
+                    <Typography variant="h6" className={classes.shortUrl}>
+                      /{row.shortUrl}
+                    </Typography>
+                  </Tooltip>
                 </Grid>
                 <Hidden smDown>
                   <Grid item className={classes.longUrlGrid}>
@@ -261,7 +261,10 @@ export default function EnhancedTableBody() {
                       src={clickCountIcon}
                       alt="Clicks"
                     />
-                    <Typography variant="caption" className={classes.clicksText}>
+                    <Typography
+                      variant="caption"
+                      className={classes.clicksText}
+                    >
                       {numberUnitFormatter(row.clicks)}
                     </Typography>
                   </div>

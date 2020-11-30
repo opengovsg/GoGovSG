@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 
 type OvalContainedButtonProps = {
-  href?: string,
+  href?: string
   onClick?: () => void
 }
 

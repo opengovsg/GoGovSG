@@ -14,7 +14,12 @@ import { Redirect } from 'react-router-dom'
 import { GoGovReduxState } from '../app/reducers/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
-import { DIRECTORY_PAGE, USER_PAGE, loginFormVariants } from '../app/util/types'
+import {
+  DIRECTORY_PAGE,
+  USER_PAGE,
+  VariantType,
+  loginFormVariants,
+} from '../app/util/types'
 import GoLogo from '../app/assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '../app/assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../app/util/requests'
@@ -22,7 +27,6 @@ import LoginForm from './components/LoginForm'
 import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
-import { VariantType } from '../app/util/types'
 import TextButton from './widgets/TextButton'
 
 type LoginPageProps = {
@@ -30,7 +34,7 @@ type LoginPageProps = {
     state?: {
       previous: string
     }
-  },
+  }
 }
 
 const useStyles = makeStyles((theme) =>
@@ -108,15 +112,16 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const LoginPage: FunctionComponent<LoginPageProps> = ({
-  location,
-}) => {
+const LoginPage: FunctionComponent<LoginPageProps> = ({ location }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const getEmailValidator = dispatch(loginActions.getEmailValidationGlobExpression())
-  const setLoginInfoMessage = (message:string) => dispatch(rootActions.setInfoMessage(message))
+  const getEmailValidator = dispatch(
+    loginActions.getEmailValidationGlobExpression(),
+  )
+  const setLoginInfoMessage = (message: string) =>
+    dispatch(rootActions.setInfoMessage(message))
   const emailValidator = useSelector(
-    (state: GoGovReduxState) => state.login.emailValidator
+    (state: GoGovReduxState) => state.login.emailValidator,
   )
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn
@@ -124,7 +129,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
   const variant: VariantType = useSelector(
-    (state: GoGovReduxState) => state.login.formVariant
+    (state: GoGovReduxState) => state.login.formVariant,
   )
   // Google Analytics
   useEffect(() => {

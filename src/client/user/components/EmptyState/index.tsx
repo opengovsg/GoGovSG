@@ -52,7 +52,7 @@ const EmptyState = (props: EmptyStateProps) => {
             variant="body2"
             color="textPrimary"
           >
-            {'No results found, try expanding your search terms.'}
+            No results found, try expanding your search terms.
           </Typography>
         )}
         {!props.urlsFiltered && (
@@ -62,7 +62,7 @@ const EmptyState = (props: EmptyStateProps) => {
             variant="body2"
             color="textPrimary"
           >
-            {'You do not have any short links yet.'}
+            You do not have any short links yet.
           </Typography>
         )}
         {!props.urlsFiltered && (
@@ -72,7 +72,7 @@ const EmptyState = (props: EmptyStateProps) => {
             variant="body2"
             color="textPrimary"
           >
-            {'Get started and customise one from an existing link or file!'}
+            Get started and customise one from an existing link or file!
           </Typography>
         )}
       </div>

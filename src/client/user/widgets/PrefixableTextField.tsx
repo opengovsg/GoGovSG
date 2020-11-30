@@ -1,10 +1,10 @@
 import React from 'react'
 import {
+  InputAdornment,
   TextField,
+  Typography,
   createStyles,
   makeStyles,
-  InputAdornment,
-  Typography,
 } from '@material-ui/core'
 
 // Height of the text field in the create link dialog.
