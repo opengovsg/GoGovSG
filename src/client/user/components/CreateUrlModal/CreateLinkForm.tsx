@@ -1,5 +1,7 @@
 import React, { useEffect, useState, FunctionComponent } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { History } from 'history'
 import i18next from 'i18next'
 import {
   Button,
@@ -30,7 +32,7 @@ import { GoGovReduxState } from '../../../app/reducers/types'
 import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
 
 type CreateLinkFormProps = {
-  onSubmitLink: () => {},
+  onSubmitLink: (history: History) => {},
   onSubmitFile: (file: File | null) => {},
 }
 
@@ -51,6 +53,8 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   const setRandomShortUrl = () => dispatch(userActions.setRandomShortUrl())
   const setUploadFileError = (error: string) => dispatch(userActions.setUploadFileError(error))
   const setCreateShortLinkError = (error: string) => dispatch(userActions.setCreateShortLinkError(error))
+
+  const history = useHistory()
 
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState<File|null>(null)
@@ -92,7 +96,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             if (isFile) {
               onSubmitFile(file)
             } else {
-              onSubmitLink()
+              onSubmitLink(history)
             }
           }}
         >

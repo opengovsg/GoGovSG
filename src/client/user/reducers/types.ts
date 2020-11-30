@@ -1,3 +1,8 @@
+export type UploadState = {
+  urlUpload: boolean
+  fileUpload: boolean
+}
+
 export enum UrlState {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
@@ -54,6 +59,7 @@ export type UserState = {
   uploadFileError: string | null
   lastCreatedLink?: string
   message: string | null
+  uploadState: UploadState
   announcement: {
     message: string | undefined
     title: string | undefined

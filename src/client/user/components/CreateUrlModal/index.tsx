@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { History } from 'history'
-import { useHistory } from 'react-router-dom'
 import {
   Dialog,
   IconButton,
@@ -57,32 +56,30 @@ const useStyles = makeStyles((theme) =>
 
 const CreateUrlModal = () => {
   const createUrlModal = useSelector((state: GoGovReduxState) => state.user.createUrlModal)
+  const urlUploadState = useSelector((state: GoGovReduxState) => state.user.uploadState.urlUpload)
+  const fileUploadState = useSelector((state: GoGovReduxState) => state.user.uploadState.fileUpload)
   const dispatch = useDispatch()
   const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
   const onCreateUrl = (history: History) => dispatch(userActions.createUrlOrRedirect(history))
-  const onUploadFile = (file: File) => dispatch(userActions.uploadFile(file))
+  const onUploadFile = (file: File | null) => dispatch(userActions.uploadFile(file))
 
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
   const [step, setStep] = useState(0)
 
-  const incrementDecorator = (func: any) => async (...args: any[]) => {
-    const proceed = await func(...args)
-    if (proceed) {
-      if (args.length) {
-        // Google Analytics: create link from file in modal page
-        GAEvent('modal page', 'create link from file', 'successful')
-      } else {
-        // Google Analytics: create link from url in modal page
-        GAEvent('modal page', 'create link from url', 'successful')
-      }
+  useEffect(() => {
+    if (fileUploadState) {
       closeCreateUrlModal()
+      dispatch(userActions.setFileUploadState(false))
     }
-  }
+  }, [fileUploadState])
 
-  const history = useHistory()
-  const onSubmitLink = incrementDecorator(() => onCreateUrl(history))
-  const onSubmitFile = incrementDecorator(onUploadFile)
+  useEffect(() => {
+    if (urlUploadState) {
+      closeCreateUrlModal()
+      dispatch(userActions.setUrlUploadState(false))
+    }
+  }, [urlUploadState])
 
   // Reset step when modal closes and reopens
   useEffect(() => {
@@ -133,8 +130,8 @@ const CreateUrlModal = () => {
       </div>
       {step === 0 ? (
         <CreateLinkForm
-          onSubmitLink={onSubmitLink}
-          onSubmitFile={onSubmitFile}
+          onSubmitLink={onCreateUrl}
+          onSubmitFile={onUploadFile}
         />
       ) : (
         <AddDescriptionForm />
