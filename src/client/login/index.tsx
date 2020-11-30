@@ -1,4 +1,5 @@
 import React, { useEffect, FunctionComponent } from 'react'
+import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -22,6 +23,7 @@ import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { VariantType } from '../app/util/types'
+import TextButton from './widgets/TextButton'
 
 type LoginPageProps = {
   location?: {
@@ -93,6 +95,16 @@ const useStyles = makeStyles((theme) =>
         marginBottom: '0',
       },
     },
+    secondaryButton: {
+      fontWeight: 400,
+      marginLeft: theme.spacing(2),
+    },
+    resendOTPBtn: {
+      marginRight: 'auto',
+      '&:disabled': {
+        opacity: 0.5,
+      },
+    },
   }),
 )
 
@@ -142,6 +154,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       cancelled = true
     }
   }, [getEmailValidator])
+
+  const getOTPEmail = () => dispatch(loginActions.getOTPEmail())
 
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
@@ -216,8 +230,28 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
-                    <LoginForm {...emailFormAttr} />
-                    <LoginForm {...otpFormAttr} />
+                    {isEmailView ?
+                      <LoginForm {...emailFormAttr} >
+                        <TextButton
+                          className={classNames(
+                            classes.secondaryButton,
+                            classes.resendOTPBtn,
+                          )}
+                          disabled={!variantMap.resendEnabled}
+                          onClick={getOTPEmail}
+                        >
+                          Resend OTP
+                        </TextButton>
+                      </LoginForm> :
+                      <LoginForm {...otpFormAttr}>
+                        <TextButton
+                          className={classes.secondaryButton}
+                          href={i18next.t('general.links.faq')}
+                        >
+                          Need help?
+                        </TextButton>
+                      </LoginForm>
+                    }
                     {variantMap.progressBarShown ? (
                       <LinearProgress />
                     ) : null}

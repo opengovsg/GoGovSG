@@ -1,11 +1,7 @@
 import React, { FunctionComponent } from 'react'
-import classNames from 'classnames'
-import { useDispatch } from 'react-redux'
-import i18next from 'i18next'
+
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { loginFormVariants, VariantType } from '../../app/util/types'
-import loginActions from '../actions'
-import TextButton from '../widgets/TextButton'
 import { GAEvent, GAPageView } from '../../app/util/ga'
 
 type LoginFormProps = {
@@ -41,16 +37,6 @@ const useStyles = makeStyles((theme) =>
       minWidth: '120px',
       marginRight: theme.spacing(2),
     },
-    secondaryButton: {
-      fontWeight: 400,
-      marginLeft: theme.spacing(2),
-    },
-    resendOTPBtn: {
-      marginRight: 'auto',
-      '&:disabled': {
-        opacity: 0.5,
-      },
-    },
   }),
 )
 
@@ -67,10 +53,9 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
   textError,
   textErrorMessage,
   submit,
+  children,
 }) => {
   const classes = useStyles()
-  const dispatch = useDispatch()
-  const getOTPEmail = () => dispatch(loginActions.getOTPEmail())
   const variantMap = loginFormVariants.map[variant]
   return (
     <form
@@ -117,25 +102,7 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
         >
           {buttonMessage}
         </Button>
-        {!isEmailView ? (
-          <TextButton
-            className={classNames(
-              classes.secondaryButton,
-              classes.resendOTPBtn,
-            )}
-            disabled={!variantMap.resendEnabled}
-            onClick={getOTPEmail}
-          >
-            Resend OTP
-          </TextButton>
-        ) : (
-          <TextButton
-            className={classes.secondaryButton}
-            href={i18next.t('general.links.faq')}
-          >
-            Need help?
-          </TextButton>
-        )}
+        {children}
       </section>
     </form>
   )
