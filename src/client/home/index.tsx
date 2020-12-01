@@ -15,7 +15,7 @@ import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
 
-const HomePage: FunctionComponent = (props) => {
+const HomePage: FunctionComponent = () => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const dispatch = useDispatch()
@@ -56,7 +56,7 @@ const HomePage: FunctionComponent = (props) => {
         <DescriptionSliver />
       </Section>
       <Section backgroundType="light">
-        <StatisticsSliver {...props} />
+        <StatisticsSliver />
       </Section>
     </BaseLayout>
   )

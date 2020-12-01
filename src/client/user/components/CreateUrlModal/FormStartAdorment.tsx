@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import {
   InputAdornment,
   Typography,
@@ -29,7 +29,11 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const FormStartAdorment: FunctionComponent = ({ children }) => {
+type FormStartAdormentProps = {}
+
+const FormStartAdorment: FunctionComponent = ({
+  children,
+}: PropsWithChildren<FormStartAdormentProps>) => {
   const classes = useStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
   })

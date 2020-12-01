@@ -18,7 +18,6 @@
     "@typescript-eslint/no-use-before-define": ["error"],
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "react/require-default-props": "off",
-    "@typescript-eslint/no-shadow": ["error"],
     "comma-dangle": ["error", "always-multiline"],
     "import/first": "off",
     "import/extensions": "off",
@@ -35,7 +34,12 @@
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
-    "import/no-cycle": "off"
+    "import/no-cycle": "off",
+    "jsx-a11y/label-has-associated-control": [ "error", {
+      "required": {
+        "some": [ "nesting", "id"  ]
+      }
+    }]
   },
   "env": {
     "browser": true,

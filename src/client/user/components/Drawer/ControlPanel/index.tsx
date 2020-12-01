@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@material-ui/core'
 
-import DrawerActions from './util/reducers'
+import { DrawerActions } from './util/reducers'
 import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
@@ -247,7 +247,7 @@ export default function ControlPanel() {
                 <TrailingButton
                   disabled={
                     !originalDescription ||
-                    originalDescription != editedDescription
+                    originalDescription !== editedDescription
                   }
                   fullWidth={isMobileView}
                   variant="outlined"
@@ -283,7 +283,7 @@ export default function ControlPanel() {
           <Typography variant="body1" className={classes.customInformationDesc}>
             This section is undergoing construction. Your link description and
             contact email added will be kept for future use in our database.
-            We'll keep you updated on any changes.
+            We`&apos;`ll keep you updated on any changes.
           </Typography>
           <div className={classes.emptyStateGraphic}>
             <img src={inProgressGraphic} alt="in progress graphic" />

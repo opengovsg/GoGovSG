@@ -25,7 +25,7 @@ import FileIcon from '../../widgets/FileIcon'
 import { formatBytes } from '../../../app/util/format'
 import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
 import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessage/types'
-import FileInputField from '../../widgets/FileInputField'
+import { FileInputField } from '../../widgets/FileInputField'
 import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
 import { GoGovReduxState } from '../../../app/reducers/types'
@@ -39,7 +39,7 @@ type CreateLinkFormProps = {
 const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   onSubmitLink,
   onSubmitFile,
-}) => {
+}: CreateLinkFormProps) => {
   const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
   const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
   const isUploading = useSelector(

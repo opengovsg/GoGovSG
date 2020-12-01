@@ -10,7 +10,7 @@ import {
   getZeroedHeatMap,
 } from './util/date-range'
 import BaseStatisticsLayout from './BaseStatisticsLayout'
-import useWindowSize from './util/window-size'
+import { useWindowSize } from './util/window-size'
 import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
 import { WeekdayClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
 
@@ -31,11 +31,14 @@ const processInputStatistics = (rawStatistics: WeekdayClicksInterface[]) => {
     zeroed
       .filter(
         (item) =>
-          item.x == hourMapping[statistics.hours] &&
+          item.x === hourMapping[statistics.hours] &&
           // In order to move Sunday, represented by index 0, to the final index.
-          item.y == weekdayMapping[(statistics.weekday + 6) % 7],
+          item.y === weekdayMapping[(statistics.weekday + 6) % 7],
       )
-      .forEach((filteredItem) => (filteredItem.color = statistics.clicks))
+      .forEach((filteredItem) => {
+        /* eslint-disable no-param-reassign */
+        filteredItem.color = statistics.clicks
+      })
   })
   return zeroed
 }
@@ -50,7 +53,9 @@ export type HeatMapStatisticsProps = {
   weekdayClicks: WeekdayClicksInterface[]
 }
 
-export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
+export default function HeatMapStatistics({
+  weekdayClicks,
+}: HeatMapStatisticsProps) {
   const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
@@ -59,7 +64,7 @@ export default function HeatMapStatistics(props: HeatMapStatisticsProps) {
   const containerEl = useRef<HTMLDivElement>(null)
   const windowSize = useWindowSize()
 
-  let clicks = processInputStatistics(props.weekdayClicks)
+  let clicks = processInputStatistics(weekdayClicks)
 
   // Flip axes in mobile view.
   if (isMobileView) {

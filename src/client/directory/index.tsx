@@ -56,11 +56,12 @@ const defaultParams: GoSearchParams = {
 
 const redirectWithParams = (newParams: GoSearchParams, history: History) => {
   const queryObject: any = { query: newParams.query }
-  for (const [key, value] of Object.entries(newParams)) {
+  Object.entries(newParams).map(([key, value], _) => {
     if (value && value !== (defaultParams as any)[key]) {
       queryObject[key] = value
     }
-  }
+    return
+  })
   const newPath = {
     pathname: DIRECTORY_PAGE,
     search: `${querystring.stringify(queryObject)}`,
