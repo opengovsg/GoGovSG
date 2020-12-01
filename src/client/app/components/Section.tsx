@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 import { ApplyAppMargins } from './AppMargins'
 
@@ -60,7 +60,7 @@ const Section: FunctionComponent<SectionProps> = ({
   bottomMultiplier = 1,
   className = '',
   shadow = false,
-}) => {
+}: PropsWithChildren<SectionProps>) => {
   const classes = useStyles({
     backgroundType,
     verticalMultiplier,

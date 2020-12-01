@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
+import React, {
+  FunctionComponent,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useLocation } from 'react-router-dom'
 import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
 
@@ -56,7 +62,7 @@ const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
   withLowFooter = true,
   children,
   hideNavButtons = false,
-}) => {
+}: PropsWithChildren<BaseLayoutProps>) => {
   const classes = useStyles()
   const path = useLocation().pathname
   const isIE = useIsIE()

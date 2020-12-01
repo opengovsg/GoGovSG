@@ -20,7 +20,9 @@ type NotFoundPageProps = {
   }
 }
 
-const NotFoundPage: FunctionComponent<NotFoundPageProps> = ({ match }) => {
+const NotFoundPage: FunctionComponent<NotFoundPageProps> = ({
+  match,
+}: NotFoundPageProps) => {
   const classes = useStyles()
   const { params } = match
   const { shortUrl } = params

@@ -25,8 +25,6 @@ type SortDrawerProps = {
   onReset: () => void
 }
 
-// type SortDrawerStyleProps = {}
-
 const useStyles = makeStyles((theme) =>
   createStyles({
     titleText: {
@@ -83,17 +81,6 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
 
   const [isIncludeInactive, setIsIncludeInactive] = useState(false)
 
-  const filterConfig = {
-    isIncludeFiles,
-    isIncludeLinks,
-    isIncludeActive,
-    isIncludeInactive,
-    setIsIncludeFiles,
-    setIsIncludeLinks,
-    setIsIncludeActive,
-    setIsIncludeInactive,
-  }
-
   // Order check
   useEffect(() => {
     onChoose(orderBy as SearchResultsSortOrder)
@@ -149,7 +136,16 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
               currentlyChosen={orderBy}
               options={options}
             />
-            <FilterPanel {...filterConfig} />
+            <FilterPanel
+              isIncludeFiles={isIncludeFiles}
+              isIncludeLinks={isIncludeLinks}
+              isIncludeActive={isIncludeActive}
+              isIncludeInactive={isIncludeInactive}
+              setIsIncludeFiles={setIsIncludeFiles}
+              setIsIncludeLinks={setIsIncludeLinks}
+              setIsIncludeActive={setIsIncludeActive}
+              setIsIncludeInactive={setIsIncludeInactive}
+            />
             <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
           </div>
         </BottomDrawer>
@@ -161,7 +157,16 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
               currentlyChosen={orderBy}
               options={options}
             />
-            <FilterPanel {...filterConfig} />
+            <FilterPanel
+              isIncludeFiles={isIncludeFiles}
+              isIncludeLinks={isIncludeLinks}
+              isIncludeActive={isIncludeActive}
+              isIncludeInactive={isIncludeInactive}
+              setIsIncludeFiles={setIsIncludeFiles}
+              setIsIncludeLinks={setIsIncludeLinks}
+              setIsIncludeActive={setIsIncludeActive}
+              setIsIncludeInactive={setIsIncludeInactive}
+            />
             <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
           </div>
         </CollapsingPanel>

@@ -23,8 +23,8 @@ export type HeatmapLegendItemProps = {
   color: string
 }
 
-export function HeatmapLegendItem(props: HeatmapLegendItemProps) {
-  const classes = useHeatmapLegendItemStyles({ color: props.color })
+export function HeatmapLegendItem({ color }: HeatmapLegendItemProps) {
+  const classes = useHeatmapLegendItemStyles({ color })
   return <div className={classes.itemRoot} />
 }
 
@@ -72,10 +72,10 @@ export type HeatmapLegendProps = {
   maxClicks: number
 }
 
-export function HeatmapLegend(props: HeatmapLegendProps) {
+export function HeatmapLegend({ minClicks, maxClicks }: HeatmapLegendProps) {
   const classes = useHeatmapLegendStyles()
-  const min = props.minClicks
-  const max = props.maxClicks
+  const min = minClicks
+  const max = maxClicks
   const mid = (min + max) / 2
   const minmid = (min + mid) / 2
   const midmax = (mid + max) / 2
@@ -83,7 +83,7 @@ export function HeatmapLegend(props: HeatmapLegendProps) {
   const ticksCount = 5
 
   const getTickStyle = (index: number, length: number) => {
-    if (index == 0) {
+    if (index === 0) {
       return classes.tickLeading
     }
     if (index >= length - 1) {

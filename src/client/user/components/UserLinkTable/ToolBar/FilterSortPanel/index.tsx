@@ -43,7 +43,7 @@ const FilterSortPanel: FunctionComponent<FilterSortPanelProps> = ({
   isOpen,
   onClose,
   tableConfig,
-}) => {
+}: FilterSortPanelProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const updateSortAndFilter = ({
@@ -79,16 +79,6 @@ const FilterSortPanel: FunctionComponent<FilterSortPanelProps> = ({
   const [isIncludeInactive, setIsIncludeInactive] = useState(
     tableConfig.filter.state === 'INACTIVE',
   )
-  const filterConfig = {
-    isIncludeFiles,
-    isIncludeLinks,
-    isIncludeActive,
-    isIncludeInactive,
-    setIsIncludeFiles,
-    setIsIncludeLinks,
-    setIsIncludeActive,
-    setIsIncludeInactive,
-  }
   const changeSortAndFilterHandler = () => {
     let isFile: UrlTableFilterConfig['isFile']
     let state: UrlTableFilterConfig['state']
@@ -147,7 +137,16 @@ const FilterSortPanel: FunctionComponent<FilterSortPanelProps> = ({
           currentlyChosen={orderBy}
           options={sortOptions}
         />
-        <FilterPanel {...filterConfig} />
+        <FilterPanel
+          isIncludeFiles={isIncludeFiles}
+          isIncludeLinks={isIncludeLinks}
+          isIncludeActive={isIncludeActive}
+          isIncludeInactive={isIncludeInactive}
+          setIsIncludeFiles={setIsIncludeFiles}
+          setIsIncludeLinks={setIsIncludeLinks}
+          setIsIncludeActive={setIsIncludeActive}
+          setIsIncludeInactive={setIsIncludeInactive}
+        />
         <FilterSortPanelFooter
           onApply={changeSortAndFilterHandler}
           onReset={reset}

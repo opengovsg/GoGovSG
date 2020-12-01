@@ -116,10 +116,10 @@ type BaseLayoutHeaderProps = {
 
 const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   backgroundType,
-  hideNavButtons,
+  hideNavButtons = false,
   isSticky,
   toStick,
-}) => {
+}: BaseLayoutHeaderProps) => {
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
@@ -270,11 +270,6 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       </AppBar>
     </Section>
   )
-}
-
-BaseLayoutHeader.defaultProps = {
-  hideNavButtons: false,
-  isSticky: false,
 }
 
 export default BaseLayoutHeader

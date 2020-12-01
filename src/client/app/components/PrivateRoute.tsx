@@ -10,8 +10,10 @@ type PrivateRouteProps = {
   path: string
 }
 
-const PrivateRoute: FunctionComponent<PrivateRouteProps> = (props) => {
-  const { component: ChildComponent, ...args } = props
+const PrivateRoute: FunctionComponent<PrivateRouteProps> = (
+  props: PrivateRouteProps,
+) => {
+  const { component: ChildComponent } = props
   const { path } = props
   const dispatch = useDispatch()
   const isLoggedIn = useSelector(
@@ -23,9 +25,10 @@ const PrivateRoute: FunctionComponent<PrivateRouteProps> = (props) => {
 
   return (
     <Route
-      {...args}
+      path={path}
       render={(routeProps) =>
         isLoggedIn ? (
+          /* eslint-disable react/jsx-props-no-spreading */
           <ChildComponent {...routeProps} />
         ) : (
           <Redirect

@@ -55,7 +55,7 @@ const PaginationActionComponent: FunctionComponent<PaginationActionComponentProp
   onChangePage,
   page,
   disablePagination = false,
-}) => {
+}: PaginationActionComponentProp) => {
   const classes = useStyles()
   return (
     <Grid

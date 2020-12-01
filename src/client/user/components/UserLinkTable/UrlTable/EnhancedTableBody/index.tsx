@@ -15,7 +15,7 @@ import fileIcon from '../../../../../app/assets/icons/file-icon.svg'
 import clickCountIcon from '../../assets/click-count-icon.svg'
 
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
-import DrawerActions from '../../../Drawer/ControlPanel/util/reducers'
+import { DrawerActions } from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../app/util/format'
 import CopyButton from '../../../../widgets/CopyButton'

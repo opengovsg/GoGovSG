@@ -8,7 +8,7 @@ type CheckCircleIconProps = {
 const CheckCircleIcon: FunctionComponent<CheckCircleIconProps> = ({
   color = '#384A51',
   className,
-}) => {
+}: CheckCircleIconProps) => {
   return (
     <svg
       width="18"
