@@ -22,7 +22,12 @@ const useStyles = makeStyles(() =>
 export default function BannerForIE({ isSticky }: BannerForIEProps) {
   const classes = useStyles()
   const icon = (
-    <img className={classes.icon} src={cautionLogo} draggable={false} alt="" />
+    <img
+      className={classes.icon}
+      src={cautionLogo}
+      draggable={false}
+      alt="caution logo"
+    />
   )
   return <Banner icon={icon} text={BANNER_TEXT} isSticky={isSticky} />
 }

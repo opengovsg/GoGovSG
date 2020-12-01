@@ -203,7 +203,7 @@ function Graphs({ data, shortUrl }: GraphsProps) {
           <img
             src={clicksLogo}
             className={classes.totalClicksIconMobile}
-            alt=""
+            alt="clicks logo"
           />
           <Typography
             variant="body2"
@@ -226,7 +226,11 @@ function Graphs({ data, shortUrl }: GraphsProps) {
               <Tab
                 label={
                   <div className={classes.tab}>
-                    <img src={devicesLogo} className={getIconStyle(0)} alt="" />{' '}
+                    <img
+                      src={devicesLogo}
+                      className={getIconStyle(0)}
+                      alt="devices logo"
+                    />{' '}
                     Devices
                   </div>
                 }
@@ -234,7 +238,11 @@ function Graphs({ data, shortUrl }: GraphsProps) {
               <Tab
                 label={
                   <div className={classes.tab}>
-                    <img src={clicksLogo} className={getIconStyle(1)} alt="" />{' '}
+                    <img
+                      src={clicksLogo}
+                      className={getIconStyle(1)}
+                      alt="clicks logo"
+                    />{' '}
                     Clicks
                   </div>
                 }
@@ -242,7 +250,11 @@ function Graphs({ data, shortUrl }: GraphsProps) {
               <Tab
                 label={
                   <div className={classes.tab}>
-                    <img src={trafficLogo} className={getIconStyle(2)} alt="" />{' '}
+                    <img
+                      src={trafficLogo}
+                      className={getIconStyle(2)}
+                      alt="traffic logo"
+                    />{' '}
                     Traffic
                   </div>
                 }
@@ -253,7 +265,7 @@ function Graphs({ data, shortUrl }: GraphsProps) {
                 <img
                   src={clicksLogo}
                   className={classes.totalClicksIcon}
-                  alt=""
+                  alt="clicks logo"
                 />
                 <Typography variant="h6" className={classes.totalClicksText}>
                   {`${data.totalClicks} total clicks`}

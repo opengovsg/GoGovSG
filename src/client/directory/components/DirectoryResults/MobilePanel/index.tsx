@@ -160,14 +160,18 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
         </Typography>
         <Divider className={classes.divider} />
         <Typography className={classes.row} variant="body2">
-          <img className={classes.personIcon} src={personIcon} alt="" />
+          <img
+            className={classes.personIcon}
+            src={personIcon}
+            alt="person icon"
+          />
           {url?.email}
           <input
             type="image"
             src={copyEmailIcon}
             onClick={() => onClickEvent()}
             className={classes.copyIcon}
-            alt=""
+            alt="email icon"
           />
         </Typography>
       </Paper>

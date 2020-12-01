@@ -195,7 +195,7 @@ const AnnouncementModal = () => {
       {announcement?.image ? (
         <img
           className={`${classes.justifyCenterImage} ${classes.announcementImage}`}
-          alt=""
+          alt="announcement"
           src={announcement.image}
         />
       ) : (
