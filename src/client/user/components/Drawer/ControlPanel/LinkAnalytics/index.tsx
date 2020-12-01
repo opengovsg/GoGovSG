@@ -8,7 +8,6 @@ import {
   Typography,
   createStyles,
   makeStyles,
-  useTheme,
 } from '@material-ui/core'
 
 import { useDrawerState } from '../..'
@@ -97,7 +96,6 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`full-width-tabpanel-${index}`}
       aria-labelledby={`full-width-tab-${index}`}
-      // {...dir}
     >
       {value === index && <Typography>{children}</Typography>}
     </div>
@@ -164,7 +162,6 @@ export type GraphsProps = {
 
 function Graphs({ data, shortUrl }: GraphsProps) {
   const classes = useStyles()
-  const theme = useTheme()
   const [tabValue, setTabValue] = useState<number>(0)
 
   // Map number to type for display
@@ -265,13 +262,13 @@ function Graphs({ data, shortUrl }: GraphsProps) {
             </Hidden>
           </div>
           <Divider />
-          <TabPanel value={tabValue} index={0} dir={theme.direction}>
+          <TabPanel value={tabValue} index={0}>
             <DeviceStatistics deviceClicks={data.deviceClicks} />
           </TabPanel>
-          <TabPanel value={tabValue} index={1} dir={theme.direction}>
+          <TabPanel value={tabValue} index={1}>
             <DailyStatistics dailyClicks={data.dailyClicks} />
           </TabPanel>
-          <TabPanel value={tabValue} index={2} dir={theme.direction}>
+          <TabPanel value={tabValue} index={2}>
             <HeatMapStatistics weekdayClicks={data.weekdayClicks} />
           </TabPanel>
         </div>
