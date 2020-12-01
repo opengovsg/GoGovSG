@@ -126,11 +126,10 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant
   )
-
+  // Google Analytics
   useEffect(() => {
-    // Google Analytics: Move into login page
-    // Because directory page will redirect to login page first
-    // We need filter that out
+    // Filter out redirects from directory page
+    // TODO (#988): Can this be fixed to cater to all routes?
     if (location?.state?.previous !== '/directory') {
       GAPageView('EMAIL LOGIN PAGE')
       GAEvent('login page', 'email')
@@ -140,7 +139,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   // Display a login message from the server
   useEffect(() => {
     let cancelled = false
-    dispatch(loginActions.getEmailValidationGlobExpression())
     get('/api/login/message').then((response) => {
       if (response.ok) {
         response.text().then((text) => {
@@ -151,6 +149,12 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     return () => {
       cancelled = true
     }
+  }, [])
+
+  // Fetch backend validation expression
+  useEffect(() => {
+    dispatch(loginActions.getEmailValidationGlobExpression())
+    return
   }, [getEmailValidator])
 
   if (!isLoggedIn) {
