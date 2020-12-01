@@ -144,7 +144,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     get('/api/login/message').then((response) => {
       if (response.ok) {
         response.text().then((text) => {
-          console.log(text)
           if (text && !cancelled) setLoginInfoMessage(text)
         })
       }
