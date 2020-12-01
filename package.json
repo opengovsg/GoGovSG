@@ -88,7 +88,7 @@
     "sharp": "^0.26.3",
     "ua-parser-js": "^0.7.22",
     "uuid": "^8.3.1",
-    "validator": "^13.1.17",
+    "validator": "^13.5.1",
     "winston": "^3.3.3"
   },
   "devDependencies": {
