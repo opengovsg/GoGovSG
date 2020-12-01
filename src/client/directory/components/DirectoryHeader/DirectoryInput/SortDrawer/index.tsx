@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import {
   createStyles,
   makeStyles,
@@ -19,8 +19,8 @@ type SortDrawerProps = {
   onClose: () => void
   options: Array<{ key: string; label: string }>
   onChoose: (orderBy: SearchResultsSortOrder) => void
-  getFile:(queryFile: string) => void
-  getState:(queryState: string) => void
+  getFile: (queryFile: string) => void
+  getState: (queryState: string) => void
   onApply: () => void
   onReset: () => void
 }
@@ -103,11 +103,9 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
   useEffect(() => {
     if (isIncludeFiles === isIncludeLinks) {
       getFile('')
-    } 
-    else if (isIncludeFiles) {
+    } else if (isIncludeFiles) {
       getFile('true')
-    }
-    else {
+    } else {
       getFile('false')
     }
   }, [isIncludeFiles, isIncludeLinks])
@@ -116,15 +114,12 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
   useEffect(() => {
     if (isIncludeActive === isIncludeInactive) {
       getState('')
-    } 
-    else if (isIncludeActive) {
+    } else if (isIncludeActive) {
       getState('ACTIVE')
-    }
-    else {
+    } else {
       getState('INACTIVE')
     }
   }, [isIncludeActive, isIncludeInactive])
-
 
   // Close the modal and hit endpoint
   const applyChange = () => {
@@ -133,7 +128,7 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
   }
 
   const reset = () => {
-    // reset current component's state 
+    // reset current component's state
     setOrderBy(defaultSortOption as string)
     setIsIncludeFiles(false)
     setIsIncludeLinks(false)
@@ -146,7 +141,7 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
 
   return (
     <>
-      {isMobile ? 
+      {isMobile ? (
         <BottomDrawer open={open} onClose={onClose}>
           <div className={classes.content}>
             <SortPanel
@@ -155,32 +150,22 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
               options={options}
             />
             <FilterPanel {...filterConfig} />
-            <FilterSortPanelFooter
-              onApply={applyChange}
-              onReset={reset}
-            />
+            <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
           </div>
         </BottomDrawer>
-      :
-      <CollapsingPanel
-        isOpen={open}
-        className={classes.sortPanel}
-        >
-            <div className={classes.content}>
-              <SortPanel
-                onChoose={setOrderBy}
-                currentlyChosen={orderBy}
-                options={options}
-              />
-              <FilterPanel {...filterConfig} />
-              <FilterSortPanelFooter
-                onApply={applyChange}
-                onReset={reset}
-              />
-            </div>
+      ) : (
+        <CollapsingPanel isOpen={open} className={classes.sortPanel}>
+          <div className={classes.content}>
+            <SortPanel
+              onChoose={setOrderBy}
+              currentlyChosen={orderBy}
+              options={options}
+            />
+            <FilterPanel {...filterConfig} />
+            <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
+          </div>
         </CollapsingPanel>
-      }
-     
+      )}
     </>
   )
 }

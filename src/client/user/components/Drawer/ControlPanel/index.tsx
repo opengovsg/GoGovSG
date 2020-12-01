@@ -1,19 +1,23 @@
 import React from 'react'
 import {
-  Drawer,
-  createStyles,
-  makeStyles,
-  Hidden,
+  CircularProgress,
   Divider,
+  Drawer,
+  Hidden,
   IconButton,
   useTheme,
   useMediaQuery,
   Link,
+  Tooltip,
   Typography,
+  createStyles,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 
 import DrawerActions from './util/reducers'
-import { useDrawerState, useDrawerDispatch } from '..'
+import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
@@ -155,8 +159,12 @@ export default function ControlPanel() {
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
 
-  const [isContactEmailValid, setContactEmailValid] = React.useState(Boolean(originalContactEmail))
-  const [isDescriptionValid, setDescriptionValid] = React.useState(Boolean(originalDescription))
+  const [isContactEmailValid, setContactEmailValid] = React.useState(
+    Boolean(originalContactEmail),
+  )
+  const [isDescriptionValid, setDescriptionValid] = React.useState(
+    Boolean(originalDescription),
+  )
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
@@ -218,49 +226,64 @@ export default function ControlPanel() {
                   ? `/#${SEARCH_PAGE}`
                   : undefined
               }
-              className={classes.previewButton}
-            >
+              onDescriptionChange={(event) =>
+                shortLinkDispatch?.setEditDescription(
+                  event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+                )
+              }
+              onContactEmailValidation={setContactEmailValid}
+              onDescriptionValidation={setDescriptionValid}
+            />
+            <div className={classes.saveLinkInformationButtonWrapper}>
+              <Link
+                target="_blank"
+                href={
+                  isDescriptionValid && isContactEmailValid && editedDescription
+                    ? `/#${SEARCH_PAGE}`
+                    : undefined
+                }
+                className={classes.previewButton}
+              >
+                <TrailingButton
+                  disabled={
+                    !originalDescription ||
+                    originalDescription != editedDescription
+                  }
+                  fullWidth={isMobileView}
+                  variant="outlined"
+                >
+                  Preview
+                </TrailingButton>
+              </Link>
               <TrailingButton
                 disabled={
-                  !originalDescription ||
-                  originalDescription != editedDescription
+                  !isDescriptionValid ||
+                  (editedContactEmail === originalContactEmail &&
+                    editedDescription === originalDescription) ||
+                  !isContactEmailValid
                 }
                 fullWidth={isMobileView}
-                variant="outlined"
+                variant={isMobileView ? 'contained' : 'outlined'}
+                onClick={shortLinkDispatch?.applyEditInformation}
               >
-                Preview
+                Save
               </TrailingButton>
-            </Link>
-            <TrailingButton
-              disabled={
-                !isDescriptionValid ||
-                (
-                  editedContactEmail === originalContactEmail &&
-                  editedDescription === originalDescription
-                ) ||
-                !isContactEmailValid
-              }
-              fullWidth={isMobileView}
-              variant={isMobileView ? 'contained' : 'outlined'}
-              onClick={shortLinkDispatch?.applyEditInformation}
-            >
-              Save
-            </TrailingButton>
             </div>
           </div>
           <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
           <Divider className={classes.dividerLinkVisibility} />
-            <Typography
-              variant="h3"
-              className={classes.customInformationHeader}
-              color="primary"
-            >
-              Custom Link Visibility
-            </Typography>
-            <Typography variant="body1" className={classes.customInformationDesc}>
-              This section is undergoing construction. Your link description and contact email added{' '}
-              will be kept for future use in our database. We'll keep you updated on any changes.
+          <Typography
+            variant="h3"
+            className={classes.customInformationHeader}
+            color="primary"
+          >
+            Custom Link Visibility
+          </Typography>
+          <Typography variant="body1" className={classes.customInformationDesc}>
+            This section is undergoing construction. Your link description and
+            contact email added will be kept for future use in our database.
+            We'll keep you updated on any changes.
           </Typography>
           <div className={classes.emptyStateGraphic}>
             <img src={inProgressGraphic} alt="in progress graphic" />

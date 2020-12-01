@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import {
+  CircularProgress,
+  Divider,
+  Hidden,
+  Tab,
+  Tabs,
   Typography,
   createStyles,
   makeStyles,
-  CircularProgress,
-  Tabs,
-  Tab,
   useTheme,
-  Divider,
-  Hidden,
 } from '@material-ui/core'
 
 import { useDrawerState } from '../..'
@@ -111,7 +111,7 @@ function LinkStatisticsGraphs() {
   const linkStatistics = useStatistics(shortUrl)
 
   // Still fetching link statistics.
-  if (!Boolean(linkStatistics.status)) {
+  if (!linkStatistics.status) {
     return (
       <div className={classes.root}>
         <CircularProgress className={classes.circularProgress} />
@@ -119,7 +119,7 @@ function LinkStatisticsGraphs() {
     )
   }
 
-  if (!Boolean(linkStatistics.contents)) {
+  if (!linkStatistics.contents) {
     return (
       <Typography variant="body1">
         There are no statistics to show right now.
@@ -208,7 +208,7 @@ const useStyles = makeStyles(() => ({
 
 export type GraphsProps = {
   data: LinkStatisticsInterface
-  shortUrl : string
+  shortUrl: string
 }
 
 function Graphs(props: GraphsProps) {
@@ -225,7 +225,7 @@ function Graphs(props: GraphsProps) {
   useEffect(() => {
     // Google Analytics: default device page and event on opening drawer
     GAPageView('DEVICE PAGE')
-    GAEvent('drawer page analytics data', 'device', '/' + props.shortUrl)
+    GAEvent('drawer page analytics data', 'device', `/${props.shortUrl}`)
 
     return () => {
       GAPageView('USER PAGE')
@@ -236,9 +236,9 @@ function Graphs(props: GraphsProps) {
     setTabValue(newValue)
 
     // Google Analytics: analytics data on device, clicks and traffics
-    const daType:string = daMap.get(newValue) || 'DEVICE PAGE'
-    GAPageView(daType.toUpperCase() + ' PAGE')
-    GAEvent('drawer page analytics data', daType, '/' + props.shortUrl)
+    const daType: string = daMap.get(newValue) || 'DEVICE PAGE'
+    GAPageView(`${daType.toUpperCase()} PAGE`)
+    GAEvent('drawer page analytics data', daType, `/${props.shortUrl}`)
   }
 
   const getIconStyle = (index: number) => {
@@ -269,7 +269,7 @@ function Graphs(props: GraphsProps) {
               value={tabValue}
               onChange={handleChange}
               className={classes.tabBar}
-              indicatorColor={'primary'}
+              indicatorColor="primary"
             >
               <Tab
                 label={
