@@ -11,7 +11,7 @@ const RotatingLinks: FunctionComponent<RotatingLinksType> = ({
   className = '',
   strings,
   prefix,
-}) => {
+}: RotatingLinksType) => {
   return (
     <main className={className}>
       {prefix}

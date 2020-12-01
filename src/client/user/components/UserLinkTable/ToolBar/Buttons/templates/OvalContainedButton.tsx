@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 
 type OvalContainedButtonProps = {
@@ -25,7 +25,7 @@ const OvalContainedButton: FunctionComponent<OvalContainedButtonProps> = ({
   children,
   href = undefined,
   onClick = undefined,
-}) => {
+}: PropsWithChildren<OvalContainedButtonProps>) => {
   const classes = useStyles()
   return (
     <Button
