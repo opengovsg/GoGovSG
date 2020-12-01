@@ -176,7 +176,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
               'general.emailDomain',
             )} email.`
           : '',
-      onChange:  (email: string) => setEmail(email),
+      onChange:  (email: string) => setEmail(email.toLowerCase()),
       variant,
       autoComplete: 'on',
       value: email,

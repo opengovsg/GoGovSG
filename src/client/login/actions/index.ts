@@ -20,12 +20,8 @@ import {
   RESEND_OTP_PENDING,
   ResendOtpDisabledAction,
   ResendOtpPendingAction,
-  SET_EMAIL,
   SET_EMAIL_VALIDATOR,
-  SET_OTP,
-  SetEmailAction,
   SetEmailValidatorAction,
-  SetOtpAction,
   VERIFY_OTP_ERROR,
   VERIFY_OTP_PENDING,
   VerifyOtpErrorAction,
@@ -63,20 +59,10 @@ const isGetOTPError: (errorMessage?: string) => GetOtpEmailErrorAction = (
   payload: errorMessage,
 })
 
-const setEmail: (payload: string) => SetEmailAction = (payload) => ({
-  type: SET_EMAIL,
-  payload,
-})
-
 const setEmailValidator: (
   payload: EmailValidatorType,
 ) => SetEmailValidatorAction = (payload) => ({
   type: SET_EMAIL_VALIDATOR,
-  payload,
-})
-
-const setOTP: (payload: string) => SetOtpAction = (payload) => ({
-  type: SET_OTP,
   payload,
 })
 
@@ -291,8 +277,6 @@ export default {
   getEmailValidationGlobExpression,
   getOTPEmail,
   verifyOTP,
-  setOTP,
-  setEmail,
   isLoggedIn,
   logout,
 }
