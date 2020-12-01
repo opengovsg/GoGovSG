@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme) =>
     copyIcon: {
       position: 'absolute',
       right: '10%',
+      '&:focus': {
+        outline: 'none',
+      },
     },
     goToIcon: {
       position: 'absolute',
@@ -159,9 +162,13 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
         <Typography className={classes.row} variant="body2">
           <img className={classes.personIcon} src={personIcon} alt="" />
           {url?.email}
-          <button type="button" onClick={() => onClickEvent()}>
-            <img className={classes.copyIcon} src={copyEmailIcon} alt="" />
-          </button>
+          <input
+            type="image"
+            src={copyEmailIcon}
+            onClick={() => onClickEvent()}
+            className={classes.copyIcon}
+            alt=""
+          />
         </Typography>
       </Paper>
     </Drawer>

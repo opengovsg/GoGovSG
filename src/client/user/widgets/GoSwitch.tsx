@@ -1,9 +1,4 @@
-import {
-  Switch,
-  SwitchProps,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Switch, createStyles, makeStyles } from '@material-ui/core'
 import React from 'react'
 
 const useStyles = makeStyles((theme) =>

@@ -112,7 +112,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const LoginPage: FunctionComponent<LoginPageProps> = ({ location }) => {
+const LoginPage: FunctionComponent<LoginPageProps> = ({
+  location,
+}: LoginPageProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const getEmailValidator = dispatch(

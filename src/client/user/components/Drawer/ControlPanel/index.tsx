@@ -282,8 +282,8 @@ export default function ControlPanel() {
           </Typography>
           <Typography variant="body1" className={classes.customInformationDesc}>
             This section is undergoing construction. Your link description and
-            contact email added will be kept for future use in our database.
-            We`&apos;`ll keep you updated on any changes.
+            contact email added will be kept for future use in our database. We
+            will keep you updated on any changes.
           </Typography>
           <div className={classes.emptyStateGraphic}>
             <img src={inProgressGraphic} alt="in progress graphic" />
