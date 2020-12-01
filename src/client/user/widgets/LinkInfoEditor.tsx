@@ -160,8 +160,6 @@ export default function LinkInfoEditor({
       </Typography>
       <ConfigOption
         title={contactEmailHelp}
-        titleVariant="body2"
-        titleClassName={classes.regularText}
         leading={
           <PrefixableTextField
             value={contactEmail}
@@ -183,8 +181,6 @@ export default function LinkInfoEditor({
       />
       <ConfigOption
         title={linkDescriptionHelp}
-        titleVariant="body2"
-        titleClassName={classes.regularText}
         leading={
           <>
             <PrefixableTextField

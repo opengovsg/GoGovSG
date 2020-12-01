@@ -5,8 +5,6 @@ import {
   Menu,
   MenuItem,
   Typography,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core'
 import FileSaver from 'file-saver'
 
@@ -80,9 +78,6 @@ const useStyles = makeStyles(() =>
     menuItemRoot: {
       height: '50%',
     },
-    regularText: {
-      fontWeight: 400,
-    },
   }),
 )
 
@@ -92,8 +87,6 @@ type Option = {
 }
 
 export default function DownloadButton() {
-  const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const classes = useStyles()
   const modalState = useDrawerState()
   const shortLink = modalState.relevantShortLink!
@@ -170,8 +163,7 @@ export default function DownloadButton() {
   return (
     <ConfigOption
       title="Download QR Code"
-      titleVariant="h6"
-      titleClassName={isMobileView ? classes.regularText : ''}
+      isTitleMobileResponsive
       trailing={button}
       trailingPosition={TrailingPosition.end}
     />

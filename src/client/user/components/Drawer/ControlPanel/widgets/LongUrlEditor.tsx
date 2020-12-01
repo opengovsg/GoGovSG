@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import {
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
@@ -16,16 +14,7 @@ import ConfigOption, {
 import PrefixableTextField from '../../../../widgets/PrefixableTextField'
 import TrailingButton from './TrailingButton'
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    regularText: {
-      fontWeight: 400,
-    },
-  }),
-)
-
 export default function LongUrlEditor() {
-  const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const drawerStates = useDrawerState()
@@ -38,8 +27,6 @@ export default function LongUrlEditor() {
   return (
     <ConfigOption
       title="Original link"
-      titleVariant="body2"
-      titleClassName={classes.regularText}
       leading={
         <PrefixableTextField
           value={editedLongUrl}

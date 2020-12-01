@@ -1,7 +1,5 @@
 import React, { FunctionComponent, useState } from 'react'
 import {
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
@@ -15,14 +13,6 @@ import DrawerTooltip from './DrawerTooltip'
 import PrefixableTextField from '../../../../widgets/PrefixableTextField'
 import TrailingButton from './TrailingButton'
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    regularText: {
-      fontWeight: 400,
-    },
-  }),
-)
-
 type LinkOwnershipFieldProps = {
   closeModal: () => void
 }
@@ -30,7 +20,6 @@ type LinkOwnershipFieldProps = {
 const LinkOwnershipField: FunctionComponent<LinkOwnershipFieldProps> = ({
   closeModal,
 }) => {
-  const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const drawerStates = useDrawerState()
@@ -50,8 +39,6 @@ const LinkOwnershipField: FunctionComponent<LinkOwnershipFieldProps> = ({
   return (
     <ConfigOption
       title={linkOwnershipHelp}
-      titleVariant="body2"
-      titleClassName={classes.regularText}
       leading={
         <PrefixableTextField
           value={pendingOwner}

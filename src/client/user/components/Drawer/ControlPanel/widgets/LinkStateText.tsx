@@ -2,8 +2,6 @@ import React from 'react'
 import {
   createStyles,
   makeStyles,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core'
 
 import { useDrawerState } from '../../index'
@@ -21,9 +19,6 @@ const useStyles = makeStyles((theme) =>
     inactiveText: {
       color: '#c85151',
     },
-    regularText: {
-      fontWeight: 400,
-    },
     stateSwitch: {
       marginBottom: theme.spacing(2),
     },
@@ -31,8 +26,6 @@ const useStyles = makeStyles((theme) =>
 )
 
 export default function LinkStateText() {
-  const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const classes = useStyles()
   const drawerStates = useDrawerState()
 
@@ -62,8 +55,7 @@ export default function LinkStateText() {
           ? stateTitleActive
           : stateTitleInactive
       }
-      titleVariant="h6"
-      titleClassName={isMobileView ? classes.regularText : ''}
+      isTitleMobileResponsive
       trailing={
         <GoSwitch
           color="primary"

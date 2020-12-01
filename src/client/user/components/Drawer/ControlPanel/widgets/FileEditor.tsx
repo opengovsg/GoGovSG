@@ -62,8 +62,6 @@ export default function FileEditor() {
   return (
     <ConfigOption
       title={replaceFileHelp}
-      titleVariant="body2"
-      titleClassName={classes.regularText}
       leading={
         <>
           <FileInputField
