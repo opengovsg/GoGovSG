@@ -34,12 +34,7 @@
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
-    "import/no-cycle": "off",
-    "jsx-a11y/label-has-associated-control": [ "error", {
-      "required": {
-        "some": [ "nesting", "id"  ]
-      }
-    }]
+    "import/no-cycle": "off"
   },
   "env": {
     "browser": true,

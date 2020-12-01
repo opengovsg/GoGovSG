@@ -197,6 +197,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                     >
                       {file ? formatBytes(file.size) : ''}
                     </Typography>
+                    {/* eslint-disable-next-line */}
                     <label htmlFor="file">
                       <Button
                         variant="contained"

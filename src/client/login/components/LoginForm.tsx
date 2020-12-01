@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
-import { loginFormVariants, VariantType } from '../../app/util/types'
+import { VariantType, loginFormVariants } from '../../app/util/types'
 
 type LoginFormProps = {
   id: string,
@@ -50,15 +50,12 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
   textErrorMessage,
   onSubmit,
   children,
-  value
-}) => {
+  value,
+}: PropsWithChildren<LoginFormProps>) => {
   const classes = useStyles()
   const variantMap = loginFormVariants.map[variant]
   return (
-    <form
-      onSubmit={onSubmit}
-      autoComplete={autoComplete}
-    >
+    <form onSubmit={onSubmit} autoComplete={autoComplete}>
       <TextField
         autoFocus
         required
