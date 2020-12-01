@@ -1,4 +1,4 @@
-import React, { useEffect, FunctionComponent } from 'react'
+import React, { useState, useEffect, FunctionComponent } from 'react'
 import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
@@ -121,12 +121,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn
   )
-  const email = useSelector(
-    (state: GoGovReduxState) => state.login.email
-  )
-  const otp = useSelector(
-    (state: GoGovReduxState) => state.login.otp
-  )
+  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState('')
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant
   )
@@ -158,8 +154,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     }
   }, [getEmailValidator])
 
-  const getOTPEmail = () => dispatch(loginActions.getOTPEmail())
-
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
@@ -169,7 +163,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       id: 'email',
       onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        dispatch(loginActions.getOTPEmail())
+        dispatch(loginActions.getOTPEmail(email))
         GAPageView('OTP LOGIN PAGE')
         GAEvent('login page', 'otp', 'successful')
       },
@@ -182,7 +176,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
               'general.emailDomain',
             )} email.`
           : '',
-      onChange:  (email: string) => dispatch(loginActions.setEmail(email)),
+      onChange:  (email: string) => setEmail(email),
       variant,
       autoComplete: 'on',
       value: email,
@@ -190,14 +184,14 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       id: 'otp',
       onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        dispatch(loginActions.verifyOTP())
+        dispatch(loginActions.verifyOTP(otp))
       },
       titleMessage: 'One time password',
       placeholder: 'e.g. 123456',
       buttonMessage: 'Submit',
       textError: () => false,
       textErrorMessage: () => '',
-      onChange: (otp: string) => dispatch(loginActions.setOTP(otp)),
+      onChange: (otp: string) => setOtp(otp),
       variant,
       autoComplete: 'off',
       value: otp,
@@ -238,26 +232,26 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
-                      <LoginForm {...formAttr}>
-                        { isEmailView ?
-                          <TextButton
-                            className={classes.secondaryButton}
-                            href={i18next.t('general.links.faq')}
-                          >
-                            Need help?
-                          </TextButton> :
-                          <TextButton
-                            className={classNames(
-                              classes.secondaryButton,
-                              classes.resendOTPBtn,
-                            )}
-                            disabled={!variantMap.resendEnabled}
-                            onClick={getOTPEmail}
-                          >
-                            Resend OTP
-                          </TextButton>
-                        }
-                      </LoginForm>
+                    <LoginForm {...formAttr}>
+                      { isEmailView ?
+                        <TextButton
+                          className={classes.secondaryButton}
+                          href={i18next.t('general.links.faq')}
+                        >
+                          Need help?
+                        </TextButton> :
+                        <TextButton
+                          className={classNames(
+                            classes.secondaryButton,
+                            classes.resendOTPBtn,
+                          )}
+                          disabled={!variantMap.resendEnabled}
+                          onClick={() => dispatch(loginActions.getOTPEmail(email))}
+                        >
+                          Resend OTP
+                        </TextButton>
+                      }
+                    </LoginForm>
                     {variantMap.progressBarShown ? (
                       <LinearProgress />
                     ) : null}

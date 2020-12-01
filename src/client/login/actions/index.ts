@@ -143,7 +143,7 @@ const getEmailValidationGlobExpression = () => (
 /**
  * Called when user enters email and waits for OTP.
  */
-const getOTPEmail = () => (
+const getOTPEmail = (email: string) => (
   dispatch: Dispatch<
     | GetOtpEmailErrorAction
     | CloseSnackbarAction
@@ -159,7 +159,7 @@ const getOTPEmail = () => (
   dispatch<CloseSnackbarAction>(rootActions.closeSnackbar())
 
   const { login } = getState()
-  const { email, formVariant } = login
+  const { formVariant } = login
   let pendingAction: () => void
   let successAction: () => void
   let errorAction: () => void
@@ -234,7 +234,7 @@ const isLoggedIn = () => (
 /**
  * Called when user enters OTP and submits for verification.
  */
-const verifyOTP = () => (
+const verifyOTP = (otp: string) => (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
@@ -249,7 +249,7 @@ const verifyOTP = () => (
   dispatch<CloseSnackbarAction>(rootActions.closeSnackbar())
 
   const { login } = getState()
-  const { email, otp } = login
+  const { email } = login
 
   dispatch<VerifyOtpPendingAction>(isVerifyOTPPending())
   return postJson('/api/login/verify', { email, otp }).then((response) => {

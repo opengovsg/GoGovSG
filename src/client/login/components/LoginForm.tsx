@@ -9,7 +9,7 @@ type LoginFormProps = {
   buttonMessage: string,
   variant: VariantType,
   autoComplete: string,
-  onChange: (email: string) => {},
+  onChange: (email: string) => void,
   textError: () => boolean,
   textErrorMessage: () => string,
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
