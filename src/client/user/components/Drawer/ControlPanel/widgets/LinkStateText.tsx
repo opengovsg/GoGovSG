@@ -2,6 +2,7 @@ import React from 'react'
 import {
   createStyles,
   makeStyles,
+  Typography,
 } from '@material-ui/core'
 
 import { useDrawerState } from '../../index'
@@ -19,8 +20,12 @@ const useStyles = makeStyles((theme) =>
     inactiveText: {
       color: '#c85151',
     },
+    regularText: {
+      fontWeight: 400,
+    },
     stateSwitch: {
-      marginBottom: theme.spacing(2),
+      marginTop: 0,
+      marginBottom: theme.spacing(4),
     },
   }),
 )
@@ -51,9 +56,17 @@ export default function LinkStateText() {
   return (
     <ConfigOption
       title={
-        shortLinkState?.state === 'ACTIVE'
-          ? stateTitleActive
-          : stateTitleInactive
+        [
+          shortLinkState?.state === 'ACTIVE'
+            ? stateTitleActive
+            : stateTitleInactive,
+          <Typography
+            variant="body2"
+            className={classes.regularText}
+          >
+            Share your link through <a href="https://postman.gov.sg" target="_blank">Postman</a>, a mass messaging tool.
+          </Typography>,
+        ]
       }
       mobile
       trailing={
