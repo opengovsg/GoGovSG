@@ -82,8 +82,7 @@ export default function ConfigOption({
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const titleVariant = mobile ? 'h6' : 'body2'
-  let titleClass = classes.regularText
-  if (mobile && !isMobileView) titleClass = ''
+  const titleClass = mobile && !isMobileView ? '' : classes.regularText
   return (
     <main className={classes.mainContainer}>
       <section className={classes.leadingContainer}>
