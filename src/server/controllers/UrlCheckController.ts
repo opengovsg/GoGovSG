@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 
 import jsonMessage from '../util/json'
 import { UrlCheckControllerInterface } from './interfaces/UrlCheckControllerInterface'
-import { UrlCreationRequest } from '../../types/server/controllers/UserController'
+import { UrlCreationRequest } from '../modules/user'
 import { UrlThreatScanServiceInterface } from '../services/interfaces/UrlThreatScanServiceInterface'
 import { DependencyIds } from '../constants'
 import { logger } from '../config'

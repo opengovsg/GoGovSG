@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
-import { StorableUrlState } from '../../../src/server/repositories/enums'
-import { createRequestWithUser } from '../api/util'
+import { StorableUrlState } from '../../../repositories/enums'
+import { createRequestWithUser } from '../../../../../test/server/api/util'
 
-import { UserController } from '../../../src/server/controllers/UserController'
+import { UserController } from '../UserController'
 
 const urlManagementService = {
   createUrl: jest.fn(),
@@ -22,6 +22,7 @@ const userAnnouncement = {
 
 describe('UserController', () => {
   const controller = new UserController(
+    // @ts-ignore - no need for private properties in UrlManagementService
     urlManagementService,
     userMessage,
     userAnnouncement,
