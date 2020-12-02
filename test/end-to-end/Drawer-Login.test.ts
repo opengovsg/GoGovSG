@@ -118,9 +118,9 @@ test.before(async (t) => {
   await t
     .click(loginButton)
     .typeText('#email', `${transferEmail}`)
-    .click(signInButton.nth(0))
+    .click(signInButton)
     .typeText('#otp', otp)
-    .click(signInButton.nth(1))
+    .click(signInButton)
 
   if (await userModal.exists) {
     await t.click(userModalCloseButton)

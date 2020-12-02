@@ -11,9 +11,9 @@ const loginProcedure = async (t) => {
   await t
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
-    .click(signInButton.nth(0))
+    .click(signInButton)
     .typeText('#otp', otp)
-    .click(signInButton.nth(1))
+    .click(signInButton)
     .click(loginSuccessAlert)
 
   if (await userModal.exists) {

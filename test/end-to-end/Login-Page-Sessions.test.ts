@@ -21,7 +21,7 @@ test('Invalid Email that does not end with .gov.sg and should not allow submissi
     .expect(emailHelperText.innerText)
     .eql("This doesn't look like a valid gov.sg email.")
     // It should not allow submission when email is invalid
-    .expect(signInButton.nth(0).hasAttribute('disabled'))
+    .expect(signInButton.hasAttribute('disabled'))
     .ok()
 })
 
@@ -29,9 +29,9 @@ test('Invalid OTP should not log the user in', async (t) => {
   await t
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
-    .click(signInButton.nth(0))
+    .click(signInButton)
     .typeText('#otp', `${incorrectOtp}`)
-    .click(signInButton.nth(1))
+    .click(signInButton)
     // Invalid OTP should not log the user in
     .expect(Selector('div[role="alert"]').exists)
     .ok()
@@ -41,12 +41,12 @@ test('After trying to enter wrong OTP 3 times, it should respond with OTP not fo
   await t
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
-    .click(signInButton.nth(0))
+    .click(signInButton)
     .typeText('#otp', `${incorrectOtp}`)
-    .click(signInButton.nth(1))
-    .click(signInButton.nth(1))
-    .click(signInButton.nth(1))
-    .click(signInButton.nth(1))
+    .click(signInButton)
+    .click(signInButton)
+    .click(signInButton)
+    .click(signInButton)
     // After trying to enter wrong OTP 3 times, it should respond with OTP not found/expired (a new OTP must be requested)
     .expect(Selector('div[role="alert"]').child(0).innerText)
     .eql('OTP expired/not found.')
@@ -65,9 +65,9 @@ test('Valid OTP should log the user in', async (t) => {
   await t
     .click(loginButton)
     .typeText('#email', `${testEmail}`)
-    .click(signInButton.nth(0))
+    .click(signInButton)
     .typeText('#otp', otp)
-    .click(signInButton.nth(1))
+    .click(signInButton)
     // Valid OTP should log the user in
     .expect(getLocation())
     .match(/user/)
