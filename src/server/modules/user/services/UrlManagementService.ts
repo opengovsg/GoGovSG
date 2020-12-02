@@ -1,25 +1,23 @@
 import { inject, injectable } from 'inversify'
-import { UrlManagementServiceInterface } from './interfaces/UrlManagementServiceInterface'
-import { UpdateUrlOptions } from './types'
-import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import {
   StorableFile,
   StorableUrl,
   UrlsPaginated,
   UserUrlsQueryConditions,
-} from '../repositories/types'
+} from '../../../repositories/types'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
   NotFoundError,
-} from '../util/error'
-import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
-import { addFileExtension, getFileExtension } from '../util/fileFormat'
-import { GoUploadedFile } from '../controllers/types'
-import { DependencyIds } from '../constants'
+} from '../../../util/error'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
+import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
+import { GoUploadedFile, UpdateUrlOptions } from '..'
+import { DependencyIds } from '../../../constants'
 
 @injectable()
-export class UrlManagementService implements UrlManagementServiceInterface {
+export class UrlManagementService {
   private userRepository: UserRepositoryInterface
 
   private urlRepository: UrlRepositoryInterface

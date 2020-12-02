@@ -10,13 +10,13 @@ import {
   urlRetrievalSchema,
   urlSchema,
 } from './validators'
-import { UserControllerInterface } from '../../controllers/interfaces/UserControllerInterface'
+import { UserController } from '../../modules/user'
 import { FileCheckControllerInterface } from '../../controllers/interfaces/FileCheckControllerInterface'
 import { UrlCheckControllerInterface } from '../../controllers/interfaces/UrlCheckControllerInterface'
 
 const router = Express.Router()
 
-const userController = container.get<UserControllerInterface>(
+const userController = container.get<UserController>(
   DependencyIds.userController,
 )
 

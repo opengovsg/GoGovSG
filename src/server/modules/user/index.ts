@@ -1,3 +1,6 @@
+import { StorableUrl } from '../../repositories/types'
+import { UserController } from './UserController'
+
 type OptionalLongUrlProperty = {
   longUrl?: string
 }
@@ -38,3 +41,19 @@ export type UrlEditRequest = ShortUrlOperationProperty &
   OptionalStateProperty &
   OptionalLongUrlProperty &
   Partial<LinkInformationProperties>
+
+export type GoUploadedFile = {
+  data: Buffer
+  mimetype: string
+  name: string
+}
+
+export type UpdateUrlOptions = Partial<
+  Pick<StorableUrl, 'state' | 'longUrl' | 'description' | 'contactEmail'> & {
+    file: GoUploadedFile
+  }
+>
+
+export { UserController } from './UserController'
+
+export default UserController
