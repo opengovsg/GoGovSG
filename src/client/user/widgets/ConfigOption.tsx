@@ -1,6 +1,18 @@
 import * as React from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
-import { Variant } from '@material-ui/core/styles/createTypography'
+import {
+  Typography,
+  createStyles,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core'
+
+export enum TrailingPosition {
+  start,
+  center,
+  end,
+  none,
+}
 
 type StylesProps = {
   trailingPosition: TrailingPosition
@@ -32,55 +44,59 @@ const useStyles = makeStyles((theme) =>
     },
     trailingContainer: {
       marginTop: (props: StylesProps) =>
-        props.trailingPosition == TrailingPosition.end ? 'auto' : 'unset',
+        props.trailingPosition === TrailingPosition.end ? 'auto' : 'unset',
       marginBottom: (props: StylesProps) =>
-        props.trailingPosition == TrailingPosition.start ? 'auto' : 'unset',
+        props.trailingPosition === TrailingPosition.start ? 'auto' : 'unset',
       width: (props: StylesProps) => (props.wrapTrailing ? '100%' : 'unset'),
+    },
+    regularText: {
+      fontWeight: 400,
     },
   }),
 )
 
-export enum TrailingPosition {
-  start,
-  center,
-  end,
-  none,
-}
-
 type ConfigOptionProps = {
   title: string | React.ReactNode
+  mobile?: boolean
   subtitle?: string
   leading?: React.ReactNode
   trailing: React.ReactNode
   trailingPosition: TrailingPosition
-  titleVariant: Variant
-  titleClassName?: string
   wrapTrailing?: boolean
 }
 
 // Represents an edit option on the ControlPanel.
-export default function ConfigOption(props: ConfigOptionProps) {
+export default function ConfigOption({
+  title,
+  mobile = false,
+  subtitle,
+  leading,
+  trailing,
+  trailingPosition,
+  wrapTrailing,
+}: ConfigOptionProps) {
   const classes = useStyles({
-    trailingPosition: props.trailingPosition,
-    wrapTrailing: props.wrapTrailing,
+    trailingPosition,
+    wrapTrailing,
   })
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const titleVariant = mobile ? 'h6' : 'body2'
+  const titleClass = mobile && !isMobileView ? '' : classes.regularText
   return (
     <main className={classes.mainContainer}>
       <section className={classes.leadingContainer}>
-        <Typography
-          variant={props.titleVariant}
-          className={props.titleClassName}
-        >
-          {props.title}
+        <Typography variant={titleVariant} className={titleClass}>
+          {title}
         </Typography>
-        {props.subtitle && (
+        {subtitle && (
           <Typography variant="body1" color="textSecondary">
-            {props.subtitle}
+            {subtitle}
           </Typography>
         )}
-        {props.leading}
+        {leading}
       </section>
-      <section className={classes.trailingContainer}>{props.trailing}</section>
+      <section className={classes.trailingContainer}>{trailing}</section>
     </main>
   )
 }

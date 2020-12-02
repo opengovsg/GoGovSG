@@ -12,6 +12,7 @@ import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
+import ConfigOption, { TrailingPosition } from '../../../../widgets/ConfigOption'
 import { get } from '../../../../../app/util/requests'
 import { GAEvent } from '../../../../../app/util/ga'
 import * as Sentry from '@sentry/browser'
@@ -116,7 +117,7 @@ export default function DownloadButton() {
     },
   ]
 
-  return (
+  const button = (
     <>
       <TrailingButton onClick={handleClick} variant="outlined">
         <div className={classes.textDiv}>Download</div>
@@ -157,5 +158,14 @@ export default function DownloadButton() {
         })}
       </Menu>
     </>
+  )
+
+  return (
+    <ConfigOption
+      title="Download QR Code"
+      mobile
+      trailing={button}
+      trailingPosition={TrailingPosition.end}
+    />
   )
 }
