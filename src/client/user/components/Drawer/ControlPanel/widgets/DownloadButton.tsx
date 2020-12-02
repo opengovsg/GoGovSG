@@ -163,7 +163,7 @@ export default function DownloadButton() {
   return (
     <ConfigOption
       title="Download QR Code"
-      isTitleMobileResponsive
+      mobile
       trailing={button}
       trailingPosition={TrailingPosition.end}
     />

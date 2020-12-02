@@ -55,7 +55,7 @@ export default function LinkStateText() {
           ? stateTitleActive
           : stateTitleInactive
       }
-      isTitleMobileResponsive
+      mobile
       trailing={
         <GoSwitch
           color="primary"

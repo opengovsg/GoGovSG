@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) =>
 
 type ConfigOptionProps = {
   title: string | React.ReactNode
-  isTitleMobileResponsive?: boolean
+  mobile?: boolean
   subtitle?: string
   leading?: React.ReactNode
   trailing: React.ReactNode
@@ -68,7 +68,7 @@ type ConfigOptionProps = {
 // Represents an edit option on the ControlPanel.
 export default function ConfigOption({
   title,
-  isTitleMobileResponsive = false,
+  mobile = false,
   subtitle,
   leading,
   trailing,
@@ -81,9 +81,9 @@ export default function ConfigOption({
   })
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-  const titleVariant = isTitleMobileResponsive ? 'h6' : 'body2'
+  const titleVariant = mobile ? 'h6' : 'body2'
   let titleClass = classes.regularText
-  if (isTitleMobileResponsive && !isMobileView) titleClass = ''
+  if (mobile && !isMobileView) titleClass = ''
   return (
     <main className={classes.mainContainer}>
       <section className={classes.leadingContainer}>
