@@ -164,7 +164,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
         fields: ['userId'],
       },
       {
-        name: 'new_urls_weighted_search_idx',
+        name: 'urls_combined_weighted_search_idx',
         unique: false,
         using: 'GIN',
         fields: [Sequelize.literal(`(${urlSearchVector})`)],
