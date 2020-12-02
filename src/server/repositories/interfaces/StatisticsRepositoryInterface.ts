@@ -1,4 +1,4 @@
-import { GlobalStatistics } from '../types'
+import { GlobalStatistics } from '../../modules/statistics'
 
 export interface StatisticsRepositoryInterface {
   /**

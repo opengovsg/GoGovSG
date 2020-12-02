@@ -75,12 +75,6 @@ export type StorableOtp = {
   retries: number
 }
 
-export type GlobalStatistics = {
-  userCount: number
-  clickCount: number
-  linkCount: number
-}
-
 /**
  * Has a cache duration expressed as a human-readable
  * time interval. An example of this is the threat matches

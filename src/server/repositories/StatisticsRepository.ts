@@ -6,7 +6,7 @@ import { Url } from '../models/url'
 import { statClient } from '../redis'
 import { logger, statisticsExpiry } from '../config'
 import { StatisticsRepositoryInterface } from './interfaces/StatisticsRepositoryInterface'
-import { GlobalStatistics } from './types'
+import { GlobalStatistics } from '../modules/statistics'
 
 const USER_COUNT_KEY = 'userCount'
 const CLICK_COUNT_KEY = 'clickCount'
