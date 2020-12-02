@@ -82,7 +82,6 @@ const useLinkStatisticsGraphsStyles = makeStyles(() => ({
 
 export type TabPanelProps = {
   children?: React.ReactNode
-  dir?: string
   index: any
   value: any
 }

@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import FileInputField from '../../../../widgets/FileInputField'
+import { FileInputField } from '../../../../widgets/FileInputField'
 import CollapsibleMessage from '../../../../../app/components/CollapsibleMessage'
 import {
   CollapsibleMessagePosition,

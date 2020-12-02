@@ -1,8 +1,5 @@
 import React, { FunctionComponent, useState } from 'react'
-import {
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@material-ui/core'
 
 import ConfigOption, {
   TrailingPosition,
@@ -19,7 +16,7 @@ type LinkOwnershipFieldProps = {
 
 const LinkOwnershipField: FunctionComponent<LinkOwnershipFieldProps> = ({
   closeModal,
-}) => {
+}: LinkOwnershipFieldProps) => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const drawerStates = useDrawerState()

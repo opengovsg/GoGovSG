@@ -4,15 +4,15 @@ import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
 import { VariantType, loginFormVariants } from '../../app/util/types'
 
 type LoginFormProps = {
-  id: string,
-  placeholder: string,
-  buttonMessage: string,
-  variant: VariantType,
-  autoComplete: string,
-  onChange: (email: string) => void,
-  textError: () => boolean,
-  textErrorMessage: () => string,
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
+  id: string
+  placeholder: string
+  buttonMessage: string
+  variant: VariantType
+  autoComplete: string
+  onChange: (email: string) => void
+  textError: () => boolean
+  textErrorMessage: () => string
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   value: string
 }
 

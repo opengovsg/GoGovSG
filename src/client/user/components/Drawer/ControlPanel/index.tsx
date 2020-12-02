@@ -1,14 +1,10 @@
 import React from 'react'
 import {
-  CircularProgress,
   Divider,
   Drawer,
   Hidden,
   IconButton,
-  useTheme,
-  useMediaQuery,
   Link,
-  Tooltip,
   Typography,
   createStyles,
   makeStyles,
@@ -148,10 +144,9 @@ export default function ControlPanel() {
   const modalDispatch = useDrawerDispatch()
 
   // Fetch short link state and dispatches from redux store through our helper hook.
-  const {
-    shortLinkState,
-    shortLinkDispatch,
-  } = useShortLink(drawerStates.relevantShortLink!)
+  const { shortLinkState, shortLinkDispatch } = useShortLink(
+    drawerStates.relevantShortLink!,
+  )
 
   // Manage values in our text fields.
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
@@ -205,26 +200,12 @@ export default function ControlPanel() {
           </Hidden>
           <LinkOwnershipField closeModal={handleClose} />
           <div className={classes.inactiveDesc}>
-          <Divider className={classes.dividerInformation} />
-          <LinkInfoEditor
-            contactEmail={editedContactEmail}
-            description={editedDescription}
-            onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)}
-            onDescriptionChange={(event) =>
-              shortLinkDispatch?.setEditDescription(
-                event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
-              )
-            }
-            onContactEmailValidation={setContactEmailValid}
-            onDescriptionValidation={setDescriptionValid}
-          />
-          <div className={classes.saveLinkInformationButtonWrapper}>
-            <Link
-              target="_blank"
-              href={
-                isDescriptionValid && isContactEmailValid && editedDescription
-                  ? `/#${SEARCH_PAGE}`
-                  : undefined
+            <Divider className={classes.dividerInformation} />
+            <LinkInfoEditor
+              contactEmail={editedContactEmail}
+              description={editedDescription}
+              onContactEmailChange={(event) =>
+                shortLinkDispatch?.setEditContactEmail(event.target.value)
               }
               onDescriptionChange={(event) =>
                 shortLinkDispatch?.setEditDescription(

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
@@ -126,7 +126,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     (state: GoGovReduxState) => state.login.emailValidator,
   )
   const isLoggedIn = useSelector(
-    (state: GoGovReduxState) => state.login.isLoggedIn
+    (state: GoGovReduxState) => state.login.isLoggedIn,
   )
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
@@ -169,43 +169,45 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     const isEmailView = loginFormVariants.isEmailView(variant)
     const emailError = () => !!email && !emailValidator(email)
 
-    const formAttr = isEmailView ? {
-      id: 'email',
-      onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        dispatch(loginActions.getOTPEmail(email))
-        GAPageView('OTP LOGIN PAGE')
-        GAEvent('login page', 'otp', 'successful')
-      },
-      placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
-      buttonMessage: 'Sign in',
-      textError: emailError,
-      textErrorMessage: () =>
-        emailError()
-          ? `This doesn't look like a valid ${i18next.t(
-              'general.emailDomain',
-            )} email.`
-          : '',
-      onChange:  (email: string) => setEmail(email.toLowerCase()),
-      variant,
-      autoComplete: 'on',
-      value: email,
-    } : {
-      id: 'otp',
-      onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        dispatch(loginActions.verifyOTP(otp))
-      },
-      titleMessage: 'One time password',
-      placeholder: 'e.g. 123456',
-      buttonMessage: 'Submit',
-      textError: () => false,
-      textErrorMessage: () => '',
-      onChange: (otp: string) => setOtp(otp),
-      variant,
-      autoComplete: 'off',
-      value: otp,
-    }
+    const formAttr = isEmailView
+      ? {
+          id: 'email',
+          onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault()
+            dispatch(loginActions.getOTPEmail(email))
+            GAPageView('OTP LOGIN PAGE')
+            GAEvent('login page', 'otp', 'successful')
+          },
+          placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
+          buttonMessage: 'Sign in',
+          textError: emailError,
+          textErrorMessage: () =>
+            emailError()
+              ? `This doesn't look like a valid ${i18next.t(
+                  'general.emailDomain',
+                )} email.`
+              : '',
+          onChange: (email: string) => setEmail(email.toLowerCase()),
+          variant,
+          autoComplete: 'on',
+          value: email,
+        }
+      : {
+          id: 'otp',
+          onSubmit: (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault()
+            dispatch(loginActions.verifyOTP(otp))
+          },
+          titleMessage: 'One time password',
+          placeholder: 'e.g. 123456',
+          buttonMessage: 'Submit',
+          textError: () => false,
+          textErrorMessage: () => '',
+          onChange: (otp: string) => setOtp(otp),
+          variant,
+          autoComplete: 'off',
+          value: otp,
+        }
 
     return (
       <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
@@ -242,29 +244,31 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     <Typography variant="body1">
                       {isEmailView ? 'Email' : 'One-time password'}
                     </Typography>
+                    {/* eslint-disable-next-line */}
                     <LoginForm {...formAttr}>
-                      { isEmailView ?
+                      {isEmailView ? (
                         <TextButton
                           className={classes.secondaryButton}
                           href={i18next.t('general.links.faq')}
                         >
                           Need help?
-                        </TextButton> :
+                        </TextButton>
+                      ) : (
                         <TextButton
                           className={classNames(
                             classes.secondaryButton,
                             classes.resendOTPBtn,
                           )}
                           disabled={!variantMap.resendEnabled}
-                          onClick={() => dispatch(loginActions.getOTPEmail(email))}
+                          onClick={() =>
+                            dispatch(loginActions.getOTPEmail(email))
+                          }
                         >
                           Resend OTP
                         </TextButton>
-                      }
+                      )}
                     </LoginForm>
-                    {variantMap.progressBarShown ? (
-                      <LinearProgress />
-                    ) : null}
+                    {variantMap.progressBarShown ? <LinearProgress /> : null}
                   </span>
                 </section>
               </Section>
