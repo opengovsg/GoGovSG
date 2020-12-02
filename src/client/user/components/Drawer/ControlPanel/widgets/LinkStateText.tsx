@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  createStyles,
-  makeStyles,
-  Typography,
-} from '@material-ui/core'
+import { Typography, createStyles, makeStyles } from '@material-ui/core'
 
 import { useDrawerState } from '../../index'
 import useShortLink from '../util/shortlink'
@@ -55,19 +51,18 @@ export default function LinkStateText() {
 
   return (
     <ConfigOption
-      title={
-        [
-          shortLinkState?.state === 'ACTIVE'
-            ? stateTitleActive
-            : stateTitleInactive,
-          <Typography
-            variant="body2"
-            className={classes.regularText}
-          >
-            Share your link through <a href="https://postman.gov.sg" target="_blank">Postman</a>, a mass messaging tool.
-          </Typography>,
-        ]
-      }
+      title={[
+        shortLinkState?.state === 'ACTIVE'
+          ? stateTitleActive
+          : stateTitleInactive,
+        <Typography variant="body2" className={classes.regularText}>
+          Share your link through{' '}
+          <a href="https://postman.gov.sg" target="_blank" rel="noreferrer">
+            Postman
+          </a>
+          , a mass messaging tool.
+        </Typography>,
+      ]}
       mobile
       trailing={
         <GoSwitch
