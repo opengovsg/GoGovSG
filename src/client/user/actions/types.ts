@@ -29,6 +29,18 @@ export const SET_EDITED_CONTACT_EMAIL = 'SET_EDITED_CONTACT_EMAIL'
 export const SET_EDITED_DESCRIPTION = 'SET_EDITED_DESCRIPTION'
 export const SET_USER_MESSAGE = 'SET_USER_MESSAGE'
 export const SET_USER_ANNOUNCEMENT = 'SET_USER_ANNOUNCEMENT'
+export const SET_URL_UPLOAD_STATE = 'SET_URL_UPLOAD_STATE'
+export const SET_FILE_UPLOAD_STATE = 'SET_FILE_UPLOAD_STATE'
+
+export type SetUrlUploadStateAction = {
+  type: typeof SET_URL_UPLOAD_STATE
+  payload: boolean
+}
+
+export type SetFileUploadStateAction = {
+  type: typeof SET_FILE_UPLOAD_STATE
+  payload: boolean
+}
 
 export type SetUserMessageAction = {
   type: typeof SET_USER_MESSAGE
@@ -145,12 +157,12 @@ export type SetIsUploadingAction = {
 
 export type SetUploadFileErrorAction = {
   type: typeof SET_UPLOAD_FILE_ERROR
-  payload: string | null
+  payload: string
 }
 
 export type SetCreateShortLinkErrorAction = {
   type: typeof SET_CREATE_SHORT_LINK_ERROR
-  payload: string | null
+  payload: string
 }
 
 export type SetUrlFilterAction = {
@@ -183,3 +195,5 @@ export type UserActionType =
   | SetEditedDescriptionAction
   | SetUserMessageAction
   | SetUserAnnouncementAction
+  | SetUrlUploadStateAction
+  | SetFileUploadStateAction

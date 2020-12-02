@@ -5,14 +5,9 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import rootReducer from './reducers'
 
 const composeEnhancers = composeWithDevTools({
-    trace: true
+  trace: true,
 })
 
-const store = createStore(
-    rootReducer,
-    composeEnhancers(
-        applyMiddleware(thunk)
-    )
-)
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)))
 
 export default store

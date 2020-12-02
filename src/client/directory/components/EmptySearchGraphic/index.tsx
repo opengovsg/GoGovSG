@@ -44,9 +44,9 @@ const EmptyStateGraphic: FunctionComponent = () => {
       </Typography>
       <Typography variant="body1" className={classes.emptyStateBodyText}>
         Search by keyword or email to see what links other public officers{' '}
-          <br />
+        <br />
         have created,and find link owners. The directory is only available{' '}
-          <br />
+        <br />
         to users who are signed in.
       </Typography>
       <div className={classes.emptyStateGraphic}>

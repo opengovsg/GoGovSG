@@ -1,9 +1,4 @@
-import {
-  Switch,
-  createStyles,
-  makeStyles,
-  SwitchProps,
-} from '@material-ui/core'
+import { Switch, createStyles, makeStyles } from '@material-ui/core'
 import React from 'react'
 
 const useStyles = makeStyles((theme) =>
@@ -46,10 +41,26 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function GoSwitch({ ...props }: SwitchProps) {
+type GoSwitchProps = {
+  color?: 'primary' | 'secondary' | 'default'
+  checked?: boolean
+  className?: string
+  onChange?: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    checked: boolean,
+  ) => void
+}
+
+export default function GoSwitch({
+  color,
+  checked,
+  className,
+  onChange,
+}: GoSwitchProps) {
   const classes = useStyles()
   return (
     <Switch
+      className={className}
       focusVisibleClassName={classes.focusVisible}
       disableRipple
       classes={{
@@ -59,7 +70,9 @@ export default function GoSwitch({ ...props }: SwitchProps) {
         track: classes.track,
         checked: classes.checked,
       }}
-      {...props}
+      color={color}
+      checked={checked}
+      onChange={onChange}
     />
   )
 }

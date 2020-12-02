@@ -8,6 +8,7 @@ import {
   SET_EDITED_CONTACT_EMAIL,
   SET_EDITED_DESCRIPTION,
   SET_EDITED_LONG_URL,
+  SET_FILE_UPLOAD_STATE,
   SET_IS_UPLOADING,
   SET_LAST_CREATED_LINK,
   SET_LONG_URL,
@@ -16,6 +17,7 @@ import {
   SET_UPLOAD_FILE_ERROR,
   SET_URL_FILTER,
   SET_URL_TABLE_CONFIG,
+  SET_URL_UPLOAD_STATE,
   SET_USER_ANNOUNCEMENT,
   SET_USER_MESSAGE,
   TOGGLE_URL_STATE_SUCCESS,
@@ -44,6 +46,12 @@ const initialState: UserState = {
   urlCount: 0,
   message: null,
   announcement: null,
+  uploadFileError: null,
+  createShortLinkError: null,
+  uploadState: {
+    urlUpload: false,
+    fileUpload: false,
+  },
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
@@ -211,6 +219,22 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UPDATE_URL_COUNT:
       nextState = {
         urlCount: action.payload,
+      }
+      break
+    case SET_URL_UPLOAD_STATE:
+      nextState = {
+        uploadState: {
+          ...state.uploadState,
+          urlUpload: action.payload,
+        },
+      }
+      break
+    case SET_FILE_UPLOAD_STATE:
+      nextState = {
+        uploadState: {
+          ...state.uploadState,
+          fileUpload: action.payload,
+        },
       }
       break
     default:

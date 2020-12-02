@@ -21,10 +21,10 @@ export type FlexibleBarProps = {
   color: string
 }
 
-const FlexibleBar = (props: FlexibleBarProps) => {
-  const classes = useStyles({ ...props })
+const FlexibleBar = ({ label, count, color }: FlexibleBarProps) => {
+  const classes = useStyles({ count, color })
   return (
-    <Tooltip title={props.label} placement="top" arrow>
+    <Tooltip title={label} placement="top" arrow>
       <div className={classes.root} />
     </Tooltip>
   )

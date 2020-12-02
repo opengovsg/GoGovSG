@@ -6,7 +6,10 @@ type OnClickTooltipType = {
   children: React.ReactElement
 }
 
-export default function OnClickTooltip(props: OnClickTooltipType) {
+export default function OnClickTooltip({
+  tooltipText,
+  children,
+}: OnClickTooltipType) {
   const [open, setOpen] = useState<boolean>(false)
   const handleTooltipOpen = () => setOpen(true)
   const handleTooltipClose = () => setOpen(false)
@@ -16,14 +19,14 @@ export default function OnClickTooltip(props: OnClickTooltipType) {
       PopperProps={{
         disablePortal: true,
       }}
-      title={props.tooltipText}
+      title={tooltipText}
       open={open}
       onClickCapture={handleTooltipOpen}
       onClose={handleTooltipClose}
       placement="top"
       arrow
     >
-      {props.children}
+      {children}
     </Tooltip>
   )
 }

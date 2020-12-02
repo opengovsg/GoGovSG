@@ -1,5 +1,5 @@
-import React, { FunctionComponent } from 'react'
-import { Hidden, Typography, makeStyles, createStyles } from '@material-ui/core'
+import React, { FunctionComponent, ReactElement } from 'react'
+import { Hidden, Typography, createStyles, makeStyles } from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 
@@ -12,10 +12,10 @@ type FileInputFieldProps = {
   uploadFileError: string | null
   textFieldHeight: number | string
   text: string
-  endAdornment?: JSX.Element
+  endAdornment?: ReactElement
   inputId: string
   setFile: (file: File | null) => void
-  setUploadFileError: (error: string | null) => void
+  setUploadFileError: (error: string) => void
   className?: string
 }
 
@@ -74,7 +74,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   setFile,
   setUploadFileError,
   className,
-}) => {
+}: FileInputFieldProps) => {
   const classes = useStyles({ textFieldHeight, uploadFileError })
   return (
     <div className={`${classes.fileInputWrapper} ${className}`}>
@@ -106,7 +106,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
               )
               return
             }
-            setUploadFileError(null)
+            setUploadFileError('')
             setFile(chosenFile)
           }}
         />

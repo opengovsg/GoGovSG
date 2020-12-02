@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react'
 import { useDispatch } from 'react-redux'
 import copy from 'copy-to-clipboard'
 import {
+  Hidden,
   TableCell,
   TableRow,
   Typography,
@@ -9,7 +10,6 @@ import {
   makeStyles,
   useMediaQuery,
   useTheme,
-  Hidden,
 } from '@material-ui/core'
 import { UrlTypePublic } from '../../../../reducers/types'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
@@ -19,11 +19,10 @@ import rootActions from '../../../../../app/components/pages/RootPage/actions'
 import DirectoryFileIcon from '../../../../widgets/DirectoryFileIcon'
 import DirectoryUrlIcon from '../../../../widgets/DirectoryUrlIcon'
 
-
 type DirectoryTableRowProps = {
   url: UrlTypePublic
   setUrlInfo: (url: UrlTypePublic) => void
-  setOpen: (urlInfo:boolean) => void
+  setOpen: (urlInfo: boolean) => void
 }
 
 type DirectoryTableRowStyleProps = {
@@ -171,20 +170,20 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const dispatch = useDispatch()
 
-
-  const onClickEvent = (e:React.MouseEvent<HTMLTableRowElement, MouseEvent>) => {
+  const onClickEvent = (
+    e: React.MouseEvent<HTMLTableRowElement, MouseEvent>,
+  ) => {
     if (!isMobileView && url.state === 'ACTIVE') {
       e.stopPropagation()
       const redirect = `${window.location.origin}/${url.shortUrl}`
-      window.open(redirect,'_blank','noopener noreferrer')
-    }
-    else if (isMobileView) {
+      window.open(redirect, '_blank', 'noopener noreferrer')
+    } else if (isMobileView) {
       setUrlInfo(url)
       setOpen(true)
     }
   }
 
-  const onClickEmail =  (e:React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const onClickEmail = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     if (!isMobileView) {
       e.stopPropagation()
       copy(url.email)
@@ -195,79 +194,71 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
   }
 
   return (
-      <TableRow
-        className={classes.tableRow}
-        onClick={(e) => onClickEvent(e)}
-        key={url.shortUrl}
-      >
-        <TableCell className={classes.shortLinkCell} key="shortUrlCell">
-          <Typography
-            variant='body2'
-            className={classes.shortLinkText}
-          >
-            <div className={classes.IconCell}>
-              {url?.isFile? 
-                <DirectoryFileIcon color={
-                  url?.state === 'ACTIVE' ?
-                    '#384A51' : '#BBBBBB'
-                }/>
-                :
-                <DirectoryUrlIcon color={
-                  url?.state === 'ACTIVE' ?
-                    '#384A51' : '#BBBBBB'
-                }/>  
-              }
-              </div>
-            {url.state === 'ACTIVE'? 
-              <>
-              <span className={classes.domainTextActive}>
-                /{url.shortUrl}
-              </span>
-              </>
-              :
-              <>
+    <TableRow
+      className={classes.tableRow}
+      onClick={(e) => onClickEvent(e)}
+      key={url.shortUrl}
+    >
+      <TableCell className={classes.shortLinkCell} key="shortUrlCell">
+        <Typography variant="body2" className={classes.shortLinkText}>
+          <div className={classes.IconCell}>
+            {url?.isFile ? (
+              <DirectoryFileIcon
+                color={url?.state === 'ACTIVE' ? '#384A51' : '#BBBBBB'}
+              />
+            ) : (
+              <DirectoryUrlIcon
+                color={url?.state === 'ACTIVE' ? '#384A51' : '#BBBBBB'}
+              />
+            )}
+          </div>
+          {url.state === 'ACTIVE' ? (
+            <>
+              <span className={classes.domainTextActive}>/{url.shortUrl}</span>
+            </>
+          ) : (
+            <>
               <span className={classes.domainTextInactive}>
                 /{url.shortUrl}
               </span>
-              </>
-            }
-            
-          </Typography>
-        </TableCell>
-        
-        <Hidden smDown>
-          <TableCell className={classes.stateCell}>
-            <Typography
-              variant="caption"
-              className={
-                url.state === 'ACTIVE'
-                  ? classes.stateActive
-                  : classes.stateInactive
-              }
-            >
-              <b style={{ fontWeight: 900 }}>{'• '}</b>
-              {url.state.toLowerCase()}
-            </Typography>
-          </TableCell>
-        </Hidden>
-        
-        <TableCell className={classes.contactEmailCell} key="emailCell">
+            </>
+          )}
+        </Typography>
+      </TableCell>
+
+      <Hidden smDown>
+        <TableCell className={classes.stateCell}>
           <Typography
-            variant='body2'
-            className={classes.emailText}
-            onClick={(e) => onClickEmail(e)}
-            >            
-            <div className={classes.IconCell}>
-              <img
-                className={classes.personIcon}
-                src={personIcon}
-                alt="Copy email"
-              />
-            </div>
-            {String(url.email)}
+            variant="caption"
+            className={
+              url.state === 'ACTIVE'
+                ? classes.stateActive
+                : classes.stateInactive
+            }
+          >
+            <b style={{ fontWeight: 900 }}>{'• '}</b>
+            {url.state.toLowerCase()}
           </Typography>
         </TableCell>
-      </TableRow>
+      </Hidden>
+
+      <TableCell className={classes.contactEmailCell} key="emailCell">
+        <Typography
+          variant="body2"
+          className={classes.emailText}
+          onClick={(e) => onClickEmail(e)}
+        >
+          <div className={classes.IconCell}>
+            <img
+              className={classes.personIcon}
+              src={personIcon}
+              alt="Copy email"
+            />
+          </div>
+          {String(url.email)}
+        </Typography>
+      </TableCell>
+    </TableRow>
   )
 }
 

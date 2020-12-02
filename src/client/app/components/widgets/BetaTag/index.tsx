@@ -1,7 +1,5 @@
-import React, { FunctionComponent } from 'react'
-import { Typography, makeStyles, createStyles } from '@material-ui/core'
-
-type BetaTagProps = {}
+import React from 'react'
+import { Typography, createStyles, makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -24,7 +22,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const BetaTag: FunctionComponent<BetaTagProps> = ({}: BetaTagProps) => {
+const BetaTag = () => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
