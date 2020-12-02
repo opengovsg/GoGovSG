@@ -1,0 +1,65 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier",
+    "prettier/react",
+    "plugin:react-hooks/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/__tests__/*"
+      ],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
+  "plugins": ["jsdoc", "prettier", "jest"],
+  "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "no-console": "off",
+    "comma-dangle": ["error", "always-multiline"],
+    "import/no-unresolved": "warn",
+    "newline-per-chained-call": ["error"],
+    "react/jsx-filename-extension": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/require-default-props": "warn",
+    "react/forbid-prop-types": "warn",
+    "react/prop-types": "off",
+    "no-unused-vars": ["error"],
+    "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "semi": [2, "never"],
+    "react/no-string-refs": "warn",
+    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "jsdoc/require-description-complete-sentence": "error",
+    "prettier/prettier": "error"
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["^~", "./src/client"],
+          ["^\\$components", "./src/client/scss/components"]
+        ],
+        "extensions": [".jsx", ".js", ".tsx", ".ts", ".scss", ".css"]
+      }
+    }
+  }
+}
