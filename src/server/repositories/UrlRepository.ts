@@ -2,7 +2,7 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
-import { Url, UrlType, sanitise } from '../models/url'
+import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import {
@@ -26,6 +26,7 @@ import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
+import { sanitiseQuery } from '../util/sanitise'
 
 const { Public, Private } = FileVisibility
 
@@ -183,7 +184,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   ): Promise<UrlDirectoryPaginated> {
     const emails = query.toString().split(' ')
     // split email/domains by space into tokens, also reduces injections
-    const likeQuery = emails.map(sanitise)
+    const likeQuery = emails.map(sanitiseQuery)
 
     const queryFile = this.getQueryFileEmail(isFile)
     const queryState = this.getQueryStateEmail(state)
