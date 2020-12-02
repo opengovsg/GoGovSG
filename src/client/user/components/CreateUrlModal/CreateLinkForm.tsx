@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { History } from 'history'
@@ -25,39 +25,48 @@ import FileIcon from '../../widgets/FileIcon'
 import { formatBytes } from '../../../app/util/format'
 import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
 import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessage/types'
-import FileInputField from '../../widgets/FileInputField'
+import { FileInputField } from '../../widgets/FileInputField'
 import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
 import { GoGovReduxState } from '../../../app/reducers/types'
 import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
 
 type CreateLinkFormProps = {
-  onSubmitLink: (history: History) => {},
-  onSubmitFile: (file: File | null) => {},
+  onSubmitLink: (history: History) => {}
+  onSubmitFile: (file: File | null) => {}
 }
 
 const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   onSubmitLink,
   onSubmitFile,
-}) => {
-  
+}: CreateLinkFormProps) => {
   const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
   const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
-  const isUploading = useSelector((state: GoGovReduxState) => state.user.isUploading)
-  const createShortLinkError = useSelector((state: GoGovReduxState) => state.user.createShortLinkError)
-  const uploadFileError = useSelector((state: GoGovReduxState) => state.user.uploadFileError)
+  const isUploading = useSelector(
+    (state: GoGovReduxState) => state.user.isUploading,
+  )
+  const createShortLinkError = useSelector(
+    (state: GoGovReduxState) => state.user.createShortLinkError,
+  )
+  const uploadFileError = useSelector(
+    (state: GoGovReduxState) => state.user.uploadFileError,
+  )
 
   const dispatch = useDispatch()
-  const setShortUrl = (shortUrl: string) => dispatch(userActions.setShortUrl(shortUrl))
-  const setLongUrl = (longUrl: string) => dispatch(userActions.setLongUrl(longUrl))
+  const setShortUrl = (shortUrl: string) =>
+    dispatch(userActions.setShortUrl(shortUrl))
+  const setLongUrl = (longUrl: string) =>
+    dispatch(userActions.setLongUrl(longUrl))
   const setRandomShortUrl = () => dispatch(userActions.setRandomShortUrl())
-  const setUploadFileError = (error: string) => dispatch(userActions.setUploadFileError(error))
-  const setCreateShortLinkError = (error: string) => dispatch(userActions.setCreateShortLinkError(error))
+  const setUploadFileError = (error: string) =>
+    dispatch(userActions.setUploadFileError(error))
+  const setCreateShortLinkError = (error: string) =>
+    dispatch(userActions.setCreateShortLinkError(error))
 
   const history = useHistory()
 
   const [isFile, setIsFile] = useState(false)
-  const [file, setFile] = useState<File|null>(null)
+  const [file, setFile] = useState<File | null>(null)
 
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
@@ -188,6 +197,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                     >
                       {file ? formatBytes(file.size) : ''}
                     </Typography>
+                    {/* eslint-disable-next-line */}
                     <label htmlFor="file">
                       <Button
                         variant="contained"

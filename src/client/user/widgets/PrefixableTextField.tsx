@@ -1,10 +1,10 @@
 import React from 'react'
 import {
+  InputAdornment,
   TextField,
+  Typography,
   createStyles,
   makeStyles,
-  InputAdornment,
-  Typography,
 } from '@material-ui/core'
 
 // Height of the text field in the create link dialog.
@@ -99,36 +99,45 @@ type TextFieldProps = {
   FormHelperTextProps?: object
 }
 
-export default function PrefixableTextField(props: TextFieldProps) {
+export default function PrefixableTextField({
+  value,
+  onChange,
+  placeholder,
+  prefix,
+  error = false,
+  helperText = '',
+  multiline,
+  rows,
+  rowsMax,
+  FormHelperTextProps,
+}: TextFieldProps) {
   const classes = useTextFieldStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
-    multiline: props.multiline,
+    multiline,
   })
 
   return (
     <TextField
       className={classes.textField}
-      error={props.error || false}
+      error={error}
       InputProps={{
         className: classes.removePrefixPadding,
         classes: {
           input: classes.textInput,
         },
-        startAdornment: props.prefix && (
-          <PrefixAdornment>{props.prefix}</PrefixAdornment>
-        ),
+        startAdornment: prefix && <PrefixAdornment>{prefix}</PrefixAdornment>,
       }}
       required
       variant="outlined"
-      value={props.value}
-      onChange={props.onChange}
-      placeholder={props.placeholder}
-      helperText={props.helperText || ''}
-      multiline={props.multiline}
-      rows={props.rows}
-      rowsMax={props.rowsMax}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      helperText={helperText}
+      multiline={multiline}
+      rows={rows}
+      rowsMax={rowsMax}
       FormHelperTextProps={
-        props.FormHelperTextProps || { className: classes.helperText }
+        FormHelperTextProps || { className: classes.helperText }
       }
     />
   )

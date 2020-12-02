@@ -45,6 +45,68 @@ export const sanitise = (query: string): string => {
   return ''
 }
 
+/**
+ * History of URL record changes.
+ * Logs the creation and modification of shorturls.
+ * ShortUrl is not included as it is the foreign key.
+ */
+interface UrlHistoryType extends IdType, UrlBaseType, Sequelize.Model {}
+
+type UrlHistoryStatic = typeof Sequelize.Model & {
+  new (values?: object, options?: Sequelize.BuildOptions): UrlHistoryType
+}
+
+export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
+  longUrl: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
+  // UrlHistory table relies on `enum_urls_state` enum type for the `state`
+  // column, which is created by Url table, so this table must be defined
+  // after `Url` table.
+  state: {
+    type: 'enum_urls_state',
+    allowNull: false,
+  },
+  isFile: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+  },
+  contactEmail: {
+    type: Sequelize.TEXT,
+    allowNull: true,
+  },
+  description: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
+})
+
+/**
+ * Helper function to take a Url instance object and writes to the UrlHistory table.
+ */
+const writeToUrlHistory = async (
+  url: UrlType,
+  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
+): Promise<UrlHistoryType> => {
+  const urlObj = url.toJSON() as UrlType & { userId: Number }
+
+  return UrlHistory.create(
+    {
+      userId: urlObj.userId,
+      state: urlObj.state,
+      urlShortUrl: urlObj.shortUrl,
+      longUrl: urlObj.longUrl,
+      isFile: urlObj.isFile,
+      contactEmail: urlObj.contactEmail,
+      description: urlObj.description,
+    },
+    {
+      transaction: options.transaction,
+    },
+  )
+}
+
 export const Url = <UrlTypeStatic>sequelize.define(
   'url',
   {
@@ -172,68 +234,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
     ],
   },
 )
-
-/**
- * History of URL record changes.
- * Logs the creation and modification of shorturls.
- * ShortUrl is not included as it is the foreign key.
- */
-interface UrlHistoryType extends IdType, UrlBaseType, Sequelize.Model {}
-
-type UrlHistoryStatic = typeof Sequelize.Model & {
-  new (values?: object, options?: Sequelize.BuildOptions): UrlHistoryType
-}
-
-export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
-  longUrl: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-  },
-  // UrlHistory table relies on `enum_urls_state` enum type for the `state`
-  // column, which is created by Url table, so this table must be defined
-  // after `Url` table.
-  state: {
-    type: 'enum_urls_state',
-    allowNull: false,
-  },
-  isFile: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-  },
-  contactEmail: {
-    type: Sequelize.TEXT,
-    allowNull: true,
-  },
-  description: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-  },
-})
-
-/**
- * Helper function to take a Url instance object and writes to the UrlHistory table.
- */
-const writeToUrlHistory = async (
-  url: UrlType,
-  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
-): Promise<UrlHistoryType> => {
-  const urlObj = url.toJSON() as UrlType & { userId: Number }
-
-  return UrlHistory.create(
-    {
-      userId: urlObj.userId,
-      state: urlObj.state,
-      urlShortUrl: urlObj.shortUrl,
-      longUrl: urlObj.longUrl,
-      isFile: urlObj.isFile,
-      contactEmail: urlObj.contactEmail,
-      description: urlObj.description,
-    },
-    {
-      transaction: options.transaction,
-    },
-  )
-}
 
 // A Url record can have many updates
 Url.hasMany(UrlHistory, { foreignKey: { allowNull: false } })

@@ -1,29 +1,34 @@
-import React, { useEffect, FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { LOGIN_PAGE } from '../util/types'
 import loginActions from '../../login/actions'
-import { GoGovReduxState } from '../../app/reducers/types'
+import { GoGovReduxState } from '../reducers/types'
 
 type PrivateRouteProps = {
   component: React.ComponentType<any>
   path: string
 }
 
-const PrivateRoute: FunctionComponent<PrivateRouteProps> = (props) => {
-  const { component: ChildComponent, ...args } = props
+const PrivateRoute: FunctionComponent<PrivateRouteProps> = (
+  props: PrivateRouteProps,
+) => {
+  const { component: ChildComponent } = props
   const { path } = props
   const dispatch = useDispatch()
-  const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
+  const isLoggedIn = useSelector(
+    (state: GoGovReduxState) => state.login.isLoggedIn,
+  )
   useEffect(() => {
     dispatch(loginActions.isLoggedIn())
   }, [dispatch])
 
   return (
     <Route
-      {...args}
+      path={path}
       render={(routeProps) =>
         isLoggedIn ? (
+          /* eslint-disable react/jsx-props-no-spreading */
           <ChildComponent {...routeProps} />
         ) : (
           <Redirect

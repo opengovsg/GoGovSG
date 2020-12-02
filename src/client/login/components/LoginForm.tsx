@@ -1,18 +1,18 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
-import { loginFormVariants, VariantType } from '../../app/util/types'
+import { VariantType, loginFormVariants } from '../../app/util/types'
 
 type LoginFormProps = {
-  id: string,
-  placeholder: string,
-  buttonMessage: string,
-  variant: VariantType,
-  autoComplete: string,
-  onChange: (email: string) => void,
-  textError: () => boolean,
-  textErrorMessage: () => string,
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void,
+  id: string
+  placeholder: string
+  buttonMessage: string
+  variant: VariantType
+  autoComplete: string
+  onChange: (email: string) => void
+  textError: () => boolean
+  textErrorMessage: () => string
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   value: string
 }
 
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 // Form object to request for user's email or OTP
-const LoginForm : FunctionComponent<LoginFormProps> = ({
+const LoginForm: FunctionComponent<LoginFormProps> = ({
   id,
   placeholder,
   buttonMessage,
@@ -50,15 +50,12 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
   textErrorMessage,
   onSubmit,
   children,
-  value
-}) => {
+  value,
+}: PropsWithChildren<LoginFormProps>) => {
   const classes = useStyles()
   const variantMap = loginFormVariants.map[variant]
   return (
-    <form
-      onSubmit={onSubmit}
-      autoComplete={autoComplete}
-    >
+    <form onSubmit={onSubmit} autoComplete={autoComplete}>
       <TextField
         autoFocus
         required

@@ -1,11 +1,23 @@
-import React, { createContext, useReducer, useContext } from 'react'
+import React, { createContext, useContext, useReducer } from 'react'
 import ControlPanel from './ControlPanel'
 import {
   Action,
   State,
-  initialState,
   drawerReducer,
+  initialState,
 } from './ControlPanel/util/reducers'
+
+type DrawerContextType = {
+  state: State
+  dispatch?: (action: Action) => void
+}
+
+// Used to inject and retrieve drawer state and dispatcher.
+export const DrawerContext = createContext<DrawerContextType>({
+  state: initialState,
+})
+export const DrawerProvider = DrawerContext.Provider
+export const DrawerConsumer = DrawerContext.Consumer
 
 function useDrawerController() {
   const [state, dispatch] = useReducer(drawerReducer, initialState)
@@ -31,18 +43,6 @@ export function useDrawerDispatch() {
   }
   return dispatch
 }
-
-type DrawerContextType = {
-  state: State
-  dispatch?: (action: Action) => void
-}
-
-// Used to inject and retrieve drawer state and dispatcher.
-export const DrawerContext = createContext<DrawerContextType>({
-  state: initialState,
-})
-export const DrawerProvider = DrawerContext.Provider
-export const DrawerConsumer = DrawerContext.Consumer
 
 type DrawerProps = {
   children: React.ReactNode

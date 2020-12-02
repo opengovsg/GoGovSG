@@ -33,8 +33,8 @@ export function processData(data: DailyClicksInterface[]) {
   return { labels, datasets }
 }
 
-export default function DailyStatistics(props: DailyStatisticsProps) {
-  const filledData = useDateRangeWith(props.dailyClicks, 7)
+export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
+  const filledData = useDateRangeWith(dailyClicks, 7)
   const data = processData(filledData)
   return (
     <BaseStatisticsLayout title="How many users have visited your link in the past week?">
@@ -109,7 +109,7 @@ export default function DailyStatistics(props: DailyStatisticsProps) {
             displayColors: false,
           },
         }}
-      ></Line>
+      />
     </BaseStatisticsLayout>
   )
 }

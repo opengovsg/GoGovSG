@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-import {
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@material-ui/core'
 
 import useShortLink from '../util/shortlink'
 import { removeHttpsProtocol } from '../../../../../app/util/url'

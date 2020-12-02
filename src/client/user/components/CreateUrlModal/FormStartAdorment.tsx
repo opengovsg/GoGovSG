@@ -1,8 +1,9 @@
-import React, { FunctionComponent } from 'react'
-import { createStyles, makeStyles } from '@material-ui/core'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import {
   InputAdornment,
   Typography,
+  createStyles,
+  makeStyles,
 } from '@material-ui/core'
 
 // Height of the text field in the create link dialog.
@@ -25,10 +26,14 @@ const useStyles = makeStyles((theme) =>
       width: '87px',
       paddingLeft: theme.spacing(1.5),
     },
-  }
-))
+  }),
+)
 
-const FormStartAdorment: FunctionComponent = ({ children }) => {
+type FormStartAdormentProps = {}
+
+const FormStartAdorment: FunctionComponent = ({
+  children,
+}: PropsWithChildren<FormStartAdormentProps>) => {
   const classes = useStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
   })

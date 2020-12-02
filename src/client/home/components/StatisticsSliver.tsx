@@ -1,4 +1,4 @@
-import React, { useEffect, FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
@@ -72,15 +72,17 @@ const useStyles = makeStyles((theme) =>
 
 const StatisticsSliver: FunctionComponent = () => {
   const classes = useStyles()
-  const dispatch  = useDispatch()
+  const dispatch = useDispatch()
   const loadStats = () => dispatch(homeActions.loadStats())
-  const statistics = useSelector((state: GoGovReduxState) => state.home.statistics)
+  const statistics = useSelector(
+    (state: GoGovReduxState) => state.home.statistics,
+  )
   const { userCount, linkCount, clickCount } = statistics
   // ensure number will never be null
   const statisticsToShow = [
-    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount},
-    { label: 'SHORT LINKS CREATED', number: linkCount},
-    { label: 'CLICKS', number: clickCount},
+    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount },
+    { label: 'SHORT LINKS CREATED', number: linkCount },
+    { label: 'CLICKS', number: clickCount },
   ]
 
   // Call once

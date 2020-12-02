@@ -41,8 +41,11 @@ const useStyles = makeStyles(() =>
 )
 
 type PaginationActionComponentProp = {
-  pageCount: number 
-  onChangePage: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void
+  pageCount: number
+  onChangePage: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    page: number,
+  ) => void
   page: number
   disablePagination?: boolean
 }
@@ -52,7 +55,7 @@ const PaginationActionComponent: FunctionComponent<PaginationActionComponentProp
   onChangePage,
   page,
   disablePagination = false,
-}) => {
+}: PaginationActionComponentProp) => {
   const classes = useStyles()
   return (
     <Grid
@@ -73,9 +76,9 @@ const PaginationActionComponent: FunctionComponent<PaginationActionComponentProp
           <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
         </IconButton>
       </Grid>
-      <Grid item className={classes.gridItemHorizontalPadding}>{`Page ${
-        page + 1
-      } of ${pageCount}`}</Grid>
+      <Grid item className={classes.gridItemHorizontalPadding}>
+        {`Page ${page + 1} of ${pageCount}`}
+      </Grid>
       <Grid item className={classes.gridItemHorizontalPadding}>
         <IconButton
           onClick={(event) => onChangePage(event, page + 1)}

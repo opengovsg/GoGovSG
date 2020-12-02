@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
+import { Store } from 'redux'
 import PrivateRoute from '../../PrivateRoute'
 import HomePage from '../../../../home'
 import LoginPage from '../../../../login'
@@ -27,13 +28,12 @@ import {
   USER_PAGE,
 } from '../../../util/types'
 import theme from '../../../theme'
-import { Store } from 'redux'
 
 type RootProps = {
   store: Store
 }
 
-const Root: FunctionComponent<RootProps> = ({ store }) => (
+const Root: FunctionComponent<RootProps> = ({ store }: RootProps) => (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
       <HashRouter>

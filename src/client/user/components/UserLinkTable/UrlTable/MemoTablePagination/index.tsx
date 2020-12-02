@@ -7,23 +7,30 @@ import useStyles from './styles'
 import { UrlTableConfig } from '../../../../reducers/types'
 
 type paginationInputIsEqualProps = {
-  tableConfig: UrlTableConfig,
-  urlCount: number,
+  tableConfig: UrlTableConfig
+  urlCount: number
 }
 // Prevents re-render if pagination did not change.
-const paginationInputIsEqual = (prev: paginationInputIsEqualProps, next: paginationInputIsEqualProps) =>
+const paginationInputIsEqual = (
+  prev: paginationInputIsEqualProps,
+  next: paginationInputIsEqualProps,
+) =>
   prev.tableConfig.numberOfRows === next.tableConfig.numberOfRows &&
   prev.tableConfig.pageNumber === next.tableConfig.pageNumber &&
   prev.urlCount === next.urlCount
 
 type MemoTablePaginationProps = {
-  urlCount: number,
-  tableConfig: UrlTableConfig,
-  updateUrlTableConfig: (config: UrlTableConfig) => void,
+  urlCount: number
+  tableConfig: UrlTableConfig
+  updateUrlTableConfig: (config: UrlTableConfig) => void
 }
 
 const MemoTablePagination = React.memo(
-  ({ urlCount, tableConfig, updateUrlTableConfig } : MemoTablePaginationProps) => {
+  ({
+    urlCount,
+    tableConfig,
+    updateUrlTableConfig,
+  }: MemoTablePaginationProps) => {
     const appMargins = useAppMargins()
     const classes = useStyles({ appMargins })
 
@@ -32,11 +39,19 @@ const MemoTablePagination = React.memo(
         updateUrlTableConfig(newConfig as UrlTableConfig)
       }
     }
-    const changePageHandler = (_: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, pageNumber: number) => {
+    const changePageHandler = (
+      _: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+      pageNumber: number,
+    ) => {
       updateTableIfChanged({ pageNumber })
     }
-    const changeRowsPerPageHandler = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      updateTableIfChanged({ numberOfRows: Number(event.target.value), pageNumber: 0 })
+    const changeRowsPerPageHandler = (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+      updateTableIfChanged({
+        numberOfRows: Number(event.target.value),
+        pageNumber: 0,
+      })
     }
 
     const pageCount = Math.ceil(urlCount / tableConfig.numberOfRows)

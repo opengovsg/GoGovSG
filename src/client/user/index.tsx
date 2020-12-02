@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Drawer from './components/Drawer'
 import CreateUrlModal from './components/CreateUrlModal'
 import AnnouncementModal from './components/AnnouncementModal'
@@ -15,16 +15,22 @@ import { GoGovReduxState } from '../app/reducers/types'
 /**
  * Show the user page.
  */
-const UserPage = ({
-}) => {
-  const fetchingUrls = useSelector((state: GoGovReduxState) => state.user.isFetchingUrls)
+const UserPage = () => {
+  const fetchingUrls = useSelector(
+    (state: GoGovReduxState) => state.user.isFetchingUrls,
+  )
   const urlCount = useSelector((state: GoGovReduxState) => state.user.urlCount)
   const message = useSelector((state: GoGovReduxState) => state.user.message)
-  const isLoggedIn =  useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
-  const emailValidator = useSelector((state: GoGovReduxState) => state.login.emailValidator)
+  const isLoggedIn = useSelector(
+    (state: GoGovReduxState) => state.login.isLoggedIn,
+  )
+  const emailValidator = useSelector(
+    (state: GoGovReduxState) => state.login.emailValidator,
+  )
   const dispatch = useDispatch()
   const getUrlsForUser = () => dispatch(userActions.getUrlsForUser())
-  const getEmailValidator = () => dispatch(loginActions.getEmailValidationGlobExpression())
+  const getEmailValidator = () =>
+    dispatch(loginActions.getEmailValidationGlobExpression())
   const getUserMessage = () => dispatch(userActions.getUserMessage())
 
   const urlsFiltered = useIsFiltered()

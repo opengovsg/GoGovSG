@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { History } from 'history'
 import {
   Dialog,
@@ -18,7 +18,7 @@ import { GAEvent, GAPageView } from '../../../app/util/ga'
 import { GoGovReduxState } from '../../../app/reducers/types'
 
 type StyleProps = {
-  isFullScreenDialog: boolean,
+  isFullScreenDialog: boolean
 }
 
 const useStyles = makeStyles((theme) =>
@@ -55,13 +55,21 @@ const useStyles = makeStyles((theme) =>
 )
 
 const CreateUrlModal = () => {
-  const createUrlModal = useSelector((state: GoGovReduxState) => state.user.createUrlModal)
-  const urlUploadState = useSelector((state: GoGovReduxState) => state.user.uploadState.urlUpload)
-  const fileUploadState = useSelector((state: GoGovReduxState) => state.user.uploadState.fileUpload)
+  const createUrlModal = useSelector(
+    (state: GoGovReduxState) => state.user.createUrlModal,
+  )
+  const urlUploadState = useSelector(
+    (state: GoGovReduxState) => state.user.uploadState.urlUpload,
+  )
+  const fileUploadState = useSelector(
+    (state: GoGovReduxState) => state.user.uploadState.fileUpload,
+  )
   const dispatch = useDispatch()
   const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
-  const onCreateUrl = (history: History) => dispatch(userActions.createUrlOrRedirect(history))
-  const onUploadFile = (file: File | null) => dispatch(userActions.uploadFile(file))
+  const onCreateUrl = (history: History) =>
+    dispatch(userActions.createUrlOrRedirect(history))
+  const onUploadFile = (file: File | null) =>
+    dispatch(userActions.uploadFile(file))
 
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })

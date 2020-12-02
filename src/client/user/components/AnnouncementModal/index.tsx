@@ -77,8 +77,10 @@ const useStyles = makeStyles((theme) =>
       width: (props: StyleProps) => (props.isFullScreenDialog ? 44 : 30.8),
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
-      marginLeft: (props: StyleProps) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
-      marginRight: (props: StyleProps) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
+      marginLeft: (props: StyleProps) =>
+        props.isFullScreenDialog ? 0 : theme.spacing(2),
+      marginRight: (props: StyleProps) =>
+        props.isFullScreenDialog ? 0 : theme.spacing(2),
     },
     headerWrapper: {
       background: '#f9f9f9',
@@ -193,7 +195,7 @@ const AnnouncementModal = () => {
       {announcement?.image ? (
         <img
           className={`${classes.justifyCenterImage} ${classes.announcementImage}`}
-          alt=""
+          alt="announcement"
           src={announcement.image}
         />
       ) : (
@@ -228,7 +230,9 @@ const AnnouncementModal = () => {
             size="large"
             variant="text"
             className={classes.learnMoreButton}
-            onClick={()=> {GAEvent('Announcement Page', announcement?.title || 'successful' )}}
+            onClick={() => {
+              GAEvent('Announcement Page', announcement?.title || 'successful')
+            }}
           >
             Try it now
           </Button>

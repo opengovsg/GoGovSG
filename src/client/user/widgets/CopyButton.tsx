@@ -4,8 +4,8 @@ import {
   Button,
   Typography,
   TypographyVariant,
-  makeStyles,
   createStyles,
+  makeStyles,
 } from '@material-ui/core'
 
 import copyIcon from '../assets/copy-icon.svg'

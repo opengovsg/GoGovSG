@@ -28,7 +28,7 @@ type DrawerTooltipProps = {
 const DrawerTooltip: FunctionComponent<DrawerTooltipProps> = ({
   title,
   imageAltText,
-}) => {
+}: DrawerTooltipProps) => {
   const classes = useStyles()
 
   return (

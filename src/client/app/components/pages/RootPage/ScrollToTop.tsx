@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, ReactNode } from 'react'
+import React, { ReactNode, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 
 const usePrevious = (value: string) => {

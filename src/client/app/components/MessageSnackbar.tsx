@@ -3,17 +3,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   Snackbar,
   SnackbarContent,
-  useMediaQuery,
-  useTheme,
   createStyles,
   makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import CheckCircleIcon from './widgets/CheckCircleIcon'
 import CloseIcon from './widgets/CloseIcon'
 import rootActions from './pages/RootPage/actions'
 import { snackbarVariants } from '../util/types'
-import { GoGovReduxState } from '../../app/reducers/types'
+import { GoGovReduxState } from '../reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -74,8 +74,12 @@ const useStyles = makeStyles((theme) =>
 const MessageSnackbar = () => {
   const theme = useTheme()
   const classes = useStyles()
-  const message = useSelector((state: GoGovReduxState) => state.root.snackbarMessage.message)
-  const variant = useSelector((state: GoGovReduxState) => state.root.snackbarMessage.variant)
+  const message = useSelector(
+    (state: GoGovReduxState) => state.root.snackbarMessage.message,
+  )
+  const variant = useSelector(
+    (state: GoGovReduxState) => state.root.snackbarMessage.variant,
+  )
   const dispatch = useDispatch()
   const closeSnackbar = (_: object, reason: string) => {
     if (reason !== 'clickaway') {

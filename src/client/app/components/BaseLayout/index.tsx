@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, FunctionComponent } from 'react'
+import React, {
+  FunctionComponent,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useLocation } from 'react-router-dom'
 import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
 
@@ -42,11 +48,11 @@ const useStyles = makeStyles(() =>
 )
 
 type BaseLayoutProps = {
-  withHeader?: boolean,
-  headerBackgroundType?: string,
-  withFooter?: boolean,
-  withLowFooter?: boolean,
-  hideNavButtons?: boolean,
+  withHeader?: boolean
+  headerBackgroundType?: string
+  withFooter?: boolean
+  withLowFooter?: boolean
+  hideNavButtons?: boolean
 }
 
 const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
@@ -56,13 +62,13 @@ const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
   withLowFooter = true,
   children,
   hideNavButtons = false,
-}) => {
+}: PropsWithChildren<BaseLayoutProps>) => {
   const classes = useStyles()
   const path = useLocation().pathname
   const isIE = useIsIE()
   const message = useSelector((state: GoGovReduxState) => state.user.message)
 
-  const toStick = isIE || !!message 
+  const toStick = isIE || !!message
   // To store y-position to trigger useEffect
   const prevScrollY = useRef(0)
   const [isSticky, setIsSticky] = useState(false)

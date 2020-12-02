@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 
 type StyleProps = {
-  applyRightMargin?: boolean,
+  applyRightMargin?: boolean
 }
 
 const useStyles = makeStyles((theme) =>
@@ -24,7 +24,7 @@ type ModalMarginsProps = {
 const ModalMargins: FunctionComponent<ModalMarginsProps> = ({
   applyRightMargin,
   children,
-}) => {
+}: PropsWithChildren<ModalMarginsProps>) => {
   const classes = useStyles({ applyRightMargin })
   const isFullScreenDialog = useFullScreenDialog()
 

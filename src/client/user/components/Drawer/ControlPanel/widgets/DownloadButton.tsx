@@ -1,21 +1,23 @@
 import React, { useState } from 'react'
 import {
-  createStyles,
-  makeStyles,
   Menu,
   MenuItem,
   Typography,
+  createStyles,
+  makeStyles,
 } from '@material-ui/core'
 import FileSaver from 'file-saver'
 
+import * as Sentry from '@sentry/browser'
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
-import ConfigOption, { TrailingPosition } from '../../../../widgets/ConfigOption'
+import ConfigOption, {
+  TrailingPosition,
+} from '../../../../widgets/ConfigOption'
 import { get } from '../../../../../app/util/requests'
 import { GAEvent } from '../../../../../app/util/ga'
-import * as Sentry from '@sentry/browser'
 
 // Gets file extension from content-type.
 function getFileExtension(format: ImageFormat) {

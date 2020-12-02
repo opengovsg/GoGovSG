@@ -153,11 +153,10 @@ export default function LinkInfoEditor({
       </Typography>
 
       <Typography
-          variant="h4"
-          className={classes.linkInformationHeader}
-          color="primary"
-        >
-      </Typography>
+        variant="h4"
+        className={classes.linkInformationHeader}
+        color="primary"
+      />
       <ConfigOption
         title={contactEmailHelp}
         leading={

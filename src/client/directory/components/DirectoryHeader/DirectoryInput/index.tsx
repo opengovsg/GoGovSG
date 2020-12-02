@@ -1,14 +1,14 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import {
+  Button,
   ClickAwayListener,
+  Divider,
   IconButton,
   TextField,
   createStyles,
   makeStyles,
   useMediaQuery,
   useTheme,
-  Divider,
-  Button,
 } from '@material-ui/core'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import SearchSortIcon from '../../../../app/components/widgets/SearchSortIcon'
@@ -27,10 +27,10 @@ type DirectoryInputProps = {
   onClearQuery?: () => void
   onKeyPress?: (e: React.KeyboardEvent<HTMLDivElement>) => void
   query: string
-  getFile:(queryFile: string) => void
-  getState:(queryState: string) => void
-  getEmail:(queryEmail: string) => void
-  setDisablePagination:(disablePagination:boolean) => void
+  getFile: (queryFile: string) => void
+  getState: (queryState: string) => void
+  getEmail: (queryEmail: string) => void
+  setDisablePagination: (disablePagination: boolean) => void
   onApply: () => void
   onReset: () => void
 }
@@ -77,8 +77,8 @@ const useStyles = makeStyles((theme) =>
         marginRight: theme.spacing(2.5),
       },
     },
-    searchbar:{
-      display: 'contents'
+    searchbar: {
+      display: 'contents',
     },
     searchOptionsButton: {
       padding: theme.spacing(0.75),
@@ -103,7 +103,7 @@ const useStyles = makeStyles((theme) =>
       height: '100%',
       paddingLeft: '30px',
       paddingRight: '30px',
-      borderRadius: '0px'
+      borderRadius: '0px',
     },
     filterIcon: {
       paddingLeft: theme.spacing(1.5),
@@ -150,53 +150,48 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
 
   // Checks and assign email variable
   useEffect(() => {
-    if(isEmail) {
+    if (isEmail) {
       getEmail('true')
-    } 
-    else {
+    } else {
       getEmail('false')
     }
   }, [isEmail])
 
   // If sort panel is open, set pagination z-index to -1, else reset z-index to 1
-  // this prevent pagination from intersecting with sort panel 
+  // this prevent pagination from intersecting with sort panel
   useEffect(() => {
     if (isSortPanelOpen) {
       setDisablePagination(true)
-    } 
-    else {
+    } else {
       setDisablePagination(false)
     }
-
   }, [isSortPanelOpen])
 
   // Label for the button - requires double conditions
-  const getSearchLabel = (isEmail: boolean, isMobileView: boolean) => {
+  const getSearchLabel = () => {
     if (isMobileView && isEmail) {
-      return (<EmailIcon size={20} />)
-    } 
-    else if (isMobileView && !isEmail) {
-      return (<SearchIcon size={20} />)
-    } 
-    else if (!isMobileView && isEmail) {
+      return <EmailIcon size={20} />
+    }
+    if (isMobileView && !isEmail) {
+      return <SearchIcon size={20} />
+    }
+    if (!isMobileView && isEmail) {
       return 'Email'
     }
-    else {
-      return 'Keyword'
-    }
+
+    return 'Keyword'
   }
 
-  // Icon for search bar 
-  const getSearchIcon = (isEmail: boolean, isMobileView:boolean) => {
+  // Icon for search bar
+  const getSearchIcon = () => {
     if (isMobileView) {
       return ''
-    } 
-    else if (isEmail) {
-      return (<EmailIcon size={isMobileView ? 30 : 30} />)
     }
-    else {
-      return (<SearchIcon size={isMobileView ? 30 : 30} />)
+    if (isEmail) {
+      return <EmailIcon size={isMobileView ? 30 : 30} />
     }
+
+    return <SearchIcon size={isMobileView ? 30 : 30} />
   }
 
   return (
@@ -214,7 +209,11 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
           autoFocus
           type="search"
           className={classes.searchTextField}
-          placeholder={isEmail? "Enter an email or email domain e.g. @mom.gov.sg": "Enter a keyword"}
+          placeholder={
+            isEmail
+              ? 'Enter an email or email domain e.g. @mom.gov.sg'
+              : 'Enter a keyword'
+          }
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           onKeyPress={onKeyPress}
@@ -222,38 +221,34 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
           InputProps={{
             className: classes.searchInput,
             startAdornment: (
-                <div className={classes.searchbar}>
-                  <Button
-                    className={classes.filterButton}
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  > 
+              <div className={classes.searchbar}>
+                <Button
+                  className={classes.filterButton}
+                  onClick={() => setIsFilterOpen(!isFilterOpen)}
+                >
                   <div className={classes.buttonWrapper}>
-                    {isMobileView? 
-                      getSearchLabel(isEmail, isMobileView)
-                      :
-                      <span className={classes.labelWrapper}>{getSearchLabel(isEmail, isMobileView)}</span>
-                    }
-                    {isMobileView?                    
-                       <ArrowDownIcon 
+                    {isMobileView ? (
+                      getSearchLabel()
+                    ) : (
+                      <span className={classes.labelWrapper}>
+                        {getSearchLabel()}
+                      </span>
+                    )}
+                    {isMobileView ? (
+                      <ArrowDownIcon
                         className={classes.filterIcon}
-                        height={'20'}
-                        width={'20'}/>
-                      :
-                        <ArrowDownIcon 
-                        className={classes.filterIcon}
-                        />
-                      }
+                        height="20"
+                        width="20"
+                      />
+                    ) : (
+                      <ArrowDownIcon className={classes.filterIcon} />
+                    )}
+                  </div>
+                </Button>
 
-                  </div>
-                  </Button>
-                  
-                    <Divider 
-                      orientation="vertical" flexItem />
-                  <div className={classes.searchInputIcon}>
-                    {getSearchIcon(isEmail, isMobileView)}
-                  </div>
+                <Divider orientation="vertical" flexItem />
+                <div className={classes.searchInputIcon}>{getSearchIcon()}</div>
               </div>
-
             ),
             endAdornment: (
               <>
@@ -289,25 +284,24 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
             onClick: () => setIsSortPanelOpen(false),
           }}
         />
-          <FilterDrawer 
-            onClick={setIsEmail}
-            selected={isEmail}
-            isFilterOpen={isFilterOpen}
-            isMobileView={isMobileView}
-            setIsFilterOpen={setIsFilterOpen}
-          />
-        
+        <FilterDrawer
+          onClick={setIsEmail}
+          selected={isEmail}
+          isFilterOpen={isFilterOpen}
+          isMobileView={isMobileView}
+          setIsFilterOpen={setIsFilterOpen}
+        />
 
-          <SortDrawer
-            open={isSortPanelOpen}
-            onClose={() => setIsSortPanelOpen(false)}
-            onChoose={onSortOrderChange}
-            options={sortOptions}
-            getFile={getFile}
-            getState={getState}
-            onApply={onApply}
-            onReset={onReset}
-          />
+        <SortDrawer
+          open={isSortPanelOpen}
+          onClose={() => setIsSortPanelOpen(false)}
+          onChoose={onSortOrderChange}
+          options={sortOptions}
+          getFile={getFile}
+          getState={getState}
+          onApply={onApply}
+          onReset={onReset}
+        />
       </div>
     </ClickAwayListener>
   )

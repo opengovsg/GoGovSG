@@ -1,4 +1,4 @@
-import React, { useEffect, FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
@@ -15,13 +15,15 @@ import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
 
-const HomePage: FunctionComponent = (props) => {
+const HomePage: FunctionComponent = () => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const dispatch = useDispatch()
   const getLinksToRotate = () => dispatch(homeActions.getLinksToRotate())
   const getIsLoggedIn = () => dispatch(loginActions.isLoggedIn())
-  const isLoggedIn = useSelector((state: GoGovReduxState) => state.login.isLoggedIn)
+  const isLoggedIn = useSelector(
+    (state: GoGovReduxState) => state.login.isLoggedIn,
+  )
 
   // Load once on start
   useEffect(() => {
@@ -54,7 +56,7 @@ const HomePage: FunctionComponent = (props) => {
         <DescriptionSliver />
       </Section>
       <Section backgroundType="light">
-        <StatisticsSliver {...props} />
+        <StatisticsSliver />
       </Section>
     </BaseLayout>
   )
