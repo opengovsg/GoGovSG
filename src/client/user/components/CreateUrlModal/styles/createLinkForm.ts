@@ -9,19 +9,8 @@ type LinkFormStyles = {
 
 const useCreateLinkFormStyles = makeStyles((theme) =>
   createStyles({
-    startAdorment: {
-      minHeight: (props: LinkFormStyles) => props.textFieldHeight,
-      backgroundColor: '#f0f0f0',
-      paddingRight: theme.spacing(1.5),
-      borderRight: `1px solid ${theme.palette.divider}`,
-      flexShrink: 0,
-    },
     endAdornment: {
       flexShrink: 0,
-    },
-    startAdormentText: {
-      width: '87px',
-      paddingLeft: theme.spacing(1.5),
     },
     form: {
       display: 'flex',

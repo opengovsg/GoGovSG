@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) =>
     },
     mobilePanel: {
       padding: theme.spacing(1.5),
-  },
+    },
   }),
 )
 
@@ -98,10 +98,11 @@ const DirectoryResults: FunctionComponent<DirectoryResultsProps> = ({
         />
       )}
 
-        <MobilePanel 
-          isOpen={isMobilePanelOpen}
-          setOpen={setIsMobilePanelOpen}
-          url={urlInfo as UrlTypePublic}/>
+      <MobilePanel
+        isOpen={isMobilePanelOpen}
+        setOpen={setIsMobilePanelOpen}
+        url={urlInfo as UrlTypePublic}
+      />
     </div>
   )
 }

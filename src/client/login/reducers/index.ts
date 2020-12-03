@@ -8,9 +8,7 @@ import {
   LoginActionType,
   RESEND_OTP_DISABLED,
   RESEND_OTP_PENDING,
-  SET_EMAIL,
   SET_EMAIL_VALIDATOR,
-  SET_OTP,
   VERIFY_OTP_ERROR,
   VERIFY_OTP_PENDING,
 } from '../actions/types'
@@ -23,7 +21,6 @@ export const defaultEmailValidator = (email: string) =>
 const initialState: LoginState = {
   email: '',
   emailValidator: defaultEmailValidator,
-  otp: '',
   user: {},
   isLoggedIn: false,
   formVariant: loginFormVariants.types.EMAIL_READY,
@@ -33,16 +30,6 @@ export const login = (state = initialState, action: LoginActionType) => {
   let nextState = {}
 
   switch (action.type) {
-    case SET_EMAIL:
-      nextState = {
-        email: action.payload.toLowerCase(), // Force input to be lowercase
-      }
-      break
-    case SET_OTP:
-      nextState = {
-        otp: action.payload,
-      }
-      break
     case SET_EMAIL_VALIDATOR:
       nextState = {
         emailValidator: action.payload,

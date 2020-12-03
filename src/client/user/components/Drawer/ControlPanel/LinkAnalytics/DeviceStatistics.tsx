@@ -71,22 +71,28 @@ export type DeviceStatisticsProps = {
   deviceClicks: DeviceClicksInterface
 }
 
-export default function DeviceStatistics(props: DeviceStatisticsProps) {
+export default function DeviceStatistics({
+  deviceClicks,
+}: DeviceStatisticsProps) {
   const classes = useStyles()
-  const deviceClicks = processStatistics(props.deviceClicks)
-  const totalClicks = deviceClicks
+  const processedDeviceClicks = processStatistics(deviceClicks)
+  const totalClicks = processedDeviceClicks
     .map((clicks) => clicks.count)
     .reduce((x, y) => x + y, 0)
 
   return (
     <BaseStatisticsLayout title="What devices are your users on?">
       <div className={classes.devicesRoot}>
-        {deviceClicks.map((clicks) => (
-          <FlexibleBar key={clicks.label} {...clicks} />
+        {processedDeviceClicks.map((clicks) => (
+          <FlexibleBar
+            label={clicks.label}
+            count={clicks.count}
+            color={clicks.color}
+          />
         ))}
       </div>
       <div className={classes.legendRoot}>
-        {deviceClicks.map((clicks) => {
+        {processedDeviceClicks.map((clicks) => {
           const percent = getFormattedPercent(clicks.count, totalClicks)
           return (
             <DeviceLegend

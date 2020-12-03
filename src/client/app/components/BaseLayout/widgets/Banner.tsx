@@ -1,5 +1,5 @@
 import React from 'react'
-import { Theme, makeStyles, createStyles, Typography } from '@material-ui/core'
+import { Theme, Typography, createStyles, makeStyles } from '@material-ui/core'
 
 import { ApplyAppMargins } from '../../AppMargins'
 
@@ -13,8 +13,8 @@ const useStyles = makeStyles<Theme, BannerForProps>((theme) =>
   createStyles({
     bannerContainer: {
       display: 'flex',
-      position: (props) => props.isSticky? 'fixed' : 'relative',
-      zIndex: (props) => props.isSticky? 20 : 1,
+      position: (props) => (props.isSticky ? 'fixed' : 'relative'),
+      zIndex: (props) => (props.isSticky ? 20 : 1),
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',

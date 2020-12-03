@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
 import {
   Button,
   ButtonProps,
@@ -21,19 +21,41 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function TrailingButton(
-  props: ButtonProps & { component?: string },
-) {
-  const classes = useStyles(props)
+type TrailingButtonProps = {
+  className?: string
+  onClick?:
+    | (() => void)
+    | ((event: React.MouseEvent<HTMLButtonElement>) => void)
+  disabled?: boolean
+  fullWidth?: boolean
+  variant?: 'text' | 'outlined' | 'contained'
+  component?: any
+}
+
+const TrailingButton: FunctionComponent<TrailingButtonProps> = ({
+  className,
+  onClick,
+  disabled,
+  fullWidth,
+  variant,
+  component,
+  children,
+}: PropsWithChildren<TrailingButtonProps>) => {
+  const classes = useStyles({ fullWidth })
   return (
     <Button
-      {...props}
-      className={`${props.className} ${classes.trailingButton}`}
+      className={`${className} ${classes.trailingButton}`}
       color="primary"
       size="large"
-      onClick={props.onClick}
+      onClick={onClick}
+      disabled={disabled}
+      fullWidth={fullWidth}
+      variant={variant}
+      component={component}
     >
-      {props.children}
+      {children}
     </Button>
   )
 }
+
+export default TrailingButton

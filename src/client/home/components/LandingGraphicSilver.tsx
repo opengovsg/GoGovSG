@@ -157,7 +157,9 @@ const LandingGraphicSliver = () => {
               color="primary"
               size="large"
               onClick={() =>
-                document.getElementById('landing-bottom')?.scrollIntoView({ behavior: 'smooth' })
+                document
+                  .getElementById('landing-bottom')
+                  ?.scrollIntoView({ behavior: 'smooth' })
               }
             >
               Learn more

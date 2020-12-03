@@ -4,7 +4,6 @@ import { EmailValidatorType } from '../actions/types'
 export type LoginState = {
   email: string
   emailValidator: EmailValidatorType
-  otp: string
   user: {
     id?: string
   }

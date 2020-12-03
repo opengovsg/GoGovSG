@@ -48,7 +48,8 @@ const useStyles = makeStyles((theme) =>
       border: 'none',
     },
     toolbar: {
-      paddingLeft: (props: DirectoryTablePaginationStyleProps) => props.appMargins,
+      paddingLeft: (props: DirectoryTablePaginationStyleProps) =>
+        props.appMargins,
       paddingRight: (props: DirectoryTablePaginationStyleProps) =>
         props.appMargins,
     },

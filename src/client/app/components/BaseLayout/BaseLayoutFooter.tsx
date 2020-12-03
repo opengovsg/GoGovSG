@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Link,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import Section from '../Section'
 
@@ -90,40 +85,40 @@ const BaseLayoutFooter = () => {
   return (
     <Section backgroundType="dark" verticalMultiplier={0.5}>
       <footer className={classes.footer}>
-          <div className={classes.appHeaderGroup}>
+        <div className={classes.appHeaderGroup}>
+          <Typography
+            className={classes.appTitle}
+            variant="body1"
+            color="textPrimary"
+          >
+            <strong>{i18next.t('general.appTitle')}</strong>
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textPrimary"
+            noWrap
+            className={classes.appCatchPhrase}
+          >
+            {i18next.t('general.appCatchphrase.noStyle')}
+          </Typography>
+        </div>
+        <div className={classes.navLinkGroup}>
+          {footers.map((footer) => (
             <Typography
-              className={classes.appTitle}
-              variant="body1"
-              color="textPrimary"
+              className={classes.navLink}
+              key={footer.text}
+              variant="caption"
             >
-              <strong>{i18next.t('general.appTitle')}</strong>
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textPrimary"
-              noWrap
-              className={classes.appCatchPhrase}
-            >
-              {i18next.t('general.appCatchphrase.noStyle')}
-            </Typography>
-          </div>
-          <div className={classes.navLinkGroup}>
-            {footers.map((footer) => (
-              <Typography
-                className={classes.navLink}
-                key={footer.text}
-                variant="caption"
+              <Link
+                className={classes.footerLink}
+                target="_blank"
+                href={footer.link}
               >
-                <Link
-                  className={classes.footerLink}
-                  target="_blank"
-                  href={footer.link}
-                >
-                  {footer.text}
-                </Link>
-              </Typography>
-            ))}
-          </div>
+                {footer.text}
+              </Link>
+            </Typography>
+          ))}
+        </div>
       </footer>
     </Section>
   )

@@ -1,14 +1,16 @@
 import React from 'react'
-import { Theme, createStyles, makeStyles } from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
+
 type MastheadProps = {
   isSticky: boolean
-  toStick: object
+  toStick: boolean
 }
-const useStyles = makeStyles<Theme, MastheadProps>(() =>
+const useStyles = makeStyles(() =>
   createStyles({
     masthead: {
       zIndex: 2,
-      position: (props) => (props.isSticky && props.toStick)? 'absolute':'relative',
+      position: (props: MastheadProps) =>
+        props.isSticky && props.toStick ? 'absolute' : 'relative',
       backgroundColor: '#F0F0F0',
       height: 'auto',
       padding: '4px 0',

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import {
+  CircularProgress,
+  Divider,
+  Hidden,
+  Tab,
+  Tabs,
   Typography,
   createStyles,
   makeStyles,
-  CircularProgress,
-  Tabs,
-  Tab,
-  useTheme,
-  Divider,
-  Hidden,
 } from '@material-ui/core'
 
 import { useDrawerState } from '../..'
@@ -71,30 +70,6 @@ const useLinkAnalyticsStyles = makeStyles((theme) =>
   }),
 )
 
-export default function LinkAnalytics() {
-  const classes = useLinkAnalyticsStyles()
-
-  return (
-    <div className={classes.linkAnalyticsDiv}>
-      <div id="link-analytics" className={classes.linkAnalyticsTitle}>
-        <Typography className={classes.titleText} variant="h3" color="primary">
-          Link analytics
-        </Typography>
-        <BetaTag />
-      </div>
-      <Typography
-        className={classes.subtitleText}
-        variant="body1"
-        color="primary"
-      >
-        View real-time analytics of your link, and sort by time period (coming
-        soon).
-      </Typography>
-      <LinkStatisticsGraphs />
-    </div>
-  )
-}
-
 const useLinkStatisticsGraphsStyles = makeStyles(() => ({
   root: {
     margin: 20,
@@ -105,40 +80,14 @@ const useLinkStatisticsGraphsStyles = makeStyles(() => ({
   },
 }))
 
-function LinkStatisticsGraphs() {
-  const classes = useLinkStatisticsGraphsStyles()
-  const shortUrl = useDrawerState().relevantShortLink!
-  const linkStatistics = useStatistics(shortUrl)
-
-  // Still fetching link statistics.
-  if (!Boolean(linkStatistics.status)) {
-    return (
-      <div className={classes.root}>
-        <CircularProgress className={classes.circularProgress} />
-      </div>
-    )
-  }
-
-  if (!Boolean(linkStatistics.contents)) {
-    return (
-      <Typography variant="body1">
-        There are no statistics to show right now.
-      </Typography>
-    )
-  }
-
-  return <Graphs data={linkStatistics.contents!} shortUrl={shortUrl} />
-}
-
 export type TabPanelProps = {
   children?: React.ReactNode
-  dir?: string
   index: any
   value: any
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props
+  const { children, value, index } = props
 
   return (
     <div
@@ -146,7 +95,6 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`full-width-tabpanel-${index}`}
       aria-labelledby={`full-width-tab-${index}`}
-      {...other}
     >
       {value === index && <Typography>{children}</Typography>}
     </div>
@@ -208,12 +156,11 @@ const useStyles = makeStyles(() => ({
 
 export type GraphsProps = {
   data: LinkStatisticsInterface
-  shortUrl : string
+  shortUrl: string
 }
 
-function Graphs(props: GraphsProps) {
+function Graphs({ data, shortUrl }: GraphsProps) {
   const classes = useStyles()
-  const theme = useTheme()
   const [tabValue, setTabValue] = useState<number>(0)
 
   // Map number to type for display
@@ -225,7 +172,7 @@ function Graphs(props: GraphsProps) {
   useEffect(() => {
     // Google Analytics: default device page and event on opening drawer
     GAPageView('DEVICE PAGE')
-    GAEvent('drawer page analytics data', 'device', '/' + props.shortUrl)
+    GAEvent('drawer page analytics data', 'device', `/${shortUrl}`)
 
     return () => {
       GAPageView('USER PAGE')
@@ -236,9 +183,9 @@ function Graphs(props: GraphsProps) {
     setTabValue(newValue)
 
     // Google Analytics: analytics data on device, clicks and traffics
-    const daType:string = daMap.get(newValue) || 'DEVICE PAGE'
-    GAPageView(daType.toUpperCase() + ' PAGE')
-    GAEvent('drawer page analytics data', daType, '/' + props.shortUrl)
+    const daType: string = daMap.get(newValue) || 'DEVICE PAGE'
+    GAPageView(`${daType.toUpperCase()} PAGE`)
+    GAEvent('drawer page analytics data', daType, `/${shortUrl}`)
   }
 
   const getIconStyle = (index: number) => {
@@ -252,13 +199,17 @@ function Graphs(props: GraphsProps) {
     <>
       <Hidden mdUp>
         <div className={classes.totalClicksMobile}>
-          <img src={clicksLogo} className={classes.totalClicksIconMobile} />
+          <img
+            src={clicksLogo}
+            className={classes.totalClicksIconMobile}
+            alt="clicks logo"
+          />
           <Typography
             variant="body2"
             color="primary"
             className={classes.totalClicksText}
           >
-            {`${props.data.totalClicks} total clicks`}
+            {`${data.totalClicks} total clicks`}
           </Typography>
         </div>
       </Hidden>
@@ -269,12 +220,16 @@ function Graphs(props: GraphsProps) {
               value={tabValue}
               onChange={handleChange}
               className={classes.tabBar}
-              indicatorColor={'primary'}
+              indicatorColor="primary"
             >
               <Tab
                 label={
                   <div className={classes.tab}>
-                    <img src={devicesLogo} className={getIconStyle(0)} />{' '}
+                    <img
+                      src={devicesLogo}
+                      className={getIconStyle(0)}
+                      alt="devices logo"
+                    />{' '}
                     Devices
                   </div>
                 }
@@ -282,14 +237,23 @@ function Graphs(props: GraphsProps) {
               <Tab
                 label={
                   <div className={classes.tab}>
-                    <img src={clicksLogo} className={getIconStyle(1)} /> Clicks
+                    <img
+                      src={clicksLogo}
+                      className={getIconStyle(1)}
+                      alt="clicks logo"
+                    />{' '}
+                    Clicks
                   </div>
                 }
               />
               <Tab
                 label={
                   <div className={classes.tab}>
-                    <img src={trafficLogo} className={getIconStyle(2)} />{' '}
+                    <img
+                      src={trafficLogo}
+                      className={getIconStyle(2)}
+                      alt="traffic logo"
+                    />{' '}
                     Traffic
                   </div>
                 }
@@ -297,25 +261,78 @@ function Graphs(props: GraphsProps) {
             </Tabs>
             <Hidden smDown>
               <div className={classes.totalClicks}>
-                <img src={clicksLogo} className={classes.totalClicksIcon} />
+                <img
+                  src={clicksLogo}
+                  className={classes.totalClicksIcon}
+                  alt="clicks logo"
+                />
                 <Typography variant="h6" className={classes.totalClicksText}>
-                  {`${props.data.totalClicks} total clicks`}
+                  {`${data.totalClicks} total clicks`}
                 </Typography>
               </div>
             </Hidden>
           </div>
           <Divider />
-          <TabPanel value={tabValue} index={0} dir={theme.direction}>
-            <DeviceStatistics deviceClicks={props.data.deviceClicks} />
+          <TabPanel value={tabValue} index={0}>
+            <DeviceStatistics deviceClicks={data.deviceClicks} />
           </TabPanel>
-          <TabPanel value={tabValue} index={1} dir={theme.direction}>
-            <DailyStatistics dailyClicks={props.data.dailyClicks} />
+          <TabPanel value={tabValue} index={1}>
+            <DailyStatistics dailyClicks={data.dailyClicks} />
           </TabPanel>
-          <TabPanel value={tabValue} index={2} dir={theme.direction}>
-            <HeatMapStatistics weekdayClicks={props.data.weekdayClicks} />
+          <TabPanel value={tabValue} index={2}>
+            <HeatMapStatistics weekdayClicks={data.weekdayClicks} />
           </TabPanel>
         </div>
       </div>
     </>
+  )
+}
+
+function LinkStatisticsGraphs() {
+  const classes = useLinkStatisticsGraphsStyles()
+  const shortUrl = useDrawerState().relevantShortLink!
+  const linkStatistics = useStatistics(shortUrl)
+
+  // Still fetching link statistics.
+  if (!linkStatistics.status) {
+    return (
+      <div className={classes.root}>
+        <CircularProgress className={classes.circularProgress} />
+      </div>
+    )
+  }
+
+  if (!linkStatistics.contents) {
+    return (
+      <Typography variant="body1">
+        There are no statistics to show right now.
+      </Typography>
+    )
+  }
+
+  return <Graphs data={linkStatistics.contents!} shortUrl={shortUrl} />
+}
+
+export default function LinkAnalytics() {
+  const classes = useLinkAnalyticsStyles()
+
+  return (
+    <div className={classes.linkAnalyticsDiv}>
+      <div id="link-analytics" className={classes.linkAnalyticsTitle}>
+        <Typography className={classes.titleText} variant="h3" color="primary">
+          Link analytics
+        </Typography>
+        <BetaTag />
+      </div>
+      <Typography
+        className={classes.subtitleText}
+        variant="body1"
+        color="primary"
+      >
+        View real-time analytics of your link, and sort by time period (coming
+        soon).
+      </Typography>
+      <LinkStatisticsGraphs />
+    </div>
   )
 }

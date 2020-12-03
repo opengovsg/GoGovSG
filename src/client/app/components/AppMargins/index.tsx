@@ -30,7 +30,7 @@ const useStyles = makeStyles(() =>
 
 type AppMarginsProps = {
   className?: string
-  children: React.ReactElement
+  children: React.ReactNode
 }
 
 export const ApplyAppMargins = ({ className, children }: AppMarginsProps) => {

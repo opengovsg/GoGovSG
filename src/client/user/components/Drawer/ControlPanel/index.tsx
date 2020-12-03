@@ -1,42 +1,32 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
-  Drawer,
-  createStyles,
-  makeStyles,
-  Hidden,
   Divider,
+  Drawer,
+  Hidden,
   IconButton,
-  Tooltip,
-  useTheme,
-  useMediaQuery,
-  CircularProgress,
   Link,
   Typography,
+  createStyles,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 
-import DrawerActions from './util/reducers'
-import { useDrawerState, useDrawerDispatch } from '..'
+import { DrawerActions } from './util/reducers'
+import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
 import DrawerHeader from './DrawerHeader'
-import ConfigOption, { TrailingPosition } from '../../../widgets/ConfigOption'
-import PrefixableTextField from '../../../widgets/PrefixableTextField'
-import TrailingButton from './widgets/TrailingButton'
-import GoSwitch from '../../../widgets/GoSwitch'
 import useShortLink from './util/shortlink'
-import { removeHttpsProtocol } from '../../../../app/util/url'
-import { isValidLongUrl } from '../../../../../shared/util/validation'
-import DownloadButton from './widgets/DownloadButton'
-import helpIcon from '../../../../app/assets/help-icon.svg'
-import FileInputField from '../../../widgets/FileInputField'
-import CollapsibleMessage from '../../../../app/components/CollapsibleMessage'
-import {
-  CollapsibleMessageType,
-  CollapsibleMessagePosition,
-} from '../../../../app/components/CollapsibleMessage/types'
-import { SEARCH_PAGE } from '../../../../app/util/types'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
+import LinkOwnershipField from './widgets/LinkOwnershipField'
+import FileEditor from './widgets/FileEditor'
+import TrailingButton from './widgets/TrailingButton'
+import DownloadButton from './widgets/DownloadButton'
+import LinkStateText from './widgets/LinkStateText'
+import LongUrlEditor from './widgets/LongUrlEditor'
+import { SEARCH_PAGE } from '../../../../app/util/types'
 import inProgressGraphic from './assets/in-progress.svg'
 
 const useStyles = makeStyles((theme) =>
@@ -87,27 +77,8 @@ const useStyles = makeStyles((theme) =>
         marginBottom: 50,
       },
     },
-    activeText: {
-      color: '#6d9067',
-    },
-    inactiveText: {
-      color: '#c85151',
-    },
     regularText: {
       fontWeight: 400,
-    },
-    ownershipHelpIcon: {
-      width: '14px',
-      verticalAlign: 'middle',
-    },
-    drawerTooltip: {
-      // margin: theme.spacing(1.5, 1, 1.5, 1),
-      whiteSpace: 'nowrap',
-      maxWidth: 'unset',
-      [theme.breakpoints.up('md')]: {
-        marginTop: '-12px',
-        padding: '16px',
-      },
     },
     topBar: {
       width: '100%',
@@ -120,18 +91,6 @@ const useStyles = makeStyles((theme) =>
     },
     textFieldsTopSpacer: {
       height: theme.spacing(1),
-    },
-    stateSwitch: {
-      marginBottom: theme.spacing(2),
-    },
-    originalFileLabel: {
-      marginBottom: theme.spacing(1),
-    },
-    fileInputField: {
-      marginBottom: theme.spacing(3),
-      [theme.breakpoints.up('md')]: {
-        marginBottom: 0,
-      },
     },
     saveLinkInformationButtonWrapper: {
       display: 'flex',
@@ -153,7 +112,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     inactiveDesc: {
-      display: 'none'
+      display: 'none',
     },
     customInformationHeader: {
       marginRight: theme.spacing(2),
@@ -184,90 +143,30 @@ export default function ControlPanel() {
   const drawerIsOpen = drawerStates.controlPanelIsOpen
   const modalDispatch = useDrawerDispatch()
 
-  // Error from attempt to replace file
-  const uploadFileError = drawerStates.uploadFileError
-  const setUploadFileError = (error: string | null) =>
-    modalDispatch({ type: DrawerActions.setUploadFileError, payload: error })
-
   // Fetch short link state and dispatches from redux store through our helper hook.
-  const {
-    shortLinkState,
-    shortLinkDispatch,
-    isUploading,
-  } = useShortLink(drawerStates.relevantShortLink!)
+  const { shortLinkState, shortLinkDispatch } = useShortLink(
+    drawerStates.relevantShortLink!,
+  )
 
   // Manage values in our text fields.
-  const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
-  const editedLongUrl = shortLinkState?.editedLongUrl || ''
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
   const editedDescription = shortLinkState?.editedDescription || ''
-  const [pendingOwner, setPendingOwner] = useState<string>('')
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
 
-  const [isContactEmailValid, setContactEmailValid] = React.useState(Boolean(originalContactEmail))
-  const [isDescriptionValid, setDescriptionValid] = React.useState(Boolean(originalDescription))
+  const [isContactEmailValid, setContactEmailValid] = React.useState(
+    Boolean(originalContactEmail),
+  )
+  const [isDescriptionValid, setDescriptionValid] = React.useState(
+    Boolean(originalDescription),
+  )
 
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
-    shortLinkDispatch?.setEditLongUrl(originalLongUrl)
     shortLinkDispatch?.setEditDescription(originalDescription)
     shortLinkDispatch?.setEditContactEmail(originalContactEmail)
-    setPendingOwner('')
     modalDispatch({ type: DrawerActions.closeControlPanel })
   }
-
-  const stateTitleActive = (
-    <>
-      Your link is <span className={classes.activeText}>active</span> and
-      publicly accessible
-    </>
-  )
-
-  const stateTitleInactive = (
-    <>
-      Your link is <span className={classes.inactiveText}>inactive</span> and
-      not publicly accessible
-    </>
-  )
-
-  const linkOwnershipHelp = (
-    <>
-      Link owner{' '}
-      <Tooltip
-        title="Links can only be transferred to an existing Go.gov.sg user"
-        arrow
-        placement="top"
-        classes={{ tooltip: classes.drawerTooltip }}
-      >
-        <img
-          className={classes.ownershipHelpIcon}
-          src={helpIcon}
-          alt="Ownership help"
-          draggable={false}
-        />
-      </Tooltip>
-    </>
-  )
-
-  const replaceFileHelp = (
-    <div className={classes.originalFileLabel}>
-      Original file{' '}
-      <Tooltip
-        title="Original file will be replaced after you select file. Maximum file size is 10mb."
-        arrow
-        placement="top"
-        classes={{ tooltip: classes.drawerTooltip }}
-      >
-        <img
-          className={classes.ownershipHelpIcon}
-          src={helpIcon}
-          alt="Replace file help"
-          draggable={false}
-        />
-      </Tooltip>
-    </div>
-  )
 
   return (
     <Drawer
@@ -287,225 +186,85 @@ export default function ControlPanel() {
         </IconButton>
         <DrawerMargin>
           <DrawerHeader />
-          <ConfigOption
-            title={
-              shortLinkState?.state === 'ACTIVE'
-                ? stateTitleActive
-                : stateTitleInactive
-            }
-            titleVariant="h6"
-            titleClassName={isMobileView ? classes.regularText : ''}
-            trailing={
-              <GoSwitch
-                color="primary"
-                checked={shortLinkState?.state === 'ACTIVE'}
-                onChange={shortLinkDispatch?.toggleStatus}
-                className={classes.stateSwitch}
-              />
-            }
-            trailingPosition={TrailingPosition.center}
-          />
-          <ConfigOption
-            title="Download QR Code"
-            titleVariant="h6"
-            titleClassName={isMobileView ? classes.regularText : ''}
-            trailing={<DownloadButton />}
-            trailingPosition={TrailingPosition.end}
-          />
+          <LinkStateText />
+          <DownloadButton />
           <Hidden smDown>
             <div className={classes.textFieldsTopSpacer} />
           </Hidden>
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
-          {!shortLinkState?.isFile && (
-            <>
-              <ConfigOption
-                title="Original link"
-                titleVariant="body2"
-                titleClassName={classes.regularText}
-                leading={
-                  <PrefixableTextField
-                    value={editedLongUrl}
-                    onChange={(event) =>
-                      shortLinkDispatch?.setEditLongUrl(event.target.value)
-                    }
-                    placeholder="Original link"
-                    prefix="https://"
-                    error={!isValidLongUrl(editedLongUrl, true)}
-                    helperText={
-                      isValidLongUrl(editedLongUrl, true)
-                        ? ' '
-                        : "This doesn't look like a valid url."
-                    }
-                  />
-                }
-                trailing={
-                  <TrailingButton
-                    disabled={
-                      !isValidLongUrl(editedLongUrl, false) ||
-                      editedLongUrl === originalLongUrl
-                    }
-                    onClick={() =>
-                      shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
-                    }
-                    fullWidth={isMobileView}
-                    variant={isMobileView ? 'contained' : 'outlined'}
-                  >
-                    Save
-                  </TrailingButton>
-                }
-                wrapTrailing={isMobileView}
-                trailingPosition={TrailingPosition.end}
-              />
-            </>
-          )}
-          {shortLinkState?.isFile && (
-            <ConfigOption
-              title={replaceFileHelp}
-              titleVariant="body2"
-              titleClassName={classes.regularText}
-              leading={
-                <>
-                  <FileInputField
-                    className={classes.fileInputField}
-                    uploadFileError={uploadFileError}
-                    textFieldHeight="44px"
-                    inputId="replace-file-input"
-                    text={originalLongUrl}
-                    setFile={(newFile) => {
-                      shortLinkDispatch?.replaceFile(
-                        newFile,
-                        setUploadFileError,
-                      )
-                    }}
-                    setUploadFileError={setUploadFileError}
-                  />
-                  <CollapsibleMessage
-                    type={CollapsibleMessageType.Error}
-                    visible={!!uploadFileError}
-                    position={CollapsibleMessagePosition.Absolute}
-                  >
-                    {uploadFileError}
-                  </CollapsibleMessage>
-                </>
-              }
-              trailing={
-                <label htmlFor="replace-file-input">
-                  <TrailingButton
-                    onClick={() => {}}
-                    disabled={isUploading}
-                    variant={isMobileView ? 'contained' : 'outlined'}
-                    fullWidth={isMobileView}
-                    component="span"
-                  >
-                    {isUploading ? (
-                      <CircularProgress color="primary" size={20} />
-                    ) : (
-                      'Replace file'
-                    )}
-                  </TrailingButton>
-                </label>
-              }
-              wrapTrailing={isMobileView}
-              trailingPosition={TrailingPosition.end}
-            />
-          )}
+          {shortLinkState?.isFile ? <FileEditor /> : <LongUrlEditor />}
           <Hidden mdUp>
             <Divider className={classes.divider} />
           </Hidden>
-          <ConfigOption
-            title={linkOwnershipHelp}
-            titleVariant="body2"
-            titleClassName={classes.regularText}
-            leading={
-              <PrefixableTextField
-                value={pendingOwner}
-                onChange={(event) => setPendingOwner(event.target.value)}
-                placeholder="Email of link recipient"
-                helperText={' '}
-              />
-            }
-            trailing={
-              <TrailingButton
-                onClick={() => {
-                  shortLinkDispatch?.applyNewOwner(pendingOwner, handleClose)
-                }}
-                disabled={!pendingOwner}
-                variant={isMobileView ? 'contained' : 'outlined'}
-                fullWidth={isMobileView}
-              >
-                Transfer
-              </TrailingButton>
-            }
-            wrapTrailing={isMobileView}
-            trailingPosition={TrailingPosition.end}
-          />
+          <LinkOwnershipField closeModal={handleClose} />
           <div className={classes.inactiveDesc}>
-          <Divider className={classes.dividerInformation} />
-          <LinkInfoEditor
-            contactEmail={editedContactEmail} 
-            description={editedDescription}
-            onContactEmailChange={(event) => shortLinkDispatch?.setEditContactEmail(event.target.value)} 
-            onDescriptionChange={(event) =>
-              shortLinkDispatch?.setEditDescription(
-                event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
-              )
-            }
-            onContactEmailValidation={setContactEmailValid}
-            onDescriptionValidation={setDescriptionValid}
-          />
-          <div className={classes.saveLinkInformationButtonWrapper}>
-            <Link
-              target="_blank"
-              href={
-                isDescriptionValid && isContactEmailValid && editedDescription
-                  ? `/#${SEARCH_PAGE}`
-                  : undefined
+            <Divider className={classes.dividerInformation} />
+            <LinkInfoEditor
+              contactEmail={editedContactEmail}
+              description={editedDescription}
+              onContactEmailChange={(event) =>
+                shortLinkDispatch?.setEditContactEmail(event.target.value)
               }
-              className={classes.previewButton}
-            >
+              onDescriptionChange={(event) =>
+                shortLinkDispatch?.setEditDescription(
+                  event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+                )
+              }
+              onContactEmailValidation={setContactEmailValid}
+              onDescriptionValidation={setDescriptionValid}
+            />
+            <div className={classes.saveLinkInformationButtonWrapper}>
+              <Link
+                target="_blank"
+                href={
+                  isDescriptionValid && isContactEmailValid && editedDescription
+                    ? `/#${SEARCH_PAGE}`
+                    : undefined
+                }
+                className={classes.previewButton}
+              >
+                <TrailingButton
+                  disabled={
+                    !originalDescription ||
+                    originalDescription !== editedDescription
+                  }
+                  fullWidth={isMobileView}
+                  variant="outlined"
+                >
+                  Preview
+                </TrailingButton>
+              </Link>
               <TrailingButton
                 disabled={
-                  !originalDescription ||
-                  originalDescription != editedDescription
+                  !isDescriptionValid ||
+                  (editedContactEmail === originalContactEmail &&
+                    editedDescription === originalDescription) ||
+                  !isContactEmailValid
                 }
                 fullWidth={isMobileView}
-                variant="outlined"
+                variant={isMobileView ? 'contained' : 'outlined'}
+                onClick={shortLinkDispatch?.applyEditInformation}
               >
-                Preview
+                Save
               </TrailingButton>
-            </Link>
-            <TrailingButton
-              disabled={
-                !isDescriptionValid ||
-                (
-                  editedContactEmail === originalContactEmail &&
-                  editedDescription === originalDescription
-                ) ||
-                !isContactEmailValid
-              }
-              fullWidth={isMobileView}
-              variant={isMobileView ? 'contained' : 'outlined'}
-              onClick={shortLinkDispatch?.applyEditInformation}
-            >
-              Save
-            </TrailingButton>
             </div>
           </div>
           <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
           <Divider className={classes.dividerLinkVisibility} />
-            <Typography
-              variant="h3"
-              className={classes.customInformationHeader}
-              color="primary"
-            >
-              Custom Link Visibility
-            </Typography>
-            <Typography variant="body1" className={classes.customInformationDesc}>
-              This section is undergoing construction. Your link description and contact email added{' '}
-              will be kept for future use in our database. We'll keep you updated on any changes.
+          <Typography
+            variant="h3"
+            className={classes.customInformationHeader}
+            color="primary"
+          >
+            Custom Link Visibility
+          </Typography>
+          <Typography variant="body1" className={classes.customInformationDesc}>
+            This section is undergoing construction. Your link description and
+            contact email added will be kept for future use in our database. We
+            will keep you updated on any changes.
           </Typography>
           <div className={classes.emptyStateGraphic}>
             <img src={inProgressGraphic} alt="in progress graphic" />

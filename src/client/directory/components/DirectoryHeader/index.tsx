@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react'
 import {
+  Button,
+  Hidden,
   Typography,
   createStyles,
   makeStyles,
-  useTheme,
   useMediaQuery,
-  Hidden,
-  Button,
+  useTheme,
 } from '@material-ui/core'
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import GoDirectoryInput from './DirectoryInput'
@@ -20,10 +20,10 @@ type DirectoryHeaderProps = {
   onSortOrderChange: (order: SearchResultsSortOrder) => void
   onClearQuery: () => void
   query: string
-  getFile:(queryFile: string) => void
-  getState:(queryState: string) => void
-  getEmail:(queryEmail: string) => void
-  setDisablePagination:(disablePagination: boolean) => void
+  getFile: (queryFile: string) => void
+  getState: (queryState: string) => void
+  getEmail: (queryEmail: string) => void
+  setDisablePagination: (disablePagination: boolean) => void
   onApply: () => void
   onReset: () => void
 }
@@ -69,11 +69,11 @@ const useStyles = makeStyles((theme) =>
         marginRight: theme.spacing(1),
       },
     },
-    leftWrapper : {
+    leftWrapper: {
       display: 'flex',
       alignItems: 'center',
     },
-    rightWrapper : {
+    rightWrapper: {
       display: 'inline-flex',
     },
     arrow: {
@@ -102,7 +102,11 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
   const isIdealHeight = useMediaQuery('(min-height: 730px)')
 
   return (
-    <div className={isIdealHeight? classes.headerWrapper: classes.headerWrapperShort}>
+    <div
+      className={
+        isIdealHeight ? classes.headerWrapper : classes.headerWrapperShort
+      }
+    >
       <ApplyAppMargins>
         <div className={classes.headerContent}>
           <div className={classes.headerTextWrapper}>
@@ -116,20 +120,23 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
               <BetaTag />
             </div>
 
-
-          <Hidden xsDown>
-            <div className={classes.rightWrapper}>
-              <Button 
-                href="/#/user" 
-                size="large"
-                variant='text'
-                color='inherit'>
-                  <img className={classes.arrow} src={arrow} alt="arrow graphic" />
+            <Hidden xsDown>
+              <div className={classes.rightWrapper}>
+                <Button
+                  href="/#/user"
+                  size="large"
+                  variant="text"
+                  color="inherit"
+                >
+                  <img
+                    className={classes.arrow}
+                    src={arrow}
+                    alt="arrow graphic"
+                  />
                   Back to Dashboard
-              </Button>
-            </div>
-          </Hidden>
-
+                </Button>
+              </div>
+            </Hidden>
           </div>
           <GoDirectoryInput
             showAdornments
@@ -145,7 +152,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
             setDisablePagination={setDisablePagination}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
-                (e.target as any).blur()
+                ;(e.target as any).blur()
                 e.preventDefault()
               }
             }}

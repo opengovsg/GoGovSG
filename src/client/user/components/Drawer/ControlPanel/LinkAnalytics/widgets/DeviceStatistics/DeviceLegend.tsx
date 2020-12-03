@@ -31,18 +31,23 @@ export type DeviceLegendProps = {
   percent: number
 }
 
-export default function DeviceLegend(props: DeviceLegendProps) {
-  const classes = useStyles({ dotColor: props.dotColor })
+export default function DeviceLegend({
+  className,
+  dotColor,
+  label,
+  percent,
+}: DeviceLegendProps) {
+  const classes = useStyles({ dotColor })
   return (
-    <div className={props.className}>
+    <div className={className}>
       <div className={classes.topRow}>
         <div className={classes.dot} />
         <Typography color="primary" className={classes.label}>
-          {props.label}
+          {label}
         </Typography>
       </div>
       <Typography color="primary" variant="h5">
-        {props.percent}%
+        {percent}%
       </Typography>
     </div>
   )

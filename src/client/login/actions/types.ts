@@ -5,8 +5,6 @@ export const VERIFY_OTP_ERROR = 'VERIFY_OTP_ERROR'
 export const VERIFY_OTP_PENDING = 'VERIFY_OTP_PENDING'
 export const RESEND_OTP_PENDING = 'RESEND_OTP_PENDING'
 export const RESEND_OTP_DISABLED = 'RESEND_OTP_DISABLED'
-export const SET_OTP = 'SET_OTP'
-export const SET_EMAIL = 'SET_EMAIL'
 export const SET_EMAIL_VALIDATOR = 'SET_EMAIL_VALIDATOR'
 export const IS_LOGGED_IN_SUCCESS = 'IS_LOGGED_IN_SUCCESS'
 export const IS_LOGGED_OUT = 'IS_LOGGED_OUT'
@@ -39,16 +37,6 @@ export type ResendOtpDisabledAction = {
   type: typeof RESEND_OTP_DISABLED
 }
 
-export type SetOtpAction = {
-  type: typeof SET_OTP
-  payload: string
-}
-
-export type SetEmailAction = {
-  type: typeof SET_EMAIL
-  payload: string
-}
-
 export type EmailValidatorType = (email: string) => boolean
 
 export type SetEmailValidatorAction = {
@@ -69,8 +57,6 @@ export type LoginActionType =
   | IsLoggedOutAction
   | IsLoggedInSuccessAction
   | SetEmailValidatorAction
-  | SetEmailAction
-  | SetOtpAction
   | ResendOtpDisabledAction
   | ResendOtpPendingAction
   | VerifyOtpPendingAction

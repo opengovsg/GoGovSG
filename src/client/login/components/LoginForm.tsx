@@ -1,25 +1,19 @@
-import React, { FunctionComponent } from 'react'
-import classNames from 'classnames'
-import { useDispatch } from 'react-redux'
-import i18next from 'i18next'
+import React, { FunctionComponent, PropsWithChildren } from 'react'
+
 import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
-import { loginFormVariants, VariantType } from '../../app/util/types'
-import loginActions from '../actions'
-import TextButton from '../widgets/TextButton'
-import { GAEvent, GAPageView } from '../../app/util/ga'
+import { VariantType, loginFormVariants } from '../../app/util/types'
 
 type LoginFormProps = {
-  id: string,
-  placeholder: string,
-  buttonMessage: string,
-  hidden: boolean,
-  variant: VariantType,
-  autoComplete: string,
-  isEmailView?: boolean,
-  onChange: (email: string) => {},
-  textError: () => boolean,
-  textErrorMessage: () => string,
-  submit: () => {},
+  id: string
+  placeholder: string
+  buttonMessage: string
+  variant: VariantType
+  autoComplete: string
+  onChange: (email: string) => void
+  textError: () => boolean
+  textErrorMessage: () => string
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  value: string
 }
 
 const useStyles = makeStyles((theme) =>
@@ -41,51 +35,27 @@ const useStyles = makeStyles((theme) =>
       minWidth: '120px',
       marginRight: theme.spacing(2),
     },
-    secondaryButton: {
-      fontWeight: 400,
-      marginLeft: theme.spacing(2),
-    },
-    resendOTPBtn: {
-      marginRight: 'auto',
-      '&:disabled': {
-        opacity: 0.5,
-      },
-    },
   }),
 )
 
 // Form object to request for user's email or OTP
-const LoginForm : FunctionComponent<LoginFormProps> = ({
+const LoginForm: FunctionComponent<LoginFormProps> = ({
   id,
   placeholder,
   buttonMessage,
-  hidden,
   variant,
   autoComplete,
-  isEmailView,
   onChange,
   textError,
   textErrorMessage,
-  submit,
-}) => {
+  onSubmit,
+  children,
+  value,
+}: PropsWithChildren<LoginFormProps>) => {
   const classes = useStyles()
-  const dispatch = useDispatch()
-  const getOTPEmail = () => dispatch(loginActions.getOTPEmail())
   const variantMap = loginFormVariants.map[variant]
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        submit()
-        // Google Analytics: OTP page, Transition from email > OTP page
-        if (isEmailView) {
-          GAPageView('OTP LOGIN PAGE')
-          GAEvent('login page', 'otp', 'successful')
-        }
-      }}
-      hidden={hidden}
-      autoComplete={autoComplete}
-    >
+    <form onSubmit={onSubmit} autoComplete={autoComplete}>
       <TextField
         autoFocus
         required
@@ -105,6 +75,7 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
         disabled={!variantMap.inputEnabled}
         error={textError()}
         helperText={textErrorMessage()}
+        value={value}
       />
       <section className={classes.buttonRow}>
         <Button
@@ -117,33 +88,10 @@ const LoginForm : FunctionComponent<LoginFormProps> = ({
         >
           {buttonMessage}
         </Button>
-        {!isEmailView ? (
-          <TextButton
-            className={classNames(
-              classes.secondaryButton,
-              classes.resendOTPBtn,
-            )}
-            disabled={!variantMap.resendEnabled}
-            onClick={getOTPEmail}
-          >
-            Resend OTP
-          </TextButton>
-        ) : (
-          <TextButton
-            className={classes.secondaryButton}
-            href={i18next.t('general.links.faq')}
-          >
-            Need help?
-          </TextButton>
-        )}
+        {children}
       </section>
     </form>
   )
-}
-
-// By default the login page should first request for email
-LoginForm.defaultProps = {
-  isEmailView: true,
 }
 
 export default LoginForm
