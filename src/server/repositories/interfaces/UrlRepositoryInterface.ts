@@ -1,5 +1,4 @@
 import { StorableFile, StorableUrl, UrlDirectoryPaginated } from '../types'
-import { DirectoryQueryConditions } from '../../services/interfaces/DirectorySearchServiceInterface'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -42,11 +41,42 @@ export interface UrlRepositoryInterface {
   getLongUrl: (shortUrl: string) => Promise<string>
 
   /**
-   * Performs search for email and plain text search.
-   * @param  {DirectoryQueryConditions} conditions The search query conditions.
-   * @returns Promise of total no. Of search results and the results on the current page.
+   * Search results base on email domains.
+   * @param {string[]} likeQuery List of valid email and domains for SQL query.
+   * @param {string} rankingAlgorithm Sort order.
+   * @param {number} limit Number of results returned.
+   * @param {number} offset Number of results skipped.
+   * @param {string[]} queryState List of states to retrieve for SQL query.
+   * @param {boolean[]} queryFile List of url types to retrieve for SQL query.
+   * @returns Promise that returns list of longUrl and count.
    */
-  rawDirectorySearch: (
-    conditions: DirectoryQueryConditions,
+  getRelevantUrlsFromEmail: (
+    likeQuery: string[],
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    queryState: string[],
+    queryFile: boolean[],
+  ) => Promise<UrlDirectoryPaginated>
+
+  /**
+   * Search results base on email domains.
+   * @param {string} urlVector Vectorised search expression.
+   * @param {string} rankingAlgorithm Sort order.
+   * @param {number} limit Number of results returned.
+   * @param {number} offset Number of results skipped.
+   * @param {string} query Search query to be vectorised.
+   * @param {string} queryState List of states to retrieve for SQL query.
+   * @param {string} queryFile List of url types to retrieve for SQL query.
+   * @returns Promise that returns list of longUrl and count.
+   */
+  getRelevantUrlsFromText: (
+    urlVector: string,
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    query: string,
+    queryState: string,
+    queryFile: string,
   ) => Promise<UrlDirectoryPaginated>
 }

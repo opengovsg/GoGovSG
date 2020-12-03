@@ -5,12 +5,7 @@ import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import {
-  logger,
-  redirectExpiry,
-  searchDescriptionWeight,
-  searchShortUrlWeight,
-} from '../config'
+import { logger, redirectExpiry } from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -23,10 +18,6 @@ import {
 } from './types'
 import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
-import { SearchResultsSortOrder } from '../../shared/search'
-import { urlSearchVector } from '../models/search'
-import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
-import { sanitiseQuery } from '../util/sanitise'
 
 const { Public, Private } = FileVisibility
 
@@ -141,54 +132,14 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
-  public rawDirectorySearch: (
-    conditions: DirectoryQueryConditions,
-  ) => Promise<UrlDirectoryPaginated> = async (conditions) => {
-    const { query, order, limit, offset, state, isFile, isEmail } = conditions
-
-    const { tableName } = Url
-
-    const urlVector = urlSearchVector
-
-    const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
-
-    const urlsModel = await (isEmail
-      ? this.getRelevantUrlsFromEmail(
-          query,
-          rankingAlgorithm,
-          limit,
-          offset,
-          state,
-          isFile,
-        )
-      : this.getRelevantUrlsFromText(
-          urlVector,
-          rankingAlgorithm,
-          limit,
-          offset,
-          query,
-          state,
-          isFile,
-        ))
-
-    return urlsModel
-  }
-
-  private async getRelevantUrlsFromEmail(
-    query: string,
+  public async getRelevantUrlsFromEmail(
+    likeQuery: string[],
     rankingAlgorithm: string,
     limit: number,
     offset: number,
-    state: string | undefined,
-    isFile: boolean | undefined,
+    queryState: string[],
+    queryFile: boolean[],
   ): Promise<UrlDirectoryPaginated> {
-    const emails = query.toString().split(' ')
-    // split email/domains by space into tokens, also reduces injections
-    const likeQuery = emails.map(sanitiseQuery)
-
-    const queryFile = this.getQueryFileEmail(isFile)
-    const queryState = this.getQueryStateEmail(state)
-
     // TODO: optimize the search query, possibly with reverse-email search
     const rawQuery = `
       SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile"
@@ -220,17 +171,15 @@ export class UrlRepository implements UrlRepositoryInterface {
     return { count, urls: slicedUrlsModel }
   }
 
-  private async getRelevantUrlsFromText(
+  public async getRelevantUrlsFromText(
     urlVector: string,
     rankingAlgorithm: string,
     limit: number,
     offset: number,
     query: string,
-    state: string | undefined,
-    isFile: boolean | undefined,
+    queryState: string,
+    queryFile: string,
   ): Promise<UrlDirectoryPaginated> {
-    const queryFile = this.getQueryFileText(isFile)
-    const queryState = this.getQueryStateText(state)
     const rawQuery = `
       SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
@@ -258,46 +207,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     const slicedUrlsModel = urlsModel.slice(offset, ending)
 
     return { count, urls: slicedUrlsModel }
-  }
-
-  private getQueryFileEmail: (isFile: boolean | undefined) => Array<boolean> = (
-    isFile,
-  ) => {
-    let queryFile = [true, false]
-    if (isFile === true) queryFile = [true]
-    else if (isFile === false) queryFile = [false]
-
-    return queryFile
-  }
-
-  private getQueryStateEmail: (state: string | undefined) => Array<string> = (
-    state,
-  ) => {
-    let queryState = ['ACTIVE', 'INACTIVE']
-    if (state === 'ACTIVE') queryState = ['ACTIVE']
-    else if (state === 'INACTIVE') queryState = ['INACTIVE']
-
-    return queryState
-  }
-
-  private getQueryFileText: (isFile: boolean | undefined) => string = (
-    isFile,
-  ) => {
-    let queryFile = ''
-    if (isFile === true) queryFile = `AND urls."isFile"=true`
-    else if (isFile === false) queryFile = `AND urls."isFile"=false`
-
-    return queryFile
-  }
-
-  private getQueryStateText: (state: string | undefined) => string = (
-    state,
-  ) => {
-    let queryState = ''
-    if (state === 'ACTIVE') queryState = `AND urls.state = 'ACTIVE'`
-    else if (state === 'INACTIVE') queryState = `AND urls.state = 'INACTIVE'`
-
-    return queryState
   }
 
   /**
@@ -378,41 +287,6 @@ export class UrlRepository implements UrlRepositoryInterface {
         else resolve()
       })
     })
-  }
-
-  /**
-   * Generates the ranking algorithm to be used in the ORDER BY clause in the
-   * SQL statement based on the input sort order.
-   * @param  {SearchResultsSortOrder} order
-   * @param  {string} tableName
-   * @returns The clause as a string.
-   */
-  private getRankingAlgorithm(
-    order: SearchResultsSortOrder,
-    tableName: string,
-  ): string {
-    let rankingAlgorithm
-    switch (order) {
-      case SearchResultsSortOrder.Relevance:
-        {
-          // The 3rd argument passed into ts_rank_cd represents
-          // the normalization option that specifies whether and how
-          // a document's length should impact its rank. It works as a bit mask.
-          // 1 divides the rank by 1 + the logarithm of the document length
-          const textRanking = `ts_rank_cd('{0, 0, ${searchDescriptionWeight}, ${searchShortUrlWeight}}',${urlSearchVector}, query, 1)`
-          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
-        }
-        break
-      case SearchResultsSortOrder.Recency:
-        rankingAlgorithm = `${tableName}."createdAt"`
-        break
-      case SearchResultsSortOrder.Popularity:
-        rankingAlgorithm = `${tableName}.clicks`
-        break
-      default:
-        throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
-    }
-    return rankingAlgorithm
   }
 }
 
