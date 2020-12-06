@@ -1,7 +1,7 @@
 import { sequelize } from '../util/sequelize'
 import { Url, UrlHistory } from './url'
 import { User } from './user'
-import { Clicks } from './statistics/daily'
+import { DailyClicks } from './statistics/daily'
 import { WeekdayClicks } from './statistics/weekday'
 import { Devices } from './statistics/devices'
 import { syncFunctions } from './functions'
@@ -15,10 +15,10 @@ User.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
 UrlHistory.belongsTo(User, { foreignKey: { allowNull: false } })
 
 // A Url record can have various rows of relevant statistics.
-Url.hasMany(Clicks, { foreignKey: 'shortUrl', as: 'DailyClicks' })
+Url.hasMany(DailyClicks, { foreignKey: 'shortUrl', as: 'DailyClicks' })
 Url.hasMany(WeekdayClicks, { foreignKey: 'shortUrl', as: 'WeekdayClicks' })
 Url.hasOne(Devices, { foreignKey: 'shortUrl', as: 'DeviceClicks' })
-Clicks.belongsTo(Url, { foreignKey: 'shortUrl' })
+DailyClicks.belongsTo(Url, { foreignKey: 'shortUrl' })
 WeekdayClicks.belongsTo(Url, { foreignKey: 'shortUrl' })
 Devices.belongsTo(Url, { foreignKey: 'shortUrl' })
 
