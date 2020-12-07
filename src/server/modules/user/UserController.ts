@@ -3,7 +3,6 @@ import { inject, injectable } from 'inversify'
 
 import { OwnershipTransferRequest, UrlCreationRequest, UrlEditRequest } from '.'
 import jsonMessage from '../../util/json'
-import { UrlManagementService } from './services'
 import { DependencyIds } from '../../constants'
 import {
   AlreadyExistsError,
@@ -14,8 +13,9 @@ import { MessageType } from '../../../shared/util/messages'
 import { StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
+import { UrlManagementService } from './interfaces/UrlManagementService'
 
-interface AnnouncementResponse {
+type AnnouncementResponse = {
   message?: string
   title?: string
   subtitle?: string

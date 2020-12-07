@@ -22,7 +22,6 @@ const userAnnouncement = {
 
 describe('UserController', () => {
   const controller = new UserController(
-    // @ts-ignore - no need for private properties in UrlManagementService
     urlManagementService,
     userMessage,
     userAnnouncement,
