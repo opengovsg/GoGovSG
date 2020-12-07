@@ -17,7 +17,7 @@ jest.mock('../../../src/server/models/statistics/devices', () => ({
   Devices: { getTableName: () => 'devices' },
 }))
 jest.mock('../../../src/server/models/statistics/daily', () => ({
-  Clicks: { getTableName: () => 'daily' },
+  DailyClicks: { getTableName: () => 'daily' },
 }))
 jest.mock('../../../src/server/models/statistics/weekday', () => ({
   WeekdayClicks: { getTableName: () => 'weekday' },
