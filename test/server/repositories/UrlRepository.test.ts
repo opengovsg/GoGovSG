@@ -11,11 +11,10 @@ import {
 } from '../api/util'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
-import { SearchResultsSortOrder } from '../../../src/shared/search'
 import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
-import { DirectoryQueryConditions } from '../../../src/server/services/interfaces/DirectorySearchServiceInterface'
+import { urlSearchVector } from '../../../src/server/models/search'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -323,22 +322,26 @@ describe('UrlRepository', () => {
     })
   })
 
-  describe('rawDirectorySearch', () => {
+  describe('directory search for email and keyword', () => {
     beforeEach(() => {
       mockQuery.mockClear()
     })
-    it('should call sequelize.query that searches for emails', async () => {
-      const conditions: DirectoryQueryConditions = {
-        query: '@test.gov.sg @test2.gov.sg',
-        order: SearchResultsSortOrder.Recency,
-        limit: 100,
-        offset: 0,
-        state: 'ACTIVE',
-        isFile: true,
-        isEmail: true,
-      }
+    it('should call sequelize.query that searches with email', async () => {
+      const likeQuery = ['@test.gov.sg', '@test2.gov.sg']
+      const rankingAlgorithm = `Url."createdAt"`
+      const limit = 100
+      const offset = 0
+      const queryState = ['ACTIVE']
+      const queryFile = [true]
 
-      const repoawait = await repository.rawDirectorySearch(conditions)
+      const repoawait = await repository.getRelevantUrlsFromEmail(
+        likeQuery,
+        rankingAlgorithm,
+        limit,
+        offset,
+        queryState,
+        queryFile,
+      )
 
       expect(repoawait).toStrictEqual({
         count: 1,
@@ -354,17 +357,23 @@ describe('UrlRepository', () => {
     })
 
     it('should call sequelize.query that searches with plain text', async () => {
-      const conditions: DirectoryQueryConditions = {
-        query: 'query',
-        order: SearchResultsSortOrder.Recency,
-        limit: 100,
-        offset: 0,
-        state: 'ACTIVE',
-        isFile: true,
-        isEmail: false,
-      }
+      const urlVector = urlSearchVector
+      const query = 'query'
+      const rankingAlgorithm = `Url."createdAt"`
+      const limit = 100
+      const offset = 0
+      const queryState = 'ACTIVE'
+      const queryFile = ''
 
-      const repoawait = await repository.rawDirectorySearch(conditions)
+      const repoawait = await repository.getRelevantUrlsFromText(
+        urlVector,
+        rankingAlgorithm,
+        limit,
+        offset,
+        query,
+        queryState,
+        queryFile,
+      )
       expect(repoawait).toStrictEqual({
         count: 1,
         urls: [

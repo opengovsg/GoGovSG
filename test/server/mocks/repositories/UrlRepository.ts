@@ -6,11 +6,7 @@ import {
   StorableFile,
   StorableUrl,
   UrlDirectoryPaginated,
-  UrlsPaginated,
 } from '../../../../src/server/repositories/types'
-import { StorableUrlState } from '../../../../src/server/repositories/enums'
-import { SearchResultsSortOrder } from '../../../../src/shared/search'
-import { DirectoryQueryConditions } from '../../../../src/server/services/interfaces/DirectorySearchServiceInterface'
 
 @injectable()
 export class UrlRepositoryMock implements UrlRepositoryInterface {
@@ -37,8 +33,13 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     throw new Error('Not implemented')
   }
 
-  rawDirectorySearch: (
-    condition: DirectoryQueryConditions,
+  getRelevantUrlsFromEmail: (
+    likeQuery: string[],
+    rankingAlgorithm: string,
+    limit: number,
+    offset: number,
+    queryState: string[],
+    queryFile: boolean[],
   ) => Promise<UrlDirectoryPaginated> = () => {
     return Promise.resolve({
       urls: [
@@ -53,24 +54,22 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     })
   }
 
-  plainTextSearch: (
-    query: string,
-    order: SearchResultsSortOrder,
+  getRelevantUrlsFromText: (
+    urlVector: string,
+    rankingAlgorithm: string,
     limit: number,
     offset: number,
-  ) => Promise<UrlsPaginated> = () => {
+    query: string,
+    queryState: string,
+    queryFile: string,
+  ) => Promise<UrlDirectoryPaginated> = () => {
     return Promise.resolve({
       urls: [
         {
           shortUrl: 'test-moh',
-          longUrl: 'https://www.moh.gov.sg/covid-19',
-          state: StorableUrlState.Active,
+          state: 'ACTIVE',
           isFile: false,
-          createdAt: '2020-04-17T09:10:07.491Z',
-          updatedAt: '2020-06-09T10:07:07.557Z',
-          description: '',
-          contactEmail: null,
-          clicks: 0,
+          email: 'test@test.gov.sg',
         },
       ],
       count: 0,
