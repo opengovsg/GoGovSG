@@ -3,7 +3,7 @@ import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepository
 import { DependencyIds } from '../constants'
 import { UrlDirectoryPaginated } from '../repositories/types'
 import { DirectoryQueryConditions } from './interfaces/DirectorySearchServiceInterface'
-import { sanitiseQuery } from '../util/sanitise'
+import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { Url } from '../models/url'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { searchDescriptionWeight, searchShortUrlWeight } from '../config'
@@ -115,6 +115,7 @@ export class DirectorySearchService {
       )
       return results as UrlDirectoryPaginated
     }
+    const newQuery = extractShortUrl(query)
     const urlVector = urlSearchVector
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
@@ -123,7 +124,7 @@ export class DirectorySearchService {
       rankingAlgorithm,
       limit,
       offset,
-      query,
+      newQuery,
       queryState,
       queryFile,
     )
