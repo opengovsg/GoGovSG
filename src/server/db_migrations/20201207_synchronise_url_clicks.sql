@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION update_clicks()
 RETURNS TRIGGER AS $$
 BEGIN
     UPDATE url_clicks
-    SET "clicks" = NEW."clicks"
+    SET "clicks" = NEW."clicks", "updatedAt" = current_timestamp
     WHERE url_clicks."shortUrl" = NEW."shortUrl";
     RETURN NEW;
 END; $$ LANGUAGE PLPGSQL;
