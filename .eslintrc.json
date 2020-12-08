@@ -1,65 +1,43 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
   "extends": [
     "airbnb",
+    "plugin:import/typescript",
+    "prettier/@typescript-eslint",
     "plugin:prettier/recommended",
-    "prettier",
-    "prettier/react",
-    "plugin:react-hooks/recommended"
+    "prettier/react"
   ],
-  "env": {
-    "browser": true,
-    "node": true
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "lib": ["es6", "dom"],
+    "sourceType": "module"
   },
-  "overrides": [
-    {
-      "files": [
-        "**/__tests__/*"
-      ],
-      "env": {
-        "jest": true
-      }
-    }
-  ],
-  "plugins": ["jsdoc", "prettier", "jest"],
+  "plugins": ["@typescript-eslint", "jsdoc", "jest"],
   "rules": {
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ],
-    "no-console": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/require-default-props": "off",
     "comma-dangle": ["error", "always-multiline"],
-    "import/no-unresolved": "warn",
+    "import/first": "off",
+    "import/extensions": "off",
     "newline-per-chained-call": ["error"],
-    "react/jsx-filename-extension": "off",
-    "react/jsx-props-no-spreading": "off",
-    "react/require-default-props": "warn",
-    "react/forbid-prop-types": "warn",
-    "react/prop-types": "off",
-    "no-unused-vars": ["error"],
-    "jsx-a11y/label-has-for": "off",
-    "jsx-a11y/label-has-associated-control": "off",
+    "no-console": "off",
+    "no-shadow": "off",
+    "no-unused-vars": "off",
+    "no-useless-return": "off",
     "semi": [2, "never"],
-    "react/no-string-refs": "warn",
     "sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "jsdoc/require-description-complete-sentence": "error",
-    "prettier/prettier": "error"
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "import/no-cycle": "off"
   },
-  "settings": {
-    "import/resolver": {
-      "alias": {
-        "map": [
-          ["^~", "./src/client"],
-          ["^\\$components", "./src/client/scss/components"]
-        ],
-        "extensions": [".jsx", ".js", ".tsx", ".ts", ".scss", ".css"]
-      }
-    }
+  "env": {
+    "browser": true,
+    "jest": true
   }
 }

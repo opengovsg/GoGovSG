@@ -1,26 +1,21 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
 
-import {
-  OwnershipTransferRequest,
-  UrlCreationRequest,
-  UrlEditRequest,
-} from '../../types/server/controllers/UserController'
-import jsonMessage from '../util/json'
-import { UrlManagementServiceInterface } from '../services/interfaces/UrlManagementServiceInterface'
-import { DependencyIds } from '../constants'
-import { UserControllerInterface } from './interfaces/UserControllerInterface'
+import { OwnershipTransferRequest, UrlCreationRequest, UrlEditRequest } from '.'
+import jsonMessage from '../../util/json'
+import { DependencyIds } from '../../constants'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
   NotFoundError,
-} from '../util/error'
-import { MessageType } from '../../shared/util/messages'
-import { StorableUrlState } from '../repositories/enums'
+} from '../../util/error'
+import { MessageType } from '../../../shared/util/messages'
+import { StorableUrlState } from '../../repositories/enums'
 
-import { logger } from '../config'
+import { logger } from '../../config'
+import { UrlManagementService } from './interfaces/UrlManagementService'
 
-interface AnnouncementResponse {
+type AnnouncementResponse = {
   message?: string
   title?: string
   subtitle?: string
@@ -29,8 +24,8 @@ interface AnnouncementResponse {
 }
 
 @injectable()
-export class UserController implements UserControllerInterface {
-  private urlManagementService: UrlManagementServiceInterface
+export class UserController {
+  private urlManagementService: UrlManagementService
 
   private userMessage: string
 
@@ -38,7 +33,7 @@ export class UserController implements UserControllerInterface {
 
   public constructor(
     @inject(DependencyIds.urlManagementService)
-    urlManagementService: UrlManagementServiceInterface,
+    urlManagementService: UrlManagementService,
     @inject(DependencyIds.userMessage)
     userMessage: string,
     @inject(DependencyIds.userAnnouncement)

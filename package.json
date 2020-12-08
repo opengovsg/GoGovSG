@@ -1,13 +1,13 @@
 {
   "name": "GoGovSG",
-  "version": "1.41.0",
+  "version": "1.42.0",
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
   "scripts": {
-    "lint-js": "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.json --ignore-path .gitignore .",
-    "lint-ts": "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.ts.json --ignore-path .gitignore .",
-    "lint-js:fix": "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.json --ignore-path .gitignore --fix .",
-    "lint-ts:fix": "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.ts.json --ignore-path .gitignore --fix .",
+    "lint-js": "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --ignore-path .gitignore .",
+    "lint-ts": "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.json --ignore-path .gitignore .",
+    "lint-js:fix": "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --ignore-path .gitignore --fix .",
+    "lint-ts:fix": "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.json --ignore-path .gitignore --fix .",
     "lint": "npm run lint-js && npm run lint-ts",
     "lint:fix": "npm run lint-js:fix && npm run lint-ts:fix",
     "build": "tsc && webpack --mode production",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "@material-ui/core": "^4.11.1",
+    "@material-ui/core": "^4.11.2",
     "@sentry/browser": "^5.27.4",
     "@types/express-rate-limit": "^5.1.0",
     "aws-sdk": "^2.802.0",
@@ -74,7 +74,7 @@
     "react-chartjs-2": "^2.11.1",
     "react-dom": "^16.14.0",
     "react-ga": "^3.3.0",
-    "react-i18next": "^11.7.3",
+    "react-i18next": "^11.8.0",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-typed": "^1.2.0",
@@ -134,9 +134,9 @@
     "@types/ua-parser-js": "^0.7.33",
     "@types/upng-js": "^2.1.1",
     "@types/uuid": "^8.3.0",
-    "@types/validator": "^13.1.0",
-    "@typescript-eslint/eslint-plugin": "^4.9.0",
-    "@typescript-eslint/parser": "^4.9.0",
+    "@types/validator": "^13.1.1",
+    "@typescript-eslint/eslint-plugin": "^4.9.1",
+    "@typescript-eslint/parser": "^4.9.1",
     "auto-changelog": "^2.2.1",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
@@ -146,23 +146,23 @@
     "copyfiles": "^2.4.1",
     "coveralls": "^3.1.0",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^7.14.0",
+    "eslint": "^7.15.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.1.3",
     "eslint-plugin-jsdoc": "^30.7.8",
     "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-prettier": "^3.2.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
-    "husky": "^4.3.0",
+    "husky": "^4.3.5",
     "jest": "^26.6.3",
     "jsqr": "^1.3.1",
-    "lint-staged": "^10.5.1",
+    "lint-staged": "^10.5.3",
     "node-mocks-http": "^1.9.0",
     "prettier": "^2.2.1",
     "redis-mock": "^0.55.0",
@@ -186,10 +186,10 @@
   },
   "lint-staged": {
     "**/*.(js|jsx)": [
-      "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.json --fix"
+      "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --fix"
     ],
-    "**/*.ts": [
-      "eslint --ext .ts --no-eslintrc -c .eslintrc.ts.json --fix"
+    "**/*.(ts|tsx)": [
+      "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.json --fix"
     ]
   },
   "config": {

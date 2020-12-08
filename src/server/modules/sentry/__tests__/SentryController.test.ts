@@ -1,5 +1,5 @@
 import httpMocks from 'node-mocks-http'
-import { SentryController } from '../../../src/server/controllers/SentryController'
+import { SentryController } from '../SentryController'
 
 describe('SentryController tests', () => {
   it('Should return rotating links defined in the application configurations', () => {
