@@ -3,6 +3,7 @@
 
 BEGIN TRANSACTION;
 
+DROP INDEX IF EXISTS urls_combined_weighted_search_idx;
 -- Search will be run on a concatenation of vectors formed from short links, 
 -- long links and their description. Short link words can be taken as the 
 -- title and words there are likely to be more important. Long links are the
