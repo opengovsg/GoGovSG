@@ -2,6 +2,7 @@ import Sequelize from 'sequelize'
 
 import { sequelize } from '../../util/sequelize'
 import { IdType } from '../../../types/server/models'
+import { SHORT_URL_REGEX } from '../../../shared/util/validation'
 
 export interface DailyClicksType extends IdType, Sequelize.Model {
   readonly shortUrl: string
@@ -22,7 +23,7 @@ export const DailyClicks = <DailyClicksTypeStatic>sequelize.define(
       type: Sequelize.STRING,
       primaryKey: true,
       validate: {
-        is: /^[a-z0-9-]+$/,
+        is: SHORT_URL_REGEX,
       },
     },
     date: {

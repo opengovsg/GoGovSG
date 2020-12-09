@@ -5,6 +5,8 @@ import blacklist from '../../server/resources/blacklist'
 
 export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
+export const SHORT_URL_REGEX = /^[a-z0-9-]+$/
+
 export const URL_OPTS: validator.IsURLOptions = {
   protocols: ['https'],
   require_tld: true,
@@ -41,7 +43,7 @@ export function isValidUrl(url: string, useWhitelist = false): boolean {
 
 // Tests if a short link consists of alphanumeric and hyphen characters.
 export function isValidShortUrl(url: string, allowBlank = false): boolean {
-  return allowBlank ? /^[a-z0-9-]*$/.test(url) : /^[a-z0-9-]+$/.test(url)
+  return allowBlank ? /^[a-z0-9-]*$/.test(url) : SHORT_URL_REGEX.test(url)
 }
 
 // Tests the validity of a long url. Will return true if blank.
