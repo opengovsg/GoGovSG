@@ -166,6 +166,16 @@ test.before(async (t) => {
     await t.click(closeButtonSnackBar)
   }
   await t.expect(successSnackBar.exists).notOk()
+
+  // Verify the link is in the transfer email
+  await t
+    .click(signOutButton)
+    .typeText('#email', `${transferEmail}`)
+    .click(signInButton)
+    .typeText('#otp', otp)
+    .click(signInButton)
+    .expect(linkRow.exists)
+    .ok()
 })
 
 test('Link transfer toast test.', async (t) => {
