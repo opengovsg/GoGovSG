@@ -34,7 +34,6 @@ test('Transition Page test.', async (t) => {
   await t.wait(3000)
 
   // Accessing a short link with a trailing slash should not result in a broken transition page.
-  console.log(`${rootLocation}/${generatedUrlActive}-redirect/`)
   await t.navigateTo(`${rootLocation}/${generatedUrlActive}-redirect/`)
 
   // Accessing a short link for the first time shows the transition page.
