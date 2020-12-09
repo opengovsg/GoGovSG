@@ -25,5 +25,6 @@ export const UrlClicks = <UrlClicksTypeStatic>sequelize.define('url_clicks', {
   clicks: {
     type: Sequelize.INTEGER,
     defaultValue: 0,
+    allowNull: false,
   },
 })
