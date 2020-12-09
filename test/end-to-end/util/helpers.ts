@@ -27,7 +27,7 @@ export const filterPanelButton = searchTextField.parent().child('button').nth(1)
 export const recencyButton = Selector('p').withText('Most recent')
 export const resultTable = Selector('table')
 
-// User Page
+// User Page - general
 export const drawer = Selector('div[role="presentation"]')
 export const fileTab = Selector('p').withText('From file')
 export const uploadFile = Selector('input[type="file"]')
@@ -62,6 +62,33 @@ export const closeButtonSnackBar = Selector(
 ).child('button')
 export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
 export const clickAway = Selector('h3')
+
+// User Page - filter search
+export const userFilterPanelButton = Selector('img[alt="Filter and sort icon"]')
+export const filterPanel = Selector('.MuiCollapse-container')
+export const userApplyButton = Selector('span').withText('Apply')
+export const userResetButton = Selector('span').withText('Reset')
+export const dateOfCreationButton = Selector('p').withText('Date of creation')
+export const userActiveButton = Selector('p')
+  .withText('Active')
+  .parent()
+  .child('button')
+  .nth(0)
+export const userInactiveButton = Selector('p')
+  .withText('Active')
+  .parent()
+  .child('button')
+  .nth(1)
+export const userLinkButton = Selector('p')
+  .withText('Link')
+  .parent()
+  .child('button')
+  .nth(0)
+export const userFileButton = Selector('p')
+  .withText('Link')
+  .parent()
+  .child('button')
+  .nth(1)
 
 // Directory Page
 export const directoryTextFieldKeyword = Selector(

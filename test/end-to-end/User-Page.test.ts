@@ -2,14 +2,26 @@
 import { Selector } from 'testcafe'
 import { rootLocation, shortUrl } from './util/config'
 import {
+  activeSwitch,
+  clickAway,
   createLinkButton,
+  dateOfCreationButton,
   drawer,
   fileTab,
+  filterPanel,
   generateUrlImage,
   longUrl,
   longUrlTextField,
   shortUrlTextField,
   uploadFile,
+  urlTable,
+  userActiveButton,
+  userApplyButton,
+  userFileButton,
+  userFilterPanelButton,
+  userInactiveButton,
+  userLinkButton,
+  userResetButton,
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 import firstLinkHandle from './util/First-Link-Handle'
@@ -21,9 +33,10 @@ fixture(`User Page`)
     await LoginProcedure(t)
   })
 
-test('User Page test.', async (t) => {
+test('User Page test on filter and search bar', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
+  // Create links for filter and search
   // Save short url 1 - active link
   const generatedUrlActive = await shortUrlTextField.value
 
@@ -36,7 +49,6 @@ test('User Page test.', async (t) => {
   // Save short url 2 - inactive link
   const generatedUrlInactive = await shortUrlTextField.value
   const linkRowInactive = Selector(`h6[title="${generatedUrlInactive}"]`)
-  const activeSwitch = Selector('input[type="checkbox"]')
 
   await t
     .typeText(longUrlTextField, `${shortUrl}`)
@@ -59,44 +71,16 @@ test('User Page test.', async (t) => {
     .setFilesToUpload(uploadFile, './util/dummyFile.txt')
     .click(createLinkButton.nth(2))
 
-  const filterPanelButton = Selector('img[alt="Filter and sort icon"]')
-  const filterPanel = Selector('.MuiCollapse-container')
-  const urlTable = Selector('tbody')
-  const applyButton = Selector('span').withText('Apply')
-  const resetButton = Selector('span').withText('Reset')
-  const dateOfCreationButton = Selector('p').withText('Date of creation')
-  const activeButton = Selector('p')
-    .withText('Active')
-    .parent()
-    .child('button')
-    .nth(0)
-  const inactiveButton = Selector('p')
-    .withText('Active')
-    .parent()
-    .child('button')
-    .nth(1)
-  const linkButton = Selector('p')
-    .withText('Link')
-    .parent()
-    .child('button')
-    .nth(0)
-  const fileButton = Selector('p')
-    .withText('Link')
-    .parent()
-    .child('button')
-    .nth(1)
-  const clickAway = Selector('h3')
-
   // Clicking on the button at the end of the search input should open the sort and filter panel
   await t
-    .click(filterPanelButton)
+    .click(userFilterPanelButton)
     .expect(filterPanel.getStyleProperty('height'))
     .notEql('0px')
 
   // Links should be sorted by their created time in descending order when enabling sort by Date of creation and clicking apply
   await t
     .click(dateOfCreationButton)
-    .click(applyButton)
+    .click(userApplyButton)
     // eslint-disable-next-line
     .expect(urlTable.child(0).child(1).child('div').child(0).child('h6').innerText)
     .eql(`/${generatedUrlFile}`)
@@ -110,9 +94,9 @@ test('User Page test.', async (t) => {
   // Inactive links should be filtered out by checking only Active and clicking apply
   // Panel should be closed when apply is clicked
   await t
-    .click(filterPanelButton)
-    .click(activeButton)
-    .click(applyButton)
+    .click(userFilterPanelButton)
+    .click(userActiveButton)
+    .click(userApplyButton)
     .expect(filterPanel.getStyleProperty('height'))
     .eql('0px')
     // eslint-disable-next-line
@@ -122,40 +106,40 @@ test('User Page test.', async (t) => {
   // Active links should be filtered out by checking only Inactive and clicking apply
   // Panel should be closed and links sorted by created time with no filtering after clicking on reset. All links and files should be visible.
   await t
-    .click(filterPanelButton)
-    .click(resetButton) // resets
-    .click(filterPanelButton)
-    .click(inactiveButton)
-    .click(applyButton)
+    .click(userFilterPanelButton)
+    .click(userResetButton) // resets
+    .click(userFilterPanelButton)
+    .click(userInactiveButton)
+    .click(userApplyButton)
     // eslint-disable-next-line
     .expect(urlTable.child(0).child(1).child('div').child(0).child('h6').innerText)
     .eql(`/${generatedUrlInactive}`)
 
   // File links should be filtered out by checking only Link and clicking apply
   await t
-    .click(filterPanelButton)
-    .click(resetButton) // resets
-    .click(filterPanelButton)
-    .click(linkButton)
-    .click(applyButton)
+    .click(userFilterPanelButton)
+    .click(userResetButton) // resets
+    .click(userFilterPanelButton)
+    .click(userLinkButton)
+    .click(userApplyButton)
     // eslint-disable-next-line
     .expect(urlTable.child(0).child(1).child('div').child(0).child('h6').innerText)
     .notEql(`/${generatedUrlFile}`)
 
   // Non-file links should be filtered out by checking only File and clicking apply
   await t
-    .click(filterPanelButton)
-    .click(resetButton) // resets
-    .click(filterPanelButton)
-    .click(fileButton)
-    .click(applyButton)
+    .click(userFilterPanelButton)
+    .click(userResetButton) // resets
+    .click(userFilterPanelButton)
+    .click(userFileButton)
+    .click(userApplyButton)
     // eslint-disable-next-line
     .expect(urlTable.child(0).child(1).child('div').child(0).child('h6').innerText)
     .eql(`/${generatedUrlFile}`)
 
   // Panel should be closed when clicking outside of it
   await t
-    .click(filterPanelButton)
+    .click(userFilterPanelButton)
     .click(clickAway)
     .expect(filterPanel.getStyleProperty('height'))
     .eql('0px')
