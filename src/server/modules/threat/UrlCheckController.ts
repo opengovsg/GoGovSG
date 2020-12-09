@@ -1,21 +1,20 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import jsonMessage from '../util/json'
-import { UrlCheckControllerInterface } from './interfaces/UrlCheckControllerInterface'
-import { UrlCreationRequest } from '../modules/user'
-import { UrlThreatScanServiceInterface } from '../services/interfaces/UrlThreatScanServiceInterface'
-import { DependencyIds } from '../constants'
-import { logger } from '../config'
-import { UserType } from '../models/user'
+import jsonMessage from '../../util/json'
+import { UrlCreationRequest } from '../user'
+import { UrlThreatScanService } from './interfaces'
+import { DependencyIds } from '../../constants'
+import { logger } from '../../config'
+import { UserType } from '../../models/user'
 
 @injectable()
-export class UrlCheckController implements UrlCheckControllerInterface {
-  private urlThreatScanService: UrlThreatScanServiceInterface
+export class UrlCheckController {
+  private urlThreatScanService: UrlThreatScanService
 
   public constructor(
     @inject(DependencyIds.urlThreatScanService)
-    urlThreatScanService: UrlThreatScanServiceInterface,
+    urlThreatScanService: UrlThreatScanService,
   ) {
     this.urlThreatScanService = urlThreatScanService
   }

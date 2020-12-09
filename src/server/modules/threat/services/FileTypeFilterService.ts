@@ -1,7 +1,7 @@
 import FileType from 'file-type'
 import { inject, injectable } from 'inversify'
-import { FileTypeFilterServiceInterface } from './interfaces/FileTypeFilterServiceInterface'
-import { DependencyIds } from '../constants'
+import * as interfaces from '../interfaces'
+import { DependencyIds } from '../../../constants'
 
 export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'asc',
@@ -43,7 +43,7 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
 ]
 
 @injectable()
-export class FileTypeFilterService implements FileTypeFilterServiceInterface {
+export class FileTypeFilterService implements interfaces.FileTypeFilterService {
   allowedFileExtensions: string[]
 
   constructor(

@@ -53,17 +53,15 @@ import { LinkStatisticsService } from './services/LinkStatisticsService'
 import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
 import { DeviceCheckService } from './services/DeviceCheckService'
 
+import { SafeBrowsingMapper } from './modules/threat/mappers'
+import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
+import { DEFAULT_ALLOWED_FILE_EXTENSIONS } from './modules/threat/services/FileTypeFilterService'
 import {
-  DEFAULT_ALLOWED_FILE_EXTENSIONS,
+  CloudmersiveScanService,
   FileTypeFilterService,
-} from './services/FileTypeFilterService'
-import { CloudmersiveScanService } from './services/CloudmersiveScanService'
-import { FileCheckController } from './controllers/FileCheckController'
-
-import { SafeBrowsingMapper } from './mappers/SafeBrowsingMapper'
-import { SafeBrowsingRepository } from './repositories/SafeBrowsingRepository'
-import { SafeBrowsingService } from './services/SafeBrowsingService'
-import { UrlCheckController } from './controllers/UrlCheckController'
+  SafeBrowsingService,
+} from './modules/threat/services'
+import { FileCheckController, UrlCheckController } from './modules/threat'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,

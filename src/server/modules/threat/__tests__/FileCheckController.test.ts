@@ -1,7 +1,19 @@
 import httpMocks from 'node-mocks-http'
+import { Request } from 'express'
 
-import { FileCheckController } from '../../../src/server/controllers/FileCheckController'
-import { createRequestWithFile } from '../api/util'
+import { FileCheckController } from '..'
+
+/**
+ * Creates a mock request with mock file in request body.
+ * @param  {any} user
+ * @returns A mock Request with mock file.
+ */
+function createRequestWithFile(file: any): Request {
+  // @ts-ignore
+  return httpMocks.createRequest({
+    files: { file },
+  })
+}
 
 describe('FileCheckController test', () => {
   const file = { data: Buffer.from('data'), name: 'file.csv' }

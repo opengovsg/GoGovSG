@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this, lines-between-class-members, no-dupe-class-members */
 import { injectable } from 'inversify'
-import { TwoWayMapper } from './TwoWayMapper'
-import { HasCacheDuration } from '../repositories/types'
+import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
+import { HasCacheDuration } from '../../../repositories/types'
 
 @injectable()
 export class SafeBrowsingMapper
