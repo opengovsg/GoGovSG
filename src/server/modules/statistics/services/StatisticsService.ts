@@ -1,16 +1,16 @@
 import { inject, injectable } from 'inversify'
 import { DependencyIds } from '../../../constants'
-import { StatisticsRepositoryInterface } from '../../../repositories/interfaces/StatisticsRepositoryInterface'
+import { StatisticsRepository } from '../interfaces/StatisticsRepository'
 import * as interfaces from '../interfaces'
 import { GlobalStatistics } from '..'
 
 @injectable()
 export class StatisticsService implements interfaces.StatisticsService {
-  private statisticsRepository: StatisticsRepositoryInterface
+  private statisticsRepository: StatisticsRepository
 
   public constructor(
     @inject(DependencyIds.statisticsRepository)
-    statisticsRepository: StatisticsRepositoryInterface,
+    statisticsRepository: StatisticsRepository,
   ) {
     this.statisticsRepository = statisticsRepository
   }

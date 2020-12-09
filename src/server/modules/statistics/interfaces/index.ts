@@ -1,3 +1,3 @@
 export { StatisticsService } from './StatisticsService'
 
-export default {}
+export { StatisticsRepository } from './StatisticsRepository'

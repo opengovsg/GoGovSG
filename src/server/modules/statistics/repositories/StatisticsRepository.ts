@@ -1,19 +1,19 @@
 /* eslint-disable class-methods-use-this */
 
 import { injectable } from 'inversify'
-import { User } from '../models/user'
-import { Url } from '../models/url'
-import { statClient } from '../redis'
-import { logger, statisticsExpiry } from '../config'
-import { StatisticsRepositoryInterface } from './interfaces/StatisticsRepositoryInterface'
-import { GlobalStatistics } from '../modules/statistics'
+import { User } from '../../../models/user'
+import { Url } from '../../../models/url'
+import { statClient } from '../../../redis'
+import { logger, statisticsExpiry } from '../../../config'
+import * as interfaces from '../interfaces'
+import { GlobalStatistics } from '..'
 
 const USER_COUNT_KEY = 'userCount'
 const CLICK_COUNT_KEY = 'clickCount'
 const LINK_COUNT_KEY = 'linkCount'
 
 @injectable()
-export class StatisticsRepository implements StatisticsRepositoryInterface {
+export class StatisticsRepository implements interfaces.StatisticsRepository {
   public getGlobalStatistics: () => Promise<GlobalStatistics> = async () => {
     const counts = await this.tryGetFromCache([
       USER_COUNT_KEY,

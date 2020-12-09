@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { StatisticsRepositoryInterface } from '../../../src/server/repositories/interfaces/StatisticsRepositoryInterface'
+import { StatisticsRepository } from '../../../src/server/modules/statistics/interfaces'
 
 const getGlobalStatistics = jest.fn()
 getGlobalStatistics.mockResolvedValue({
@@ -11,7 +11,7 @@ getGlobalStatistics.mockResolvedValue({
 })
 // Binds mockups before binding default
 container
-  .bind<StatisticsRepositoryInterface>(DependencyIds.statisticsRepository)
+  .bind<StatisticsRepository>(DependencyIds.statisticsRepository)
   .toConstantValue({ getGlobalStatistics })
 
 // Importing setup app

@@ -32,10 +32,12 @@ import {
   RedirectService,
 } from './modules/redirect/services'
 import { RedirectController } from './modules/redirect'
+
+import { StatisticsRepository } from './modules/statistics/repositories'
+import { StatisticsService } from './modules/statistics/services'
+import { StatisticsController } from './modules/statistics'
+
 import { GaController } from './controllers/GaController'
-import { StatisticsRepository } from './repositories/StatisticsRepository'
-import { StatisticsService } from './modules/statistics/services/StatisticsService'
-import { StatisticsController } from './modules/statistics/StatisticsController'
 import { RotatingLinksController } from './controllers/RotatingLinksController'
 import { SentryController } from './modules/sentry/SentryController'
 import { LoginController } from './controllers/LoginController'
