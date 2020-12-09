@@ -1,6 +1,6 @@
-import { GlobalStatistics } from '../types'
+import { GlobalStatistics } from '..'
 
-export interface StatisticsRepositoryInterface {
+export interface StatisticsRepository {
   /**
    * Retrieves the global statistics from the store.
    * These include total click, link and user count.
