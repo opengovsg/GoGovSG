@@ -1,21 +1,56 @@
-import { redisMockClient, urlModelMock, userModelMock } from '../api/util'
+import redisMock from 'redis-mock'
+import SequelizeMock from 'sequelize-mock'
 
-import { StatisticsRepository } from '../../../src/server/repositories/StatisticsRepository'
+export const sequelizeMock = new SequelizeMock()
 
-jest.mock('../../../src/server/redis', () => ({
+export const urlModelMock = sequelizeMock.define(
+  'url',
+  {
+    shortUrl: 'a',
+    longUrl: 'aa',
+    state: 'ACTIVE',
+    clicks: 8,
+  },
+  {
+    instanceMethods: {
+      findOne: () => {},
+      increment: () => {},
+    },
+  },
+)
+
+export const userModelMock = {
+  findByPk: jest.fn(),
+  findOne: jest.fn(),
+  scope: jest.fn(),
+  findOrCreate: ({ where: { email } }: { where: { email: string } }) =>
+    Promise.resolve([
+      {
+        get: () => email,
+      },
+      {},
+    ]),
+}
+
+const redisMockClient = redisMock.createClient()
+
+jest.mock('../../../../redis', () => ({
   statClient: redisMockClient,
 }))
 
-jest.mock('../../../src/server/models/user', () => ({
+jest.mock('../../../../models/user', () => ({
   User: userModelMock,
 }))
 
-jest.mock('../../../src/server/models/url', () => ({
+jest.mock('../../../../models/url', () => ({
   Url: urlModelMock,
 }))
 
 const setSpy = jest.spyOn(redisMockClient, 'set')
 const mgetSpy = jest.spyOn(redisMockClient, 'mget')
+
+const { StatisticsRepository } = require('..')
+
 const repository = new StatisticsRepository()
 
 describe('StatisticsRepository', () => {

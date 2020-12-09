@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize'
 import { ACTIVE, INACTIVE } from './types'
 import {
+  SHORT_URL_REGEX,
   isBlacklisted,
   isCircularRedirects,
   isHttps,
@@ -114,7 +115,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
       type: Sequelize.STRING,
       primaryKey: true,
       validate: {
-        is: /^[a-z0-9-]+$/,
+        is: SHORT_URL_REGEX,
       },
     },
     longUrl: {

@@ -1,6 +1,6 @@
 import httpMocks from 'node-mocks-http'
 
-import { StatisticsController } from '../../../src/server/controllers/StatisticsController'
+import { StatisticsController } from '..'
 
 describe('StatisticsController test', () => {
   const getGlobalStatistics = jest.fn()

@@ -1,16 +1,15 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { StatisticsControllerInterface } from './interfaces/StatisticsControllerInterface'
-import { StatisticsServiceInterface } from '../services/interfaces/StatisticsServiceInterface'
-import { DependencyIds } from '../constants'
+import { DependencyIds } from '../../constants'
+import { StatisticsService } from './interfaces'
 
 @injectable()
-export class StatisticsController implements StatisticsControllerInterface {
-  private statisticsService: StatisticsServiceInterface
+export class StatisticsController {
+  private statisticsService: StatisticsService
 
   public constructor(
     @inject(DependencyIds.statisticsService)
-    statisticsService: StatisticsServiceInterface,
+    statisticsService: StatisticsService,
   ) {
     this.statisticsService = statisticsService
   }

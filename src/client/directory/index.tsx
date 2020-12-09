@@ -15,6 +15,7 @@ import DirectoryHeader from './components/DirectoryHeader'
 import DirectoryResults from './components/DirectoryResults'
 import EmptyStateGraphic from './components/EmptySearchGraphic'
 import { defaultSortOption } from './constants'
+import { GAEvent, GAPageView } from '../app/util/ga'
 
 type GoSearchParams = {
   query: string
@@ -181,6 +182,11 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
       )
     }
   }
+  // Google Analytics
+  useEffect(() => {
+    GAEvent('directory page', 'main')
+    GAPageView('DIRECTORY PAGE')
+  }, [])
 
   // Changes when queryEmail changes
   useEffect(() => {
