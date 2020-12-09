@@ -8,3 +8,7 @@ export const invalidShortUrl = 'bit.ly'
 export const rootLocation = 'http://localhost:3000'
 export const apiLocation = 'http://localhost:8080'
 export const otp = '111111'
+export const dummyFilePath = './test/end-to-end/anotherDummy.txt'
+export const dummyRelativePath = './anotherDummy.txt'
+export const smallFileSize = 1024 * 1024 * 1
+export const largeFileSize = 1024 * 1024 * 11

@@ -1,11 +1,21 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Selector } from 'testcafe'
-import { invalidShortUrl, rootLocation, shortUrl } from './util/config'
+import {
+  dummyFilePath,
+  dummyRelativePath,
+  invalidShortUrl,
+  largeFileSize,
+  rootLocation,
+  shortUrl,
+  smallFileSize,
+} from './util/config'
 import {
   createLinkButton,
   createUrlModal,
+  fileSubmitButton,
   fileTab,
   generateUrlImage,
+  largeFileError,
   longUrlTextField,
   resultTable,
   searchBar,
@@ -17,6 +27,7 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 import firstLinkHandle from './util/First-Link-Handle'
+import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
@@ -71,9 +82,12 @@ test('The file based shortlink test.', async (t) => {
   const generatedfileUrl = await shortUrlTextField.value
   const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
 
+  // Generate 1mb file
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
   await t
     .click(fileTab)
-    .setFilesToUpload(uploadFile, './util/dummyFile.txt')
+    .setFilesToUpload(uploadFile, dummyRelativePath)
     .click(createLinkButton.nth(2))
     // It should show an success snackbar when a new file link has been added
     .expect(successUrlCreation.exists)
@@ -84,6 +98,26 @@ test('The file based shortlink test.', async (t) => {
     // The new short url should be highlighted on the users' links table when a new file link is created
     .expect(urlTable.child(0).getStyleProperty('background-color'))
     .eql('rgb(249, 249, 249)') // #f9f9f9 in rgb
+
+  // Delete 1mb file
+  await deleteFile(dummyFilePath)
+
+  // Generate 11mb file
+  await createEmptyFileOfSize(dummyFilePath, largeFileSize)
+
+  await t
+    .click(createLinkButton.nth(0))
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    // It should show an error below the file input when a file larger than 10MB is chosen
+    .expect(largeFileError.exists)
+    .ok()
+
+  // It should disable the submit button when a file larger than 10MB is chosen
+  await t.expect(fileSubmitButton.hasAttribute('disabled')).ok()
+
+  // Delete 11mb file
+  await deleteFile(dummyFilePath)
 })
 
 test('The URL searching test.', async (t) => {

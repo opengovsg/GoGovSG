@@ -2,9 +2,13 @@
 import { ClientFunction, Selector } from 'testcafe'
 import {
   apiLocation,
+  dummyFilePath,
+  dummyRelativePath,
+  largeFileSize,
   otp,
   rootLocation,
   shortUrl,
+  smallFileSize,
   subUrl,
   testEmail,
   transferEmail,
@@ -15,9 +19,11 @@ import {
   closeButtonSnackBar,
   createLinkButton,
   drawer,
+  fileTab,
   generateUrlImage,
   helperText,
   inactiveWord,
+  largeFileError,
   linkErrorSnackBar,
   linkTransferField,
   loginButton,
@@ -28,6 +34,7 @@ import {
   signOutButton,
   successSnackBar,
   transferButton,
+  uploadFile,
   urlSaveButton,
   urlUpdatedToaster,
   userModal,
@@ -35,6 +42,7 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 import firstLinkHandle from './util/First-Link-Handle'
+import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
 const getLocation = ClientFunction(() => document.location.href)
 
@@ -45,7 +53,7 @@ fixture(`Drawer Page`)
     await LoginProcedure(t)
   })
 
-test('Drawer functionality test.', async (t) => {
+test('Drawer functionality test for url.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrl = await shortUrlTextField.value
@@ -79,7 +87,7 @@ test('Drawer functionality test.', async (t) => {
   await t
     .click(longUrl)
     .pressKey('ctrl+a delete')
-    .typeText(longUrl, 'yahoo.com')
+    .typeText(longUrl, `${subUrl}`)
     .click(drawer.child(2).child('main').child('button'))
     .click(linkRow)
     // Url reverts to original when user enters a new url, then re-opens the drawer without clicking "save"
@@ -118,6 +126,31 @@ test('Drawer functionality test.', async (t) => {
     .click(activeSwitch.nth(0))
     .navigateTo(`${apiLocation}/${generatedUrl}`)
   await t.wait(6000).expect(getLocation()).contains(`${subUrl}`)
+})
+
+test('Drawer functionality test for file.', async (t) => {
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+
+  const generatedFileUrl = await shortUrlTextField.value
+  const linkRow = Selector(`h6[title="${generatedFileUrl}"]`)
+
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
+  await t
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    .click(createLinkButton.nth(2))
+
+  await deleteFile(dummyFilePath)
+  await createEmptyFileOfSize(dummyFilePath, largeFileSize)
+
+  await t
+    .click(linkRow)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    .expect(largeFileError.exists)
+    .ok()
+
+  await deleteFile(dummyFilePath)
 })
 
 test.before(async (t) => {

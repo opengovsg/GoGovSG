@@ -1,6 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Selector } from 'testcafe'
-import { rootLocation, shortUrl } from './util/config'
+import {
+  dummyFilePath,
+  dummyRelativePath,
+  rootLocation,
+  shortUrl,
+  smallFileSize,
+} from './util/config'
 import {
   activeSwitch,
   clickAway,
@@ -25,6 +31,7 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 import firstLinkHandle from './util/First-Link-Handle'
+import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
 // eslint-disable-next-line no-undef
 fixture(`User Page`)
@@ -33,7 +40,7 @@ fixture(`User Page`)
     await LoginProcedure(t)
   })
 
-test('User Page test on filter and search bar', async (t) => {
+test('User Page test on filter search`', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   // Create links for filter and search
@@ -66,10 +73,14 @@ test('User Page test on filter and search bar', async (t) => {
   // Save short url 3 - file link
   const generatedUrlFile = await shortUrlTextField.value
 
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
   await t
     .click(fileTab)
-    .setFilesToUpload(uploadFile, './util/dummyFile.txt')
+    .setFilesToUpload(uploadFile, dummyRelativePath)
     .click(createLinkButton.nth(2))
+
+  await deleteFile(dummyFilePath)
 
   // Clicking on the button at the end of the search input should open the sort and filter panel
   await t

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { ClientFunction, Selector } from 'testcafe'
 
 // General
@@ -62,6 +63,10 @@ export const closeButtonSnackBar = Selector(
 ).child('button')
 export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
 export const clickAway = Selector('h3')
+export const largeFileError = Selector('div').withText(
+  'File too large, please upload a file smaller than 10mb',
+)
+export const fileSubmitButton = Selector('button[type="submit"]')
 
 // User Page - filter search
 export const userFilterPanelButton = Selector('img[alt="Filter and sort icon"]')
