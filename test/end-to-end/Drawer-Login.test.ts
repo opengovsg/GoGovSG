@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Selector } from 'testcafe'
 import {
   otp,
@@ -32,6 +33,7 @@ import {
   userModalCloseButton,
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
+import firstLinkHandle from './util/First-Link-Handle'
 
 // eslint-disable-next-line no-undef
 fixture(`Drawer Page`)
@@ -48,11 +50,7 @@ test('Drawer functionality test.', async (t) => {
 
   await t.typeText(longUrlTextField, `${shortUrl}`)
 
-  if (await createLinkButton.nth(2).exists) {
-    await t.click(createLinkButton.nth(2))
-  } else {
-    await t.click(createLinkButton.nth(1))
-  }
+  await firstLinkHandle(t)
 
   await t
     .click(linkRow)

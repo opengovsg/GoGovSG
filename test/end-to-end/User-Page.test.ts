@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Selector } from 'testcafe'
 import { rootLocation, shortUrl } from './util/config'
 import {
@@ -11,6 +12,7 @@ import {
   uploadFile,
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
+import firstLinkHandle from './util/First-Link-Handle'
 
 // eslint-disable-next-line no-undef
 fixture(`User Page`)
@@ -27,11 +29,7 @@ test('User Page test.', async (t) => {
 
   await t.typeText(longUrlTextField, `${shortUrl}`)
 
-  if (await createLinkButton.nth(2).exists) {
-    await t.click(createLinkButton.nth(2))
-  } else {
-    await t.click(createLinkButton.nth(1))
-  }
+  await firstLinkHandle(t)
 
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 

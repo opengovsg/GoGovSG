@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Selector } from 'testcafe'
 import { invalidShortUrl, rootLocation, shortUrl } from './util/config'
 import {
@@ -15,6 +16,7 @@ import {
   validationError,
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
+import firstLinkHandle from './util/First-Link-Handle'
 
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
@@ -49,11 +51,7 @@ test('The URL based shortlink test.', async (t) => {
     .pressKey('ctrl+a delete')
     .typeText(longUrlTextField, `${shortUrl}`)
 
-  if (await createLinkButton.nth(2).exists) {
-    await t.click(createLinkButton.nth(2))
-  } else {
-    await t.click(createLinkButton.nth(1))
-  }
+  await firstLinkHandle(t)
 
   await t
     // It should show an success snackbar when a new url has been added

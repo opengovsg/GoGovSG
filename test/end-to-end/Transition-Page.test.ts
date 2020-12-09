@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { ClientFunction } from 'testcafe'
 import { rootLocation, shortUrl } from './util/config'
 import {
@@ -8,6 +9,7 @@ import {
   skipButton,
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
+import firstLinkHandle from './util/First-Link-Handle'
 
 const getLocation = ClientFunction(() => document.location.href)
 
@@ -27,12 +29,7 @@ test('Transition Page test.', async (t) => {
     .typeText(shortUrlTextField, '-redirect')
     .typeText(longUrlTextField, `${shortUrl}`)
 
-  // if it is the first link to be created, need to click on index 1 button
-  if (await createLinkButton.nth(2).exists) {
-    await t.click(createLinkButton.nth(2))
-  } else {
-    await t.click(createLinkButton.nth(1))
-  }
+  await firstLinkHandle(t)
 
   await t.wait(3000)
 
