@@ -3,7 +3,7 @@ import { Op, QueryTypes } from 'sequelize'
 import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
-import { Clicks, ClicksType } from '../models/statistics/daily'
+import { DailyClicks, DailyClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
 import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
 import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
@@ -15,7 +15,7 @@ import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
 // Get the relevant table names from their models.
 const urlTable = Url.getTableName()
 const devicesTable = Devices.getTableName()
-const clicksTable = Clicks.getTableName()
+const clicksTable = DailyClicks.getTableName()
 const weekdayTable = WeekdayClicks.getTableName()
 const timeZone = 'Asia/Singapore'
 
@@ -66,7 +66,7 @@ END; $$ LANGUAGE plpgsql;
 export type UrlStats = UrlType & {
   Url: UrlType
   DeviceClicks?: DevicesType
-  DailyClicks: ClicksType[]
+  DailyClicks: DailyClicksType[]
   WeekdayClicks: WeekdayClicksType[]
 }
 
@@ -81,7 +81,7 @@ export class LinkStatisticsRepository
       include: [
         { model: Devices, as: 'DeviceClicks' },
         {
-          model: Clicks,
+          model: DailyClicks,
           as: 'DailyClicks',
           where: {
             date: {
@@ -98,7 +98,7 @@ export class LinkStatisticsRepository
         },
       ],
       order: [
-        [{ model: Clicks, as: 'DailyClicks' }, 'date', 'ASC'],
+        [{ model: DailyClicks, as: 'DailyClicks' }, 'date', 'ASC'],
         [{ model: WeekdayClicks, as: 'WeekdayClicks' }, 'weekday', 'ASC'],
         [{ model: WeekdayClicks, as: 'WeekdayClicks' }, 'hours', 'ASC'],
       ],
