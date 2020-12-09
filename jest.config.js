@@ -7,6 +7,6 @@ module.exports = {
     },
   },
   collectCoverageFrom: ['./src/server/**/*.{ts,js}'],
-  coveragePathIgnorePatterns: ['./node_modules/', './test/'],
+  coveragePathIgnorePatterns: ['./node_modules/', './test/', '__tests__'],
   setupFiles: ['./test/server/setup.ts'],
 }

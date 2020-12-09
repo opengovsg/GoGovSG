@@ -1,11 +1,11 @@
 import Express from 'express'
 import { container } from '../util/inversify'
-import { SentryControllerInterface } from '../controllers/interfaces/SentryControllerInterface'
+import { SentryController } from '../modules/sentry'
 import { DependencyIds } from '../constants'
 
 const router = Express.Router()
 
-const sentryController = container.get<SentryControllerInterface>(
+const sentryController = container.get<SentryController>(
   DependencyIds.sentryController,
 )
 

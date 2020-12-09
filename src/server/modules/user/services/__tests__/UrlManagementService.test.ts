@@ -1,9 +1,9 @@
-import { UrlManagementService } from '../../../src/server/services/UrlManagementService'
+import { UrlManagementService } from '../UrlManagementService'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
   NotFoundError,
-} from '../../../src/server/util/error'
+} from '../../../../util/error'
 
 describe('UrlManagementService', () => {
   const userRepository = {
