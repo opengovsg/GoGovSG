@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { Selector } from 'testcafe'
+import { ClientFunction, Selector } from 'testcafe'
 import {
+  apiLocation,
   otp,
   rootLocation,
   shortUrl,
@@ -34,6 +35,8 @@ import {
 } from './util/helpers'
 import LoginProcedure from './util/Login-Procedure'
 import firstLinkHandle from './util/First-Link-Handle'
+
+const getLocation = ClientFunction(() => document.location.href)
 
 // eslint-disable-next-line no-undef
 fixture(`Drawer Page`)
@@ -95,7 +98,7 @@ test('Drawer functionality test.', async (t) => {
   await t
     .click(drawer.child(2).child('main').child('button'))
     .click(linkRow)
-    // Url is updated/saved when user enters a new url, then clicks "save"
+    // Url is updated/saved when user enters a new url, then clicks "save" - check textfield
     .expect(longUrl.value)
     .eql(`${subUrl}`)
 
@@ -109,6 +112,12 @@ test('Drawer functionality test.', async (t) => {
 
   // "Save" button is disabled (grey and unclickable) when value in edit long url textfield is invalid
   await t.expect(urlSaveButton.parent(0).hasAttribute('disabled')).ok()
+
+  // Url is updated/saved when user enters a new url, then clicks "save" - check redirect with port 8080
+  await t
+    .click(activeSwitch.nth(0))
+    .navigateTo(`${apiLocation}/${generatedUrl}`)
+  await t.wait(6000).expect(getLocation()).contains(`${subUrl}`)
 })
 
 test.before(async (t) => {
