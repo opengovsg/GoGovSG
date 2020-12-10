@@ -60,14 +60,14 @@ export interface UrlRepositoryInterface {
   ) => Promise<UrlDirectoryPaginated>
 
   /**
-   * Search results base on email domains.
+   * Search results base on keywords.
    * @param {string} urlVector Vectorised search expression.
    * @param {string} rankingAlgorithm Sort order.
    * @param {number} limit Number of results returned.
    * @param {number} offset Number of results skipped.
    * @param {string} query Search query to be vectorised.
-   * @param {string} queryState List of states to retrieve for SQL query.
-   * @param {string} queryFile List of url types to retrieve for SQL query.
+   * @param {string} queryState States to retrieve for SQL query.
+   * @param {string} queryFile Url types to retrieve for SQL query.
    * @returns Promise that returns list of longUrl and count.
    */
   getRelevantUrlsFromText: (
