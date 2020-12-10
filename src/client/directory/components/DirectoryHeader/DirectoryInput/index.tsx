@@ -114,7 +114,7 @@ const useStyles = makeStyles((theme) =>
     },
     buttonWrapper: {
       width: 'auto',
-      display: 'inline-block',
+      display: 'box',
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
       },
