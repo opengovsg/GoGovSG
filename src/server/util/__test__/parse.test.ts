@@ -1,6 +1,6 @@
-import { extractShortUrl } from '../../../src/server/util/parse'
+import { extractShortUrl } from '../parse'
 
-jest.mock('../../../src/server/config', () => ({
+jest.mock('../../config', () => ({
   ogHostname: 'test.gov.sg',
 }))
 
