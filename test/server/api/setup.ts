@@ -87,7 +87,7 @@ jest.mock('../../../src/server/models/url', () => ({
 
 // Necessary mock for app to work
 jest.mock('../../../src/server/models/statistics/daily', () => ({
-  Clicks: clicksModelMock,
+  DailyClicks: clicksModelMock,
 }))
 
 // Necessary mock for app to work

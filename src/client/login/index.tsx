@@ -14,12 +14,7 @@ import { Redirect } from 'react-router-dom'
 import { GoGovReduxState } from '../app/reducers/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
-import {
-  DIRECTORY_PAGE,
-  USER_PAGE,
-  VariantType,
-  loginFormVariants,
-} from '../app/util/types'
+import { USER_PAGE, VariantType, loginFormVariants } from '../app/util/types'
 import GoLogo from '../app/assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '../app/assets/login-page-graphics/login-page-graphics.svg'
 import { get } from '../app/util/requests'
@@ -113,7 +108,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 const LoginPage: FunctionComponent<LoginPageProps> = ({
-  location,
+  location = undefined,
 }: LoginPageProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -135,9 +130,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   )
   // Google Analytics
   useEffect(() => {
-    // Filter out redirects from directory page
-    // TODO (#988): Can this be fixed to cater to all routes?
-    if (location?.state?.previous !== '/directory') {
+    // Filter out redirects from private routes
+    if (!location?.state?.previous) {
       GAPageView('EMAIL LOGIN PAGE')
       GAEvent('login page', 'email')
     }
@@ -280,22 +274,13 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   }
 
   if (location) {
-    // ensure redirection back to directory and reset the state
-    if (location?.state?.previous === '/directory') {
-      // reason why we record directory here is because going into directory page will always go into login page first
-      // before going into directory page
-      GAEvent('directory page', 'main')
-      GAPageView('DIRECTORY PAGE')
-      return <Redirect to={{ pathname: DIRECTORY_PAGE, state: {} }} />
+    // ensure page re-directed back to intended private route and reset the state
+    if (location?.state?.previous) {
+      return <Redirect to={{ pathname: location.state.previous, state: {} }} />
     }
-
     return <Redirect to={{ pathname: USER_PAGE, state: { from: location } }} />
   }
   return <Redirect to={{ pathname: USER_PAGE }} />
-}
-
-LoginPage.defaultProps = {
-  location: undefined,
 }
 
 export default LoginPage
