@@ -29,8 +29,8 @@ import {
   userLinkButton,
   userResetButton,
 } from './util/helpers'
-import LoginProcedure from './util/Login-Procedure'
-import firstLinkHandle from './util/First-Link-Handle'
+import LoginProcedure from './util/LoginProcedure'
+import firstLinkHandle from './util/FirstLinkHandle'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
 // eslint-disable-next-line no-undef

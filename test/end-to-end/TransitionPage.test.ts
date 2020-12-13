@@ -8,8 +8,8 @@ import {
   shortUrlTextField,
   skipButton,
 } from './util/helpers'
-import LoginProcedure from './util/Login-Procedure'
-import firstLinkHandle from './util/First-Link-Handle'
+import LoginProcedure from './util/LoginProcedure'
+import firstLinkHandle from './util/FirstLinkHandle'
 
 const getLocation = ClientFunction(() => document.location.href)
 
