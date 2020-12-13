@@ -7,6 +7,9 @@ import {
   userModalCloseButton,
 } from './helpers'
 
+/**
+ * Process of login into test account.
+ */
 const loginProcedure = async (t) => {
   await t
     .click(loginButton)

@@ -1,6 +1,8 @@
 const fs = require('fs')
 
-// Overwrite file if exists, else create
+/**
+ * Overwrite file if exists, else create.
+ */
 export const createEmptyFileOfSize = (fileName: string, size: number) => {
   return new Promise((resolve, reject) => {
     try {
@@ -19,7 +21,9 @@ export const createEmptyFileOfSize = (fileName: string, size: number) => {
   })
 }
 
-// Delete file
+/**
+ * Delete file.
+ */
 export const deleteFile = (fileName: string) => {
   return new Promise((resolve, reject) => {
     try {
