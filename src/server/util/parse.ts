@@ -25,5 +25,5 @@ export function extractShortUrl(query: string) {
   if (capture) {
     return capture[1]
   }
-  return query
+  return null
 }
