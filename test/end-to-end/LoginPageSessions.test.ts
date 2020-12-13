@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { ClientFunction, Selector } from 'testcafe'
 import {
   incorrectEmail,

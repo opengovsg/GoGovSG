@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { ClientFunction } from 'testcafe'
 import { rootLocation, shortUrl } from './util/config'
 import {
