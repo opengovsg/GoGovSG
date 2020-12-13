@@ -11,8 +11,6 @@ describe('extractShortUrl tests', () => {
     )
   })
   test('should not extract shorturl without https header', () => {
-    expect(extractShortUrl('test.gov.sg/my-url')).toStrictEqual(
-      'test.gov.sg/my-url',
-    )
+    expect(extractShortUrl('test.gov.sg/my-url')).toStrictEqual(null)
   })
 })
