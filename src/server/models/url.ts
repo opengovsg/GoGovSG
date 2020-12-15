@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize'
+import { UrlClicks } from './statistics/clicks'
 import { ACTIVE, INACTIVE } from './types'
 import {
   SHORT_URL_REGEX,
@@ -178,6 +179,15 @@ export const Url = <UrlTypeStatic>sequelize.define(
         // eslint-disable-next-line no-use-before-define
         await writeToUrlHistory(
           url,
+          options as Sequelize.CreateOptions & {
+            transaction: Sequelize.Transaction
+          },
+        )
+
+        await UrlClicks.upsert(
+          {
+            shortUrl: url.shortUrl,
+          },
           options as Sequelize.CreateOptions & {
             transaction: Sequelize.Transaction
           },
