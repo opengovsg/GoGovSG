@@ -26,6 +26,7 @@ import {
   linkErrorSnackBar,
   linkTransferField,
   loginButton,
+  loginSuccessAlert,
   longUrl,
   longUrlTextField,
   shortUrlTextField,
@@ -160,6 +161,7 @@ test.before(async (t) => {
     .click(signInButton)
     .typeText('#otp', otp)
     .click(signInButton)
+    .click(loginSuccessAlert)
 
   if (await userModal.exists) {
     await t.click(userModalCloseButton)

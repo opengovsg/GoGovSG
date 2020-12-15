@@ -20,7 +20,7 @@
     "dev": "docker-compose -f docker-compose.yml up --build",
     "test": "jest --collectCoverage",
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
-    "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 240000",
+    "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
     "cz": "git-cz"
   },
   "author": "Open Government Products, GovTech Singapore (https://open.gov.sg)",
