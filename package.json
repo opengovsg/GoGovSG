@@ -170,7 +170,7 @@
     "supertest": "^6.0.1",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.11",
-    "ts-node-dev": "^1.0.0",
+    "ts-node-dev": "^1.1.1",
     "typescript": "^4.1.2",
     "upng-js": "^2.1.0",
     "webpack": "^4.44.2",
