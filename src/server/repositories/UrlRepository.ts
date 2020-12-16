@@ -230,7 +230,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     isFile: boolean | undefined,
   ): Promise<UrlDirectoryPaginated> {
     // Extract shortUrls with regex
-    const newQuery = this.queryFilter(query)
+    const newQuery = extractShortUrl(query) || query
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
     const rawQuery = `
@@ -260,14 +260,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     const slicedUrlsModel = urlsModel.slice(offset, ending)
 
     return { count, urls: slicedUrlsModel }
-  }
-
-  private queryFilter: (query: string) => string = (query) => {
-    const shortUrl = extractShortUrl(query)
-    if (shortUrl) {
-      return shortUrl
-    }
-    return query
   }
 
   private getQueryFileEmail: (isFile: boolean | undefined) => Array<boolean> = (
