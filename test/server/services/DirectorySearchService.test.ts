@@ -24,6 +24,7 @@ describe('DirectorySearchService tests', () => {
       await expect(service.plainTextSearch(conditions)).resolves.toStrictEqual({
         urls: [
           {
+            longUrl: 'https://test-moh.com',
             shortUrl: 'test-moh',
             state: 'ACTIVE',
             isFile: false,
