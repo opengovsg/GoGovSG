@@ -169,7 +169,7 @@
     "redis-mock": "^0.55.0",
     "sequelize-mock": "^0.10.2",
     "supertest": "^6.0.1",
-    "testcafe": "^1.9.4",
+    "testcafe": "^1.10.0",
     "ts-jest": "^26.4.4",
     "ts-loader": "^8.0.12",
     "ts-node-dev": "^1.1.1",
