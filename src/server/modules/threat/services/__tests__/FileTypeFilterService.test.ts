@@ -1,4 +1,4 @@
-import { FileTypeFilterService } from '../../../src/server/services/FileTypeFilterService'
+import { FileTypeFilterService } from '..'
 
 describe('FileTypeFilterService', () => {
   const service = new FileTypeFilterService(['csv', 'xml'])

@@ -1,6 +1,6 @@
-import { HasCacheDuration } from '../types'
+import { HasCacheDuration } from '../../../repositories/types'
 
-export interface SafeBrowsingRepositoryInterface {
+export interface SafeBrowsingRepository {
   /**
    * Sets or replaces the Safe Browsing threat matches associated with a URL.
    * @param  {string} url The URL.

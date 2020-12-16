@@ -19,11 +19,13 @@ const getGaId = async () => {
  * @param {string} category
  * @param {string} action
  * @param {string} [label='nothing']
+ * @param {number} value
  */
 export const GAEvent = async (
   category: string,
   action: string,
   label: string = 'nothing',
+  value: number = 0,
 ) => {
   if (!hasInit) {
     await getGaId()
@@ -32,7 +34,7 @@ export const GAEvent = async (
     category, // Required
     action, // Required
     label,
-    value: 10,
+    value,
     nonInteraction: false,
   })
 }

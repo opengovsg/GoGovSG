@@ -1,4 +1,4 @@
-import { CloudmersiveScanService } from '../../../src/server/services/CloudmersiveScanService'
+import { CloudmersiveScanService } from '..'
 
 const scanFile = jest.fn()
 const scanWebsite = jest.fn()

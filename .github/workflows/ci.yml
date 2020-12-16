@@ -70,6 +70,29 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  testcafe:
+    name: End To End Tests
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - name: Install TestCafe from 'npm' and Run Tests
+        uses: DevExpress/testcafe-action@6114d4290399f0e36ac0be3ca56b6713dc2fab3d # pin@v0.0.3
+        with:
+          args: "chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000"
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:

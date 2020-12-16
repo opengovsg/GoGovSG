@@ -1,7 +1,21 @@
 import httpMocks from 'node-mocks-http'
+import { Request } from 'express'
 
-import { UrlCheckController } from '../../../src/server/controllers/UrlCheckController'
-import { createRequestWithUser } from '../api/util'
+import { UrlCheckController } from '..'
+
+/**
+ * Creates a mock request with the input session user.
+ * @param  {any} user
+ * @returns A mock Request with the input session user.
+ */
+function createRequestWithUser(user: any): Request {
+  return httpMocks.createRequest({
+    session: {
+      user,
+    },
+    body: {},
+  })
+}
 
 describe('UrlCheckController test', () => {
   const url = 'https://example.com'

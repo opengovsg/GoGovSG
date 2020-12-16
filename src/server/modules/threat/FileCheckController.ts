@@ -1,25 +1,23 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import jsonMessage from '../util/json'
-import { FileCheckControllerInterface } from './interfaces/FileCheckControllerInterface'
-import { DependencyIds } from '../constants'
-import { FileTypeFilterServiceInterface } from '../services/interfaces/FileTypeFilterServiceInterface'
-import { VirusScanServiceInterface } from '../services/interfaces/VirusScanServiceInterface'
-import { logger } from '../config'
-import { UserType } from '../models/user'
+import jsonMessage from '../../util/json'
+import { DependencyIds } from '../../constants'
+import { FileTypeFilterService, VirusScanService } from './interfaces'
+import { logger } from '../../config'
+import { UserType } from '../../models/user'
 
 @injectable()
-export class FileCheckController implements FileCheckControllerInterface {
-  private fileTypeFilterService: FileTypeFilterServiceInterface
+export class FileCheckController {
+  private fileTypeFilterService: FileTypeFilterService
 
-  private virusScanService: VirusScanServiceInterface
+  private virusScanService: VirusScanService
 
   public constructor(
     @inject(DependencyIds.fileTypeFilterService)
-    fileTypeFilterService: FileTypeFilterServiceInterface,
+    fileTypeFilterService: FileTypeFilterService,
     @inject(DependencyIds.virusScanService)
-    virusScanService: VirusScanServiceInterface,
+    virusScanService: VirusScanService,
   ) {
     this.fileTypeFilterService = fileTypeFilterService
     this.virusScanService = virusScanService

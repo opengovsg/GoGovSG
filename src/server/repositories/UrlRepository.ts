@@ -2,7 +2,7 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
-import { Url, UrlType, sanitise } from '../models/url'
+import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import {
@@ -26,6 +26,7 @@ import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
+import { extractShortUrl, sanitiseQuery } from '../util/parse'
 
 const { Public, Private } = FileVisibility
 
@@ -183,14 +184,14 @@ export class UrlRepository implements UrlRepositoryInterface {
   ): Promise<UrlDirectoryPaginated> {
     const emails = query.toString().split(' ')
     // split email/domains by space into tokens, also reduces injections
-    const likeQuery = emails.map(sanitise)
+    const likeQuery = emails.map(sanitiseQuery)
 
     const queryFile = this.getQueryFileEmail(isFile)
     const queryState = this.getQueryStateEmail(state)
 
     // TODO: optimize the search query, possibly with reverse-email search
     const rawQuery = `
-      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile"
+      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
       JOIN users
       ON "urls"."userId" = "users"."id"
@@ -228,14 +229,16 @@ export class UrlRepository implements UrlRepositoryInterface {
     state: string | undefined,
     isFile: boolean | undefined,
   ): Promise<UrlDirectoryPaginated> {
+    // Extract shortUrls with regex
+    const newQuery = extractShortUrl(query) || query
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
     const rawQuery = `
-      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
+      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
       JOIN users
       ON "urls"."userId" = "users"."id"
-      JOIN plainto_tsquery('english', $query) query
+      JOIN plainto_tsquery('english', $newQuery) query
       ON query @@ (${urlVector})
       ${queryFile}
       ${queryState}
@@ -244,7 +247,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     // Search only once to get both urls and count
     const urlsModel = (await sequelize.query(rawQuery, {
       bind: {
-        query,
+        newQuery,
       },
       raw: true,
       type: QueryTypes.SELECT,

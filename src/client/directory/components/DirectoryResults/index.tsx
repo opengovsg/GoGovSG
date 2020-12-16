@@ -27,6 +27,7 @@ type DirectoryResultsProps = {
   resultsCount: number
   query: string
   disablePagination: boolean
+  rankOffset: number
 }
 
 const useStyles = makeStyles((theme) =>
@@ -61,6 +62,7 @@ const DirectoryResults: FunctionComponent<DirectoryResultsProps> = ({
   changeRowsPerPageHandler,
   query,
   disablePagination,
+  rankOffset,
 }: DirectoryResultsProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
@@ -95,6 +97,7 @@ const DirectoryResults: FunctionComponent<DirectoryResultsProps> = ({
           setUrlInfo={setUrlInfo}
           setOpen={setIsMobilePanelOpen}
           disablePagination={disablePagination}
+          rankOffset={rankOffset}
         />
       )}
 

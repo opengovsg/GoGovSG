@@ -97,7 +97,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const { query, sortOrder, state, isFile, isEmail } = params
   const rowsPerPage = Number(params.rowsPerPage)
   const currentPage = Number(params.currentPage)
-
+  const rankOffset = rowsPerPage * currentPage
   // When the query changes
   const getResults = () =>
     dispatch(
@@ -280,6 +280,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
             resultsCount={resultsCount}
             query={queryToDisplay}
             disablePagination={disablePagination}
+            rankOffset={rankOffset}
           />
         ) : (
           <EmptyStateGraphic />
