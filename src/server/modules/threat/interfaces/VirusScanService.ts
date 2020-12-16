@@ -1,5 +1,5 @@
 import fileUpload from 'express-fileupload'
 
-export interface VirusScanServiceInterface {
+export interface VirusScanService {
   hasVirus(file: fileUpload.UploadedFile): Promise<boolean>
 }

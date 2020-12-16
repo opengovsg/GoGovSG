@@ -1,15 +1,16 @@
 /* eslint-disable class-methods-use-this */
 
 import { inject, injectable } from 'inversify'
-import { safeBrowsingClient } from '../redis'
-import { HasCacheDuration } from './types'
-import { SafeBrowsingRepositoryInterface } from './interfaces/SafeBrowsingRepositoryInterface'
-import { TwoWayMapper } from '../mappers/TwoWayMapper'
-import { DependencyIds } from '../constants'
-import { NotFoundError } from '../util/error'
+import { safeBrowsingClient } from '../../../redis'
+import { HasCacheDuration } from '../../../repositories/types'
+import * as interfaces from '../interfaces'
+import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
+import { DependencyIds } from '../../../constants'
+import { NotFoundError } from '../../../util/error'
 
 @injectable()
-export class SafeBrowsingRepository implements SafeBrowsingRepositoryInterface {
+export class SafeBrowsingRepository
+  implements interfaces.SafeBrowsingRepository {
   private safeBrowsingMapper: TwoWayMapper<HasCacheDuration[], string>
 
   public constructor(

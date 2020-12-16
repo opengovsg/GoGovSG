@@ -1,13 +1,17 @@
-import { redisMockClient } from '../api/util'
-import { SafeBrowsingRepository } from '../../../src/server/repositories/SafeBrowsingRepository'
-import { SafeBrowsingMapper } from '../../../src/server/mappers/SafeBrowsingMapper'
+import redisMock from 'redis-mock'
+import { SafeBrowsingMapper } from '../../mappers/SafeBrowsingMapper'
 
-jest.mock('../../../src/server/redis', () => ({
+const redisMockClient = redisMock.createClient()
+
+jest.mock('../../../../redis', () => ({
   safeBrowsingClient: redisMockClient,
 }))
 
 const setSpy = jest.spyOn(redisMockClient, 'set')
 const getSpy = jest.spyOn(redisMockClient, 'get')
+
+const { SafeBrowsingRepository } = require('..')
+
 const repository = new SafeBrowsingRepository(new SafeBrowsingMapper())
 
 const durationInSeconds = 1
