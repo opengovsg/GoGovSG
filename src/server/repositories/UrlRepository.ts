@@ -190,7 +190,7 @@ export class UrlRepository implements UrlRepositoryInterface {
 
     // TODO: optimize the search query, possibly with reverse-email search
     const rawQuery = `
-      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile"
+      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
       JOIN users
       ON "urls"."userId" = "users"."id"
@@ -231,7 +231,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
     const rawQuery = `
-      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
+      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
       JOIN users
       ON "urls"."userId" = "users"."id"
