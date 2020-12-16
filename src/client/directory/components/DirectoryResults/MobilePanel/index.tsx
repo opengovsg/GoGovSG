@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(3),
     },
     shortUrlRow: {
-      display: 'inline-block',
+      display: 'box',
       maxWidth: '200px',
       width: '100%',
       textOverflow: 'ellipsis',
@@ -60,6 +60,9 @@ const useStyles = makeStyles((theme) =>
       overflow: 'hidden',
     },
     shortUrlInActive: {
+      color: '#BBBBBB',
+    },
+    longLinkText: {
       color: '#BBBBBB',
     },
     stateIcon: {
@@ -100,7 +103,11 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
       return (
         <>
           <DirectoryFileIcon className={classes.stateIcon} />
-          <span>/{url?.shortUrl}</span>
+          <div>
+            <span>/{url?.shortUrl}</span>
+            <br />
+            <p className={classes.longLinkText}>{url?.longUrl}</p>
+          </div>
         </>
       )
     }
@@ -108,7 +115,11 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
       return (
         <>
           <DirectoryUrlIcon className={classes.stateIcon} />
-          <span>/{url?.shortUrl}</span>
+          <div>
+            <span>/{url?.shortUrl}</span>
+            <br />
+            <p className={classes.longLinkText}>{url?.longUrl}</p>
+          </div>
         </>
       )
     }
@@ -116,7 +127,11 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
       return (
         <>
           <DirectoryFileIcon className={classes.stateIcon} color="#BBBBBB" />
-          <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
+          <div>
+            <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
+            <br />
+            <p className={classes.longLinkText}>{url?.longUrl}</p>
+          </div>
         </>
       )
     }
@@ -124,7 +139,11 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
     return (
       <>
         <DirectoryUrlIcon className={classes.stateIcon} color="#BBBBBB" />
-        <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
+        <div>
+          <span className={classes.shortUrlInActive}>/{url?.shortUrl}</span>
+          <br />
+          <p className={classes.longLinkText}>{url?.longUrl}</p>
+        </div>
       </>
     )
   }

@@ -47,6 +47,9 @@ const useStyles = makeStyles((theme) =>
         marginLeft: () => 0,
       },
     },
+    longLinkText: {
+      color: '#BBBBBB',
+    },
     tableRow: {
       display: 'flex',
       flexWrap: 'wrap',
@@ -59,6 +62,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     shortLinkText: {
+      display: 'box',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
       overflow: 'hidden',
@@ -109,7 +113,7 @@ const useStyles = makeStyles((theme) =>
       paddingLeft: (props: DirectoryTableRowStyleProps) => props.appMargins,
       paddingBottom: theme.spacing(4),
       [theme.breakpoints.up('md')]: {
-        paddingTop: theme.spacing(5.5),
+        paddingTop: theme.spacing(7.5),
         paddingBottom: theme.spacing(0.5),
         paddingLeft: () => 0,
         width: '25%',
@@ -146,7 +150,7 @@ const useStyles = makeStyles((theme) =>
     },
     stateCell: {
       [theme.breakpoints.up('md')]: {
-        paddingTop: theme.spacing(5.5),
+        paddingTop: theme.spacing(7.5),
         minWidth: '100px',
       },
       [theme.breakpoints.down('sm')]: {
@@ -213,15 +217,19 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
             )}
           </div>
           {url.state === 'ACTIVE' ? (
-            <>
+            <div>
               <span className={classes.domainTextActive}>/{url.shortUrl}</span>
-            </>
+              <br />
+              <p className={classes.longLinkText}>{url.longUrl}</p>
+            </div>
           ) : (
-            <>
+            <div>
               <span className={classes.domainTextInactive}>
                 /{url.shortUrl}
               </span>
-            </>
+              <br />
+              <p className={classes.longLinkText}>{url.longUrl}</p>
+            </div>
           )}
         </Typography>
       </TableCell>
