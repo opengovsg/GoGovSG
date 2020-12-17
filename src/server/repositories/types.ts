@@ -1,4 +1,5 @@
 import { UrlType } from '../models/url'
+import { UrlClicksType } from '../models/statistics/clicks'
 
 /**
  * A type that represents Urls stored in the data store.
@@ -8,13 +9,13 @@ export type StorableUrl = Pick<
   | 'shortUrl'
   | 'longUrl'
   | 'state'
-  | 'clicks'
   | 'isFile'
   | 'createdAt'
   | 'updatedAt'
   | 'description'
   | 'contactEmail'
->
+> &
+  Pick<UrlClicksType, 'clicks'>
 
 /**
  * A type that represents a file that can be stored in the data store.

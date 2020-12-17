@@ -91,7 +91,7 @@ export const User = <UserTypeStatic>sequelize.define(
         return {
           include: [
             {
-              model: Url,
+              model: Url.scope('getClicks'),
               as: 'Urls',
               where: whereUrlConditions,
               // use left outer join instead of default inner join
@@ -115,7 +115,7 @@ export const User = <UserTypeStatic>sequelize.define(
         return {
           include: [
             {
-              model: Url,
+              model: Url.scope('getClicks'),
               as: 'Urls',
               where: { shortUrl },
             },
