@@ -76,7 +76,7 @@ export class LinkStatisticsRepository
   public findByShortUrl: (
     shortUrl: string,
   ) => Promise<LinkStatisticsInterface | null> = async (shortUrl) => {
-    const url = await Url.findOne({
+    const url = await Url.scope('getClicks').findOne({
       where: { shortUrl },
       include: [
         { model: Devices, as: 'DeviceClicks' },
@@ -106,7 +106,7 @@ export class LinkStatisticsRepository
     if (url) {
       const urlStats = url as UrlStats
 
-      const totalClicks = url.clicks
+      const totalClicks = url.UrlClicks?.clicks
 
       const deviceClicks = urlStats.DeviceClicks
         ? _.pick(urlStats.DeviceClicks.toJSON(), [
