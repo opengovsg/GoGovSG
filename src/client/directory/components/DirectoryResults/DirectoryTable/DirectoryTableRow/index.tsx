@@ -166,6 +166,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Single search result row.
+ */
 const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
   url,
   setUrlInfo,
