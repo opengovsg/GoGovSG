@@ -57,7 +57,7 @@
     "helmet": "^4.2.0",
     "history": "^4.10.1",
     "i18next": "^19.8.4",
-    "inversify": "^5.0.1",
+    "inversify": "^5.0.5",
     "jsdom": "^16.4.0",
     "lodash": "^4.17.20",
     "minimatch": "^3.0.4",
