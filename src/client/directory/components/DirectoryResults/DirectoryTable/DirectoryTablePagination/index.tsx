@@ -79,6 +79,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Holds the drop down option for the result count and page number.
+ */
 const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps> = ({
   pageCount,
   rowsPerPage,

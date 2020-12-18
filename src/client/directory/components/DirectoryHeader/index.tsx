@@ -82,6 +82,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Header bar that holds the search input bar and user page redirection button.
+ */
 const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
   onQueryChange,
   onSortOrderChange,

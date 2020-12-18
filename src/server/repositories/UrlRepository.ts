@@ -174,6 +174,17 @@ export class UrlRepository implements UrlRepositoryInterface {
     return urlsModel
   }
 
+  /**
+   * Using sequelize SQL replacement to query urls that matches the email search parameters.
+   * Returns the urls and count.
+   * @param  {string} query Keyword search query.
+   * @param  {string} rankingAlgorithm Order by SQL string.
+   * @param  {number} limit Maximum number of results.
+   * @param  {number} offset Number of results skip.
+   * @param  {string | undefined} state State of Url.
+   * @param  {boolean | undefined} isFile Type of Url.
+   * @returns {Promise<UrlDirectoryPaginated>} Returns shorturl, email, state, type and longurl of urls and count.
+   */
   private async getRelevantUrlsFromEmail(
     query: string,
     rankingAlgorithm: string,
@@ -220,6 +231,18 @@ export class UrlRepository implements UrlRepositoryInterface {
     return { count, urls: slicedUrlsModel }
   }
 
+  /**
+   * Using sequelize SQL replacement to query urls that matches the keyword parameters.
+   * Returns the urls and count.
+   * @param  {string} urlVector Full text search column vector.
+   * @param  {string} rankingAlgorithm Order by SQL string.
+   * @param  {number} limit Maximum number of results.
+   * @param  {number} offset Number of results skip.
+   * @param  {string} query Keyword search query.
+   * @param  {string | undefined} state State of Url.
+   * @param  {boolean | undefined} isFile Type of Url.
+   * @returns {Promise<UrlDirectoryPaginated>} Returns shorturl, email, state, type and longurl of urls and count.
+   */
   private async getRelevantUrlsFromText(
     urlVector: string,
     rankingAlgorithm: string,
@@ -262,6 +285,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     return { count, urls: slicedUrlsModel }
   }
 
+  /**
+   * Converts isFile logic into usable SQL query substitution for email query.
+   * @param  {boolean | undefined} isFile Type of Url.
+   * @returns {Array<boolean>} Usable SQL query substitution.
+   */
   private getQueryFileEmail: (isFile: boolean | undefined) => Array<boolean> = (
     isFile,
   ) => {
@@ -272,6 +300,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     return queryFile
   }
 
+  /**
+   * Converts state logic into usable SQL query substitution for email query.
+   * @param  {string | undefined} state State of Url.
+   * @returns {Array<string>} Usable SQL query substitution.
+   */
   private getQueryStateEmail: (state: string | undefined) => Array<string> = (
     state,
   ) => {
@@ -282,6 +315,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     return queryState
   }
 
+  /**
+   * Converts file logic into usable SQL query substitution for keyword query.
+   * @param  {boolean | undefined} isFile Type of Url.
+   * @returns {string} Usable SQL query substitution.
+   */
   private getQueryFileText: (isFile: boolean | undefined) => string = (
     isFile,
   ) => {
@@ -292,6 +330,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     return queryFile
   }
 
+  /**
+   * Converts state logic into usable SQL query substitution for keyword query.
+   * @param  {string | undefined} state State of Url.
+   * @returns {string} Usable SQL query substitution.
+   */
   private getQueryStateText: (state: string | undefined) => string = (
     state,
   ) => {
