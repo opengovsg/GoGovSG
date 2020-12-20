@@ -53,6 +53,30 @@ const repository = new UrlRepository(fileBucket, new UrlMapper())
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
 describe('UrlRepository', () => {
+  const baseUserId = 2
+  const baseShortUrl = 'abcdef'
+  const baseLongUrl = 'https://www.agency.gov.sg'
+  const baseUrlClicks = {
+    clicks: 2,
+  }
+  const baseTemplate = {
+    shortUrl: baseShortUrl,
+    longUrl: baseLongUrl,
+    state: 'ACTIVE',
+    isFile: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    description: 'An agency of the Singapore Government',
+    contactEmail: 'contact-us@agency.gov.sg',
+  }
+  const baseUrl = {
+    ...baseTemplate,
+    UrlClicks: baseUrlClicks,
+  }
+  const baseStorableUrl = {
+    ...baseTemplate,
+    ...baseUrlClicks,
+  }
   beforeEach(async () => {
     redisMockClient.flushall()
     cacheGetSpy.mockClear()
@@ -73,7 +97,9 @@ describe('UrlRepository', () => {
 
   describe('create', () => {
     const create = jest.spyOn(urlModelMock, 'create')
+    const scope = jest.spyOn(urlModelMock, 'scope')
     const putObject = jest.spyOn(s3Client, 'putObject')
+    const findByPk = jest.fn()
 
     // @ts-ignore
     putObject.mockReturnValue({ promise: () => Promise.resolve() })
@@ -85,24 +111,17 @@ describe('UrlRepository', () => {
     beforeEach(() => {
       create.mockReset()
       putObject.mockClear()
+      findByPk.mockReset()
+      scope.mockReset()
     })
 
     it('creates the specified longUrl', async () => {
-      const storableUrl = {
-        shortUrl,
-        longUrl,
-        state: 'ACTIVE',
-        clicks: 2,
-        isFile: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        description: 'An agency of the Singapore Government',
-        contactEmail: 'contact-us@agency.gov.sg',
-      }
-      create.mockResolvedValue(storableUrl)
+      findByPk.mockResolvedValueOnce(baseUrl)
+      scope.mockImplementationOnce(() => ({ findByPk }))
+      create.mockResolvedValue(baseTemplate)
       await expect(
         repository.create({ userId, shortUrl, longUrl }),
-      ).resolves.toStrictEqual(storableUrl)
+      ).resolves.toStrictEqual(baseStorableUrl)
       expect(create).toHaveBeenCalledWith(
         {
           longUrl,
@@ -112,6 +131,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
+      expect(scope).toHaveBeenCalledWith('getClicks')
       expect(putObject).not.toHaveBeenCalled()
     })
 
@@ -121,20 +141,21 @@ describe('UrlRepository', () => {
         key: 'key',
         mimetype: 'text/csv',
       }
-      const storableUrl = {
-        shortUrl,
-        longUrl: fileBucket.buildFileLongUrl(file.key),
-        state: 'ACTIVE',
-        clicks: 2,
+      const url = {
+        ...baseUrl,
         isFile: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        description: 'An agency of the Singapore Government',
-        contactEmail: 'contact-us@agency.gov.sg',
+        longUrl: fileBucket.buildFileLongUrl(file.key),
       }
-      create.mockResolvedValue(storableUrl)
+      const storableUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        longUrl: fileBucket.buildFileLongUrl(file.key),
+      }
+      findByPk.mockResolvedValueOnce(url)
+      scope.mockImplementationOnce(() => ({ findByPk }))
+      create.mockResolvedValue(url)
       await expect(
-        repository.create({ userId, shortUrl }, file),
+        repository.create({ userId: baseUserId, shortUrl: baseShortUrl }, file),
       ).resolves.toStrictEqual(storableUrl)
       expect(create).toHaveBeenCalledWith(
         {
@@ -145,6 +166,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
+      expect(scope).toHaveBeenCalledWith('getClicks')
       expect(putObject).toHaveBeenCalledWith({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
@@ -158,13 +180,13 @@ describe('UrlRepository', () => {
 
   describe('update', () => {
     const findOne = jest.spyOn(urlModelMock, 'findOne')
+    const scope = jest.spyOn(urlModelMock, 'scope')
     const putObject = jest.spyOn(s3Client, 'putObject')
     const putObjectAcl = jest.spyOn(s3Client, 'putObjectAcl')
 
-    const shortUrl = 'abcdef'
-
     beforeEach(() => {
       findOne.mockReset()
+      scope.mockReset()
       putObject.mockClear()
       putObjectAcl.mockClear()
     })
@@ -179,39 +201,55 @@ describe('UrlRepository', () => {
     putObjectAcl.mockReturnValue({ promise: () => Promise.resolve() })
 
     it('should throw NotFoundError on not found', async () => {
+      scope.mockImplementationOnce(() => urlModelMock)
       findOne.mockResolvedValue(null)
-      await expect(repository.update({ shortUrl }, {})).rejects.toBeInstanceOf(
-        NotFoundError,
-      )
-      expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
+      await expect(
+        repository.update({ shortUrl: baseShortUrl }, {}),
+      ).rejects.toBeInstanceOf(NotFoundError)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(scope).toHaveBeenCalledWith('getClicks')
     })
 
     it('should update non-file links', async () => {
       const description = 'Changes made'
       const update = jest.fn()
-      findOne.mockResolvedValue({ isFile: false, update })
+      scope.mockImplementationOnce(() => urlModelMock)
+      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update })
       await expect(
-        repository.update({ shortUrl }, { description }),
+        repository.update({ shortUrl: baseShortUrl }, { description }),
       ).resolves.toStrictEqual(expect.objectContaining({ isFile: false }))
-      expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
+      expect(scope).toHaveBeenCalledWith('getClicks')
     })
 
     it('should update non-state changes on file links', async () => {
       const description = 'Changes made'
-      const longUrl = 'https://files.go.gov.sg/key'
       const update = jest.fn()
-      findOne.mockResolvedValue({ isFile: true, longUrl, update })
+      const url: any = {
+        ...baseUrl,
+        isFile: true,
+        update: update.mockImplementationOnce(({ description }) => {
+          url.description = description
+        }),
+      }
+      const expectedUrl = { ...baseStorableUrl, isFile: true, description }
+      scope.mockImplementationOnce(() => urlModelMock)
+      findOne.mockResolvedValue(url)
       await expect(
-        repository.update({ shortUrl }, { description }),
-      ).resolves.toStrictEqual(
-        expect.objectContaining({ isFile: true, longUrl }),
-      )
-      expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
+        repository.update({ shortUrl: baseShortUrl }, { description }),
+      ).resolves.toEqual(expectedUrl)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
@@ -219,42 +257,64 @@ describe('UrlRepository', () => {
 
     it('should update state change to Active on file links', async () => {
       const state = StorableUrlState.Active
-      const longUrl = 'https://files.go.gov.sg/key'
       const update = jest.fn()
-      findOne.mockResolvedValue({ isFile: true, longUrl, update })
+      const url = {
+        ...baseUrl,
+        isFile: true,
+        state: StorableUrlState.Inactive,
+        update: update.mockImplementationOnce(({ state }) => {
+          url.state = state
+        }),
+      }
+      const expectedUrl = { ...baseStorableUrl, isFile: true }
+      scope.mockImplementationOnce(() => urlModelMock)
+      findOne.mockResolvedValue(url)
       await expect(
-        repository.update({ shortUrl }, { state }),
-      ).resolves.toStrictEqual(
-        expect.objectContaining({ isFile: true, longUrl }),
-      )
-      expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
+        repository.update({ shortUrl: baseShortUrl }, { state }),
+      ).resolves.toEqual(expectedUrl)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
       expect(putObject).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ state }, expect.anything())
 
       expect(putObjectAcl).toHaveBeenCalledWith({
         Bucket: s3Bucket,
-        Key: fileBucket.getKeyFromLongUrl(longUrl),
+        Key: fileBucket.getKeyFromLongUrl(baseLongUrl),
         ACL: FileVisibility.Public,
       })
     })
 
     it('should update state change to Inactive on file links', async () => {
       const state = StorableUrlState.Inactive
-      const longUrl = 'https://files.go.gov.sg/key'
       const update = jest.fn()
-      findOne.mockResolvedValue({ isFile: true, longUrl, update })
+      const url = {
+        ...baseUrl,
+        isFile: true,
+        state: StorableUrlState.Active,
+        update: update.mockImplementationOnce(({ state }) => {
+          url.state = state
+        }),
+      }
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        state: StorableUrlState.Inactive,
+      }
+      scope.mockImplementationOnce(() => urlModelMock)
+      findOne.mockResolvedValue(url)
       await expect(
-        repository.update({ shortUrl }, { state }),
-      ).resolves.toStrictEqual(
-        expect.objectContaining({ isFile: true, longUrl }),
-      )
-      expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
+        repository.update({ shortUrl: baseShortUrl }, { state }),
+      ).resolves.toEqual(expect.objectContaining(expectedUrl))
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
       expect(putObject).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ state }, expect.anything())
 
       expect(putObjectAcl).toHaveBeenCalledWith({
         Bucket: s3Bucket,
-        Key: fileBucket.getKeyFromLongUrl(longUrl),
+        Key: fileBucket.getKeyFromLongUrl(baseLongUrl),
         ACL: FileVisibility.Private,
       })
     })
@@ -272,14 +332,29 @@ describe('UrlRepository', () => {
       }
 
       const update = jest.fn()
-      findOne.mockResolvedValue({ isFile: true, longUrl, update })
+      const url = {
+        ...baseUrl,
+        isFile: true,
+        longUrl,
+        update: update.mockImplementationOnce(({ longUrl }) => {
+          url.longUrl = longUrl
+        }),
+      }
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        longUrl: newLongUrl,
+      }
+
+      scope.mockImplementationOnce(() => urlModelMock)
+      findOne.mockResolvedValue(url)
 
       await expect(
-        repository.update({ shortUrl }, {}, file),
-      ).resolves.toStrictEqual(
-        expect.objectContaining({ isFile: true, longUrl }),
-      )
-      expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
+        repository.update({ shortUrl: baseShortUrl }, {}, file),
+      ).resolves.toEqual(expectedUrl)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
 
       expect(update).toHaveBeenCalledWith(
         { longUrl: newLongUrl },

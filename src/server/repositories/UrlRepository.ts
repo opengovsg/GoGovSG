@@ -51,9 +51,10 @@ export class UrlRepository implements UrlRepositoryInterface {
   public findByShortUrl: (
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (shortUrl) => {
-    return (await Url.findOne({
+    const url = await Url.scope('getClicks').findOne({
       where: { shortUrl },
-    })) as StorableUrl | null
+    })
+    return this.urlMapper.persistenceToDto(url)
   }
 
   public create: (
@@ -61,7 +62,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
-      const url = Url.create(
+      await Url.create(
         {
           ...properties,
           longUrl: file
@@ -69,14 +70,21 @@ export class UrlRepository implements UrlRepositoryInterface {
             : properties.longUrl,
           isFile: !!file,
         },
-        { transaction: t },
+        {
+          transaction: t,
+        },
       )
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }
-      return url
+
+      // Do a fresh read which eagerly loads the associated UrlClicks field.
+      return Url.scope('getClicks').findByPk(properties.shortUrl, {
+        transaction: t,
+      })
     })
 
+    if (!newUrl) throw new Error('Newly-created url is null')
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
@@ -86,7 +94,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
-    const url = await Url.findOne({ where: { shortUrl } })
+    const url = await Url.scope('getClicks').findOne({ where: { shortUrl } })
     if (!url) {
       throw new NotFoundError(
         `url not found in database:\tshortUrl=${shortUrl}`,

@@ -24,6 +24,7 @@ jest.mock('../../../src/server/models/statistics/weekday', () => ({
 }))
 
 const findOne = jest.spyOn(urlModelMock, 'findOne')
+const scope = jest.spyOn(urlModelMock, 'scope')
 
 const shortUrl = 'short-url'
 
@@ -32,6 +33,7 @@ const repository = new LinkStatisticsRepository()
 describe('LinkStatisticsRepository', () => {
   beforeEach(async () => {
     findOne.mockClear()
+    scope.mockClear()
   })
 
   it('returns null on no url', async () => {
@@ -52,17 +54,19 @@ describe('LinkStatisticsRepository', () => {
 
   it('returns values on some device click stats', async () => {
     const url = {
-      clicks: 4,
       DeviceClicks: { toJSON: () => ({ desktop: 1 }) },
       DailyClicks: [{ date: 'today', clicks: 2 }],
       WeekdayClicks: [
         { weekday: 0, hours: 12, clicks: 3 },
         { weekday: 0, hours: 13, clicks: 1 },
       ],
+      UrlClicks: {
+        clicks: 2,
+      },
     }
     findOne.mockResolvedValue(url)
     await expect(repository.findByShortUrl(shortUrl)).resolves.toStrictEqual({
-      totalClicks: url.clicks,
+      totalClicks: url.UrlClicks.clicks,
       deviceClicks: url.DeviceClicks.toJSON(),
       dailyClicks: url.DailyClicks,
       weekdayClicks: url.WeekdayClicks,
@@ -70,6 +74,7 @@ describe('LinkStatisticsRepository', () => {
     expect(findOne).toBeCalledWith(
       expect.objectContaining({ where: { shortUrl } }),
     )
+    expect(scope).toBeCalledWith('getClicks')
   })
 
   it('correctly interpolates table names into update_link_statistics', () => {
