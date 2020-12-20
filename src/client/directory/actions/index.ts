@@ -96,7 +96,12 @@ const getDirectoryResults = (
     // Remove all words that have @ inside to prevent potential email address problem
     filteredQuery = query.replace('@', ' ')
   }
-  GAEvent('directory page', filteredQuery, 'successful')
+  GAEvent(
+    'directory page',
+    filteredQuery,
+    'successful',
+    parseInt(`${json.count}`, 10),
+  )
   dispatch(
     setDirectoryResults({
       count: json.count,

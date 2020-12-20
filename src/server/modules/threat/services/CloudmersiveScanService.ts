@@ -1,13 +1,12 @@
 import { inject, injectable } from 'inversify'
 import { ScanApi } from 'cloudmersive-virus-api-client'
-import { VirusScanServiceInterface } from './interfaces/VirusScanServiceInterface'
-import { UrlThreatScanServiceInterface } from './interfaces/UrlThreatScanServiceInterface'
-import { logger } from '../config'
-import { DependencyIds } from '../constants'
+import { UrlThreatScanService, VirusScanService } from '../interfaces'
+import { logger } from '../../../config'
+import { DependencyIds } from '../../../constants'
 
 @injectable()
 export class CloudmersiveScanService
-  implements VirusScanServiceInterface, UrlThreatScanServiceInterface {
+  implements VirusScanService, UrlThreatScanService {
   private cloudmersiveKey: string
 
   private api: ScanApi

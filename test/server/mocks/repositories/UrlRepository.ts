@@ -43,6 +43,7 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     return Promise.resolve({
       urls: [
         {
+          longUrl: 'https://test-moh.com',
           shortUrl: 'test-moh',
           state: 'ACTIVE',
           isFile: false,

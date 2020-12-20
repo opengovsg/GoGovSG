@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+
 describe('SafeBrowsingService', () => {
   const get = jest.fn()
   const set = jest.fn()
@@ -10,14 +11,12 @@ describe('SafeBrowsingService', () => {
 
   describe('without safeBrowsingKey', () => {
     jest.resetModules()
-    jest.mock('../../../src/server/config', () => ({
+    jest.mock('../../../../config', () => ({
       logger: console,
       safeBrowsingKey: '',
     }))
 
-    const {
-      SafeBrowsingService,
-    } = require('../../../src/server/services/SafeBrowsingService')
+    const { SafeBrowsingService } = require('..')
     const service = new SafeBrowsingService({ get, set })
 
     it('always returns false', async () => {
@@ -31,16 +30,14 @@ describe('SafeBrowsingService', () => {
   describe('with safeBrowsingKey but log-only', () => {
     jest.resetModules()
 
-    jest.mock('../../../src/server/config', () => ({
+    jest.mock('../../../../config', () => ({
       logger: console,
       safeBrowsingKey: 'key',
       safeBrowsingLogOnly: true,
     }))
     jest.mock('cross-fetch', () => mockFetch)
 
-    const {
-      SafeBrowsingService,
-    } = require('../../../src/server/services/SafeBrowsingService')
+    const { SafeBrowsingService } = require('..')
     const service = new SafeBrowsingService({ get, set })
 
     beforeEach(() => {
@@ -108,16 +105,14 @@ describe('SafeBrowsingService', () => {
   describe('with safeBrowsingKey and active', () => {
     jest.resetModules()
 
-    jest.mock('../../../src/server/config', () => ({
+    jest.mock('../../../../config', () => ({
       logger: console,
       safeBrowsingKey: 'key',
       safeBrowsingLogOnly: false,
     }))
     jest.mock('cross-fetch', () => mockFetch)
 
-    const {
-      SafeBrowsingService,
-    } = require('../../../src/server/services/SafeBrowsingService')
+    const { SafeBrowsingService } = require('..')
     const service = new SafeBrowsingService({ get, set })
 
     beforeEach(() => {

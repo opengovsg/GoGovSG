@@ -20,6 +20,7 @@ type DirectoryTableProps = {
   disablePagination: boolean
   setUrlInfo: (url: UrlTypePublic) => void
   setOpen: (urlInfo: boolean) => void
+  rankOffset: number
 }
 
 const useStyles = makeStyles((theme) =>
@@ -46,16 +47,18 @@ const DirectoryTable: FunctionComponent<DirectoryTableProps> = React.memo(
     changeRowsPerPageHandler,
     setUrlInfo,
     setOpen,
+    rankOffset,
   }: DirectoryTableProps) => {
     const classes = useStyles()
     return (
       <Table aria-label="search results table" className={classes.resultsTable}>
         <TableBody>
-          {searchResults.map((url: UrlTypePublic) => (
+          {searchResults.map((url: UrlTypePublic, index) => (
             <DirectoryTableRow
               url={url}
               setUrlInfo={setUrlInfo}
               setOpen={setOpen}
+              index={index + 1 + rankOffset}
             />
           ))}
           <DirectoryTablePagination

@@ -48,6 +48,7 @@ describe('DirectoryController unit test', () => {
     expect(okSpy).toHaveBeenCalledWith({
       urls: [
         {
+          longUrl: 'https://test-moh.com',
           shortUrl: 'test-moh',
           state: 'ACTIVE',
           isFile: false,

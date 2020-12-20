@@ -34,18 +34,6 @@ type UrlTypeStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): UrlType
 }
 
-// Escape characters
-export const sanitise = (query: string): string => {
-  // check legit domain
-  if (emailValidator.match(query)) {
-    // remove wildcards characters and escape characters
-    const inputRaw = query.replace(/(%|\\)/g, '')
-    return `%${inputRaw}`
-  }
-
-  return ''
-}
-
 /**
  * History of URL record changes.
  * Logs the creation and modification of shorturls.
