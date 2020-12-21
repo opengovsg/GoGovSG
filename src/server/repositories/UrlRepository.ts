@@ -5,12 +5,7 @@ import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import {
-  logger,
-  redirectExpiry,
-  searchDescriptionWeight,
-  searchShortUrlWeight,
-} from '../config'
+import { logger, redirectExpiry } from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -403,16 +398,6 @@ export class UrlRepository implements UrlRepositoryInterface {
   ): string {
     let rankingAlgorithm
     switch (order) {
-      case SearchResultsSortOrder.Relevance:
-        {
-          // The 3rd argument passed into ts_rank_cd represents
-          // the normalization option that specifies whether and how
-          // a document's length should impact its rank. It works as a bit mask.
-          // 1 divides the rank by 1 + the logarithm of the document length
-          const textRanking = `ts_rank_cd('{0, 0, ${searchDescriptionWeight}, ${searchShortUrlWeight}}',${urlSearchVector}, query, 1)`
-          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
-        }
-        break
       case SearchResultsSortOrder.Recency:
         rankingAlgorithm = `${tableName}."createdAt"`
         break
