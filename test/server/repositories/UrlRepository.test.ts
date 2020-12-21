@@ -7,6 +7,7 @@ import {
   mockTransaction,
   redisMockClient,
   sanitiseMock,
+  urlClicksModelMock,
   urlModelMock,
 } from '../api/util'
 import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
@@ -20,6 +21,10 @@ import { DirectoryQueryConditions } from '../../../src/server/services/interface
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
   sanitise: sanitiseMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/clicks', () => ({
+  UrlClicks: urlClicksModelMock,
 }))
 
 jest.mock('../../../src/server/models/statistics/daily', () => ({
