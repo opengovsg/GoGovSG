@@ -3,6 +3,7 @@ import { Op, QueryTypes } from 'sequelize'
 import _ from 'lodash'
 
 import { Url, UrlType } from '../models/url'
+import { UrlClicks } from '../models/statistics/clicks'
 import { DailyClicks, DailyClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
 import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
@@ -13,7 +14,7 @@ import { sequelize } from '../util/sequelize'
 import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
 
 // Get the relevant table names from their models.
-const urlTable = Url.getTableName()
+const urlClicksTable = UrlClicks.getTableName()
 const devicesTable = Devices.getTableName()
 const clicksTable = DailyClicks.getTableName()
 const weekdayTable = WeekdayClicks.getTableName()
@@ -26,7 +27,7 @@ export const updateLinkStatistics = `CREATE OR REPLACE FUNCTION update_link_stat
 RETURNS void AS $$
 BEGIN
 -- Update total clicks.
-UPDATE "${urlTable}" SET "clicks" = "${urlTable}"."clicks" + 1
+UPDATE "${urlClicksTable}" SET "clicks" = "${urlClicksTable}"."clicks" + 1
 WHERE "shortUrl" = inputShortUrl;
 -- Update devices clicks.
 IF device='mobile' THEN
