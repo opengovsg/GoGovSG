@@ -2,6 +2,7 @@ import Sequelize from 'sequelize'
 import { sequelize } from '../util/sequelize'
 import { IdType, Settable } from '../../types/server/models'
 import { Url, UrlType } from './url'
+import { UrlClicks } from './statistics/clicks'
 import { emailValidator } from '../config'
 
 // Users
@@ -91,7 +92,7 @@ export const User = <UserTypeStatic>sequelize.define(
         return {
           include: [
             {
-              model: Url,
+              model: Url.scope('getClicks'),
               as: 'Urls',
               where: whereUrlConditions,
               // use left outer join instead of default inner join
@@ -99,7 +100,17 @@ export const User = <UserTypeStatic>sequelize.define(
               right: false,
             },
           ],
-          order: [[{ model: Url, as: 'Urls' }, orderBy, sortDirection]],
+          order:
+            orderBy === 'clicks'
+              ? [
+                  [
+                    { model: Url, as: 'Urls' },
+                    { model: UrlClicks, as: 'UrlClicks' },
+                    orderBy,
+                    sortDirection,
+                  ],
+                ]
+              : [[{ model: Url, as: 'Urls' }, orderBy, sortDirection]],
           where: {
             id: userId,
           },
@@ -115,7 +126,7 @@ export const User = <UserTypeStatic>sequelize.define(
         return {
           include: [
             {
-              model: Url,
+              model: Url.scope('getClicks'),
               as: 'Urls',
               where: { shortUrl },
             },

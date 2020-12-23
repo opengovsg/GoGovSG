@@ -57,6 +57,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Holds the panel for sorting configuration and filter configuration based on state and type.
+ */
 const SortDrawer: FunctionComponent<SortDrawerProps> = ({
   open,
   onClose,

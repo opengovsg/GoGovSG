@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Default display component in place of search result.
+ */
 const EmptyStateGraphic: FunctionComponent = () => {
   const classes = useStyles()
   const theme = useTheme()

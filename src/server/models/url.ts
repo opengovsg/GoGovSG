@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize'
+import { UrlClicks, UrlClicksType } from './statistics/clicks'
 import { ACTIVE, INACTIVE } from './types'
 import {
   SHORT_URL_REGEX,
@@ -23,7 +24,7 @@ interface UrlBaseType extends IdType {
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
-  readonly clicks: number
+  readonly UrlClicks?: UrlClicksType
   readonly createdAt: string
   readonly updatedAt: string
   readonly email: string
@@ -143,11 +144,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
       values: [ACTIVE, INACTIVE],
       defaultValue: ACTIVE,
     },
-    clicks: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
     isFile: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
@@ -178,6 +174,16 @@ export const Url = <UrlTypeStatic>sequelize.define(
         // eslint-disable-next-line no-use-before-define
         await writeToUrlHistory(
           url,
+          options as Sequelize.CreateOptions & {
+            transaction: Sequelize.Transaction
+          },
+        )
+
+        // TODO: change to create after DB triggers are removed.
+        await UrlClicks.upsert(
+          {
+            shortUrl: url.shortUrl,
+          },
           options as Sequelize.CreateOptions & {
             transaction: Sequelize.Transaction
           },
@@ -221,6 +227,16 @@ export const Url = <UrlTypeStatic>sequelize.define(
         fields: [Sequelize.literal(`(${urlSearchVector})`)],
       },
     ],
+    scopes: {
+      getClicks: {
+        include: [
+          {
+            model: UrlClicks,
+            as: 'UrlClicks',
+          },
+        ],
+      },
+    },
   },
 )
 

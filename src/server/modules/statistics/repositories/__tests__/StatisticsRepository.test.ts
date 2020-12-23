@@ -32,6 +32,8 @@ export const userModelMock = {
     ]),
 }
 
+export const urlClicksModelMock = {}
+
 const redisMockClient = redisMock.createClient()
 
 jest.mock('../../../../redis', () => ({
@@ -44,6 +46,10 @@ jest.mock('../../../../models/user', () => ({
 
 jest.mock('../../../../models/url', () => ({
   Url: urlModelMock,
+}))
+
+jest.mock('../../../../models/statistics/clicks', () => ({
+  UrlClicks: urlClicksModelMock,
 }))
 
 const setSpy = jest.spyOn(redisMockClient, 'set')
@@ -69,7 +75,7 @@ describe('StatisticsRepository', () => {
   afterEach(async () => {
     delete (userModelMock as any).count
     delete (urlModelMock as any).count
-    delete (urlModelMock as any).sum
+    delete (urlClicksModelMock as any).sum
   })
 
   it('returns values from Redis if present', async () => {
@@ -99,8 +105,10 @@ describe('StatisticsRepository', () => {
     mgetSpy.mockImplementation(raiseError)
     Object.assign(userModelMock, { count: () => userCount })
     Object.assign(urlModelMock, {
-      sum: () => clickCount,
       count: () => linkCount,
+    })
+    Object.assign(urlClicksModelMock, {
+      sum: () => clickCount,
     })
 
     await expect(repository.getGlobalStatistics()).resolves.toStrictEqual({
@@ -125,8 +133,10 @@ describe('StatisticsRepository', () => {
 
     Object.assign(userModelMock, { count: () => userCount })
     Object.assign(urlModelMock, {
-      sum: () => clickCount,
       count: () => linkCount,
+    })
+    Object.assign(urlClicksModelMock, {
+      sum: () => clickCount,
     })
 
     // @ts-ignore

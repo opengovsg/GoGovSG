@@ -99,7 +99,9 @@ export const urlModelMock = sequelizeMock.define(
     shortUrl: 'a',
     longUrl: 'aa',
     state: ACTIVE,
-    clicks: 8,
+    UrlClicks: {
+      clicks: 3,
+    },
   },
   {
     instanceMethods: {
@@ -108,6 +110,11 @@ export const urlModelMock = sequelizeMock.define(
     },
   },
 )
+
+export const urlClicksModelMock = sequelizeMock.define('url_clicks', {
+  shortUrl: 'a',
+  clicks: 3,
+})
 
 export const clicksModelMock = sequelizeMock.define(
   'daily_stats',

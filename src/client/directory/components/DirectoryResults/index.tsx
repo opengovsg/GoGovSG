@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Holds the search results table and headers, as well as the mobile drawer.
+ */
 const DirectoryResults: FunctionComponent<DirectoryResultsProps> = ({
   searchResults,
   pageCount,

@@ -11,11 +11,14 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
     if (!urlType) {
       return null
     }
+    const { UrlClicks: urlClicks } = urlType
+    if (!urlClicks || !Number.isInteger(urlClicks.clicks))
+      throw new Error('UrlClicks object not populated.')
     return {
       shortUrl: urlType.shortUrl,
       longUrl: urlType.longUrl,
       state: urlType.state,
-      clicks: urlType.clicks,
+      clicks: urlClicks.clicks,
       isFile: urlType.isFile,
       createdAt: urlType.createdAt,
       updatedAt: urlType.updatedAt,

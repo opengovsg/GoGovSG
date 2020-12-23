@@ -3,6 +3,7 @@
 import { injectable } from 'inversify'
 import { User } from '../../../models/user'
 import { Url } from '../../../models/url'
+import { UrlClicks } from '../../../models/statistics/clicks'
 import { statClient } from '../../../redis'
 import { logger, statisticsExpiry } from '../../../config'
 import * as interfaces from '../interfaces'
@@ -32,7 +33,7 @@ export class StatisticsRepository implements interfaces.StatisticsRepository {
 
     if (clickCount == null) {
       // Replace Nan with 0 if there is no data
-      clickCount = (await Url.sum('clicks')) || 0
+      clickCount = (await UrlClicks.sum('clicks')) || 0
       this.trySetCache(CLICK_COUNT_KEY, clickCount.toString())
     }
 

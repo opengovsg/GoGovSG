@@ -17,6 +17,9 @@ import EmptyStateGraphic from './components/EmptySearchGraphic'
 import { defaultSortOption } from './constants'
 import { GAEvent, GAPageView } from '../app/util/ga'
 
+/**
+ * Search query parameters for calling directory endpoint.
+ */
 type GoSearchParams = {
   query: string
   sortOrder: SearchResultsSortOrder
@@ -44,7 +47,9 @@ const useStyles = makeStyles(() =>
 
 type SearchPageProps = {}
 
-// might carry this over to constants/directory instead
+/**
+ * Search query default parameters.
+ */
 const defaultParams: GoSearchParams = {
   query: '',
   sortOrder: defaultSortOption,
@@ -55,6 +60,9 @@ const defaultParams: GoSearchParams = {
   isEmail: 'false',
 }
 
+/**
+ * Redirect back to directory page with parameters that are different from default parameters.
+ */
 const redirectWithParams = (newParams: GoSearchParams, history: History) => {
   const queryObject: any = { query: newParams.query }
   Object.entries(newParams).map(([key, value], _) => {
@@ -72,6 +80,9 @@ const redirectWithParams = (newParams: GoSearchParams, history: History) => {
 
 const updateQueryDebounced = debounce(redirectWithParams, 500)
 
+/**
+ * @component Directory page root component.
+ */
 const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
@@ -87,6 +98,9 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   )
   const [disablePagination, setDisablePagination] = useState<boolean>(false)
 
+  /**
+   * Search parameters that includes the latest changes and retain default values for the others.
+   */
   const urlParams = querystring.parse(
     location.search.substring(1),
   ) as Partial<GoSearchParams>
@@ -98,7 +112,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const rowsPerPage = Number(params.rowsPerPage)
   const currentPage = Number(params.currentPage)
   const rankOffset = rowsPerPage * currentPage
-  // When the query changes
+  /** Dispatch action to get new results. */
   const getResults = () =>
     dispatch(
       directoryActions.getDirectoryResults(
@@ -143,7 +157,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     )
   }
 
-  // When applying changes after filtering order, file type and state
+  /** Redirect when sort order, type or state changes. */
   const applyChanges = () => {
     if (
       !(queryFile === params.isFile) ||
@@ -164,7 +178,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     }
   }
 
-  // reset
+  /** Reset all parameters to default. */
   const onResetFilter = () => {
     // Ensure same differences will not be pushed to history
     if (
@@ -188,7 +202,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     GAPageView('DIRECTORY PAGE')
   }, [])
 
-  // Changes when queryEmail changes
+  // Redirect when queryEmail changes
   useEffect(() => {
     setPendingQuery('')
     dispatch(directoryActions.resetDirectoryResults())
@@ -208,7 +222,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     setPendingQuery('')
   }
 
-  // When changing page
+  /** Redirect when page number changes. */
   const changePageHandler = (
     _: React.MouseEvent<HTMLButtonElement> | null,
     pageNumber: number,
@@ -226,7 +240,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
     )
   }
 
-  // When changing number of rows in a page
+  /** Redirect when rows per page changes. */
   const changeRowsPerPageHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
