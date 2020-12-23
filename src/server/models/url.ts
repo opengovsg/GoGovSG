@@ -179,6 +179,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
           },
         )
 
+        // TODO: change to create after DB triggers are removed.
         await UrlClicks.upsert(
           {
             shortUrl: url.shortUrl,
