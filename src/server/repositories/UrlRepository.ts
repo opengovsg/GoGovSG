@@ -3,14 +3,10 @@
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
 import { Url, UrlType } from '../models/url'
+import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import {
-  logger,
-  redirectExpiry,
-  searchDescriptionWeight,
-  searchShortUrlWeight,
-} from '../config'
+import { logger, redirectExpiry } from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -51,9 +47,10 @@ export class UrlRepository implements UrlRepositoryInterface {
   public findByShortUrl: (
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (shortUrl) => {
-    return (await Url.findOne({
+    const url = await Url.scope('getClicks').findOne({
       where: { shortUrl },
-    })) as StorableUrl | null
+    })
+    return this.urlMapper.persistenceToDto(url)
   }
 
   public create: (
@@ -61,7 +58,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
-      const url = Url.create(
+      await Url.create(
         {
           ...properties,
           longUrl: file
@@ -69,14 +66,21 @@ export class UrlRepository implements UrlRepositoryInterface {
             : properties.longUrl,
           isFile: !!file,
         },
-        { transaction: t },
+        {
+          transaction: t,
+        },
       )
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }
-      return url
+
+      // Do a fresh read which eagerly loads the associated UrlClicks field.
+      return Url.scope('getClicks').findByPk(properties.shortUrl, {
+        transaction: t,
+      })
     })
 
+    if (!newUrl) throw new Error('Newly-created url is null')
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
@@ -86,7 +90,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
-    const url = await Url.findOne({ where: { shortUrl } })
+    const url = await Url.scope('getClicks').findOne({ where: { shortUrl } })
     if (!url) {
       throw new NotFoundError(
         `url not found in database:\tshortUrl=${shortUrl}`,
@@ -146,11 +150,16 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) => Promise<UrlDirectoryPaginated> = async (conditions) => {
     const { query, order, limit, offset, state, isFile, isEmail } = conditions
 
-    const { tableName } = Url
+    const { tableName: urlTableName } = Url
+    const { tableName: urlClicksTableName } = UrlClicks
 
     const urlVector = urlSearchVector
 
-    const rankingAlgorithm = this.getRankingAlgorithm(order, tableName)
+    const rankingAlgorithm = this.getRankingAlgorithm(
+      order,
+      urlTableName,
+      urlClicksTableName,
+    )
 
     const urlsModel = await (isEmail
       ? this.getRelevantUrlsFromEmail(
@@ -204,6 +213,8 @@ export class UrlRepository implements UrlRepositoryInterface {
     const rawQuery = `
       SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
+      JOIN url_clicks
+      ON "urls"."shortUrl" = "url_clicks"."shortUrl"
       JOIN users
       ON "urls"."userId" = "users"."id"
       AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
@@ -259,6 +270,8 @@ export class UrlRepository implements UrlRepositoryInterface {
     const rawQuery = `
       SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
+      JOIN url_clicks
+      ON "urls"."shortUrl" = "url_clicks"."shortUrl"
       JOIN users
       ON "urls"."userId" = "users"."id"
       JOIN plainto_tsquery('english', $newQuery) query
@@ -429,30 +442,22 @@ export class UrlRepository implements UrlRepositoryInterface {
    * Generates the ranking algorithm to be used in the ORDER BY clause in the
    * SQL statement based on the input sort order.
    * @param  {SearchResultsSortOrder} order
-   * @param  {string} tableName
+   * @param  {string} urlTableName
+   * @param  {string} urlClicksTableName
    * @returns The clause as a string.
    */
   private getRankingAlgorithm(
     order: SearchResultsSortOrder,
-    tableName: string,
+    urlTableName: string,
+    urlClicksTableName: string,
   ): string {
     let rankingAlgorithm
     switch (order) {
-      case SearchResultsSortOrder.Relevance:
-        {
-          // The 3rd argument passed into ts_rank_cd represents
-          // the normalization option that specifies whether and how
-          // a document's length should impact its rank. It works as a bit mask.
-          // 1 divides the rank by 1 + the logarithm of the document length
-          const textRanking = `ts_rank_cd('{0, 0, ${searchDescriptionWeight}, ${searchShortUrlWeight}}',${urlSearchVector}, query, 1)`
-          rankingAlgorithm = `${textRanking} * log(${tableName}.clicks + 1)`
-        }
-        break
       case SearchResultsSortOrder.Recency:
-        rankingAlgorithm = `${tableName}."createdAt"`
+        rankingAlgorithm = `${urlTableName}."createdAt"`
         break
       case SearchResultsSortOrder.Popularity:
-        rankingAlgorithm = `${tableName}.clicks`
+        rankingAlgorithm = `${urlClicksTableName}.clicks`
         break
       default:
         throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)

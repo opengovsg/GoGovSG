@@ -13,16 +13,29 @@ const userRepo = new UserRepository(
   new UrlMapper(),
 )
 
-const url = {
+const baseUrlTemplate = {
   shortUrl: 'short-link',
   longUrl: 'https://www.agency.gov.sg',
   state: 'ACTIVE',
-  clicks: 23,
   isFile: false,
   createdAt: Date.now(),
   updatedAt: Date.now(),
   description: 'An agency of the Singapore Government',
   contactEmail: 'contact-us@agency.gov.sg',
+}
+
+const urlClicks = {
+  clicks: 23,
+}
+
+const url = {
+  ...baseUrlTemplate,
+  UrlClicks: urlClicks,
+}
+
+const expectedUrl = {
+  ...baseUrlTemplate,
+  ...urlClicks,
 }
 
 describe('UserRepository', () => {
@@ -56,7 +69,7 @@ describe('UserRepository', () => {
       await expect(userRepo.findById(2)).resolves.toStrictEqual({
         id: user.id,
         email: user.email,
-        urls: [url],
+        urls: [expectedUrl],
       })
     })
   })
@@ -96,7 +109,7 @@ describe('UserRepository', () => {
       ).resolves.toStrictEqual({
         id: user.id,
         email: user.email,
-        urls: [url],
+        urls: [expectedUrl],
       })
     })
   })
@@ -120,10 +133,10 @@ describe('UserRepository', () => {
     it('returns null for null user', async () => {
       findOne.mockResolvedValue(null)
       await expect(
-        userRepo.findOneUrlForUser(2, url.shortUrl),
+        userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toBeNull()
       expect(scope).toHaveBeenCalledWith({
-        method: ['includeShortUrl', url.shortUrl],
+        method: ['includeShortUrl', expectedUrl.shortUrl],
       })
     })
 
@@ -134,10 +147,10 @@ describe('UserRepository', () => {
         }),
       })
       await expect(
-        userRepo.findOneUrlForUser(2, url.shortUrl),
-      ).resolves.toStrictEqual(url)
+        userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
+      ).resolves.toStrictEqual(expectedUrl)
       expect(scope).toHaveBeenCalledWith({
-        method: ['includeShortUrl', url.shortUrl],
+        method: ['includeShortUrl', expectedUrl.shortUrl],
       })
     })
   })
@@ -159,11 +172,13 @@ describe('UserRepository', () => {
         Urls: [url],
       }
       findOne.mockResolvedValue(user)
-      await expect(userRepo.findUserByUrl(url.shortUrl)).resolves.toStrictEqual(
+      await expect(
+        userRepo.findUserByUrl(expectedUrl.shortUrl),
+      ).resolves.toStrictEqual(
         expect.objectContaining({ id: user.id, email: user.email }),
       )
       expect(scope).toHaveBeenCalledWith({
-        method: ['includeShortUrl', url.shortUrl],
+        method: ['includeShortUrl', expectedUrl.shortUrl],
       })
     })
   })
@@ -227,7 +242,7 @@ describe('UserRepository', () => {
       findAndCountAll.mockResolvedValue({ rows, count: rows.length })
       await expect(userRepo.findUrlsForUser(conditions)).resolves.toStrictEqual(
         {
-          urls: [url],
+          urls: [expectedUrl],
           count: 1,
         },
       )
