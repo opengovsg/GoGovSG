@@ -1,30 +1,4 @@
-import {
-  CLOSE_CREATE_URL_MODAL,
-  GET_URLS_FOR_USER_SUCCESS,
-  IS_FETCHING_URLS,
-  OPEN_CREATE_URL_MODAL,
-  RESET_USER_STATE,
-  SET_CREATE_SHORT_LINK_ERROR,
-  SET_EDITED_CONTACT_EMAIL,
-  SET_EDITED_DESCRIPTION,
-  SET_EDITED_LONG_URL,
-  SET_FILE_UPLOAD_STATE,
-  SET_IS_UPLOADING,
-  SET_LAST_CREATED_LINK,
-  SET_LONG_URL,
-  SET_RANDOM_SHORT_URL,
-  SET_SHORT_URL,
-  SET_UPLOAD_FILE_ERROR,
-  SET_URL_FILTER,
-  SET_URL_TABLE_CONFIG,
-  SET_URL_UPLOAD_STATE,
-  SET_USER_ANNOUNCEMENT,
-  SET_USER_MESSAGE,
-  TOGGLE_URL_STATE_SUCCESS,
-  UPDATE_URL_COUNT,
-  UserActionType,
-  WIPE_USER_STATE,
-} from '../actions/types'
+import { UserAction, UserActionType } from '../actions/types'
 import { UserState } from './types'
 import { initialSortConfig } from '../constants'
 
@@ -61,58 +35,58 @@ const user: (state: UserState, action: UserActionType) => UserState = (
   let nextState: Partial<UserState> = {}
 
   switch (action.type) {
-    case SET_USER_MESSAGE:
+    case UserAction.SET_USER_MESSAGE:
       nextState = {
         message: action.payload,
       }
       break
-    case SET_USER_ANNOUNCEMENT:
+    case UserAction.SET_USER_ANNOUNCEMENT:
       nextState = {
         announcement: action.payload,
       }
       break
-    case SET_LAST_CREATED_LINK:
+    case UserAction.SET_LAST_CREATED_LINK:
       nextState = {
         lastCreatedLink: action.payload,
       }
       break
-    case SET_CREATE_SHORT_LINK_ERROR:
+    case UserAction.SET_CREATE_SHORT_LINK_ERROR:
       nextState = {
         createShortLinkError: action.payload,
       }
       break
-    case SET_UPLOAD_FILE_ERROR:
+    case UserAction.SET_UPLOAD_FILE_ERROR:
       nextState = {
         uploadFileError: action.payload,
       }
       break
-    case SET_IS_UPLOADING:
+    case UserAction.SET_IS_UPLOADING:
       nextState = {
         isUploading: action.payload,
       }
       break
-    case IS_FETCHING_URLS:
+    case UserAction.IS_FETCHING_URLS:
       nextState = {
         isFetchingUrls: action.payload,
       }
       break
-    case GET_URLS_FOR_USER_SUCCESS:
+    case UserAction.GET_URLS_FOR_USER_SUCCESS:
       nextState = {
         initialised: true,
         urls: action.payload,
       }
       break
-    case SET_SHORT_URL:
+    case UserAction.SET_SHORT_URL:
       nextState = {
         shortUrl: action.payload,
       }
       break
-    case SET_LONG_URL:
+    case UserAction.SET_LONG_URL:
       nextState = {
         longUrl: action.payload,
       }
       break
-    case SET_EDITED_LONG_URL: {
+    case UserAction.SET_EDITED_LONG_URL: {
       const { editedLongUrl, shortUrl } = action.payload
       nextState = {
         urls: state.urls.map((url) => {
@@ -127,7 +101,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       }
       break
     }
-    case SET_EDITED_CONTACT_EMAIL: {
+    case UserAction.SET_EDITED_CONTACT_EMAIL: {
       const { editedContactEmail, shortUrl } = action.payload
       nextState = {
         urls: state.urls.map((url) => {
@@ -142,7 +116,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       }
       break
     }
-    case SET_EDITED_DESCRIPTION: {
+    case UserAction.SET_EDITED_DESCRIPTION: {
       const { editedDescription, shortUrl } = action.payload
       nextState = {
         urls: state.urls.map((url) => {
@@ -157,23 +131,23 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       }
       break
     }
-    case SET_RANDOM_SHORT_URL:
+    case UserAction.SET_RANDOM_SHORT_URL:
       nextState = {
         shortUrl: action.payload,
       }
       break
-    case RESET_USER_STATE:
+    case UserAction.RESET_USER_STATE:
       nextState = {
         shortUrl: '',
         longUrl: '',
       }
       break
-    case WIPE_USER_STATE:
+    case UserAction.WIPE_USER_STATE:
       nextState = {
         ...initialState,
       }
       break
-    case TOGGLE_URL_STATE_SUCCESS: {
+    case UserAction.TOGGLE_URL_STATE_SUCCESS: {
       const { shortUrl, toState } = action.payload
 
       nextState = {
@@ -189,17 +163,17 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       }
       break
     }
-    case OPEN_CREATE_URL_MODAL:
+    case UserAction.OPEN_CREATE_URL_MODAL:
       nextState = {
         createUrlModal: true,
       }
       break
-    case CLOSE_CREATE_URL_MODAL:
+    case UserAction.CLOSE_CREATE_URL_MODAL:
       nextState = {
         createUrlModal: false,
       }
       break
-    case SET_URL_TABLE_CONFIG:
+    case UserAction.SET_URL_TABLE_CONFIG:
       nextState = {
         tableConfig: {
           ...state.tableConfig,
@@ -207,7 +181,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
         },
       }
       break
-    case SET_URL_FILTER:
+    case UserAction.SET_URL_FILTER:
       nextState = {
         tableConfig: {
           ...state.tableConfig,
@@ -216,12 +190,12 @@ const user: (state: UserState, action: UserActionType) => UserState = (
         },
       }
       break
-    case UPDATE_URL_COUNT:
+    case UserAction.UPDATE_URL_COUNT:
       nextState = {
         urlCount: action.payload,
       }
       break
-    case SET_URL_UPLOAD_STATE:
+    case UserAction.SET_URL_UPLOAD_STATE:
       nextState = {
         uploadState: {
           ...state.uploadState,
@@ -229,7 +203,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
         },
       }
       break
-    case SET_FILE_UPLOAD_STATE:
+    case UserAction.SET_FILE_UPLOAD_STATE:
       nextState = {
         uploadState: {
           ...state.uploadState,

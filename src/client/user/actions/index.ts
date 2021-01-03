@@ -6,32 +6,11 @@ import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import * as Sentry from '@sentry/browser'
 import {
-  CLOSE_CREATE_URL_MODAL,
   CloseCreateUrlModalAction,
-  GET_URLS_FOR_USER_SUCCESS,
   GetUrlsForUserSuccessAction,
-  IS_FETCHING_URLS,
   IsFetchingUrlsAction,
-  OPEN_CREATE_URL_MODAL,
   OpenCreateUrlModalAction,
-  RESET_USER_STATE,
   ResetUserStateAction,
-  SET_CREATE_SHORT_LINK_ERROR,
-  SET_EDITED_CONTACT_EMAIL,
-  SET_EDITED_DESCRIPTION,
-  SET_EDITED_LONG_URL,
-  SET_FILE_UPLOAD_STATE,
-  SET_IS_UPLOADING,
-  SET_LAST_CREATED_LINK,
-  SET_LONG_URL,
-  SET_RANDOM_SHORT_URL,
-  SET_SHORT_URL,
-  SET_UPLOAD_FILE_ERROR,
-  SET_URL_FILTER,
-  SET_URL_TABLE_CONFIG,
-  SET_URL_UPLOAD_STATE,
-  SET_USER_ANNOUNCEMENT,
-  SET_USER_MESSAGE,
   SetCreateShortLinkErrorAction,
   SetEditedContactEmailAction,
   SetEditedDescriptionAction,
@@ -48,12 +27,10 @@ import {
   SetUrlUploadStateAction,
   SetUserAnnouncementAction,
   SetUserMessageAction,
-  TOGGLE_URL_STATE_SUCCESS,
   ToggleUrlStateSuccessAction,
-  UPDATE_URL_COUNT,
   UpdateUrlCountAction,
+  UserAction,
   UserActionType,
-  WIPE_USER_STATE,
   WipeUserStateAction,
 } from './types'
 import {
@@ -86,35 +63,35 @@ import { GAEvent } from '../../app/util/ga'
 const setUrlUploadState: (payload: boolean) => SetUrlUploadStateAction = (
   payload,
 ) => ({
-  type: SET_URL_UPLOAD_STATE,
+  type: UserAction.SET_URL_UPLOAD_STATE,
   payload,
 })
 
 const setFileUploadState: (payload: boolean) => SetFileUploadStateAction = (
   payload,
 ) => ({
-  type: SET_FILE_UPLOAD_STATE,
+  type: UserAction.SET_FILE_UPLOAD_STATE,
   payload,
 })
 
 const isFetchingUrls: (payload: boolean) => IsFetchingUrlsAction = (
   payload,
 ) => ({
-  type: IS_FETCHING_URLS,
+  type: UserAction.IS_FETCHING_URLS,
   payload,
 })
 
 const setLastCreatedLink: (payload: string) => SetLastCreatedLinkAction = (
   payload,
 ) => ({
-  type: SET_LAST_CREATED_LINK,
+  type: UserAction.SET_LAST_CREATED_LINK,
   payload,
 })
 
 const setIsUploading: (payload: boolean) => SetIsUploadingAction = (
   payload,
 ) => ({
-  type: SET_IS_UPLOADING,
+  type: UserAction.SET_IS_UPLOADING,
   payload,
 })
 
@@ -122,7 +99,7 @@ const setEditedContactEmail: (
   shortUrl: string,
   editedContactEmail: string,
 ) => SetEditedContactEmailAction = (shortUrl, editedContactEmail) => ({
-  type: SET_EDITED_CONTACT_EMAIL,
+  type: UserAction.SET_EDITED_CONTACT_EMAIL,
   payload: {
     shortUrl,
     editedContactEmail,
@@ -133,7 +110,7 @@ const setEditedDescription: (
   shortUrl: string,
   editedDescription: string,
 ) => SetEditedDescriptionAction = (shortUrl, editedDescription) => ({
-  type: SET_EDITED_DESCRIPTION,
+  type: UserAction.SET_EDITED_DESCRIPTION,
   payload: {
     shortUrl,
     editedDescription,
@@ -143,21 +120,21 @@ const setEditedDescription: (
 const setCreateShortLinkError: (
   payload: string,
 ) => SetCreateShortLinkErrorAction = (payload) => ({
-  type: SET_CREATE_SHORT_LINK_ERROR,
+  type: UserAction.SET_CREATE_SHORT_LINK_ERROR,
   payload,
 })
 
 const setUploadFileError: (payload: string) => SetUploadFileErrorAction = (
   payload,
 ) => ({
-  type: SET_UPLOAD_FILE_ERROR,
+  type: UserAction.SET_UPLOAD_FILE_ERROR,
   payload,
 })
 
 const isGetUrlsForUserSuccess: (
   urls: Array<UrlType>,
 ) => GetUrlsForUserSuccessAction = (urls) => ({
-  type: GET_URLS_FOR_USER_SUCCESS,
+  type: UserAction.GET_URLS_FOR_USER_SUCCESS,
   payload: urls,
 })
 
@@ -170,27 +147,27 @@ const isGetUrlsForUserSuccess: (
 const setUrlTableConfig: (
   payload: UrlTableConfig,
 ) => SetUrlTableConfigAction = (payload) => ({
-  type: SET_URL_TABLE_CONFIG,
+  type: UserAction.SET_URL_TABLE_CONFIG,
   payload,
 })
 
 const setUrlFilter: (payload: UrlTableFilterConfig) => SetUrlFilterAction = (
   payload,
 ) => ({
-  type: SET_URL_FILTER,
+  type: UserAction.SET_URL_FILTER,
   payload,
 })
 
 const updateUrlCount: (urlCount: number) => UpdateUrlCountAction = (
   urlCount,
 ) => ({
-  type: UPDATE_URL_COUNT,
+  type: UserAction.UPDATE_URL_COUNT,
   payload: urlCount,
 })
 
 const setUserMessage: (payload: string) => SetUserMessageAction = (
   payload,
-) => ({ type: SET_USER_MESSAGE, payload })
+) => ({ type: UserAction.SET_USER_MESSAGE, payload })
 
 const setUserAnnouncement: (payload: {
   message: string
@@ -199,7 +176,7 @@ const setUserAnnouncement: (payload: {
   url: string
   image: string
 }) => SetUserAnnouncementAction = (payload) => ({
-  type: SET_USER_ANNOUNCEMENT,
+  type: UserAction.SET_USER_ANNOUNCEMENT,
   payload,
 })
 
@@ -336,11 +313,11 @@ const getUrlsForUser = (): ThunkAction<
 }
 
 const resetUserState: () => ResetUserStateAction = () => ({
-  type: RESET_USER_STATE,
+  type: UserAction.RESET_USER_STATE,
 })
 
 const wipeUserState: () => WipeUserStateAction = () => ({
-  type: WIPE_USER_STATE,
+  type: UserAction.WIPE_USER_STATE,
 })
 
 // API call to update long URL
@@ -452,13 +429,13 @@ const replaceFile = (
 
 // For setting short link value in the input box
 const setShortUrl: (shortUrl: string) => SetShortUrlAction = (shortUrl) => ({
-  type: SET_SHORT_URL,
+  type: UserAction.SET_SHORT_URL,
   payload: shortUrl,
 })
 
 // For setting URL value in the input box
 const setLongUrl: (longUrl: string) => SetLongUrlAction = (longUrl) => ({
-  type: SET_LONG_URL,
+  type: UserAction.SET_LONG_URL,
   payload: removeHttpsProtocol(longUrl),
 })
 
@@ -466,7 +443,7 @@ const setEditedLongUrl: (
   shortUrl: string,
   editedLongUrl: string,
 ) => SetEditedLongUrlAction = (shortUrl, editedLongUrl) => ({
-  type: SET_EDITED_LONG_URL,
+  type: UserAction.SET_EDITED_LONG_URL,
   payload: { shortUrl, editedLongUrl },
 })
 
@@ -474,7 +451,7 @@ const setEditedLongUrl: (
 const setRandomShortUrl = () => (dispatch: Dispatch<SetRandomShortUrlAction>) =>
   generateShortUrl().then((randomUrl) => {
     dispatch<SetRandomShortUrlAction>({
-      type: SET_RANDOM_SHORT_URL,
+      type: UserAction.SET_RANDOM_SHORT_URL,
       payload: randomUrl,
     })
   })
@@ -483,7 +460,7 @@ const isToggleUrlStateSuccess: (payload: {
   shortUrl: string
   toState: UrlState
 }) => ToggleUrlStateSuccessAction = (payload) => ({
-  type: TOGGLE_URL_STATE_SUCCESS,
+  type: UserAction.TOGGLE_URL_STATE_SUCCESS,
   payload,
 })
 
@@ -510,11 +487,11 @@ const toggleUrlState = (shortUrl: string, state: UrlState) => (
 }
 
 const openCreateUrlModal: () => OpenCreateUrlModalAction = () => ({
-  type: OPEN_CREATE_URL_MODAL,
+  type: UserAction.OPEN_CREATE_URL_MODAL,
 })
 
 const closeCreateUrlModal: () => CloseCreateUrlModalAction = () => ({
-  type: CLOSE_CREATE_URL_MODAL,
+  type: UserAction.CLOSE_CREATE_URL_MODAL,
 })
 
 const urlCreated = (
