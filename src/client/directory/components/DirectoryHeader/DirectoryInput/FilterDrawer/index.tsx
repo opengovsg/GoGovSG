@@ -33,7 +33,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-// Filter the search by keyword or email
+/**
+ * @component Filter dropdown that filters the search by keyword or email.
+ */
 const FilterDrawer: FunctionComponent<FilterDrawerProps> = ({
   onClick,
   selected,

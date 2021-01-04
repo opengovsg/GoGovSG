@@ -10,6 +10,7 @@ import {
   mockQuery,
   mockTransaction,
   redisMockClient,
+  urlClicksModelMock,
   urlModelMock,
   userModelMock,
 } from './util'
@@ -83,6 +84,10 @@ jest.mock('../../../src/server/util/sequelize', () => ({
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
+}))
+
+jest.mock('../../../src/server/models/statistics/clicks', () => ({
+  UrlClicks: urlClicksModelMock,
 }))
 
 // Necessary mock for app to work

@@ -80,7 +80,9 @@ const useStyles = makeStyles((theme) =>
     },
   }),
 )
-
+/**
+ * @component Popup drawer for mobile view.
+ */
 const MobilePanel: FunctionComponent<MobilePanelProps> = ({
   isOpen,
   setOpen,

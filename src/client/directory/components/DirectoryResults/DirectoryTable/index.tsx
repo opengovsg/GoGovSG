@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
+/**
+ * @component Holds the entire search results in table format and the pagination bar.
+ */
 const DirectoryTable: FunctionComponent<DirectoryTableProps> = React.memo(
   ({
     searchResults,

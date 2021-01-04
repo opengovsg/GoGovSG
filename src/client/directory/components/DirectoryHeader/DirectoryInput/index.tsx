@@ -127,6 +127,9 @@ const useStyles = makeStyles((theme) =>
 
 const noOp = () => {}
 
+/**
+ * @component Search bar with filter panel and sort panel.
+ */
 const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
   showAdornments,
   query,
