@@ -36,22 +36,22 @@ export enum UserAction {
 }
 
 export type SetUrlUploadStateAction = {
-  type: typeof UserAction.SET_URL_UPLOAD_STATE
+  type: UserAction.SET_URL_UPLOAD_STATE
   payload: boolean
 }
 
 export type SetFileUploadStateAction = {
-  type: typeof UserAction.SET_FILE_UPLOAD_STATE
+  type: UserAction.SET_FILE_UPLOAD_STATE
   payload: boolean
 }
 
 export type SetUserMessageAction = {
-  type: typeof UserAction.SET_USER_MESSAGE
+  type: UserAction.SET_USER_MESSAGE
   payload: string
 }
 
 export type SetUserAnnouncementAction = {
-  type: typeof UserAction.SET_USER_ANNOUNCEMENT
+  type: UserAction.SET_USER_ANNOUNCEMENT
   payload: {
     message: string | undefined
     title: string | undefined
@@ -62,7 +62,7 @@ export type SetUserAnnouncementAction = {
 }
 
 export type SetEditedContactEmailAction = {
-  type: typeof UserAction.SET_EDITED_CONTACT_EMAIL
+  type: UserAction.SET_EDITED_CONTACT_EMAIL
   payload: {
     shortUrl: string
     editedContactEmail: string
@@ -70,7 +70,7 @@ export type SetEditedContactEmailAction = {
 }
 
 export type SetEditedDescriptionAction = {
-  type: typeof UserAction.SET_EDITED_DESCRIPTION
+  type: UserAction.SET_EDITED_DESCRIPTION
   payload: {
     shortUrl: string
     editedDescription: string
@@ -78,48 +78,48 @@ export type SetEditedDescriptionAction = {
 }
 
 export type SetLastCreatedLinkAction = {
-  type: typeof UserAction.SET_LAST_CREATED_LINK
+  type: UserAction.SET_LAST_CREATED_LINK
   payload: string
 }
 
 export type WipeUserStateAction = {
-  type: typeof UserAction.WIPE_USER_STATE
+  type: UserAction.WIPE_USER_STATE
 }
 
 export type IsFetchingUrlsAction = {
-  type: typeof UserAction.IS_FETCHING_URLS
+  type: UserAction.IS_FETCHING_URLS
   payload: boolean
 }
 
 export type CreateUrlSuccessAction = {
-  type: typeof UserAction.CREATE_URL_SUCCESS
+  type: UserAction.CREATE_URL_SUCCESS
 }
 
 export type GetUrlsForUserSuccessAction = {
-  type: typeof UserAction.GET_URLS_FOR_USER_SUCCESS
+  type: UserAction.GET_URLS_FOR_USER_SUCCESS
   payload: Array<UrlType>
 }
 
 export type OpenCreateUrlModalAction = {
-  type: typeof UserAction.OPEN_CREATE_URL_MODAL
+  type: UserAction.OPEN_CREATE_URL_MODAL
 }
 
 export type CloseCreateUrlModalAction = {
-  type: typeof UserAction.CLOSE_CREATE_URL_MODAL
+  type: UserAction.CLOSE_CREATE_URL_MODAL
 }
 
 export type SetShortUrlAction = {
-  type: typeof UserAction.SET_SHORT_URL
+  type: UserAction.SET_SHORT_URL
   payload: string
 }
 
 export type SetLongUrlAction = {
-  type: typeof UserAction.SET_LONG_URL
+  type: UserAction.SET_LONG_URL
   payload: string
 }
 
 export type SetEditedLongUrlAction = {
-  type: typeof UserAction.SET_EDITED_LONG_URL
+  type: UserAction.SET_EDITED_LONG_URL
   payload: {
     shortUrl: string
     editedLongUrl: string
@@ -127,16 +127,16 @@ export type SetEditedLongUrlAction = {
 }
 
 export type SetRandomShortUrlAction = {
-  type: typeof UserAction.SET_RANDOM_SHORT_URL
+  type: UserAction.SET_RANDOM_SHORT_URL
   payload: string
 }
 
 export type ResetUserStateAction = {
-  type: typeof UserAction.RESET_USER_STATE
+  type: UserAction.RESET_USER_STATE
 }
 
 export type ToggleUrlStateSuccessAction = {
-  type: typeof UserAction.TOGGLE_URL_STATE_SUCCESS
+  type: UserAction.TOGGLE_URL_STATE_SUCCESS
   payload: {
     shortUrl: string
     toState: UrlState
@@ -144,32 +144,32 @@ export type ToggleUrlStateSuccessAction = {
 }
 
 export type SetUrlTableConfigAction = {
-  type: typeof UserAction.SET_URL_TABLE_CONFIG
+  type: UserAction.SET_URL_TABLE_CONFIG
   payload: UrlTableConfig
 }
 
 export type UpdateUrlCountAction = {
-  type: typeof UserAction.UPDATE_URL_COUNT
+  type: UserAction.UPDATE_URL_COUNT
   payload: number
 }
 
 export type SetIsUploadingAction = {
-  type: typeof UserAction.SET_IS_UPLOADING
+  type: UserAction.SET_IS_UPLOADING
   payload: boolean
 }
 
 export type SetUploadFileErrorAction = {
-  type: typeof UserAction.SET_UPLOAD_FILE_ERROR
+  type: UserAction.SET_UPLOAD_FILE_ERROR
   payload: string
 }
 
 export type SetCreateShortLinkErrorAction = {
-  type: typeof UserAction.SET_CREATE_SHORT_LINK_ERROR
+  type: UserAction.SET_CREATE_SHORT_LINK_ERROR
   payload: string
 }
 
 export type SetUrlFilterAction = {
-  type: typeof UserAction.SET_URL_FILTER
+  type: UserAction.SET_URL_FILTER
   payload: UrlTableFilterConfig
 }
 
