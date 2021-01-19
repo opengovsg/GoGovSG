@@ -1,2 +1,7 @@
-User-agent: *
-Disallow: /bundle.js
+User-agent: NLB_archive_bot
+
+Allow: /
+Allow: /bundle.js
+Allow: /css*
+Allow: /assets/*
+Disallow: *
