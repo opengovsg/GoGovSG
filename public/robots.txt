@@ -1,0 +1,9 @@
+User-agent: NLB_archive_bot
+
+Allow: /
+Allow: /bundle.js
+Allow: /css2
+Allow: /assets/*
+Allow: /s/*.woff2$
+Allow: /favicon.ico
+Disallow: *
