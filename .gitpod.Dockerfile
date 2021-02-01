@@ -15,7 +15,7 @@ USER gitpod
 
 ENV NODE_ENV=development
 ENV PORT=8080
-ENV DB_URI=postgres://0.0.0.0:5432/postgres
+ENV DB_URI=postgres://gitpod@0.0.0.0:5432/postgres
 ENV REDIS_OTP_URI=redis://0.0.0.0:6379/0
 ENV REDIS_SESSION_URI=redis://0.0.0.0:6379/1
 ENV REDIS_REDIRECT_URI=redis://0.0.0.0:6379/2
