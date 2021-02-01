@@ -2,19 +2,24 @@ import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
 import jsonMessage from '../../util/json'
-import { UrlCreationRequest } from '../user'
-import { UrlThreatScanService } from './interfaces'
 import { DependencyIds } from '../../constants'
 import { logger } from '../../config'
 import { UserType } from '../../models/user'
 
+import { UrlCreationRequest } from '../user'
+
+import { SafeBrowsingService } from './services'
+
 @injectable()
 export class UrlCheckController {
-  private urlThreatScanService: UrlThreatScanService
+  private urlThreatScanService: Pick<
+    SafeBrowsingService,
+    keyof SafeBrowsingService
+  >
 
   public constructor(
     @inject(DependencyIds.urlThreatScanService)
-    urlThreatScanService: UrlThreatScanService,
+    urlThreatScanService: Pick<SafeBrowsingService, keyof SafeBrowsingService>,
   ) {
     this.urlThreatScanService = urlThreatScanService
   }

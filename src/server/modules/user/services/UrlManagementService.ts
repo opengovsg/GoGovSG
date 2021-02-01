@@ -15,10 +15,9 @@ import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepo
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 import { DependencyIds } from '../../../constants'
-import * as interfaces from '../interfaces'
 
 @injectable()
-export class UrlManagementService implements interfaces.UrlManagementService {
+export class UrlManagementService {
   private userRepository: UserRepositoryInterface
 
   private urlRepository: UrlRepositoryInterface

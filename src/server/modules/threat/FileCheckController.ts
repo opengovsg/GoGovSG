@@ -3,8 +3,7 @@ import { inject, injectable } from 'inversify'
 
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
-import { FileTypeFilterService } from './services'
-import { VirusScanService } from './interfaces'
+import { CloudmersiveScanService, FileTypeFilterService } from './services'
 import { logger } from '../../config'
 import { UserType } from '../../models/user'
 
@@ -15,7 +14,10 @@ export class FileCheckController {
     keyof FileTypeFilterService
   >
 
-  private virusScanService: VirusScanService
+  private virusScanService: Pick<
+    CloudmersiveScanService,
+    keyof CloudmersiveScanService
+  >
 
   public constructor(
     @inject(DependencyIds.fileTypeFilterService)
@@ -24,7 +26,10 @@ export class FileCheckController {
       keyof FileTypeFilterService
     >,
     @inject(DependencyIds.virusScanService)
-    virusScanService: VirusScanService,
+    virusScanService: Pick<
+      CloudmersiveScanService,
+      keyof CloudmersiveScanService
+    >,
   ) {
     this.fileTypeFilterService = fileTypeFilterService
     this.virusScanService = virusScanService

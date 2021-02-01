@@ -1,6 +1,5 @@
 import fetch from 'cross-fetch'
 import { inject, injectable } from 'inversify'
-import { UrlThreatScanService } from '../interfaces'
 import { logger, safeBrowsingKey, safeBrowsingLogOnly } from '../../../config'
 import { SafeBrowsingRepository } from '../repositories'
 import { DependencyIds } from '../../../constants'
@@ -8,10 +7,8 @@ import { DependencyIds } from '../../../constants'
 const ENDPOINT = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${safeBrowsingKey}`
 
 @injectable()
-export class SafeBrowsingService implements UrlThreatScanService {
+export class SafeBrowsingService {
   private safeBrowsingRepository: SafeBrowsingRepository
-
-  public aFetch: any = fetch
 
   public constructor(
     @inject(DependencyIds.safeBrowsingRepository)
