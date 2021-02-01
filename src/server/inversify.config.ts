@@ -7,6 +7,8 @@ import {
   accessEndpoint,
   bucketEndpoint,
   cloudmersiveKey,
+  linksToRotate,
+  ogUrl,
   s3Bucket,
   userAnnouncement,
   userMessage,
@@ -38,14 +40,13 @@ import { StatisticsService } from './modules/statistics/services'
 import { StatisticsController } from './modules/statistics'
 
 import { GaController } from './controllers/GaController'
-import { RotatingLinksController } from './controllers/RotatingLinksController'
+import { RotatingLinksController } from './modules/display/RotatingLinksController'
 import { SentryController } from './modules/sentry/SentryController'
 import { LoginController } from './controllers/LoginController'
 import { AuthService } from './services/AuthService'
 import { LogoutController } from './controllers/LogoutController'
 import { UrlManagementService } from './modules/user/services'
 import { UserController } from './modules/user'
-import { QrCodeService } from './services/QrCodeService'
 import { DirectoryController } from './controllers/DirectoryController'
 import { DirectorySearchService } from './services/DirectorySearchService'
 import { LinkStatisticsController } from './controllers/LinkStatisticsController'
@@ -63,6 +64,9 @@ import {
 } from './modules/threat/services'
 import { FileCheckController, UrlCheckController } from './modules/threat'
 
+import { QrCodeService } from './modules/qr/services'
+import { QrCodeController } from './modules/qr'
+
 function bindIfUnbound<T>(
   dependencyId: symbol,
   impl: { new (...args: any[]): T },
@@ -77,6 +81,8 @@ export default () => {
   container
     .bind(DependencyIds.userAnnouncement)
     .toConstantValue(userAnnouncement)
+  container.bind(DependencyIds.linksToRotate).toConstantValue(linksToRotate)
+  container.bind(DependencyIds.ogUrl).toConstantValue(ogUrl)
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
@@ -102,6 +108,7 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
+  bindIfUnbound(DependencyIds.qrCodeController, QrCodeController)
   bindIfUnbound(DependencyIds.directorySearchService, DirectorySearchService)
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)

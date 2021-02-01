@@ -29,6 +29,7 @@ export const DependencyIds = {
   urlManagementService: Symbol.for('urlManagementService'),
   userController: Symbol.for('userController'),
   qrCodeService: Symbol.for('qrCodeService'),
+  qrCodeController: Symbol.for('qrCodeController'),
   directorySearchService: Symbol.for('directorySearchService'),
   directoryController: Symbol.for('directoryController'),
   linkStatisticsController: Symbol.for('linkStatisticsController'),
@@ -46,6 +47,8 @@ export const DependencyIds = {
   urlCheckController: Symbol.for('urlCheckController'),
   userMessage: Symbol.for('userMessage'),
   userAnnouncement: Symbol.for('userAnnouncement'),
+  linksToRotate: Symbol.for('linksToRotate'),
+  ogUrl: Symbol.for('ogUrl'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
