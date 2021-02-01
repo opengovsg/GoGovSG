@@ -13,7 +13,7 @@ import { MessageType } from '../../../shared/util/messages'
 import { StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
-import { UrlManagementService } from './interfaces/UrlManagementService'
+import { UrlManagementService } from './services'
 
 type AnnouncementResponse = {
   message?: string
@@ -25,7 +25,10 @@ type AnnouncementResponse = {
 
 @injectable()
 export class UserController {
-  private urlManagementService: UrlManagementService
+  private urlManagementService: Pick<
+    UrlManagementService,
+    keyof UrlManagementService
+  >
 
   private userMessage: string
 
@@ -33,7 +36,10 @@ export class UserController {
 
   public constructor(
     @inject(DependencyIds.urlManagementService)
-    urlManagementService: UrlManagementService,
+    urlManagementService: Pick<
+      UrlManagementService,
+      keyof UrlManagementService
+    >,
     @inject(DependencyIds.userMessage)
     userMessage: string,
     @inject(DependencyIds.userAnnouncement)

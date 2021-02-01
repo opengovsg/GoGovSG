@@ -1,6 +1,5 @@
 import FileType from 'file-type'
 import { inject, injectable } from 'inversify'
-import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
 
 export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
@@ -43,8 +42,8 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
 ]
 
 @injectable()
-export class FileTypeFilterService implements interfaces.FileTypeFilterService {
-  allowedFileExtensions: string[]
+export class FileTypeFilterService {
+  private allowedFileExtensions: string[]
 
   constructor(
     @inject(DependencyIds.allowedFileExtensions)

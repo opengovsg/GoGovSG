@@ -2,7 +2,7 @@ import fetch from 'cross-fetch'
 import { inject, injectable } from 'inversify'
 import { UrlThreatScanService } from '../interfaces'
 import { logger, safeBrowsingKey, safeBrowsingLogOnly } from '../../../config'
-import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository'
+import { SafeBrowsingRepository } from '../repositories'
 import { DependencyIds } from '../../../constants'
 
 const ENDPOINT = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${safeBrowsingKey}`

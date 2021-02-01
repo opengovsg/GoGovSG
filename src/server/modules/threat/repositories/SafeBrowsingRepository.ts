@@ -3,14 +3,12 @@
 import { inject, injectable } from 'inversify'
 import { safeBrowsingClient } from '../../../redis'
 import { HasCacheDuration } from '../../../repositories/types'
-import * as interfaces from '../interfaces'
 import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
 import { DependencyIds } from '../../../constants'
 import { NotFoundError } from '../../../util/error'
 
 @injectable()
-export class SafeBrowsingRepository
-  implements interfaces.SafeBrowsingRepository {
+export class SafeBrowsingRepository {
   private safeBrowsingMapper: TwoWayMapper<HasCacheDuration[], string>
 
   public constructor(
@@ -23,8 +21,8 @@ export class SafeBrowsingRepository
   public set: (url: string, matches: HasCacheDuration[]) => Promise<void> = (
     url,
     matches,
-  ) => {
-    return new Promise((resolve, reject) => {
+  ) =>
+    new Promise((resolve, reject) => {
       if (!matches.length || !matches[0]) {
         reject(
           new NotFoundError(`No matches found for ${url}, should not persist`),
@@ -51,10 +49,9 @@ export class SafeBrowsingRepository
         },
       )
     })
-  }
 
-  public get: (url: string) => Promise<HasCacheDuration[] | null> = (url) => {
-    return new Promise((resolve, reject) => {
+  public get: (url: string) => Promise<HasCacheDuration[] | null> = (url) =>
+    new Promise((resolve, reject) => {
       safeBrowsingClient.get(url, (redisError, string) => {
         if (redisError) {
           reject(redisError)
@@ -68,7 +65,6 @@ export class SafeBrowsingRepository
         resolve(this.safeBrowsingMapper.persistenceToDto(string))
       })
     })
-  }
 }
 
 export default SafeBrowsingRepository
