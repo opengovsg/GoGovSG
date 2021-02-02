@@ -1,7 +1,8 @@
-import { DirectorySearchService } from '../../../src/server/services/DirectorySearchService'
-import { UrlRepositoryMock } from '../mocks/repositories/UrlRepository'
-import { SearchResultsSortOrder } from '../../../src/shared/search'
-import { DirectoryQueryConditions } from '../../../src/server/services/interfaces/DirectorySearchServiceInterface'
+import { UrlRepositoryMock } from '../../../../../../test/server/mocks/repositories/UrlRepository'
+import { SearchResultsSortOrder } from '../../../../../shared/search'
+import { DirectoryQueryConditions } from '../..'
+
+import { DirectorySearchService } from '..'
 
 /**
  * Unit tests for DirectorySearchService.

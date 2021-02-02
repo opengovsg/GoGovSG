@@ -1,5 +1,5 @@
 import { StorableFile, StorableUrl, UrlDirectoryPaginated } from '../types'
-import { DirectoryQueryConditions } from '../../services/interfaces/DirectorySearchServiceInterface'
+import { DirectoryQueryConditions } from '../../modules/directory'
 
 /**
  * A url repository that handles access to the data store of Urls.

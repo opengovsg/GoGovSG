@@ -1,19 +1,18 @@
 import { inject, injectable } from 'inversify'
 import Express from 'express'
-import { DirectorySearchServiceInterface } from '../services/interfaces/DirectorySearchServiceInterface'
-import { DependencyIds } from '../constants'
-import { logger } from '../config'
-import jsonMessage from '../util/json'
-import { DirectoryControllerInterface } from './interfaces/DirectoryControllerInterface'
-import { SearchResultsSortOrder } from '../../shared/search'
+import { DirectorySearchService } from './interfaces'
+import { DependencyIds } from '../../constants'
+import { logger } from '../../config'
+import jsonMessage from '../../util/json'
+import { SearchResultsSortOrder } from '../../../shared/search'
 
 @injectable()
-export class DirectoryController implements DirectoryControllerInterface {
-  private directorySearchService: DirectorySearchServiceInterface
+export class DirectoryController {
+  private directorySearchService: DirectorySearchService
 
   public constructor(
     @inject(DependencyIds.directorySearchService)
-    directorySearchService: DirectorySearchServiceInterface,
+    directorySearchService: DirectorySearchService,
   ) {
     this.directorySearchService = directorySearchService
   }

@@ -1,21 +1,36 @@
 import httpMock from 'node-mocks-http'
-import { DirectoryController } from '../../../src/server/controllers/DirectoryController'
-import { DirectorySearchServiceMock } from '../mocks/services/DirectorySearchService'
-import { logger } from '../config'
-import { SearchResultsSortOrder } from '../../../src/shared/search'
+import { SearchResultsSortOrder } from '../../../../shared/search'
 
-const directorySearchService = new DirectorySearchServiceMock()
-const controller = new DirectoryController(directorySearchService)
-const searchSpy = jest.spyOn(directorySearchService, 'plainTextSearch')
+import { logger } from '../../../../../test/server/config'
+
+import { DirectoryController } from '..'
+
+const searchResults = {
+  urls: [
+    {
+      longUrl: 'https://test-moh.com',
+      shortUrl: 'test-moh',
+      state: 'ACTIVE',
+      isFile: false,
+      email: 'test@test.gov.sg',
+    },
+  ],
+  count: 0,
+}
+
+const plainTextSearch = jest.fn()
 const loggerErrorSpy = jest.spyOn(logger, 'error')
+
+const controller = new DirectoryController({ plainTextSearch })
 
 /**
  * Unit test for directory controller.
  */
 describe('DirectoryController unit test', () => {
   beforeEach(() => {
-    searchSpy.mockClear()
+    plainTextSearch.mockClear()
     loggerErrorSpy.mockClear()
+    plainTextSearch.mockResolvedValue(searchResults)
   })
   it('should return directory search results from service', async () => {
     const req = httpMock.createRequest({
@@ -43,20 +58,8 @@ describe('DirectoryController unit test', () => {
       isEmail: true,
     }
 
-    expect(directorySearchService.plainTextSearch).toBeCalledWith(conditions)
-    expect(okSpy).toHaveBeenCalled()
-    expect(okSpy).toHaveBeenCalledWith({
-      urls: [
-        {
-          longUrl: 'https://test-moh.com',
-          shortUrl: 'test-moh',
-          state: 'ACTIVE',
-          isFile: false,
-          email: 'test@test.gov.sg',
-        },
-      ],
-      count: 0,
-    })
+    expect(plainTextSearch).toBeCalledWith(conditions)
+    expect(okSpy).toHaveBeenCalledWith(searchResults)
   })
 
   it('should work with without isfile and state', async () => {
@@ -85,8 +88,8 @@ describe('DirectoryController unit test', () => {
       isEmail: true,
     }
 
-    expect(directorySearchService.plainTextSearch).toBeCalledWith(conditions)
-    expect(okSpy).toHaveBeenCalled()
+    expect(plainTextSearch).toBeCalledWith(conditions)
+    expect(okSpy).toHaveBeenCalledWith(searchResults)
   })
 
   it('should respond with server error and log the error when service throws', async () => {
@@ -104,9 +107,7 @@ describe('DirectoryController unit test', () => {
     const res: any = httpMock.createResponse()
     const serverErrorSpy = jest.fn()
     res.serverError = serverErrorSpy
-    searchSpy.mockImplementationOnce(() => {
-      throw new Error('Service error')
-    })
+    plainTextSearch.mockRejectedValue(new Error('Service error'))
     await controller.getDirectoryWithConditions(req, res)
     expect(res.serverError).toHaveBeenCalled()
     const conditions = {
@@ -118,7 +119,7 @@ describe('DirectoryController unit test', () => {
       isFile: undefined,
       isEmail: true,
     }
-    expect(directorySearchService.plainTextSearch).toBeCalledWith(conditions)
+    expect(plainTextSearch).toBeCalledWith(conditions)
     expect(logger.error).toBeCalled()
   })
 })

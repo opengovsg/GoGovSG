@@ -21,7 +21,7 @@ import { StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
-import { DirectoryQueryConditions } from '../services/interfaces/DirectorySearchServiceInterface'
+import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 
 const { Public, Private } = FileVisibility

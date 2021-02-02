@@ -10,7 +10,7 @@ import {
 } from '../../../../src/server/repositories/types'
 import { StorableUrlState } from '../../../../src/server/repositories/enums'
 import { SearchResultsSortOrder } from '../../../../src/shared/search'
-import { DirectoryQueryConditions } from '../../../../src/server/services/interfaces/DirectorySearchServiceInterface'
+import { DirectoryQueryConditions } from '../../../../src/server/modules/directory'
 
 @injectable()
 export class UrlRepositoryMock implements UrlRepositoryInterface {
