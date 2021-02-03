@@ -1,15 +1,15 @@
 /* eslint-disable class-methods-use-this */
 
 import { inject, injectable } from 'inversify'
-import { otpClient } from '../redis'
-import { StorableOtp } from './types'
-import { otpExpiry } from '../config'
-import { OtpRepositoryInterface } from './interfaces/OtpRepositoryInterface'
-import { TwoWayMapper } from '../mappers/TwoWayMapper'
-import { DependencyIds } from '../constants'
+import { otpClient } from '../../../redis'
+import { StorableOtp } from '../../../repositories/types'
+import { otpExpiry } from '../../../config'
+import * as interfaces from '../interfaces'
+import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
+import { DependencyIds } from '../../../constants'
 
 @injectable()
-export class OtpRepository implements OtpRepositoryInterface {
+export class OtpRepository implements interfaces.OtpRepository {
   private otpMapper: TwoWayMapper<StorableOtp, string>
 
   public constructor(

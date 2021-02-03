@@ -1,28 +1,27 @@
 import { inject, injectable } from 'inversify'
-import { Cryptography } from './cryptography'
-import { Mailer } from './email'
-import { OtpRepositoryInterface } from '../repositories/interfaces/OtpRepositoryInterface'
-import { DependencyIds } from '../constants'
-import { getOTP, logger, saltRounds } from '../config'
-import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
-import { StorableOtp, StorableUser } from '../repositories/types'
-import { AuthServiceInterface } from './interfaces/AuthServiceInterface'
-import { InvalidOtpError, NotFoundError } from '../util/error'
+import { Mailer } from '../../../services/email'
+import { Cryptography, OtpRepository } from '../interfaces'
+import { DependencyIds } from '../../../constants'
+import { getOTP, logger, saltRounds } from '../../../config'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
+import { StorableOtp, StorableUser } from '../../../repositories/types'
+import * as interfaces from '../interfaces'
+import { InvalidOtpError, NotFoundError } from '../../../util/error'
 
 @injectable()
-export class AuthService implements AuthServiceInterface {
+export class AuthService implements interfaces.AuthService {
   private cryptography: Cryptography
 
   private mailer: Mailer
 
-  private otpRepository: OtpRepositoryInterface
+  private otpRepository: OtpRepository
 
   private userRepository: UserRepositoryInterface
 
   constructor(
     @inject(DependencyIds.cryptography) cryptography: Cryptography,
     @inject(DependencyIds.mailer) mailer: Mailer,
-    @inject(DependencyIds.otpRepository) otpRepository: OtpRepositoryInterface,
+    @inject(DependencyIds.otpRepository) otpRepository: OtpRepository,
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
   ) {

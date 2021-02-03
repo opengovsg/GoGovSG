@@ -16,9 +16,8 @@ import {
 
 import { container } from './util/inversify'
 import { DependencyIds } from './constants'
-import { OtpRepository } from './repositories/OtpRepository'
+import { OtpRepository } from './modules/auth/repositories'
 import { MailerNode } from './services/email'
-import { CryptographyBcrypt } from './services/cryptography'
 
 import { MailerNoOp } from './services/emaildev'
 import { S3ServerSide } from './services/aws'
@@ -42,9 +41,9 @@ import { StatisticsController } from './modules/statistics'
 import { GaController } from './controllers/GaController'
 import { RotatingLinksController } from './modules/display/RotatingLinksController'
 import { SentryController } from './modules/sentry/SentryController'
-import { LoginController } from './controllers/LoginController'
-import { AuthService } from './services/AuthService'
-import { LogoutController } from './controllers/LogoutController'
+
+import { AuthService, CryptographyBcrypt } from './modules/auth/services'
+import { LoginController, LogoutController } from './modules/auth'
 import { UrlManagementService } from './modules/user/services'
 import { UserController } from './modules/user'
 import { DirectoryController } from './modules/directory'

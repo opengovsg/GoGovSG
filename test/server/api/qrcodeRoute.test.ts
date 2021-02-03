@@ -4,16 +4,16 @@ import jsQR from 'jsqr'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
 import { OtpRepositoryMock } from '../mocks/repositories/OtpRepository'
-import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
-import { Cryptography } from '../../../src/server/services/cryptography'
+import {
+  Cryptography,
+  OtpRepository,
+} from '../../../src/server/modules/auth/interfaces'
 import CryptographyMock from '../mocks/services/cryptography'
 import { UserRepositoryInterface } from '../../../src/server/repositories/interfaces/UserRepositoryInterface'
 import { MockUserRepository } from '../mocks/repositories/UserRepository'
 
 // Mocked up bindings
-container
-  .bind<OtpRepositoryInterface>(DependencyIds.otpRepository)
-  .to(OtpRepositoryMock)
+container.bind<OtpRepository>(DependencyIds.otpRepository).to(OtpRepositoryMock)
 container.bind<Cryptography>(DependencyIds.cryptography).to(CryptographyMock)
 container
   .bind<UserRepositoryInterface>(DependencyIds.userRepository)

@@ -1,11 +1,6 @@
 import bcrypt from 'bcrypt'
 import { injectable } from 'inversify'
-
-export interface Cryptography {
-  hash(data: string, saltOrRounds: string | number): Promise<string>
-
-  compare(data: string, encrypted: string): Promise<boolean>
-}
+import { Cryptography } from '../interfaces'
 
 @injectable()
 export class CryptographyBcrypt implements Cryptography {
@@ -13,3 +8,5 @@ export class CryptographyBcrypt implements Cryptography {
 
   compare = bcrypt.compare
 }
+
+export default CryptographyBcrypt
