@@ -1,6 +1,6 @@
-import { LinkStatistics } from '../../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
 
-export interface LinkStatisticsServiceInterface {
+export interface LinkStatisticsService {
   /**
    * Updates the relevant statistics of a specified link.
    *

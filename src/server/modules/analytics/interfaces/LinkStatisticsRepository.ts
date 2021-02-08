@@ -1,7 +1,7 @@
-import { LinkStatistics } from '../../../shared/interfaces/link-statistics'
-import { DeviceType } from '../../services/interfaces/DeviceCheckServiceInterface'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
+import { DeviceType } from '.'
 
-export interface LinkStatisticsRepositoryInterface {
+export interface LinkStatisticsRepository {
   /**
    * Retrieves link statistics for a specified short link.
    *

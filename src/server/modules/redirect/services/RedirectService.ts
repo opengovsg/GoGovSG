@@ -3,7 +3,7 @@ import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepo
 import { DependencyIds } from '../../../constants'
 import { NotFoundError } from '../../../util/error'
 import { RedirectResult, RedirectType } from '..'
-import { LinkStatisticsServiceInterface } from '../../../services/interfaces/LinkStatisticsServiceInterface'
+import { LinkStatisticsService } from '../../analytics/interfaces'
 import { ogUrl } from '../../../config'
 import { CookieArrayReducerService, CrawlerCheckService } from '.'
 
@@ -15,7 +15,7 @@ export class RedirectService {
 
   private cookieArrayReducerService: CookieArrayReducerService
 
-  private linkStatisticsService: LinkStatisticsServiceInterface
+  private linkStatisticsService: LinkStatisticsService
 
   public constructor(
     @inject(DependencyIds.urlRepository) urlRepository: UrlRepositoryInterface,
@@ -24,7 +24,7 @@ export class RedirectService {
     @inject(DependencyIds.cookieReducer)
     cookieArrayReducerService: CookieArrayReducerService,
     @inject(DependencyIds.linkStatisticsService)
-    linkStatisticsService: LinkStatisticsServiceInterface,
+    linkStatisticsService: LinkStatisticsService,
   ) {
     this.urlRepository = urlRepository
     this.crawlerCheckService = crawlerCheckService

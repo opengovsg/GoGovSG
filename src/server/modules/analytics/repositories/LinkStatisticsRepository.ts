@@ -2,16 +2,19 @@ import { injectable } from 'inversify'
 import { Op, QueryTypes } from 'sequelize'
 import _ from 'lodash'
 
-import { Url, UrlType } from '../models/url'
-import { UrlClicks } from '../models/statistics/clicks'
-import { DailyClicks, DailyClicksType } from '../models/statistics/daily'
-import { Devices, DevicesType } from '../models/statistics/devices'
-import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
-import { LinkStatistics } from '../../shared/interfaces/link-statistics'
-import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
-import { getLocalDayGroup } from '../util/time'
-import { sequelize } from '../util/sequelize'
-import { DeviceType } from '../services/interfaces/DeviceCheckServiceInterface'
+import { Url, UrlType } from '../../../models/url'
+import { UrlClicks } from '../../../models/statistics/clicks'
+import { DailyClicks, DailyClicksType } from '../../../models/statistics/daily'
+import { Devices, DevicesType } from '../../../models/statistics/devices'
+import {
+  WeekdayClicks,
+  WeekdayClicksType,
+} from '../../../models/statistics/weekday'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
+import * as interfaces from '../interfaces'
+import { getLocalDayGroup } from '../../../util/time'
+import { sequelize } from '../../../util/sequelize'
+import { DeviceType } from '../interfaces'
 
 // Get the relevant table names from their models.
 const urlClicksTable = UrlClicks.getTableName()
@@ -73,7 +76,7 @@ export type UrlStats = UrlType & {
 
 @injectable()
 export class LinkStatisticsRepository
-  implements LinkStatisticsRepositoryInterface {
+  implements interfaces.LinkStatisticsRepository {
   public findByShortUrl: (
     shortUrl: string,
   ) => Promise<LinkStatistics | null> = async (shortUrl) => {

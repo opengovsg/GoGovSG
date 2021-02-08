@@ -1,25 +1,28 @@
 import { QueryTypes } from 'sequelize'
-import { sequelizeMock, urlModelMock } from '../api/util'
+import {
+  sequelizeMock,
+  urlModelMock,
+} from '../../../../../../test/server/api/util'
 
 import {
   LinkStatisticsRepository,
   updateLinkStatistics,
-} from '../../../src/server/repositories/LinkStatisticsRepository'
+} from '../LinkStatisticsRepository'
 
-jest.mock('../../../src/server/util/sequelize', () => ({
+jest.mock('../../../../util/sequelize', () => ({
   sequelize: sequelizeMock,
 }))
-jest.mock('../../../src/server/models/url', () => ({
+jest.mock('../../../../models/url', () => ({
   Url: urlModelMock,
 }))
 
-jest.mock('../../../src/server/models/statistics/devices', () => ({
+jest.mock('../../../../models/statistics/devices', () => ({
   Devices: { getTableName: () => 'devices' },
 }))
-jest.mock('../../../src/server/models/statistics/daily', () => ({
+jest.mock('../../../../models/statistics/daily', () => ({
   DailyClicks: { getTableName: () => 'daily' },
 }))
-jest.mock('../../../src/server/models/statistics/weekday', () => ({
+jest.mock('../../../../models/statistics/weekday', () => ({
   WeekdayClicks: { getTableName: () => 'weekday' },
 }))
 
