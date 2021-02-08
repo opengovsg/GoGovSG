@@ -3,12 +3,12 @@ import { select } from 'd3'
 import fs from 'fs'
 import QRCode from 'qrcode'
 import { resolve } from 'path'
-import util from 'util'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
 
-import ImageFormat from '../../../shared/util/image-format'
-import { QrCodeServiceInterface } from '../interfaces/QrCodeServiceInterface'
+import ImageFormat from '../../../../shared/util/image-format'
+
+import * as interfaces from '../interfaces'
 
 const { JSDOM } = jsdom
 
@@ -18,11 +18,8 @@ export const MARGIN_VERTICAL = 85
 export const FONT_SIZE = 32
 export const LINE_HEIGHT = 1.35
 
-// Convert readFile callback function to promise function.
-const readFile = util.promisify(fs.readFile)
-
 @injectable()
-export class QrCodeService implements QrCodeServiceInterface {
+export class QrCodeService implements interfaces.QrCodeService {
   // Build base QR code string without logo.
   private makeQrCode: (url: string) => Promise<string> = (url) => {
     return QRCode.toString(url, {
@@ -57,8 +54,8 @@ export class QrCodeService implements QrCodeServiceInterface {
     const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
 
     // Read the logo as a string.
-    const filePath = resolve(__dirname, 'assets/qrlogo.svg')
-    const logoSvg = await readFile(filePath, 'utf-8')
+    const filePath = resolve(__dirname, '../assets/qrlogo.svg')
+    const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
     const body = select(dom.window.document.querySelector('body'))
 

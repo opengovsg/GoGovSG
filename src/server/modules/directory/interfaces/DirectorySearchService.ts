@@ -1,23 +1,10 @@
-import { UrlDirectoryPaginated } from '../../repositories/types'
-import { SearchResultsSortOrder } from '../../../shared/search'
-
-/**
- * A type that represents query parameters required for search.
- */
-export type DirectoryQueryConditions = {
-  query: string
-  order: SearchResultsSortOrder
-  limit: number
-  offset: number
-  state: string | undefined
-  isFile: boolean | undefined
-  isEmail: boolean
-}
+import { UrlDirectoryPaginated } from '../../../repositories/types'
+import { DirectoryQueryConditions } from '..'
 
 /**
  * Access url repository for search base on query parameters.
  */
-export interface DirectorySearchServiceInterface {
+export interface DirectorySearchService {
   /**
    * Returns urls that match the query based on their shortUrl and
    * description. The results are ranked in order of either popularity

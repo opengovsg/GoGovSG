@@ -1,11 +1,13 @@
 import { inject, injectable } from 'inversify'
-import { UrlRepositoryInterface } from '../repositories/interfaces/UrlRepositoryInterface'
-import { DependencyIds } from '../constants'
-import { UrlDirectoryPaginated } from '../repositories/types'
-import { DirectoryQueryConditions } from './interfaces/DirectorySearchServiceInterface'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
+import { DependencyIds } from '../../../constants'
+import { UrlDirectoryPaginated } from '../../../repositories/types'
+import * as interfaces from '../interfaces'
+import { DirectoryQueryConditions } from '..'
 
 @injectable()
-export class DirectorySearchService {
+export class DirectorySearchService
+  implements interfaces.DirectorySearchService {
   private urlRepository: UrlRepositoryInterface
 
   public constructor(
