@@ -7,7 +7,7 @@ import { UrlClicks } from '../models/statistics/clicks'
 import { DailyClicks, DailyClicksType } from '../models/statistics/daily'
 import { Devices, DevicesType } from '../models/statistics/devices'
 import { WeekdayClicks, WeekdayClicksType } from '../models/statistics/weekday'
-import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../shared/interfaces/link-statistics'
 import { LinkStatisticsRepositoryInterface } from './interfaces/LinkStatisticsRepositoryInterface'
 import { getLocalDayGroup } from '../util/time'
 import { sequelize } from '../util/sequelize'
@@ -76,7 +76,7 @@ export class LinkStatisticsRepository
   implements LinkStatisticsRepositoryInterface {
   public findByShortUrl: (
     shortUrl: string,
-  ) => Promise<LinkStatisticsInterface | null> = async (shortUrl) => {
+  ) => Promise<LinkStatistics | null> = async (shortUrl) => {
     const url = await Url.scope('getClicks').findOne({
       where: { shortUrl },
       include: [
@@ -133,7 +133,7 @@ export class LinkStatisticsRepository
           deviceClicks,
           dailyClicks,
           weekdayClicks,
-        } as LinkStatisticsInterface
+        } as LinkStatistics
       }
       // There are no statistics to show yet.
       return null

@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import { DependencyIds } from '../constants'
 import { LinkStatisticsServiceInterface } from './interfaces/LinkStatisticsServiceInterface'
 import { LinkStatisticsRepositoryInterface } from '../repositories/interfaces/LinkStatisticsRepositoryInterface'
-import { LinkStatisticsInterface } from '../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../shared/interfaces/link-statistics'
 import { UserRepositoryInterface } from '../repositories/interfaces/UserRepositoryInterface'
 import { NotFoundError } from '../util/error'
 import { logger } from '../config'
@@ -46,7 +46,7 @@ export class LinkStatisticsService implements LinkStatisticsServiceInterface {
   getLinkStatistics: (
     userId: number,
     shortUrl: string,
-  ) => Promise<LinkStatisticsInterface | null> = async (userId, shortUrl) => {
+  ) => Promise<LinkStatistics | null> = async (userId, shortUrl) => {
     const userOwnsLink = !!(await this.userRepository.findOneUrlForUser(
       userId,
       shortUrl,
