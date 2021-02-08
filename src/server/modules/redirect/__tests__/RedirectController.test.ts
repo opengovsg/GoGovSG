@@ -7,7 +7,7 @@ import { ACTIVE } from '../../../models/types'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { container } from '../../../util/inversify'
 import { DependencyIds } from '../../../constants'
-import { generateCookie } from '../../../services/analytics'
+import { generateCookie } from '../ga'
 
 import {
   AnalyticsLoggerService,
