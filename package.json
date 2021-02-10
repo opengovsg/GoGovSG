@@ -46,7 +46,7 @@
     "copy-to-clipboard": "^3.3.1",
     "cross-fetch": "^3.0.6",
     "d3": "^6.3.1",
-    "ejs": "^3.1.5",
+    "ejs": "^3.1.6",
     "express": "^4.16.3",
     "express-fileupload": "^1.2.1",
     "express-joi-validation": "^4.0.3",
