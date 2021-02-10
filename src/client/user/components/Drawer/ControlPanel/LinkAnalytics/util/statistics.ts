@@ -2,21 +2,23 @@ import { useEffect, useState } from 'react'
 
 import * as Sentry from '@sentry/browser'
 import { get } from '../../../../../../app/util/requests'
-import { LinkStatisticsInterface } from '../../../../../../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../../../../../../shared/interfaces/link-statistics'
 import { GAEvent } from '../../../../../../app/util/ga'
 
-export type LinkStatistics = {
+export type LinkStatisticsState = {
   status: number | null
-  contents: LinkStatisticsInterface | null
+  contents: LinkStatistics | null
 }
 
-export const initialState: LinkStatistics = {
+export const initialState: LinkStatisticsState = {
   status: null,
   contents: null,
 }
 
 export const useStatistics = (shortUrl: string) => {
-  const [statistics, setStatistics] = useState<LinkStatistics>(initialState)
+  const [statistics, setStatistics] = useState<LinkStatisticsState>(
+    initialState,
+  )
 
   useEffect(() => {
     const fetchStatistics = async () => {
@@ -33,7 +35,7 @@ export const useStatistics = (shortUrl: string) => {
         )
       }
 
-      const linkStatistics: LinkStatistics = {
+      const linkStatistics: LinkStatisticsState = {
         status: response.status,
         contents: await response.json(),
       }

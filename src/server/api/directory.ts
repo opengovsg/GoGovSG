@@ -3,7 +3,7 @@ import { createValidator } from 'express-joi-validation'
 import Joi from '@hapi/joi'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
-import { DirectoryControllerInterface } from '../controllers/interfaces/DirectoryControllerInterface'
+import { DirectoryController } from '../modules/directory'
 import { SearchResultsSortOrder } from '../../shared/search'
 
 const urlSearchRequestSchema = Joi.object({
@@ -21,7 +21,7 @@ const urlSearchRequestSchema = Joi.object({
 
 const router = Express.Router()
 const validator = createValidator({ passError: true })
-const directoryController = container.get<DirectoryControllerInterface>(
+const directoryController = container.get<DirectoryController>(
   DependencyIds.directoryController,
 )
 

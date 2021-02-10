@@ -1,10 +1,10 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 import { injectable } from 'inversify'
 import { StorableOtp } from '../../../../src/server/repositories/types'
-import { OtpRepositoryInterface } from '../../../../src/server/repositories/interfaces/OtpRepositoryInterface'
+import { OtpRepository } from '../../../../src/server/modules/auth/interfaces/OtpRepository'
 
 @injectable()
-export class OtpRepositoryMock implements OtpRepositoryInterface {
+export class OtpRepositoryMock implements OtpRepository {
   cache = new Map<string, StorableOtp>()
 
   deleteOtpByEmail = (email: string) => {
@@ -26,7 +26,7 @@ export class OtpRepositoryMock implements OtpRepositoryInterface {
 }
 
 @injectable()
-export class OtpRepositoryMockDown implements OtpRepositoryInterface {
+export class OtpRepositoryMockDown implements OtpRepository {
   deleteOtpByEmail(_: string): Promise<void> {
     return Promise.reject(Error())
   }

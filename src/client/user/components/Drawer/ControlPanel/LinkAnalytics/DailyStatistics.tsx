@@ -3,15 +3,15 @@ import { Line } from 'react-chartjs-2'
 import moment from 'moment'
 
 import BaseStatisticsLayout from './BaseStatisticsLayout'
-import { DailyClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
+import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics'
 import { useDateRangeWith } from './util/date-range'
 import { compactNumberFormatter } from '../../../../../app/util/format'
 
 export type DailyStatisticsProps = {
-  dailyClicks: DailyClicksInterface[]
+  dailyClicks: DailyClicks[]
 }
 
-export function processData(data: DailyClicksInterface[]) {
+export function processData(data: DailyClicks[]) {
   const labels = data.map((day) => {
     return moment(day.date, 'yyyy-MM-DD').format('D MMM')
   })

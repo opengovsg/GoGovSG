@@ -26,6 +26,8 @@ export const logger = createLogger({
 
 export const redirectExpiry = 60
 
+export const saltRounds = 5
+
 jest.mock('../../src/server/config', () => ({
   DEV_ENV: false,
   emailValidator: new minimatch.Minimatch('*.test.sg', {
@@ -37,7 +39,7 @@ jest.mock('../../src/server/config', () => ({
   getOTP: () => '1',
   logger,
   loginMessage: 'login message',
-  saltRounds: '',
+  saltRounds,
   validEmailDomainGlobExpression: '*.test.sg',
   redirectExpiry,
   otpExpiry: 10,

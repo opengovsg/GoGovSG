@@ -1,7 +1,7 @@
 import React from 'react'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 
-import { DeviceClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
+import { DeviceClicks } from '../../../../../../shared/interfaces/link-statistics'
 import FlexibleBar from './widgets/DeviceStatistics/FlexibleBar'
 import DeviceLegend from './widgets/DeviceStatistics/DeviceLegend'
 import BaseStatisticsLayout from './BaseStatisticsLayout'
@@ -17,7 +17,7 @@ export type ProcessedStatistic = {
  *
  * @param data The device clicks data to be processed.
  */
-function processStatistics(data: DeviceClicksInterface): ProcessedStatistic[] {
+function processStatistics(data: DeviceClicks): ProcessedStatistic[] {
   return [
     { label: 'Desktop', count: data.desktop, color: '#384A51' },
     { label: 'Tablet', count: data.tablet, color: '#8CA6AD' },
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export type DeviceStatisticsProps = {
-  deviceClicks: DeviceClicksInterface
+  deviceClicks: DeviceClicks
 }
 
 export default function DeviceStatistics({
