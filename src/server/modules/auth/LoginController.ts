@@ -1,24 +1,18 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { LoginControllerInterface } from './interfaces/LoginControllerInterface'
-import { loginMessage, validEmailDomainGlobExpression } from '../config'
-import { DependencyIds } from '../constants'
-import jsonMessage from '../util/json'
-import { AuthServiceInterface } from '../services/interfaces/AuthServiceInterface'
-import { InvalidOtpError, NotFoundError } from '../util/error'
-import {
-  EmailProperty,
-  VerifyOtpRequest,
-} from '../../types/server/controllers/LoginController'
-import getIp from '../util/request'
+import { loginMessage, validEmailDomainGlobExpression } from '../../config'
+import { DependencyIds } from '../../constants'
+import jsonMessage from '../../util/json'
+import { AuthService } from './interfaces'
+import { InvalidOtpError, NotFoundError } from '../../util/error'
+import { EmailProperty, VerifyOtpRequest } from '.'
+import getIp from '../../util/request'
 
 @injectable()
-export class LoginController implements LoginControllerInterface {
-  private authService: AuthServiceInterface
+export class LoginController {
+  private authService: AuthService
 
-  constructor(
-    @inject(DependencyIds.authService) authService: AuthServiceInterface,
-  ) {
+  constructor(@inject(DependencyIds.authService) authService: AuthService) {
     this.authService = authService
   }
 

@@ -1,10 +1,9 @@
 import Express from 'express'
 import { injectable } from 'inversify'
-import { LogoutControllerInterface } from './interfaces/LogoutControllerInterface'
-import jsonMessage from '../util/json'
+import jsonMessage from '../../util/json'
 
 @injectable()
-export class LogoutController implements LogoutControllerInterface {
+export class LogoutController {
   public logOut: (req: Express.Request, res: Express.Response) => void = (
     req,
     res,

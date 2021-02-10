@@ -1,5 +1,5 @@
 import httpMocks from 'node-mocks-http'
-import { LogoutController } from '../../../src/server/controllers/LogoutController'
+import { LogoutController } from '..'
 
 describe('LogoutController', () => {
   const controller = new LogoutController()

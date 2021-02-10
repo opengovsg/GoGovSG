@@ -1,6 +1,6 @@
-import { StorableOtp } from '../types'
+import { StorableOtp } from '../../../repositories/types'
 
-export interface OtpRepositoryInterface {
+export interface OtpRepository {
   /**
    * Delete the otp associated with the user with the input email.
    * @param  {string} email Email of the user.

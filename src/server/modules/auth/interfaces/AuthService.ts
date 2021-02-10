@@ -1,6 +1,6 @@
-import { StorableUser } from '../../repositories/types'
+import { StorableUser } from '../../../repositories/types'
 
-export interface AuthServiceInterface {
+export interface AuthService {
   /**
    * Generates and stores a random otp for the input email.
    * @param  {string} email The email of the user to generate an otp for.
