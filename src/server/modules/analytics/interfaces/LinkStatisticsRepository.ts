@@ -1,13 +1,13 @@
-import { LinkStatisticsInterface } from '../../../shared/interfaces/link-statistics'
-import { DeviceType } from '../../services/interfaces/DeviceCheckServiceInterface'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
+import { DeviceType } from '.'
 
-export interface LinkStatisticsRepositoryInterface {
+export interface LinkStatisticsRepository {
   /**
    * Retrieves link statistics for a specified short link.
    *
    * @param shortUrl The target short url to retrieve link statistics.
    */
-  findByShortUrl(shortUrl: string): Promise<LinkStatisticsInterface | null>
+  findByShortUrl(shortUrl: string): Promise<LinkStatistics | null>
 
   /**
    * Update link statistics of the specified short url.

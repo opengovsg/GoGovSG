@@ -1,10 +1,10 @@
 import _ from 'lodash'
 
 import { getLocalDayGroup } from '../../../../../../../server/util/time'
-import { DailyClicksInterface } from '../../../../../../../shared/interfaces/link-statistics'
+import { DailyClicks } from '../../../../../../../shared/interfaces/link-statistics'
 
-export const useDateRange = (days: number): DailyClicksInterface[] => {
-  const range: DailyClicksInterface[] = []
+export const useDateRange = (days: number): DailyClicks[] => {
+  const range: DailyClicks[] = []
   for (let i = 0; i < days; i += 1) {
     range.unshift({
       date: getLocalDayGroup(-i),
@@ -15,9 +15,9 @@ export const useDateRange = (days: number): DailyClicksInterface[] => {
 }
 
 export const useDateRangeWith = (
-  data: DailyClicksInterface[],
+  data: DailyClicks[],
   days: number,
-): DailyClicksInterface[] => {
+): DailyClicks[] => {
   const range = useDateRange(days)
   data.forEach((item) => {
     range

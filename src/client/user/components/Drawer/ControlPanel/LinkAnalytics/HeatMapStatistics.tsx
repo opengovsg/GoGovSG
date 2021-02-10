@@ -12,7 +12,7 @@ import {
 import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { useWindowSize } from './util/window-size'
 import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
-import { WeekdayClicksInterface } from '../../../../../../shared/interfaces/link-statistics'
+import { WeekdayClicks } from '../../../../../../shared/interfaces/link-statistics'
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const processInputStatistics = (rawStatistics: WeekdayClicksInterface[]) => {
+const processInputStatistics = (rawStatistics: WeekdayClicks[]) => {
   const zeroed = getZeroedHeatMap()
   const hourMapping = getDayRange()
   const weekdayMapping = getWeekRange()
@@ -50,7 +50,7 @@ const flipChart = (data: HeatMapDataPoint[]): HeatMapDataPoint[] => {
 }
 
 export type HeatMapStatisticsProps = {
-  weekdayClicks: WeekdayClicksInterface[]
+  weekdayClicks: WeekdayClicks[]
 }
 
 export default function HeatMapStatistics({

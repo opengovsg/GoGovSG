@@ -1,4 +1,4 @@
-import { DeviceCheckService } from '../../../src/server/services/DeviceCheckService'
+import { DeviceCheckService } from '..'
 
 /**
  * Unit tests for DeviceCheckService.

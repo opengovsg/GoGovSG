@@ -1,20 +1,18 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import jsonMessage from '../util/json'
-import { DependencyIds } from '../constants'
-import { LinkStatisticsControllerInterface } from './interfaces/LinkStatisticsControllerInterface'
-import { LinkStatisticsServiceInterface } from '../services/interfaces/LinkStatisticsServiceInterface'
-import { UserType } from '../models/user'
+import jsonMessage from '../../util/json'
+import { DependencyIds } from '../../constants'
+import { LinkStatisticsService } from './interfaces'
+import { UserType } from '../../models/user'
 
 @injectable()
-export class LinkStatisticsController
-  implements LinkStatisticsControllerInterface {
-  private linkStatisticsService: LinkStatisticsServiceInterface
+export class LinkStatisticsController {
+  private linkStatisticsService: LinkStatisticsService
 
   public constructor(
     @inject(DependencyIds.linkStatisticsService)
-    linkStatisticsService: LinkStatisticsServiceInterface,
+    linkStatisticsService: LinkStatisticsService,
   ) {
     this.linkStatisticsService = linkStatisticsService
   }

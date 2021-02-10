@@ -1,6 +1,6 @@
-import { LinkStatisticsInterface } from '../../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
 
-export interface LinkStatisticsServiceInterface {
+export interface LinkStatisticsService {
   /**
    * Updates the relevant statistics of a specified link.
    *
@@ -19,5 +19,5 @@ export interface LinkStatisticsServiceInterface {
   getLinkStatistics(
     userId: number,
     shortUrl: string,
-  ): Promise<LinkStatisticsInterface | null>
+  ): Promise<LinkStatistics | null>
 }

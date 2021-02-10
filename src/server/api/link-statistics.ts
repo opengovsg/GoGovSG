@@ -4,13 +4,13 @@ import { createValidator } from 'express-joi-validation'
 
 import { DependencyIds } from '../constants'
 import { container } from '../util/inversify'
-import { LinkStatisticsControllerInterface } from '../controllers/interfaces/LinkStatisticsControllerInterface'
+import { LinkStatisticsController } from '../modules/analytics'
 import { isValidShortUrl } from '../../shared/util/validation'
 
 const router = Express.Router()
 const validator = createValidator()
 
-const statisticsController = container.get<LinkStatisticsControllerInterface>(
+const statisticsController = container.get<LinkStatisticsController>(
   DependencyIds.linkStatisticsController,
 )
 

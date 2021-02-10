@@ -49,6 +49,7 @@ export const DependencyIds = {
   userAnnouncement: Symbol.for('userAnnouncement'),
   linksToRotate: Symbol.for('linksToRotate'),
   ogUrl: Symbol.for('ogUrl'),
+  gaTrackingId: Symbol.for('gaTrackingId'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'

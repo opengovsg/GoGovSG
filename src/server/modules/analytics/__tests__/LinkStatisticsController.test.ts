@@ -1,13 +1,29 @@
 import httpMocks from 'node-mocks-http'
 
-import { LinkStatisticsController } from '../../../src/server/controllers/LinkStatisticsController'
-import { LinkStatisticsServiceMock } from '../mocks/services/LinkStatisticsService'
-import { createRequestWithShortUrl } from '../api/util'
-import { UserType } from '../../../src/server/models/user'
-import { UrlType } from '../../../src/server/models/url'
+import { createRequestWithShortUrl } from '../../../../../test/server/api/util'
+import { UserType } from '../../../models/user'
+import { UrlType } from '../../../models/url'
 
-const service = new LinkStatisticsServiceMock()
-const controller = new LinkStatisticsController(service)
+import { LinkStatisticsController } from '..'
+
+const getLinkStatistics = jest.fn()
+const updateLinkStatistics = jest.fn()
+getLinkStatistics.mockResolvedValue({
+  totalClicks: 1,
+  deviceClicks: {
+    desktop: 1,
+    tablet: 2,
+    mobile: 3,
+    others: 4,
+  },
+  dailyClicks: [],
+  weekdayClicks: [],
+})
+
+const controller = new LinkStatisticsController({
+  getLinkStatistics,
+  updateLinkStatistics,
+})
 const userCredentials = {
   id: 1,
   email: 'hello@open.gov.sg',
@@ -15,15 +31,13 @@ const userCredentials = {
 } as UserType
 
 describe('LinkStatisticsController test', () => {
-  const serviceSpy = jest.spyOn(service, 'getLinkStatistics')
-
   test('no short url included', async () => {
     const req = createRequestWithShortUrl('')
     const res = httpMocks.createResponse()
     const responseSpy = jest.spyOn(res, 'status')
 
     await controller.getLinkStatistics(req, res)
-    expect(serviceSpy).not.toHaveBeenCalled()
+    expect(getLinkStatistics).not.toHaveBeenCalled()
     expect(responseSpy).toBeCalledWith(404)
   })
 
@@ -34,7 +48,7 @@ describe('LinkStatisticsController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkStatistics(req, res)
-    expect(serviceSpy).not.toHaveBeenCalled()
+    expect(getLinkStatistics).not.toHaveBeenCalled()
     expect(responseSpy).toBeCalledWith(404)
   })
 
@@ -45,7 +59,7 @@ describe('LinkStatisticsController test', () => {
     req.query.url = 'test'
 
     await controller.getLinkStatistics(req, res)
-    expect(serviceSpy).not.toHaveBeenCalled()
+    expect(getLinkStatistics).not.toHaveBeenCalled()
     expect(responseSpy).toBeCalledWith(401)
   })
 
@@ -57,7 +71,7 @@ describe('LinkStatisticsController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkStatistics(req, res)
-    expect(serviceSpy).toBeCalledWith(userCredentials.id, 'test')
+    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test')
     expect(responseSpy).toBeCalledWith(200)
   })
 
@@ -68,12 +82,10 @@ describe('LinkStatisticsController test', () => {
     req.query.url = 'test'
     req.session!.user = userCredentials
 
-    serviceSpy.mockImplementationOnce((_, __) => {
-      throw Error(':(')
-    })
+    getLinkStatistics.mockRejectedValue(new Error(':('))
 
     await controller.getLinkStatistics(req, res)
-    expect(serviceSpy).toBeCalledWith(userCredentials.id, 'test')
+    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test')
     expect(responseSpy).toBeCalledWith(404)
   })
 })

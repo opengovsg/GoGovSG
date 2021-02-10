@@ -1,15 +1,13 @@
 import UAParser from 'ua-parser-js'
 import { injectable } from 'inversify'
 
-import {
-  DeviceCheckServiceInterface,
-  DeviceType,
-} from './interfaces/DeviceCheckServiceInterface'
+import * as interfaces from '../interfaces'
+import { DeviceType } from '../interfaces'
 
 const BOTS_USER_AGENTS = /bot|facebookexternalhit|Facebot|Slackbot|TelegramBot|WhatsApp|Twitterbot|Pinterest|Postman|url/
 
 @injectable()
-export class DeviceCheckService implements DeviceCheckServiceInterface {
+export class DeviceCheckService implements interfaces.DeviceCheckService {
   getDeviceType: (userAgent: string) => DeviceType = (userAgent) => {
     const parser = new UAParser(userAgent)
     const deviceType = parser.getDevice().type

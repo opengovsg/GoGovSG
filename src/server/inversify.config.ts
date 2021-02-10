@@ -7,6 +7,7 @@ import {
   accessEndpoint,
   bucketEndpoint,
   cloudmersiveKey,
+  gaTrackingId,
   linksToRotate,
   ogUrl,
   s3Bucket,
@@ -38,7 +39,6 @@ import { StatisticsRepository } from './modules/statistics/repositories'
 import { StatisticsService } from './modules/statistics/services'
 import { StatisticsController } from './modules/statistics'
 
-import { GaController } from './controllers/GaController'
 import { RotatingLinksController } from './modules/display/RotatingLinksController'
 import { SentryController } from './modules/sentry/SentryController'
 
@@ -48,10 +48,12 @@ import { UrlManagementService } from './modules/user/services'
 import { UserController } from './modules/user'
 import { DirectoryController } from './modules/directory'
 import { DirectorySearchService } from './modules/directory/services'
-import { LinkStatisticsController } from './controllers/LinkStatisticsController'
-import { LinkStatisticsService } from './services/LinkStatisticsService'
-import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
-import { DeviceCheckService } from './services/DeviceCheckService'
+import { GaController, LinkStatisticsController } from './modules/analytics'
+import {
+  DeviceCheckService,
+  LinkStatisticsService,
+} from './modules/analytics/services'
+import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
 
 import { SafeBrowsingMapper } from './modules/threat/mappers'
 import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
@@ -82,6 +84,7 @@ export default () => {
     .toConstantValue(userAnnouncement)
   container.bind(DependencyIds.linksToRotate).toConstantValue(linksToRotate)
   container.bind(DependencyIds.ogUrl).toConstantValue(ogUrl)
+  container.bind(DependencyIds.gaTrackingId).toConstantValue(gaTrackingId)
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
