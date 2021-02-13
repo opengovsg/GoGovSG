@@ -1,11 +1,11 @@
 import Express from 'express'
 import { container } from '../util/inversify'
-import { RotatingLinksControllerInterface } from '../controllers/interfaces/RotatingLinksControllerInterface'
+import { RotatingLinksController } from '../modules/display'
 import { DependencyIds } from '../constants'
 
 const router = Express.Router()
 
-const linksController = container.get<RotatingLinksControllerInterface>(
+const linksController = container.get<RotatingLinksController>(
   DependencyIds.linksController,
 )
 

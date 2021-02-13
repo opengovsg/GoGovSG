@@ -7,7 +7,7 @@ import { ACTIVE } from '../../../models/types'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { container } from '../../../util/inversify'
 import { DependencyIds } from '../../../constants'
-import { generateCookie } from '../../../services/analytics'
+import { generateCookie } from '../ga'
 
 import {
   AnalyticsLoggerService,
@@ -18,7 +18,7 @@ import {
 import { RedirectController } from '..'
 import { logger } from '../../../config'
 import { UrlMapper } from '../../../mappers/UrlMapper'
-import { LinkStatisticsServiceInterface } from '../../../services/interfaces/LinkStatisticsServiceInterface'
+import { LinkStatisticsService } from '../../analytics/interfaces'
 
 const redisMockClient = redisMock.createClient()
 const sequelizeMock = new SequelizeMock()
@@ -249,7 +249,7 @@ describe('redirect API tests', () => {
       .bind<CrawlerCheckService>(DependencyIds.crawlerCheckService)
       .to(CrawlerCheckService)
     container
-      .bind<LinkStatisticsServiceInterface>(DependencyIds.linkStatisticsService)
+      .bind<LinkStatisticsService>(DependencyIds.linkStatisticsService)
       .toConstantValue(linkStatisticsServiceMock)
     redisMockClient.flushall()
   })

@@ -1,5 +1,5 @@
 /* eslint-disable global-require */
-import * as analytics from '../../../../services/analytics'
+import * as analytics from '../../ga'
 
 describe('AnalyticsLoggerService', () => {
   const gaTrackingId = 'UA-000000-2'

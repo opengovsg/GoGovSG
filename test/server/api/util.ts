@@ -7,14 +7,14 @@ import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
 import { ACTIVE } from '../../../src/server/models/types'
-import { OtpRepositoryInterface } from '../../../src/server/repositories/interfaces/OtpRepositoryInterface'
+import { OtpRepository } from '../../../src/server/modules/auth/interfaces/OtpRepository'
 
 /**
  * Retrieves the currently binded OtpCache in the Inversify container.
  * @returns OtpCache.
  */
-export function getOtpCache(): OtpRepositoryInterface {
-  return container.get<OtpRepositoryInterface>(DependencyIds.otpRepository)
+export function getOtpCache(): OtpRepository {
+  return container.get<OtpRepository>(DependencyIds.otpRepository)
 }
 
 /**

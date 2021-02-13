@@ -16,7 +16,8 @@ import { SearchResultsSortOrder } from '../../../src/shared/search'
 import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
-import { DirectoryQueryConditions } from '../../../src/server/services/interfaces/DirectorySearchServiceInterface'
+
+import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,

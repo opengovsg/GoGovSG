@@ -1,7 +1,7 @@
 import { QueryTypes } from 'sequelize'
 
 import { sequelize } from '../util/sequelize'
-import { updateLinkStatistics } from '../repositories/LinkStatisticsRepository'
+import { updateLinkStatistics } from '../modules/analytics/repositories/LinkStatisticsRepository'
 
 /**
  * Syncs database functions.

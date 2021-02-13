@@ -13,7 +13,7 @@ import {
 import { useDrawerState } from '../..'
 import { useStatistics } from './util/statistics'
 import DeviceStatistics from './DeviceStatistics'
-import { LinkStatisticsInterface } from '../../../../../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../../../../../shared/interfaces/link-statistics'
 import DailyStatistics from './DailyStatistics'
 import HeatMapStatistics from './HeatMapStatistics'
 
@@ -155,7 +155,7 @@ const useStyles = makeStyles(() => ({
 }))
 
 export type GraphsProps = {
-  data: LinkStatisticsInterface
+  data: LinkStatistics
   shortUrl: string
 }
 

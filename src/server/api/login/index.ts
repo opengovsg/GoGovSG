@@ -4,7 +4,7 @@ import { createValidator } from 'express-joi-validation'
 import getIp from '../../util/request'
 import { otpGenerationSchema, otpVerificationSchema } from './validators'
 import { container } from '../../util/inversify'
-import { LoginControllerInterface } from '../../controllers/interfaces/LoginControllerInterface'
+import { LoginController } from '../../modules/auth'
 import { DependencyIds } from '../../constants'
 import { logger, otpRateLimit } from '../../config'
 
@@ -12,7 +12,7 @@ const router: Express.Router = Express.Router()
 
 const authValidator = createValidator({ passError: false, statusCode: 401 })
 
-const loginController = container.get<LoginControllerInterface>(
+const loginController = container.get<LoginController>(
   DependencyIds.loginController,
 )
 

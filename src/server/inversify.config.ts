@@ -7,6 +7,9 @@ import {
   accessEndpoint,
   bucketEndpoint,
   cloudmersiveKey,
+  gaTrackingId,
+  linksToRotate,
+  ogUrl,
   s3Bucket,
   userAnnouncement,
   userMessage,
@@ -14,9 +17,8 @@ import {
 
 import { container } from './util/inversify'
 import { DependencyIds } from './constants'
-import { OtpRepository } from './repositories/OtpRepository'
+import { OtpRepository } from './modules/auth/repositories'
 import { MailerNode } from './services/email'
-import { CryptographyBcrypt } from './services/cryptography'
 
 import { MailerNoOp } from './services/emaildev'
 import { S3ServerSide } from './services/aws'
@@ -37,21 +39,21 @@ import { StatisticsRepository } from './modules/statistics/repositories'
 import { StatisticsService } from './modules/statistics/services'
 import { StatisticsController } from './modules/statistics'
 
-import { GaController } from './controllers/GaController'
-import { RotatingLinksController } from './controllers/RotatingLinksController'
+import { RotatingLinksController } from './modules/display/RotatingLinksController'
 import { SentryController } from './modules/sentry/SentryController'
-import { LoginController } from './controllers/LoginController'
-import { AuthService } from './services/AuthService'
-import { LogoutController } from './controllers/LogoutController'
+
+import { AuthService, CryptographyBcrypt } from './modules/auth/services'
+import { LoginController, LogoutController } from './modules/auth'
 import { UrlManagementService } from './modules/user/services'
 import { UserController } from './modules/user'
-import { QrCodeService } from './services/QrCodeService'
-import { DirectoryController } from './controllers/DirectoryController'
-import { DirectorySearchService } from './services/DirectorySearchService'
-import { LinkStatisticsController } from './controllers/LinkStatisticsController'
-import { LinkStatisticsService } from './services/LinkStatisticsService'
-import { LinkStatisticsRepository } from './repositories/LinkStatisticsRepository'
-import { DeviceCheckService } from './services/DeviceCheckService'
+import { DirectoryController } from './modules/directory'
+import { DirectorySearchService } from './modules/directory/services'
+import { GaController, LinkStatisticsController } from './modules/analytics'
+import {
+  DeviceCheckService,
+  LinkStatisticsService,
+} from './modules/analytics/services'
+import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
 
 import { SafeBrowsingMapper } from './modules/threat/mappers'
 import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
@@ -62,6 +64,9 @@ import {
   SafeBrowsingService,
 } from './modules/threat/services'
 import { FileCheckController, UrlCheckController } from './modules/threat'
+
+import { QrCodeService } from './modules/qr/services'
+import { QrCodeController } from './modules/qr'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -77,6 +82,9 @@ export default () => {
   container
     .bind(DependencyIds.userAnnouncement)
     .toConstantValue(userAnnouncement)
+  container.bind(DependencyIds.linksToRotate).toConstantValue(linksToRotate)
+  container.bind(DependencyIds.ogUrl).toConstantValue(ogUrl)
+  container.bind(DependencyIds.gaTrackingId).toConstantValue(gaTrackingId)
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
@@ -102,6 +110,7 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
+  bindIfUnbound(DependencyIds.qrCodeController, QrCodeController)
   bindIfUnbound(DependencyIds.directorySearchService, DirectorySearchService)
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)

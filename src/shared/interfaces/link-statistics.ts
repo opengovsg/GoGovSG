@@ -1,24 +1,24 @@
-export interface DeviceClicksInterface {
+export interface DeviceClicks {
   desktop: number
   tablet: number
   mobile: number
   others: number
 }
 
-export interface DailyClicksInterface {
+export interface DailyClicks {
   date: string
   clicks: number
 }
 
-export interface WeekdayClicksInterface {
+export interface WeekdayClicks {
   weekday: number
   hours: number
   clicks: number
 }
 
-export interface LinkStatisticsInterface {
+export interface LinkStatistics {
   totalClicks: number
-  deviceClicks: DeviceClicksInterface
-  dailyClicks: DailyClicksInterface[]
-  weekdayClicks: WeekdayClicksInterface[]
+  deviceClicks: DeviceClicks
+  dailyClicks: DailyClicks[]
+  weekdayClicks: WeekdayClicks[]
 }
