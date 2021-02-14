@@ -93,7 +93,7 @@ describe('UrlRepository', () => {
     try {
       const shortUrl = 'abcdef'
       findOne.mockResolvedValue(null)
-      await expect(repository.findByShortUrl(shortUrl)).resolves.toBeNull()
+      await expect(repository.findByShortUrlWithTotalClicks(shortUrl)).resolves.toBeNull()
       expect(findOne).toHaveBeenCalledWith({ where: { shortUrl } })
     } finally {
       // Deliberately not call findOne.mockRestore(), as it seems

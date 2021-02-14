@@ -14,7 +14,7 @@ import { DirectoryQueryConditions } from '../../../../src/server/modules/directo
 
 @injectable()
 export class UrlRepositoryMock implements UrlRepositoryInterface {
-  findByShortUrl: (shortUrl: string) => Promise<StorableUrl | null> = () => {
+  findByShortUrlWithTotalClicks: (shortUrl: string) => Promise<StorableUrl | null> = () => {
     throw new Error('Not implemented')
   }
 
