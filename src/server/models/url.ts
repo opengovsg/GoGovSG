@@ -184,9 +184,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
             shortUrl: url.shortUrl,
             clicks: 0,
           },
-          options as Sequelize.CreateOptions & {
-            transaction: Sequelize.Transaction
-          },
+          options,
         )
         return Promise.resolve()
       },
