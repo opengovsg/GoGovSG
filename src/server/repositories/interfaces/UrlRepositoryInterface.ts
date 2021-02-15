@@ -5,7 +5,7 @@ import { DirectoryQueryConditions } from '../../modules/directory'
  * A url repository that handles access to the data store of Urls.
  */
 export interface UrlRepositoryInterface {
-  findByShortUrl(shortUrl: string): Promise<StorableUrl | null>
+  findByShortUrlWithTotalClicks(shortUrl: string): Promise<StorableUrl | null>
 
   /**
    * Updates the input url with the input changes and file (if any) in the data store.

@@ -179,14 +179,12 @@ export const Url = <UrlTypeStatic>sequelize.define(
           },
         )
 
-        // TODO: change to create after DB triggers are removed.
-        await UrlClicks.upsert(
+        await UrlClicks.create(
           {
             shortUrl: url.shortUrl,
+            clicks: 0,
           },
-          options as Sequelize.CreateOptions & {
-            transaction: Sequelize.Transaction
-          },
+          options,
         )
         return Promise.resolve()
       },

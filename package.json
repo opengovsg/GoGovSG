@@ -1,6 +1,6 @@
 {
   "name": "GoGovSG",
-  "version": "1.46.0",
+  "version": "1.47.0",
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "express": "^4.16.3",
     "express-fileupload": "^1.2.1",
     "express-joi-validation": "^4.0.3",
-    "express-rate-limit": "^5.2.3",
+    "express-rate-limit": "^5.2.5",
     "express-session": "^1.17.1",
     "file-saver": "^2.0.5",
     "file-type": "^16.2.0",
@@ -86,8 +86,8 @@
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.5.0",
-    "sharp": "^0.27.0",
-    "ua-parser-js": "^0.7.24",
+    "sharp": "^0.27.1",
+    "ua-parser-js": "^0.7.23",
     "uuid": "^8.3.2",
     "validator": "^13.5.2",
     "winston": "^3.3.3"
