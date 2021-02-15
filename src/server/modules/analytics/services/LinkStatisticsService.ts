@@ -46,7 +46,12 @@ export class LinkStatisticsService implements interfaces.LinkStatisticsService {
   getLinkStatistics: (
     userId: number,
     shortUrl: string,
-  ) => Promise<LinkStatistics | null> = async (userId, shortUrl) => {
+    offsetDays?: number,
+  ) => Promise<LinkStatistics | null> = async (
+    userId,
+    shortUrl,
+    offsetDays,
+  ) => {
     const userOwnsLink = !!(await this.userRepository.findOneUrlForUser(
       userId,
       shortUrl,
@@ -54,7 +59,7 @@ export class LinkStatisticsService implements interfaces.LinkStatisticsService {
     if (!userOwnsLink) {
       throw new NotFoundError('User does not own this short url')
     }
-    return this.linkStatisticsRepository.findByShortUrl(shortUrl)
+    return this.linkStatisticsRepository.findByShortUrl(shortUrl, offsetDays)
   }
 }
 
