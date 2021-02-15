@@ -28,7 +28,7 @@ export class QrCodeController {
   private shortUrlExists: (shortUrl: string) => Promise<boolean> = async (
     shortUrl,
   ) => {
-    return !!(await this.urlRepository.findByShortUrl(shortUrl))
+    return !!(await this.urlRepository.findByShortUrlWithTotalClicks(shortUrl))
   }
 
   createGoQrCode: (req: Request, res: Response) => Promise<void> = async (

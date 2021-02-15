@@ -44,7 +44,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     this.urlMapper = urlMapper
   }
 
-  public findByShortUrl: (
+  public findByShortUrlWithTotalClicks: (
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (shortUrl) => {
     const url = await Url.scope('getClicks').findOne({
