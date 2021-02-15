@@ -9,8 +9,10 @@ env:
   UAT_BRANCH: refs/heads/uat
   EB_APP_PRODUCTION: gosg-production
   EB_ENV_PRODUCTION: gosg-production
+  EB_ENV_EDU_PRODUCTION: edu-production
   EB_APP_STAGING: gosg-stag
   EB_ENV_STAGING: gosg-stag
+  EB_ENV_EDU_STAGING: edu-staging
   EB_APP_UAT: gosg-uat
   EB_ENV_UAT: gosg-uat2
   ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
@@ -229,16 +231,20 @@ jobs:
           uat = os.environ['UAT_BRANCH']
           eb_app_staging = os.environ['EB_APP_STAGING']
           eb_env_staging = os.environ['EB_ENV_STAGING']
+          eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
           eb_env_production = os.environ['EB_ENV_PRODUCTION']
+          eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
           eb_app_uat = os.environ['EB_APP_UAT']
           eb_env_uat = os.environ['EB_ENV_UAT']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
             print('::set-output name=eb_env::' + eb_env_staging)
+            print('::set-output name=eb_env_edu::' + eb_env_edu_staging)
           elif branch == production:
             print('::set-output name=eb_app::' + eb_app_production)
             print('::set-output name=eb_env::' + eb_env_production)
+            print('::set-output name=eb_env_edu::' + eb_env_edu_production)
           elif branch == uat:
             print('::set-output name=eb_app::' + eb_app_uat)
             print('::set-output name=eb_env::' + eb_env_uat)
@@ -250,6 +256,19 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
           environment_name: ${{ steps.select_eb_vars.outputs.eb_env }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          wait_for_deployment: false
+          wait_for_environment_recovery: false
+      - name: Deploy to EB edu
+        uses: opengovsg/beanstalk-deploy@v11
+        if: steps.select_eb_vars.outputs.eb_env_edu
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env_edu }}
           version_label: ${{ steps.get_label.outputs.label }}
           region: ap-southeast-1
           deployment_package: deploy.zip
