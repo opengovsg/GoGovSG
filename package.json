@@ -171,7 +171,7 @@
     "supertest": "^6.0.1",
     "testcafe": "^1.10.0",
     "ts-jest": "^26.5.1",
-    "ts-loader": "^8.0.12",
+    "ts-loader": "^8.0.17",
     "ts-node-dev": "^1.1.1",
     "typescript": "^4.1.5",
     "upng-js": "^2.1.0",
