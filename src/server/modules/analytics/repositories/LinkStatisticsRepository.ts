@@ -79,7 +79,8 @@ export class LinkStatisticsRepository
   implements interfaces.LinkStatisticsRepository {
   public findByShortUrl: (
     shortUrl: string,
-  ) => Promise<LinkStatistics | null> = async (shortUrl) => {
+    offsetDays?: number,
+  ) => Promise<LinkStatistics | null> = async (shortUrl, offsetDays = 6) => {
     const url = await Url.scope('getClicks').findOne({
       where: { shortUrl },
       include: [
@@ -90,7 +91,10 @@ export class LinkStatisticsRepository
           where: {
             date: {
               // To retrieve a range from today, and up to 6 days ago inclusive.
-              [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
+              [Op.between]: [
+                getLocalDayGroup(-1 * offsetDays),
+                getLocalDayGroup(),
+              ],
             },
           },
           // As previously accessed links can be inactive for over a week.
