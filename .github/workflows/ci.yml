@@ -272,5 +272,6 @@ jobs:
           version_label: ${{ steps.get_label.outputs.label }}
           region: ap-southeast-1
           deployment_package: deploy.zip
+          use_existing_version_if_available: true
           wait_for_deployment: false
           wait_for_environment_recovery: false
