@@ -62,7 +62,7 @@
     "lodash": "^4.17.20",
     "minimatch": "^3.0.4",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.32",
+    "moment-timezone": "^0.5.33",
     "morgan": "^1.10.0",
     "nanoid": "^2.1.11",
     "nodemailer": "^6.4.17",
