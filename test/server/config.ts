@@ -31,7 +31,7 @@ export const saltRounds = 5
 jest.mock('../../src/server/config', () => ({
   DEV_ENV: false,
   emailValidator: new minimatch.Minimatch('*.test.sg', {
-    noext: true,
+    noext: false,
     noglobstar: true,
     nobrace: true,
     nonegate: true,

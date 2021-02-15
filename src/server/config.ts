@@ -132,7 +132,7 @@ export const validEmailDomainGlobExpression = process.env
 export const emailValidator = new minimatch.Minimatch(
   validEmailDomainGlobExpression,
   {
-    noext: true,
+    noext: false,
     noglobstar: true,
     nobrace: true,
     nonegate: true,
