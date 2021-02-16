@@ -10,7 +10,7 @@ const ArrowDownIcon: FunctionComponent<ArrowDownIconProps> = ({
   className = '',
   width = '36',
   height = '36',
-}) => {
+}: ArrowDownIconProps) => {
   return (
     <svg
       className={className}
