@@ -8,7 +8,7 @@ type DirectoryUrlIconProps = {
 const DirectoryUrlIcon: FunctionComponent<DirectoryUrlIconProps> = ({
   className = '',
   color = '#384A51',
-}) => {
+}: DirectoryUrlIconProps) => {
   return (
     <svg
       className={className}

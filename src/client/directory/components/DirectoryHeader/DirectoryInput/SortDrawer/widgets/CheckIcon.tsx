@@ -8,7 +8,7 @@ type CheckIconProps = {
 const CheckIcon: FunctionComponent<CheckIconProps> = ({
   color = '#000',
   className = '',
-}) => {
+}: CheckIconProps) => {
   return (
     <svg
       className={className}
