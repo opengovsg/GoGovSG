@@ -41,7 +41,7 @@
     "chart.js": "^2.9.4",
     "classnames": "^2.2.6",
     "cloudmersive-virus-api-client": "^1.2.0",
-    "connect-redis": "^5.0.0",
+    "connect-redis": "^5.1.0",
     "cookie-session": "^1.4.0",
     "copy-to-clipboard": "^3.3.1",
     "cross-fetch": "^3.0.6",
