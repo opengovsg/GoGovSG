@@ -71,7 +71,20 @@ describe('LinkStatisticsController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test')
+    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test', undefined)
+    expect(responseSpy).toBeCalledWith(200)
+  })
+
+  test('authenticated user with short url and offset', async () => {
+    const req = createRequestWithShortUrl('')
+    const res = httpMocks.createResponse()
+    const responseSpy = jest.spyOn(res, 'status')
+    req.query.url = 'test'
+    req.query.offset = '3650'
+    req.session!.user = userCredentials
+
+    await controller.getLinkStatistics(req, res)
+    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test', 3650)
     expect(responseSpy).toBeCalledWith(200)
   })
 
@@ -85,7 +98,7 @@ describe('LinkStatisticsController test', () => {
     getLinkStatistics.mockRejectedValue(new Error(':('))
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test')
+    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test', undefined)
     expect(responseSpy).toBeCalledWith(404)
   })
 })
