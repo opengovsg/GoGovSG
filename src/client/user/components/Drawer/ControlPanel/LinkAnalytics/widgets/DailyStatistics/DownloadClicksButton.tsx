@@ -40,15 +40,14 @@ const useStyles = makeStyles(() => ({
     padding: 0,
     outline: 0,
     background: 'transparent',
+    cursor: 'pointer',
   },
   text: {
     padding: '5px 0',
-    cursor: 'pointer',
     display: 'inline-block',
   },
   icon: {
     padding: '0 5px',
-    cursor: 'pointer',
   },
 }))
 
