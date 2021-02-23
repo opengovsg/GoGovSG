@@ -71,7 +71,11 @@ describe('LinkStatisticsController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test', undefined)
+    expect(getLinkStatistics).toBeCalledWith(
+      userCredentials.id,
+      'test',
+      undefined,
+    )
     expect(responseSpy).toBeCalledWith(200)
   })
 
@@ -98,7 +102,11 @@ describe('LinkStatisticsController test', () => {
     getLinkStatistics.mockRejectedValue(new Error(':('))
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test', undefined)
+    expect(getLinkStatistics).toBeCalledWith(
+      userCredentials.id,
+      'test',
+      undefined,
+    )
     expect(responseSpy).toBeCalledWith(404)
   })
 })
