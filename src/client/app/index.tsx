@@ -1,5 +1,5 @@
 import React from 'react'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import { render } from 'react-dom'
 
 import Root from './components/pages/RootPage'
