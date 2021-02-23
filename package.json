@@ -59,7 +59,7 @@
     "i18next": "^19.8.4",
     "inversify": "^5.0.5",
     "jsdom": "^16.4.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
