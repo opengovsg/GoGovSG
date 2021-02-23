@@ -64,7 +64,7 @@ export default function DownloadClicksButton() {
       onClick={() => downloadClicks(shortUrl, onError)}
     >
       <Typography color="primary" variant="body2" className={classes.text}>
-        Download full statistics
+        Download full link click statistics here
       </Typography>
       <img
         src={downloadIcon}
