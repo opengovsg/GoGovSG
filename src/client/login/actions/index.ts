@@ -2,7 +2,7 @@ import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import validator from 'validator'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import { GAEvent } from '../../app/util/ga'
 import {
   EmailValidatorType,

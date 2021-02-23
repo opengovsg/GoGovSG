@@ -4,7 +4,7 @@ import querystring, { ParsedUrlQueryInput } from 'querystring'
 import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import {
   CloseCreateUrlModalAction,
   GetUrlsForUserSuccessAction,

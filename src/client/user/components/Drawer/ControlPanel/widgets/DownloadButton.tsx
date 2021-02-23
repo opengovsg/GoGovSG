@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core'
 import FileSaver from 'file-saver'
 
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import TrailingButton from './TrailingButton'
 import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
