@@ -6,6 +6,7 @@ import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics'
 import { useDateRangeWith } from './util/date-range'
 import { compactNumberFormatter } from '../../../../../app/util/format'
+import DownloadClicksButton from './widgets/DailyStatistics/DownloadClicksButton'
 
 export type DailyStatisticsProps = {
   dailyClicks: DailyClicks[]
@@ -37,7 +38,10 @@ export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
   const filledData = useDateRangeWith(dailyClicks, 7)
   const data = processData(filledData)
   return (
-    <BaseStatisticsLayout title="How many users have visited your link in the past week?">
+    <BaseStatisticsLayout
+      title="How many users have visited your link in the past week?"
+      subtitle={<DownloadClicksButton />}
+    >
       <Line
         data={data}
         legend={{ display: false }}

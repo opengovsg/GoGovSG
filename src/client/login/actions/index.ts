@@ -2,7 +2,7 @@ import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import validator from 'validator'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import { GAEvent } from '../../app/util/ga'
 import {
   EmailValidatorType,
@@ -108,7 +108,7 @@ const getEmailValidationGlobExpression = () => (
     if (response.ok) {
       response.text().then((expression) => {
         const globValidator = new Minimatch(expression, {
-          noext: true,
+          noext: false,
           noglobstar: true,
           nobrace: true,
           nonegate: true,

@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import rootActions from '../components/pages/RootPage/actions'
 import userActions from '../../user/actions'
 import useIsIE from '../components/BaseLayout/util/ie'

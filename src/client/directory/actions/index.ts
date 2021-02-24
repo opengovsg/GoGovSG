@@ -2,7 +2,7 @@ import { ThunkAction } from 'redux-thunk'
 import { Dispatch } from 'react'
 import querystring from 'querystring'
 import { History } from 'history'
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import {
   DirectoryActionType,
   ResetDirectoryResultsAction,

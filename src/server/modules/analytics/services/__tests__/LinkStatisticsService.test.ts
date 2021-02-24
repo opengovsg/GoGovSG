@@ -65,7 +65,38 @@ describe('LinkStatisticService tests', () => {
         dailyClicks: [{ date: '2020-06-23', clicks: 1 }],
         weekdayClicks: [{ weekday: 2, hours: 23, clicks: 1 }],
       })
-      expect(findByShortUrl).toHaveBeenCalledWith(shortUrl)
+      expect(findByShortUrl).toHaveBeenCalledWith(shortUrl, undefined)
+    })
+
+    it('should forward offset days to repository', async () => {
+      const shortUrl = 'hello'
+      const offsetDays = 9
+
+      findOneUrlForUser.mockResolvedValue({
+        shortUrl,
+        longUrl: 'https://open.gov.sg',
+        state: 'ACTIVE',
+        clicks: 100,
+        isFile: false,
+        createdAt: '',
+        updatedAt: '',
+      })
+      findByShortUrl.mockResolvedValue(linkStatistics)
+
+      await expect(
+        service.getLinkStatistics(123, shortUrl, offsetDays),
+      ).resolves.toStrictEqual({
+        totalClicks: 1,
+        deviceClicks: {
+          desktop: 1,
+          tablet: 0,
+          mobile: 0,
+          others: 0,
+        },
+        dailyClicks: [{ date: '2020-06-23', clicks: 1 }],
+        weekdayClicks: [{ weekday: 2, hours: 23, clicks: 1 }],
+      })
+      expect(findByShortUrl).toHaveBeenCalledWith(shortUrl, offsetDays)
     })
   })
 

@@ -8,7 +8,7 @@ type RedirectIconProps = {
 const RedirectIcon: FunctionComponent<RedirectIconProps> = ({
   className = '',
   color = '#384A51',
-}) => {
+}: RedirectIconProps) => {
   return (
     <svg
       className={className}

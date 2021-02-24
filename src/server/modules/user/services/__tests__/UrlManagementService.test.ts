@@ -18,7 +18,7 @@ describe('UrlManagementService', () => {
   const urlRepository = {
     update: jest.fn(),
     create: jest.fn(),
-    findByShortUrl: jest.fn(),
+    findByShortUrlWithTotalClicks: jest.fn(),
     getLongUrl: jest.fn(),
     plainTextSearch: jest.fn(),
     rawDirectorySearch: jest.fn(),
@@ -34,7 +34,7 @@ describe('UrlManagementService', () => {
     beforeEach(() => {
       userRepository.findById.mockReset()
       userRepository.findUserByUrl.mockReset()
-      urlRepository.findByShortUrl.mockReset()
+      urlRepository.findByShortUrlWithTotalClicks.mockReset()
       urlRepository.create.mockReset()
     })
 
@@ -65,7 +65,7 @@ describe('UrlManagementService', () => {
 
     it('processes new non-file url', async () => {
       userRepository.findById.mockResolvedValue({ id: userId })
-      urlRepository.findByShortUrl.mockResolvedValue(null)
+      urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
         service.createUrl(userId, shortUrl, longUrl),
@@ -85,7 +85,7 @@ describe('UrlManagementService', () => {
         mimetype: 'application/json',
       }
       userRepository.findById.mockResolvedValue({ id: userId })
-      urlRepository.findByShortUrl.mockResolvedValue(null)
+      urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
         service.createUrl(userId, shortUrl, longUrl, file),
