@@ -178,7 +178,7 @@
     "upng-js": "^2.1.0",
     "webpack": "^4.44.2",
     "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.2"
   },
   "husky": {
     "hooks": {
