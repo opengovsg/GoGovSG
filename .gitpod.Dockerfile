@@ -10,7 +10,7 @@ RUN sudo mkdir -p /docker-entrypoint-initaws.d
 RUN sudo chown gitpod /docker-entrypoint-initaws.d
 
 # Use last known working version of LocalStack
-RUN pip install "localstack[full]==0.11.3"
+RUN pip install "localstack[full]==0.11.2"
 
 USER gitpod
 
