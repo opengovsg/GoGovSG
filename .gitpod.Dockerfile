@@ -9,9 +9,6 @@ RUN sudo apt-get update \
 RUN sudo mkdir -p /docker-entrypoint-initaws.d
 RUN sudo chown gitpod /docker-entrypoint-initaws.d
 
-# Use last known working version of LocalStack
-RUN pip install "localstack[full]==0.11.2"
-
 USER gitpod
 
 ENV NODE_ENV=development
