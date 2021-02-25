@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import { get } from '../../../../../../app/util/requests'
 import { LinkStatistics } from '../../../../../../../shared/interfaces/link-statistics'
 import { GAEvent } from '../../../../../../app/util/ga'

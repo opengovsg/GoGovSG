@@ -38,11 +38,13 @@ const useStyles = makeStyles((theme) => ({
 export type BaseStatisticsLayoutProps = {
   children: React.ReactNode
   title: string
+  subtitle?: React.ReactNode
 }
 
 export default function BaseStatisticsLayout({
   children,
   title,
+  subtitle,
 }: BaseStatisticsLayoutProps) {
   const classes = useStyles()
   const theme = useTheme()
@@ -56,6 +58,7 @@ export default function BaseStatisticsLayout({
       >
         {title}
       </Typography>
+      {subtitle}
       <div className={classes.divider} />
       {children}
     </div>

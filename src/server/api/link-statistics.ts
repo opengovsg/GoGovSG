@@ -26,6 +26,7 @@ const linkStatisticsSchema = Joi.object({
       return url
     })
     .required(),
+  offset: Joi.number().min(0),
 })
 
 /**

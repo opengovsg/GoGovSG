@@ -1,9 +1,12 @@
 import React, { FunctionComponent } from 'react'
 import { Provider } from 'react-redux'
-import { HashRouter, Route, Switch } from 'react-router-dom'
+import { Route, Router, Switch } from 'react-router-dom'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
 import { Store } from 'redux'
+
+import { History } from 'history'
+
 import PrivateRoute from '../../PrivateRoute'
 import HomePage from '../../../../home'
 import LoginPage from '../../../../login'
@@ -31,12 +34,13 @@ import theme from '../../../theme'
 
 type RootProps = {
   store: Store
+  history: History
 }
 
-const Root: FunctionComponent<RootProps> = ({ store }: RootProps) => (
+const Root: FunctionComponent<RootProps> = ({ store, history }: RootProps) => (
   <Provider store={store}>
     <MuiThemeProvider theme={theme}>
-      <HashRouter>
+      <Router history={history}>
         <ScrollToTop>
           <Switch>
             <Route exact path={HOME_PAGE} component={HomePage} />
@@ -47,7 +51,7 @@ const Root: FunctionComponent<RootProps> = ({ store }: RootProps) => (
             <Route component={NotFoundPage} />
           </Switch>
         </ScrollToTop>
-      </HashRouter>
+      </Router>
       <MessageSnackbar />
     </MuiThemeProvider>
   </Provider>

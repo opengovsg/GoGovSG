@@ -15,9 +15,11 @@ export interface LinkStatisticsService {
    *
    * @param userId The user id of the requester.
    * @param shortUrl The short url which statistics is to be retrieved.
+   * @param offsetDays The number of days of daily clicks stats to load.
    */
   getLinkStatistics(
     userId: number,
     shortUrl: string,
+    offsetDays?: number,
   ): Promise<LinkStatistics | null>
 }

@@ -1,4 +1,4 @@
-import { QueryTypes } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 import {
   sequelizeMock,
   urlModelMock,
@@ -8,6 +8,8 @@ import {
   LinkStatisticsRepository,
   updateLinkStatistics,
 } from '../LinkStatisticsRepository'
+import { DailyClicks } from '../../../../models/statistics/daily'
+import { getLocalDayGroup } from '../../../../util/time'
 
 jest.mock('../../../../util/sequelize', () => ({
   sequelize: sequelizeMock,
@@ -76,6 +78,46 @@ describe('LinkStatisticsRepository', () => {
     })
     expect(findOne).toBeCalledWith(
       expect.objectContaining({ where: { shortUrl } }),
+    )
+    expect(scope).toBeCalledWith('getClicks')
+  })
+
+  it('correctly queries daily click stats', async () => {
+    const url = {
+      DeviceClicks: { toJSON: () => ({ desktop: 1 }) },
+      DailyClicks: [{ date: 'today', clicks: 2 }],
+      WeekdayClicks: [
+        { weekday: 0, hours: 12, clicks: 3 },
+        { weekday: 0, hours: 13, clicks: 1 },
+      ],
+      UrlClicks: {
+        clicks: 2,
+      },
+    }
+    findOne.mockResolvedValue(url)
+    await expect(repository.findByShortUrl(shortUrl)).resolves.toStrictEqual({
+      totalClicks: url.UrlClicks.clicks,
+      deviceClicks: url.DeviceClicks.toJSON(),
+      dailyClicks: url.DailyClicks,
+      weekdayClicks: url.WeekdayClicks,
+    })
+    expect(findOne).toBeCalledWith(
+      expect.objectContaining({
+        where: { shortUrl },
+        include: expect.arrayContaining([
+          {
+            model: DailyClicks,
+            as: 'DailyClicks',
+            where: {
+              date: {
+                // To retrieve a range from today, and up to 6 days ago inclusive.
+                [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
+              },
+            },
+            required: false,
+          },
+        ]),
+      }),
     )
     expect(scope).toBeCalledWith('getClicks')
   })
