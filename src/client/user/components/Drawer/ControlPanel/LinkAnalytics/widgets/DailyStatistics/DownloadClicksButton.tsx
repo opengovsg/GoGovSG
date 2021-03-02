@@ -8,12 +8,14 @@ import downloadIcon from '../../assets/download.svg'
 import { get } from '../../../../../../../app/util/requests'
 import useIsIE from '../../../../../../../app/components/BaseLayout/util/ie'
 import { useDrawerState } from '../../../../index'
+import { GAEvent } from '../../../../../../../app/util/ga'
 
 async function downloadClicks(shortUrl: string, onError: () => void) {
   const offsetDays = 3650
   const url = `/api/link-stats?url=${shortUrl}&offset=${offsetDays}`
   const response = await get(url)
   if (!response.ok) {
+    GAEvent('Link stats CSV download', shortUrl, 'unsuccessful')
     onError()
     return
   }
@@ -30,6 +32,7 @@ async function downloadClicks(shortUrl: string, onError: () => void) {
   } else {
     saveAs(blob, 'clicks.csv')
   }
+  GAEvent('Link stats CSV download', shortUrl, 'successful')
 }
 
 const useStyles = makeStyles(() => ({
