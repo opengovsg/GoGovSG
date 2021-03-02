@@ -81,6 +81,16 @@ if (cspReportUri) {
 if (sentryDns) {
   connectSrc.push(parseDomain(sentryDns))
 }
+const imgSrc = [
+  "'self'",
+  'data:',
+  'https://www.google-analytics.com/',
+  'https://www.googletagmanager.com/',
+  'https://stats.g.doubleclick.net/',
+]
+if (cspImageBucket) {
+  imgSrc.push(cspImageBucket)
+}
 
 const app = express()
 app.use(
@@ -99,14 +109,7 @@ app.use(
           'https://fonts.gstatic.com/',
           'https://cdn.jsdelivr.net/',
         ],
-        imgSrc: [
-          "'self'",
-          'data:',
-          'https://www.google-analytics.com/',
-          'https://www.googletagmanager.com/',
-          'https://stats.g.doubleclick.net/',
-          cspImageBucket,
-        ],
+        imgSrc,
         scriptSrc: [
           "'self'",
           'https://www.google-analytics.com/',
