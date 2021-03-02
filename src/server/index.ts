@@ -20,6 +20,7 @@ import api from './api'
 // Logger configuration
 import {
   cookieSettings,
+  cspImageBucket,
   cspOnlyReportViolations,
   cspReportUri,
   logger,
@@ -104,6 +105,7 @@ app.use(
           'https://www.google-analytics.com/',
           'https://www.googletagmanager.com/',
           'https://stats.g.doubleclick.net/',
+          cspImageBucket,
         ],
         scriptSrc: [
           "'self'",

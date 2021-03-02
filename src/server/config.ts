@@ -182,6 +182,14 @@ export const cspOnlyReportViolations =
   process.env.CSP_ONLY_REPORT_VIOLATIONS === 'true'
 export const cspReportUri = process.env.CSP_REPORT_URI
 
+const cspImageBucketMap: { [key: string]: string } = {
+  'https://go.gov.sg': 'https://file.go.gov.sg/',
+  'https://staging.go.gov.sg': 'https://file-staging.go.gov.sg/',
+  'https://golink.edu.sg': 'https://file.golink.edu.sg/',
+  'https://staging.golink.edu.sg': 'https://file-staging.golink.edu.sg/',
+}
+export const cspImageBucket = cspImageBucketMap[ogUrl]
+
 export const safeBrowsingLogOnly = process.env.SAFE_BROWSING_LOG_ONLY === 'true'
 
 export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
