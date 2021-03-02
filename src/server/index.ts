@@ -20,10 +20,9 @@ import api from './api'
 // Logger configuration
 import {
   cookieSettings,
-  cspImageBucket,
   cspOnlyReportViolations,
   cspReportUri,
-  logger,
+  logger, s3Bucket,
   sentryDns,
   sessionSettings,
   trustProxy,
@@ -81,16 +80,6 @@ if (cspReportUri) {
 if (sentryDns) {
   connectSrc.push(parseDomain(sentryDns))
 }
-const imgSrc = [
-  "'self'",
-  'data:',
-  'https://www.google-analytics.com/',
-  'https://www.googletagmanager.com/',
-  'https://stats.g.doubleclick.net/',
-]
-if (cspImageBucket) {
-  imgSrc.push(cspImageBucket)
-}
 
 const app = express()
 app.use(
@@ -109,7 +98,14 @@ app.use(
           'https://fonts.gstatic.com/',
           'https://cdn.jsdelivr.net/',
         ],
-        imgSrc,
+        imgSrc: [
+          "'self'",
+          'data:',
+          'https://www.google-analytics.com/',
+          'https://www.googletagmanager.com/',
+          'https://stats.g.doubleclick.net/',
+          `https://${s3Bucket}/`,
+        ],
         scriptSrc: [
           "'self'",
           'https://www.google-analytics.com/',
