@@ -1,6 +1,8 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 
+import lionHeadSymbol from '../../assets/lion-head-symbol.svg'
+
 type MastheadProps = {
   isSticky: boolean
   toStick: boolean
@@ -29,22 +31,6 @@ const useStyles = makeStyles(() =>
     mastheadText: {
       marginLeft: '4px',
     },
-    mastheadIcon: {
-      fontSize: '20px',
-      fontFamily: 'sgds-icons !important',
-      speak: 'none',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      fontVariant: 'normal',
-      textTransform: 'none',
-      lineHeight: 1,
-      WebkitFontSmoothing: 'antialiased',
-      MozOsxFontSmoothing: 'grayscale',
-      '&:before': {
-        content: '"\\e948"',
-        color: '#db0000',
-      },
-    },
   }),
 )
 const Masthead = ({ isSticky, toStick }: MastheadProps) => {
@@ -57,7 +43,7 @@ const Masthead = ({ isSticky, toStick }: MastheadProps) => {
         rel="noopener noreferrer"
         className={classes.mastheadLink}
       >
-        <span className={classes.mastheadIcon} />
+        <img src={lionHeadSymbol} alt="" />
         <span className={classes.mastheadText}>
           A Singapore Government Agency Website
         </span>
