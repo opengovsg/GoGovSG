@@ -58,6 +58,7 @@
     "helmet": "^4.4.1",
     "history": "^4.10.1",
     "i18next": "^19.8.9",
+    "i18next-http-backend": "^1.0.24",
     "inversify": "^5.0.5",
     "jsdom": "^16.4.0",
     "lodash": "^4.17.21",
