@@ -3,7 +3,8 @@ image:
 tasks:
   - command: redis-server
   - before: cp ./init-localstack.sh /docker-entrypoint-initaws.d/init-localstack.sh
-    command: localstack start --host
+    init: pip install --quiet localstack[full]
+    command: /workspace/.pip-modules/bin/localstack start --host
   - before: export ACCESS_ENDPOINT=`gp url 4566`
     init: npm install
     command: /tmp/wait-for-it.sh localhost:4566 -t 0 -- ./init-localstack.sh && echo "Run npm run docker-dev to begin"

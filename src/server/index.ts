@@ -23,6 +23,7 @@ import {
   cspOnlyReportViolations,
   cspReportUri,
   logger,
+  s3Bucket,
   sentryDns,
   sessionSettings,
   trustProxy,
@@ -104,6 +105,7 @@ app.use(
           'https://www.google-analytics.com/',
           'https://www.googletagmanager.com/',
           'https://stats.g.doubleclick.net/',
+          `https://${s3Bucket}/`,
         ],
         scriptSrc: [
           "'self'",
