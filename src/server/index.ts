@@ -92,13 +92,8 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           'https://fonts.googleapis.com/',
-          'https://cdn.jsdelivr.net/',
         ],
-        fontSrc: [
-          "'self'",
-          'https://fonts.gstatic.com/',
-          'https://cdn.jsdelivr.net/',
-        ],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com/'],
         imgSrc: [
           "'self'",
           'data:',

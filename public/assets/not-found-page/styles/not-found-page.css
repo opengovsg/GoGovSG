@@ -40,6 +40,36 @@ img {
   padding: 6px 30px;
 }
 
+.sgds-masthead {
+  position: relative;
+  background-color: #f0f0f0;
+  height: auto;
+  font-size: 14px
+}
+
+.sgds-masthead .sgds-icon {
+  font-size: 20px
+}
+
+.sgds-masthead a {
+  color: #484848;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.sgds-masthead .is-text {
+  margin-left: 4px;
+}
+
+.sgds-masthead a:hover {
+  color: #151515
+}
+
+#main-message p {
+  line-height: 2rem;
+}
+
 #main-container {
   margin-top: 10vh;
   margin-bottom: 10vh;
