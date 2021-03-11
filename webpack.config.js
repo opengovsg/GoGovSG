@@ -14,6 +14,15 @@ const requiredSentryEnvVar = [
   process.env.SENTRY_URL,
 ]
 
+const assetVariant = process.env.ASSET_VARIANT || 'gov'
+
+const assetResolveDir = () => {
+  if (assetVariant === 'edu') {
+    return 'assets/edu/'
+  }
+  return 'assets/gov/'
+}
+
 module.exports = () => {
   const jsBundle = {
     entry: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
@@ -23,9 +32,10 @@ module.exports = () => {
       publicPath: '/',
     },
     resolve: {
-      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
+      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.svg'],
       alias: {
         '~': srcDirectory,
+        '@assets': path.resolve(srcDirectory, assetResolveDir()),
       },
     },
     module: {
@@ -70,7 +80,7 @@ module.exports = () => {
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         template: './public/index.html',
-        favicon: './src/client/app/assets/favicon/favicon.ico',
+        favicon: `./src/client/app/${assetResolveDir()}favicon/favicon.ico`,
         chunksSortMode: 'none',
         meta: {
           // Open Graph protocol meta tags

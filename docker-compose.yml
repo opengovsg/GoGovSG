@@ -44,6 +44,7 @@ services:
       - CSP_ONLY_REPORT_VIOLATIONS=true
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
+      - ASSET_VARIANT=
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src

@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import statsGraphic from '../../../app/assets/landing-page-graphics/stats-graphic.svg'
+import statsGraphic from '@assets/components/home/statistics-graphic/stats-graphic.svg'
 
 const useStyles = makeStyles(() =>
   createStyles({

@@ -1,13 +1,13 @@
 import React from 'react'
 import { Grid, Typography, createStyles, makeStyles } from '@material-ui/core'
-import trustedByMom from '../../app/assets/trusted-by-logos/1.png'
-import trustedByLta from '../../app/assets/trusted-by-logos/2.png'
-import trustedByMoh from '../../app/assets/trusted-by-logos/3.png'
-import trustedByMsf from '../../app/assets/trusted-by-logos/4.png'
-import trustedBySpf from '../../app/assets/trusted-by-logos/5.png'
-import trustedByIras from '../../app/assets/trusted-by-logos/6.png'
-import trustedByMoe from '../../app/assets/trusted-by-logos/7.png'
-import trustedByMha from '../../app/assets/trusted-by-logos/8.png'
+import trustedByMom from '@assets/components/home/trusted-by-sliver/1.png'
+import trustedByLta from '@assets/components/home/trusted-by-sliver/2.png'
+import trustedByMoh from '@assets/components/home/trusted-by-sliver/3.png'
+import trustedByMsf from '@assets/components/home/trusted-by-sliver/4.png'
+import trustedBySpf from '@assets/components/home/trusted-by-sliver/5.png'
+import trustedByIras from '@assets/components/home/trusted-by-sliver/6.png'
+import trustedByMoe from '@assets/components/home/trusted-by-sliver/7.png'
+import trustedByMha from '@assets/components/home/trusted-by-sliver/8.png'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

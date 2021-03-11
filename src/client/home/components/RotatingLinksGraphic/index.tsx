@@ -2,7 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
-import mainImage from '../../../app/assets/landing-page-graphics/landing-main.svg'
+import mainImage from '@assets/components/home/rotating-links-graphic/landing-main.svg'
 import RotatingLinks from './RotatingLinks'
 import { GoGovReduxState } from '../../../app/reducers/types'
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import classNames from 'classnames'
-import LinkedinIcon from '../assets/linkedin-icon.svg'
+import LinkedinIcon from '@assets/widgets/app/linkedin-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
