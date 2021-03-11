@@ -1,9 +1,5 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
-import sgdsIconsTtf from '../assets/fonts/sgds-icons.ttf'
-import sgdsIconsWoff from '../assets/fonts/sgds-icons.woff'
-import sgdsIconsSvg from '../assets/fonts/sgds-icons.svg'
-
 // Provides theme spacing, breakpoint values for the main theme to consume.
 const basicTheme = createMuiTheme({
   breakpoints: {
@@ -118,24 +114,6 @@ export default responsiveFontSizes(
       MuiInputBase: {
         input: {
           fontSize: '14px',
-        },
-      },
-      MuiCssBaseline: {
-        '@global': {
-          // Used for crest symbol in government masthead.
-          '@font-face': [
-            {
-              fontFamily: 'sgds-icons',
-              fontStyle: 'normal',
-              fontWeight: 400,
-              src: `
-              url(${sgdsIconsTtf}) format("truetype"),
-              url(${sgdsIconsWoff}) format("woff"),
-              url(${sgdsIconsSvg}?#sgds-icons) format("svg");
-            `,
-              unicodeRange: 'U+e948',
-            },
-          ],
         },
       },
       MuiOutlinedInput: {

@@ -8,7 +8,7 @@ import { Integrations } from '@sentry/tracing'
 
 import Root from './components/pages/RootPage'
 import { get } from './util/requests'
-import './i18n'
+import { i18nInit } from './i18n'
 import store from './store'
 
 const history = createHashHistory()
@@ -33,8 +33,9 @@ get('/api/sentry/').then((response) => {
     })
   }
 })
-
-render(
-  <Root store={store} history={history} />,
-  document.getElementById('root'),
+i18nInit.then(() =>
+  render(
+    <Root store={store} history={history} />,
+    document.getElementById('root'),
+  ),
 )
