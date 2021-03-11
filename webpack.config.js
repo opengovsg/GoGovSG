@@ -32,7 +32,7 @@ module.exports = () => {
       publicPath: '/',
     },
     resolve: {
-      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.svg'],
+      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
         '@assets': path.resolve(srcDirectory, assetResolveDir()),

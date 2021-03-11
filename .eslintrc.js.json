@@ -54,9 +54,10 @@
       "alias": {
         "map": [
           ["^~", "./src/client"],
+          ["^@assets", "./src/client/app/assets/gov"],
           ["^\\$components", "./src/client/scss/components"]
         ],
-        "extensions": [".jsx", ".js", ".tsx", ".ts", ".scss", ".css"]
+        "extensions": [".jsx", ".js", ".tsx", ".ts", ".scss", ".css", ".png", ".svg"]
       }
     }
   }
