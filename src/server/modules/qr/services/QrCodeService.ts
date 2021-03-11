@@ -18,6 +18,14 @@ export const MARGIN_VERTICAL = 85
 export const FONT_SIZE = 32
 export const LINE_HEIGHT = 1.35
 
+const assetVariant = process.env.ASSET_VARIANT || 'gov'
+const logoVariant = () => {
+  if (assetVariant === 'edu') {
+    return 'qrlogo-edu.svg'
+  }
+  return 'qrlogo-gov.svg'
+}
+
 @injectable()
 export class QrCodeService implements interfaces.QrCodeService {
   // Build base QR code string without logo.
@@ -54,7 +62,7 @@ export class QrCodeService implements interfaces.QrCodeService {
     const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
 
     // Read the logo as a string.
-    const filePath = resolve(__dirname, '../assets/qrlogo.svg')
+    const filePath = resolve(__dirname, `../assets/${logoVariant()}`)
     const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
     const body = select(dom.window.document.querySelector('body'))
