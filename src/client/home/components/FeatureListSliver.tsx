@@ -1,5 +1,5 @@
 import React from 'react'
-import { Trans } from 'react-i18next'
+import i18next from 'i18next'
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import antiPhisingIcon from '../../app/assets/icons/home-page-anti-phishing-icon.svg'
+import antiPhishingIcon from '../../app/assets/icons/home-page-anti-phishing-icon.svg'
 import customisedIcon from '../../app/assets/icons/home-page-customised-icon.svg'
 import analyticsIcon from '../../app/assets/icons/home-page-analytics-icon.svg'
 import fileSharingIcon from '../../app/assets/icons/home-page-file-sharing-icon.svg'
@@ -67,14 +67,14 @@ const columns = [
     id: 1,
     data: [
       {
-        icon: antiPhisingIcon,
+        icon: antiPhishingIcon,
         title: 'Anti-phishing',
-        description: <Trans>homePage.features.antiPhishing.description</Trans>,
+        description: i18next.t('homePage.features.antiPhishing.description'),
       },
       {
         icon: fileSharingIcon,
         title: 'File sharing',
-        description: <Trans>homePage.features.fileSharing.description</Trans>,
+        description: i18next.t('homePage.features.fileSharing.description'),
       },
     ],
   },
@@ -84,12 +84,12 @@ const columns = [
       {
         icon: customisedIcon,
         title: 'Customised',
-        description: <Trans>homePage.features.customised.description</Trans>,
+        description: i18next.t('homePage.features.customised.description'),
       },
       {
         icon: analyticsIcon,
         title: 'Analytics',
-        description: <Trans>homePage.features.analytics.description</Trans>,
+        description: i18next.t('homePage.features.analytics.description'),
       },
     ],
   },
