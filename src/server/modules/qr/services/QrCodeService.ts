@@ -5,7 +5,7 @@ import QRCode from 'qrcode'
 import { resolve } from 'path'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
-import { assetVariant } from 'src/server/config'
+import { assetVariant } from '../../../config'
 
 import ImageFormat from '../../../../shared/util/image-format'
 

@@ -29,8 +29,7 @@ module.exports = () => {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
-        src: path.resolve(__dirname, 'src'),
-        '@assets': path.resolve(srcDirectory, assetResolveDir()),
+        '@assets': path.resolve(srcDirectory, assetResolveDir),
       },
     },
     module: {
@@ -75,7 +74,7 @@ module.exports = () => {
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         template: './public/index.html',
-        favicon: `./src/client/app/${assetResolveDir()}favicon/favicon.ico`,
+        favicon: `./src/client/app/${assetResolveDir}favicon/favicon.ico`,
         chunksSortMode: 'none',
         meta: {
           // Open Graph protocol meta tags

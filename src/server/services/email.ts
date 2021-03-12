@@ -9,7 +9,7 @@ import {
   ogUrl,
   otpExpiry,
   transporterOptions,
-} from 'src/server/config'
+} from '../config'
 
 const directTransport = require('nodemailer-direct-transport')
 
