@@ -15,13 +15,7 @@ const requiredSentryEnvVar = [
 ]
 
 const assetVariant = process.env.ASSET_VARIANT || 'gov'
-
-const assetResolveDir = () => {
-  if (assetVariant === 'edu') {
-    return 'assets/edu/'
-  }
-  return 'assets/gov/'
-}
+const assetResolveDir = assetVariant === 'edu' ? 'assets/edu/' : 'assets/gov/'
 
 module.exports = () => {
   const jsBundle = {
