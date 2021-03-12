@@ -53,6 +53,7 @@
     "import/resolver": {
       "alias": {
         "map": [
+          ["^src", "./src"],
           ["^~", "./src/client"],
           ["^@assets", "./src/client/app/assets/gov"],
           ["^\\$components", "./src/client/scss/components"]
