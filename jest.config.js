@@ -10,4 +10,7 @@ module.exports = {
   coveragePathIgnorePatterns: ['./node_modules/', './test/', '__tests__'],
   setupFiles: ['./test/server/setup.ts'],
   modulePathIgnorePatterns: ['./test/end-to-end'],
+  moduleNameMapper: {
+    '^src/(.*)$': '<rootDir>/src/$1',
+  },
 }

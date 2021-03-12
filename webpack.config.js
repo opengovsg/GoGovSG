@@ -29,6 +29,7 @@ module.exports = () => {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
+        src: path.resolve(__dirname, 'src'),
         '@assets': path.resolve(srcDirectory, assetResolveDir()),
       },
     },
