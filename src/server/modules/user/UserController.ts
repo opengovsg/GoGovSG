@@ -77,7 +77,7 @@ export class UserController {
         return
       }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage(error.message, MessageType.LongUrlError))
+      res.badRequest(jsonMessage(error.message))
       return
     }
   }
