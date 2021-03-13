@@ -34,7 +34,7 @@ export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
 export const validationError = Selector('div').withText(
-  'ValidationError: Creation of URLs to link shortener sites prohibited.',
+  'Validation error: Creation of URLs to link shortener sites prohibited.',
 )
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
