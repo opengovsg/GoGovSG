@@ -44,6 +44,7 @@ services:
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
       - ASSET_VARIANT=
+      - USE_MAILDEV=true
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -78,6 +79,10 @@ services:
       - ./init-localstack.sh:/docker-entrypoint-initaws.d/init-localstack.sh # Initialise the bucket.
       - './.localstack:/tmp/localstack'
       - '/var/run/docker.sock:/var/run/docker.sock'
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1080:80"
 
 volumes:
   pgdata:

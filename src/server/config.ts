@@ -35,6 +35,9 @@ const requiredVars: string[] = [
 // AWS Simple Email Service
 const sesVars: string[] = ['SES_HOST', 'SES_USER', 'SES_PASS', 'SES_PORT']
 
+// MailDev toggle process env
+export const useMaildev: boolean = process.env.USE_MAILDEV === 'true'
+
 // Winston for generic logging
 export const logger: winston.Logger = createLogger({
   // change level if in dev environment versus production
@@ -87,7 +90,7 @@ let otpLimit: number = 5
 if (DEV_ENV) {
   // Only configure things particular to development here
   logger.warn('Deploying in development mode.')
-  otpFunction = () => '111111'
+  otpFunction = useMaildev ? generateOTP : () => '111111'
   cookieConfig = {
     secure: false, // do not set domain for localhost
     maxAge: 1800000, // milliseconds = 30 min

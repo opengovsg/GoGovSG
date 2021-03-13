@@ -13,6 +13,12 @@ declare module 'nodemailer' {
     maxConnections: number
   }
 
+  interface MailDevTransporterOptions {
+    host: string
+    port: string
+    ignoreTLS: boolean
+  }
+
   interface MailOptions {
     to: string
     from: string
@@ -24,4 +30,5 @@ declare module 'nodemailer' {
     sendMail(mail: MailOptions, callback?: (err: Error) => void): void
   }
   function createTransport(config: TransporterOptions): Transport
+  function createTransport(config: MailDevTransporterOptions): Transport
 }

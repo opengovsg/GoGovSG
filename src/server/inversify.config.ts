@@ -11,6 +11,7 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  useMaildev,
   userAnnouncement,
   userMessage,
 } from './config'
@@ -159,8 +160,7 @@ export default () => {
       endpoint: bucketEndpoint,
       s3ForcePathStyle: true,
     })
-
-    bindIfUnbound(DependencyIds.mailer, MailerNoOp)
+    bindIfUnbound(DependencyIds.mailer, useMaildev ? MailerNode : MailerNoOp)
     container
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
