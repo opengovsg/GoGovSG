@@ -3,7 +3,13 @@
 
 import { injectable } from 'inversify'
 import nodemailer from 'nodemailer'
-import { logger, ogUrl, otpExpiry, transporterOptions } from '../config'
+import {
+  logger,
+  ogUrl,
+  otpExpiry,
+  transporterOptions,
+  useMaildev,
+} from '../config'
 
 const directTransport = require('nodemailer-direct-transport')
 
@@ -13,7 +19,7 @@ export interface Mailer {
   initMailer(): void
 
   /**
-   * Sends email to SES / Direct transport to send out.
+   * Sends email to SES / MailDev / Direct transport to send out.
    */
   mailOTP(email: string, otp: string, ip: string): Promise<void>
 }
@@ -24,9 +30,19 @@ export class MailerNode implements Mailer {
     if (transporterOptions !== null) {
       // Uses SES SMTP transport
       transporter = nodemailer.createTransport(transporterOptions)
+    } else if (useMaildev) {
+      logger.warn(
+        'No SES credentials detected, using MailDev at localhost:1080. This should NEVER be seen in production.',
+      )
+      // Falls back to maildev
+      transporter = nodemailer.createTransport({
+        host: 'maildev',
+        port: '25',
+        ignoreTLS: true,
+      })
     } else {
       logger.warn(
-        'No SES credentials detected, Using Nodemailer Direct Transport. This should NEVER be seen in production.',
+        'No SES credentials detected, using Nodemailer Direct Transport. This should NEVER be seen in production.',
       )
       // Falls back to direct transport
       transporter = nodemailer.createTransport(directTransport())
