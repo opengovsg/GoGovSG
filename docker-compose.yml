@@ -44,7 +44,7 @@ services:
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
       - ASSET_VARIANT=
-      - USE_MAILDEV=true
+      - USE_MAILDEV=false
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
