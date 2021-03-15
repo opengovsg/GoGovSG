@@ -2,8 +2,7 @@ import i18next from 'i18next'
 import Backend from 'i18next-http-backend'
 import { initReactI18next } from 'react-i18next'
 
-declare let ASSET_VARIANT: string
-const assetVariant = ASSET_VARIANT || 'gov'
+const assetVariant = process.env.ASSET_VARIANT || 'gov'
 
 const pathVariant =
   assetVariant === 'edu'
