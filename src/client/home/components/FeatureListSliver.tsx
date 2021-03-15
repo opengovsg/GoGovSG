@@ -11,10 +11,10 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import antiPhishingIcon from '../../app/assets/icons/home-page-anti-phishing-icon.svg'
-import customisedIcon from '../../app/assets/icons/home-page-customised-icon.svg'
-import analyticsIcon from '../../app/assets/icons/home-page-analytics-icon.svg'
-import fileSharingIcon from '../../app/assets/icons/home-page-file-sharing-icon.svg'
+import antiPhishingIcon from '@assets/components/home/feature-list-sliver/home-page-anti-phishing-icon.svg'
+import customisedIcon from '@assets/components/home/feature-list-sliver/home-page-customised-icon.svg'
+import analyticsIcon from '@assets/components/home/feature-list-sliver/home-page-analytics-icon.svg'
+import fileSharingIcon from '@assets/components/home/feature-list-sliver/home-page-file-sharing-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

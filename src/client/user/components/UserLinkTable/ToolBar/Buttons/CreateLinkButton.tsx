@@ -2,11 +2,11 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { createStyles, makeStyles } from '@material-ui/core'
 
+import addIcon from '@assets/components/user/user-link-table/toolbar/add-icon.svg'
 import userActions from '../../../../actions'
 import ContainedIconButton from './templates/ContainedIconButton'
 import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import OvalContainedButton from './templates/OvalContainedButton'
-import addIcon from '../assets/add-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

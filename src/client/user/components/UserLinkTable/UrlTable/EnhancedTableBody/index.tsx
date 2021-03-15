@@ -10,9 +10,9 @@ import {
   Typography,
 } from '@material-ui/core'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import linkIcon from '../../../../../app/assets/icons/link-icon.svg'
-import fileIcon from '../../../../../app/assets/icons/file-icon.svg'
-import clickCountIcon from '../../assets/click-count-icon.svg'
+import linkIcon from '@assets/components/user/user-link-table/link-icon.svg'
+import fileIcon from '@assets/components/user/user-link-table/file-icon.svg'
+import clickCountIcon from '@assets/components/user/user-link-table/click-count-icon.svg'
 
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import { DrawerActions } from '../../../Drawer/ControlPanel/util/reducers'

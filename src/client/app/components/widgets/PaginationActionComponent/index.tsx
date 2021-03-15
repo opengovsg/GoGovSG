@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import { Grid, IconButton, createStyles, makeStyles } from '@material-ui/core'
-import arrowLeftIcon from '../../../assets/icons/arrow-left-icon.svg'
-import arrowRightIcon from '../../../assets/icons/arrow-right-icon.svg'
+import arrowLeftIcon from '@assets/widgets/app/arrow-left-icon.svg'
+import arrowRightIcon from '@assets/widgets/app/arrow-right-icon.svg'
 
 const useStyles = makeStyles(() =>
   createStyles({

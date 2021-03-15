@@ -2,6 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const SentryCliPlugin = require('@sentry/webpack-plugin')
+const webpack = require('webpack')
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client/app')
@@ -14,6 +15,28 @@ const requiredSentryEnvVar = [
   process.env.SENTRY_URL,
 ]
 
+const assetVariant = process.env.ASSET_VARIANT || 'gov'
+const assetResolveDir = assetVariant === 'edu' ? 'assets/edu' : 'assets/gov'
+const templatePath = assetVariant === 'edu' ? 'edu' : 'gov'
+
+const govMetaTags = {
+  'og:title': 'Go.gov.sg',
+  'og:type': 'article',
+  'og:description': 'The official Singapore government link shortener',
+  'og:image':
+    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
+}
+
+const eduMetaTags = {
+  'og:title': 'Edu.edu.sg',
+  'og:type': 'article',
+  'og:description': 'The official Singapore government link shortener',
+  'og:image':
+    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
+}
+
+const metaVariant = assetVariant === 'edu' ? eduMetaTags : govMetaTags
+
 module.exports = () => {
   const jsBundle = {
     entry: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
@@ -23,9 +46,10 @@ module.exports = () => {
       publicPath: '/',
     },
     resolve: {
-      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json'],
+      extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
+        '@assets': path.resolve(srcDirectory, assetResolveDir),
       },
     },
     module: {
@@ -69,17 +93,13 @@ module.exports = () => {
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
-        template: './public/index.html',
-        favicon: './src/client/app/assets/favicon/favicon.ico',
+        template: path.join('./public', templatePath, 'index.html'),
+        favicon: `./src/client/app/${assetResolveDir}/favicon/favicon.ico`,
         chunksSortMode: 'none',
-        meta: {
-          // Open Graph protocol meta tags
-          'og:title': 'Go.gov.sg',
-          'og:type': 'article',
-          'og:description': 'The official Singapore government link shortener',
-          'og:image':
-            'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
-        },
+        meta: metaVariant,
+      }),
+      new webpack.DefinePlugin({
+        'process.env.ASSET_VARIANT': JSON.stringify(process.env.ASSET_VARIANT),
       }),
     ],
   }

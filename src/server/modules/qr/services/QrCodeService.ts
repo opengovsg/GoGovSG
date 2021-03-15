@@ -4,6 +4,7 @@ import QRCode from 'qrcode'
 import { resolve } from 'path'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
+import { assetVariant } from '../../../config'
 
 import ImageFormat from '../../../../shared/util/image-format'
 
@@ -14,6 +15,8 @@ export const QR_CODE_DIMENSIONS = 800
 export const MARGIN_VERTICAL = 85
 export const FONT_SIZE = 32
 export const LINE_HEIGHT = 1.35
+
+const logoVariant = assetVariant === 'edu' ? 'qrlogo-edu.svg' : 'qrlogo-gov.svg'
 
 @injectable()
 export class QrCodeService implements interfaces.QrCodeService {
@@ -51,7 +54,7 @@ export class QrCodeService implements interfaces.QrCodeService {
     const dom = cheerio.load('')
 
     // Read the logo as a string.
-    const filePath = resolve(__dirname, '../assets/qrlogo.svg')
+    const filePath = resolve(__dirname, `../assets/${logoVariant}`)
     const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
     dom('body').append('<svg></svg>')

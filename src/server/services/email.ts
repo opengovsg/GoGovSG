@@ -3,9 +3,17 @@
 
 import { injectable } from 'inversify'
 import nodemailer from 'nodemailer'
-import { logger, ogUrl, otpExpiry, transporterOptions } from '../config'
+import {
+  assetVariant,
+  logger,
+  ogUrl,
+  otpExpiry,
+  transporterOptions,
+} from '../config'
 
 const directTransport = require('nodemailer-direct-transport')
+
+const domainVariant = assetVariant === 'edu' ? 'golink.edu.sg' : 'go.gov.sg'
 
 let transporter: nodemailer.Transport
 
@@ -47,8 +55,8 @@ export class MailerNode implements Mailer {
     <p>This login attempt was made from the IP: ${ip}. If you did not attempt to log in, you may choose to ignore this email or investigate this IP address further.</p>`
     const mail: nodemailer.MailOptions = {
       to: email,
-      from: 'go.gov.sg <donotreply@mail.go.gov.sg>',
-      subject: 'One-Time Password (OTP) for go.gov.sg',
+      from: `${domainVariant} <donotreply@mail.${domainVariant}>`,
+      subject: `One-Time Password (OTP) for ${domainVariant}`,
       html: emailHTML,
     }
 
