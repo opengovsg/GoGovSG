@@ -197,4 +197,4 @@ export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS
 
-export const assetVariant = process.env.ASSET_VARIANT || 'gov'
+export const assetVariant: string = process.env.ASSET_VARIANT || 'gov'
