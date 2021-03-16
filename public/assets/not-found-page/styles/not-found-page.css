@@ -1,18 +1,8 @@
-:root {
-  --text-color: #384a51;
-  --text-emphasize-color: #456682;
-  --banner-color: #f9f9f9;
-  --button-text-color: #ffffff;
-  --button-pine-color: #456682;
-  --button-seaweed-color: #384a51;
-  --divider-grey-color: #e8e8e8;
-}
-
 body {
   position: relative;
   -webkit-font-smoothing: antialiased;
   font-family: 'IBM Plex Sans', sans-serif;
-  color: var(--text-color);
+  color: var(--notfound-text-color);
   overflow-wrap: break-word;
   /* Do not use default window margins. */
   margin: 0 !important;
@@ -31,39 +21,9 @@ img {
 
 .divider {
   height: 1px;
-  background-color: var(--divider-grey-color);
+  background-color: var(--notfound-divider-grey-color);
   margin-top: 49px;
   margin-bottom: 54px;
-}
-
-.masthead-root {
-  padding: 6px 30px;
-}
-
-.sgds-masthead {
-  position: relative;
-  background-color: #f0f0f0;
-  height: auto;
-  font-size: 14px
-}
-
-.sgds-masthead .sgds-icon {
-  font-size: 20px
-}
-
-.sgds-masthead a {
-  color: #484848;
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.sgds-masthead .is-text {
-  margin-left: 4px;
-}
-
-.sgds-masthead a:hover {
-  color: #151515
 }
 
 #main-message p {
@@ -87,7 +47,7 @@ img {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.36;
-  color: var(--button-seaweed-color);
+  color: var(--notfound-button-seaweed-color);
   margin-top: 0;
   margin-bottom: 0;
 }

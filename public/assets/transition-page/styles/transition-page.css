@@ -8,37 +8,7 @@ body {
   padding: 0 !important;
   height: 100%;
   min-height: 100vh;
-  background: #f9f9f9;
-}
-
-.masthead-root {
-  padding: 6px 30px;
-}
-
-.sgds-masthead {
-  position: relative;
-  background-color: #f0f0f0;
-  height: auto;
-  font-size: 14px
-}
-
-.sgds-masthead .sgds-icon {
-  font-size: 20px
-}
-
-.sgds-masthead a {
-  color: #484848;
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.sgds-masthead .is-text {
-  margin-left: 4px;
-}
-
-.sgds-masthead a:hover {
-  color: #151515
+  background: var(--transition-body-color);
 }
 
 #main-message p {
@@ -46,14 +16,14 @@ body {
 }
 
 .top-half {
-  background: #384a51;
+  background: var(--transition-top-half-color) ;
   height: 50vh;
   position: relative;
 }
 
 .top-half-content {
   text-align: center;
-  color: #ffffff;
+  color: var(--transition-top-half-content-color);
   position: absolute;
   bottom: -56px;
   left: 50%;
@@ -67,7 +37,7 @@ body {
 
 .top-half-content a {
   display: block;
-  color: white;
+  color: var(--transition-top-half-content-link-color);
   font-size: 16px;
   margin-bottom: 35px;
 }
@@ -93,7 +63,7 @@ body {
   height: 140px;
   padding-top: 75px;
   padding-left: 165px;
-  color: #000000;
+  color: var(--transition-links-color);
 }
 
 .bottom-half {
@@ -115,7 +85,7 @@ body {
 
 #skip > span {
   font-size: 13px;
-  color: #456682;
+  color: var(--transition-skip-span-color);
   text-decoration: underline;
 }
 
@@ -128,7 +98,7 @@ body {
 }
 
 .footer p {
-  color: #bbbbbb;
+  color: var(--transition-footer-p-color);
   font-size: 13px;
   line-height: 13px;
 }
@@ -186,6 +156,7 @@ body {
     padding-left: 115px;
     font-size: 12px;
     height: 120px;
+    box-sizing: border-box;
   }
 
   .top-half-content a {
@@ -229,5 +200,6 @@ body {
     padding-top: 73px;
     padding-left: 115px;
     font-size: 12px;
+    box-sizing: border-box;
   }
 }
