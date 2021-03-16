@@ -19,9 +19,11 @@ import api from './api'
 
 // Logger configuration
 import {
+  assetVariant,
   cookieSettings,
   cspOnlyReportViolations,
   cspReportUri,
+  displayHostname,
   logger,
   s3Bucket,
   sentryDns,
@@ -190,7 +192,11 @@ initDb()
     ) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
-      res.status(404).render(ERROR_404_PATH, { shortUrl })
+      res.status(404).render(ERROR_404_PATH, {
+        shortUrl,
+        assetVariant,
+        displayHostname,
+      })
       return
     })
 
