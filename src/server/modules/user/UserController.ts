@@ -1,6 +1,7 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
 
+import Sequelize from 'sequelize'
 import { OwnershipTransferRequest, UrlCreationRequest, UrlEditRequest } from '.'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
@@ -76,8 +77,11 @@ export class UserController {
         res.badRequest(jsonMessage(error.message, MessageType.ShortUrlError))
         return
       }
+      if (error instanceof Sequelize.ValidationError) {
+        res.badRequest(jsonMessage(error.message))
+      }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Server error.'))
+      res.badRequest(jsonMessage('Server Error.'))
       return
     }
   }
