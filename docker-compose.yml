@@ -36,7 +36,7 @@ services:
       - ANNOUNCEMENT_TITLE=GoDirectory is here!
       - ANNOUNCEMENT_SUBTITLE=Search all go.gov.sg links
       - ANNOUNCEMENT_URL=https://go.gov.sg/
-      - ANNOUNCEMENT_IMAGE=/gov/assets/transition-page/images/directory-browser.svg
+      - ANNOUNCEMENT_IMAGE=/assets/gov/transition-page/images/directory-browser.svg
       - AWS_S3_BUCKET=local-bucket
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
       - AWS_ACCESS_KEY_ID=foobar
