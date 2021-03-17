@@ -1,9 +1,11 @@
 /* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
+import { ValidationError } from 'sequelize'
 import { StorableUrlState } from '../../../repositories/enums'
 import { createRequestWithUser } from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
+import { AlreadyExistsError, NotFoundError } from '../../../util/error'
 
 const urlManagementService = {
   createUrl: jest.fn(),
@@ -71,7 +73,49 @@ describe('UserController', () => {
       )
     })
 
-    it('reports bad request on Error', async () => {
+    it('reports not found on NotFoundError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.notFound = jest.fn()
+
+      urlManagementService.createUrl.mockRejectedValue(new NotFoundError(''))
+
+      await controller.createUrl(req, res)
+      expect(res.notFound).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
+    })
+
+    it('reports bad request on AlreadyExistsError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      urlManagementService.createUrl.mockRejectedValue(
+        new AlreadyExistsError(''),
+      )
+
+      await controller.createUrl(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        message: expect.any(String),
+        type: expect.any(String),
+      })
+    })
+
+    it('reports bad request on Sequelize.ValidationError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      urlManagementService.createUrl.mockRejectedValue(new ValidationError(''))
+
+      await controller.createUrl(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
+    })
+
+    it('reports bad request on generic Error', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()

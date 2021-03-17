@@ -19,9 +19,11 @@ import api from './api'
 
 // Logger configuration
 import {
+  assetVariant,
   cookieSettings,
   cspOnlyReportViolations,
   cspReportUri,
+  displayHostname,
   logger,
   s3Bucket,
   sentryDns,
@@ -41,7 +43,7 @@ import './util/response'
 // Morgan configuration for logging HTTP requests
 import getIp from './util/request'
 import { container } from './util/inversify'
-import { DependencyIds } from './constants'
+import { DependencyIds, ERROR_404_PATH } from './constants'
 import { Mailer } from './services/email'
 import parseDomain from './util/domain'
 import { RedirectController } from './modules/redirect'
@@ -92,13 +94,8 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           'https://fonts.googleapis.com/',
-          'https://cdn.jsdelivr.net/',
         ],
-        fontSrc: [
-          "'self'",
-          'https://fonts.gstatic.com/',
-          'https://cdn.jsdelivr.net/',
-        ],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com/'],
         imgSrc: [
           "'self'",
           'data:',
@@ -195,7 +192,11 @@ initDb()
     ) // The Redirect Endpoint
     app.use((req, res) => {
       const shortUrl = req.path.slice(1)
-      res.status(404).render('404.error.ejs', { shortUrl })
+      res.status(404).render(ERROR_404_PATH, {
+        shortUrl,
+        assetVariant,
+        displayHostname,
+      })
       return
     })
 

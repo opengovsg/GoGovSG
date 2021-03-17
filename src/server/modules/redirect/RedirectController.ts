@@ -1,6 +1,11 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { gaTrackingId, logger } from '../../config'
+import {
+  assetVariant,
+  displayHostname,
+  gaTrackingId,
+  logger,
+} from '../../config'
 import { NotFoundError } from '../../util/error'
 import parseDomain from '../../util/domain'
 import { DependencyIds, ERROR_404_PATH } from '../../constants'
@@ -61,7 +66,11 @@ export class RedirectController {
 
     // Short link must not be null
     if (!shortUrl) {
-      res.status(404).render(ERROR_404_PATH, { shortUrl })
+      res.status(404).render(ERROR_404_PATH, {
+        shortUrl,
+        assetVariant,
+        displayHostname,
+      })
       return
     }
 
@@ -95,6 +104,8 @@ export class RedirectController {
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
           rootDomain,
           gaTrackingId,
+          assetVariant,
+          displayHostname,
         })
         this.logRedirect(req, shortUrl, longUrl)
         return
@@ -109,7 +120,11 @@ export class RedirectController {
         )
       }
 
-      res.status(404).render(ERROR_404_PATH, { shortUrl })
+      res.status(404).render(ERROR_404_PATH, {
+        shortUrl,
+        assetVariant,
+        displayHostname,
+      })
       return
     }
   }

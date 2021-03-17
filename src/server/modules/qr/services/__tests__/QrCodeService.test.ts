@@ -12,10 +12,10 @@ describe('GoGovSg QR code', () => {
     const qrCodeService = new QrCodeService()
 
     test('png string', async () => {
-      const buffer = (await qrCodeService.createGoQrCode(
+      const buffer = await qrCodeService.createGoQrCode(
         testUrl,
         ImageFormat.PNG,
-      )) as Buffer
+      )
       const data = png.decode(buffer)
       const out = {
         data: new Uint8ClampedArray(png.toRGBA8(data)[0]),

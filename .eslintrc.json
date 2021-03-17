@@ -38,5 +38,17 @@
   "env": {
     "browser": true,
     "jest": true
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["^~", "./src/client"],
+          ["^@assets", "./src/client/app/assets/gov"],
+          ["^\\$components", "./src/client/scss/components"]
+        ],
+        "extensions": [".jsx", ".js", ".tsx", ".ts", ".scss", ".css", ".png", ".svg"]
+      }
+    }
   }
 }

@@ -1,22 +1,22 @@
-import jsdom from 'jsdom'
-import { select } from 'd3'
+import cheerio from 'cheerio'
 import fs from 'fs'
 import QRCode from 'qrcode'
 import { resolve } from 'path'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
+import { assetVariant } from '../../../config'
 
 import ImageFormat from '../../../../shared/util/image-format'
 
 import * as interfaces from '../interfaces'
-
-const { JSDOM } = jsdom
 
 export const IMAGE_WIDTH = 1000
 export const QR_CODE_DIMENSIONS = 800
 export const MARGIN_VERTICAL = 85
 export const FONT_SIZE = 32
 export const LINE_HEIGHT = 1.35
+
+const logoVariant = assetVariant === 'edu' ? 'qrlogo-edu.svg' : 'qrlogo-gov.svg'
 
 @injectable()
 export class QrCodeService implements interfaces.QrCodeService {
@@ -51,37 +51,39 @@ export class QrCodeService implements interfaces.QrCodeService {
     )
 
     const qrString = await this.makeQrCode(url)
-    const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
+    const dom = cheerio.load('')
 
     // Read the logo as a string.
-    const filePath = resolve(__dirname, '../assets/qrlogo.svg')
+    const filePath = resolve(__dirname, `../assets/${logoVariant}`)
     const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
-    const body = select(dom.window.document.querySelector('body'))
-
-    const svg = body
-      .append('svg')
-      .attr('width', IMAGE_WIDTH)
-      .attr('height', imageHeight)
+    dom('body').append('<svg></svg>')
+    const svg = dom('svg')
+      .attr('width', `${IMAGE_WIDTH}`)
+      .attr('height', `${imageHeight}`)
       .attr('xmlns', 'http://www.w3.org/2000/svg')
 
     // Provides the entire graphic with a white background.
-    svg
-      .append('rect')
+    svg.append('<rect></rect>')
+    dom('rect')
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('fill', '#ffffff')
 
     // Append generated qr code to jsdom.
     const qrCodeOffsetX = (IMAGE_WIDTH - QR_CODE_DIMENSIONS) / 2
-    svg
-      .append('svg')
-      .attr('x', qrCodeOffsetX)
-      .attr('y', MARGIN_VERTICAL)
+
+    const qrDOM = cheerio.load('')
+    qrDOM('body').append('<svg></svg>')
+    qrDOM('svg')
+      .attr('x', `${qrCodeOffsetX}`)
+      .attr('y', `${MARGIN_VERTICAL}`)
       .attr('viewBox', `0 0 ${QR_CODE_DIMENSIONS} ${QR_CODE_DIMENSIONS}`)
-      .attr('width', QR_CODE_DIMENSIONS)
-      .attr('height', QR_CODE_DIMENSIONS)
+      .attr('width', `${QR_CODE_DIMENSIONS}`)
+      .attr('height', `${QR_CODE_DIMENSIONS}`)
       .html(qrString)
+
+    svg.append(`${qrDOM('body').html()}`)
 
     // Append go logo to the qrcode on jsdom.
     const logoDimensions = 0.35 * QR_CODE_DIMENSIONS
@@ -89,38 +91,39 @@ export class QrCodeService implements interfaces.QrCodeService {
     const logoOffsetY =
       MARGIN_VERTICAL + (QR_CODE_DIMENSIONS - logoDimensions) / 2
 
-    svg
-      .append('svg')
-      .attr('x', logoOffsetX)
-      .attr('y', logoOffsetY)
+    const goLogoDOM = cheerio.load('')
+    goLogoDOM('body').append('<svg></svg>')
+    goLogoDOM('svg')
+      .attr('x', logoOffsetX.toString())
+      .attr('y', logoOffsetY.toString())
       .attr('viewBox', `0 0 ${logoDimensions} ${logoDimensions}`)
-      .attr('width', logoDimensions)
-      .attr('height', logoDimensions)
+      .attr('width', logoDimensions.toString())
+      .attr('height', logoDimensions.toString())
       .html(logoSvg)
+
+    svg.append(`${goLogoDOM('body').html()}`)
 
     // Append the relevant shortlink to the bottom of the qrcode.
     const textLocationX = IMAGE_WIDTH / 2
     const textLocationY = 2 * MARGIN_VERTICAL + QR_CODE_DIMENSIONS
 
-    svg
-      .selectAll('text')
-      .data(lines)
-      .enter()
-      .append('text')
-      .attr('x', textLocationX)
-      .attr('y', (_, i) => {
-        return textLocationY + i * FONT_SIZE * LINE_HEIGHT
-      })
-      .attr('text-anchor', 'middle')
-      .attr('font-family', 'sans-serif')
-      .attr('font-weight', '400')
-      .attr('font-size', `${FONT_SIZE}px`)
-      .text((d) => {
-        return d
-      })
+    lines.forEach((line, i) => {
+      const linkDOM = cheerio.load('')
+      linkDOM('body').append('<text></text>')
+      linkDOM('text')
+        .attr('x', `${textLocationX}`)
+        .attr('y', `${textLocationY + i * FONT_SIZE * LINE_HEIGHT}`)
+        .attr('text-anchor', 'middle')
+        .attr('font-family', 'sans-serif')
+        .attr('font-weight', '400')
+        .attr('font-size', `${FONT_SIZE}px`)
+        .text(line)
+
+      svg.append(`${linkDOM('body').html()}`)
+    })
 
     // Return the result svg as string.
-    return [Buffer.from(body.html()), imageHeight]
+    return [Buffer.from(`${dom('body').html()}`), imageHeight]
   }
 
   // Build QR code of specified file format as a string or buffer.

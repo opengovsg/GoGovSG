@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import { Tooltip, createStyles, makeStyles } from '@material-ui/core'
 
-import helpIcon from '../../../../../app/assets/help-icon.svg'
+import helpIcon from '@assets/shared/help-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

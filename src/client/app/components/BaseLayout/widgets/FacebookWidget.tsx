@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import classNames from 'classnames'
-import FacebookIcon from '../assets/facebook-icon.svg'
+import FacebookIcon from '@assets/widgets/app/facebook-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

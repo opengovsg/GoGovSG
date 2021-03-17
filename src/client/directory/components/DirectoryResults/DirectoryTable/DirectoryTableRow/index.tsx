@@ -11,9 +11,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
+import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
 import { UrlTypePublic } from '../../../../reducers/types'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
-import personIcon from '../../../../assets/person-icon.svg'
 import { SetSuccessMessageAction } from '../../../../../app/components/pages/RootPage/actions/types'
 import rootActions from '../../../../../app/components/pages/RootPage/actions'
 import DirectoryFileIcon from '../../../../widgets/DirectoryFileIcon'
