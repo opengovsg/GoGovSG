@@ -13,7 +13,7 @@ import {
 
 const directTransport = require('nodemailer-direct-transport')
 
-const domainVariant = assetVariant === 'edu' ? 'golink.edu.sg' : 'go.gov.sg'
+const domainVariant = assetVariant === 'edu' ? 'for.edu.sg' : 'go.gov.sg'
 
 let transporter: nodemailer.Transport
 

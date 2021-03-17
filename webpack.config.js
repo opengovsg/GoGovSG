@@ -28,7 +28,7 @@ const govMetaTags = {
 }
 
 const eduMetaTags = {
-  'og:title': 'Edu.edu.sg',
+  'og:title': 'For.edu.sg',
   'og:type': 'article',
   'og:description': 'The official Singapore government link shortener',
   'og:image':

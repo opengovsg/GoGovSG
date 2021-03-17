@@ -19,6 +19,8 @@ import { USER_PAGE } from '../../util/types'
 import Banner from './widgets/Banner'
 import { GoGovReduxState } from '../../reducers/types'
 
+const displayMasthead = process.env.ASSET_VARIANT === 'gov'
+
 const useStyles = makeStyles(() =>
   createStyles({
     '@global': {
@@ -93,7 +95,7 @@ const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
   return (
     <>
       <CssBaseline />
-      <Masthead isSticky={isSticky} toStick={toStick} />
+      {displayMasthead && <Masthead isSticky={isSticky} toStick={toStick} />}
       {path === USER_PAGE && isIE && <BannerForIE isSticky={isSticky} />}
       {path === USER_PAGE && message && (
         <Banner text={message} isSticky={isSticky} />
