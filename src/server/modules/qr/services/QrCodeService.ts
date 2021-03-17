@@ -63,6 +63,18 @@ export class QrCodeService implements interfaces.QrCodeService {
       .attr('height', `${imageHeight}`)
       .attr('xmlns', 'http://www.w3.org/2000/svg')
 
+    // Sources IBM Plex Sans font from Google Fonts and defines the text style.
+    // This only affects QRCodes that are exported to SVGs.
+    // Note that sharp sources the font file from the Docker container that the
+    // instance is run on. Refer to Dockerfile for the installation.
+    svg.append(
+      `<defs>
+        <style type="text/css">
+          @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&amp;display=swap");
+        </style>
+      </defs>`,
+    )
+
     // Provides the entire graphic with a white background.
     svg.append('<rect></rect>')
     dom('rect')
@@ -114,7 +126,7 @@ export class QrCodeService implements interfaces.QrCodeService {
         .attr('x', `${textLocationX}`)
         .attr('y', `${textLocationY + i * FONT_SIZE * LINE_HEIGHT}`)
         .attr('text-anchor', 'middle')
-        .attr('font-family', 'sans-serif')
+        .attr('font-family', 'IBM Plex Sans, sans-serif')
         .attr('font-weight', '400')
         .attr('font-size', `${FONT_SIZE}px`)
         .text(line)

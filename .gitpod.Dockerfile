@@ -38,5 +38,9 @@ ENV PORT_WEB_UI=8055
 
 ENV BUCKET_ENDPOINT=http://localhost:4566
 
+# Installs IBMPlexSans-Regular.ttf for QRCodeService.
+RUN wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/TTF/IBMPlexSans-Regular.ttf
+RUN fc-cache -f
+
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /tmp/wait-for-it.sh
 RUN chmod 755 /tmp/wait-for-it.sh
