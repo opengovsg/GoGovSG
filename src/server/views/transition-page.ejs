@@ -6,30 +6,27 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta charset="UTF-8">
-    <title>Go.gov.sg</title>
-    <link href="/assets/shared/shared-styles.css" rel="stylesheet">
-    <link href="/assets/shared/colours.css" rel="stylesheet">
+    <title><%- displayHostname %></title>
+    <link href="/assets/styles/shared/shared-styles.css" rel="stylesheet">
+    <link href="/assets/<%- assetVariant %>/styles/colours.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="/assets/transition-page/styles/transition-page.css" rel="stylesheet">
+    <link href="/assets/styles/transition-page/transition-page.css" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
-    <div class="sgds-masthead masthead-root">
-        <a href="https://www.gov.sg" target="_blank" rel=”noreferrer noopener”>
-            <img src="/assets/lion-head-symbol.svg" />
-            <span class="is-text">A Singapore Government Agency Website</span>
-        </a>
-    </div>
+    <% if(assetVariant === 'gov') { %> 
+        <%- include('partial-masthead') %> 
+    <% } %>
     <div class="top-half">
         <div class="top-half-content">
             <h3>Check your address bar</h3>
-            <a href="https://go.gov.sg/go-antiphishing" target="_blank" rel="noreferrer noopener">Beware of phishing! <br class="mobile-break">Make sure your link starts with go.gov.sg</a>
+            <a href="https://go.gov.sg/go-antiphishing" target="_blank" rel="noreferrer noopener">Beware of phishing! <br class="mobile-break">Make sure your link starts with <%- displayHostname.toLowerCase() %></a>
             <p id="url" data-href="<%- escapedLongUrl %>">You will be redirected in <span id="countdown-seconds">6</span> second<span id="s">s</span></p>
-            <img id="spinner" src="/assets/transition-page/images/spinner.gif" alt="loading" />
-            <div class="browser-image">
-                <div class="links">go.gov.sg/</div>
+            <img id="spinner" src="/assets/<%- assetVariant %>/transition-page/images/spinner.gif" alt="loading" />
+            <div class="browser-image" style="background-image: url('assets/<%- assetVariant %>/transition-page/images/browser.svg');">
+                <div class="links" <% if(assetVariant === 'edu') { %> <%-"style=padding-left:169px;"%> <% } %>><%- displayHostname.toLowerCase() %>/</div>
             </div>
         </div>
     </div>
@@ -37,11 +34,11 @@
         
         <div id="skip">
             <span>I've checked the link. Skip ahead</span>
-            <img src="/assets/transition-page/icons/icon-arrow-right.svg" alt="right arrow" />
+            <img src="/assets/<%- assetVariant %>/transition-page/icons/icon-arrow-right.svg" alt="right arrow" />
         </div>
         <div class="footer">
             <div id="logo">
-                <img src="/assets/transition-page/icons/ogp-logo.svg" alt="ogp logo" />
+                <img src="/assets/<%- assetVariant %>/transition-page/icons/ogp-logo.svg" alt="ogp logo" />
             </div>
             <p>You will only be shown this page the first time you access this short link.</p>
         </div>

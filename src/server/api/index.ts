@@ -1,6 +1,7 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
 import { ERROR_404_PATH } from '../constants'
+import { assetVariant, displayHostname } from '../config'
 
 const router = Express.Router()
 
@@ -50,7 +51,10 @@ router.use('/link-stats', userGuard, require('./link-statistics'))
 router.use('/directory', userGuard, require('./directory'))
 
 router.use((_, res) => {
-  res.status(404).render(ERROR_404_PATH)
+  res.status(404).render(ERROR_404_PATH, {
+    assetVariant,
+    displayHostname,
+  })
 })
 
 export default router

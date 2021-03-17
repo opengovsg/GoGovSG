@@ -6,8 +6,8 @@ const assetVariant = process.env.ASSET_VARIANT || 'gov'
 
 const pathVariant =
   assetVariant === 'edu'
-    ? '/edu/locales/{{lng}}/{{ns}}.json'
-    : '/gov/locales/{{lng}}/{{ns}}.json'
+    ? '/locales/edu/{{lng}}/{{ns}}.json'
+    : '/locales/gov/{{lng}}/{{ns}}.json'
 
 export const i18nInit = i18next
   // load translation using http -> see /public/locales
