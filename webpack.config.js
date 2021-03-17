@@ -93,7 +93,7 @@ module.exports = () => {
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
-        template: path.join('./public', templatePath, 'index.html'),
+        template: path.join('./public', `index-${templatePath}.html`),
         favicon: `./src/client/app/${assetResolveDir}/favicon/favicon.ico`,
         chunksSortMode: 'none',
         meta: metaVariant,
