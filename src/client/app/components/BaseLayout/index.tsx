@@ -19,7 +19,7 @@ import { USER_PAGE } from '../../util/types'
 import Banner from './widgets/Banner'
 import { GoGovReduxState } from '../../reducers/types'
 
-const assetVariant = process.env.ASSET_VARIANT === 'edu' ? 'edu' : 'gov'
+const assetVariant = process.env.ASSET_VARIANT || 'gov'
 const displayMasthead = assetVariant === 'gov'
 
 const useStyles = makeStyles(() =>
