@@ -14,6 +14,10 @@ EXPOSE 3000
 
 RUN apk update && apk add ttf-freefont && rm -rf /var/cache/apk/*
 
+# Installs IBMPlexSans-Regular.ttf for QRCodeService.
+RUN wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/TTF/IBMPlexSans-Regular.ttf
+RUN fc-cache -f
+
 # Install libraries
 COPY package.json package-lock.json ./
 
