@@ -44,7 +44,7 @@ module.exports = () => {
       path: path.join(__dirname, outputDirectory),
       filename: 'bundle.js',
       publicPath: '/',
-      assetModuleFilename: 'assets/[name].[ext]',
+      assetModuleFilename: 'assets/[name][ext]',
     },
     resolve: {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
