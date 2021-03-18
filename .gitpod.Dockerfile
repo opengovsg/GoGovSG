@@ -9,6 +9,10 @@ RUN sudo apt-get update \
 RUN sudo mkdir -p /docker-entrypoint-initaws.d
 RUN sudo chown gitpod /docker-entrypoint-initaws.d
 
+# Installs IBMPlexSans-Regular.ttf for QRCodeService.
+RUN sudo wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/truetype/IBMPlexSans-Regular.ttf
+RUN sudo fc-cache -f
+
 USER gitpod
 
 ENV NODE_ENV=development
@@ -37,10 +41,6 @@ ENV AWS_SECRET_ACCESS_KEY=foobar
 ENV PORT_WEB_UI=8055
 
 ENV BUCKET_ENDPOINT=http://localhost:4566
-
-# Installs IBMPlexSans-Regular.ttf for QRCodeService.
-RUN wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/truetype/IBMPlexSans-Regular.ttf
-RUN fc-cache -f
 
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /tmp/wait-for-it.sh
 RUN chmod 755 /tmp/wait-for-it.sh
