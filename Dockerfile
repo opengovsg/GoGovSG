@@ -2,8 +2,6 @@ FROM node:14-alpine3.12
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
-ARG BUILD_MODE
-
 # Inject ASSET_VARIANT via build arguments for production
 ARG __ASSET_VARIANT
 ENV ASSET_VARIANT=${__ASSET_VARIANT:-gov}

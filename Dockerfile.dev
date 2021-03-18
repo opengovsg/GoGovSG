@@ -2,8 +2,6 @@ FROM node:14-alpine3.12
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
-ARG BUILD_MODE
-
 WORKDIR /usr/src/gogovsg
 
 # For Express server
