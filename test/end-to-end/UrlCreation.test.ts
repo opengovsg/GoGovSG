@@ -1,5 +1,6 @@
 import { Selector } from 'testcafe'
 import {
+  circularRedirectUrl,
   dummyFilePath,
   dummyRelativePath,
   invalidShortUrl,
@@ -9,6 +10,8 @@ import {
   smallFileSize,
 } from './util/config'
 import {
+  blacklistValidationError,
+  circularRedirectValidationError,
   createLinkButton,
   createUrlModal,
   fileSubmitButton,
@@ -22,7 +25,6 @@ import {
   successUrlCreation,
   uploadFile,
   urlTable,
-  validationError,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import firstLinkHandle from './util/FirstLinkHandle'
@@ -54,7 +56,21 @@ test('The URL based shortlink test.', async (t) => {
     await t.click(createLinkButton.nth(1))
   }
 
-  await t.expect(validationError.exists).ok()
+  await t.expect(blacklistValidationError.exists).ok()
+
+  // It should prevent creation of short urls pointing to long urls hosted on our domains (circular redirects)
+  await t
+    .click(longUrlTextField)
+    .pressKey('ctrl+a delete')
+    .typeText(longUrlTextField, `${circularRedirectUrl}`)
+
+  if (await createLinkButton.nth(2).exists) {
+    await t.click(createLinkButton.nth(2))
+  } else {
+    await t.click(createLinkButton.nth(1))
+  }
+
+  await t.expect(circularRedirectValidationError.exists).ok()
 
   await t
     .click(longUrlTextField)

@@ -1,0 +1,72 @@
+/* sgds element styles */
+
+.masthead-root {
+  padding: 6px 30px;
+}
+
+.sgds-masthead {
+  position: relative;
+  background-color: #f0f0f0;
+  height: auto;
+  font-size: 14px
+}
+
+.sgds-masthead .sgds-icon {
+  font-size: 20px
+}
+
+.sgds-masthead a {
+  color: #484848;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.sgds-masthead .is-text {
+  margin-left: 4px;
+}
+
+.sgds-masthead a:hover {
+  color: #151515
+}
+
+/* body and html styles */
+
+body {
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+html {
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility
+}
+
+*, ::after, ::before {
+  box-sizing: inherit;
+}
+
+/* other elements */
+
+.top-half-content h3 {
+  margin-top: 0px;
+  font-size: 2rem;
+  line-height: 2.8125rem;
+}
+
+.top-half-content a {
+    text-decoration: none;
+}
+
+.browser-image {
+  margin-top: 8px;
+}
+
+.footer p {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}

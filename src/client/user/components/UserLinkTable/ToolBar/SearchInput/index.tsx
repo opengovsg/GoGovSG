@@ -10,9 +10,9 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
+import filterSortIcon from '@assets/components/user/user-link-table/toolbar/filtersort-icon.svg'
 import FilterSortPanel from '../FilterSortPanel'
 import userActions from '../../../../actions'
-import filterSortIcon from '../assets/filtersort-icon.svg'
 import useSearchInputHeight from './searchInputHeight'
 import SearchIcon from '../../../../../app/components/widgets/SearchIcon'
 import { UrlTableConfig } from '../../../../reducers/types'

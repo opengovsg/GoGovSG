@@ -1,7 +1,7 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 
-import lionHeadSymbol from '../../assets/lion-head-symbol.svg'
+import lionHeadSymbol from '@assets/components/app/base-layout/lion-head-symbol.svg'
 
 type MastheadProps = {
   isSticky: boolean

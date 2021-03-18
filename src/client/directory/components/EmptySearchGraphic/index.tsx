@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import empyGraphic from '../../assets/empty-graphic.svg'
+import empyGraphic from '@assets/components/directory/empty-search-graphic/empty-graphic.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

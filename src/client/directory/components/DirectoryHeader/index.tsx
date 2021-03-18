@@ -8,12 +8,12 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
+import arrow from '@assets/components/directory/directory-header/arrow.svg'
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import GoDirectoryInput from './DirectoryInput'
 import { SearchResultsSortOrder } from '../../../../shared/search'
 import useAppMargins from '../../../app/components/AppMargins/appMargins'
 import BetaTag from '../../../app/components/widgets/BetaTag'
-import arrow from '../../assets/arrow.svg'
 
 type DirectoryHeaderProps = {
   onQueryChange: (query: string) => void

@@ -27,7 +27,9 @@ export default function LongUrlEditor() {
       leading={
         <PrefixableTextField
           value={editedLongUrl}
-          onChange={(event) => setEditedLongUrl(event.target.value)}
+          onChange={(event) =>
+            setEditedLongUrl(removeHttpsProtocol(event.target.value))
+          }
           placeholder="Original link"
           prefix="https://"
           error={!isValidLongUrl(editedLongUrl, true)}

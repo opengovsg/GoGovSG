@@ -8,7 +8,7 @@ import {
   makeStyles,
 } from '@material-ui/core'
 
-import copyIcon from '../assets/copy-icon.svg'
+import copyIcon from '@assets/widgets/user/copy-icon.svg'
 import OnClickTooltip from './OnClickTooltip'
 
 type StyleProps = {
