@@ -4,8 +4,7 @@ services:
   app:
     build:
       context: .
-      args:
-        - BUILD_MODE=development
+      dockerfile: Dockerfile.dev
     command: npm run docker-dev
     depends_on:
       - postgres
