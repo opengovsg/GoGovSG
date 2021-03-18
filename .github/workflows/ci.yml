@@ -282,7 +282,7 @@ jobs:
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
           SHA: ${{ github.sha }}
-      - run: docker build --tag my-image .
+      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=edu .
       - name: Push to ECR
         uses: opengovsg/gh-ecr-push@v1
         with:
