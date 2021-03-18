@@ -51,6 +51,9 @@ module.exports = () => {
         '~': srcDirectory,
         '@assets': path.resolve(srcDirectory, assetResolveDir),
       },
+      fallback: {
+        path: require.resolve('path-browserify'),
+      },
     },
     module: {
       rules: [
