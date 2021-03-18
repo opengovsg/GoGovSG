@@ -29,14 +29,12 @@ RUN npm ci
 
 COPY . ./
 
-RUN if [ "$BUILD_MODE" != "development" ]; \
-then { \
+RUN { \
   echo "Building..."; \
   npm run build; \
   echo "Removing devDependencies for production..."; \
   npm prune --production; \
-} \
-fi
+}
 
 # Builds and starts Node server for production
 CMD ["npm", "run", "start"]
