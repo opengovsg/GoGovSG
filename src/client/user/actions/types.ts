@@ -5,6 +5,8 @@ import {
   UrlType,
 } from '../reducers/types'
 
+import { HasPayload, ReduxAction } from '../../app/actions/types'
+
 /* User actions */
 
 export enum UserAction {
@@ -35,143 +37,135 @@ export enum UserAction {
   SET_FILE_UPLOAD_STATE = 'SET_FILE_UPLOAD_STATE',
 }
 
-export type SetUrlUploadStateAction = {
-  type: UserAction.SET_URL_UPLOAD_STATE
-  payload: boolean
-}
+export type SetUrlUploadStateAction = ReduxAction<
+  typeof UserAction.SET_URL_UPLOAD_STATE
+> &
+  HasPayload<boolean>
 
-export type SetFileUploadStateAction = {
-  type: UserAction.SET_FILE_UPLOAD_STATE
-  payload: boolean
-}
+export type SetFileUploadStateAction = ReduxAction<
+  typeof UserAction.SET_FILE_UPLOAD_STATE
+> &
+  HasPayload<boolean>
 
-export type SetUserMessageAction = {
-  type: UserAction.SET_USER_MESSAGE
-  payload: string
-}
+export type SetUserMessageAction = ReduxAction<
+  typeof UserAction.SET_USER_MESSAGE
+> &
+  HasPayload<string>
 
-export type SetUserAnnouncementAction = {
-  type: UserAction.SET_USER_ANNOUNCEMENT
-  payload: {
+export type SetUserAnnouncementAction = ReduxAction<
+  typeof UserAction.SET_USER_ANNOUNCEMENT
+> &
+  HasPayload<{
     message: string | undefined
     title: string | undefined
     subtitle: string | undefined
     url: string | undefined
     image: string | undefined
-  }
-}
+  }>
 
-export type SetEditedContactEmailAction = {
-  type: UserAction.SET_EDITED_CONTACT_EMAIL
-  payload: {
+export type SetEditedContactEmailAction = ReduxAction<
+  typeof UserAction.SET_EDITED_CONTACT_EMAIL
+> &
+  HasPayload<{
     shortUrl: string
     editedContactEmail: string
-  }
-}
+  }>
 
-export type SetEditedDescriptionAction = {
-  type: UserAction.SET_EDITED_DESCRIPTION
-  payload: {
+export type SetEditedDescriptionAction = ReduxAction<
+  typeof UserAction.SET_EDITED_DESCRIPTION
+> &
+  HasPayload<{
     shortUrl: string
     editedDescription: string
-  }
-}
+  }>
 
-export type SetLastCreatedLinkAction = {
-  type: UserAction.SET_LAST_CREATED_LINK
-  payload: string
-}
+export type SetLastCreatedLinkAction = ReduxAction<
+  typeof UserAction.SET_LAST_CREATED_LINK
+> &
+  HasPayload<string>
 
-export type WipeUserStateAction = {
-  type: UserAction.WIPE_USER_STATE
-}
+export type WipeUserStateAction = ReduxAction<typeof UserAction.WIPE_USER_STATE>
 
-export type IsFetchingUrlsAction = {
-  type: UserAction.IS_FETCHING_URLS
-  payload: boolean
-}
+export type IsFetchingUrlsAction = ReduxAction<
+  typeof UserAction.IS_FETCHING_URLS
+> &
+  HasPayload<boolean>
 
-export type CreateUrlSuccessAction = {
-  type: UserAction.CREATE_URL_SUCCESS
-}
+export type CreateUrlSuccessAction = ReduxAction<
+  typeof UserAction.CREATE_URL_SUCCESS
+>
 
-export type GetUrlsForUserSuccessAction = {
-  type: UserAction.GET_URLS_FOR_USER_SUCCESS
-  payload: Array<UrlType>
-}
+export type GetUrlsForUserSuccessAction = ReduxAction<
+  typeof UserAction.GET_URLS_FOR_USER_SUCCESS
+> &
+  HasPayload<Array<UrlType>>
 
-export type OpenCreateUrlModalAction = {
-  type: UserAction.OPEN_CREATE_URL_MODAL
-}
+export type OpenCreateUrlModalAction = ReduxAction<
+  typeof UserAction.OPEN_CREATE_URL_MODAL
+>
 
-export type CloseCreateUrlModalAction = {
-  type: UserAction.CLOSE_CREATE_URL_MODAL
-}
+export type CloseCreateUrlModalAction = ReduxAction<
+  typeof UserAction.CLOSE_CREATE_URL_MODAL
+>
 
-export type SetShortUrlAction = {
-  type: UserAction.SET_SHORT_URL
-  payload: string
-}
+export type SetShortUrlAction = ReduxAction<typeof UserAction.SET_SHORT_URL> &
+  HasPayload<string>
 
-export type SetLongUrlAction = {
-  type: UserAction.SET_LONG_URL
-  payload: string
-}
+export type SetLongUrlAction = ReduxAction<typeof UserAction.SET_LONG_URL> &
+  HasPayload<string>
 
-export type SetEditedLongUrlAction = {
-  type: UserAction.SET_EDITED_LONG_URL
-  payload: {
+export type SetEditedLongUrlAction = ReduxAction<
+  typeof UserAction.SET_EDITED_LONG_URL
+> &
+  HasPayload<{
     shortUrl: string
     editedLongUrl: string
-  }
-}
+  }>
 
-export type SetRandomShortUrlAction = {
-  type: UserAction.SET_RANDOM_SHORT_URL
-  payload: string
-}
+export type SetRandomShortUrlAction = ReduxAction<
+  typeof UserAction.SET_RANDOM_SHORT_URL
+> &
+  HasPayload<string>
 
-export type ResetUserStateAction = {
-  type: UserAction.RESET_USER_STATE
-}
+export type ResetUserStateAction = ReduxAction<
+  typeof UserAction.RESET_USER_STATE
+>
 
-export type ToggleUrlStateSuccessAction = {
-  type: UserAction.TOGGLE_URL_STATE_SUCCESS
-  payload: {
+export type ToggleUrlStateSuccessAction = ReduxAction<
+  typeof UserAction.TOGGLE_URL_STATE_SUCCESS
+> &
+  HasPayload<{
     shortUrl: string
     toState: UrlState
-  }
-}
+  }>
 
-export type SetUrlTableConfigAction = {
-  type: UserAction.SET_URL_TABLE_CONFIG
-  payload: UrlTableConfig
-}
+export type SetUrlTableConfigAction = ReduxAction<
+  typeof UserAction.SET_URL_TABLE_CONFIG
+> &
+  HasPayload<UrlTableConfig>
 
-export type UpdateUrlCountAction = {
-  type: UserAction.UPDATE_URL_COUNT
-  payload: number
-}
+export type UpdateUrlCountAction = ReduxAction<
+  typeof UserAction.UPDATE_URL_COUNT
+> &
+  HasPayload<number>
 
-export type SetIsUploadingAction = {
-  type: UserAction.SET_IS_UPLOADING
-  payload: boolean
-}
+export type SetIsUploadingAction = ReduxAction<
+  typeof UserAction.SET_IS_UPLOADING
+> &
+  HasPayload<boolean>
 
-export type SetUploadFileErrorAction = {
-  type: UserAction.SET_UPLOAD_FILE_ERROR
-  payload: string
-}
+export type SetUploadFileErrorAction = ReduxAction<
+  typeof UserAction.SET_UPLOAD_FILE_ERROR
+> &
+  HasPayload<string>
 
-export type SetCreateShortLinkErrorAction = {
-  type: UserAction.SET_CREATE_SHORT_LINK_ERROR
-  payload: string
-}
+export type SetCreateShortLinkErrorAction = ReduxAction<
+  typeof UserAction.SET_CREATE_SHORT_LINK_ERROR
+> &
+  HasPayload<string>
 
-export type SetUrlFilterAction = {
-  type: UserAction.SET_URL_FILTER
-  payload: UrlTableFilterConfig
-}
+export type SetUrlFilterAction = ReduxAction<typeof UserAction.SET_URL_FILTER> &
+  HasPayload<UrlTableFilterConfig>
 
 export type UserActionType =
   | UpdateUrlCountAction
