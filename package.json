@@ -68,7 +68,6 @@
     "morgan": "^1.10.0",
     "nanoid": "^2.1.11",
     "nodemailer": "^6.5.0",
-    "nodemailer-direct-transport": "^3.3.2",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.2",
     "prop-types": "^15.7.2",

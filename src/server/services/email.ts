@@ -9,10 +9,7 @@ import {
   ogUrl,
   otpExpiry,
   transporterOptions,
-  useMaildev,
 } from '../config'
-
-const directTransport = require('nodemailer-direct-transport')
 
 const domainVariant = assetVariant === 'edu' ? 'for.edu.sg' : 'go.gov.sg'
 
@@ -33,7 +30,7 @@ export class MailerNode implements Mailer {
     if (transporterOptions !== null) {
       // Uses SES SMTP transport
       transporter = nodemailer.createTransport(transporterOptions)
-    } else if (useMaildev) {
+    } else {
       logger.warn(
         'No SES credentials detected, using MailDev at localhost:1080. This should NEVER be seen in production.',
       )
@@ -43,12 +40,6 @@ export class MailerNode implements Mailer {
         port: '25',
         ignoreTLS: true,
       })
-    } else {
-      logger.warn(
-        'No SES credentials detected, using Nodemailer Direct Transport. This should NEVER be seen in production.',
-      )
-      // Falls back to direct transport
-      transporter = nodemailer.createTransport(directTransport())
     }
   }
 
