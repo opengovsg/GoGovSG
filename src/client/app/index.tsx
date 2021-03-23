@@ -1,6 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
 
+// top level application entrypoint polyfill imports
+require('core-js/stable')
+require('regenerator-runtime/runtime')
+
 import { createHashHistory } from 'history'
 
 import * as Sentry from '@sentry/react'
