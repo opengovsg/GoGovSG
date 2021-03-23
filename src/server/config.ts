@@ -78,13 +78,11 @@ exitIfAnyMissing(requiredVars)
 
 // From here, all required env variables will be casted to non-nullable strings.
 
-let otpFunction: OtpFunction | null = null
+const otpFunction: OtpFunction | null = generateOTP
 let transporterOpts: nodemailer.TransporterOptions | null = null
 let proxy: boolean = true
 let cookieConfig = null
 let otpLimit: number = 5
-
-otpFunction = generateOTP
 
 if (DEV_ENV) {
   // Only configure things particular to development here
