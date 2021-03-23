@@ -7,6 +7,7 @@ import {
   testEmail,
 } from './util/config'
 import { emailHelperText, loginButton, signInButton } from './util/helpers'
+import loginProcedure from './util/LoginProcedure'
 
 const getLocation = ClientFunction(() => document.location.href)
 
@@ -62,15 +63,7 @@ test.page(`${rootLocation}/#/user`)(
 
 test('Valid OTP should log the user in', async (t) => {
   // Shows the homepage if user does not have an existing session
-  await t
-    .click(loginButton)
-    .typeText('#email', `${testEmail}`)
-    .click(signInButton)
-    .typeText('#otp', otp)
-    .click(signInButton)
-    // Valid OTP should log the user in
-    .expect(getLocation())
-    .match(/user/)
+  await loginProcedure(t)
 
   // Redirects to /user if user has an existing session (ie logged in previously on the same browser)
   await t.navigateTo(`${rootLocation}`).expect(getLocation()).match(/user/)
