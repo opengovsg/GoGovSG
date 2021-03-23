@@ -39,7 +39,14 @@ const metaVariant = assetVariant === 'edu' ? eduMetaTags : govMetaTags
 
 module.exports = () => {
   const jsBundle = {
-    entry: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
+    target: ['web', 'es5'],
+    entry: [
+      // explicitly specify transpilation order to prevent IE 11 from breaking
+      'babel-polyfill',
+      'react',
+      'react-dom',
+      path.join(srcDirectory, 'index.tsx'),
+    ],
     output: {
       path: path.join(__dirname, outputDirectory),
       filename: 'bundle.js',
@@ -54,6 +61,11 @@ module.exports = () => {
       },
       fallback: {
         path: require.resolve('path-browserify'),
+        zlib: false,
+        http: false,
+        https: false,
+        stream: false,
+        crypto: false,
       },
     },
     module: {
