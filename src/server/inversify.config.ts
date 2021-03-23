@@ -149,6 +149,8 @@ export default () => {
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 
+  bindIfUnbound(DependencyIds.mailer, MailerNode)
+
   if (DEV_ENV) {
     const s3Client = new AWS.S3({
       credentials: {
@@ -158,13 +160,11 @@ export default () => {
       endpoint: bucketEndpoint,
       s3ForcePathStyle: true,
     })
-    bindIfUnbound(DependencyIds.mailer, MailerNode)
     container
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
   } else {
-    bindIfUnbound(DependencyIds.mailer, MailerNode)
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
   }

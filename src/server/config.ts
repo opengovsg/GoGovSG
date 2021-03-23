@@ -84,19 +84,30 @@ let proxy: boolean = true
 let cookieConfig = null
 let otpLimit: number = 5
 
+otpFunction = generateOTP
+
 if (DEV_ENV) {
   // Only configure things particular to development here
   logger.warn('Deploying in development mode.')
-  otpFunction = generateOTP
   cookieConfig = {
     secure: false, // do not set domain for localhost
     maxAge: 1800000, // milliseconds = 30 min
   }
   proxy = false
   otpLimit = 10
+
+  // Configures transporter for maildev
+  transporterOpts = {
+    host: 'maildev',
+    port: '25',
+    pool: true,
+    maxMessages: 100,
+    maxConnections: 20,
+    ignoreTLS: true,
+  }
 } else {
   logger.info('Deploying in production mode.')
-  otpFunction = generateOTP
+
   const maxAge = Number(process.env.COOKIE_MAX_AGE)
   cookieConfig = {
     secure: true,
@@ -160,7 +171,7 @@ export const redisStatUri = process.env.REDIS_STAT_URI as string
 export const redisSafeBrowsingUri = process.env
   .REDIS_SAFE_BROWSING_URI as string
 export const getOTP: OtpFunction = otpFunction
-export const transporterOptions: nodemailer.TransporterOptions | null = transporterOpts
+export const transporterOptions: nodemailer.TransporterOptions = transporterOpts
 export const trustProxy: boolean = proxy
 export const otpRateLimit: number = otpLimit
 export const cookieSettings: CookieSettings = cookieConfig
