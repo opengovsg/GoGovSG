@@ -61,7 +61,6 @@
     "i18next-http-backend": "^1.1.0",
     "inversify": "^5.0.5",
     "lodash": "^4.17.21",
-    "maildev": "^1.1.0",
     "minimatch": "^3.0.4",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
