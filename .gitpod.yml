@@ -8,6 +8,8 @@ tasks:
   - before: export ACCESS_ENDPOINT=`gp url 4566`
     init: npm install
     command: /tmp/wait-for-it.sh localhost:4566 -t 0 -- ./init-localstack.sh && echo "Run npm run docker-dev to begin"
+  - init: npm install maildev -g
+    command: maildev --verbose
 ports:
   # postgres
   - port: 5432
@@ -25,4 +27,7 @@ ports:
   # expressjs - not needed since we have
   # access via webpack dev server proxy
   - port: 8080
+    onOpen: ignore
+  # maildev
+  - port: 1025
     onOpen: ignore

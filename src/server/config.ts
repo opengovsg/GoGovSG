@@ -96,8 +96,8 @@ if (DEV_ENV) {
 
   // Configures transporter for maildev
   transporterOpts = {
-    host: 'maildev',
-    port: '25',
+    host: process.env.MAILDEV_HOST || 'maildev',
+    port: process.env.MAILDEV_SMTP_PORT || '25',
     pool: true,
     maxMessages: 100,
     maxConnections: 20,
