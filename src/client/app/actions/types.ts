@@ -23,4 +23,7 @@ export interface HasPayload<P> {
   payload: P
 }
 
+export type ReduxPayloadAction<T extends string, P> = ReduxAction<T> &
+  HasPayload<P>
+
 export type AllThunkDispatch = ThunkDispatch<GoGovReduxState, void, AllActions>
