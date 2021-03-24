@@ -38,22 +38,22 @@ export enum UserAction {
 }
 
 export type SetUrlUploadStateAction = ReduxPayloadAction<
-  typeof UserAction.SET_URL_UPLOAD_STATE,
+  UserAction.SET_URL_UPLOAD_STATE,
   boolean
 >
 
 export type SetFileUploadStateAction = ReduxPayloadAction<
-  typeof UserAction.SET_FILE_UPLOAD_STATE,
+  UserAction.SET_FILE_UPLOAD_STATE,
   boolean
 >
 
 export type SetUserMessageAction = ReduxPayloadAction<
-  typeof UserAction.SET_USER_MESSAGE,
+  UserAction.SET_USER_MESSAGE,
   string
 >
 
 export type SetUserAnnouncementAction = ReduxPayloadAction<
-  typeof UserAction.SET_USER_ANNOUNCEMENT,
+  UserAction.SET_USER_ANNOUNCEMENT,
   {
     message: string | undefined
     title: string | undefined
@@ -64,7 +64,7 @@ export type SetUserAnnouncementAction = ReduxPayloadAction<
 >
 
 export type SetEditedContactEmailAction = ReduxPayloadAction<
-  typeof UserAction.SET_EDITED_CONTACT_EMAIL,
+  UserAction.SET_EDITED_CONTACT_EMAIL,
   {
     shortUrl: string
     editedContactEmail: string
@@ -72,7 +72,7 @@ export type SetEditedContactEmailAction = ReduxPayloadAction<
 >
 
 export type SetEditedDescriptionAction = ReduxPayloadAction<
-  typeof UserAction.SET_EDITED_DESCRIPTION,
+  UserAction.SET_EDITED_DESCRIPTION,
   {
     shortUrl: string
     editedDescription: string
@@ -80,46 +80,40 @@ export type SetEditedDescriptionAction = ReduxPayloadAction<
 >
 
 export type SetLastCreatedLinkAction = ReduxPayloadAction<
-  typeof UserAction.SET_LAST_CREATED_LINK,
+  UserAction.SET_LAST_CREATED_LINK,
   string
 >
 
-export type WipeUserStateAction = ReduxAction<typeof UserAction.WIPE_USER_STATE>
+export type WipeUserStateAction = ReduxAction<UserAction.WIPE_USER_STATE>
 
 export type IsFetchingUrlsAction = ReduxPayloadAction<
-  typeof UserAction.IS_FETCHING_URLS,
+  UserAction.IS_FETCHING_URLS,
   boolean
 >
 
-export type CreateUrlSuccessAction = ReduxAction<
-  typeof UserAction.CREATE_URL_SUCCESS
->
+export type CreateUrlSuccessAction = ReduxAction<UserAction.CREATE_URL_SUCCESS>
 
 export type GetUrlsForUserSuccessAction = ReduxPayloadAction<
-  typeof UserAction.GET_URLS_FOR_USER_SUCCESS,
+  UserAction.GET_URLS_FOR_USER_SUCCESS,
   Array<UrlType>
 >
 
-export type OpenCreateUrlModalAction = ReduxAction<
-  typeof UserAction.OPEN_CREATE_URL_MODAL
->
+export type OpenCreateUrlModalAction = ReduxAction<UserAction.OPEN_CREATE_URL_MODAL>
 
-export type CloseCreateUrlModalAction = ReduxAction<
-  typeof UserAction.CLOSE_CREATE_URL_MODAL
->
+export type CloseCreateUrlModalAction = ReduxAction<UserAction.CLOSE_CREATE_URL_MODAL>
 
 export type SetShortUrlAction = ReduxPayloadAction<
-  typeof UserAction.SET_SHORT_URL,
+  UserAction.SET_SHORT_URL,
   string
 >
 
 export type SetLongUrlAction = ReduxPayloadAction<
-  typeof UserAction.SET_LONG_URL,
+  UserAction.SET_LONG_URL,
   string
 >
 
 export type SetEditedLongUrlAction = ReduxPayloadAction<
-  typeof UserAction.SET_EDITED_LONG_URL,
+  UserAction.SET_EDITED_LONG_URL,
   {
     shortUrl: string
     editedLongUrl: string
@@ -127,16 +121,14 @@ export type SetEditedLongUrlAction = ReduxPayloadAction<
 >
 
 export type SetRandomShortUrlAction = ReduxPayloadAction<
-  typeof UserAction.SET_RANDOM_SHORT_URL,
+  UserAction.SET_RANDOM_SHORT_URL,
   string
 >
 
-export type ResetUserStateAction = ReduxAction<
-  typeof UserAction.RESET_USER_STATE
->
+export type ResetUserStateAction = ReduxAction<UserAction.RESET_USER_STATE>
 
 export type ToggleUrlStateSuccessAction = ReduxPayloadAction<
-  typeof UserAction.TOGGLE_URL_STATE_SUCCESS,
+  UserAction.TOGGLE_URL_STATE_SUCCESS,
   {
     shortUrl: string
     toState: UrlState
@@ -144,32 +136,32 @@ export type ToggleUrlStateSuccessAction = ReduxPayloadAction<
 >
 
 export type SetUrlTableConfigAction = ReduxPayloadAction<
-  typeof UserAction.SET_URL_TABLE_CONFIG,
+  UserAction.SET_URL_TABLE_CONFIG,
   UrlTableConfig
 >
 
 export type UpdateUrlCountAction = ReduxPayloadAction<
-  typeof UserAction.UPDATE_URL_COUNT,
+  UserAction.UPDATE_URL_COUNT,
   number
 >
 
 export type SetIsUploadingAction = ReduxPayloadAction<
-  typeof UserAction.SET_IS_UPLOADING,
+  UserAction.SET_IS_UPLOADING,
   boolean
 >
 
 export type SetUploadFileErrorAction = ReduxPayloadAction<
-  typeof UserAction.SET_UPLOAD_FILE_ERROR,
+  UserAction.SET_UPLOAD_FILE_ERROR,
   string
 >
 
 export type SetCreateShortLinkErrorAction = ReduxPayloadAction<
-  typeof UserAction.SET_CREATE_SHORT_LINK_ERROR,
+  UserAction.SET_CREATE_SHORT_LINK_ERROR,
   string
 >
 
 export type SetUrlFilterAction = ReduxPayloadAction<
-  typeof UserAction.SET_URL_FILTER,
+  UserAction.SET_URL_FILTER,
   UrlTableFilterConfig
 >
 
