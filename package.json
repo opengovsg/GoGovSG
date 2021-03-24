@@ -21,7 +21,8 @@
     "test": "jest --collectCoverage",
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
     "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
-    "cz": "git-cz"
+    "cz": "git-cz",
+    "prepare": "husky install"
   },
   "author": "Open Government Products, GovTech Singapore (https://open.gov.sg)",
   "license": "MIT",
@@ -178,13 +179,6 @@
     "webpack": "^5.26.3",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run lint && commitlint --from origin/develop --to HEAD --verbose",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "sh secrets-check.sh && lint-staged"
-    }
   },
   "lint-staged": {
     "**/*.(js|jsx)": [
