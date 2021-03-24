@@ -9,6 +9,10 @@ RUN sudo apt-get update \
 RUN sudo mkdir -p /docker-entrypoint-initaws.d
 RUN sudo chown gitpod /docker-entrypoint-initaws.d
 
+# Installs IBMPlexSans-Regular.ttf for QRCodeService.
+RUN sudo wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/truetype/IBMPlexSans-Regular.ttf
+RUN sudo fc-cache -f
+
 USER gitpod
 
 ENV NODE_ENV=development

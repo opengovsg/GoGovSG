@@ -7,10 +7,11 @@ declare module 'nodemailer' {
   interface TransporterOptions {
     host: string
     port: string
-    auth: TransporterCredentials
+    auth?: TransporterCredentials
     pool: boolean
     maxMessages: number
     maxConnections: number
+    ignoreTLS?: boolean
   }
 
   interface MailOptions {

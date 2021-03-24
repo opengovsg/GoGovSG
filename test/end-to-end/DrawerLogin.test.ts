@@ -155,13 +155,7 @@ test('Drawer functionality test for file.', async (t) => {
 
 test.before(async (t) => {
   // login to the transfer email to activate it, then logout
-  await t
-    .click(loginButton)
-    .typeText('#email', `${transferEmail}`)
-    .click(signInButton)
-    .typeText('#otp', otp)
-    .click(signInButton)
-    .click(loginSuccessAlert)
+  await LoginProcedure(t, transferEmail)
 
   if (await userModal.exists) {
     await t.click(userModalCloseButton)
@@ -211,14 +205,11 @@ test.before(async (t) => {
   await t.expect(successSnackBar.exists).notOk()
 
   // Verify the link is in the transfer email
-  await t
-    .click(signOutButton)
-    .typeText('#email', `${transferEmail}`)
-    .click(signInButton)
-    .typeText('#otp', otp)
-    .click(signInButton)
-    .expect(linkRow.exists)
-    .ok()
+  await t.click(signOutButton).navigateTo(`${rootLocation}`)
+
+  await LoginProcedure(t, transferEmail)
+
+  await t.expect(linkRow.exists).ok()
 })
 
 test('Link transfer toast test.', async (t) => {

@@ -11,17 +11,14 @@ import {
   transporterOptions,
 } from '../config'
 
-const directTransport = require('nodemailer-direct-transport')
-
 const domainVariant = assetVariant === 'edu' ? 'for.edu.sg' : 'go.gov.sg'
 
 let transporter: nodemailer.Transport
-
 export interface Mailer {
   initMailer(): void
 
   /**
-   * Sends email to SES / Direct transport to send out.
+   * Sends email to SES / MailDev to send out.
    */
   mailOTP(email: string, otp: string, ip: string): Promise<void>
 }
@@ -29,16 +26,7 @@ export interface Mailer {
 @injectable()
 export class MailerNode implements Mailer {
   initMailer() {
-    if (transporterOptions !== null) {
-      // Uses SES SMTP transport
-      transporter = nodemailer.createTransport(transporterOptions)
-    } else {
-      logger.warn(
-        'No SES credentials detected, Using Nodemailer Direct Transport. This should NEVER be seen in production.',
-      )
-      // Falls back to direct transport
-      transporter = nodemailer.createTransport(directTransport())
-    }
+    transporter = nodemailer.createTransport(transporterOptions)
   }
 
   mailOTP(email: string, otp: string, ip: string): Promise<void> {

@@ -1,0 +1,15 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "corejs": 3,
+      "useBuiltIns": "entry",
+      "targets": {
+        "browsers": ["IE 11", "not dead"]
+      }
+    }],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties"
+  ]
+}

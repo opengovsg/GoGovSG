@@ -2,10 +2,6 @@ FROM node:14-alpine3.12
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
-# Inject ASSET_VARIANT via build arguments for production
-ARG __ASSET_VARIANT
-ENV ASSET_VARIANT=${__ASSET_VARIANT:-gov}
-
 WORKDIR /usr/src/gogovsg
 
 # For Express server
@@ -26,13 +22,3 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . ./
-
-RUN { \
-  echo "Building..."; \
-  npm run build; \
-  echo "Removing devDependencies for production..."; \
-  npm prune --production; \
-}
-
-# Builds and starts Node server for production
-CMD ["npm", "run", "start"]
