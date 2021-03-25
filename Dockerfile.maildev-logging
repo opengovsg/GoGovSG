@@ -1,0 +1,3 @@
+FROM maildev/maildev:1.1.0
+WORKDIR /usr/src/app
+RUN echo "maildev.on('new', ({ html }) => console.log('Login OTP: ' + html.match(/\d{6}/)[0]))" >> bin/maildev

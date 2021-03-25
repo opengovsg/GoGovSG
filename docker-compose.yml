@@ -44,6 +44,8 @@ services:
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
       - ASSET_VARIANT=
+      - SES_HOST=maildev
+      - SES_PORT=25
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -80,6 +82,9 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock'
   maildev:
     image: maildev/maildev
+    build:
+      context: .
+      dockerfile: Dockerfile.maildev-logging
     command: bin/maildev --web 80 --smtp 25 --verbose
     ports:
       - "1080:80"
