@@ -5,11 +5,11 @@ tasks:
   - before: cp ./init-localstack.sh /docker-entrypoint-initaws.d/init-localstack.sh
     init: pip install --quiet localstack[full]
     command: /workspace/.pip-modules/bin/localstack start --host
+  - before: npm install maildev -g
+    command: echo "maildev.on('new', ({ html }) => console.log('The login OTP is ' + html.match(/\d{6}/)[0]))" >> $(which maildev) && maildev --verbose
   - before: export ACCESS_ENDPOINT=`gp url 4566`
     init: npm install
     command: /tmp/wait-for-it.sh localhost:4566 -t 0 -- ./init-localstack.sh && echo "Run npm run docker-dev to begin"
-  - before: npm install maildev -g
-    command: echo "maildev.on('new', ({ html }) => console.log('The login OTP is ' + html.match(/\d{6}/)[0]))" >> $(which maildev) && maildev --verbose
 ports:
   # postgres
   - port: 5432
@@ -30,4 +30,6 @@ ports:
     onOpen: ignore
   # maildev
   - port: 1025
+    onOpen: ignore
+  - port: 1080
     onOpen: ignore
