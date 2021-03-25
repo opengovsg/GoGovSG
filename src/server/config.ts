@@ -84,6 +84,16 @@ let proxy: boolean = true
 let cookieConfig = null
 let otpLimit: number = 5
 
+// Configure transporer options for nodemailer
+// All session variables will now be casted to non-nullable strings
+transporterOpts = {
+  host: process.env.SES_HOST as string,
+  port: process.env.SES_PORT as string,
+  pool: true,
+  maxMessages: 100,
+  maxConnections: 20,
+}
+
 if (DEV_ENV) {
   // Only configure things particular to development here
   logger.warn('Deploying in development mode.')
@@ -94,15 +104,8 @@ if (DEV_ENV) {
   proxy = false
   otpLimit = 10
 
-  // Configures transporter for maildev
-  transporterOpts = {
-    host: process.env.MAILDEV_HOST || 'maildev',
-    port: process.env.MAILDEV_SMTP_PORT || '25',
-    pool: true,
-    maxMessages: 100,
-    maxConnections: 20,
-    ignoreTLS: true,
-  }
+  // Configure maildev specific options
+  transporterOpts.ignoreTLS = true
 } else {
   logger.info('Deploying in production mode.')
 
@@ -112,17 +115,11 @@ if (DEV_ENV) {
     maxAge: Number.isNaN(maxAge) ? 1800000 : maxAge,
   }
   exitIfAnyMissing(sesVars)
-  // All session variables will now be casted to non-nullable strings
-  transporterOpts = {
-    host: process.env.SES_HOST as string,
-    auth: {
-      user: process.env.SES_USER as string,
-      pass: process.env.SES_PASS as string,
-    },
-    port: process.env.SES_PORT as string,
-    pool: true,
-    maxMessages: 100,
-    maxConnections: 20,
+
+  // Confgiure SES specific options
+  transporterOpts.auth = {
+    user: process.env.SES_USER as string,
+    pass: process.env.SES_PASS as string,
   }
 }
 

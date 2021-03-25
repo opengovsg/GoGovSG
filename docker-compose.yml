@@ -44,8 +44,8 @@ services:
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
       - ASSET_VARIANT=
-      - MAILDEV_HOST=
-      - MAILDEV_SMTP_PORT=
+      - SES_HOST=maildev
+      - SES_PORT=25
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
