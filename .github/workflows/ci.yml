@@ -261,6 +261,90 @@ jobs:
           deployment_package: deploy.zip
           wait_for_deployment: false
           wait_for_environment_recovery: false
+  build-edu:
+    name: Build and push for edu
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA}-edu)"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=edu .
+      - name: Push to ECR
+        uses: opengovsg/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ap-southeast-1
+          local-image: my-image
+          image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
+  deploy-edu:
+    name: Deploy to Elastic Beanstalk
+    runs-on: ubuntu-18.04
+    needs: [ci, test, gatekeep, build-edu]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          zip -r "deploy.zip" Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build-edu.outputs.tag }}
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
+        id: get_label
+        env:
+          TAG: ${{ needs.build-edu.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          uat = os.environ['UAT_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_staging = os.environ['EB_ENV_STAGING']
+          eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
+          eb_app_production = os.environ['EB_APP_PRODUCTION']
+          eb_env_production = os.environ['EB_ENV_PRODUCTION']
+          eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
+          eb_app_uat = os.environ['EB_APP_UAT']
+          eb_env_uat = os.environ['EB_ENV_UAT']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env::' + eb_env_staging)
+            print('::set-output name=eb_env_edu::' + eb_env_edu_staging)
+          elif branch == production:
+            print('::set-output name=eb_app::' + eb_app_production)
+            print('::set-output name=eb_env::' + eb_env_production)
+            print('::set-output name=eb_env_edu::' + eb_env_edu_production)
+          elif branch == uat:
+            print('::set-output name=eb_app::' + eb_app_uat)
+            print('::set-output name=eb_env::' + eb_env_uat)
+        id: select_eb_vars
       - name: Deploy to EB edu
         uses: opengovsg/beanstalk-deploy@v11
         if: steps.select_eb_vars.outputs.eb_env_edu

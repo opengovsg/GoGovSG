@@ -39,17 +39,33 @@ const metaVariant = assetVariant === 'edu' ? eduMetaTags : govMetaTags
 
 module.exports = () => {
   const jsBundle = {
-    entry: ['babel-polyfill', path.join(srcDirectory, 'index.tsx')],
+    target: ['web', 'es5'],
+    entry: [
+      // explicitly specify transpilation order to prevent IE 11 from breaking
+      'babel-polyfill',
+      'react',
+      'react-dom',
+      path.join(srcDirectory, 'index.tsx'),
+    ],
     output: {
       path: path.join(__dirname, outputDirectory),
       filename: 'bundle.js',
       publicPath: '/',
+      assetModuleFilename: 'assets/[name][ext]',
     },
     resolve: {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
         '@assets': path.resolve(srcDirectory, assetResolveDir),
+      },
+      fallback: {
+        path: require.resolve('path-browserify'),
+        zlib: false,
+        http: false,
+        https: false,
+        stream: false,
+        crypto: false,
       },
     },
     module: {
@@ -68,15 +84,7 @@ module.exports = () => {
         },
         {
           test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                outputPath: 'assets',
-                name: '[name].[ext]',
-              },
-            },
-          ],
+          type: 'asset/resource',
         },
       ],
     },

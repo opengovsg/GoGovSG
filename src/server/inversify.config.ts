@@ -20,7 +20,6 @@ import { DependencyIds } from './constants'
 import { OtpRepository } from './modules/auth/repositories'
 import { MailerNode } from './services/email'
 
-import { MailerNoOp } from './services/emaildev'
 import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
@@ -150,6 +149,8 @@ export default () => {
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 
+  bindIfUnbound(DependencyIds.mailer, MailerNode)
+
   if (DEV_ENV) {
     const s3Client = new AWS.S3({
       credentials: {
@@ -159,14 +160,11 @@ export default () => {
       endpoint: bucketEndpoint,
       s3ForcePathStyle: true,
     })
-
-    bindIfUnbound(DependencyIds.mailer, MailerNoOp)
     container
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
   } else {
-    bindIfUnbound(DependencyIds.mailer, MailerNode)
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
   }
