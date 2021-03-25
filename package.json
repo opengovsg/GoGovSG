@@ -118,7 +118,7 @@
     "@types/file-saver": "^2.0.1",
     "@types/hapi__joi": "^17.1.6",
     "@types/helmet": "4.0.0",
-    "@types/jest": "^26.0.20",
+    "@types/jest": "^26.0.21",
     "@types/lodash": "^4.14.165",
     "@types/maildev": "0.0.1",
     "@types/moment-timezone": "^0.5.30",
