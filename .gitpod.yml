@@ -8,8 +8,8 @@ tasks:
   - before: export ACCESS_ENDPOINT=`gp url 4566`
     init: npm install
     command: /tmp/wait-for-it.sh localhost:4566 -t 0 -- ./init-localstack.sh && echo "Run npm run docker-dev to begin"
-  - init: npm install maildev -g
-    command: maildev --verbose
+  - before: npm install maildev -g
+    command: echo "maildev.on('new', ({ html }) => console.log('The login OTP is ' + html.match(/\d{6}/)[0]))" >> $(which maildev) && maildev --verbose
 ports:
   # postgres
   - port: 5432
