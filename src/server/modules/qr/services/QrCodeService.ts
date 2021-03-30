@@ -17,6 +17,7 @@ export const FONT_SIZE = 32
 export const LINE_HEIGHT = 1.35
 
 const logoVariant = assetVariant === 'edu' ? 'qrlogo-edu.svg' : 'qrlogo-gov.svg'
+const dark = assetVariant === 'edu' ? '#000000' : '#384A51'
 
 @injectable()
 export class QrCodeService implements interfaces.QrCodeService {
@@ -27,7 +28,7 @@ export class QrCodeService implements interfaces.QrCodeService {
       margin: 0,
       errorCorrectionLevel: 'H',
       color: {
-        dark: '#384A51',
+        dark,
       },
     })
   }
@@ -97,20 +98,22 @@ export class QrCodeService implements interfaces.QrCodeService {
 
     svg.append(`${qrDOM('body').html()}`)
 
-    // Append go logo to the qrcode on jsdom.
-    const logoDimensions = 0.35 * QR_CODE_DIMENSIONS
-    const logoOffsetX = (IMAGE_WIDTH - logoDimensions) / 2
-    const logoOffsetY =
-      MARGIN_VERTICAL + (QR_CODE_DIMENSIONS - logoDimensions) / 2
+    // Append logo to the qrcode on jsdom.
+    const logoDom = cheerio.load(logoSvg)
+    const logoWidth = Number(logoDom('svg').attr('width'))
+    const logoHeight = Number(logoDom('svg').attr('height'))
+
+    const logoOffsetX = (IMAGE_WIDTH - logoWidth) / 2
+    const logoOffsetY = MARGIN_VERTICAL + (QR_CODE_DIMENSIONS - logoHeight) / 2
 
     const goLogoDOM = cheerio.load('')
     goLogoDOM('body').append('<svg></svg>')
     goLogoDOM('svg')
       .attr('x', logoOffsetX.toString())
       .attr('y', logoOffsetY.toString())
-      .attr('viewBox', `0 0 ${logoDimensions} ${logoDimensions}`)
-      .attr('width', logoDimensions.toString())
-      .attr('height', logoDimensions.toString())
+      .attr('viewBox', `0 0 ${logoWidth} ${logoHeight}`)
+      .attr('width', logoWidth.toString())
+      .attr('height', logoHeight.toString())
       .html(logoSvg)
 
     svg.append(`${goLogoDOM('body').html()}`)
