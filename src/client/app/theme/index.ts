@@ -1,3 +1,4 @@
+import { PaletteType } from '@material-ui/core'
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
 // Provides theme spacing, breakpoint values for the main theme to consume.
@@ -13,27 +14,61 @@ const basicTheme = createMuiTheme({
   },
 })
 
+const paletteVariants = {
+  gov: {
+    type: 'light' as PaletteType,
+    divider: '#d8d8d8',
+    primary: {
+      main: '#456682',
+      dark: '#384A51',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#CDDCE0',
+      main: '#8CA6AD',
+      dark: '#2F4B62',
+      contrastText: '#000',
+    },
+    text: {
+      primary: '#384A51',
+      secondary: '#767676',
+    },
+    background: {
+      default: '#f9f9f9',
+      paper: '#ffffff',
+    },
+  },
+  edu: {
+    type: 'light' as PaletteType,
+    divider: '#d8d8d8',
+    primary: {
+      main: '#48426D',
+      dark: '#2B2E4A',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#D5CDE0',
+      main: '#8F8AB0',
+      dark: '#2B2E4A',
+      contrastText: '#000',
+    },
+    text: {
+      primary: '#48426D',
+      secondary: '#767676',
+    },
+    background: {
+      default: '#f9f9f9',
+      paper: '#ffffff',
+    },
+  },
+}
+
+const palette = paletteVariants[process.env.ASSET_VARIANT as 'gov' | 'edu']
+
 export default responsiveFontSizes(
   createMuiTheme({
     breakpoints: basicTheme.breakpoints,
-    palette: {
-      type: 'light',
-      divider: '#d8d8d8',
-      primary: {
-        main: '#456682',
-        dark: '#384A51',
-        contrastText: '#fff',
-      },
-      secondary: {
-        main: '#fff',
-        dark: '#f9f9f9',
-        contrastText: '#000',
-      },
-      text: {
-        primary: '#384a51',
-        secondary: '#767676',
-      },
-    },
+    palette,
     typography: {
       fontFamily: "'IBM Plex Sans', sans-serif",
       h1: {
@@ -82,7 +117,7 @@ export default responsiveFontSizes(
       caption: {
         fontSize: '0.8125rem',
         lineHeight: 1.308,
-        color: '#808080',
+        color: palette.text.secondary,
       },
       button: {
         textTransform: 'none',
@@ -103,12 +138,12 @@ export default responsiveFontSizes(
           },
         },
         outlinedPrimary: {
-          border: `1px solid #456682`,
+          border: `1px solid ${palette.primary.main}`,
         },
       },
       MuiAppBar: {
         colorPrimary: {
-          backgroundColor: '#f9f9f9',
+          backgroundColor: palette.background.default,
         },
       },
       MuiInputBase: {
@@ -140,11 +175,11 @@ export default responsiveFontSizes(
       },
       MuiTooltip: {
         tooltip: {
-          backgroundColor: '#384A51',
+          backgroundColor: palette.text.primary,
           fontSize: '0.8125rem',
         },
         arrow: {
-          color: '#384A51',
+          color: palette.text.primary,
         },
       },
       MuiTable: {
@@ -164,7 +199,7 @@ export default responsiveFontSizes(
           paddingBottom: basicTheme.spacing(2),
           paddingLeft: 0,
           paddingRight: basicTheme.spacing(4),
-          borderBottom: '1px solid #d8d8d860',
+          borderBottom: `1px solid ${palette.divider}60`,
         },
         body: {
           wordBreak: 'break-all',

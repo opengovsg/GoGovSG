@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) =>
     roundIconButton: {
       width: 'auto',
       backgroundColor: theme.palette.primary.main,
-      fill: theme.palette.secondary.dark,
+      fill: theme.palette.background.default,
       '&:hover': {
         backgroundColor: theme.palette.primary.dark,
         // Reset on touch devices, it doesn't add specificity

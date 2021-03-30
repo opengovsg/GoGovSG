@@ -5,7 +5,7 @@ import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import { downloadUrls } from '../../../../../app/util/download'
 import { GoGovReduxState } from '../../../../../app/reducers/types'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     downloadButtonContainer: {
       marginLeft: 20,
@@ -13,7 +13,7 @@ const useStyles = makeStyles(() =>
       flexShrink: 0,
     },
     downloadButton: {
-      border: 'solid 1px #456682',
+      border: `solid 1px ${theme.palette.primary.main}`,
       height: '100%',
       width: '150px',
     },

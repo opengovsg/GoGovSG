@@ -1,5 +1,11 @@
 import React, { FunctionComponent, ReactElement } from 'react'
-import { Hidden, Typography, createStyles, makeStyles } from '@material-ui/core'
+import {
+  Hidden,
+  Typography,
+  createStyles,
+  makeStyles,
+  useTheme,
+} from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 
@@ -41,7 +47,7 @@ const useStyles = makeStyles((theme) =>
     },
     leftFileIcon: {
       width: '44px',
-      backgroundColor: '#456682',
+      backgroundColor: theme.palette.primary.main,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -52,7 +58,7 @@ const useStyles = makeStyles((theme) =>
       minHeight: (props: FileInputFieldStyleProps) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
-      backgroundColor: '#d8d8d8',
+      backgroundColor: theme.palette.divider,
       display: 'flex',
       alignItems: 'stretch',
       overflow: 'hidden',
@@ -75,12 +81,13 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   setUploadFileError,
   className,
 }: FileInputFieldProps) => {
+  const theme = useTheme()
   const classes = useStyles({ textFieldHeight, uploadFileError })
   return (
     <div className={`${classes.fileInputWrapper} ${className}`}>
       <Hidden smDown>
         <div className={classes.leftFileIcon}>
-          <FileIconLarge color="#f9f9f9" />
+          <FileIconLarge color={theme.palette.background.default} />
         </div>
       </Hidden>
       <div className={classes.fileInput}>

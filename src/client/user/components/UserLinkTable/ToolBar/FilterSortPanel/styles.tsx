@@ -92,7 +92,7 @@ export default makeStyles((theme) =>
     sortButtonSelected: {
       height: '100%',
       justifyContent: 'start',
-      background: '#f9f9f9',
+      background: theme.palette.background.default,
     },
     columnLabel: {
       paddingLeft: theme.spacing(3),

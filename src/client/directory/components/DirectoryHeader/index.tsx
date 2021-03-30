@@ -35,12 +35,12 @@ type DirectoryHeaderStyleProps = {
 const useStyles = makeStyles((theme) =>
   createStyles({
     headerWrapper: {
-      backgroundColor: '#384a51',
+      backgroundColor: theme.palette.primary.dark,
       position: 'sticky',
       top: 0,
     },
     headerWrapperShort: {
-      backgroundColor: '#384a51',
+      backgroundColor: theme.palette.primary.dark,
       top: 0,
     },
     headerContent: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     headerTextWrapper: {
-      color: '#f9f9f9',
+      color: theme.palette.background.default,
       marginBottom: theme.spacing(3),
       display: 'flex',
       alignItems: 'center',

@@ -62,14 +62,16 @@ const useStyles = makeStyles((theme) =>
     },
     appBarSignOutBtn: {
       // fill: theme.palette.primary.main,
-      color: (props: StyleProps) => (props.isLightItems ? 'white' : '#384A51'),
+      color: (props: StyleProps) =>
+        props.isLightItems ? 'white' : theme.palette.text.primary,
       order: 10,
     },
     appBarSignInBtn: {
       width: '140px',
       minWidth: '90px',
       order: 10,
-      color: (props: StyleProps) => (props.isLightItems ? '#384A51' : 'white'),
+      color: (props: StyleProps) =>
+        props.isLightItems ? theme.palette.text.primary : 'white',
       background: (props: StyleProps) =>
         props.isLightItems ? 'white' : theme.palette.primary.main,
     },

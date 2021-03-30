@@ -37,7 +37,7 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       minHeight: (props: LinkFormStyles) => props.textFieldHeight,
       padding: theme.spacing(0),
       lineHeight: 1.5,
-      backgroundColor: '#d8d8d8',
+      backgroundColor: theme.palette.divider,
       display: 'flex',
       alignItems: 'stretch',
       overflow: 'hidden',
@@ -79,12 +79,12 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       borderRadius: '10px',
     },
     linkTypeButtonEnabled: {
-      backgroundColor: '#384a51 !important',
+      backgroundColor: `${theme.palette.primary.main} !important`,
       boxShadow: '0 0 20px 0 rgba(69, 102, 130, 0.7)',
     },
     linkTypeWrapper: {
       marginTop: theme.spacing(5),
-      background: '#4566821A',
+      background: `${theme.palette.primary.main}1A`,
       borderRadius: '10px',
       width: 'fit-content',
       overflow: 'hidden',
@@ -93,11 +93,13 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       },
     },
     linkTypeUrlButtonText: {
-      color: (props: LinkFormStyles) => (props.isFile ? 'unset' : '#f9f9f9'),
+      color: (props: LinkFormStyles) =>
+        props.isFile ? 'unset' : theme.palette.background.default,
       marginLeft: '4px',
     },
     linkTypeFileButtonText: {
-      color: (props: LinkFormStyles) => (props.isFile ? '#f9f9f9' : 'unset'),
+      color: (props: LinkFormStyles) =>
+        props.isFile ? theme.palette.background.default : 'unset',
       marginLeft: '4px',
     },
     fileInputInvis: {
@@ -128,7 +130,7 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
     },
     leftFileIcon: {
       width: '44px',
-      backgroundColor: '#456682',
+      backgroundColor: theme.palette.primary.main,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -155,7 +157,7 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       width: '81px',
       height: '100%',
       borderRadius: 0,
-      color: '#f9f9f9',
+      color: theme.palette.background.default,
       [theme.breakpoints.up('sm')]: {
         width: '146px',
       },
