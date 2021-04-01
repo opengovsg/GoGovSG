@@ -107,7 +107,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
       >
-        Created for public officers{' '}
+        Created for {i18next.t('general.officerType')} officers{' '}
       </Typography>
       <Hidden smUp>
         <br />
@@ -118,7 +118,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
       >
-        (with a gov.sg email)
+        (with an email from {i18next.t('general.emailDomain')})
       </Typography>
       <Grid
         container
