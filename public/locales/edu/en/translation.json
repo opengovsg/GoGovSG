@@ -2,7 +2,7 @@
   "general": {
     "emailDomain": "edu.sg",
     "shortUrlPrefix": "for.edu.sg/",
-    "appTitle": "For.edu.sg",
+    "appTitle": "for.edu.sg",
     "officerType": "education",
     "appCatchphrase": {
       "styled": "Trusted short links from <strong><i>education institutions</i></strong>",
