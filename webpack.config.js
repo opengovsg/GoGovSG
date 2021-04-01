@@ -30,9 +30,9 @@ const govMetaTags = {
 const eduMetaTags = {
   'og:title': 'For.edu.sg',
   'og:type': 'article',
-  'og:description': 'The official Singapore government link shortener',
+  'og:description': 'Trusted short links from education institutions',
   'og:image':
-    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/gosg-landing-meta.jpg',
+    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
 }
 
 const metaVariant = assetVariant === 'edu' ? eduMetaTags : govMetaTags
