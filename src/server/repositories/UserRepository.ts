@@ -53,7 +53,7 @@ export class UserRepository implements UserRepositoryInterface {
   ) => {
     return User.scope('useMasterDb')
       .findOrCreate({ where: { email } })
-      .then(([user, _]) => user.get())
+      .then(([user, _]) => user)
   }
 
   public findOneUrlForUser: (
@@ -73,9 +73,7 @@ export class UserRepository implements UserRepositoryInterface {
       return null
     }
 
-    const {
-      Urls: [url],
-    } = user.get() as UserType
+    const [url] = user.Urls
 
     return this.urlMapper.persistenceToDto(url)
   }
@@ -118,7 +116,7 @@ export class UserRepository implements UserRepositoryInterface {
       throw new NotFoundError(notFoundMessage)
     }
 
-    const urls = (userUrls.get() as UserType).Urls.map((urlType) =>
+    const urls = userUrls.Urls.map((urlType) =>
       this.urlMapper.persistenceToDto(urlType),
     )
 
