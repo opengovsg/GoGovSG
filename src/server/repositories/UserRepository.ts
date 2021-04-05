@@ -35,32 +35,37 @@ export class UserRepository implements UserRepositoryInterface {
   public findById: (userId: number) => Promise<StorableUser | null> = async (
     userId,
   ) => {
-    return this.userMapper.persistenceToDto(await User.findByPk(userId))
+    return this.userMapper.persistenceToDto(
+      await User.scope('useMasterDb').findByPk(userId),
+    )
   }
 
   public findByEmail: (email: string) => Promise<StorableUser | null> = async (
     email,
   ) => {
     return this.userMapper.persistenceToDto(
-      await User.findOne({ where: { email } }),
+      await User.scope('useMasterDb').findOne({ where: { email } }),
     )
   }
 
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
     email,
   ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, _]) =>
-      user.get(),
-    )
+    return User.scope('useMasterDb')
+      .findOrCreate({ where: { email } })
+      .then(([user, _]) => user.get())
   }
 
   public findOneUrlForUser: (
     userId: number,
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (userId, shortUrl) => {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne({
+    const user = await User.scope([
+      { method: ['useMasterDb'] },
+      {
+        method: ['includeShortUrl', shortUrl],
+      },
+    ]).findOne({
       where: { id: userId },
     })
 
@@ -78,9 +83,12 @@ export class UserRepository implements UserRepositoryInterface {
   public findUserByUrl: (
     shortUrl: string,
   ) => Promise<StorableUser | null> = async (shortUrl) => {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne()
+    const user = await User.scope([
+      { method: ['useMasterDb'] },
+      {
+        method: ['includeShortUrl', shortUrl],
+      },
+    ]).findOne()
 
     return this.userMapper.persistenceToDto(user)
   }
@@ -89,9 +97,12 @@ export class UserRepository implements UserRepositoryInterface {
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
-    const userCountAndArray = await User.scope({
-      method: ['urlsWithQueryConditions', conditions],
-    }).findAndCountAll({
+    const userCountAndArray = await User.scope([
+      { method: ['useMasterDb'] },
+      {
+        method: ['urlsWithQueryConditions', conditions],
+      },
+    ]).findAndCountAll({
       subQuery: false, // set limit and offset at end of main query instead of subquery
     })
 
