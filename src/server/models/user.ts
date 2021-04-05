@@ -35,6 +35,9 @@ export const User = <UserTypeStatic>sequelize.define(
     },
   },
   {
+    defaultScope: {
+      useMaster: true,
+    },
     scopes: {
       /**
        * Fetches all Urls with the given settings.
@@ -131,6 +134,14 @@ export const User = <UserTypeStatic>sequelize.define(
               where: { shortUrl },
             },
           ],
+        }
+      },
+      /**
+       * Use the master database for read queries. ALWAYS ENABLE THIS.
+       */
+      useMasterDb() {
+        return {
+          useMaster: true,
         }
       },
     },
