@@ -27,7 +27,7 @@ export class StatisticsRepository implements interfaces.StatisticsRepository {
     )
 
     if (userCount == null) {
-      userCount = await User.count()
+      userCount = await User.scope('useMasterDb').count()
       this.trySetCache(USER_COUNT_KEY, userCount.toString())
     }
 
