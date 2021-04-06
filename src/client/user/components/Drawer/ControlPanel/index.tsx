@@ -5,7 +5,6 @@ import {
   Hidden,
   IconButton,
   Link,
-  Typography,
   createStyles,
   makeStyles,
   useMediaQuery,
@@ -27,7 +26,6 @@ import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
 import { SEARCH_PAGE } from '../../../../app/util/types'
-import inProgressGraphic from './assets/in-progress.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -113,21 +111,6 @@ const useStyles = makeStyles((theme) =>
     },
     inactiveDesc: {
       display: 'none',
-    },
-    customInformationHeader: {
-      marginRight: theme.spacing(2),
-    },
-    dividerLinkVisibility: {
-      marginBottom: '50px',
-    },
-    customInformationDesc: {
-      paddingTop: '20px',
-    },
-    emptyStateGraphic: {
-      marginTop: '48px',
-      marginBottom: '76px',
-      textAlign: 'center',
-      zIndex: -1,
     },
   }),
 )
@@ -253,22 +236,6 @@ export default function ControlPanel() {
           </div>
           <Divider className={classes.dividerAnalytics} />
           <LinkAnalytics />
-          <Divider className={classes.dividerLinkVisibility} />
-          <Typography
-            variant="h3"
-            className={classes.customInformationHeader}
-            color="primary"
-          >
-            Custom Link Visibility
-          </Typography>
-          <Typography variant="body1" className={classes.customInformationDesc}>
-            This section is undergoing construction. Your link description and
-            contact email added will be kept for future use in our database. We
-            will keep you updated on any changes.
-          </Typography>
-          <div className={classes.emptyStateGraphic}>
-            <img src={inProgressGraphic} alt="in progress graphic" />
-          </div>
         </DrawerMargin>
       </main>
     </Drawer>
