@@ -63,7 +63,6 @@ describe('StatisticsRepository', () => {
   const userCount = 1
   const clickCount = 3
   const linkCount = 2
-  const { scope } = userModelMock
 
   beforeEach(async () => {
     await new Promise<void>((resolve) => {
@@ -71,7 +70,6 @@ describe('StatisticsRepository', () => {
     })
     setSpy.mockClear()
     mgetSpy.mockClear()
-    scope.mockReset()
   })
 
   afterEach(async () => {
@@ -104,12 +102,14 @@ describe('StatisticsRepository', () => {
 
     // @ts-ignore
     mgetSpy.mockImplementation(raiseError)
-    scope.mockReturnValue({ count: () => userCount })
+    Object.assign(userModelMock, {
+      unscoped: () => ({ count: () => userCount }),
+    })
     Object.assign(urlModelMock, {
-      count: () => linkCount,
+      unscoped: () => ({ count: () => linkCount }),
     })
     Object.assign(urlClicksModelMock, {
-      sum: () => clickCount,
+      unscoped: () => ({ sum: () => clickCount }),
     })
 
     await expect(repository.getGlobalStatistics()).resolves.toStrictEqual({
@@ -119,7 +119,6 @@ describe('StatisticsRepository', () => {
     })
     expect(mgetSpy).toHaveBeenCalled()
     expect(setSpy).toHaveBeenCalledTimes(3)
-    expect(scope).toBeCalledWith('useMasterDb')
   })
 
   it('returns values from Sequelize even if Redis set fails', async () => {
@@ -133,7 +132,9 @@ describe('StatisticsRepository', () => {
       callback(new Error('error'))
     }
 
-    scope.mockReturnValue({ count: () => userCount })
+    Object.assign(urlModelMock, {
+      unscoped: () => ({ count: () => linkCount }),
+    })
     Object.assign(urlModelMock, {
       count: () => linkCount,
     })
@@ -151,6 +152,5 @@ describe('StatisticsRepository', () => {
     })
     expect(mgetSpy).toHaveBeenCalled()
     expect(setSpy).toHaveBeenCalledTimes(3)
-    expect(scope).toHaveBeenCalledWith('useMasterDb')
   })
 })
