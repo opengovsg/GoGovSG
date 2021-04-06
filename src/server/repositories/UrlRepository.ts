@@ -47,7 +47,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   public findByShortUrlWithTotalClicks: (
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (shortUrl) => {
-    const url = await Url.scope('getClicks').findOne({
+    const url = await Url.scope(['useMasterDb', 'getClicks']).findOne({
       where: { shortUrl },
     })
     return this.urlMapper.persistenceToDto(url)
@@ -90,7 +90,9 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
-    const url = await Url.scope('getClicks').findOne({ where: { shortUrl } })
+    const url = await Url.scope(['useMasterDb', 'getClicks']).findOne({
+      where: { shortUrl },
+    })
     if (!url) {
       throw new NotFoundError(
         `url not found in database:\tshortUrl=${shortUrl}`,
@@ -233,6 +235,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       model: Url,
       raw: true,
       mapToModel: true,
+      useMaster: true,
     })) as Array<UrlDirectory>
 
     const count = urlsModel.length
@@ -289,6 +292,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       type: QueryTypes.SELECT,
       model: Url,
       mapToModel: true,
+      useMaster: true,
     })) as Array<UrlDirectory>
 
     const count = urlsModel.length
@@ -382,7 +386,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   private getLongUrlFromDatabase: (
     shortUrl: string,
   ) => Promise<string> = async (shortUrl) => {
-    const url = await Url.findOne({
+    const url = await Url.scope('useMasterDb').findOne({
       where: { shortUrl, state: StorableUrlState.Active },
     })
     if (!url) {

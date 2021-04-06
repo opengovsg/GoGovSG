@@ -38,7 +38,7 @@ export class StatisticsRepository implements interfaces.StatisticsRepository {
     }
 
     if (linkCount == null) {
-      linkCount = await Url.count()
+      linkCount = await Url.scope('useMasterDb').count()
       this.trySetCache(LINK_COUNT_KEY, linkCount.toString())
     }
 
