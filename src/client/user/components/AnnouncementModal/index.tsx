@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) =>
       alignSelf: 'flex-end',
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
+      color: theme.palette.common.white,
     },
     headerBanner: {
       paddingBottom: theme.spacing(8),
@@ -37,6 +38,7 @@ const useStyles = makeStyles((theme) =>
     },
     announcementImage: {
       width: '600px',
+      height: '30vh',
       marginLeft: 'auto',
       marginRight: 'auto',
       paddingLeft: '80px',
@@ -173,7 +175,6 @@ const AnnouncementModal = () => {
               <Typography
                 className={classes.headerText}
                 variant={isFullScreenDialog ? 'h6' : 'h3'}
-                color="secondary"
               >
                 {announcement.title}
               </Typography>

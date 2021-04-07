@@ -56,9 +56,11 @@ const HomePage: FunctionComponent = () => {
           <TrustedBySliver />
         </Section>
       </div> */}
-      <Section backgroundType="dark">
-        <DescriptionSliver />
-      </Section>
+      <div id="landing-description">
+        <Section backgroundType="dark">
+          <DescriptionSliver />
+        </Section>
+      </div>
       <Section backgroundType="light">
         <StatisticsSliver />
       </Section>
