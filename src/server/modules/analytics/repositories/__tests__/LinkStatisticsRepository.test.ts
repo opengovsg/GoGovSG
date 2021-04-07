@@ -136,9 +136,11 @@ describe('LinkStatisticsRepository', () => {
 
     repository.updateLinkStatistics(shortUrl, device)
     expect(query).toHaveBeenCalledWith(expect.stringContaining(shortUrl), {
+      useMaster: true,
       type: QueryTypes.SELECT,
     })
     expect(query).toHaveBeenCalledWith(expect.stringContaining(device), {
+      useMaster: true,
       type: QueryTypes.SELECT,
     })
   })
