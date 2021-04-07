@@ -121,7 +121,6 @@
     "@types/helmet": "4.0.0",
     "@types/jest": "^26.0.20",
     "@types/lodash": "^4.14.165",
-    "@types/maildev": "0.0.1",
     "@types/moment-timezone": "^0.5.30",
     "@types/morgan": "^1.9.2",
     "@types/nanoid": "^2.1.0",
