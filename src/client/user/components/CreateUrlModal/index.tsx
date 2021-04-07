@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) =>
       marginRight: (props) => (props.isFullScreenDialog ? 0 : theme.spacing(2)),
     },
     headerWrapper: {
-      background: '#f9f9f9',
+      background: theme.palette.background.default,
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       [theme.breakpoints.up('sm')]: {
         background: 'unset',

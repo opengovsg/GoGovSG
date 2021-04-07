@@ -2,6 +2,7 @@ import React from 'react'
 import { Line } from 'react-chartjs-2'
 import moment from 'moment'
 
+import { useTheme } from '@material-ui/core'
 import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics'
 import { useDateRangeWith } from './util/date-range'
@@ -12,7 +13,7 @@ export type DailyStatisticsProps = {
   dailyClicks: DailyClicks[]
 }
 
-export function processData(data: DailyClicks[]) {
+export function processData(data: DailyClicks[], primaryColor: string) {
   const labels = data.map((day) => {
     return moment(day.date, 'yyyy-MM-DD').format('D MMM')
   })
@@ -21,11 +22,11 @@ export function processData(data: DailyClicks[]) {
     {
       fill: false,
       lineTension: 0,
-      backgroundColor: '#456682',
-      borderColor: '#456682',
-      pointColor: '#456682',
+      backgroundColor: primaryColor,
+      borderColor: primaryColor,
+      pointColor: primaryColor,
       pointHitRadius: 20,
-      pointStrokeColor: '#456682',
+      pointStrokeColor: primaryColor,
       pointRadius: 0,
       pointHoverRadius: 5,
       data: points,
@@ -35,8 +36,12 @@ export function processData(data: DailyClicks[]) {
 }
 
 export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
+  const theme = useTheme()
   const filledData = useDateRangeWith(dailyClicks, 7)
-  const data = processData(filledData)
+
+  const primaryColor = theme.palette.primary.main
+
+  const data = processData(filledData, primaryColor)
   return (
     <BaseStatisticsLayout
       title="How many users have visited your link in the past week?"
@@ -55,7 +60,7 @@ export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
                 ticks: {
                   fontFamily: "'IBM Plex Sans', sans-serif",
                   fontSize: 12,
-                  fontColor: '#456682',
+                  fontColor: primaryColor,
                   padding: 8,
                   callback: (label: string): string | undefined => {
                     return moment(label, 'D MMM').format('ddd')
@@ -68,7 +73,7 @@ export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
                 ticks: {
                   fontFamily: "'IBM Plex Sans', sans-serif",
                   fontSize: 12,
-                  fontColor: '#456682',
+                  fontColor: primaryColor,
                   autoSkip: true,
                   maxTicksLimit: 5,
                   padding: 5,
@@ -103,12 +108,12 @@ export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
             bodyFontFamily: "'IBM Plex Sans', sans-serif",
             titleFontSize: 10,
             bodyFontSize: 14,
-            titleFontColor: '#456682',
-            bodyFontColor: '#456682',
+            titleFontColor: primaryColor,
+            bodyFontColor: primaryColor,
             titleFontStyle: 'normal',
             bodyFontStyle: 'bold',
             backgroundColor: '#FFFFFF',
-            borderColor: '#2F4B62',
+            borderColor: theme.palette.secondary.dark,
             borderWidth: 0.2,
             displayColors: false,
           },

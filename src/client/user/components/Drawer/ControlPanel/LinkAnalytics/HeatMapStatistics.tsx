@@ -113,7 +113,10 @@ export default function HeatMapStatistics({
           />
           <HeatmapSeries
             className="heatmap-statistics"
-            colorRange={['#CDDCE0', '#2F4B62']}
+            colorRange={[
+              theme.palette.secondary.light,
+              theme.palette.secondary.dark,
+            ]}
             colorDomain={[minClicks, maxClicks]}
             data={clicks as any[]}
             style={{

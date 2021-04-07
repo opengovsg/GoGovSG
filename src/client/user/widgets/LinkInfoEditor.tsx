@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(0.5),
     },
     hotlink: {
-      color: '#384a51',
+      color: theme.palette.text.primary,
     },
   }),
 )

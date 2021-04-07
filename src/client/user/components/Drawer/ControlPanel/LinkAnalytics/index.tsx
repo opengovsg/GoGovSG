@@ -101,13 +101,13 @@ function TabPanel(props: TabPanelProps) {
   )
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: 20,
     marginBottom: 20,
   },
   tabRoot: {
-    border: 'solid 1px #CDDCE0',
+    border: `solid 1px ${theme.palette.secondary.light}`,
     borderRadius: 3,
   },
   tabSection: {

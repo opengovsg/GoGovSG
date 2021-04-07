@@ -62,43 +62,43 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const columns = [
-  {
-    id: 1,
-    data: [
-      {
-        icon: antiPhishingIcon,
-        title: 'Anti-phishing',
-        description: i18next.t('homePage.features.antiPhishing.description'),
-      },
-      {
-        icon: fileSharingIcon,
-        title: 'File sharing',
-        description: i18next.t('homePage.features.fileSharing.description'),
-      },
-    ],
-  },
-  {
-    id: 2,
-    data: [
-      {
-        icon: customisedIcon,
-        title: 'Customised',
-        description: i18next.t('homePage.features.customised.description'),
-      },
-      {
-        icon: analyticsIcon,
-        title: 'Analytics',
-        description: i18next.t('homePage.features.analytics.description'),
-      },
-    ],
-  },
-]
-
 const FeatureListSliver = () => {
   const classes = useStyles()
   const theme = useTheme()
   const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))
+  const columns = [
+    {
+      id: 1,
+      data: [
+        {
+          icon: antiPhishingIcon,
+          title: 'Anti-phishing',
+          description: i18next.t('homePage.features.antiPhishing.description'),
+        },
+        {
+          icon: fileSharingIcon,
+          title: 'File sharing',
+          description: i18next.t('homePage.features.fileSharing.description'),
+        },
+      ],
+    },
+    {
+      id: 2,
+      data: [
+        {
+          icon: customisedIcon,
+          title: 'Customised',
+          description: i18next.t('homePage.features.customised.description'),
+        },
+        {
+          icon: analyticsIcon,
+          title: 'Analytics',
+          description: i18next.t('homePage.features.analytics.description'),
+        },
+      ],
+    },
+  ]
+
   return (
     <>
       <Typography
@@ -107,7 +107,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
       >
-        Created for public officers{' '}
+        Created for {i18next.t('general.officerType')} officers{' '}
       </Typography>
       <Hidden smUp>
         <br />
@@ -118,7 +118,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
       >
-        (with a gov.sg email)
+        (with an email from {i18next.t('general.emailDomain')})
       </Typography>
       <Grid
         container

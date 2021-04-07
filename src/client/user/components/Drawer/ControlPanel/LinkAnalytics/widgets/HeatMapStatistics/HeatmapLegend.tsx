@@ -1,5 +1,5 @@
 import React from 'react'
-import makeStyles from '@material-ui/core/styles/makeStyles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { compactNumberFormatter } from '../../../../../../../app/util/format'
 
 export type HeatmapLegendItemStylesProps = {
@@ -73,6 +73,7 @@ export type HeatmapLegendProps = {
 }
 
 export function HeatmapLegend({ minClicks, maxClicks }: HeatmapLegendProps) {
+  const theme = useTheme()
   const classes = useHeatmapLegendStyles()
   const min = minClicks
   const max = maxClicks
@@ -95,10 +96,10 @@ export function HeatmapLegend({ minClicks, maxClicks }: HeatmapLegendProps) {
   return (
     <div className={classes.root}>
       <div className={classes.row}>
-        <HeatmapLegendItem color="#CDDCE0" />
-        <HeatmapLegendItem color="#8CA6AD" />
-        <HeatmapLegendItem color="#456682" />
-        <HeatmapLegendItem color="#2F4B62" />
+        <HeatmapLegendItem color={theme.palette.secondary.light} />
+        <HeatmapLegendItem color={theme.palette.secondary.main} />
+        <HeatmapLegendItem color={theme.palette.primary.main} />
+        <HeatmapLegendItem color={theme.palette.secondary.dark} />
       </div>
       <div className={classes.ticks}>
         {ticks.map((tick, id) => {
