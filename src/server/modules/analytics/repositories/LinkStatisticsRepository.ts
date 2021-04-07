@@ -156,7 +156,10 @@ export class LinkStatisticsRepository
     const rawFunction = `
       SELECT update_link_statistics('${shortUrl}', '${device}')
     `
-    return sequelize.query(rawFunction, { type: QueryTypes.SELECT })
+    return sequelize.query(rawFunction, {
+      useMaster: true,
+      type: QueryTypes.SELECT,
+    })
   }
 }
 
