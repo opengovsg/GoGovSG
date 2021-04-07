@@ -5,7 +5,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       fontWeight: 400,
-      background: '#8CA6AD',
+      background: theme.palette.secondary.main,
       borderRadius: '5px',
       color: 'white',
       paddingTop: theme.spacing(0.5),

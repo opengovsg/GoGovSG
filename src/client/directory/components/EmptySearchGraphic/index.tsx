@@ -1,4 +1,6 @@
 import React, { FunctionComponent } from 'react'
+import i18next from 'i18next'
+
 import {
   Typography,
   createStyles,
@@ -6,7 +8,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import empyGraphic from '@assets/components/directory/empty-search-graphic/empty-graphic.svg'
+import emptyGraphic from '@assets/components/directory/empty-search-graphic/empty-graphic.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -46,14 +48,14 @@ const EmptyStateGraphic: FunctionComponent = () => {
         What link are you looking for?
       </Typography>
       <Typography variant="body1" className={classes.emptyStateBodyText}>
-        Search by keyword or email to see what links other public officers{' '}
-        <br />
-        have created,and find link owners. The directory is only available{' '}
+        Search by keyword or email to see what links other{' '}
+        {i18next.t('general.emailDomain')} officers <br />
+        have created, and find link owners. The directory is only available{' '}
         <br />
         to users who are signed in.
       </Typography>
       <div className={classes.emptyStateGraphic}>
-        <img src={empyGraphic} alt="empty search graphic" />
+        <img src={emptyGraphic} alt="empty search graphic" />
       </div>
     </div>
   )

@@ -43,7 +43,7 @@ services:
       - CSP_ONLY_REPORT_VIOLATIONS=true
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
-      - ASSET_VARIANT=
+      - ASSET_VARIANT=gov
       - SES_HOST=maildev
       - SES_PORT=25
     volumes:

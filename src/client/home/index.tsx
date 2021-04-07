@@ -6,7 +6,7 @@ import { useMediaQuery, useTheme } from '@material-ui/core'
 import homeActions from './actions'
 import loginActions from '../login/actions'
 import { USER_PAGE } from '../app/util/types'
-import TrustedBySliver from './components/TrustedBySliver'
+// import TrustedBySliver from './components/TrustedBySliver'
 import StatisticsSliver from './components/StatisticsSliver'
 import DescriptionSliver from './components/FeatureListSliver'
 import Section from '../app/components/Section'
@@ -45,13 +45,17 @@ const HomePage: FunctionComponent = () => {
   }
 
   return (
-    <BaseLayout headerBackgroundType={isMobileView ? '#f9f9f9' : 'light'}>
+    <BaseLayout
+      headerBackgroundType={
+        isMobileView ? theme.palette.background.default : 'light'
+      }
+    >
       <LandingGraphicSilver />
-      <div id="landing-bottom">
+      {/* <div id="landing-bottom">
         <Section backgroundType="light">
           <TrustedBySliver />
         </Section>
-      </div>
+      </div> */}
       <Section backgroundType="dark">
         <DescriptionSliver />
       </Section>

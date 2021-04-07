@@ -3,6 +3,7 @@
     "emailDomain": "gov.sg",
     "shortUrlPrefix": "go.gov.sg/",
     "appTitle": "Go.gov.sg",
+    "officerType": "public",
     "appCatchphrase": {
       "styled": "Trusted short links from <strong><i>public officers</i></strong>",
       "noStyle": "Trusted short links from public officers"
@@ -10,6 +11,7 @@
     "appDescription": {
       "subtitle": "<strong>$t(general.appTitle)</strong> short links can only be created by public officers, so you can be sure it’s from a trustworthy source."
     },
+    "linkAdmins": "the Singapore government",
     "appSignInPrompt": "Are you a public officer?",
     "copyright": "© 2020 Open Government Products, ",
     "copyrightTag": "Government Technology Agency of Singapore",
@@ -19,10 +21,10 @@
     "links": {
       "contribute": "https://go.gov.sg/go-opensource",
       "directory": "/directory",
-      "faq": "https://guide.go.gov.sg/faq.html",
-      "privacy": "https://guide.go.gov.sg/privacy.html",
-      "terms": "https://guide.go.gov.sg/termsofuse.html",
-      "contact": "https://form.gov.sg/forms/govtech/5c5295edb3d80b0017ac7c81",
+      "faq": "https://guide.go.gov.sg",
+      "privacy": "https://guide.go.gov.sg/privacy",
+      "terms": "https://guide.go.gov.sg/termsofuse",
+      "contact": "https://form.gov.sg/5c5295edb3d80b0017ac7c81",
       "builtBy": "https://open.gov.sg",
       "linkedin": "https://sg.linkedin.com/company/open-government-products",
       "facebook": "https://www.facebook.com/opengovsg"

@@ -1,6 +1,5 @@
 import React from 'react'
-import makeStyles from '@material-ui/core/styles/makeStyles'
-
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { DeviceClicks } from '../../../../../../shared/interfaces/link-statistics'
 import FlexibleBar from './widgets/DeviceStatistics/FlexibleBar'
 import DeviceLegend from './widgets/DeviceStatistics/DeviceLegend'
@@ -10,20 +9,6 @@ export type ProcessedStatistic = {
   label: string
   count: number
   color: string
-}
-
-/**
- * Process device clicks data by adding in labels and relevant color codes.
- *
- * @param data The device clicks data to be processed.
- */
-function processStatistics(data: DeviceClicks): ProcessedStatistic[] {
-  return [
-    { label: 'Desktop', count: data.desktop, color: '#384A51' },
-    { label: 'Tablet', count: data.tablet, color: '#8CA6AD' },
-    { label: 'Mobile', count: data.mobile, color: '#CDDCE0' },
-    { label: 'Others', count: data.others, color: '#E8E8E8' },
-  ]
 }
 
 /**
@@ -74,7 +59,39 @@ export type DeviceStatisticsProps = {
 export default function DeviceStatistics({
   deviceClicks,
 }: DeviceStatisticsProps) {
+  const theme = useTheme()
   const classes = useStyles()
+
+  /**
+   * Process device clicks data by adding in labels and relevant color codes.
+   *
+   * @param data The device clicks data to be processed.
+   */
+  function processStatistics(data: DeviceClicks): ProcessedStatistic[] {
+    return [
+      {
+        label: 'Desktop',
+        count: data.desktop,
+        color: theme.palette.primary.dark,
+      },
+      {
+        label: 'Tablet',
+        count: data.tablet,
+        color: theme.palette.secondary.main,
+      },
+      {
+        label: 'Mobile',
+        count: data.mobile,
+        color: theme.palette.secondary.light,
+      },
+      {
+        label: 'Others',
+        count: data.others,
+        color: theme.palette.background.default,
+      },
+    ]
+  }
+
   const processedDeviceClicks = processStatistics(deviceClicks)
   const totalClicks = processedDeviceClicks
     .map((clicks) => clicks.count)

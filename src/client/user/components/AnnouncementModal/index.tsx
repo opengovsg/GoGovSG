@@ -83,7 +83,7 @@ const useStyles = makeStyles((theme) =>
         props.isFullScreenDialog ? 0 : theme.spacing(2),
     },
     headerWrapper: {
-      background: '#f9f9f9',
+      background: theme.palette.background.default,
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       [theme.breakpoints.up('sm')]: {
         background: 'unset',
@@ -103,7 +103,7 @@ const useStyles = makeStyles((theme) =>
       width: theme.spacing(16),
       marginTop: theme.spacing(3),
       backgroundColor: theme.palette.primary.dark,
-      color: theme.palette.secondary.dark,
+      color: theme.palette.background.default,
       '&:hover': {
         backgroundColor: theme.palette.primary.main,
       },

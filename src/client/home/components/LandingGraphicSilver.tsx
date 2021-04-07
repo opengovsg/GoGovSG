@@ -78,9 +78,9 @@ const useStyles = makeStyles((theme) =>
       width: '150px',
       // Creates the half in colour-fill, half outside it effect.
       marginTop: 'calc(-44px / 2)',
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.common.white,
       '&:hover': {
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: theme.palette.common.white,
       },
     },
     signInTextContainer: {

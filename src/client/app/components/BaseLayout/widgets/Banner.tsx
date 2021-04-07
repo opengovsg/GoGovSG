@@ -20,7 +20,7 @@ const useStyles = makeStyles<Theme, BannerForProps>((theme) =>
       width: '100%',
       minHeight: 50,
       backgroundColor: theme.palette.primary.main,
-      color: '#F9F9F9',
+      color: theme.palette.background.default,
       paddingTop: 15,
       paddingBottom: 15,
     },
