@@ -22,18 +22,18 @@ const useStyles = makeStyles((theme) =>
     },
     error: {
       backgroundColor: '#FFEDED',
-      color: '#384A51',
+      color: theme.palette.text.primary,
     },
     info: {
       backgroundColor: theme.palette.primary.dark,
     },
     success: {
       backgroundColor: '#EAF9E7',
-      color: '#384A51',
+      color: theme.palette.text.primary,
     },
     before: {
       '&::before': {
-        backgroundColor: '#384A51',
+        backgroundColor: theme.palette.primary.dark,
         width: '4px',
         content: '""',
         marginRight: theme.spacing(2.25),
@@ -136,7 +136,11 @@ const MessageSnackbar = () => {
           >
             <div className={classes.iconWrapper}>
               <CloseIcon
-                color={variant === snackbarVariants.INFO ? '#fff' : '#384A51'}
+                color={
+                  variant === snackbarVariants.INFO
+                    ? '#fff'
+                    : theme.palette.text.primary
+                }
                 size={16}
               />
             </div>

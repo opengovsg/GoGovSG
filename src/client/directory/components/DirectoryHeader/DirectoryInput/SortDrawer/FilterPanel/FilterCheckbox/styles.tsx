@@ -1,15 +1,15 @@
 import { createStyles, makeStyles } from '@material-ui/core'
 
-export default makeStyles(() =>
+export default makeStyles((theme) =>
   createStyles({
     uncheckedIcon: {
       width: '20px',
       height: '20px',
       borderRadius: '2px',
-      border: 'solid 1px #384a51',
+      border: `solid 1px ${theme.palette.primary.dark}`,
     },
     filled: {
-      backgroundColor: '#384a51',
+      backgroundColor: theme.palette.primary.dark,
       display: 'flex',
       alignItems: 'center',
       justifyContents: 'center',

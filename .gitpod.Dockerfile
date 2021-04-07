@@ -42,5 +42,9 @@ ENV PORT_WEB_UI=8055
 
 ENV BUCKET_ENDPOINT=http://localhost:4566
 
+# maildev env vars
+ENV SES_HOST=localhost
+ENV SES_PORT=1025
+
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /tmp/wait-for-it.sh
 RUN chmod 755 /tmp/wait-for-it.sh

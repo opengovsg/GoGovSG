@@ -165,12 +165,12 @@ const useStyles = makeStyles((theme) => {
         borderLeft: 'none',
       },
       '&:hover': {
-        backgroundColor: '#f9f9f9',
+        backgroundColor: theme.palette.background.default,
         cursor: 'pointer',
       },
     },
     lastCreatedRow: {
-      backgroundColor: '#f9f9f9',
+      backgroundColor: theme.palette.background.default,
     },
   })
 })

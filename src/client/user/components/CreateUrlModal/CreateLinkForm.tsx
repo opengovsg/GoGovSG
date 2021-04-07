@@ -12,6 +12,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  useTheme,
 } from '@material-ui/core'
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
@@ -52,6 +53,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     (state: GoGovReduxState) => state.user.uploadFileError,
   )
 
+  const theme = useTheme()
   const dispatch = useDispatch()
   const setShortUrl = (shortUrl: string) =>
     dispatch(userActions.setShortUrl(shortUrl))
@@ -117,7 +119,13 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               }`}
               onClick={() => setIsFile(false)}
             >
-              <LinkIcon color={isFile ? '#384a51' : '#f9f9f9'} />
+              <LinkIcon
+                color={
+                  isFile
+                    ? theme.palette.primary.dark
+                    : theme.palette.background.default
+                }
+              />
               <Typography
                 variant="body2"
                 className={classes.linkTypeUrlButtonText}
@@ -132,7 +140,13 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               }`}
               onClick={() => setIsFile(true)}
             >
-              <FileIcon color={isFile ? '#f9f9f9' : '#384a51'} />
+              <FileIcon
+                color={
+                  isFile
+                    ? theme.palette.background.default
+                    : theme.palette.primary.dark
+                }
+              />
               <Typography
                 variant="body2"
                 className={classes.linkTypeFileButtonText}

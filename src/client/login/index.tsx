@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
-      maxHeight: 'calc(100vh - 28px)',
+      maxHeight:
+        process.env.ASSET_VARIANT === 'edu' ? '100vh' : 'calc(100vh - 28px)',
       textAlign: 'center',
       overflow: 'hidden',
     },
@@ -230,8 +231,9 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                       />
                     </Link>
                     <Typography className={classes.loginHeader} variant="body1">
-                      Only available for use by public officers with a{' '}
-                      <strong>{i18next.t('general.emailDomain')}</strong> email.
+                      Only available for use by{' '}
+                      {i18next.t('general.officerType')} officers with an email
+                      from <strong>{i18next.t('general.emailDomain')}</strong>.
                     </Typography>
                   </span>
                   <span className={classes.textInputGroup}>

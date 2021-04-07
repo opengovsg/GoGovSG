@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import i18next from 'i18next'
 import {
   Button,
   Card,
@@ -93,7 +94,7 @@ const StatisticsSliver: FunctionComponent = () => {
   return (
     <>
       <Typography variant="h3" color="textPrimary" gutterBottom>
-        The official link shortener for the Singapore government
+        The official link shortener for {i18next.t('general.linkAdmins')}
       </Typography>
       <Grid container className={classes.grid} spacing={2}>
         <Grid

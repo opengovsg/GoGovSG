@@ -17,11 +17,11 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: (props: styleProps) => {
         switch (props.backgroundType) {
           case 'light':
-            return theme.palette.secondary.light
+            return theme.palette.background.paper
           case 'dark':
-            return theme.palette.secondary.dark
+            return theme.palette.background.default
           case 'darkest':
-            return '#384A51'
+            return theme.palette.primary.dark
           case 'black':
             return '#000000'
           default:

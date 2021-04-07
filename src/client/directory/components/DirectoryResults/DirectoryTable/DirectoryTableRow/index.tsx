@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) =>
       borderBottom: '1px solid #d8d8d860',
       height: 'fit-content',
       '&:hover': {
-        backgroundColor: '#f9f9f9',
+        backgroundColor: theme.palette.background.default,
         cursor: 'pointer',
       },
     },
@@ -230,11 +230,19 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
           <div className={classes.IconCell}>
             {url?.isFile ? (
               <DirectoryFileIcon
-                color={url?.state === 'ACTIVE' ? '#384A51' : '#BBBBBB'}
+                color={
+                  url?.state === 'ACTIVE'
+                    ? theme.palette.primary.dark
+                    : '#BBBBBB'
+                }
               />
             ) : (
               <DirectoryUrlIcon
-                color={url?.state === 'ACTIVE' ? '#384A51' : '#BBBBBB'}
+                color={
+                  url?.state === 'ACTIVE'
+                    ? theme.palette.primary.dark
+                    : '#BBBBBB'
+                }
               />
             )}
           </div>

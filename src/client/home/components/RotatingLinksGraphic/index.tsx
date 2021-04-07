@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) =>
       maxHeight: (props: styleProps) =>
         `${props.targetImageWidthPx * props.heightToWidthRatio}px`,
       marginLeft: 'auto',
+      marginRight: '-1.5px',
       marginBottom: (props: styleProps) =>
         `max(${props.linkBoxHeightToImageWidth * -50}vw, calc((${
           -1 * props.linkBoxHeightToImageWidth * props.targetImageWidthPx
@@ -98,7 +99,7 @@ const RotatingLinksGraphic = () => {
       <div className={classes.rotatingLinks}>
         <RotatingLinks
           prefix={i18next.t('general.shortUrlPrefix')}
-          strings={linksToRotate || ['whatsapp']}
+          strings={linksToRotate || []}
         />
       </div>
     </div>

@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme) =>
       borderRadius: '0px',
     },
     filterIcon: {
-      paddingLeft: theme.spacing(1.5),
+      paddingLeft: theme.spacing(0.5),
       verticalAlign: 'middle',
       [theme.breakpoints.down('sm')]: {
         paddingLeft: theme.spacing(0.0),
@@ -114,10 +114,7 @@ const useStyles = makeStyles((theme) =>
     },
     buttonWrapper: {
       width: 'auto',
-      display: 'box',
-      [theme.breakpoints.down('sm')]: {
-        display: 'inline-flex',
-      },
+      display: 'inline-flex',
     },
     labelWrapper: {
       verticalAlign: 'middle',
@@ -244,7 +241,11 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
                         width="20"
                       />
                     ) : (
-                      <ArrowDownIcon className={classes.filterIcon} />
+                      <ArrowDownIcon
+                        className={classes.filterIcon}
+                        height="24"
+                        width="24"
+                      />
                     )}
                   </div>
                 </Button>
