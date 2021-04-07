@@ -37,7 +37,7 @@ const DownloadButton = () => {
             onClick={() => downloadUrls(urlCount, tableConfig)}
             className={classes.downloadButton}
           >
-            <Typography variant="body2">Download Links</Typography>
+            <Typography variant="body2">Download links</Typography>
           </Button>
         </span>
       )}

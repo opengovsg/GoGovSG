@@ -158,7 +158,7 @@ const LandingGraphicSliver = () => {
               size="large"
               onClick={() =>
                 document
-                  .getElementById('landing-bottom')
+                  .getElementById('landing-description')
                   ?.scrollIntoView({ behavior: 'smooth' })
               }
             >

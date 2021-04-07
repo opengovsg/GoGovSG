@@ -45,7 +45,7 @@ export const successUrlCreation = Selector('div').withText(
 export const urlTable = Selector('tbody')
 export const searchBar = Selector('input[placeholder="Search links"]')
 export const downloadLinkButton = Selector('p')
-  .withText('Download Links')
+  .withText('Download links')
   .parent()
   .parent()
 export const longUrl = Selector('input[placeholder="Original link"]')
