@@ -22,6 +22,7 @@ import clicksLogo from './assets/chart-logo.svg'
 import trafficLogo from './assets/traffic-logo.svg'
 import BetaTag from '../../../../../app/components/widgets/BetaTag'
 import { GAEvent, GAPageView } from '../../../../../app/util/ga'
+import NoLinkAnalyticsGraphic from './NoLinkAnalyticsGraphic'
 
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({
@@ -303,11 +304,7 @@ function LinkStatisticsGraphs() {
   }
 
   if (!linkStatistics.contents) {
-    return (
-      <Typography variant="body1">
-        There are no statistics to show right now.
-      </Typography>
-    )
+    return <NoLinkAnalyticsGraphic />
   }
 
   return <Graphs data={linkStatistics.contents!} shortUrl={shortUrl} />
