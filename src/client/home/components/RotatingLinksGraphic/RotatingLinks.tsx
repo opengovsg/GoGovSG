@@ -15,13 +15,15 @@ const RotatingLinks: FunctionComponent<RotatingLinksType> = ({
   return (
     <main className={className}>
       {prefix}
-      <Typed
-        strings={strings}
-        typeSpeed={80}
-        backDelay={2500}
-        smartBackspace={false}
-        loop
-      />
+      {strings && strings.length > 0 ? (
+        <Typed
+          strings={strings}
+          typeSpeed={80}
+          backDelay={2500}
+          smartBackspace={false}
+          loop
+        />
+      ) : null}
     </main>
   )
 }
