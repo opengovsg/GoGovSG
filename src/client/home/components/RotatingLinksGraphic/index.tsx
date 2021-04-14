@@ -99,7 +99,7 @@ const RotatingLinksGraphic = () => {
       <div className={classes.rotatingLinks}>
         <RotatingLinks
           prefix={i18next.t('general.shortUrlPrefix')}
-          strings={linksToRotate || ['whatsapp', 'passport']}
+          strings={linksToRotate || []}
         />
       </div>
     </div>
