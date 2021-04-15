@@ -137,11 +137,11 @@ export const User = <UserTypeStatic>sequelize.define(
         }
       },
       /**
-       * Use the master database for read queries. ALWAYS ENABLE THIS.
+       * Use the replica database for read queries.
        */
-      useMasterDb() {
+      useReplica() {
         return {
-          useMaster: true,
+          useMaster: false,
         }
       },
     },

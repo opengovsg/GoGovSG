@@ -28,7 +28,7 @@ export class StatisticsRepository implements interfaces.StatisticsRepository {
 
     if (userCount == null) {
       // Allow use of read replica
-      userCount = await User.unscoped().count()
+      userCount = await User.scope('useReplica').count()
       this.trySetCache(USER_COUNT_KEY, userCount.toString())
     }
 

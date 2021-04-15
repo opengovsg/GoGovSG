@@ -35,25 +35,21 @@ export class UserRepository implements UserRepositoryInterface {
   public findById: (userId: number) => Promise<StorableUser | null> = async (
     userId,
   ) => {
-    return this.userMapper.persistenceToDto(
-      await User.scope('useMasterDb').findByPk(userId),
-    )
+    return this.userMapper.persistenceToDto(await User.findByPk(userId))
   }
 
   public findByEmail: (email: string) => Promise<StorableUser | null> = async (
     email,
   ) => {
     return this.userMapper.persistenceToDto(
-      await User.scope('useMasterDb').findOne({ where: { email } }),
+      await User.findOne({ where: { email } }),
     )
   }
 
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
     email,
   ) => {
-    return User.scope('useMasterDb')
-      .findOrCreate({ where: { email } })
-      .then(([user, _]) => user)
+    return User.findOrCreate({ where: { email } }).then(([user, _]) => user)
   }
 
   public findOneUrlForUser: (
@@ -61,7 +57,7 @@ export class UserRepository implements UserRepositoryInterface {
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (userId, shortUrl) => {
     const user = await User.scope([
-      { method: ['useMasterDb'] },
+      { method: ['defaultScope'] },
       {
         method: ['includeShortUrl', shortUrl],
       },
@@ -82,7 +78,7 @@ export class UserRepository implements UserRepositoryInterface {
     shortUrl: string,
   ) => Promise<StorableUser | null> = async (shortUrl) => {
     const user = await User.scope([
-      { method: ['useMasterDb'] },
+      { method: ['defaultScope'] },
       {
         method: ['includeShortUrl', shortUrl],
       },
@@ -96,7 +92,7 @@ export class UserRepository implements UserRepositoryInterface {
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
     const userCountAndArray = await User.scope([
-      { method: ['useMasterDb'] },
+      { method: ['defaultScope'] },
       {
         method: ['urlsWithQueryConditions', conditions],
       },
