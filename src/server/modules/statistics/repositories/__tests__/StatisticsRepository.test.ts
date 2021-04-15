@@ -32,7 +32,9 @@ export const userModelMock = {
     ]),
 }
 
-export const urlClicksModelMock = {}
+export const urlClicksModelMock = {
+  scope: jest.fn(),
+}
 
 const redisMockClient = redisMock.createClient()
 
@@ -65,6 +67,7 @@ describe('StatisticsRepository', () => {
   const linkCount = 2
   const urlScope = jest.spyOn(urlModelMock, 'scope')
   const userScope = jest.spyOn(userModelMock, 'scope')
+  const urlClickScope = jest.spyOn(urlClicksModelMock, 'scope')
 
   beforeEach(async () => {
     await new Promise<void>((resolve) => {
@@ -73,6 +76,8 @@ describe('StatisticsRepository', () => {
     setSpy.mockClear()
     mgetSpy.mockClear()
     urlScope.mockReset()
+    userScope.mockReset()
+    urlClickScope.mockReset()
   })
 
   afterEach(async () => {
@@ -107,9 +112,7 @@ describe('StatisticsRepository', () => {
     mgetSpy.mockImplementation(raiseError)
     userScope.mockReturnValue({ count: () => userCount })
     urlScope.mockReturnValue({ count: () => linkCount })
-    Object.assign(urlClicksModelMock, {
-      unscoped: () => ({ sum: () => clickCount }),
-    })
+    urlClickScope.mockReturnValue({ sum: () => clickCount })
 
     await expect(repository.getGlobalStatistics()).resolves.toStrictEqual({
       userCount,
@@ -133,9 +136,7 @@ describe('StatisticsRepository', () => {
 
     userScope.mockReturnValue({ count: () => userCount })
     urlScope.mockReturnValue({ count: () => linkCount })
-    Object.assign(urlClicksModelMock, {
-      sum: () => clickCount,
-    })
+    urlClickScope.mockReturnValue({ sum: () => clickCount })
 
     // @ts-ignore
     setSpy.mockImplementation(raiseError)
