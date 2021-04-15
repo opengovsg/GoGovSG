@@ -63,6 +63,7 @@ describe('StatisticsRepository', () => {
   const userCount = 1
   const clickCount = 3
   const linkCount = 2
+  const scope = jest.spyOn(urlModelMock, 'scope')
 
   beforeEach(async () => {
     await new Promise<void>((resolve) => {
@@ -70,6 +71,7 @@ describe('StatisticsRepository', () => {
     })
     setSpy.mockClear()
     mgetSpy.mockClear()
+    scope.mockReset()
   })
 
   afterEach(async () => {
@@ -105,9 +107,7 @@ describe('StatisticsRepository', () => {
     Object.assign(userModelMock, {
       unscoped: () => ({ count: () => userCount }),
     })
-    Object.assign(urlModelMock, {
-      unscoped: () => ({ count: () => linkCount }),
-    })
+    scope.mockReturnValue({ count: () => linkCount })
     Object.assign(urlClicksModelMock, {
       unscoped: () => ({ sum: () => clickCount }),
     })
@@ -132,12 +132,10 @@ describe('StatisticsRepository', () => {
       callback(new Error('error'))
     }
 
-    Object.assign(urlModelMock, {
-      unscoped: () => ({ count: () => linkCount }),
+    Object.assign(userModelMock, {
+      unscoped: () => ({ count: () => userCount }),
     })
-    Object.assign(urlModelMock, {
-      count: () => linkCount,
-    })
+    scope.mockReturnValue({ count: () => linkCount })
     Object.assign(urlClicksModelMock, {
       sum: () => clickCount,
     })

@@ -139,7 +139,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith('getClicks')
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).not.toHaveBeenCalled()
     })
 
@@ -174,7 +174,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith('getClicks')
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).toHaveBeenCalledWith({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
@@ -219,7 +219,7 @@ describe('UrlRepository', () => {
       })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
-      expect(scope).toHaveBeenCalledWith(['useMasterDb', 'getClicks'])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
     it('should update non-file links', async () => {
@@ -236,7 +236,7 @@ describe('UrlRepository', () => {
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
-      expect(scope).toHaveBeenCalledWith(['useMasterDb', 'getClicks'])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
     it('should update non-state changes on file links', async () => {
@@ -385,18 +385,8 @@ describe('UrlRepository', () => {
   })
 
   describe('getLongUrl', () => {
-    const scope = jest.spyOn(urlModelMock, 'scope')
-
-    beforeEach(() => {
-      scope.mockReset()
-      scope.mockReturnValue({
-        findOne: () => urlModelMock.findOne(),
-      })
-    })
-
     it('should return from db when cache is empty', async () => {
       await expect(repository.getLongUrl('a')).resolves.toBe('aa')
-      expect(scope).toBeCalledWith('useMasterDb')
     })
 
     it('should return from cache when cache is filled', async () => {
@@ -413,7 +403,6 @@ describe('UrlRepository', () => {
         return false
       })
       await expect(repository.getLongUrl('a')).resolves.toBe('aa')
-      expect(scope).toBeCalledWith('useMasterDb')
     })
   })
 
