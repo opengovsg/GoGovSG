@@ -47,7 +47,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   public findByShortUrlWithTotalClicks: (
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (shortUrl) => {
-    const url = await Url.scope(['useMasterDb', 'getClicks']).findOne({
+    const url = await Url.scope(['defaultScope', 'getClicks']).findOne({
       where: { shortUrl },
     })
     return this.urlMapper.persistenceToDto(url)
@@ -75,9 +75,12 @@ export class UrlRepository implements UrlRepositoryInterface {
       }
 
       // Do a fresh read which eagerly loads the associated UrlClicks field.
-      return Url.scope('getClicks').findByPk(properties.shortUrl, {
-        transaction: t,
-      })
+      return Url.scope(['defaultScope', 'getClicks']).findByPk(
+        properties.shortUrl,
+        {
+          transaction: t,
+        },
+      )
     })
 
     if (!newUrl) throw new Error('Newly-created url is null')
@@ -90,7 +93,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
-    const url = await Url.scope(['useMasterDb', 'getClicks']).findOne({
+    const url = await Url.scope(['defaultScope', 'getClicks']).findOne({
       where: { shortUrl },
     })
     if (!url) {
@@ -386,7 +389,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   private getLongUrlFromDatabase: (
     shortUrl: string,
   ) => Promise<string> = async (shortUrl) => {
-    const url = await Url.scope('useMasterDb').findOne({
+    const url = await Url.findOne({
       where: { shortUrl, state: StorableUrlState.Active },
     })
     if (!url) {

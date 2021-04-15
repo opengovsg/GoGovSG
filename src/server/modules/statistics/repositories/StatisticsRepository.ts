@@ -41,7 +41,7 @@ export class StatisticsRepository implements interfaces.StatisticsRepository {
 
     if (linkCount == null) {
       // Allow use of read replica
-      linkCount = await Url.unscoped().count()
+      linkCount = await Url.scope('useReplica').count()
       this.trySetCache(LINK_COUNT_KEY, linkCount.toString())
     }
 

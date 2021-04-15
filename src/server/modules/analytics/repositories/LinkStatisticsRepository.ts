@@ -81,7 +81,7 @@ export class LinkStatisticsRepository
     shortUrl: string,
     offsetDays?: number,
   ) => Promise<LinkStatistics | null> = async (shortUrl, offsetDays = 6) => {
-    const url = await Url.scope('getClicks').findOne({
+    const url = await Url.scope(['useReplica', 'getClicks']).findOne({
       where: { shortUrl },
       include: [
         { model: Devices, as: 'DeviceClicks' },

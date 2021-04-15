@@ -238,12 +238,12 @@ export const Url = <UrlTypeStatic>sequelize.define(
         ],
       },
       /**
-       * Use the master database for read queries. To be enabled
-       * when realtime data is needed.
+       * Use the replica database for read queries. To be enabled
+       * when realtime data is not needed.
        */
-      useMasterDb() {
+      useReplica() {
         return {
-          useMaster: true,
+          useMaster: false,
         }
       },
     },
