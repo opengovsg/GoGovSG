@@ -40,19 +40,15 @@ const expectedUrl = {
 
 describe('UserRepository', () => {
   describe('findById', () => {
-    const { scope } = userModelMock
-    const findByPk = jest.fn()
+    const findByPk = jest.spyOn(userModelMock, 'findByPk')
 
     beforeEach(() => {
-      scope.mockReset()
-      scope.mockReturnValue({ findByPk })
       findByPk.mockReset()
     })
 
     it('returns null if no user found', async () => {
       findByPk.mockReturnValue(null)
       await expect(userRepo.findById(2)).resolves.toBeNull()
-      await expect(scope).toHaveBeenCalledWith('useMasterDb')
     })
 
     it('returns user without urls if such a user found', async () => {
@@ -65,7 +61,6 @@ describe('UserRepository', () => {
         ...user,
         urls: undefined,
       })
-      await expect(scope).toHaveBeenCalledWith('useMasterDb')
     })
 
     it('returns user with urls if such a user found', async () => {
@@ -80,17 +75,13 @@ describe('UserRepository', () => {
         email: user.email,
         urls: [expectedUrl],
       })
-      await expect(scope).toHaveBeenCalledWith('useMasterDb')
     })
   })
 
   describe('findByEmail', () => {
-    const { scope } = userModelMock
-    const findOne = jest.fn()
+    const findOne = jest.spyOn(userModelMock, 'findOne')
 
     beforeEach(() => {
-      scope.mockReset()
-      scope.mockReturnValue({ findOne })
       findOne.mockReset()
     })
 
@@ -99,7 +90,6 @@ describe('UserRepository', () => {
       await expect(
         userRepo.findByEmail('user@agency.gov.sg'),
       ).resolves.toBeNull()
-      await expect(scope).toBeCalledWith('useMasterDb')
     })
 
     it('returns user without urls if such a user found', async () => {
@@ -114,7 +104,6 @@ describe('UserRepository', () => {
         ...user,
         urls: undefined,
       })
-      await expect(scope).toBeCalledWith('useMasterDb')
     })
 
     it('returns user with urls if such a user found', async () => {
@@ -131,27 +120,23 @@ describe('UserRepository', () => {
         email: user.email,
         urls: [expectedUrl],
       })
-      await expect(scope).toBeCalledWith('useMasterDb')
     })
   })
 
   describe('findOrCreateByEmail', () => {
-    const { scope } = userModelMock
-    const findOrCreate = jest.fn()
+    const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
 
     beforeEach(() => {
-      scope.mockReset()
-      scope.mockReturnValue({ findOrCreate })
       findOrCreate.mockReset()
     })
 
     it('directs findOrCreateWithEmail to User.findOrCreate', async () => {
-      const userObject = { email: 'user@agency.gov.sg' }
-      findOrCreate.mockResolvedValue([userObject, null])
+      const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
+      const user = userModelMock.findOne()
+      findOrCreate.mockResolvedValue([user, null])
       await expect(
         userRepo.findOrCreateWithEmail('user@agency.gov.sg'),
-      ).resolves.toBe(userObject)
-      await expect(scope).toHaveBeenCalledWith('useMasterDb')
+      ).resolves.toBe(user)
     })
   })
 
@@ -171,7 +156,7 @@ describe('UserRepository', () => {
         userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toBeNull()
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['includeShortUrl', expectedUrl.shortUrl],
         },
@@ -186,7 +171,7 @@ describe('UserRepository', () => {
         userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toStrictEqual(expectedUrl)
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['includeShortUrl', expectedUrl.shortUrl],
         },
@@ -217,7 +202,7 @@ describe('UserRepository', () => {
         expect.objectContaining({ id: user.id, email: user.email }),
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['includeShortUrl', expectedUrl.shortUrl],
         },
@@ -251,7 +236,7 @@ describe('UserRepository', () => {
         NotFoundError,
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['urlsWithQueryConditions', conditions],
         },
@@ -264,7 +249,7 @@ describe('UserRepository', () => {
         NotFoundError,
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['urlsWithQueryConditions', conditions],
         },
@@ -281,7 +266,7 @@ describe('UserRepository', () => {
         },
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['urlsWithQueryConditions', conditions],
         },
@@ -298,7 +283,7 @@ describe('UserRepository', () => {
         },
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['useMasterDb'] },
+        { method: ['defaultScope'] },
         {
           method: ['urlsWithQueryConditions', conditions],
         },
