@@ -156,7 +156,7 @@ describe('UserRepository', () => {
         userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toBeNull()
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['includeShortUrl', expectedUrl.shortUrl],
         },
@@ -171,7 +171,7 @@ describe('UserRepository', () => {
         userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toStrictEqual(expectedUrl)
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['includeShortUrl', expectedUrl.shortUrl],
         },
@@ -202,7 +202,7 @@ describe('UserRepository', () => {
         expect.objectContaining({ id: user.id, email: user.email }),
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['includeShortUrl', expectedUrl.shortUrl],
         },
@@ -236,7 +236,7 @@ describe('UserRepository', () => {
         NotFoundError,
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['urlsWithQueryConditions', conditions],
         },
@@ -249,7 +249,7 @@ describe('UserRepository', () => {
         NotFoundError,
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['urlsWithQueryConditions', conditions],
         },
@@ -266,7 +266,7 @@ describe('UserRepository', () => {
         },
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['urlsWithQueryConditions', conditions],
         },
@@ -283,7 +283,7 @@ describe('UserRepository', () => {
         },
       )
       expect(scope).toHaveBeenCalledWith([
-        { method: ['defaultScope'] },
+        'defaultScope',
         {
           method: ['urlsWithQueryConditions', conditions],
         },

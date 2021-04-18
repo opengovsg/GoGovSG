@@ -57,7 +57,7 @@ export class UserRepository implements UserRepositoryInterface {
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (userId, shortUrl) => {
     const user = await User.scope([
-      { method: ['defaultScope'] },
+      'defaultScope',
       {
         method: ['includeShortUrl', shortUrl],
       },
@@ -78,7 +78,7 @@ export class UserRepository implements UserRepositoryInterface {
     shortUrl: string,
   ) => Promise<StorableUser | null> = async (shortUrl) => {
     const user = await User.scope([
-      { method: ['defaultScope'] },
+      'defaultScope',
       {
         method: ['includeShortUrl', shortUrl],
       },
@@ -92,7 +92,7 @@ export class UserRepository implements UserRepositoryInterface {
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
     const userCountAndArray = await User.scope([
-      { method: ['defaultScope'] },
+      'defaultScope',
       {
         method: ['urlsWithQueryConditions', conditions],
       },
