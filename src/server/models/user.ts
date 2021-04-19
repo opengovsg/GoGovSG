@@ -139,11 +139,7 @@ export const User = <UserTypeStatic>sequelize.define(
       /**
        * Use the replica database for read queries.
        */
-      useReplica() {
-        return {
-          useMaster: false,
-        }
-      },
+      useReplica: {},
     },
   },
 )
