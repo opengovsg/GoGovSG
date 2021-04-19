@@ -40,7 +40,9 @@ export const UrlClicks = <UrlClicksTypeStatic>sequelize.define(
        * Use the replica database for read queries. To be enabled
        * when realtime data is not needed.
        */
-      useReplica: {},
+      useReplica: {
+        useMaster: undefined,
+      },
     },
   },
 )
