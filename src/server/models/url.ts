@@ -225,6 +225,9 @@ export const Url = <UrlTypeStatic>sequelize.define(
         fields: [Sequelize.literal(`(${urlSearchVector})`)],
       },
     ],
+    defaultScope: {
+      useMaster: true,
+    },
     scopes: {
       getClicks: {
         include: [
@@ -233,6 +236,13 @@ export const Url = <UrlTypeStatic>sequelize.define(
             as: 'UrlClicks',
           },
         ],
+      },
+      /**
+       * Use the replica database for read queries. To be enabled
+       * when realtime data is not needed.
+       */
+      useReplica: {
+        useMaster: undefined,
       },
     },
   },

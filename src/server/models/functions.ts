@@ -9,6 +9,7 @@ import { updateLinkStatistics } from '../modules/analytics/repositories/LinkStat
 export async function syncFunctions() {
   // Initialises the link statistics database function.
   await sequelize.query(updateLinkStatistics, {
+    useMaster: true,
     type: QueryTypes.RAW,
   })
 }

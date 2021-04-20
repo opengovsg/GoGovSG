@@ -1,7 +1,9 @@
 import nodemailer from 'nodemailer'
+import { ConnectionOptions } from 'sequelize'
 import winston, { createLogger, format, transports } from 'winston'
 import minimatch from 'minimatch'
 import { parse } from 'url'
+import { parse as parseUri } from 'pg-connection-string'
 import generateOTP, { OtpFunction } from './util/otp'
 
 // Check environment
@@ -21,6 +23,7 @@ const STATISTICS_EXPIRY: number =
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
   'DB_URI', // Main SQL database used with Sequelize
+  'REPLICA_URI',
   'OG_URL', // Origin Url
   'REDIS_OTP_URI', // Cache for storing OTP hashes
   'REDIS_SESSION_URI', // Cache for storing session info
@@ -158,7 +161,19 @@ export const userAnnouncement = {
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 
+const parseDbUri = (uri: string): ConnectionOptions => {
+  const { host, user, password, database, port } = parseUri(uri)
+  if (!(host && user && password && database && port)) {
+    logger.error('Invalid master/replica credentials supplied.')
+    process.exit(1)
+  }
+  return { host, username: user, password, database, port }
+}
+
 export const databaseUri = process.env.DB_URI as string
+export const masterDatabaseCredentials = parseDbUri(databaseUri)
+export const replicaUri = process.env.REPLICA_URI as string
+export const replicaDatabaseCredentials = parseDbUri(replicaUri)
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
 export const redisSessionUri = process.env.REDIS_SESSION_URI as string
 export const redisRedirectUri = process.env.REDIS_REDIRECT_URI as string

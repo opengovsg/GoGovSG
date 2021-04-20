@@ -79,7 +79,7 @@ describe('LinkStatisticsRepository', () => {
     expect(findOne).toBeCalledWith(
       expect.objectContaining({ where: { shortUrl } }),
     )
-    expect(scope).toBeCalledWith('getClicks')
+    expect(scope).toBeCalledWith(['useReplica', 'getClicks'])
   })
 
   it('correctly queries daily click stats', async () => {
@@ -119,7 +119,7 @@ describe('LinkStatisticsRepository', () => {
         ]),
       }),
     )
-    expect(scope).toBeCalledWith('getClicks')
+    expect(scope).toBeCalledWith(['useReplica', 'getClicks'])
   })
 
   it('correctly interpolates table names into update_link_statistics', () => {
@@ -136,9 +136,11 @@ describe('LinkStatisticsRepository', () => {
 
     repository.updateLinkStatistics(shortUrl, device)
     expect(query).toHaveBeenCalledWith(expect.stringContaining(shortUrl), {
+      useMaster: true,
       type: QueryTypes.SELECT,
     })
     expect(query).toHaveBeenCalledWith(expect.stringContaining(device), {
+      useMaster: true,
       type: QueryTypes.SELECT,
     })
   })
