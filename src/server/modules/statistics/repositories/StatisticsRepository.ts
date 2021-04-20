@@ -27,18 +27,21 @@ export class StatisticsRepository implements interfaces.StatisticsRepository {
     )
 
     if (userCount == null) {
-      userCount = await User.count()
+      // Allow use of read replica
+      userCount = await User.scope('useReplica').count()
       this.trySetCache(USER_COUNT_KEY, userCount.toString())
     }
 
     if (clickCount == null) {
       // Replace Nan with 0 if there is no data
-      clickCount = (await UrlClicks.sum('clicks')) || 0
+      // Allow use of read replica
+      clickCount = (await UrlClicks.scope('useReplica').sum('clicks')) || 0
       this.trySetCache(CLICK_COUNT_KEY, clickCount.toString())
     }
 
     if (linkCount == null) {
-      linkCount = await Url.count()
+      // Allow use of read replica
+      linkCount = await Url.scope('useReplica').count()
       this.trySetCache(LINK_COUNT_KEY, linkCount.toString())
     }
 

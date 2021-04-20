@@ -35,6 +35,9 @@ export const User = <UserTypeStatic>sequelize.define(
     },
   },
   {
+    defaultScope: {
+      useMaster: true,
+    },
     scopes: {
       /**
        * Fetches all Urls with the given settings.
@@ -92,7 +95,7 @@ export const User = <UserTypeStatic>sequelize.define(
         return {
           include: [
             {
-              model: Url.scope('getClicks'),
+              model: Url.scope(['defaultScope', 'getClicks']),
               as: 'Urls',
               where: whereUrlConditions,
               // use left outer join instead of default inner join
@@ -126,12 +129,18 @@ export const User = <UserTypeStatic>sequelize.define(
         return {
           include: [
             {
-              model: Url.scope('getClicks'),
+              model: Url.scope(['defaultScope', 'getClicks']),
               as: 'Urls',
               where: { shortUrl },
             },
           ],
         }
+      },
+      /**
+       * Use the replica database for read queries.
+       */
+      useReplica: {
+        useMaster: undefined,
       },
     },
   },

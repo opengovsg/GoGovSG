@@ -49,18 +49,19 @@ export class UserRepository implements UserRepositoryInterface {
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
     email,
   ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, _]) =>
-      user.get(),
-    )
+    return User.findOrCreate({ where: { email } }).then(([user, _]) => user)
   }
 
   public findOneUrlForUser: (
     userId: number,
     shortUrl: string,
   ) => Promise<StorableUrl | null> = async (userId, shortUrl) => {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne({
+    const user = await User.scope([
+      'defaultScope',
+      {
+        method: ['includeShortUrl', shortUrl],
+      },
+    ]).findOne({
       where: { id: userId },
     })
 
@@ -68,9 +69,7 @@ export class UserRepository implements UserRepositoryInterface {
       return null
     }
 
-    const {
-      Urls: [url],
-    } = user.get() as UserType
+    const [url] = user.Urls
 
     return this.urlMapper.persistenceToDto(url)
   }
@@ -78,9 +77,12 @@ export class UserRepository implements UserRepositoryInterface {
   public findUserByUrl: (
     shortUrl: string,
   ) => Promise<StorableUser | null> = async (shortUrl) => {
-    const user = await User.scope({
-      method: ['includeShortUrl', shortUrl],
-    }).findOne()
+    const user = await User.scope([
+      'defaultScope',
+      {
+        method: ['includeShortUrl', shortUrl],
+      },
+    ]).findOne()
 
     return this.userMapper.persistenceToDto(user)
   }
@@ -89,9 +91,12 @@ export class UserRepository implements UserRepositoryInterface {
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
-    const userCountAndArray = await User.scope({
-      method: ['urlsWithQueryConditions', conditions],
-    }).findAndCountAll({
+    const userCountAndArray = await User.scope([
+      'defaultScope',
+      {
+        method: ['urlsWithQueryConditions', conditions],
+      },
+    ]).findAndCountAll({
       subQuery: false, // set limit and offset at end of main query instead of subquery
     })
 
@@ -107,7 +112,7 @@ export class UserRepository implements UserRepositoryInterface {
       throw new NotFoundError(notFoundMessage)
     }
 
-    const urls = (userUrls.get() as UserType).Urls.map((urlType) =>
+    const urls = userUrls.Urls.map((urlType) =>
       this.urlMapper.persistenceToDto(urlType),
     )
 
