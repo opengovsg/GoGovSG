@@ -81,7 +81,12 @@ const StatisticsSliver: FunctionComponent = () => {
   const { userCount, linkCount, clickCount } = statistics
   // ensure number will never be null
   const statisticsToShow = [
-    { label: 'PUBLIC OFFICERS ONBOARD', number: userCount },
+    {
+      label: `${i18next
+        .t('general.officerType')
+        .toUpperCase()} OFFICERS ONBOARD`,
+      number: userCount,
+    },
     { label: 'SHORT LINKS CREATED', number: linkCount },
     { label: 'CLICKS', number: clickCount },
   ]

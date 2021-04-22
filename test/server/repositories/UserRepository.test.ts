@@ -42,6 +42,10 @@ describe('UserRepository', () => {
   describe('findById', () => {
     const findByPk = jest.spyOn(userModelMock, 'findByPk')
 
+    beforeEach(() => {
+      findByPk.mockReset()
+    })
+
     it('returns null if no user found', async () => {
       findByPk.mockReturnValue(null)
       await expect(userRepo.findById(2)).resolves.toBeNull()
@@ -76,6 +80,11 @@ describe('UserRepository', () => {
 
   describe('findByEmail', () => {
     const findOne = jest.spyOn(userModelMock, 'findOne')
+
+    beforeEach(() => {
+      findOne.mockReset()
+    })
+
     it('returns null if no user found', async () => {
       findOne.mockReturnValue(null)
       await expect(
@@ -114,10 +123,21 @@ describe('UserRepository', () => {
     })
   })
 
-  it('directs findOrCreateWithEmail to User.findOrCreate', async () => {
+  describe('findOrCreateByEmail', () => {
     const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
-    await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
-    expect(findOrCreate).toHaveBeenCalled()
+
+    beforeEach(() => {
+      findOrCreate.mockReset()
+    })
+
+    it('directs findOrCreateWithEmail to User.findOrCreate', async () => {
+      const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
+      const user = userModelMock.findOne()
+      findOrCreate.mockResolvedValue([user, null])
+      await expect(
+        userRepo.findOrCreateWithEmail('user@agency.gov.sg'),
+      ).resolves.toBe(user)
+    })
   })
 
   describe('findOneUrlForUser', () => {
@@ -135,23 +155,27 @@ describe('UserRepository', () => {
       await expect(
         userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toBeNull()
-      expect(scope).toHaveBeenCalledWith({
-        method: ['includeShortUrl', expectedUrl.shortUrl],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['includeShortUrl', expectedUrl.shortUrl],
+        },
+      ])
     })
 
     it('returns url for user', async () => {
       findOne.mockResolvedValue({
-        get: () => ({
-          Urls: [url],
-        }),
+        Urls: [url],
       })
       await expect(
         userRepo.findOneUrlForUser(2, expectedUrl.shortUrl),
       ).resolves.toStrictEqual(expectedUrl)
-      expect(scope).toHaveBeenCalledWith({
-        method: ['includeShortUrl', expectedUrl.shortUrl],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['includeShortUrl', expectedUrl.shortUrl],
+        },
+      ])
     })
   })
 
@@ -177,9 +201,12 @@ describe('UserRepository', () => {
       ).resolves.toStrictEqual(
         expect.objectContaining({ id: user.id, email: user.email }),
       )
-      expect(scope).toHaveBeenCalledWith({
-        method: ['includeShortUrl', expectedUrl.shortUrl],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['includeShortUrl', expectedUrl.shortUrl],
+        },
+      ])
     })
   })
 
@@ -208,9 +235,12 @@ describe('UserRepository', () => {
       await expect(userRepo.findUrlsForUser(conditions)).rejects.toBeInstanceOf(
         NotFoundError,
       )
-      expect(scope).toHaveBeenCalledWith({
-        method: ['urlsWithQueryConditions', conditions],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['urlsWithQueryConditions', conditions],
+        },
+      ])
     })
 
     it('throws NotFoundError on findAndCountAll without user', async () => {
@@ -218,13 +248,16 @@ describe('UserRepository', () => {
       await expect(userRepo.findUrlsForUser(conditions)).rejects.toBeInstanceOf(
         NotFoundError,
       )
-      expect(scope).toHaveBeenCalledWith({
-        method: ['urlsWithQueryConditions', conditions],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['urlsWithQueryConditions', conditions],
+        },
+      ])
     })
 
     it('returns empty result on user without urls', async () => {
-      const rows = [{ get: () => ({ Urls: [] }) }]
+      const rows = [{ Urls: [] }]
       findAndCountAll.mockResolvedValue({ rows, count: rows.length })
       await expect(userRepo.findUrlsForUser(conditions)).resolves.toStrictEqual(
         {
@@ -232,13 +265,16 @@ describe('UserRepository', () => {
           count: 0,
         },
       )
-      expect(scope).toHaveBeenCalledWith({
-        method: ['urlsWithQueryConditions', conditions],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['urlsWithQueryConditions', conditions],
+        },
+      ])
     })
 
     it('returns result on user with urls', async () => {
-      const rows = [{ get: () => ({ Urls: [url] }) }]
+      const rows = [{ Urls: [url] }]
       findAndCountAll.mockResolvedValue({ rows, count: rows.length })
       await expect(userRepo.findUrlsForUser(conditions)).resolves.toStrictEqual(
         {
@@ -246,9 +282,12 @@ describe('UserRepository', () => {
           count: 1,
         },
       )
-      expect(scope).toHaveBeenCalledWith({
-        method: ['urlsWithQueryConditions', conditions],
-      })
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        {
+          method: ['urlsWithQueryConditions', conditions],
+        },
+      ])
     })
   })
 })

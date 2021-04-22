@@ -32,7 +32,9 @@ export const userModelMock = {
     ]),
 }
 
-export const urlClicksModelMock = {}
+export const urlClicksModelMock = {
+  scope: jest.fn(),
+}
 
 const redisMockClient = redisMock.createClient()
 
@@ -63,6 +65,9 @@ describe('StatisticsRepository', () => {
   const userCount = 1
   const clickCount = 3
   const linkCount = 2
+  const urlScope = jest.spyOn(urlModelMock, 'scope')
+  const userScope = jest.spyOn(userModelMock, 'scope')
+  const urlClickScope = jest.spyOn(urlClicksModelMock, 'scope')
 
   beforeEach(async () => {
     await new Promise<void>((resolve) => {
@@ -70,10 +75,12 @@ describe('StatisticsRepository', () => {
     })
     setSpy.mockClear()
     mgetSpy.mockClear()
+    urlScope.mockReset()
+    userScope.mockReset()
+    urlClickScope.mockReset()
   })
 
   afterEach(async () => {
-    delete (userModelMock as any).count
     delete (urlModelMock as any).count
     delete (urlClicksModelMock as any).sum
   })
@@ -103,13 +110,9 @@ describe('StatisticsRepository', () => {
 
     // @ts-ignore
     mgetSpy.mockImplementation(raiseError)
-    Object.assign(userModelMock, { count: () => userCount })
-    Object.assign(urlModelMock, {
-      count: () => linkCount,
-    })
-    Object.assign(urlClicksModelMock, {
-      sum: () => clickCount,
-    })
+    userScope.mockReturnValue({ count: () => userCount })
+    urlScope.mockReturnValue({ count: () => linkCount })
+    urlClickScope.mockReturnValue({ sum: () => clickCount })
 
     await expect(repository.getGlobalStatistics()).resolves.toStrictEqual({
       userCount,
@@ -131,13 +134,9 @@ describe('StatisticsRepository', () => {
       callback(new Error('error'))
     }
 
-    Object.assign(userModelMock, { count: () => userCount })
-    Object.assign(urlModelMock, {
-      count: () => linkCount,
-    })
-    Object.assign(urlClicksModelMock, {
-      sum: () => clickCount,
-    })
+    userScope.mockReturnValue({ count: () => userCount })
+    urlScope.mockReturnValue({ count: () => linkCount })
+    urlClickScope.mockReturnValue({ sum: () => clickCount })
 
     // @ts-ignore
     setSpy.mockImplementation(raiseError)

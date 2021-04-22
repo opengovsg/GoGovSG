@@ -19,6 +19,7 @@ services:
       - PORT=8080
       # postgres://user:pass@hostname:port/database
       - DB_URI=postgres://postgres:postgres@postgres:5432/postgres
+      - REPLICA_URI=postgres://postgres:postgres@postgres:5432/postgres
       # redis://[CLUSTER-PUBLIC-IP]:[PORT]
       - REDIS_OTP_URI=redis://redis:6379/0
       - REDIS_SESSION_URI=redis://redis:6379/1
