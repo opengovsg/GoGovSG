@@ -15,7 +15,7 @@ pull_request_rules:
         type: APPROVE
       merge:
         method: squash
-  - name: Approve and merge non-major version Snyk.io upgrades
+  - name: Approve and merge Snyk.io upgrades
     conditions:
       - author=snyk-bot
       - check-success~=CI
