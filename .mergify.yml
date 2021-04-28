@@ -1,0 +1,30 @@
+pull_request_rules:
+  - name: Approve and merge non-major version dependabot upgrades
+    conditions:
+      - 'author=dependabot[bot]'
+      - '#check-success~=ci'
+      - '#check-success~=CodeQL'
+      - '#check-success~=GitGuardian'
+      - '#check-success~=coverage'
+      - '#check-success~=snyk'
+      - 'title~=bump [^\s]+ from ([\d]+)\..+ to \1\.'
+    actions:
+      review:
+        type: APPROVE
+      merge:
+        method: squash
+
+  - name: Approve and merge non-major version Snyk.io upgrades
+    conditions:
+      - 'author=snyk-bot'
+      - '#check-success~=ci'
+      - '#check-success~=CodeQL'
+      - '#check-success~=GitGuardian'
+      - '#check-success~=coverage'
+      - '#check-success~=snyk'
+      - 'title~=\[Snyk\]'
+    actions:
+      review:
+        type: APPROVE
+      merge:
+        method: squash
