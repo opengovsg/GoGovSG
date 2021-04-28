@@ -109,7 +109,7 @@
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.33",
     "@types/chart.js": "^2.9.30",
-    "@types/classnames": "^2.2.11",
+    "@types/classnames": "^2.3.1",
     "@types/cloudmersive-virus-api-client": "^1.1.1",
     "@types/connect-redis": "0.0.14",
     "@types/cookie-session": "^2.0.39",
