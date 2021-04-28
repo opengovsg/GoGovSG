@@ -7,7 +7,6 @@ pull_request_rules:
       - check-success~=CodeQL
       - check-success~=GitGuardian
       - check-success~=coverage
-      - check-success~=snyk
       - check-success~=End To End Tests
       - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
@@ -24,7 +23,6 @@ pull_request_rules:
       - check-success~=CodeQL
       - check-success~=GitGuardian
       - check-success~=coverage
-      - check-success~=snyk
       - title~=^\[Snyk\]
     actions:
       review:
