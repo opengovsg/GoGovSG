@@ -74,6 +74,7 @@ const useStyles = makeStyles((theme) =>
     },
     loginReferral: {
       fontSize: '0.85rem',
+      color: '#767676',
       marginBottom: theme.spacing(4),
     },
     textInputGroup: {
@@ -243,10 +244,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                       variant="body1"
                     >
                       {i18next.t('general.referralOfficerPhrase')} can use their{' '}
-                      <strong>
-                        {i18next.t('general.referralEmailDomain')}
-                      </strong>{' '}
-                      emails at{' '}
+                      {i18next.t('general.referralEmailDomain')} emails at{' '}
                       <Link
                         href={`https://${i18next.t('general.referralLink')}`}
                       >
