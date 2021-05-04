@@ -4,6 +4,9 @@
     "shortUrlPrefix": "for.edu.sg/",
     "appTitle": "for.edu.sg",
     "officerType": "education",
+    "referralEmailDomain": "gov.sg",
+    "referralOfficerPhrase": "Public officers",
+    "referralLink": "go.gov.sg",
     "appCatchphrase": {
       "styled": "Trusted short links from <strong><i>education institutions</i></strong>",
       "noStyle": "Trusted short links from education institutions"

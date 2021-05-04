@@ -4,6 +4,9 @@
     "shortUrlPrefix": "go.gov.sg/",
     "appTitle": "Go.gov.sg",
     "officerType": "public",
+    "referralEmailDomain": "edu.sg",
+    "referralOfficerPhrase": "Staff from selected schools",
+    "referralLink": "for.edu.sg",
     "appCatchphrase": {
       "styled": "Trusted short links from <strong><i>public officers</i></strong>",
       "noStyle": "Trusted short links from public officers"
