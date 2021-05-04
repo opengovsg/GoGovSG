@@ -234,6 +234,10 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                       Only available for use by{' '}
                       {i18next.t('general.officerType')} officers with an email
                       from <strong>{i18next.t('general.emailDomain')}</strong>.
+                      Staff from selected schools can use their{' '}
+                      <strong>edu.sg</strong> emails at{' '}
+                      <Link href="https://for.edu.sg">for.edu.sg</Link> to
+                      shorten links instead.
                     </Typography>
                   </span>
                   <span className={classes.textInputGroup}>
