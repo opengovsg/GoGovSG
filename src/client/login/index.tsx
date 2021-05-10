@@ -71,6 +71,10 @@ const useStyles = makeStyles((theme) =>
     },
     loginHeader: {
       marginTop: theme.spacing(1),
+    },
+    loginReferral: {
+      fontSize: '0.85rem',
+      color: '#767676',
       marginBottom: theme.spacing(4),
     },
     textInputGroup: {
@@ -234,6 +238,19 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                       Only available for use by{' '}
                       {i18next.t('general.officerType')} officers with an email
                       from <strong>{i18next.t('general.emailDomain')}</strong>.
+                    </Typography>
+                    <Typography
+                      className={classes.loginReferral}
+                      variant="body1"
+                    >
+                      {i18next.t('general.referralOfficerPhrase')} can use their{' '}
+                      {i18next.t('general.referralEmailDomain')} emails at{' '}
+                      <Link
+                        href={`https://${i18next.t('general.referralLink')}`}
+                      >
+                        {i18next.t('general.referralLink')}
+                      </Link>{' '}
+                      to shorten links instead.
                     </Typography>
                   </span>
                   <span className={classes.textInputGroup}>
