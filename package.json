@@ -105,7 +105,7 @@
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
     "@commitlint/travis-cli": "^12.1.1",
-    "@sentry/webpack-plugin": "^1.14.2",
+    "@sentry/webpack-plugin": "^1.15.1",
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.33",
     "@types/chart.js": "^2.9.30",
