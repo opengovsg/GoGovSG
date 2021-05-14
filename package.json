@@ -70,7 +70,7 @@
     "nanoid": "^2.1.11",
     "nodemailer": "^6.5.0",
     "pg": "^8.6.0",
-    "pg-connection-string": "^2.4.0",
+    "pg-connection-string": "^2.5.0",
     "pg-hstore": "^2.3.2",
     "prop-types": "^15.7.2",
     "qrcode": "^1.4.4",
