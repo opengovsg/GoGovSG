@@ -189,7 +189,8 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             <>
               <div className={classes.fileInputDescWrapper}>
                 <Typography className={classes.labelText} variant="body1">
-                  Choose your file
+                  Choose your file (this will be <strong>publicly</strong>{' '}
+                  indexable by search engines)
                 </Typography>
                 <div className={classes.maxSizeTextWrapper}>
                   <Typography variant="caption" className={classes.maxSizeText}>
