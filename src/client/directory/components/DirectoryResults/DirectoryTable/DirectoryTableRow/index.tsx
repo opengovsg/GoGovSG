@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
         width: '40%',
-        paddingTop: theme.spacing(5.5),
+        paddingTop: theme.spacing(7.5),
         paddingRight: () => '10%',
         marginLeft: () => 0,
       },
