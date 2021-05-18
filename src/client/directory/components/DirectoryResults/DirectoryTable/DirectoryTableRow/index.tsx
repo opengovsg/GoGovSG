@@ -250,7 +250,6 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
             <div>
               <span className={classes.domainTextActive}>/{url.shortUrl}</span>
               <br />
-              <p className={classes.longLinkText}>{url.longUrl}</p>
             </div>
           ) : (
             <div>
@@ -258,7 +257,6 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
                 /{url.shortUrl}
               </span>
               <br />
-              <p className={classes.longLinkText}>{url.longUrl}</p>
             </div>
           )}
         </Typography>
