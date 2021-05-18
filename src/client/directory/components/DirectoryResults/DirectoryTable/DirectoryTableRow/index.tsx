@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
         width: '40%',
-        paddingTop: theme.spacing(5.5),
+        paddingTop: theme.spacing(7.5),
         paddingRight: () => '10%',
         marginLeft: () => 0,
       },
@@ -250,7 +250,6 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
             <div>
               <span className={classes.domainTextActive}>/{url.shortUrl}</span>
               <br />
-              <p className={classes.longLinkText}>{url.longUrl}</p>
             </div>
           ) : (
             <div>
@@ -258,7 +257,6 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
                 /{url.shortUrl}
               </span>
               <br />
-              <p className={classes.longLinkText}>{url.longUrl}</p>
             </div>
           )}
         </Typography>
