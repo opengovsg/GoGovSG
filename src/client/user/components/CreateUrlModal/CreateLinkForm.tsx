@@ -158,7 +158,8 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
           {!isFile && (
             <>
               <Typography className={classes.labelText} variant="body1">
-                Original link
+                Original link (this will be <strong>publicly</strong> indexable
+                by search engines)
               </Typography>
               <TextField
                 error={!isValidLongUrl(longUrl, true)}
