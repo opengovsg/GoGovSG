@@ -102,7 +102,7 @@
     "@babel/preset-env": "^7.13.10",
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.13.0",
-    "@commitlint/cli": "^12.1.1",
+    "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
     "@commitlint/travis-cli": "^12.1.1",
     "@sentry/webpack-plugin": "^1.15.1",
