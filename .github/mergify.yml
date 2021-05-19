@@ -8,7 +8,7 @@ pull_request_rules:
       - check-success~=GitGuardian
       - check-success~=coverage
       - check-success~=End To End Tests
-      - title~=^Bump [^\s]+ from ([\d]+)\..+ to \1\.
+      - title~=^build\(deps[^)]*\). bump [^\s]+ from ([\d]+)\..+ to \1\.
     actions:
       review:
         type: APPROVE
