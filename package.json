@@ -33,7 +33,7 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "@material-ui/core": "^4.11.4",
-    "@sentry/react": "^6.2.2",
+    "@sentry/react": "^6.4.1",
     "@sentry/tracing": "^6.2.2",
     "@types/express-rate-limit": "^5.1.1",
     "aws-sdk": "^2.906.0",
