@@ -154,7 +154,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     conditions: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated> = async (conditions) => {
     const { query, order, limit, offset, state, isFile, isEmail } = conditions
-
     const { tableName: urlTableName } = Url
     const { tableName: urlClicksTableName } = UrlClicks
 
@@ -274,7 +273,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
     const rawQuery = `
-      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile", "urls"."longUrl"
+      SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
       JOIN url_clicks
       ON "urls"."shortUrl" = "url_clicks"."shortUrl"

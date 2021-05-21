@@ -54,7 +54,6 @@ export type UrlDirectory = {
   email: string
   state: string
   isFile: boolean
-  longUrl: string
 }
 
 export type UrlDirectoryPaginated = {
