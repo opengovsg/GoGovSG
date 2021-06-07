@@ -76,16 +76,13 @@ export class RedirectController {
 
     // Find longUrl to redirect to.
     try {
-      const {
-        longUrl,
-        visitedUrls,
-        redirectType,
-      } = await this.redirectService.redirectFor(
-        shortUrl,
-        req.session!.visits,
-        req.get('user-agent') || '',
-        req.get('referrer') || '',
-      )
+      const { longUrl, visitedUrls, redirectType } =
+        await this.redirectService.redirectFor(
+          shortUrl,
+          req.session!.visits,
+          req.get('user-agent') || '',
+          req.get('referrer') || '',
+        )
 
       const generatedCookie = this.analyticsLogger.generateCookie(
         req.headers.cookie,

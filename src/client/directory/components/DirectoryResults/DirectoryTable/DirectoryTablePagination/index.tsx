@@ -82,56 +82,57 @@ const useStyles = makeStyles((theme) =>
 /**
  * @component Holds the drop down option for the result count and page number.
  */
-const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps> = ({
-  pageCount,
-  rowsPerPage,
-  resultsCount,
-  currentPage,
-  disablePagination,
-  changePageHandler,
-  changeRowsPerPageHandler,
-}: DirectoryTablePaginationProps) => {
-  const appMargins = useAppMargins()
-  const classes = useStyles({ appMargins })
+const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps> =
+  ({
+    pageCount,
+    rowsPerPage,
+    resultsCount,
+    currentPage,
+    disablePagination,
+    changePageHandler,
+    changeRowsPerPageHandler,
+  }: DirectoryTablePaginationProps) => {
+    const appMargins = useAppMargins()
+    const classes = useStyles({ appMargins })
 
-  return (
-    <TableRow key="pagination" className={classes.paginationRow}>
-      <TableCell className={classes.paginationCell}>
-        <TablePagination
-          className={classes.pagination}
-          ActionsComponent={({ onChangePage, page }) => (
-            <PaginationActionComponent
-              pageCount={pageCount}
-              onChangePage={onChangePage}
-              page={page}
-              disablePagination={disablePagination}
-            />
-          )}
-          labelRowsPerPage="Links per page"
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={resultsCount}
-          rowsPerPage={rowsPerPage}
-          page={currentPage}
-          backIconButtonProps={{
-            'aria-label': 'previous page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'next page',
-          }}
-          onChangePage={changePageHandler}
-          onChangeRowsPerPage={changeRowsPerPageHandler}
-          classes={{
-            spacer: classes.spacer,
-            toolbar: classes.toolbar,
-            caption: classes.caption,
-            select: classes.select,
-            selectIcon: classes.selectIcon,
-          }}
-        />
-      </TableCell>
-    </TableRow>
-  )
-}
+    return (
+      <TableRow key="pagination" className={classes.paginationRow}>
+        <TableCell className={classes.paginationCell}>
+          <TablePagination
+            className={classes.pagination}
+            ActionsComponent={({ onChangePage, page }) => (
+              <PaginationActionComponent
+                pageCount={pageCount}
+                onChangePage={onChangePage}
+                page={page}
+                disablePagination={disablePagination}
+              />
+            )}
+            labelRowsPerPage="Links per page"
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={resultsCount}
+            rowsPerPage={rowsPerPage}
+            page={currentPage}
+            backIconButtonProps={{
+              'aria-label': 'previous page',
+            }}
+            nextIconButtonProps={{
+              'aria-label': 'next page',
+            }}
+            onChangePage={changePageHandler}
+            onChangeRowsPerPage={changeRowsPerPageHandler}
+            classes={{
+              spacer: classes.spacer,
+              toolbar: classes.toolbar,
+              caption: classes.caption,
+              select: classes.select,
+              selectIcon: classes.selectIcon,
+            }}
+          />
+        </TableCell>
+      </TableRow>
+    )
+  }
 
 export default DirectoryTablePagination

@@ -14,7 +14,7 @@ export class AnalyticsLoggerService {
     if (!gaTrackingId) return
 
     const body = new URLSearchParams(
-      (pageViewHit as unknown) as Record<string, string>,
+      pageViewHit as unknown as Record<string, string>,
     )
 
     fetch(gaEndpoint, {

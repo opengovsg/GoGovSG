@@ -53,14 +53,12 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     this.allowedFileExtensions = allowedFileExtensions
   }
 
-  hasAllowedType: (file: {
-    name: string
-    data: Buffer
-  }) => Promise<boolean> = async ({ name, data }) => {
-    const fileType = await FileType.fromBuffer(data)
-    const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
-    return this.allowedFileExtensions.includes(extension)
-  }
+  hasAllowedType: (file: { name: string; data: Buffer }) => Promise<boolean> =
+    async ({ name, data }) => {
+      const fileType = await FileType.fromBuffer(data)
+      const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
+      return this.allowedFileExtensions.includes(extension)
+    }
 }
 
 export default FileTypeFilterService

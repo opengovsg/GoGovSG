@@ -98,9 +98,11 @@ export type GetUrlsForUserSuccessAction = ReduxPayloadAction<
   Array<UrlType>
 >
 
-export type OpenCreateUrlModalAction = ReduxAction<UserAction.OPEN_CREATE_URL_MODAL>
+export type OpenCreateUrlModalAction =
+  ReduxAction<UserAction.OPEN_CREATE_URL_MODAL>
 
-export type CloseCreateUrlModalAction = ReduxAction<UserAction.CLOSE_CREATE_URL_MODAL>
+export type CloseCreateUrlModalAction =
+  ReduxAction<UserAction.CLOSE_CREATE_URL_MODAL>
 
 export type SetShortUrlAction = ReduxPayloadAction<
   UserAction.SET_SHORT_URL,

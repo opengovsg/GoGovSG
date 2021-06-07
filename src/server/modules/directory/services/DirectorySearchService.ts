@@ -7,7 +7,8 @@ import { DirectoryQueryConditions } from '..'
 
 @injectable()
 export class DirectorySearchService
-  implements interfaces.DirectorySearchService {
+  implements interfaces.DirectorySearchService
+{
   private urlRepository: UrlRepositoryInterface
 
   public constructor(
