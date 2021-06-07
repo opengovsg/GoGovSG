@@ -13,25 +13,26 @@ const setLinksToRotate: (payload: LinksToRotate) => SetLinksToRotateAction = (
   payload,
 ) => ({ type: SET_LINKS_TO_ROTATE, payload })
 
-const getLinksToRotate = () => (
-  dispatch: Dispatch<SetLinksToRotateAction>,
-  getState: GetReduxState,
-) => {
-  const { home } = getState()
-  const { linksToRotate } = home
-  if (!linksToRotate) {
-    get('/api/links').then((response) => {
-      if (response.ok) {
-        response.text().then((extractedString) => {
-          if (extractedString) {
-            const links = extractedString.split(',').map((link) => link.trim())
-            dispatch<SetLinksToRotateAction>(setLinksToRotate(links))
-          }
-        })
-      }
-    })
+const getLinksToRotate =
+  () =>
+  (dispatch: Dispatch<SetLinksToRotateAction>, getState: GetReduxState) => {
+    const { home } = getState()
+    const { linksToRotate } = home
+    if (!linksToRotate) {
+      get('/api/links').then((response) => {
+        if (response.ok) {
+          response.text().then((extractedString) => {
+            if (extractedString) {
+              const links = extractedString
+                .split(',')
+                .map((link) => link.trim())
+              dispatch<SetLinksToRotateAction>(setLinksToRotate(links))
+            }
+          })
+        }
+      })
+    }
   }
-}
 
 const loadStats = () => (dispatch: Dispatch<LoadStatsAction>) => {
   get('/api/stats').then((response) => {

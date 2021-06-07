@@ -76,7 +76,8 @@ export type UrlStats = UrlType & {
 
 @injectable()
 export class LinkStatisticsRepository
-  implements interfaces.LinkStatisticsRepository {
+  implements interfaces.LinkStatisticsRepository
+{
   public findByShortUrl: (
     shortUrl: string,
     offsetDays?: number,
@@ -148,19 +149,17 @@ export class LinkStatisticsRepository
     return null
   }
 
-  public updateLinkStatistics: (
-    shortUrl: string,
-    device: DeviceType,
-  ) => void = (shortUrl, device) => {
-    // Creates or modifies an existing function.
-    const rawFunction = `
+  public updateLinkStatistics: (shortUrl: string, device: DeviceType) => void =
+    (shortUrl, device) => {
+      // Creates or modifies an existing function.
+      const rawFunction = `
       SELECT update_link_statistics('${shortUrl}', '${device}')
     `
-    return sequelize.query(rawFunction, {
-      useMaster: true,
-      type: QueryTypes.SELECT,
-    })
-  }
+      return sequelize.query(rawFunction, {
+        useMaster: true,
+        type: QueryTypes.SELECT,
+      })
+    }
 }
 
 export default LinkStatisticsRepository

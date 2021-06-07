@@ -385,19 +385,18 @@ export class UrlRepository implements UrlRepositoryInterface {
    * @param  {string} shortUrl Short url.
    * @returns The long url that the short url redirects to.
    */
-  private getLongUrlFromDatabase: (
-    shortUrl: string,
-  ) => Promise<string> = async (shortUrl) => {
-    const url = await Url.findOne({
-      where: { shortUrl, state: StorableUrlState.Active },
-    })
-    if (!url) {
-      throw new NotFoundError(
-        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-      )
+  private getLongUrlFromDatabase: (shortUrl: string) => Promise<string> =
+    async (shortUrl) => {
+      const url = await Url.findOne({
+        where: { shortUrl, state: StorableUrlState.Active },
+      })
+      if (!url) {
+        throw new NotFoundError(
+          `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+        )
+      }
+      return url.longUrl
     }
-    return url.longUrl
-  }
 
   /**
    * Retrieves the long url which the short url redirects to
@@ -432,17 +431,15 @@ export class UrlRepository implements UrlRepositoryInterface {
    * @param  {string} shortUrl Short url.
    * @param  {string} longUrl Long url.
    */
-  private cacheShortUrl: (
-    shortUrl: string,
-    longUrl: string,
-  ) => Promise<void> = (shortUrl, longUrl) => {
-    return new Promise((resolve, reject) => {
-      redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
-        if (err) reject(err)
-        else resolve()
+  private cacheShortUrl: (shortUrl: string, longUrl: string) => Promise<void> =
+    (shortUrl, longUrl) => {
+      return new Promise((resolve, reject) => {
+        redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
+          if (err) reject(err)
+          else resolve()
+        })
       })
-    })
-  }
+    }
 
   /**
    * Generates the ranking algorithm to be used in the ORDER BY clause in the

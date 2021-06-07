@@ -47,9 +47,10 @@ const useStyles = makeStyles((theme) =>
     searchTextField: {
       width: '100%',
       height: '100%',
-      '& input::-webkit-search-decoration, & input::-webkit-search-cancel-button, & input::-webkit-search-results-button, & input::-webkit-search-results-decoration': {
-        display: 'none',
-      },
+      '& input::-webkit-search-decoration, & input::-webkit-search-cancel-button, & input::-webkit-search-results-button, & input::-webkit-search-results-decoration':
+        {
+          display: 'none',
+        },
     },
     searchInput: {
       height: '100%',

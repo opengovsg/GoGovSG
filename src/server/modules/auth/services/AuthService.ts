@@ -66,65 +66,63 @@ export class AuthService implements interfaces.AuthService {
     }
   }
 
-  public verifyOtp: (
-    email: string,
-    otp: string,
-  ) => Promise<StorableUser> = async (email, otp) => {
-    let retrievedOtp: StorableOtp | null = null
-    // Retrieve hash from cache
-    try {
-      retrievedOtp = await this.otpRepository.getOtpForEmail(email)
-    } catch (error) {
-      logger.error(`Error verifying OTP:\t${error}`)
-      throw error
-    }
-
-    if (!retrievedOtp) {
-      throw new NotFoundError('Missing otp')
-    }
-
-    const isOtpMatch = await this.cryptography.compare(
-      otp,
-      retrievedOtp.hashedOtp,
-    )
-
-    if (!isOtpMatch) {
-      const modifiedOtp = {
-        ...retrievedOtp,
-        retries: retrievedOtp.retries - 1,
+  public verifyOtp: (email: string, otp: string) => Promise<StorableUser> =
+    async (email, otp) => {
+      let retrievedOtp: StorableOtp | null = null
+      // Retrieve hash from cache
+      try {
+        retrievedOtp = await this.otpRepository.getOtpForEmail(email)
+      } catch (error) {
+        logger.error(`Error verifying OTP:\t${error}`)
+        throw error
       }
 
-      if (modifiedOtp.retries > 0) {
-        try {
-          await this.otpRepository.setOtpForEmail(email, modifiedOtp)
-        } catch (error) {
-          logger.error(`OTP retry could not be decremented:\t${error}`)
-        }
-      } else {
-        try {
-          await this.otpRepository.deleteOtpByEmail(email)
-        } catch (error) {
-          logger.error(
-            `Could not delete OTP after reaching retry limit:\t${error}`,
-          )
-        }
+      if (!retrievedOtp) {
+        throw new NotFoundError('Missing otp')
       }
-      throw new InvalidOtpError(modifiedOtp.retries)
+
+      const isOtpMatch = await this.cryptography.compare(
+        otp,
+        retrievedOtp.hashedOtp,
+      )
+
+      if (!isOtpMatch) {
+        const modifiedOtp = {
+          ...retrievedOtp,
+          retries: retrievedOtp.retries - 1,
+        }
+
+        if (modifiedOtp.retries > 0) {
+          try {
+            await this.otpRepository.setOtpForEmail(email, modifiedOtp)
+          } catch (error) {
+            logger.error(`OTP retry could not be decremented:\t${error}`)
+          }
+        } else {
+          try {
+            await this.otpRepository.deleteOtpByEmail(email)
+          } catch (error) {
+            logger.error(
+              `Could not delete OTP after reaching retry limit:\t${error}`,
+            )
+          }
+        }
+        throw new InvalidOtpError(modifiedOtp.retries)
+      }
+
+      try {
+        const dbUser = await this.userRepository.findOrCreateWithEmail(email)
+
+        this.otpRepository.deleteOtpByEmail(email).catch((error) => {
+          logger.error(`OTP could not be expired:\t${error}`)
+        })
+
+        return dbUser
+      } catch (error) {
+        logger.error(`Error creating user:\t ${email}, ${error}`)
+        throw new Error('Error creating user.')
+      }
     }
-
-    try {
-      const dbUser = await this.userRepository.findOrCreateWithEmail(email)
-
-      this.otpRepository.deleteOtpByEmail(email).catch((error) => {
-        logger.error(`OTP could not be expired:\t${error}`)
-      })
-
-      return dbUser
-    } catch (error) {
-      logger.error(`Error creating user:\t ${email}, ${error}`)
-      throw new Error('Error creating user.')
-    }
-  }
 }
 
 export default AuthService

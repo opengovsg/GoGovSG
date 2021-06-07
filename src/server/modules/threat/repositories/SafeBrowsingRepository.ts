@@ -10,7 +10,8 @@ import { NotFoundError } from '../../../util/error'
 
 @injectable()
 export class SafeBrowsingRepository
-  implements interfaces.SafeBrowsingRepository {
+  implements interfaces.SafeBrowsingRepository
+{
   private safeBrowsingMapper: TwoWayMapper<HasCacheDuration[], string>
 
   public constructor(

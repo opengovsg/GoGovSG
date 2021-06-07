@@ -81,20 +81,18 @@ export class LoginController {
     }
   }
 
-  public getIsLoggedIn: (
-    req: Express.Request,
-    res: Express.Response,
-  ) => void = (req, res) => {
-    const { session } = req
-    const { user } = session!
-    if (user) {
-      const response = { ...jsonMessage('Logged in'), user }
-      res.ok(response)
+  public getIsLoggedIn: (req: Express.Request, res: Express.Response) => void =
+    (req, res) => {
+      const { session } = req
+      const { user } = session!
+      if (user) {
+        const response = { ...jsonMessage('Logged in'), user }
+        res.ok(response)
+        return
+      }
+      res.notFound(jsonMessage('User session not found'))
       return
     }
-    res.notFound(jsonMessage('User session not found'))
-    return
-  }
 }
 
 export default LoginController
