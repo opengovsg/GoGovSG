@@ -121,7 +121,7 @@
     "@types/hapi__joi": "^17.1.6",
     "@types/helmet": "4.0.0",
     "@types/jest": "^26.0.23",
-    "@types/lodash": "^4.14.165",
+    "@types/lodash": "^4.14.170",
     "@types/moment-timezone": "^0.5.30",
     "@types/morgan": "^1.9.2",
     "@types/nanoid": "^2.1.0",
