@@ -30,18 +30,19 @@ export class LinkStatisticsService implements interfaces.LinkStatisticsService {
     this.linkStatisticsRepository = linkStatisticsRepository
   }
 
-  updateLinkStatistics: (
-    shortUrl: string,
-    userAgent: string,
-  ) => Promise<void> = async (shortUrl, userAgent) => {
-    const deviceType = this.deviceCheckService.getDeviceType(userAgent)
+  updateLinkStatistics: (shortUrl: string, userAgent: string) => Promise<void> =
+    async (shortUrl, userAgent) => {
+      const deviceType = this.deviceCheckService.getDeviceType(userAgent)
 
-    Promise.all([
-      this.linkStatisticsRepository.updateLinkStatistics(shortUrl, deviceType),
-    ]).catch((error) =>
-      logger.error(`Unable to update link statistics: ${error}`),
-    )
-  }
+      Promise.all([
+        this.linkStatisticsRepository.updateLinkStatistics(
+          shortUrl,
+          deviceType,
+        ),
+      ]).catch((error) =>
+        logger.error(`Unable to update link statistics: ${error}`),
+      )
+    }
 
   getLinkStatistics: (
     userId: number,

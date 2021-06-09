@@ -74,18 +74,17 @@ export class UserRepository implements UserRepositoryInterface {
     return this.urlMapper.persistenceToDto(url)
   }
 
-  public findUserByUrl: (
-    shortUrl: string,
-  ) => Promise<StorableUser | null> = async (shortUrl) => {
-    const user = await User.scope([
-      'defaultScope',
-      {
-        method: ['includeShortUrl', shortUrl],
-      },
-    ]).findOne()
+  public findUserByUrl: (shortUrl: string) => Promise<StorableUser | null> =
+    async (shortUrl) => {
+      const user = await User.scope([
+        'defaultScope',
+        {
+          method: ['includeShortUrl', shortUrl],
+        },
+      ]).findOne()
 
-    return this.userMapper.persistenceToDto(user)
-  }
+      return this.userMapper.persistenceToDto(user)
+    }
 
   public findUrlsForUser: (
     conditions: UserUrlsQueryConditions,

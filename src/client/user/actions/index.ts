@@ -144,12 +144,11 @@ const isGetUrlsForUserSuccess: (
  * key-value pairs for the tableConfig.
  * @example [ ['orderBy', 'shortUrl'], ['sortDirection', 'desc'] ]
  */
-const setUrlTableConfig: (
-  payload: UrlTableConfig,
-) => SetUrlTableConfigAction = (payload) => ({
-  type: UserAction.SET_URL_TABLE_CONFIG,
-  payload,
-})
+const setUrlTableConfig: (payload: UrlTableConfig) => SetUrlTableConfigAction =
+  (payload) => ({
+    type: UserAction.SET_URL_TABLE_CONFIG,
+    payload,
+  })
 
 const setUrlFilter: (payload: UrlTableFilterConfig) => SetUrlFilterAction = (
   payload,
@@ -180,31 +179,25 @@ const setUserAnnouncement: (payload: {
   payload,
 })
 
-const getUserMessage = (): ThunkAction<
-  void,
-  GoGovReduxState,
-  void,
-  UserActionType
-> => async (dispatch: Dispatch<SetUserMessageAction>) => {
-  const response = await get('/api/user/message')
-  if (response.ok) {
-    const text = await response.text()
-    if (text) dispatch(setUserMessage(text))
+const getUserMessage =
+  (): ThunkAction<void, GoGovReduxState, void, UserActionType> =>
+  async (dispatch: Dispatch<SetUserMessageAction>) => {
+    const response = await get('/api/user/message')
+    if (response.ok) {
+      const text = await response.text()
+      if (text) dispatch(setUserMessage(text))
+    }
   }
-}
 
-const getUserAnnouncement = (): ThunkAction<
-  void,
-  GoGovReduxState,
-  void,
-  UserActionType
-> => async (dispatch: Dispatch<SetUserAnnouncementAction>) => {
-  const response = await get('/api/user/announcement')
-  if (response.ok) {
-    const payload = await response.json()
-    if (payload) dispatch(setUserAnnouncement(payload))
+const getUserAnnouncement =
+  (): ThunkAction<void, GoGovReduxState, void, UserActionType> =>
+  async (dispatch: Dispatch<SetUserAnnouncementAction>) => {
+    const response = await get('/api/user/announcement')
+    if (response.ok) {
+      const payload = await response.json()
+      if (payload) dispatch(setUserAnnouncement(payload))
+    }
   }
-}
 
 async function handleError(
   dispatch: Dispatch<
@@ -239,9 +232,7 @@ async function handleError(
 }
 
 // retrieve urls based on query object
-const getUrls: (
-  queryObj: ParsedUrlQueryInput,
-) => Promise<{
+const getUrls: (queryObj: ParsedUrlQueryInput) => Promise<{
   json: { urls: Array<UrlType>; count: number; message?: string }
   isOk: boolean
 }> = (queryObj) => {
@@ -254,63 +245,67 @@ const getUrls: (
 }
 
 // retrieves urls based on url table config
-const getUrlsForUser = (): ThunkAction<
-  void,
-  GoGovReduxState,
-  void,
-  UserActionType | RootActionType
-> => async (
-  dispatch: Dispatch<
-    | IsFetchingUrlsAction
-    | GetUrlsForUserSuccessAction
-    | UpdateUrlCountAction
-    | SetErrorMessageAction
-  >,
-  getState: GetReduxState,
-) => {
-  const state = getState()
-  const { tableConfig } = state.user
-  const {
-    numberOfRows,
-    pageNumber,
-    sortDirection,
-    orderBy,
-    searchText,
-    filter: { state: urlState, isFile },
-  } = tableConfig
-  const offset = pageNumber * numberOfRows
+const getUrlsForUser =
+  (): ThunkAction<
+    void,
+    GoGovReduxState,
+    void,
+    UserActionType | RootActionType
+  > =>
+  async (
+    dispatch: Dispatch<
+      | IsFetchingUrlsAction
+      | GetUrlsForUserSuccessAction
+      | UpdateUrlCountAction
+      | SetErrorMessageAction
+    >,
+    getState: GetReduxState,
+  ) => {
+    const state = getState()
+    const { tableConfig } = state.user
+    const {
+      numberOfRows,
+      pageNumber,
+      sortDirection,
+      orderBy,
+      searchText,
+      filter: { state: urlState, isFile },
+    } = tableConfig
+    const offset = pageNumber * numberOfRows
 
-  const queryObj = {
-    limit: numberOfRows,
-    offset,
-    orderBy,
-    sortDirection,
-    searchText,
-    state: urlState,
-    isFile,
+    const queryObj = {
+      limit: numberOfRows,
+      offset,
+      orderBy,
+      sortDirection,
+      searchText,
+      state: urlState,
+      isFile,
+    }
+
+    dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
+    const { json, isOk } = await getUrls(queryObj)
+
+    if (isOk) {
+      json.urls.forEach((url: UrlType) => {
+        /* eslint-disable no-param-reassign */
+        url.createdAt = moment(url.createdAt)
+          .tz('Singapore')
+          .format('D MMM YYYY')
+        url.editedLongUrl = removeHttpsProtocol(url.longUrl)
+        url.editedContactEmail = url.contactEmail
+        url.editedDescription = url.description
+        /* eslint-enable no-param-reassign */
+      })
+      dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
+      dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
+    } else {
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage(json.message || 'Error fetching URLs'),
+      )
+    }
+    dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
   }
-
-  dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
-  const { json, isOk } = await getUrls(queryObj)
-
-  if (isOk) {
-    json.urls.forEach((url: UrlType) => {
-      /* eslint-disable no-param-reassign */
-      url.createdAt = moment(url.createdAt).tz('Singapore').format('D MMM YYYY')
-      url.editedLongUrl = removeHttpsProtocol(url.longUrl)
-      url.editedContactEmail = url.contactEmail
-      url.editedDescription = url.description
-      /* eslint-enable no-param-reassign */
-    })
-    dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
-    dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
-  } else {
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage(json.message || 'Error fetching URLs'),
-    )
-  }
-  dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
-}
 
 const resetUserState: () => ResetUserStateAction = () => ({
   type: UserAction.RESET_USER_STATE,
@@ -321,111 +316,117 @@ const wipeUserState: () => WipeUserStateAction = () => ({
 })
 
 // API call to update long URL
-const updateLongUrl = (shortUrl: string, longUrl: string) => (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    SetErrorMessageAction | SetSuccessMessageAction
-  >,
-) => {
-  // Append https:// as the protocol is stripped out
-  // TODO: consider using Upgrade-Insecure-Requests header for HTTP
-  if (!/^(http|https):\/\//.test(longUrl)) {
-    longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
-  }
+const updateLongUrl =
+  (shortUrl: string, longUrl: string) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetErrorMessageAction | SetSuccessMessageAction
+    >,
+  ) => {
+    // Append https:// as the protocol is stripped out
+    // TODO: consider using Upgrade-Insecure-Requests header for HTTP
+    if (!/^(http|https):\/\//.test(longUrl)) {
+      longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
+    }
 
-  if (!isValidUrl(longUrl)) {
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage('URL is invalid.'),
-    )
-    return null
-  }
-
-  return patch('/api/user/url', { longUrl, shortUrl }).then((response) => {
-    if (response.ok) {
-      dispatch<void>(getUrlsForUser())
-      dispatch<SetSuccessMessageAction>(
-        rootActions.setSuccessMessage('URL is updated.'),
+    if (!isValidUrl(longUrl)) {
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('URL is invalid.'),
       )
       return null
     }
 
-    return response.json().then((json) => {
-      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
-      return null
+    return patch('/api/user/url', { longUrl, shortUrl }).then((response) => {
+      if (response.ok) {
+        dispatch<void>(getUrlsForUser())
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage('URL is updated.'),
+        )
+        return null
+      }
+
+      return response.json().then((json) => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
+        return null
+      })
     })
-  })
-}
+  }
 
 // API call to update description and contact email
-const updateUrlInformation = (shortUrl: string) => (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    SetErrorMessageAction | SetSuccessMessageAction
-  >,
-  getState: GetReduxState,
-) => {
-  const { user } = getState()
-  const url = user.urls.filter(
-    (urlToCheck) => urlToCheck.shortUrl === shortUrl,
-  )[0]
-  if (!url) {
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage('Url not found.'),
-    )
-    return null
-  }
-  return patch('/api/user/url', {
-    contactEmail: url.editedContactEmail ? url.editedContactEmail : null,
-    description: url.editedDescription,
-    shortUrl,
-  }).then((response) => {
-    if (response.ok) {
-      dispatch<void>(getUrlsForUser())
-      dispatch<SetSuccessMessageAction>(
-        rootActions.setSuccessMessage('URL is updated.'),
+const updateUrlInformation =
+  (shortUrl: string) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetErrorMessageAction | SetSuccessMessageAction
+    >,
+    getState: GetReduxState,
+  ) => {
+    const { user } = getState()
+    const url = user.urls.filter(
+      (urlToCheck) => urlToCheck.shortUrl === shortUrl,
+    )[0]
+    if (!url) {
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Url not found.'),
       )
       return null
     }
+    return patch('/api/user/url', {
+      contactEmail: url.editedContactEmail ? url.editedContactEmail : null,
+      description: url.editedDescription,
+      shortUrl,
+    }).then((response) => {
+      if (response.ok) {
+        dispatch<void>(getUrlsForUser())
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage('URL is updated.'),
+        )
+        return null
+      }
 
-    return response.json().then((json) => {
-      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
-      return null
+      return response.json().then((json) => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
+        return null
+      })
     })
-  })
-}
-
-// API call to replace file
-const replaceFile = (
-  shortUrl: string,
-  file: File,
-  onError: (error: string) => void,
-) => async (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    SetErrorMessageAction | SetSuccessMessageAction | SetIsUploadingAction
-  >,
-) => {
-  dispatch<SetIsUploadingAction>(setIsUploading(true))
-  const data = new FormData()
-  data.append('file', file, file.name)
-  data.append('shortUrl', shortUrl)
-
-  const response = await patchFormData('/api/user/url', data)
-  dispatch<SetIsUploadingAction>(setIsUploading(false))
-  if (!response.ok) {
-    const json = await response.json()
-    onError(json.message)
-    return
   }
 
-  dispatch<void>(getUrlsForUser())
-  dispatch<SetSuccessMessageAction>(
-    rootActions.setSuccessMessage('Your link has been updated.'),
-  )
-}
+// API call to replace file
+const replaceFile =
+  (shortUrl: string, file: File, onError: (error: string) => void) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetErrorMessageAction | SetSuccessMessageAction | SetIsUploadingAction
+    >,
+  ) => {
+    dispatch<SetIsUploadingAction>(setIsUploading(true))
+    const data = new FormData()
+    data.append('file', file, file.name)
+    data.append('shortUrl', shortUrl)
+
+    const response = await patchFormData('/api/user/url', data)
+    dispatch<SetIsUploadingAction>(setIsUploading(false))
+    if (!response.ok) {
+      const json = await response.json()
+      onError(json.message)
+      return
+    }
+
+    dispatch<void>(getUrlsForUser())
+    dispatch<SetSuccessMessageAction>(
+      rootActions.setSuccessMessage('Your link has been updated.'),
+    )
+  }
 
 // For setting short link value in the input box
 const setShortUrl: (shortUrl: string) => SetShortUrlAction = (shortUrl) => ({
@@ -465,26 +466,28 @@ const isToggleUrlStateSuccess: (payload: {
 })
 
 // Toggle URL between active / inactive
-const toggleUrlState = (shortUrl: string, state: UrlState) => (
-  dispatch: Dispatch<UserActionType | RootActionType>,
-) => {
-  const toState =
-    state === UrlState.Active ? UrlState.Inactive : UrlState.Active
+const toggleUrlState =
+  (shortUrl: string, state: UrlState) =>
+  (dispatch: Dispatch<UserActionType | RootActionType>) => {
+    const toState =
+      state === UrlState.Active ? UrlState.Inactive : UrlState.Active
 
-  patch('/api/user/url', { shortUrl, state: toState }).then((response) => {
-    if (response.ok) {
-      dispatch<ToggleUrlStateSuccessAction>(
-        isToggleUrlStateSuccess({ shortUrl, toState }),
-      )
-      return null
-    }
+    patch('/api/user/url', { shortUrl, state: toState }).then((response) => {
+      if (response.ok) {
+        dispatch<ToggleUrlStateSuccessAction>(
+          isToggleUrlStateSuccess({ shortUrl, toState }),
+        )
+        return null
+      }
 
-    return response.json().then((json) => {
-      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(json.message))
-      return null
+      return response.json().then((json) => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
+        return null
+      })
     })
-  })
-}
+  }
 
 const openCreateUrlModal: () => OpenCreateUrlModalAction = () => ({
   type: UserAction.OPEN_CREATE_URL_MODAL,
@@ -521,176 +524,178 @@ const urlCreated = (
  * @param history
  * @returns Promise<bool> Whether creation succeeded.
  */
-const createUrlOrRedirect = (history: History) => async (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    | CloseCreateUrlModalAction
-    | ResetUserStateAction
-    | SetSuccessMessageAction
-    | SetLastCreatedLinkAction
-    | SetErrorMessageAction
-    | SetUrlUploadStateAction
-  >,
-  getState: GetReduxState,
-) => {
-  const { user } = getState()
-  const { shortUrl } = user
-  let { longUrl } = user
+const createUrlOrRedirect =
+  (history: History) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
+      | SetSuccessMessageAction
+      | SetLastCreatedLinkAction
+      | SetErrorMessageAction
+      | SetUrlUploadStateAction
+    >,
+    getState: GetReduxState,
+  ) => {
+    const { user } = getState()
+    const { shortUrl } = user
+    let { longUrl } = user
 
-  // Test for malformed short URL
-  if (!/^[a-z0-9-]/.test(shortUrl)) {
-    // Sentry analytics: create link with url fail
-    Sentry.captureMessage('create link with url unsuccessful')
-    GAEvent('modal page', 'create link from url', 'unsuccessful')
+    // Test for malformed short URL
+    if (!/^[a-z0-9-]/.test(shortUrl)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with url unsuccessful')
+      GAEvent('modal page', 'create link from url', 'unsuccessful')
 
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage(
-        'Short links should only consist of a-z, 0-9 and hyphens.',
-      ),
-    )
-    dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
-    return
-  }
-
-  // Append https:// as the protocol is stripped out
-  // TODO: consider using Upgrade-Insecure-Requests header for HTTP
-  if (!/^(http|https):\/\//.test(longUrl)) {
-    longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
-  }
-
-  if (!isValidUrl(longUrl)) {
-    // Sentry analytics: create link with url fail
-    Sentry.captureMessage('create link with url unsuccessful')
-    GAEvent('modal page', 'create link from url', 'unsuccessful')
-
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage('URL is invalid.'),
-    )
-    dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
-    return
-  }
-
-  const response = await postJson('/api/user/url', { longUrl, shortUrl })
-
-  if (!response.ok) {
-    // Sentry analytics: create link with url fail
-    Sentry.captureMessage('create link with url unsuccessful')
-    GAEvent('modal page', 'create link from url', 'unsuccessful')
-
-    if (response.status === 401) {
-      history.push(LOGIN_PAGE)
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage(
+          'Short links should only consist of a-z, 0-9 and hyphens.',
+        ),
+      )
       dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
-    } else {
-      handleError(dispatch, response)
-      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+      return
     }
-  } else {
-    GAEvent('modal page', 'create link from url', 'successful')
-    const json = await response.json()
-    urlCreated(dispatch, json.shortUrl)
-    dispatch<SetUrlUploadStateAction>(setUrlUploadState(true))
-  }
-}
 
-const transferOwnership = (
-  shortUrl: string,
-  newOwner: string,
-  onSuccess: () => void,
-) => (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    SetSuccessMessageAction | SetErrorMessageAction
-  >,
-) =>
-  patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
-    (response) => {
-      if (response.ok) {
-        // Google Analytics: Transfer ownership - success and shorturl are combined together to create unique actions
-        GAEvent(
-          'transfer link ownership',
-          'successful',
-          `/${shortUrl.toString()}`,
-        )
-        onSuccess()
-        dispatch<void>(getUrlsForUser())
-        const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
-        dispatch<SetSuccessMessageAction>(
-          rootActions.setSuccessMessage(successMessage),
-        )
+    // Append https:// as the protocol is stripped out
+    // TODO: consider using Upgrade-Insecure-Requests header for HTTP
+    if (!/^(http|https):\/\//.test(longUrl)) {
+      longUrl = `https://${longUrl}` // eslint-disable-line no-param-reassign
+    }
+
+    if (!isValidUrl(longUrl)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with url unsuccessful')
+      GAEvent('modal page', 'create link from url', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('URL is invalid.'),
+      )
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+      return
+    }
+
+    const response = await postJson('/api/user/url', { longUrl, shortUrl })
+
+    if (!response.ok) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with url unsuccessful')
+      GAEvent('modal page', 'create link from url', 'unsuccessful')
+
+      if (response.status === 401) {
+        history.push(LOGIN_PAGE)
+        dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
       } else {
-        // Sentry analytics: transfer ownership fail
-        Sentry.captureMessage('transfer ownership unsuccessful')
-        GAEvent(
-          'transfer link ownership',
-          'unsuccessful',
-          `/${shortUrl.toString()}`,
-        )
-
-        // Otherwise, show error toast with relevant error message.
-        response.json().then((json) => {
-          dispatch<SetErrorMessageAction>(
-            rootActions.setErrorMessage(json.message),
-          )
-        })
+        handleError(dispatch, response)
+        dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
       }
-    },
-  )
+    } else {
+      GAEvent('modal page', 'create link from url', 'successful')
+      const json = await response.json()
+      urlCreated(dispatch, json.shortUrl)
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(true))
+    }
+  }
+
+const transferOwnership =
+  (shortUrl: string, newOwner: string, onSuccess: () => void) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetSuccessMessageAction | SetErrorMessageAction
+    >,
+  ) =>
+    patch('/api/user/url/ownership', { shortUrl, newUserEmail: newOwner }).then(
+      (response) => {
+        if (response.ok) {
+          // Google Analytics: Transfer ownership - success and shorturl are combined together to create unique actions
+          GAEvent(
+            'transfer link ownership',
+            'successful',
+            `/${shortUrl.toString()}`,
+          )
+          onSuccess()
+          dispatch<void>(getUrlsForUser())
+          const successMessage = `Your link /${shortUrl} has been transferred to ${newOwner}`
+          dispatch<SetSuccessMessageAction>(
+            rootActions.setSuccessMessage(successMessage),
+          )
+        } else {
+          // Sentry analytics: transfer ownership fail
+          Sentry.captureMessage('transfer ownership unsuccessful')
+          GAEvent(
+            'transfer link ownership',
+            'unsuccessful',
+            `/${shortUrl.toString()}`,
+          )
+
+          // Otherwise, show error toast with relevant error message.
+          response.json().then((json) => {
+            dispatch<SetErrorMessageAction>(
+              rootActions.setErrorMessage(json.message),
+            )
+          })
+        }
+      },
+    )
 
 /**
  * API call to upload a file.
  * @param file
  * @returns Promise<bool> Whether file upload succeeded.
  */
-const uploadFile = (file: File | null) => async (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    | CloseCreateUrlModalAction
-    | ResetUserStateAction
-    | SetSuccessMessageAction
-    | SetLastCreatedLinkAction
-    | SetErrorMessageAction
-    | SetIsUploadingAction
-    | SetFileUploadStateAction
-  >,
-  getState: GetReduxState,
-) => {
-  const {
-    user: { shortUrl },
-  } = getState()
-  if (file === null) {
-    // Sentry analytics: create link with file fail
-    Sentry.captureMessage('create link with file unsuccessful')
-    GAEvent('modal page', 'create link from file', 'unsuccessful')
-
-    dispatch<SetErrorMessageAction>(
-      rootActions.setErrorMessage('File is missing.'),
-    )
-    dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-  } else {
-    dispatch<SetIsUploadingAction>(setIsUploading(true))
-    const data = new FormData()
-    data.append('file', file, file.name)
-    data.append('shortUrl', shortUrl)
-    const response = await postFormData('/api/user/url', data)
-    dispatch<SetIsUploadingAction>(setIsUploading(false))
-    if (!response.ok) {
+const uploadFile =
+  (file: File | null) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
+      | SetSuccessMessageAction
+      | SetLastCreatedLinkAction
+      | SetErrorMessageAction
+      | SetIsUploadingAction
+      | SetFileUploadStateAction
+    >,
+    getState: GetReduxState,
+  ) => {
+    const {
+      user: { shortUrl },
+    } = getState()
+    if (file === null) {
       // Sentry analytics: create link with file fail
       Sentry.captureMessage('create link with file unsuccessful')
       GAEvent('modal page', 'create link from file', 'unsuccessful')
 
-      await handleError(dispatch, response)
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('File is missing.'),
+      )
       dispatch<SetFileUploadStateAction>(setFileUploadState(false))
     } else {
-      GAEvent('modal page', 'create link from file', 'successful')
-      const json = await response.json()
-      urlCreated(dispatch, json.shortUrl)
-      dispatch<SetFileUploadStateAction>(setFileUploadState(true))
+      dispatch<SetIsUploadingAction>(setIsUploading(true))
+      const data = new FormData()
+      data.append('file', file, file.name)
+      data.append('shortUrl', shortUrl)
+      const response = await postFormData('/api/user/url', data)
+      dispatch<SetIsUploadingAction>(setIsUploading(false))
+      if (!response.ok) {
+        // Sentry analytics: create link with file fail
+        Sentry.captureMessage('create link with file unsuccessful')
+        GAEvent('modal page', 'create link from file', 'unsuccessful')
+
+        await handleError(dispatch, response)
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      } else {
+        GAEvent('modal page', 'create link from file', 'successful')
+        const json = await response.json()
+        urlCreated(dispatch, json.shortUrl)
+        dispatch<SetFileUploadStateAction>(setFileUploadState(true))
+      }
     }
   }
-}
 
 export default {
   getUrlsForUser,

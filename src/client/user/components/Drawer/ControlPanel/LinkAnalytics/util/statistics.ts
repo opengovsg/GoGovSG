@@ -16,9 +16,8 @@ export const initialState: LinkStatisticsState = {
 }
 
 export const useStatistics = (shortUrl: string) => {
-  const [statistics, setStatistics] = useState<LinkStatisticsState>(
-    initialState,
-  )
+  const [statistics, setStatistics] =
+    useState<LinkStatisticsState>(initialState)
 
   useEffect(() => {
     const fetchStatistics = async () => {

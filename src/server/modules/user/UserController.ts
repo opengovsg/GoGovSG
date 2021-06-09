@@ -144,11 +144,8 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const {
-      userId,
-      shortUrl,
-      newUserEmail,
-    }: OwnershipTransferRequest = req.body
+    const { userId, shortUrl, newUserEmail }: OwnershipTransferRequest =
+      req.body
 
     try {
       const url = await this.urlManagementService.changeOwnership(
@@ -205,10 +202,8 @@ export class UserController {
     }
     // Find user and paginated urls
     try {
-      const {
-        urls,
-        count,
-      } = await this.urlManagementService.getUrlsWithConditions(queryConditions)
+      const { urls, count } =
+        await this.urlManagementService.getUrlsWithConditions(queryConditions)
       res.ok({ urls, count })
       return
     } catch (error) {
