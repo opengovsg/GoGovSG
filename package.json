@@ -54,7 +54,7 @@
     "express-fileupload": "^1.2.1",
     "express-joi-validation": "^4.0.3",
     "express-rate-limit": "^5.2.6",
-    "express-session": "^1.17.1",
+    "express-session": "^1.17.2",
     "file-saver": "^2.0.5",
     "file-type": "^16.3.0",
     "helmet": "^4.6.0",
