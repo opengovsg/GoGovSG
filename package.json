@@ -75,7 +75,7 @@
     "prop-types": "^15.7.2",
     "qrcode": "^1.4.4",
     "react": "^16.14.0",
-    "react-chartjs-2": "^2.11.1",
+    "react-chartjs-2": "^2.11.2",
     "react-dom": "^16.14.0",
     "react-ga": "^3.3.0",
     "react-i18next": "^11.8.11",
