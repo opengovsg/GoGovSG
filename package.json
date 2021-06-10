@@ -41,7 +41,7 @@
     "bcrypt": "^5.0.1",
     "body-parser": "^1.18.3",
     "chart.js": "^2.9.4",
-    "cheerio": "^1.0.0-rc.5",
+    "cheerio": "^1.0.0-rc.10",
     "classnames": "^2.3.0",
     "cloudmersive-virus-api-client": "^1.2.0",
     "connect-redis": "^6.0.0",
