@@ -71,7 +71,7 @@
     "nodemailer": "^6.6.1",
     "pg": "^8.6.0",
     "pg-connection-string": "^2.5.0",
-    "pg-hstore": "^2.3.2",
+    "pg-hstore": "^2.3.4",
     "prop-types": "^15.7.2",
     "qrcode": "^1.4.4",
     "react": "^16.14.0",
