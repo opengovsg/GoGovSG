@@ -6,7 +6,8 @@ import { DependencyIds } from '../../../constants'
 
 @injectable()
 export class CloudmersiveScanService
-  implements VirusScanService, UrlThreatScanService {
+  implements VirusScanService, UrlThreatScanService
+{
   private cloudmersiveKey: string
 
   private api: ScanApi
@@ -44,18 +45,16 @@ export class CloudmersiveScanService
       })
     })
 
-  public hasVirus: (file: {
-    data: Buffer
-    name: string
-  }) => Promise<boolean> = async (file) => {
-    if (!this.cloudmersiveKey) {
-      logger.warn(
-        `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
-      )
-      return false
+  public hasVirus: (file: { data: Buffer; name: string }) => Promise<boolean> =
+    async (file) => {
+      if (!this.cloudmersiveKey) {
+        logger.warn(
+          `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
+        )
+        return false
+      }
+      return this.scanFilePromise(file.data)
     }
-    return this.scanFilePromise(file.data)
-  }
 
   public isThreat: (url: string) => Promise<boolean> = async (url) => {
     if (!this.cloudmersiveKey) {

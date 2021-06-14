@@ -4,7 +4,8 @@ import { injectable } from 'inversify'
 import * as interfaces from '../interfaces'
 import { DeviceType } from '../interfaces'
 
-const BOTS_USER_AGENTS = /bot|facebookexternalhit|Facebot|Slackbot|TelegramBot|WhatsApp|Twitterbot|Pinterest|Postman|url/
+const BOTS_USER_AGENTS =
+  /bot|facebookexternalhit|Facebot|Slackbot|TelegramBot|WhatsApp|Twitterbot|Pinterest|Postman|url/
 
 @injectable()
 export class DeviceCheckService implements interfaces.DeviceCheckService {

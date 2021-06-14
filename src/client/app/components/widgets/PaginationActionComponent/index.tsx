@@ -50,45 +50,46 @@ type PaginationActionComponentProp = {
   disablePagination?: boolean
 }
 
-const PaginationActionComponent: FunctionComponent<PaginationActionComponentProp> = ({
-  pageCount,
-  onChangePage,
-  page,
-  disablePagination = false,
-}: PaginationActionComponentProp) => {
-  const classes = useStyles()
-  return (
-    <Grid
-      container
-      item
-      alignItems="center"
-      className={
-        disablePagination
-          ? classes.pageSelectGridDirectory
-          : classes.pageSelectGrid
-      }
-    >
-      <Grid item className={classes.gridItemHorizontalPadding}>
-        <IconButton
-          onClick={(event) => onChangePage(event, page - 1)}
-          disabled={page <= 0}
-        >
-          <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
-        </IconButton>
+const PaginationActionComponent: FunctionComponent<PaginationActionComponentProp> =
+  ({
+    pageCount,
+    onChangePage,
+    page,
+    disablePagination = false,
+  }: PaginationActionComponentProp) => {
+    const classes = useStyles()
+    return (
+      <Grid
+        container
+        item
+        alignItems="center"
+        className={
+          disablePagination
+            ? classes.pageSelectGridDirectory
+            : classes.pageSelectGrid
+        }
+      >
+        <Grid item className={classes.gridItemHorizontalPadding}>
+          <IconButton
+            onClick={(event) => onChangePage(event, page - 1)}
+            disabled={page <= 0}
+          >
+            <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
+          </IconButton>
+        </Grid>
+        <Grid item className={classes.gridItemHorizontalPadding}>
+          {`Page ${page + 1} of ${pageCount}`}
+        </Grid>
+        <Grid item className={classes.gridItemHorizontalPadding}>
+          <IconButton
+            onClick={(event) => onChangePage(event, page + 1)}
+            disabled={pageCount <= page + 1}
+          >
+            <img src={arrowRightIcon} alt="Next page" draggable={false} />
+          </IconButton>
+        </Grid>
       </Grid>
-      <Grid item className={classes.gridItemHorizontalPadding}>
-        {`Page ${page + 1} of ${pageCount}`}
-      </Grid>
-      <Grid item className={classes.gridItemHorizontalPadding}>
-        <IconButton
-          onClick={(event) => onChangePage(event, page + 1)}
-          disabled={pageCount <= page + 1}
-        >
-          <img src={arrowRightIcon} alt="Next page" draggable={false} />
-        </IconButton>
-      </Grid>
-    </Grid>
-  )
-}
+    )
+  }
 
 export default PaginationActionComponent

@@ -26,9 +26,8 @@ get('/api/sentry/').then((response) => {
           dsn: sentryDns,
           integrations: [
             new Integrations.BrowserTracing({
-              routingInstrumentation: Sentry.reactRouterV5Instrumentation(
-                history,
-              ),
+              routingInstrumentation:
+                Sentry.reactRouterV5Instrumentation(history),
             }),
           ],
           tracesSampleRate: 1.0,

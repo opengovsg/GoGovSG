@@ -5,7 +5,8 @@ import { HasCacheDuration } from '../../../repositories/types'
 
 @injectable()
 export class SafeBrowsingMapper
-  implements TwoWayMapper<HasCacheDuration[], string> {
+  implements TwoWayMapper<HasCacheDuration[], string>
+{
   persistenceToDto(matches: string): HasCacheDuration[]
   persistenceToDto(matches: string | null): HasCacheDuration[] | null {
     if (!matches) {

@@ -19,36 +19,33 @@ export class UrlCheckController {
     this.urlThreatScanService = urlThreatScanService
   }
 
-  checkUrl: (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => Promise<void> = async (req, res, next) => {
-    const { shortUrl, longUrl }: UrlCreationRequest = req.body
+  checkUrl: (req: Request, res: Response, next: NextFunction) => Promise<void> =
+    async (req, res, next) => {
+      const { shortUrl, longUrl }: UrlCreationRequest = req.body
 
-    if (longUrl) {
-      try {
-        const isThreat = await this.urlThreatScanService.isThreat(longUrl)
-        if (isThreat) {
-          const user = req.session?.user as UserType
-          logger.warn(
-            `Malicious link attempt: User ${user?.id} tried to link ${shortUrl} to ${longUrl}`,
-          )
-          res.badRequest(
-            jsonMessage(
-              'Link is likely to be malicious, please contact us for further assistance',
-            ),
-          )
+      if (longUrl) {
+        try {
+          const isThreat = await this.urlThreatScanService.isThreat(longUrl)
+          if (isThreat) {
+            const user = req.session?.user as UserType
+            logger.warn(
+              `Malicious link attempt: User ${user?.id} tried to link ${shortUrl} to ${longUrl}`,
+            )
+            res.badRequest(
+              jsonMessage(
+                'Link is likely to be malicious, please contact us for further assistance',
+              ),
+            )
+            return
+          }
+        } catch (error) {
+          logger.error(error)
+          res.serverError(jsonMessage(error.message))
           return
         }
-      } catch (error) {
-        logger.error(error)
-        res.serverError(jsonMessage(error.message))
-        return
       }
+      next()
     }
-    next()
-  }
 }
 
 export default UrlCheckController

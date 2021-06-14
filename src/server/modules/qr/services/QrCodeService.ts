@@ -142,27 +142,28 @@ export class QrCodeService implements interfaces.QrCodeService {
   }
 
   // Build QR code of specified file format as a string or buffer.
-  public createGoQrCode: (
-    url: string,
-    format: ImageFormat,
-  ) => Promise<Buffer> = async (url, format) => {
-    const [qrSvgString, imageHeight] = await this.makeGoQrCode(url)
-    switch (format) {
-      case ImageFormat.SVG: {
-        return qrSvgString
+  public createGoQrCode: (url: string, format: ImageFormat) => Promise<Buffer> =
+    async (url, format) => {
+      const [qrSvgString, imageHeight] = await this.makeGoQrCode(url)
+      switch (format) {
+        case ImageFormat.SVG: {
+          return qrSvgString
+        }
+        case ImageFormat.PNG: {
+          const buffer = Buffer.from(qrSvgString)
+          return sharp(buffer).resize(IMAGE_WIDTH, imageHeight).png().toBuffer()
+        }
+        case ImageFormat.JPEG: {
+          const buffer = Buffer.from(qrSvgString)
+          return sharp(buffer)
+            .resize(IMAGE_WIDTH, imageHeight)
+            .jpeg()
+            .toBuffer()
+        }
+        default:
+          throw Error('Invalid format')
       }
-      case ImageFormat.PNG: {
-        const buffer = Buffer.from(qrSvgString)
-        return sharp(buffer).resize(IMAGE_WIDTH, imageHeight).png().toBuffer()
-      }
-      case ImageFormat.JPEG: {
-        const buffer = Buffer.from(qrSvgString)
-        return sharp(buffer).resize(IMAGE_WIDTH, imageHeight).jpeg().toBuffer()
-      }
-      default:
-        throw Error('Invalid format')
     }
-  }
 }
 
 export default QrCodeService
