@@ -60,7 +60,7 @@
     "helmet": "^4.6.0",
     "history": "^4.10.1",
     "i18next": "^20.3.1",
-    "i18next-http-backend": "^1.2.4",
+    "i18next-http-backend": "^1.2.6",
     "inversify": "^5.1.1",
     "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
