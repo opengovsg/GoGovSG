@@ -36,7 +36,7 @@
     "@sentry/react": "^6.7.1",
     "@sentry/tracing": "^6.7.1",
     "@types/express-rate-limit": "^5.1.2",
-    "aws-sdk": "^2.929.0",
+    "aws-sdk": "^2.930.0",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.18.3",
