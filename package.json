@@ -34,7 +34,7 @@
     "@hapi/joi": "^17.1.1",
     "@material-ui/core": "^4.11.4",
     "@sentry/react": "^6.7.2",
-    "@sentry/tracing": "^6.7.2",
+    "@sentry/tracing": "^6.8.0",
     "@types/express-rate-limit": "^5.1.2",
     "aws-sdk": "^2.935.0",
     "babel-polyfill": "^6.26.0",
