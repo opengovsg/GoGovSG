@@ -138,7 +138,7 @@
     "@types/upng-js": "^2.1.1",
     "@types/uuid": "^8.3.0",
     "@types/validator": "^13.1.4",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.0",
     "auto-changelog": "^2.3.0",
     "babel-eslint": "^10.1.0",
