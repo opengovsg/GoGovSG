@@ -43,7 +43,7 @@
     "chart.js": "^2.9.4",
     "cheerio": "^1.0.0-rc.10",
     "classnames": "^2.3.1",
-    "cloudmersive-virus-api-client": "^1.2.1",
+    "cloudmersive-virus-api-client": "^1.2.2",
     "connect-redis": "^6.0.0",
     "cookie-session": "^1.4.0",
     "copy-to-clipboard": "^3.3.1",
