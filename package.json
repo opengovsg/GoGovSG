@@ -122,7 +122,7 @@
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.170",
     "@types/moment-timezone": "^0.5.30",
-    "@types/morgan": "^1.9.2",
+    "@types/morgan": "^1.9.3",
     "@types/nanoid": "^2.1.0",
     "@types/node": "^15.14.0",
     "@types/qrcode": "^1.4.0",
