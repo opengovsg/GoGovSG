@@ -107,7 +107,7 @@
     "@commitlint/travis-cli": "^12.1.4",
     "@sentry/webpack-plugin": "^1.15.1",
     "@types/bcrypt": "^5.0.0",
-    "@types/chart.js": "^2.9.33",
+    "@types/chart.js": "^2.9.34",
     "@types/classnames": "^2.3.1",
     "@types/cloudmersive-virus-api-client": "^1.1.1",
     "@types/connect-redis": "0.0.14",
