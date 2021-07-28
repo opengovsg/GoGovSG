@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { LinkStatisticsService } from './interfaces'
-import { UserType } from '../../models/user'
+import { StorableUser } from '../../repositories/types'
 
 @injectable()
 export class LinkStatisticsController {
@@ -25,7 +25,7 @@ export class LinkStatisticsController {
         res.status(404).send(jsonMessage('Short url does not exist'))
         return
       }
-      const user = req.session?.user as UserType
+      const user = req.session?.user as StorableUser
       if (!user) {
         res.status(401).send(jsonMessage('User session does not exist'))
         return
