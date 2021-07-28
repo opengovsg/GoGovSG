@@ -419,6 +419,7 @@ export class UrlRepository implements UrlRepositoryInterface {
                 `longUrl not found in cache:\tshortUrl=${shortUrl}`,
               ),
             )
+            return
           }
           resolve(cacheLongUrl)
         }
