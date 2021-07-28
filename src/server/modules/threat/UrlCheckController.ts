@@ -6,7 +6,6 @@ import { UrlCreationRequest } from '../user'
 import { UrlThreatScanService } from './interfaces'
 import { DependencyIds } from '../../constants'
 import { logger } from '../../config'
-import { StorableUser } from '../../repositories/types'
 
 @injectable()
 export class UrlCheckController {
@@ -27,7 +26,7 @@ export class UrlCheckController {
         try {
           const isThreat = await this.urlThreatScanService.isThreat(longUrl)
           if (isThreat) {
-            const user = req.session?.user as StorableUser
+            const user = req.session?.user
             logger.warn(
               `Malicious link attempt: User ${user?.id} tried to link ${shortUrl} to ${longUrl}`,
             )
