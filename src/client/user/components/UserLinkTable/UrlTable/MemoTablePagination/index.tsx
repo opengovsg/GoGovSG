@@ -58,10 +58,10 @@ const MemoTablePagination = React.memo(
 
     return (
       <TablePagination
-        ActionsComponent={({ onChangePage, page }) => (
+        ActionsComponent={({ onPageChange, page }) => (
           <PaginationActionComponent
             pageCount={pageCount}
-            onChangePage={onChangePage}
+            onChangePage={onPageChange}
             page={page}
           />
         )}
@@ -77,7 +77,7 @@ const MemoTablePagination = React.memo(
         nextIconButtonProps={{
           'aria-label': 'next page',
         }}
-        onChangePage={changePageHandler}
+        onPageChange={changePageHandler}
         onChangeRowsPerPage={changeRowsPerPageHandler}
         classes={{
           spacer: classes.spacer,
