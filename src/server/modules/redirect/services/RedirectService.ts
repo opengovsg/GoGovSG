@@ -34,7 +34,7 @@ export class RedirectService {
 
   public redirectFor: (
     shortUrl: string,
-    pastVisits: string[],
+    pastVisits: string[] | undefined,
     userAgent: string,
     referrer: string,
   ) => Promise<RedirectResult> = async (
@@ -59,7 +59,7 @@ export class RedirectService {
     if (this.crawlerCheckService.isCrawler(userAgent)) {
       return {
         longUrl,
-        visitedUrls: pastVisits,
+        visitedUrls: pastVisits || [],
         redirectType: RedirectType.Direct,
       }
     }

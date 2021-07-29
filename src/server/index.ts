@@ -64,7 +64,7 @@ morgan.token(
 )
 morgan.token('userId', (req: express.Request) =>
   req.session && req.session.user && req.session.user.id
-    ? (req.session.user.id as string)
+    ? String(req.session.user.id)
     : '',
 )
 

@@ -100,10 +100,10 @@ const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps>
         <TableCell className={classes.paginationCell}>
           <TablePagination
             className={classes.pagination}
-            ActionsComponent={({ onChangePage, page }) => (
+            ActionsComponent={({ onPageChange, page }) => (
               <PaginationActionComponent
                 pageCount={pageCount}
-                onChangePage={onChangePage}
+                onChangePage={onPageChange}
                 page={page}
                 disablePagination={disablePagination}
               />
@@ -120,7 +120,7 @@ const DirectoryTablePagination: FunctionComponent<DirectoryTablePaginationProps>
             nextIconButtonProps={{
               'aria-label': 'next page',
             }}
-            onChangePage={changePageHandler}
+            onPageChange={changePageHandler}
             onChangeRowsPerPage={changeRowsPerPageHandler}
             classes={{
               spacer: classes.spacer,

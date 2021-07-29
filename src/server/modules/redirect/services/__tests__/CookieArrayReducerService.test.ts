@@ -16,7 +16,7 @@ describe('CookieArrayReducerService', () => {
 
   describe('userHasVisitedShortLink', () => {
     it('is false on null cookie array', () => {
-      expect(service.userHasVisitedShortlink(null, shortUrl)).toBeFalsy()
+      expect(service.userHasVisitedShortlink(undefined, shortUrl)).toBeFalsy()
     })
 
     it('is false on empty cookie array', () => {
@@ -36,9 +36,9 @@ describe('CookieArrayReducerService', () => {
 
   describe('writeShortlinkToCookie', () => {
     it('returns array with shortUrl on null cookie', () => {
-      expect(service.writeShortlinkToCookie(null, shortUrl)).toStrictEqual([
-        shortUrl,
-      ])
+      expect(service.writeShortlinkToCookie(undefined, shortUrl)).toStrictEqual(
+        [shortUrl],
+      )
     })
 
     it('moves shortUrl to the end of cookie array', () => {

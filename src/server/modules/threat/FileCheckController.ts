@@ -5,7 +5,6 @@ import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { FileTypeFilterService, VirusScanService } from './interfaces'
 import { logger } from '../../config'
-import { UserType } from '../../models/user'
 
 @injectable()
 export class FileCheckController {
@@ -46,7 +45,7 @@ export class FileCheckController {
       try {
         const hasVirus = await this.virusScanService.hasVirus(file)
         if (hasVirus) {
-          const user = req.session?.user as UserType
+          const user = req.session?.user
           logger.warn(
             `Malicious file attempt: User ${user?.id} tried to upload ${file.name}`,
           )
