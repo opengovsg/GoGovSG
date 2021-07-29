@@ -12,12 +12,18 @@ import { cookieSessionMaxSizeBytes } from '../../../config'
   ["userHasVisitedShortlink", "writeShortlinkToCookie"] }] */
 @injectable()
 export class CookieArrayReducerService {
-  userHasVisitedShortlink(cookie: string[] | null, shortUrl: string): boolean {
+  userHasVisitedShortlink(
+    cookie: string[] | undefined,
+    shortUrl: string,
+  ): boolean {
     if (!cookie) return false
     return cookie.includes(shortUrl)
   }
 
-  writeShortlinkToCookie(cookie: string[] | null, shortUrl: string): string[] {
+  writeShortlinkToCookie(
+    cookie: string[] | undefined,
+    shortUrl: string,
+  ): string[] {
     if (!cookie) return [shortUrl]
     if (cookie.includes(shortUrl)) {
       return _.without(cookie, shortUrl).concat(shortUrl)

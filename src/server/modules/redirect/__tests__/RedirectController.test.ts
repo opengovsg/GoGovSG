@@ -187,18 +187,24 @@ const mockAnalyticsLogger: jest.Mocked<AnalyticsLoggerService> = {
 }
 
 // eslint-disable-next-line no-unused-vars
-const writeShortlinkToCookie = jest.fn((_: string[] | null, __: string) => [])
+const writeShortlinkToCookie = jest.fn(
+  (_: string[] | undefined, __: string) => [],
+)
 
 const cookieArrayReducerMockUnvisited: jest.Mocked<CookieArrayReducerService> =
   {
     // eslint-disable-next-line no-unused-vars
-    userHasVisitedShortlink: jest.fn((_: string[] | null, __: string) => false),
+    userHasVisitedShortlink: jest.fn(
+      (_: string[] | undefined, __: string) => false,
+    ),
     writeShortlinkToCookie,
   }
 
 const cookieArrayReducerMockVisited: jest.Mocked<CookieArrayReducerService> = {
   // eslint-disable-next-line no-unused-vars
-  userHasVisitedShortlink: jest.fn((_: string[] | null, __: string) => true),
+  userHasVisitedShortlink: jest.fn(
+    (_: string[] | undefined, __: string) => true,
+  ),
   writeShortlinkToCookie,
 }
 

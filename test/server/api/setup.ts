@@ -55,8 +55,11 @@ app.use(
 
 // prime mock
 function primeMock(req: Request, _: Response, next: NextFunction): void {
-  if (req.headers.prime) {
-    req.session!.user = { id: req.headers.prime }
+  if (typeof req.headers.prime === 'string') {
+    req.session!.user = {
+      id: Number(req.headers.prime),
+      email: 'hello@open.gov.sg',
+    }
   }
   next()
 }

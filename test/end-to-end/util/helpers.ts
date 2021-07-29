@@ -72,7 +72,7 @@ export const fileSubmitButton = Selector('button[type="submit"]')
 
 // User Page - filter search
 export const userFilterPanelButton = Selector('img[alt="Filter and sort icon"]')
-export const filterPanel = Selector('.MuiCollapse-container')
+export const filterPanel = Selector('.MuiCollapse-root')
 export const userApplyButton = Selector('span').withText('Apply')
 export const userResetButton = Selector('span').withText('Reset')
 export const dateOfCreationButton = Selector('p').withText('Date of creation')
