@@ -37,7 +37,7 @@ function preprocess(
   _: Express.Response,
   next: Express.NextFunction,
 ) {
-  if (req.body.email) {
+  if (req.body.email && typeof req.body.email === 'string') {
     req.body.email = req.body.email.trim().toLowerCase()
   }
 
