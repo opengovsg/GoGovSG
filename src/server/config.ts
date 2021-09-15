@@ -165,6 +165,10 @@ export const userAnnouncement = {
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 
+export const ddApiKey = process.env.DD_API_KEY
+export const ddEnv = process.env.DD_ENV
+export const ddService = process.env.DD_SERVICE
+
 const parseDbUri = (uri: string): ConnectionOptions => {
   const { host, user, password, database, port } = parseUri(uri)
   if (!(host && user && password && database && port)) {
