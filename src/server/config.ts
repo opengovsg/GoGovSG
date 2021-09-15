@@ -33,6 +33,10 @@ const requiredVars: string[] = [
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
   'AWS_S3_BUCKET', // For file.go.gov.sg uploads
+  // Datadog
+  'DD_API_KEY',
+  'DD_ENV', // one of staging, production, uat as reported to DataDog
+  'DD_SERVICE', // name of service as reported to DataDog
 ]
 
 // AWS Simple Email Service
