@@ -4,7 +4,24 @@ import winston, { createLogger, format, transports } from 'winston'
 import minimatch from 'minimatch'
 import { parse } from 'url'
 import { parse as parseUri } from 'pg-connection-string'
+import { DatadogWinston } from 'datadog-winston'
+
+import { readFileSync } from 'fs'
 import generateOTP, { OtpFunction } from './util/otp'
+
+function getInstanceId(): string {
+  let instanceId = 'i-unknown'
+  try {
+    // Find the instance id as described in files commonly
+    // found in cloud-init hosts, including EC2 instances
+    instanceId = readFileSync('/var/lib/cloud/data/instance-id', 'utf-8') ?? ''
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error)
+  }
+  // For safety, interpolate into another string and trim whitespace
+  return `${instanceId}`.trim()
+}
 
 // Check environment
 export const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
@@ -123,11 +140,21 @@ if (DEV_ENV) {
   }
   exitIfAnyMissing(sesVars)
 
-  // Confgiure SES specific options
+  // Configure SES specific options
   transporterOpts.auth = {
     user: process.env.SES_USER as string,
     pass: process.env.SES_PASS as string,
   }
+
+  logger.add(
+    new DatadogWinston({
+      apiKey: `${process.env.DD_API_KEY}`,
+      hostname: getInstanceId(),
+      service: `${process.env.DD_SERVICE}`,
+      ddsource: 'nodejs',
+      ddtags: `env:${process.env.DD_ENV}`,
+    }),
+  )
 }
 
 export interface CookieSettings {
