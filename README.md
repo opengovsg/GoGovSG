@@ -73,8 +73,8 @@ on port 8080 instead.
 Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
 but that is really being proxied to `localhost:8080/shortlink`. Also, given that GoGovSG will attempt to send
 emails directly from your computer when running on localhost, there is a chance that the email might land in
-spam or not be sent entirely. To mitigate this, we have set the one-time password for all log-in attempts
-on localhost to be `111111`.
+spam or not be sent entirely. To mitigate this, we have configured the one-time password for all log-in attempts
+to be printed to the console.
 
 ### Setting up the infrastructure
 
