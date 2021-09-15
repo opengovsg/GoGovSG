@@ -206,7 +206,7 @@ jobs:
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          zip -r "deploy.zip" Dockerrun.aws.json
+          zip -r "deploy.zip" Dockerrun.aws.json .ebextensions
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build.outputs.tag }}
