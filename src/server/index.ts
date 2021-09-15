@@ -6,7 +6,10 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import session from 'express-session'
 import cookieSession from 'cookie-session'
+import connectDatadog from 'connect-datadog'
 import connectRedis from 'connect-redis'
+import { StatsD } from 'hot-shots'
+
 import jsonMessage from './util/json'
 import bindInversifyDependencies from './inversify.config'
 
@@ -19,10 +22,13 @@ import api from './api'
 
 // Logger configuration
 import {
+  DEV_ENV,
   assetVariant,
   cookieSettings,
   cspOnlyReportViolations,
   cspReportUri,
+  ddEnv,
+  ddService,
   displayHostname,
   logger,
   s3Bucket,
@@ -47,6 +53,7 @@ import { DependencyIds, ERROR_404_PATH } from './constants'
 import { Mailer } from './services/email'
 import parseDomain from './util/domain'
 import { RedirectController } from './modules/redirect'
+
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -85,6 +92,29 @@ if (sentryDns) {
 }
 
 const app = express()
+
+// Datadog monitoring
+if (!DEV_ENV) {
+  app.use(
+    connectDatadog({
+      response_code: true,
+      tags: [`service:${ddService}`, `env:${ddEnv}`],
+      path: true,
+      dogstatsd: new StatsD({
+        useDefaultRoute: true,
+        errorHandler: (error) => {
+          logger.error({
+            message: error.message,
+            meta: { function: 'Datadog' },
+            error,
+          })
+        },
+      }),
+    }),
+  )
+}
+
+// Content security policy
 app.use(
   helmet({
     contentSecurityPolicy: {
