@@ -104,7 +104,7 @@
     "@babel/preset-typescript": "^7.14.5",
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
-    "@commitlint/travis-cli": "^12.1.4",
+    "@commitlint/travis-cli": "^14.1.0",
     "@sentry/webpack-plugin": "^1.15.1",
     "@types/bcrypt": "^5.0.0",
     "@types/chart.js": "^2.9.34",
