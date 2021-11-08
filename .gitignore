@@ -7,3 +7,5 @@ dist
 yarn.lock
 build
 coverage
+.DS_Store
+.dccache
