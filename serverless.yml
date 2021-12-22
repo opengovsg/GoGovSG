@@ -7,37 +7,34 @@ provider:
   stage: ${env:SERVERLESS_STAGE}
   region: ap-southeast-1
   memorySize: 256
-  # environment:
-  #     DATABASE_URL: ${env:DATABASE_URL}
 
 plugins:
   - serverless-plugin-include-dependencies
 
 package:
- individually: true 
-#  exclude:  
-#     - .github/**
-#     # - node_modules/**
-#     # - package-lock.json
-#     # - package.json 
-#     - node_modules/@chakra-ui/**
-#     - node_modules/@emotion/**
-#     - node_modules/@loadable/**
-#     - node_modules/react*/**
+ individually: true
 
 functions:
   migrate-url-to-user:
     handler: src/server/serverless/lambda-migrate-url-to-user/index.handler
     memorySize: 128
     description: Postgresql user-defined function for migrating a url to an existing user
-    # package: 
-    #   exclude:
-    #       - lambda-migrate-user-links/**
-  # migrate-user-links:
-  #   handler: build/server/serverless/lambda-migrate-user-links/index.handler
-  #   memorySize: 128
-  #   description: Postgresql user-defined function for migrating a user's links to another existing user
-    # package: 
-    #   exclude:
-    #       - lambda-migrate-url-to-user/**
+    package:
+      excludeDevDependencies: false
+      patterns:
+          - '!./**' 
+          - 'src/server/serverless/lambda-migrate-url-to-user/**'
+          - 'package-lock.json'
+          - 'package.json'
+  migrate-user-links:
+    handler: src/server/serverless/lambda-migrate-user-links/index.handler
+    memorySize: 128
+    description: Postgresql user-defined function for migrating a user's links to another existing user
+    package: 
+      excludeDevDependencies: false
+      patterns:
+          - '!./**' 
+          - 'src/server/serverless/lambda-migrate-user-links/**'
+          - 'package-lock.json'
+          - 'package.json'
   
