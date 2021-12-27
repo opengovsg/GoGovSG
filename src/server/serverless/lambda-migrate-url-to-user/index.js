@@ -1,8 +1,4 @@
-const fs = require('fs')
-const path = require('path')
 const { Client } = require('pg')
-
-const SQLSCRIPT = 'migrate_url_to_user.sql'
 
 async function handler(event) {
   const dbConfig = process.env.DATABASE_URL
@@ -12,20 +8,15 @@ async function handler(event) {
   try {
     const { shortUrl } = event
     const { toUserEmail } = event
-    const sqlScriptPath = path.join(__dirname, SQLSCRIPT)
 
     await pgClient.connect().then(() => {
       console.log('Connected')
     })
 
-    const sqlUDF = fs.readFileSync(sqlScriptPath)
     const sqlScript = `SELECT migrate_url_to_user($1, $2)`
     const values = [shortUrl, toUserEmail]
 
-    const queryUDFResult = await pgClient.query(sqlUDF.toString())
-    const { rowCount } = queryUDFResult
-      ? await pgClient.query(sqlScript, values)
-      : undefined
+    const { rowCount } = await pgClient.query(sqlScript, values)
 
     pgClient.end().then(() => console.log('Disconnected'))
 
