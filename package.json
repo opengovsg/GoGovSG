@@ -67,7 +67,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "morgan": "^1.10.0",
-    "nanoid": "^2.1.11",
+    "nanoid": "^3.1.31",
     "nodemailer": "^6.6.2",
     "pg": "^8.6.0",
     "pg-connection-string": "^2.5.0",
