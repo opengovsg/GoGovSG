@@ -8,14 +8,14 @@ variable "region" {
 module "eb_app" {
   source = "../modules/eb_application"
   stage = "stag"
-  app = "yj-test" # TODO: "gosg"
+  app = "gosg"
   region = var.region
 }
 
 module "main" {
   source = "../modules/main"
   stage = "staging"
-  app = "yj-test" # TODO: "gosg"
+  app = "gosg"
   region = var.region
   vpc_config = {
     base_cidr_block = "172.31.0.0/16"

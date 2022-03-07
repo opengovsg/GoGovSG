@@ -28,10 +28,6 @@ variable "app" {
 
 resource "aws_elastic_beanstalk_application" "application" {
   name = "${var.app}-${var.stage}"
-  tags = {
-    # TODO: Remove
-    user = "yongjie"
-  }
 }
 
 data "aws_caller_identity" "current" {}
@@ -40,10 +36,6 @@ data "aws_elb_service_account" "main" {}
 resource "aws_s3_bucket" "lb-logs" {
   bucket_prefix = "${var.app}-${var.stage}-lb-logs"
   acl    = "private"
-  tags = {
-    # TODO: Remove
-    user = "yongjie"
-  }
 }
 
 resource "aws_s3_bucket_policy" "lb-bucket-policy" {

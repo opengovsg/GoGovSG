@@ -79,9 +79,7 @@ resource "aws_vpc" "main" {
   cidr_block = var.vpc_config.base_cidr_block
   enable_dns_hostnames = true
   tags = {
-    Name = var.app # TODO: var.stage
-    # TODO: Remove
-    user = "yongjie"
+    Name = var.stage
   }
 }
 
@@ -90,8 +88,6 @@ resource "aws_internet_gateway" "igw" {
 
   tags = {
     Name = "${var.app}-${var.stage}"
-    # TODO: Remove
-    user = "yongjie"
   }
 }
 
@@ -173,9 +169,7 @@ resource "aws_subnet" "lb_a" {
   map_public_ip_on_launch = false
   cidr_block = var.vpc_config.load_balancer_subnet.cidr_a
   tags = {
-    Name = "${var.app}-lb-1a" # TODO: "${var.stage}-lb-1a"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-lb-1a"
   }
 }
 
@@ -185,9 +179,7 @@ resource "aws_subnet" "lb_b" {
   map_public_ip_on_launch = false
   cidr_block = var.vpc_config.load_balancer_subnet.cidr_b
   tags = {
-    Name = "${var.app}-lb-1b" # TODO: "${var.stage}-lb-1b"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-lb-1b"
   }
 }
 
@@ -197,7 +189,7 @@ resource "aws_subnet" "lb_c" {
   map_public_ip_on_launch = false
   cidr_block = var.vpc_config.load_balancer_subnet.cidr_c
   tags = {
-    Name = "${var.app}-lb-1c" # TODO: "${var.stage}-lb-1c"
+    Name = "${var.stage}-lb-1c"
   }
 }
 
@@ -207,9 +199,7 @@ resource "aws_subnet" "db_a" {
   map_public_ip_on_launch = true
   cidr_block = var.vpc_config.database_subnet.cidr_a
   tags = {
-    Name = "${var.app}-db-1a" # TODO: "${var.stage}-db-1a"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-db-1a"
   }
 }
 
@@ -219,9 +209,7 @@ resource "aws_subnet" "db_b" {
   map_public_ip_on_launch = true
   cidr_block = var.vpc_config.database_subnet.cidr_b
   tags = {
-    Name = "${var.app}-db-1b" # TODO: "${var.stage}-db-1b"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-db-1b"
   }
 }
 
@@ -231,9 +219,7 @@ resource "aws_subnet" "db_c" {
   map_public_ip_on_launch = true
   cidr_block = var.vpc_config.database_subnet.cidr_c
   tags = {
-    Name = "${var.app}-db-1c" # TODO: "${var.stage}-db-1c"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-db-1c"
   }
 }
 
@@ -243,9 +229,7 @@ resource "aws_subnet" "ec2_a" {
   map_public_ip_on_launch = false
   cidr_block = var.vpc_config.ec2_subnet.cidr_a
   tags = {
-    Name = "${var.app}-ec2-1a" # TODO: "${var.stage}-ec2-1a"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-ec2-1a"
   }
 }
 
@@ -255,9 +239,7 @@ resource "aws_subnet" "ec2_b" {
   map_public_ip_on_launch = false
   cidr_block = var.vpc_config.ec2_subnet.cidr_b
   tags = {
-    Name = "${var.app}-ec2-1b" # TODO: "${var.stage}-ec2-1b"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-ec2-1b"
   }
 }
 
@@ -267,9 +249,7 @@ resource "aws_subnet" "ec2_c" {
   map_public_ip_on_launch = false
   cidr_block = var.vpc_config.ec2_subnet.cidr_c
   tags = {
-    Name = "${var.app}-ec2-1c" # TODO: "${var.stage}-ec2-1c"
-    # TODO: Remove
-    user = "yongjie"
+    Name = "${var.stage}-ec2-1c"
   }
 }
 
@@ -312,8 +292,6 @@ resource "aws_security_group" "eb_lb" {
 
   tags = {
     Name = "${var.app}-eb-lb-${var.stage}"
-    # TODO: Remove
-    user = "yongjie"
   }
 }
 
@@ -347,8 +325,6 @@ resource "aws_security_group" "eb_ec2" {
 
   tags = {
     Name = "${var.app}-eb-ec2-${var.stage}"
-    # TODO: Remove
-    user = "yongjie"
   }
 }
 
@@ -374,8 +350,6 @@ resource "aws_security_group" "redis" {
 
   tags = {
     Name = "${var.app}-redis-${var.stage}"
-    # TODO: Remove
-    user = "yongjie"
   }
 }
 
@@ -387,10 +361,6 @@ resource "aws_elasticache_subnet_group" "subnets" {
     aws_subnet.ec2_b.id,
     aws_subnet.ec2_c.id
   ]
-  tags = {
-    # TODO: remove
-    user = "yongjie"
-  }
 }
 
 resource "aws_elasticache_replication_group" "redis" {
@@ -411,10 +381,6 @@ resource "aws_elasticache_replication_group" "redis" {
   number_cache_clusters = 3
   port = 6379
   security_group_ids = [aws_security_group.redis.id]
-  tags = {
-    # TODO: Remove
-    user = "yongjie"
-  }
 }
 
 resource "aws_elastic_beanstalk_environment" "environment" {
@@ -435,11 +401,6 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   solution_stack_name = "64bit Amazon Linux 2 v3.4.5 running Docker"
   wait_for_ready_timeout = "10m"
   poll_interval = "10s"
-
-  tags = {
-    # TODO: Remove
-    user = "yongjie"
-  }
 
   setting {
     namespace = "aws:autoscaling:asg"
