@@ -153,8 +153,8 @@ jobs:
         run: npm run build
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  build:
-    name: Build and push
+  build-gogov:
+    name: Build and push for gogov
     runs-on: ubuntu-18.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
@@ -183,10 +183,10 @@ jobs:
           region: ap-southeast-1
           local-image: my-image
           image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
-  deploy:
-    name: Deploy to Elastic Beanstalk and AWS Lambda
+  deploy-gogov:
+    name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
     runs-on: ubuntu-18.04
-    needs: [ci, test, gatekeep, build]
+    needs: [ci, test, gatekeep, build-gogov]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
@@ -201,7 +201,7 @@ jobs:
           zip -r "deploy.zip" Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
-          TAG: ${{ needs.build.outputs.tag }}
+          TAG: ${{ needs.build-gogov.outputs.tag }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -211,7 +211,7 @@ jobs:
         run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
         id: get_label
         env:
-          TAG: ${{ needs.build.outputs.tag }}
+          TAG: ${{ needs.build-gogov.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
       - run: |
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -228,18 +228,14 @@ jobs:
           production = os.environ['PRODUCTION_BRANCH']
           eb_app_staging = os.environ['EB_APP_STAGING']
           eb_env_staging = os.environ['EB_ENV_STAGING']
-          eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
           eb_env_production = os.environ['EB_ENV_PRODUCTION']
-          eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
             print('::set-output name=eb_env::' + eb_env_staging)
-            print('::set-output name=eb_env_edu::' + eb_env_edu_staging)
           elif branch == production:
             print('::set-output name=eb_app::' + eb_app_production)
             print('::set-output name=eb_env::' + eb_env_production)
-            print('::set-output name=eb_env_edu::' + eb_env_edu_production)
         id: select_eb_vars
       - name: Deploy to EB
         uses: opengovsg/beanstalk-deploy@v11
@@ -293,7 +289,7 @@ jobs:
           local-image: my-image
           image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
   deploy-edu:
-    name: Deploy to Elastic Beanstalk
+    name: Deploy to Elastic Beanstalk for edu
     runs-on: ubuntu-18.04
     needs: [ci, test, gatekeep, build-edu]
     if: needs.gatekeep.outputs.proceed == 'true'
@@ -326,18 +322,14 @@ jobs:
           staging = os.environ['STAGING_BRANCH']
           production = os.environ['PRODUCTION_BRANCH']
           eb_app_staging = os.environ['EB_APP_STAGING']
-          eb_env_staging = os.environ['EB_ENV_STAGING']
           eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
-          eb_env_production = os.environ['EB_ENV_PRODUCTION']
           eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
-            print('::set-output name=eb_env::' + eb_env_staging)
             print('::set-output name=eb_env_edu::' + eb_env_edu_staging)
           elif branch == production:
             print('::set-output name=eb_app::' + eb_app_production)
-            print('::set-output name=eb_env::' + eb_env_production)
             print('::set-output name=eb_env_edu::' + eb_env_edu_production)
         id: select_eb_vars
       - name: Deploy to EB edu
