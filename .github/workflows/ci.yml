@@ -6,25 +6,20 @@ on:
 env:
   PRODUCTION_BRANCH: refs/heads/release
   STAGING_BRANCH: refs/heads/edge
-  UAT_BRANCH: refs/heads/uat
   EB_APP_PRODUCTION: gosg-production
   EB_ENV_PRODUCTION: gosg-production
   EB_ENV_EDU_PRODUCTION: edu-production
   EB_APP_STAGING: gosg-stag
   EB_ENV_STAGING: gosg-stag
   EB_ENV_EDU_STAGING: edu-staging
-  EB_APP_UAT: gosg-uat
-  EB_ENV_UAT: gosg-uat2
   ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPO: gogovsg
   SENTRY_URL: https://sentry.io/
   SENTRY_ORG: gogovsg
   SENTRY_PROJECT_PRODUCTION: gogovsg-prod
   SENTRY_PROJECT_STAGING: gogovsg-staging
-  SENTRY_PROJECT_UAT: gogovsg-uat
   SENTRY_DNS_PRODUCTION: https://a76d61749b824d8fa8ad84eee7ecc882@o372043.ingest.sentry.io/5193500
   SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
-  SENTRY_DNS_UAT: https://615965e21c624312bcb719de721d950f@o372043.ingest.sentry.io/5286893
 jobs:
   ci:
     name: CI
@@ -109,8 +104,7 @@ jobs:
           ref = os.environ['GITHUB_REF']
           prod = os.environ['PRODUCTION_BRANCH']
           stage = os.environ['STAGING_BRANCH']
-          uat = os.environ['UAT_BRANCH']
-          if ref == prod or ref == stage or ref == uat:
+          if ref == prod or ref == stage:
             print('::set-output name=proceed::true')
           else:
             print('::set-output name=proceed::false')
@@ -142,13 +136,10 @@ jobs:
           branch = os.environ['GITHUB_REF']
           staging = os.environ['STAGING_BRANCH']
           production = os.environ['PRODUCTION_BRANCH']
-          uat = os.environ['UAT_BRANCH']
           sentry_project_staging = os.environ['SENTRY_PROJECT_STAGING']
           sentry_dns_staging = os.environ['SENTRY_DNS_STAGING']
           sentry_project_production = os.environ['SENTRY_PROJECT_PRODUCTION']
           sentry_dns_production = os.environ['SENTRY_DNS_PRODUCTION']
-          sentry_project_uat = os.environ['SENTRY_PROJECT_UAT']
-          sentry_dns_uat = os.environ['SENTRY_DNS_UAT']
           github_env = os.environ['GITHUB_ENV']
           file = open(github_env, 'a')
           if branch == staging:
@@ -157,9 +148,6 @@ jobs:
           elif branch == production:
             file.write('SENTRY_PROJECT={}\n'.format(sentry_project_production))
             file.write('SENTRY_DNS={}\n'.format(sentry_dns_production))
-          elif branch == uat:
-            file.write('SENTRY_PROJECT={}\n'.format(sentry_project_uat))
-            file.write('SENTRY_DNS={}\n'.format(sentry_dns_uat))
           file.close()
       - name: Upload to Sentry
         run: npm run build
@@ -238,15 +226,12 @@ jobs:
           branch = os.environ['GITHUB_REF']
           staging = os.environ['STAGING_BRANCH']
           production = os.environ['PRODUCTION_BRANCH']
-          uat = os.environ['UAT_BRANCH']
           eb_app_staging = os.environ['EB_APP_STAGING']
           eb_env_staging = os.environ['EB_ENV_STAGING']
           eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
           eb_env_production = os.environ['EB_ENV_PRODUCTION']
           eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
-          eb_app_uat = os.environ['EB_APP_UAT']
-          eb_env_uat = os.environ['EB_ENV_UAT']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
             print('::set-output name=eb_env::' + eb_env_staging)
@@ -255,9 +240,6 @@ jobs:
             print('::set-output name=eb_app::' + eb_app_production)
             print('::set-output name=eb_env::' + eb_env_production)
             print('::set-output name=eb_env_edu::' + eb_env_edu_production)
-          elif branch == uat:
-            print('::set-output name=eb_app::' + eb_app_uat)
-            print('::set-output name=eb_env::' + eb_env_uat)
         id: select_eb_vars
       - name: Deploy to EB
         uses: opengovsg/beanstalk-deploy@v11
@@ -343,15 +325,12 @@ jobs:
           branch = os.environ['GITHUB_REF']
           staging = os.environ['STAGING_BRANCH']
           production = os.environ['PRODUCTION_BRANCH']
-          uat = os.environ['UAT_BRANCH']
           eb_app_staging = os.environ['EB_APP_STAGING']
           eb_env_staging = os.environ['EB_ENV_STAGING']
           eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
           eb_env_production = os.environ['EB_ENV_PRODUCTION']
           eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
-          eb_app_uat = os.environ['EB_APP_UAT']
-          eb_env_uat = os.environ['EB_ENV_UAT']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
             print('::set-output name=eb_env::' + eb_env_staging)
@@ -360,9 +339,6 @@ jobs:
             print('::set-output name=eb_app::' + eb_app_production)
             print('::set-output name=eb_env::' + eb_env_production)
             print('::set-output name=eb_env_edu::' + eb_env_edu_production)
-          elif branch == uat:
-            print('::set-output name=eb_app::' + eb_app_uat)
-            print('::set-output name=eb_env::' + eb_env_uat)
         id: select_eb_vars
       - name: Deploy to EB edu
         uses: opengovsg/beanstalk-deploy@v11
