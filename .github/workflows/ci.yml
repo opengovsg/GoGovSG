@@ -12,6 +12,7 @@ env:
   EB_APP_STAGING: gosg-stag
   EB_ENV_STAGING: gosg-stag
   EB_ENV_EDU_STAGING: edu-staging
+  EB_ENV_HEALTH_STAGING: health-staging
   ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPO: gogovsg
   SENTRY_URL: https://sentry.io/
@@ -340,6 +341,89 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
           environment_name: ${{ steps.select_eb_vars.outputs.eb_env_edu }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          use_existing_version_if_available: true
+          wait_for_deployment: false
+          wait_for_environment_recovery: false
+  build-health:
+    name: Build and push for health
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA}-health)"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=edu . # TODO: replaced when assets are ready
+      - name: Push to ECR
+        uses: opengovsg/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ap-southeast-1
+          local-image: my-image
+          image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
+  deploy-health:
+    name: Deploy to Elastic Beanstalk for health
+    runs-on: ubuntu-18.04
+    needs: [ci, test, gatekeep, build-health]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          zip -r "deploy.zip" Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build-health.outputs.tag }}
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
+        id: get_label
+        env:
+          TAG: ${{ needs.build-health.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: | #TODO: add production actions
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_health_staging = os.environ['EB_ENV_HEALTH_STAGING']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env_health::' + eb_env_health_staging)
+        id: select_eb_vars
+      - name: Deploy to EB health
+        uses: opengovsg/beanstalk-deploy@v11
+        if: steps.select_eb_vars.outputs.eb_env_health
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env_health }}
           version_label: ${{ steps.get_label.outputs.label }}
           region: ap-southeast-1
           deployment_package: deploy.zip
