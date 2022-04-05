@@ -292,12 +292,16 @@ jobs:
           local-image: my-image
           image: ${{ env.ECR_REPO }}:${{ steps.extract_tag.outputs.tag }}
   deploy-edu:
-    name: Deploy to Elastic Beanstalk for edu
+    name: Deploy to Elastic Beanstalk and AWS Lambda for edu
     runs-on: ubuntu-18.04
     needs: [ci, test, gatekeep, build-edu]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
@@ -317,6 +321,13 @@ jobs:
         env:
           TAG: ${{ needs.build-edu.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - run: |
+          echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Select Elastic Beanstalk variables
         shell: python
         run: |
@@ -349,6 +360,16 @@ jobs:
           use_existing_version_if_available: true
           wait_for_deployment: false
           wait_for_environment_recovery: false
+      - name: serverless deploy
+        uses: opengovsg/serverless-github-action@master
+        with:
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --conceal -v"
+          entrypoint: /bin/bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
+          SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
   build-health:
     name: Build and push for health
     runs-on: ubuntu-18.04
