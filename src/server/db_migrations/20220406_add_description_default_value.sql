@@ -7,6 +7,6 @@
 
 BEGIN TRANSACTION;
 
-ALTER TABLE url_histories ADD "description" text NOT NULL DEFAULT '';
+ALTER TABLE url_histories ALTER "description" SET DEFAULT '';
 
 COMMIT;
