@@ -1,4 +1,4 @@
-import generate from 'nanoid/async/generate'
+import { customAlphabet } from 'nanoid/async'
 
 const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
 const LENGTH = 6
@@ -10,7 +10,7 @@ const LENGTH = 6
  * (1e6 / (36^6) = 0.000459, or one in 2176.
  */
 export async function generateShortUrl() {
-  return generate(ALPHABET, LENGTH)
+  return customAlphabet(ALPHABET, LENGTH)
 }
 
 /**
