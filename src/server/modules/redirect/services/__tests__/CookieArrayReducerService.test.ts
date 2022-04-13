@@ -1,12 +1,13 @@
-import generate from 'nanoid/async/generate'
+import { customAlphabet } from 'nanoid/async'
 import { CookieArrayReducerService } from '..'
 import { cookieSessionMaxSizeBytes } from '../../../../config'
 
 const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
 const LENGTH = 6
+const generate = customAlphabet(ALPHABET, LENGTH)
 
 async function generateShortUrl() {
-  return generate(ALPHABET, LENGTH)
+  return generate()
 }
 
 const service = new CookieArrayReducerService()
