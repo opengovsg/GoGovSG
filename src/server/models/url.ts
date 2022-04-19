@@ -69,6 +69,7 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
   description: {
     type: Sequelize.TEXT,
     allowNull: false,
+    defaultValue: '',
   },
 })
 
