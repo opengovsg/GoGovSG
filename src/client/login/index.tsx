@@ -13,6 +13,7 @@ import {
 import { Redirect } from 'react-router-dom'
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
+import assetVariant from '../../shared/util/asset-variant'
 import { GoGovReduxState } from '../app/reducers/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
@@ -84,8 +85,7 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
-      maxHeight:
-        process.env.ASSET_VARIANT === 'edu' ? '100vh' : 'calc(100vh - 28px)',
+      maxHeight: assetVariant === 'edu' ? '100vh' : 'calc(100vh - 28px)',
       textAlign: 'center',
       overflow: 'hidden',
     },

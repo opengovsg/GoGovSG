@@ -1,7 +1,8 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
 import { ERROR_404_PATH } from '../constants'
-import { assetVariant, displayHostname } from '../config'
+import { displayHostname } from '../config'
+import assetVariant from '../../shared/util/asset-variant'
 
 const router = Express.Router()
 

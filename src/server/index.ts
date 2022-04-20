@@ -19,7 +19,6 @@ import api from './api'
 
 // Logger configuration
 import {
-  assetVariant,
   cookieSettings,
   cspOnlyReportViolations,
   cspReportUri,
@@ -47,6 +46,7 @@ import { DependencyIds, ERROR_404_PATH } from './constants'
 import { Mailer } from './services/email'
 import parseDomain from './util/domain'
 import { RedirectController } from './modules/redirect'
+import assetVariant from '../shared/util/asset-variant'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 

@@ -15,9 +15,10 @@ const requiredSentryEnvVar = [
   process.env.SENTRY_URL,
 ]
 
+// assetVariant is first imported from the process environment here, separate
+// from the asset-variant util file, as it needs to be present for webpack
 const assetVariant = process.env.ASSET_VARIANT || 'gov'
-const assetResolveDir = assetVariant === 'edu' ? 'assets/edu' : 'assets/gov'
-const templatePath = assetVariant === 'edu' ? 'edu' : 'gov'
+const assetResolveDir = `assets/${assetVariant}`
 
 const govMetaTags = {
   'og:title': 'Go.gov.sg',
@@ -35,7 +36,20 @@ const eduMetaTags = {
     'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
 }
 
-const metaVariant = assetVariant === 'edu' ? eduMetaTags : govMetaTags
+const healthMetaTags = {
+  'og:title': 'For.sg',
+  'og:type': 'article',
+  'og:description': 'Trusted short links from health institutions',
+  'og:image':
+    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
+}
+
+const metaVariantMap = {
+  gov: govMetaTags,
+  edu: eduMetaTags,
+  health: healthMetaTags,
+}
+const metaVariant = metaVariantMap[assetVariant] || govMetaTags
 
 module.exports = () => {
   const jsBundle = {
@@ -57,6 +71,7 @@ module.exports = () => {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
+        // this aliases all "@assets" imports to read from the correct assetVariant asset directory
         '@assets': path.resolve(srcDirectory, assetResolveDir),
       },
       fallback: {
@@ -101,7 +116,7 @@ module.exports = () => {
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
-        template: path.join('./public', `index-${templatePath}.html`),
+        template: path.join('./public', `index-${assetVariant}.html`),
         favicon: `./src/client/app/${assetResolveDir}/favicon/favicon.ico`,
         chunksSortMode: 'none',
         meta: metaVariant,
