@@ -85,7 +85,8 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
       width: '50vw',
       height: '100%',
-      maxHeight: assetVariant === 'edu' ? '100vh' : 'calc(100vh - 28px)',
+      // allocates space for the government masthead when on gov variant
+      maxHeight: assetVariant === 'gov' ? 'calc(100vh - 28px)' : '100vh',
       textAlign: 'center',
       overflow: 'hidden',
     },
