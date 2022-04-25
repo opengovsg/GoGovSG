@@ -6,10 +6,14 @@ const assetVariants = ['gov', 'edu', 'health'] as const
 type AssetVariants = typeof assetVariants[number]
 
 const envVariant = process.env.ASSET_VARIANT
-const assetVariant: AssetVariants =
-  assetVariants.find((variant) => variant === envVariant) || 'gov'
+const foundVariant: AssetVariants | undefined = assetVariants.find(
+  (variant) => variant === envVariant,
+)
 
-console.log(assetVariant)
+// ensure that foundVariant is defined
+if (!foundVariant) throw Error('Invalid variant name!')
 
 // exports a typed assetVariant variable for use in most files except webpack (used before ts compiles)
+
+const assetVariant: AssetVariants = foundVariant
 export default assetVariant
