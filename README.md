@@ -90,40 +90,40 @@ Other infrastructure used in GoGovSG:
 After these have been set up, set the environment variables according to the table below:
 
 #### Server
-|Environment Variable|Required|Description/Value|Shared across environments|
-|:---:|:---:|:---:|:---|
-|NODE_ENV|Yes|`production`|Yes|
-|DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|No|
-|OG_URL|Yes|The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`|No|
-|AWS_S3_BUCKET|Yes|The bucket name used for storing file uploads.|No|
-|REDIS_OTP_URI|Yes|Redis connection string, e.g. `redis://redis:6379/0`|No|
-|REDIS_SESSION_URI|Yes|Redis connection string, e.g. `redis://redis:6379/1`|No|
-|REDIS_REDIRECT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/2`|No|
-|REDIS_STAT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/3`|No|
-|REDIS_SAFE_BROWSING_URI|Yes|Redis connection string, e.g. `redis://redis:6379/4`|No|
-|SESSION_SECRET|Yes|For hashing browser sessions, e.g. `change-this`|No|
-|VALID_EMAIL_GLOB_EXPRESSION|Yes|The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com`|No|
-|GA_TRACKING_ID|No|The Google Analytics tracking ID, e.g. `UA-12345678-9`|No|
-|SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps.|Yes|
-|SENTRY_DNS|No|The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`|Yes|
-|SENTRY_ORG|No|Our Sentry organisation name, e.g. `example-org`|Yes|
-|SENTRY_PROJECT|No|The relevant Sentry project. e.g. `project-prod`|Yes|
-|SENTRY_URL|No|The Sentry url. e.g. `https://sentry.io/`|Yes|
-|LOGIN_MESSAGE|No|A text message that will be displayed on the login page as a snackbar|Not necessarily|
-|USER_MESSAGE|No|A text message that will be displayed as a banner, once the user has logged in|Not necessarily|
-|ANNOUNCEMENT_MESSAGE|No|The message in the announcement displayed as a modal to users on login|Not necessarily|
-|ANNOUNCEMENT_TITLE|No|The title in the announcement displayed as a modal to users on login|Not necessarily|
-|ANNOUNCEMENT_SUBTITLE|No|The subtitle in the announcement displayed as a modal to users on login|Not necessarily|
-|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|Not necessarily|
-|ANNOUNCEMENT_URL|No|The hyperlink for the button in the announcement displayed as a modal to users on login|Not necessarily|
-|ANNOUNCEMENT_IMAGE|No|The image in the announcement displayed as a modal to users on login|Not necessarily|
-|CSP_REPORT_URI|No|A URI to report CSP violations to.|Yes|
-|CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|Not necessarily|
-|CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|Yes|
-|SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|Yes|
-|ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `edu`, `gov`|No|
-|COOKIE_MAX_AGE|Yes|Session duration of cookie|Yes|
-|REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|No|
+|Environment Variable|Required|Description/Value|
+|:---:|:---:|:---|
+|NODE_ENV|Yes|`production`|
+|DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
+|OG_URL|Yes|The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`|
+|AWS_S3_BUCKET|Yes|The bucket name used for storing file uploads.|
+|REDIS_OTP_URI|Yes|Redis connection string, e.g. `redis://redis:6379/0`|
+|REDIS_SESSION_URI|Yes|Redis connection string, e.g. `redis://redis:6379/1`|
+|REDIS_REDIRECT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/2`|
+|REDIS_STAT_URI|Yes|Redis connection string, e.g. `redis://redis:6379/3`|
+|REDIS_SAFE_BROWSING_URI|Yes|Redis connection string, e.g. `redis://redis:6379/4`|
+|SESSION_SECRET|Yes|For hashing browser sessions, e.g. `change-this`|
+|VALID_EMAIL_GLOB_EXPRESSION|Yes|The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com`|
+|GA_TRACKING_ID|No|The Google Analytics tracking ID, e.g. `UA-12345678-9`|
+|SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps.|
+|SENTRY_DNS|No|The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`|
+|SENTRY_ORG|No|Our Sentry organisation name, e.g. `example-org`|
+|SENTRY_PROJECT|No|The relevant Sentry project. e.g. `project-prod`|
+|SENTRY_URL|No|The Sentry url. e.g. `https://sentry.io/`|
+|LOGIN_MESSAGE|No|A text message that will be displayed on the login page as a snackbar|
+|USER_MESSAGE|No|A text message that will be displayed as a banner, once the user has logged in|
+|ANNOUNCEMENT_MESSAGE|No|The message in the announcement displayed as a modal to users on login|
+|ANNOUNCEMENT_TITLE|No|The title in the announcement displayed as a modal to users on login|
+|ANNOUNCEMENT_SUBTITLE|No|The subtitle in the announcement displayed as a modal to users on login|
+|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
+|ANNOUNCEMENT_URL|No|The hyperlink for the button in the announcement displayed as a modal to users on login|
+|ANNOUNCEMENT_IMAGE|No|The image in the announcement displayed as a modal to users on login|
+|CSP_REPORT_URI|No|A URI to report CSP violations to.|
+|CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
+|CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|
+|SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|
+|ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `edu`, `gov`|
+|COOKIE_MAX_AGE|Yes|Session duration of cookie|
+|REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 
 #### Serverless functions for link migration
 |Secrets|Required|Description/Value|Shared across environments|
