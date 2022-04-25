@@ -32,7 +32,7 @@ The official Singapore government link shortener.
 
 ## Introduction
 
-Go.gov.sg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve two link shortener environments, [for.edu.sg](https://www.for.edu.sg), and [Go.gov.sg](https://www.go.gov.sg).
+GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve two link shortener environments, [for.edu.sg](https://www.for.edu.sg), and [Go.gov.sg](https://www.go.gov.sg).
 
 There are multiple reasons why we built an official government link shortener:
 
@@ -40,7 +40,7 @@ There are multiple reasons why we built an official government link shortener:
 - Email clients might block other commercial link shorteners if they are listed as **spam** on their site
 - Citizens are afraid of **phishing** when receiving a shortened link and unsure of where it goes
 
-With Go.gov.sg, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
+With GoGovSg, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
 
 ## Getting Started
 
@@ -83,7 +83,7 @@ to do that for us. On top of running the server, GoGovSG minimally requires the 
 - A PostgreSQL database (for storing short-long URL mappings)
 - A Redis server (transient storage of sessions, one-time passwords, click statistics and frequently used shortlinks)
 
-Other infrastructure used in GoGovSG:
+Other optional infrastructure used in GoGovSG:
 - Serverless functions (for migrating user links)
 - Batch jobs (for backups of our database to external source)
 
