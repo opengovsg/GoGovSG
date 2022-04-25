@@ -1,8 +1,10 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const SentryCliPlugin = require('@sentry/webpack-plugin')
-const webpack = require('webpack')
+import path from 'path'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+import SentryCliPlugin from '@sentry/webpack-plugin'
+import webpack from 'webpack'
+
+import assetVariant from './src/shared/util/asset-variant'
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client/app')
@@ -15,9 +17,6 @@ const requiredSentryEnvVar = [
   process.env.SENTRY_URL,
 ]
 
-// assetVariant is first imported from the process environment here, separate
-// from the asset-variant util file, as it needs to be present for webpack
-const assetVariant = process.env.ASSET_VARIANT || 'gov'
 const assetResolveDir = `assets/${assetVariant}`
 
 const govMetaTags = {
@@ -118,6 +117,7 @@ module.exports = () => {
       new HtmlWebpackPlugin({
         template: path.join('./public', `index-${assetVariant}.html`),
         favicon: `./src/client/app/${assetResolveDir}/favicon/favicon.ico`,
+        // @ts-ignore - type definition is incorrect, chunksSortMode 'none' only performs identity mapping (no-sort).
         chunksSortMode: 'none',
         meta: metaVariant,
       }),
@@ -131,6 +131,7 @@ module.exports = () => {
       '\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m',
     )
     jsBundle.plugins.push(
+      // @ts-ignore - this should add a new plugin regardless of the current plugins in the plugins array
       new SentryCliPlugin({
         include: '.',
         ignoreFile: '.gitignore',
