@@ -45,6 +45,8 @@ jobs:
       - run: npm run lint
       - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
       - run: npm run build
+        env:
+          ASSET_VARIANT: gov
   test:
     name: Test
     runs-on: ubuntu-18.04
@@ -154,6 +156,7 @@ jobs:
       - name: Upload to Sentry
         run: npm run build
         env:
+          ASSET_VARIANT: gov
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   build-gogov:
     name: Build and push for gogov
@@ -392,7 +395,7 @@ jobs:
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
           SHA: ${{ github.sha }}
-      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=edu . # TODO: replaced when assets are ready
+      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=health .
       - name: Push to ECR
         uses: opengovsg/gh-ecr-push@v1
         with:
