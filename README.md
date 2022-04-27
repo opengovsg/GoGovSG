@@ -32,7 +32,7 @@ The official Singapore government link shortener.
 
 ## Introduction
 
-Go.gov.sg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg).
+GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve two link shortener environments, [for.edu.sg](https://www.for.edu.sg), and [Go.gov.sg](https://www.go.gov.sg).
 
 There are multiple reasons why we built an official government link shortener:
 
@@ -40,7 +40,7 @@ There are multiple reasons why we built an official government link shortener:
 - Email clients might block other commercial link shorteners if they are listed as **spam** on their site
 - Citizens are afraid of **phishing** when receiving a shortened link and unsure of where it goes
 
-With Go.gov.sg, citizens are safe in the knowledge that the links are **official** and **safe**. Any public officer can log in with their government emails and immediately create short links with the official `gov.sg` domain.
+With GoGovSg, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
 
 ## Getting Started
 
@@ -83,8 +83,13 @@ to do that for us. On top of running the server, GoGovSG minimally requires the 
 - A PostgreSQL database (for storing short-long URL mappings)
 - A Redis server (transient storage of sessions, one-time passwords, click statistics and frequently used shortlinks)
 
+Other optional infrastructure used in GoGovSG:
+- Serverless functions (for migrating user links)
+- Batch jobs (for backups of our database to external source)
+
 After these have been set up, set the environment variables according to the table below:
 
+#### Server
 |Environment Variable|Required|Description/Value|
 |:---:|:---:|:---|
 |NODE_ENV|Yes|`production`|
@@ -109,12 +114,32 @@ After these have been set up, set the environment variables according to the tab
 |ANNOUNCEMENT_MESSAGE|No|The message in the announcement displayed as a modal to users on login|
 |ANNOUNCEMENT_TITLE|No|The title in the announcement displayed as a modal to users on login|
 |ANNOUNCEMENT_SUBTITLE|No|The subtitle in the announcement displayed as a modal to users on login|
+|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
 |ANNOUNCEMENT_URL|No|The hyperlink for the button in the announcement displayed as a modal to users on login|
 |ANNOUNCEMENT_IMAGE|No|The image in the announcement displayed as a modal to users on login|
 |CSP_REPORT_URI|No|A URI to report CSP violations to.|
 |CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
 |CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|
 |SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|
+|ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `edu`, `gov`|
+|COOKIE_MAX_AGE|Yes|Session duration of cookie|
+|REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
+
+#### Serverless functions for link migration
+|Secrets|Required|Description/Value|Shared across environments|
+|:---:|:---:|:---:|:---|
+|DATABASE_URL|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|No|
+
+#### Batch functions for backups
+|Secrets|Required|Description/Value|Shared across environments|
+|:---:|:---:|:---:|:---|
+|DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|No|
+|GCS_CREDENTIALS|Yes|Authorization credentials for writing to backup buckets in GCS|Yes|
+
+|Environment Variable|Required|Description/Value|Shared across environments|
+|:---:|:---:|:---:|:---|
+|GCS_BUCKET|Yes|Name of bucket in GCS to write to|No|
+|CRONITOR_MONITOR_CODE|No|ID for Cronitor monitor to monitor batch jobs|No|
 
 Trigger the typescript compilation and webpack bundling process by calling `npm run build`.
 
@@ -122,49 +147,50 @@ Finally, start the production server by running `npm start`.
 
 ### Deploying
 
-GoGovSG uses Travis to deploy to AWS Elastic Beanstalk. We also use Sentry.io to track client-side errors.
+GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk and AWS Lambda. We also use Sentry.io to track client-side errors.
 
-|Environment Variable|Required|Description/Value|
+|Secrets|Required|Description/Value|
 |:---:|:---:|:---|
 |AWS_ACCESS_KEY_ID|Yes|AWS credential ID used to deploy to Elastic and Modify files on S3|
 |AWS_SECRET_ACCESS_KEY|Yes|AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3|
-|AWS_EB_ENV_PRODUCTION, AWS_EB_ENV_STAGING|Yes|Elastic Beanstalk environment name|
-|AWS_EB_APP_PRODUCTION, AWS_EB_APP_STAGING|Yes|Elastic Beanstalk application name|
-|AWS_EB_BUCKET_PRODUCTION, AWS_EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|
-|AWS_EB_REGION|Yes|AWS region to deploy to, e.g. `ap-southeast-1`|
-|EMAIL_RECIPIENT|Yes|Email for Travis notifications|
+|SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps|
+|GITHUB_TOKEN|Yes*|Used by Coveralls to verify test coverage on repo. Does not need to be manually specified as it is specified by Github Actions. [More Info](https://docs.github.com/en/actions/security-guides/automatic-token-authentication)
+
+|Environment Variable|Required|Description/Value|
+|:---:|:---:|:---|
+|EB_ENV_(EDU_)PRODUCTION, EB_ENV_(EDU_)STAGING|Yes|Elastic Beanstalk environment name|
+|EB_APP_PRODUCTION, EB_APP_STAGING|Yes|Elastic Beanstalk application name|
+|EB_BUCKET_PRODUCTION, EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|
 |PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
-|REPO|Yes|Docker container registry URI to push built images to|
-|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
+|ECR_URL|Yes|AWS ECR Docker container registry URI to push built images to|
+|ECR_REPO|Yes|Name of repository in AWS ECR containing images|
 |SENTRY_ORG|No|Sentry.io organisation name|
-|SENTRY_PROJECT|No|Sentry.io project name|
+|SENTRY_PROJECT_PRODUCTION, SENTRY_PROJECT_STAGING|No|Sentry.io project name|
 |SENTRY_URL|No|Sentry.io URL e.g. `https://sentry.io/`|
-|SENTRY_DNS|No|Sentry.io endpoint to post client-side errors to|
-
-## Pre-release
-
-We have yet to setup travis to automate these steps:
-
-- Update package version
-- Update credits [opengovsg/credits-generator](https://github.com/opengovsg/credits-generator)
-- Upload pdf to S3 bucket
+|SENTRY_DNS_PRODUCTION,SENTRY_DNS_STAGING|No|Sentry.io endpoint to post client-side errors to|
 
 ## Operations
 
 ### Transferring links to a new owner or email address
 
-Use the following SQL functions defined in [scripts folder](scripts/) to safely transfer link ownership.
+Functions to safely transfer links to new owners can be accessed on AWS Lambda console (for authorized users only).
 
-To transfer a single link to a new email address (must be lowercase):
+To transfer a single link to a new email address (must be lowercase), please use the relevant Lambda function ([gogov-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/gogovsg-production-migrate-url-to-user?tab=testing), [edu-production]()) to create an event with the following event body:
 
-```sql
-SELECT migrate_url_to_user('the-short-link', 'new_email@domain.com');
+```json
+{
+  "shortUrl": "<short url to be transfered>",
+  "toUserEmail": "<user email to transfer to>"
+}
 ```
 
-To transfer all links belonging to an account to another account, specify the email accounts of both (must be in lowercase):
+To transfer all links belonging to an account to another account, please use the relevant Lambda function ([gogov-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/gogovsg-production-migrate-user-links?tab=testing), [edu-production]()) to create an event with the following event body:
 
-```sql
-SELECT migrate_user_links('from@domain.com','to@domain.com');
+```json
+{
+  "fromUserEmail": "<user email to transfer from>",
+  "toUserEmail": "<user email to transfer to>"
+}
 ```
 
 ## Developer Documentation
@@ -173,16 +199,14 @@ SELECT migrate_user_links('from@domain.com','to@domain.com');
 
 All source code resides in the `src` directory. Inside `src`, there is `client` and `server` directory. Frontend code (react, css, js and other assets) will be in `client` directory. Backend Node.js/Express code will be in the `server` directory.
 
+### Asset variants
+
+This repository serves as the codebase to serve two link shortener environments, [for.edu.sg](https://www.for.edu.sg), and [Go.gov.sg](https://www.go.gov.sg). These environments are run on separate infrastructure, and the deployment pipeline is set up to deploy any code changes in this codebase across all infrastructure environments. The environments are identical apart from the assets, copy and list of authorized users.
+
 ### Babel
 
 [Babel](https://babeljs.io/) helps us to write code in the latest version of JavaScript. If an environment does not support certain features natively, Babel will help us to compile those features down to a supported version. It also helps us to convert JSX to Javascript.
-[.babelrc file](https://babeljs.io/docs/usage/babelrc/) is used describe the configurations required for Babel. Below is the .babelrc file which I am using.
-
-```javascript
-{
-    "presets": ["env", "react"]
-}
-```
+[babel.config.json file](https://babeljs.io/docs/en/configuration#babelconfigjson) is used to describe the configurations required for Babel. 
 
 Babel requires plugins to do the transformation. Presets are the set of plugins defined by Babel. Preset **env** allows to use babel-preset-es2015, babel-preset-es2016, and babel-preset-es2017 and it will transform them to ES5. Preset **react** allows us to use JSX syntax and it will transform JSX to Javascript.
 
@@ -200,12 +224,13 @@ Babel requires plugins to do the transformation. Presets are the set of plugins 
 
 [webpack.config.js](https://webpack.js.org/configuration/) file is used to describe the configurations required for webpack.
 
-1. **entry:** entry: ./src/client/index.js is where the application starts executing and webpack starts bundling.
+1. **entry:** entry: ./src/client/app/index.tsx is where the application starts executing and webpack starts bundling.
     Note: babel-polyfill is added to support async/await. Read more [here](https://babeljs.io/docs/en/babel-polyfill#usage-in-node-browserify-webpack).
 2. **output path and filename:** the target directory and the filename for the bundled output
-3. **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. Fonts and images are loaded through [file-loader](https://github.com/webpack-contrib/file-loader).
-4. **Dev Server:** Configurations for the webpack-dev-server which will be described in coming section.
-5. **plugins:** [clean-webpack-plugin](https://github.com/johnagan/clean-webpack-plugin) is a webpack plugin to remove the build folder(s) before building. [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) simplifies creation of HTML files to serve your webpack bundles. It loads the template (public/index.html) and injects the output bundle.
+3. **resolve:** We use aliasing at bundle time to inject and resolve the right asset variant path, which allows us to easily switch between asset folders for the different environments. 
+4. **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. Fonts and images are loaded through [file-loader](https://github.com/webpack-contrib/file-loader).
+5. **Dev Server:** Configurations for the webpack-dev-server which will be described incoming section.
+6. **plugins:** [clean-webpack-plugin](https://github.com/johnagan/clean-webpack-plugin) is a webpack plugin to remove the build folder(s) before building. [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) simplifies creation of HTML files to serve your webpack bundles. It loads the template (public/index.html) and injects the output bundle.
 
 ### Webpack dev server
 
@@ -268,3 +293,8 @@ Express is a web application framework for Node.js. It is used to build our back
 Developer Tools to power-up [Redux](https://github.com/reactjs/redux) development workflow.
 
 It can be used as a browser extension (for [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), [Edge](https://microsoftedge.microsoft.com/addons/detail/redux-devtools/nnkgneoiohoecpdiaponcejilbhhikei) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/)), as [a standalone app](https://github.com/zalmoxisus/remotedev-app) or as [a React component](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools) integrated in the client app.
+
+
+### Infrastructure
+
+Diagrams for our infrastructure setup can be found [here](https://lucid.app/lucidchart/81dee53d-5fdc-4c79-a3ca-018287531ab3/view?page=0_0#).
