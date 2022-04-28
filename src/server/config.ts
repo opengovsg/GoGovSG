@@ -4,6 +4,7 @@ import winston, { createLogger, format, transports } from 'winston'
 import minimatch from 'minimatch'
 import { parse } from 'url'
 import { parse as parseUri } from 'pg-connection-string'
+import assetVariant from '../shared/util/asset-variant'
 import generateOTP, { OtpFunction } from './util/otp'
 
 // Check environment
@@ -218,6 +219,9 @@ export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS
 
-export const assetVariant: string = process.env.ASSET_VARIANT || 'gov'
-export const displayHostname =
-  assetVariant === 'gov' ? 'Go.gov.sg' : 'For.edu.sg'
+const displayHostnameMap = {
+  gov: 'Go.gov.sg',
+  edu: 'For.edu.sg',
+  health: 'For.sg',
+}
+export const displayHostname = displayHostnameMap[assetVariant]

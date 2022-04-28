@@ -1,6 +1,9 @@
 import { createLogger, format, transports } from 'winston'
 import minimatch from 'minimatch'
 
+// define assetVariant env for testing
+jest.mock('../../src/shared/util/asset-variant', () => 'gov')
+
 // Winston for generic logging
 export const logger = createLogger({
   // change level if in dev environment versus production

@@ -1,8 +1,10 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const SentryCliPlugin = require('@sentry/webpack-plugin')
-const webpack = require('webpack')
+import path from 'path'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import { CleanWebpackPlugin } from 'clean-webpack-plugin'
+import SentryCliPlugin from '@sentry/webpack-plugin'
+import webpack from 'webpack'
+
+import assetVariant from './src/shared/util/asset-variant'
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client/app')
@@ -15,9 +17,7 @@ const requiredSentryEnvVar = [
   process.env.SENTRY_URL,
 ]
 
-const assetVariant = process.env.ASSET_VARIANT || 'gov'
-const assetResolveDir = assetVariant === 'edu' ? 'assets/edu' : 'assets/gov'
-const templatePath = assetVariant === 'edu' ? 'edu' : 'gov'
+const assetResolveDir = `assets/${assetVariant}`
 
 const govMetaTags = {
   'og:title': 'Go.gov.sg',
@@ -35,7 +35,20 @@ const eduMetaTags = {
     'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
 }
 
-const metaVariant = assetVariant === 'edu' ? eduMetaTags : govMetaTags
+const healthMetaTags = {
+  'og:title': 'For.sg',
+  'og:type': 'article',
+  'og:description': 'Trusted short links from health institutions',
+  'og:image':
+    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
+}
+
+const metaVariantMap = {
+  gov: govMetaTags,
+  edu: eduMetaTags,
+  health: healthMetaTags,
+}
+const metaVariant = metaVariantMap[assetVariant] || govMetaTags
 
 module.exports = () => {
   const jsBundle = {
@@ -57,6 +70,7 @@ module.exports = () => {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
       alias: {
         '~': srcDirectory,
+        // this aliases all "@assets" imports to read from the correct assetVariant asset directory
         '@assets': path.resolve(srcDirectory, assetResolveDir),
       },
       fallback: {
@@ -101,8 +115,9 @@ module.exports = () => {
     plugins: [
       new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
-        template: path.join('./public', `index-${templatePath}.html`),
+        template: path.join('./public', `index-${assetVariant}.html`),
         favicon: `./src/client/app/${assetResolveDir}/favicon/favicon.ico`,
+        // @ts-ignore - type definition is incorrect, chunksSortMode 'none' only performs identity mapping (no-sort).
         chunksSortMode: 'none',
         meta: metaVariant,
       }),
@@ -116,6 +131,7 @@ module.exports = () => {
       '\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m',
     )
     jsBundle.plugins.push(
+      // @ts-ignore - this should add a new plugin regardless of the current plugins in the plugins array
       new SentryCliPlugin({
         include: '.',
         ignoreFile: '.gitignore',

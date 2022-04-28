@@ -45,6 +45,8 @@ jobs:
       - run: npm run lint
       - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
       - run: npm run build
+        env:
+          ASSET_VARIANT: gov
   test:
     name: Test
     runs-on: ubuntu-18.04
@@ -91,7 +93,7 @@ jobs:
       - name: Install TestCafe from 'npm' and Run Tests
         uses: DevExpress/testcafe-action@6114d4290399f0e36ac0be3ca56b6713dc2fab3d # pin@v0.0.3
         with:
-          args: "chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000"
+          args: 'chrome:headless ./test/end-to-end --app "npm run dev" --app-init-delay 270000'
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
@@ -154,6 +156,7 @@ jobs:
       - name: Upload to Sentry
         run: npm run build
         env:
+          ASSET_VARIANT: gov
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   build-gogov:
     name: Build and push for gogov
@@ -392,7 +395,7 @@ jobs:
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
           SHA: ${{ github.sha }}
-      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=edu . # TODO: replaced when assets are ready
+      - run: docker build --tag my-image --build-arg __ASSET_VARIANT=health .
       - name: Push to ECR
         uses: opengovsg/gh-ecr-push@v1
         with:
@@ -448,7 +451,7 @@ jobs:
           eb_app_staging = os.environ['EB_APP_STAGING']
           eb_env_health_staging = os.environ['EB_ENV_HEALTH_STAGING']
           eb_app_production = os.environ['EB_APP_PRODUCTION']
-           eb_env_health_production = os.environ['EB_ENV_HEALTH_PRODUCTION']
+          eb_env_health_production = os.environ['EB_ENV_HEALTH_PRODUCTION']
           if branch == staging:
             print('::set-output name=eb_app::' + eb_app_staging)
             print('::set-output name=eb_env_health::' + eb_env_health_staging)

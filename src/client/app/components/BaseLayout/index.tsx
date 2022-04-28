@@ -18,8 +18,8 @@ import BannerForIE from './BannerForIE'
 import { USER_PAGE } from '../../util/types'
 import Banner from './widgets/Banner'
 import { GoGovReduxState } from '../../reducers/types'
+import assetVariant from '../../../../shared/util/asset-variant'
 
-const assetVariant = process.env.ASSET_VARIANT || 'gov'
 const displayMasthead = assetVariant === 'gov'
 
 const useStyles = makeStyles(() =>

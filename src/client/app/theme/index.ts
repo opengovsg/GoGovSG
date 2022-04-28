@@ -1,5 +1,6 @@
 import { PaletteType } from '@material-ui/core'
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+import assetVariant from '../../../shared/util/asset-variant'
 
 // Provides theme spacing, breakpoint values for the main theme to consume.
 const basicTheme = createMuiTheme({
@@ -61,9 +62,32 @@ const paletteVariants = {
       paper: '#ffffff',
     },
   },
+  health: {
+    type: 'light' as PaletteType,
+    divider: '#d8d8d8',
+    primary: {
+      main: '#48426D',
+      dark: '#2B2E4A',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#D5CDE0',
+      main: '#8F8AB0',
+      dark: '#2B2E4A',
+      contrastText: '#000',
+    },
+    text: {
+      primary: '#48426D',
+      secondary: '#767676',
+    },
+    background: {
+      default: '#f9f9f9',
+      paper: '#ffffff',
+    },
+  },
 }
 
-const palette = paletteVariants[process.env.ASSET_VARIANT as 'gov' | 'edu']
+const palette = paletteVariants[assetVariant]
 
 export default responsiveFontSizes(
   createMuiTheme({
