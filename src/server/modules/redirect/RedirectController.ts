@@ -1,11 +1,6 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import {
-  assetVariant,
-  displayHostname,
-  gaTrackingId,
-  logger,
-} from '../../config'
+import { displayHostname, gaTrackingId, logger } from '../../config'
 import { NotFoundError } from '../../util/error'
 import parseDomain from '../../util/domain'
 import { DependencyIds, ERROR_404_PATH } from '../../constants'
@@ -13,6 +8,7 @@ import { AnalyticsLoggerService, RedirectService } from './services'
 import { RedirectType } from '.'
 import { EventAction, EventCategory } from './ga/types/enum'
 import { createPageViewHit } from './ga'
+import assetVariant from '../../../shared/util/asset-variant'
 
 const TRANSITION_PATH = 'transition-page.ejs'
 const GTAG_PATH = 'redirect.ejs'

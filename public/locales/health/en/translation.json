@@ -1,0 +1,53 @@
+{
+  "general": {
+    "emailDomain": "edu.sg",
+    "shortUrlPrefix": "for.edu.sg/",
+    "appTitle": "for.edu.sg",
+    "officerType": "education",
+    "referralEmailDomain": "gov.sg",
+    "referralOfficerPhrase": "Public officers",
+    "referralLink": "go.gov.sg",
+    "appCatchphrase": {
+      "styled": "Trusted short links from <strong><i>education institutions</i></strong>",
+      "noStyle": "Trusted short links from education institutions"
+    },
+    "appDescription": {
+      "subtitle": "<strong>$t(general.appTitle)</strong> short links can only be created by education officers, so you can be sure it’s from a trustworthy source."
+    },
+    "linkAdmins": "education institutions",
+    "appSignInPrompt": "Are you an education officer?",
+    "copyright": "© 2021 Open Government Products, ",
+    "copyrightTag": "Government Technology Agency of Singapore",
+    "placeholders": {
+      "email": "jane@science.edu.sg"
+    },
+    "links": {
+      "contribute": "https://go.gov.sg/go-opensource",
+      "directory": "/directory",
+      "faq": "https://guide.for.edu.sg",
+      "privacy": "https://guide.for.edu.sg/privacy",
+      "terms": "https://guide.for.edu.sg/termsofuse",
+      "contact": "http://go.gov.sg/foredusg-contact",
+      "builtBy": "https://open.gov.sg",
+      "linkedin": "https://sg.linkedin.com/company/open-government-products",
+      "facebook": "https://www.facebook.com/opengovsg"
+    },
+    "builtBy": "Built by Open Government Products"
+  },
+  "homePage": {
+    "features": {
+      "antiPhishing": {
+        "description": "Shorten your links with a trustworthy $t(general.emailDomain) domain, so your users know they are from an education officer."
+      },
+      "customised": {
+        "description": "Long URLs are hard to remember and take up space. Create and share short links instead."
+      },
+      "analytics": {
+        "description": "Want to know how popular your links are? Track each link's click rate through our web interface."
+      },
+      "fileSharing": {
+        "description": "Upload your file to share it with anyone, using a customised and trustworthy $t(general.emailDomain) short link."
+      }
+    }
+  }
+}

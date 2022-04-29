@@ -4,8 +4,8 @@ import QRCode from 'qrcode'
 import { resolve } from 'path'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
-import { assetVariant } from '../../../config'
 
+import assetVariant from '../../../../shared/util/asset-variant'
 import ImageFormat from '../../../../shared/util/image-format'
 
 import * as interfaces from '../interfaces'
@@ -16,8 +16,13 @@ export const MARGIN_VERTICAL = 85
 export const FONT_SIZE = 32
 export const LINE_HEIGHT = 1.35
 
-const logoVariant = assetVariant === 'edu' ? 'qrlogo-edu.svg' : 'qrlogo-gov.svg'
-const dark = assetVariant === 'edu' ? '#000000' : '#384A51'
+const logoVariant = `qrlogo-${assetVariant}.svg`
+const darkColorMap = {
+  gov: '#384A51',
+  edu: '#000000',
+  health: '#000000', // TODO: update color for health
+}
+const dark = darkColorMap[assetVariant]
 
 @injectable()
 export class QrCodeService implements interfaces.QrCodeService {

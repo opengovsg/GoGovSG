@@ -3,15 +3,15 @@
 
 import { injectable } from 'inversify'
 import nodemailer from 'nodemailer'
-import {
-  assetVariant,
-  logger,
-  ogUrl,
-  otpExpiry,
-  transporterOptions,
-} from '../config'
+import assetVariant from '../../shared/util/asset-variant'
+import { logger, ogUrl, otpExpiry, transporterOptions } from '../config'
 
-const domainVariant = assetVariant === 'edu' ? 'for.edu.sg' : 'go.gov.sg'
+const domainVariantMap = {
+  gov: 'go.gov.sg',
+  edu: 'for.edu.sg',
+  health: 'for.sg',
+}
+const domainVariant = domainVariantMap[assetVariant]
 
 let transporter: nodemailer.Transport
 export interface Mailer {
