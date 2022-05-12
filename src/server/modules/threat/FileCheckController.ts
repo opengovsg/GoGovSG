@@ -47,7 +47,9 @@ export class FileCheckController {
         if (hasVirus) {
           const user = req.session?.user
           logger.warn(
-            `Malicious file attempt: User ${user?.id} tried to upload ${file.name}`,
+            `Malicious file attempt: User ${
+              user?.email || user?.id
+            } tried to upload ${file.name}`,
           )
           res.badRequest(jsonMessage('File is likely to be malicious.'))
           return

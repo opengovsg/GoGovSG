@@ -25,8 +25,15 @@ const timeZone = 'Asia/Singapore'
 
 /**
  * This function is used to update the relevant link statistics tables, when called.
+ *
+ * The SQL query acquires a transaction lock to prevent concurrent executions of
+ * the CREATE OR REPLACE FUNCTION. The transaction lock is enforced by lock key, so
+ * the id in the lock has to be a unique (64-bit key) per non-blocking transaction,
+ * i.e. Pg_advisory_xact_lock(uniqueId).
  */
-export const updateLinkStatistics = `CREATE OR REPLACE FUNCTION update_link_statistics (inputShortUrl text, device text)
+export const updateLinkStatistics = `BEGIN TRANSACTION;
+SELECT pg_advisory_xact_lock(2142616474639426746); 
+CREATE OR REPLACE FUNCTION update_link_statistics (inputShortUrl text, device text)
 RETURNS void AS $$
 BEGIN
 -- Update total clicks.
@@ -65,6 +72,7 @@ VALUES (inputShortUrl, extract(dow from date(current_timestamp at time zone '${t
 ON CONFLICT ("shortUrl", "weekday", "hours")
 DO UPDATE SET "clicks" = "${weekdayTable}"."clicks" + 1;
 END; $$ LANGUAGE plpgsql;
+COMMIT;
 `
 
 export type UrlStats = UrlType & {
