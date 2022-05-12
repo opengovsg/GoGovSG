@@ -1,4 +1,4 @@
-service: gogovsg
+service: ${env:SERVERLESS_SERVICE}
 frameworkVersion: '2'
 
 provider:
