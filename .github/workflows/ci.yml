@@ -9,11 +9,11 @@ env:
   EB_APP_PRODUCTION: gosg-production
   EB_ENV_PRODUCTION: gosg-production
   EB_ENV_EDU_PRODUCTION: edu-production
+  EB_ENV_HEALTH_PRODUCTION: health-production
   EB_APP_STAGING: gosg-stag
   EB_ENV_STAGING: gosg-stag
   EB_ENV_EDU_STAGING: edu-staging
   EB_ENV_HEALTH_STAGING: health-staging
-  EB_ENV_HEALTH_PRODUCTION: health-production
   ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
   ECR_REPO: gogovsg
   SENTRY_URL: https://sentry.io/
