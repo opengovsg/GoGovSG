@@ -12,6 +12,7 @@ KEY=$(git diff --cached --name-only -z $against | xargs -0 cat | perl -nle'print
 if [ "$KEY_ID" != "" -o "$KEY" != "" ]; then
     echo "Found patterns for AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY"
     echo "Please check your code and remove API keys."
+    echo "Key ID: $KEY_ID, Key: $KEY"
     exit 1
 fi
 
