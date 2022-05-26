@@ -107,7 +107,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
       >
-        Created for {i18next.t('general.officerType')} officers{' '}
+        Created for {i18next.t('general.officerType')}{' '}
       </Typography>
       <Hidden smUp>
         <br />

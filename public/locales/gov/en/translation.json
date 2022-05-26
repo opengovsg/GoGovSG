@@ -3,7 +3,7 @@
     "emailDomain": "gov.sg",
     "shortUrlPrefix": "go.gov.sg/",
     "appTitle": "Go.gov.sg",
-    "officerType": "public",
+    "officerType": "public officers",
     "referralEmailDomain": "edu.sg",
     "referralOfficerPhrase": "Staff from selected schools",
     "referralLink": "for.edu.sg",

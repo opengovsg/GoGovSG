@@ -237,8 +237,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                     </Link>
                     <Typography className={classes.loginHeader} variant="body1">
                       Only available for use by{' '}
-                      {i18next.t('general.officerType')} officers with an email
-                      from <strong>{i18next.t('general.emailDomain')}</strong>.
+                      {i18next.t('general.officerType')} with an email from{' '}
+                      <strong>{i18next.t('general.emailDomain')}</strong>.
                     </Typography>
                     <Typography
                       className={classes.loginReferral}

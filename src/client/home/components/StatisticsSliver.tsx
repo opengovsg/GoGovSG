@@ -82,9 +82,7 @@ const StatisticsSliver: FunctionComponent = () => {
   // ensure number will never be null
   const statisticsToShow = [
     {
-      label: `${i18next
-        .t('general.officerType')
-        .toUpperCase()} OFFICERS ONBOARD`,
+      label: `${i18next.t('general.officerType').toUpperCase()} ONBOARD`,
       number: userCount,
     },
     { label: 'SHORT LINKS CREATED', number: linkCount },
