@@ -66,18 +66,18 @@ const paletteVariants = {
     type: 'light' as PaletteType,
     divider: '#d8d8d8',
     primary: {
-      main: '#48426D',
-      dark: '#2B2E4A',
+      main: '#6D4559',
+      dark: '#472F40',
       contrastText: '#fff',
     },
     secondary: {
-      light: '#D5CDE0',
-      main: '#8F8AB0',
-      dark: '#2B2E4A',
+      light: '#F1D4DF',
+      main: '#AB7F95',
+      dark: '#472F40',
       contrastText: '#000',
     },
     text: {
-      primary: '#48426D',
+      primary: '#6D4559',
       secondary: '#767676',
     },
     background: {
