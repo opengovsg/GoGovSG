@@ -1,27 +1,27 @@
 {
   "general": {
-    "emailDomain": "edu.sg",
-    "shortUrlPrefix": "for.edu.sg/",
-    "appTitle": "for.edu.sg",
+    "emailDomain": "for.sg",
+    "shortUrlPrefix": "for.sg/",
+    "appTitle": "for.sg",
     "officerType": "healthcare professionals",
     "appCatchphrase": {
-      "styled": "Trusted short links from <strong><i>education institutions</i></strong>",
-      "noStyle": "Trusted short links from education institutions"
+      "styled": "Trusted short links from <strong><i>healthcare professionals</i></strong>",
+      "noStyle": "Trusted short links from healthcare professionals"
     },
     "appDescription": {
-      "subtitle": "<strong>$t(general.appTitle)</strong> short links can only be created by education officers, so you can be sure it’s from a trustworthy source."
+      "subtitle": "<strong>$t(general.appTitle)</strong> short links can only be created by healthcare professionals, so you can be sure it’s from a trustworthy source."
     },
-    "linkAdmins": "education institutions",
-    "appSignInPrompt": "Are you an education officer?",
+    "linkAdmins": "healthcare institutions",
+    "appSignInPrompt": "Are you a healthcare professional?",
     "copyright": "Open Government Products",
     "copyrightTag": "Government Technology Agency of Singapore",
     "links": {
       "contribute": "https://go.gov.sg/go-opensource",
       "directory": "/directory",
-      "faq": "https://guide.for.edu.sg",
-      "privacy": "https://guide.for.edu.sg/privacy",
-      "terms": "https://guide.for.edu.sg/termsofuse",
-      "contact": "http://go.gov.sg/foredusg-contact",
+      "faq": "https://guide.for.sg",
+      "privacy": "https://guide.for.sg/privacy",
+      "terms": "https://guide.for.sg/termsofuse",
+      "contact": "https://go.gov.sg/forsg-contact",
       "builtBy": "https://open.gov.sg",
       "linkedin": "https://sg.linkedin.com/company/open-government-products",
       "facebook": "https://www.facebook.com/opengovsg"
@@ -32,7 +32,7 @@
     "targetUsersPhrase": "(from <strong><a href='https://guide.for.sg' target='_blank' rel='noreferrer' style='color: #6D4559'>selected institutions</a></strong>)",
     "features": {
       "antiPhishing": {
-        "description": "Shorten your links with a trustworthy $t(general.emailDomain) domain, so your users know they are from an education officer."
+        "description": "Shorten your links with a trustworthy $t(general.emailDomain) domain, so your users know they are from a healthcare professional."
       },
       "customised": {
         "description": "Long URLs are hard to remember and take up space. Create and share short links instead."
