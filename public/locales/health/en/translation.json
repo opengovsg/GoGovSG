@@ -29,6 +29,7 @@
     "builtBy": "Built by Open Government Products"
   },
   "homePage": {
+    "targetUsersPhrase": "(from <strong><a href='https://guide.for.sg' target='_blank' rel='noreferrer' style='color: #6D4559'>selected institutions</a></strong>)",
     "features": {
       "antiPhishing": {
         "description": "Shorten your links with a trustworthy $t(general.emailDomain) domain, so your users know they are from an education officer."

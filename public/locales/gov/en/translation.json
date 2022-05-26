@@ -29,6 +29,7 @@
     "builtBy": "Built by Open Government Products"
   },
   "homePage": {
+    "targetUsersPhrase": "(with an email from $t(general.emailDomain))",
     "features": {
       "antiPhishing": {
         "description": "Shorten your links with a trustworthy $t(general.emailDomain) domain, so your users know they are from a public officer."

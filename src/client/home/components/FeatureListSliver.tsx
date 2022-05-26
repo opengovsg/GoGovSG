@@ -117,8 +117,11 @@ const FeatureListSliver = () => {
         color="textPrimary"
         display="inline"
         gutterBottom
+        dangerouslySetInnerHTML={{
+          __html: i18next.t('homePage.targetUsersPhrase'),
+        }}
       >
-        (with an email from {i18next.t('general.emailDomain')})
+        {/* <text ></text> NOTE: dangerouslySetInnerHTML is used as copy includes <a href></a> tag */}
       </Typography>
       <Grid
         container
