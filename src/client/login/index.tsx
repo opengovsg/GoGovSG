@@ -178,7 +178,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
             GAPageView('OTP LOGIN PAGE')
             GAEvent('login page', 'otp', 'successful')
           },
-          placeholder: `e.g. ${i18next.t('general.placeholders.email')}`,
+          placeholder: `e.g. ${i18next.t('login.placeholders.email')}`,
           buttonMessage: 'Sign in',
           textError: emailError,
           textErrorMessage: () =>
@@ -235,23 +235,36 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                         alt="GoGovSG logo"
                       />
                     </Link>
-                    <Typography className={classes.loginHeader} variant="body1">
-                      Only available for use by{' '}
-                      {i18next.t('general.officerType')} with an email from{' '}
-                      <strong>{i18next.t('general.emailDomain')}</strong>.
+                    <Typography
+                      className={classes.loginHeader}
+                      variant="body1"
+                      dangerouslySetInnerHTML={{
+                        __html: i18next.t('login.whitelistPhrase'),
+                      }}
+                    >
+                      {/* <text ></text> NOTE: dangerouslySetInnerHTML is used as copy includes <a href></a> tag */}
                     </Typography>
                     <Typography
                       className={classes.loginReferral}
                       variant="body1"
                     >
-                      {i18next.t('general.referralOfficerPhrase')} can use their{' '}
-                      {i18next.t('general.referralEmailDomain')} emails at{' '}
+                      {i18next.t('login.referrals.1.officerPhrase')} can use
+                      their {i18next.t('login.referrals.1.emailDomain')} emails
+                      at{' '}
                       <Link
-                        href={`https://${i18next.t('general.referralLink')}`}
+                        href={`https://${i18next.t('login.referrals.1.link')}`}
                       >
-                        {i18next.t('general.referralLink')}
+                        {i18next.t('login.referrals.1.link')}
+                      </Link>
+                      , and {i18next.t('login.referrals.2.officerPhrase')} can
+                      use their {i18next.t('login.referrals.2.emailDomain')}{' '}
+                      emails at{' '}
+                      <Link
+                        href={`https://${i18next.t('login.referrals.2.link')}`}
+                      >
+                        {i18next.t('login.referrals.2.link')}
                       </Link>{' '}
-                      to shorten links instead.
+                      to shorten links.
                     </Typography>
                   </span>
                   <span className={classes.textInputGroup}>

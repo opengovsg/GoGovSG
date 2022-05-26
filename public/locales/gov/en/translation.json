@@ -4,9 +4,6 @@
     "shortUrlPrefix": "go.gov.sg/",
     "appTitle": "Go.gov.sg",
     "officerType": "public officers",
-    "referralEmailDomain": "edu.sg",
-    "referralOfficerPhrase": "Staff from selected schools",
-    "referralLink": "for.edu.sg",
     "appCatchphrase": {
       "styled": "Trusted short links from <strong><i>public officers</i></strong>",
       "noStyle": "Trusted short links from public officers"
@@ -18,9 +15,6 @@
     "appSignInPrompt": "Are you a public officer?",
     "copyright": "Open Government Products",
     "copyrightTag": "Government Technology Agency of Singapore",
-    "placeholders": {
-      "email": "jane@data.gov.sg"
-    },
     "links": {
       "contribute": "https://go.gov.sg/go-opensource",
       "directory": "/directory",
@@ -58,6 +52,24 @@
       "6": "IRAS",
       "7": "MOE",
       "8": "MHA"
+    }
+  },
+  "login": {
+    "whitelistPhrase": "Only available for use by $t(general.officerType) with an email from <strong>$t(general.emailDomain)</strong>.",
+    "referrals": {
+      "1": {
+        "officerPhrase": "Staff from selected schools",
+        "emailDomain": "edu.sg",
+        "link": "for.edu.sg"
+      },
+      "2": {
+        "officerPhrase": "selected healthcare professionals",
+        "emailDomain": "",
+        "link": "for.sg"
+      }
+    },
+    "placeholders": {
+      "email": "jane@data.gov.sg"
     }
   }
 }
