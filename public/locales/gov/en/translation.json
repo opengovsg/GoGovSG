@@ -45,14 +45,10 @@
       }
     },
     "trustedBy": {
-      "1": "MOM",
-      "2": "LTA",
-      "3": "MOH",
-      "4": "MSF",
-      "5": "SPF",
-      "6": "IRAS",
-      "7": "MOE",
-      "8": "MHA"
+      "1": "MCI",
+      "2": "MINDEF",
+      "3": "SPF",
+      "4": "WSG"
     }
   },
   "login": {
