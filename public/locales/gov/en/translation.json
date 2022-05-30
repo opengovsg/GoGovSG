@@ -32,7 +32,7 @@
     "targetUsersPhrase": "(with an email from $t(general.emailDomain))",
     "features": {
       "antiPhishing": {
-        "description": "Shorten your links with a trustworthy $t(general.emailDomain) domain, so your users know they are from a public officer."
+        "description": "Shorten your links with a trustworthy $t(general.appTitle) domain, so your users know they are from a public officer."
       },
       "customised": {
         "description": "Long URLs are hard to remember and take up space. Create and share short links instead."
@@ -41,7 +41,7 @@
         "description": "Want to know how popular your links are? Track each link's click rate through our web interface."
       },
       "fileSharing": {
-        "description": "Upload your file to share it with anyone, using a customised and trustworthy go.gov.sg short link."
+        "description": "Upload your file to share it with anyone, using a customised and trustworthy $t(general.appTitle) short link."
       }
     },
     "trustedBy": {
