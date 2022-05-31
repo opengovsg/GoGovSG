@@ -1,5 +1,7 @@
 import React from 'react'
 import { Grid, Typography, createStyles, makeStyles } from '@material-ui/core'
+import i18next from 'i18next'
+
 import trustedBy1 from '@assets/components/home/trusted-by-sliver/1.png'
 import trustedBy2 from '@assets/components/home/trusted-by-sliver/2.png'
 import trustedBy3 from '@assets/components/home/trusted-by-sliver/3.png'
@@ -8,8 +10,6 @@ import trustedBy5 from '@assets/components/home/trusted-by-sliver/5.png'
 import trustedBy6 from '@assets/components/home/trusted-by-sliver/6.png'
 import trustedBy7 from '@assets/components/home/trusted-by-sliver/7.png'
 import trustedBy8 from '@assets/components/home/trusted-by-sliver/8.png'
-
-import i18next from 'i18next'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
