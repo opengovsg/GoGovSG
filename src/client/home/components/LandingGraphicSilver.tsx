@@ -92,13 +92,21 @@ const useStyles = makeStyles((theme) =>
         justifyContent: 'flex-start',
       },
       [theme.breakpoints.up('lg')]: {
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(4),
         alignItems: 'flex-start',
       },
     },
     signInText: {
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
+      color: theme.palette.secondary.light,
+    },
+    signInLink: {
+      color: 'inherit',
+      textDecoration: 'underline',
+      '&:hover': {
+        color: theme.palette.common.white,
+      },
     },
   }),
 )
@@ -168,13 +176,9 @@ const LandingGraphicSliver = () => {
         </Hidden>
         <div className={classes.signInTextContainer}>
           <ApplyAppMargins>
-            <Typography
-              className={classes.signInText}
-              variant="caption"
-              color="secondary"
-            >
+            <Typography className={classes.signInText} variant="caption">
               <Trans>general.appSignInPrompt</Trans>{' '}
-              <Link href="/#/login" color="inherit" underline="always">
+              <Link className={classes.signInLink} href="/#/login">
                 Sign in
               </Link>
             </Typography>
