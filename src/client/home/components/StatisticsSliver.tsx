@@ -55,7 +55,6 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(2),
     },
     getStartedButton: {
-      marginTop: theme.spacing(6),
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
       width: '100%',
@@ -125,20 +124,22 @@ const StatisticsSliver: FunctionComponent = () => {
               </Card>
             </Grid>
           ))}
+          <Grid item>
+            <Button
+              className={classes.getStartedButton}
+              href="/#/login"
+              size="medium"
+              color="primary"
+              variant="contained"
+            >
+              Get started
+            </Button>
+          </Grid>
         </Grid>
         <Grid item>
           <StatisticsGraphic />
         </Grid>
       </Grid>
-      <Button
-        className={classes.getStartedButton}
-        href="/#/login"
-        size="medium"
-        color="primary"
-        variant="contained"
-      >
-        Get started
-      </Button>
     </>
   )
 }
