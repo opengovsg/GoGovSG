@@ -46,9 +46,10 @@
     },
     "trustedBy": {
       "1": "MOH",
-      "2": "MOH Holdings",
+      "2": "NUHS",
       "3": "NHG",
-      "4": "SingHealth"
+      "4": "SingHealth",
+      "5": "IHiS"
     }
   },
   "login": {
