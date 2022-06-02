@@ -29,7 +29,7 @@
     "builtBy": "Built by Open Government Products"
   },
   "homePage": {
-    "targetUsersPhrase": "(from <strong><a href='https://guide.for.sg' target='_blank' rel='noreferrer' style='color: #6D4559'>selected institutions</a></strong>)",
+    "targetUsersPhrase": "(from <strong><a href='https://guide.for.sg/#who-can-use-for.sg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #6D4559;'>selected institutions</a></strong>)",
     "features": {
       "antiPhishing": {
         "description": "Shorten your links with a trustworthy $t(general.appTitle) domain, so your users know they are from a healthcare professional."
@@ -52,7 +52,7 @@
     }
   },
   "login": {
-    "whitelistPhrase": "Only available for use by healthcare institutions listed <strong><a href='https://guide.for.sg'  target='_blank' rel='noreferrer' style='color: #6D4559'>here</a></strong>.",
+    "whitelistPhrase": "Only available for use by healthcare institutions listed <strong><a href='https://guide.for.sg/#who-can-use-for.sg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #6D4559;'>here</a></strong>.",
     "referrals": {
       "1": {
         "officerPhrase": "Staff from selected schools",
