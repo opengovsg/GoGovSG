@@ -163,6 +163,18 @@ export default responsiveFontSizes(
         },
         outlinedPrimary: {
           border: `1px solid ${palette.primary.main}`,
+          backgroundColor: basicTheme.palette.common.white,
+          '&:hover': {
+            backgroundColor: basicTheme.palette.grey[100],
+          },
+          '&:active': {
+            backgroundColor: palette.primary.main,
+            color: basicTheme.palette.common.white,
+          },
+          '&:disabled': {
+            color: '#bbb',
+            border: `1px solid #bbb`,
+          },
         },
       },
       MuiAppBar: {
