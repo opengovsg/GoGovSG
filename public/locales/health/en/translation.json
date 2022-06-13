@@ -48,6 +48,16 @@
       "fileSharing": {
         "description": "Upload your file to share it with anyone, using a customised and trustworthy $t(general.emailDomain) short link."
       }
+    },
+    "trustedBy": {
+      "1": "MOM",
+      "2": "LTA",
+      "3": "MOH",
+      "4": "MSF",
+      "5": "SPF",
+      "6": "IRAS",
+      "7": "MOE",
+      "8": "MHA"
     }
   }
 }
