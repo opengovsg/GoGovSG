@@ -31,7 +31,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -55,7 +55,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -79,7 +79,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -123,7 +123,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -196,10 +196,10 @@ jobs:
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
@@ -303,10 +303,10 @@ jobs:
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
@@ -412,10 +412,10 @@ jobs:
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: '14.x'
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
