@@ -19,7 +19,7 @@ import { GoGovReduxState } from '../../app/reducers/types'
 const useStyles = makeStyles((theme) =>
   createStyles({
     grid: {
-      marginTop: theme.spacing(8),
+      marginTop: theme.spacing(5),
     },
     card: {
       display: 'flex',
@@ -95,7 +95,7 @@ const StatisticsSliver: FunctionComponent = () => {
 
   return (
     <>
-      <Typography variant="h3" color="textPrimary" gutterBottom>
+      <Typography variant="h3" color="textPrimary">
         The official link shortener for {i18next.t('general.linkAdmins')}
       </Typography>
       <Grid container className={classes.grid} spacing={2}>

@@ -68,7 +68,7 @@ const TrustedBySliver = () => {
         color="textPrimary"
         gutterBottom
       >
-        Trusted by these agencies
+        Trusted by these agencies and more
       </Typography>
       <>
         <Grid className={classes.trustedLogosGroup} container spacing={10}>
