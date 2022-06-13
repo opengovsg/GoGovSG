@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(4),
       },
       maxWidth: '1400px',
+      justifyContent: 'space-between',
     },
     columnGrid: {
       maxWidth: 'min(600px, calc(100% + 48px))',
@@ -128,7 +129,6 @@ const FeatureListSliver = () => {
         className={classes.grid}
         spacing={6}
         direction={!isDesktopWidth ? 'column' : 'row'}
-        justify="space-between"
       >
         {columns.map((column) => (
           <Grid

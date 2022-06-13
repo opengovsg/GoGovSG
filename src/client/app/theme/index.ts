@@ -1,9 +1,9 @@
 import { PaletteType } from '@material-ui/core'
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles'
 import assetVariant from '../../../shared/util/asset-variant'
 
 // Provides theme spacing, breakpoint values for the main theme to consume.
-const basicTheme = createMuiTheme({
+const basicTheme = createTheme({
   breakpoints: {
     values: {
       xs: 0,
@@ -90,7 +90,7 @@ const paletteVariants = {
 const palette = paletteVariants[assetVariant]
 
 export default responsiveFontSizes(
-  createMuiTheme({
+  createTheme({
     breakpoints: basicTheme.breakpoints,
     palette,
     typography: {
