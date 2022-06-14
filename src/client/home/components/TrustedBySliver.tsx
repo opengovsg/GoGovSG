@@ -7,14 +7,14 @@ import trustedBy2 from '@assets/components/home/trusted-by-sliver/2.png'
 import trustedBy3 from '@assets/components/home/trusted-by-sliver/3.png'
 import trustedBy4 from '@assets/components/home/trusted-by-sliver/4.png'
 import trustedBy5 from '@assets/components/home/trusted-by-sliver/5.png'
-import trustedBy6 from '@assets/components/home/trusted-by-sliver/6.png'
-import trustedBy7 from '@assets/components/home/trusted-by-sliver/7.png'
-import trustedBy8 from '@assets/components/home/trusted-by-sliver/8.png'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     trustedByText: {
       paddingBottom: theme.spacing(4),
+    },
+    trustedLogosGroup: {
+      justifyContent: 'center',
     },
     trustedLogoGrid: {
       display: 'flex',
@@ -57,9 +57,6 @@ const TrustedBySliver = () => {
     { name: i18next.t('homePage.trustedBy.3'), icon: trustedBy3 },
     { name: i18next.t('homePage.trustedBy.4'), icon: trustedBy4 },
     { name: i18next.t('homePage.trustedBy.5'), icon: trustedBy5 },
-    { name: i18next.t('homePage.trustedBy.6'), icon: trustedBy6 },
-    { name: i18next.t('homePage.trustedBy.7'), icon: trustedBy7 },
-    { name: i18next.t('homePage.trustedBy.8'), icon: trustedBy8 },
   ]
 
   const classes = useStyles()
@@ -71,25 +68,27 @@ const TrustedBySliver = () => {
         color="textPrimary"
         gutterBottom
       >
-        Trusted by these agencies
+        Trusted by these agencies and more
       </Typography>
-      <Grid container spacing={2}>
-        {trustedLogos.map((trustedLogo) => (
-          <Grid
-            item
-            className={classes.trustedLogoGrid}
-            key={trustedLogo.name}
-            xs={4}
-            md={3}
-          >
-            <img
-              className={classes.trustedLogo}
-              src={trustedLogo.icon}
-              alt={trustedLogo.name}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <>
+        <Grid className={classes.trustedLogosGroup} container spacing={10}>
+          {trustedLogos.map((trustedLogo) => (
+            <Grid
+              item
+              className={classes.trustedLogoGrid}
+              key={trustedLogo.name}
+              xs={4}
+              md={2}
+            >
+              <img
+                className={classes.trustedLogo}
+                src={trustedLogo.icon}
+                alt={trustedLogo.name}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </>
     </>
   )
 }

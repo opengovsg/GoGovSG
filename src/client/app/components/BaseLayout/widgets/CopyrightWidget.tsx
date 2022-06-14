@@ -2,6 +2,7 @@ import React from 'react'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import classNames from 'classnames'
 import i18next from 'i18next'
+import { format } from 'date-fns-tz'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -30,7 +31,8 @@ const CopyrightWidget = ({ className }: CopyrightWidgetProps) => {
   return (
     <span className={classNames(className, classes.copyright)}>
       <Typography variant="caption" className={classes.copyrightText}>
-        {i18next.t('general.copyright')} <br className={classes.mobileFooter} />{' '}
+        © {format(Date.now(), 'yyyy')} {i18next.t('general.copyright')},
+        <br className={classes.mobileFooter} />{' '}
         {i18next.t('general.copyrightTag')}
       </Typography>
     </span>

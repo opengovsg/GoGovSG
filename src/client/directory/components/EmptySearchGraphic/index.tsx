@@ -49,7 +49,7 @@ const EmptyStateGraphic: FunctionComponent = () => {
       </Typography>
       <Typography variant="body1" className={classes.emptyStateBodyText}>
         Search by keyword or email to see what links other{' '}
-        {i18next.t('general.emailDomain')} officers <br />
+        {i18next.t('general.officerType')} <br />
         have created, and find link owners. The directory is only available{' '}
         <br />
         to users who are signed in.
