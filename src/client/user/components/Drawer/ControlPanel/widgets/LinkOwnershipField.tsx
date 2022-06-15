@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react'
 import { useMediaQuery, useTheme } from '@material-ui/core'
+import i18next from 'i18next'
 
 import ConfigOption, {
   TrailingPosition,
@@ -27,7 +28,9 @@ const LinkOwnershipField: FunctionComponent<LinkOwnershipFieldProps> = ({
     <>
       Link owner{' '}
       <DrawerTooltip
-        title="Links can only be transferred to an existing Go.gov.sg user"
+        title={`Links can only be transferred to an existing ${i18next.t(
+          'general.appTitle',
+        )} user`}
         imageAltText="Ownership help"
       />
     </>

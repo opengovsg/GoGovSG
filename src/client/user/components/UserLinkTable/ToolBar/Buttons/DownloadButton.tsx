@@ -34,6 +34,7 @@ const DownloadButton = () => {
         <span className={classes.downloadButtonContainer}>
           <Button
             variant="outlined"
+            color="primary"
             onClick={() => downloadUrls(urlCount, tableConfig)}
             className={classes.downloadButton}
           >
