@@ -1,9 +1,9 @@
 import { PaletteType } from '@material-ui/core'
-import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
+import { createTheme, responsiveFontSizes } from '@material-ui/core/styles'
 import assetVariant from '../../../shared/util/asset-variant'
 
 // Provides theme spacing, breakpoint values for the main theme to consume.
-const basicTheme = createMuiTheme({
+const basicTheme = createTheme({
   breakpoints: {
     values: {
       xs: 0,
@@ -66,18 +66,18 @@ const paletteVariants = {
     type: 'light' as PaletteType,
     divider: '#d8d8d8',
     primary: {
-      main: '#48426D',
-      dark: '#2B2E4A',
+      main: '#6D4559',
+      dark: '#472F40',
       contrastText: '#fff',
     },
     secondary: {
-      light: '#D5CDE0',
-      main: '#8F8AB0',
-      dark: '#2B2E4A',
+      light: '#F1D4DF',
+      main: '#AB7F95',
+      dark: '#472F40',
       contrastText: '#000',
     },
     text: {
-      primary: '#48426D',
+      primary: '#6D4559',
       secondary: '#767676',
     },
     background: {
@@ -90,7 +90,7 @@ const paletteVariants = {
 const palette = paletteVariants[assetVariant]
 
 export default responsiveFontSizes(
-  createMuiTheme({
+  createTheme({
     breakpoints: basicTheme.breakpoints,
     palette,
     typography: {
@@ -163,6 +163,18 @@ export default responsiveFontSizes(
         },
         outlinedPrimary: {
           border: `1px solid ${palette.primary.main}`,
+          backgroundColor: basicTheme.palette.common.white,
+          '&:hover': {
+            backgroundColor: basicTheme.palette.grey[100],
+          },
+          '&:active': {
+            backgroundColor: palette.primary.main,
+            color: basicTheme.palette.common.white,
+          },
+          '&:disabled': {
+            color: '#bbb',
+            border: `1px solid #bbb`,
+          },
         },
       },
       MuiAppBar: {

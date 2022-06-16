@@ -1,18 +1,20 @@
 import React from 'react'
 import { Grid, Typography, createStyles, makeStyles } from '@material-ui/core'
-import trustedByMom from '@assets/components/home/trusted-by-sliver/1.png'
-import trustedByLta from '@assets/components/home/trusted-by-sliver/2.png'
-import trustedByMoh from '@assets/components/home/trusted-by-sliver/3.png'
-import trustedByMsf from '@assets/components/home/trusted-by-sliver/4.png'
-import trustedBySpf from '@assets/components/home/trusted-by-sliver/5.png'
-import trustedByIras from '@assets/components/home/trusted-by-sliver/6.png'
-import trustedByMoe from '@assets/components/home/trusted-by-sliver/7.png'
-import trustedByMha from '@assets/components/home/trusted-by-sliver/8.png'
+import i18next from 'i18next'
+
+import trustedBy1 from '@assets/components/home/trusted-by-sliver/1.png'
+import trustedBy2 from '@assets/components/home/trusted-by-sliver/2.png'
+import trustedBy3 from '@assets/components/home/trusted-by-sliver/3.png'
+import trustedBy4 from '@assets/components/home/trusted-by-sliver/4.png'
+import trustedBy5 from '@assets/components/home/trusted-by-sliver/5.png'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     trustedByText: {
       paddingBottom: theme.spacing(4),
+    },
+    trustedLogosGroup: {
+      justifyContent: 'center',
     },
     trustedLogoGrid: {
       display: 'flex',
@@ -48,18 +50,15 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const trustedLogos = [
-  { name: 'MOM', icon: trustedByMom },
-  { name: 'LTA', icon: trustedByLta },
-  { name: 'MOH', icon: trustedByMoh },
-  { name: 'MSF', icon: trustedByMsf },
-  { name: 'SPF', icon: trustedBySpf },
-  { name: 'IRAS', icon: trustedByIras },
-  { name: 'MOE', icon: trustedByMoe },
-  { name: 'MHA', icon: trustedByMha },
-]
-
 const TrustedBySliver = () => {
+  const trustedLogos = [
+    { name: i18next.t('homePage.trustedBy.1'), icon: trustedBy1 },
+    { name: i18next.t('homePage.trustedBy.2'), icon: trustedBy2 },
+    { name: i18next.t('homePage.trustedBy.3'), icon: trustedBy3 },
+    { name: i18next.t('homePage.trustedBy.4'), icon: trustedBy4 },
+    { name: i18next.t('homePage.trustedBy.5'), icon: trustedBy5 },
+  ]
+
   const classes = useStyles()
   return (
     <>
@@ -69,25 +68,27 @@ const TrustedBySliver = () => {
         color="textPrimary"
         gutterBottom
       >
-        Trusted by these agencies
+        Trusted by these agencies and more
       </Typography>
-      <Grid container spacing={2}>
-        {trustedLogos.map((trustedLogo) => (
-          <Grid
-            item
-            className={classes.trustedLogoGrid}
-            key={trustedLogo.name}
-            xs={4}
-            md={3}
-          >
-            <img
-              className={classes.trustedLogo}
-              src={trustedLogo.icon}
-              alt={trustedLogo.name}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <>
+        <Grid className={classes.trustedLogosGroup} container spacing={10}>
+          {trustedLogos.map((trustedLogo) => (
+            <Grid
+              item
+              className={classes.trustedLogoGrid}
+              key={trustedLogo.name}
+              xs={4}
+              md={2}
+            >
+              <img
+                className={classes.trustedLogo}
+                src={trustedLogo.icon}
+                alt={trustedLogo.name}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </>
     </>
   )
 }

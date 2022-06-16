@@ -11,7 +11,6 @@ const useStyles = makeStyles(() =>
     },
     emptyLinkAnalyticsGraphic: {
       marginTop: '24px',
-      marginBottom: '142px',
       position: 'relative',
       zIndex: -1,
     },
@@ -30,15 +29,15 @@ const NoLinkAnalyticsGraphic: FunctionComponent = () => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
+      <div className={classes.emptyLinkAnalyticsGraphic}>
+        <img src={emptyGraphic} alt="empty link analytics graphic" />
+      </div>
       <Typography
         variant="body1"
         className={classes.emptyLinkAnalyticsBodyText}
       >
         Your link does not have any statistics yet
       </Typography>
-      <div className={classes.emptyLinkAnalyticsGraphic}>
-        <img src={emptyGraphic} alt="empty link analytics graphic" />
-      </div>
     </div>
   )
 }

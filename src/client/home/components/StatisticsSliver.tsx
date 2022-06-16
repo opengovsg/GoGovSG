@@ -19,7 +19,7 @@ import { GoGovReduxState } from '../../app/reducers/types'
 const useStyles = makeStyles((theme) =>
   createStyles({
     grid: {
-      marginTop: theme.spacing(8),
+      marginTop: theme.spacing(5),
     },
     card: {
       display: 'flex',
@@ -55,7 +55,6 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(2),
     },
     getStartedButton: {
-      marginTop: theme.spacing(6),
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
       width: '100%',
@@ -82,9 +81,7 @@ const StatisticsSliver: FunctionComponent = () => {
   // ensure number will never be null
   const statisticsToShow = [
     {
-      label: `${i18next
-        .t('general.officerType')
-        .toUpperCase()} OFFICERS ONBOARD`,
+      label: `${i18next.t('general.officerType').toUpperCase()} ONBOARD`,
       number: userCount,
     },
     { label: 'SHORT LINKS CREATED', number: linkCount },
@@ -98,7 +95,7 @@ const StatisticsSliver: FunctionComponent = () => {
 
   return (
     <>
-      <Typography variant="h3" color="textPrimary" gutterBottom>
+      <Typography variant="h3" color="textPrimary">
         The official link shortener for {i18next.t('general.linkAdmins')}
       </Typography>
       <Grid container className={classes.grid} spacing={2}>
@@ -127,20 +124,22 @@ const StatisticsSliver: FunctionComponent = () => {
               </Card>
             </Grid>
           ))}
+          <Grid item>
+            <Button
+              className={classes.getStartedButton}
+              href="/#/login"
+              size="medium"
+              color="primary"
+              variant="contained"
+            >
+              Get started
+            </Button>
+          </Grid>
         </Grid>
         <Grid item>
           <StatisticsGraphic />
         </Grid>
       </Grid>
-      <Button
-        className={classes.getStartedButton}
-        href="/#/login"
-        size="medium"
-        color="primary"
-        variant="contained"
-      >
-        Get started
-      </Button>
     </>
   )
 }

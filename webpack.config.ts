@@ -38,7 +38,7 @@ const eduMetaTags = {
 const healthMetaTags = {
   'og:title': 'For.sg',
   'og:type': 'article',
-  'og:description': 'Trusted short links from health institutions',
+  'og:description': 'Trusted short links from healthcare institutions',
   'og:image':
     'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
 }

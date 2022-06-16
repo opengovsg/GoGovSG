@@ -15,6 +15,7 @@ import antiPhishingIcon from '@assets/components/home/feature-list-sliver/home-p
 import customisedIcon from '@assets/components/home/feature-list-sliver/home-page-customised-icon.svg'
 import analyticsIcon from '@assets/components/home/feature-list-sliver/home-page-analytics-icon.svg'
 import fileSharingIcon from '@assets/components/home/feature-list-sliver/home-page-file-sharing-icon.svg'
+import { hmtlSanitizer } from '../../app/util/format'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -24,6 +25,7 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(4),
       },
       maxWidth: '1400px',
+      justifyContent: 'space-between',
     },
     columnGrid: {
       maxWidth: 'min(600px, calc(100% + 48px))',
@@ -107,7 +109,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
       >
-        Created for {i18next.t('general.officerType')} officers{' '}
+        Created for {i18next.t('general.officerType')}{' '}
       </Typography>
       <Hidden smUp>
         <br />
@@ -117,15 +119,17 @@ const FeatureListSliver = () => {
         color="textPrimary"
         display="inline"
         gutterBottom
+        dangerouslySetInnerHTML={{
+          __html: hmtlSanitizer(i18next.t('homePage.targetUsersPhrase')),
+        }}
       >
-        (with an email from {i18next.t('general.emailDomain')})
+        {/* <text ></text> NOTE: dangerouslySetInnerHTML is used as copy includes <a href></a> tag */}
       </Typography>
       <Grid
         container
         className={classes.grid}
         spacing={6}
         direction={!isDesktopWidth ? 'column' : 'row'}
-        justify="space-between"
       >
         {columns.map((column) => (
           <Grid

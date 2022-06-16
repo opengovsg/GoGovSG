@@ -1,3 +1,5 @@
+import sanitizeHtml from 'sanitize-html'
+
 // Threshold value for click count before applying compact notations.
 export const THRESHOLD_VAL = 9_999_999
 
@@ -62,6 +64,25 @@ export function formatBytes(bytes: number) {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
   return `${parseFloat((bytes / k ** i).toFixed(1))}${sizes[i]}`
+}
+
+export function hmtlSanitizer(dirtyHtmlString: string) {
+  return sanitizeHtml(dirtyHtmlString, {
+    allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel', 'style'],
+    },
+    allowedStyles: {
+      '*': {
+        // Match HEX and RGB
+        color: [
+          /^#(0x)?[0-9a-f]+$/i,
+          /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/,
+        ],
+        'text-decoration': [/^underline$/],
+      },
+    },
+  })
 }
 
 export default new Intl.NumberFormat()
