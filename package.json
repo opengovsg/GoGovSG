@@ -94,7 +94,7 @@
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "^0.13.8",
     "sanitize-html": "^2.7.0",
-    "sequelize": "^6.6.5",
+    "sequelize": "^6.19.1",
     "sharp": "^0.30.5",
     "ua-parser-js": "^0.7.28",
     "uuid": "^8.3.2",
