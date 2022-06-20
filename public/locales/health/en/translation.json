@@ -45,7 +45,7 @@
       }
     },
     "trustedBy": {
-      "1": "MOH",
+      "1": "AIC",
       "2": "NUHS",
       "3": "NHG",
       "4": "SingHealth",
@@ -67,7 +67,7 @@
       }
     },
     "placeholders": {
-      "email": "jane@moh.gov.sg"
+      "email": "jane@aic.sg"
     }
   }
 }
