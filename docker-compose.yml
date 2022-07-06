@@ -50,6 +50,7 @@ services:
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
+      - ~/Projects/ContainerLogs:/root/.npm/_logs
 
   postgres:
     image: postgres:11.1-alpine
