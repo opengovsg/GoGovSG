@@ -10,3 +10,4 @@ build
 coverage
 .DS_Store
 .dccache
+.idea
