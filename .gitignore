@@ -1,6 +1,7 @@
 .localstack
 .vscode
 .env
+.logs
 node_modules
 dist
 *.log
@@ -9,3 +10,4 @@ build
 coverage
 .DS_Store
 .dccache
+.idea
