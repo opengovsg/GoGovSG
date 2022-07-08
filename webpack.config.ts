@@ -40,7 +40,7 @@ const healthMetaTags = {
   'og:type': 'article',
   'og:description': 'Trusted short links from healthcare institutions',
   'og:image':
-    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/edusg-landing-meta.png',
+    'https://s3-ap-southeast-1.amazonaws.com/gosg-public/forsg-landing-meta.png',
 }
 
 const metaVariantMap = {
