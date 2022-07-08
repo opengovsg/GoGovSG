@@ -44,6 +44,8 @@ With GoGovSg, citizens are safe in the knowledge that the links are **official**
 
 ## Getting Started
 
+Make sure you have node version `14`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
+
 Start by cloning the repository and installing dependencies.
 
 ```bash
@@ -58,8 +60,6 @@ npm install
 ```
 
 ### Running Locally
-
-Make sure you have docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed. Then run:
 
 ```bash
 npm run dev
