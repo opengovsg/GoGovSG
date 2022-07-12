@@ -16,13 +16,11 @@ async function handler(event) {
     const sqlScript = `SELECT migrate_url_to_user($1, $2)`
     const values = [shortUrl, toUserEmail]
 
-    const { rowCount } = await pgClient.query(sqlScript, values)
+    await pgClient.query(sqlScript, values)
 
     pgClient.end().then(() => console.log('Disconnected'))
 
-    statusMsg = `URL successfully migrated. ${JSON.stringify(
-      rowCount,
-    )} rows affected`
+    statusMsg = 'URL successfully migrated.'
   } catch (err) {
     console.log(err)
     pgClient.end()
