@@ -16,7 +16,8 @@ async function handler(event) {
     const sqlScript = `SELECT migrate_user_links($1, $2)`
     const values = [fromUserEmail, toUserEmail]
 
-    const { rowCount } = await pgClient.query(sqlScript, values)
+    const { rows } = await pgClient.query(sqlScript, values)
+    const rowCount = rows[0].migrate_user_links
 
     pgClient.end().then(() => console.log('Disconnected'))
 
