@@ -213,6 +213,7 @@ jobs:
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
           zip -r "deploy.zip" Dockerrun.aws.json
+          sed -i -e "s#@DD_API_KEY#$DD_API_KEY#g" .ebextensions/99datadog.config
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-gogov.outputs.tag }}
@@ -274,6 +275,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
           SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
   build-edu:
     name: Build and push for edu
     runs-on: ubuntu-18.04
@@ -327,6 +329,7 @@ jobs:
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s#@DD_API_KEY#$DD_API_KEY#g" .ebextensions/99datadog.config
           zip -r "deploy.zip" Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
@@ -391,6 +394,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
           SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
   build-health:
     name: Build and push for health
     runs-on: ubuntu-18.04
@@ -444,6 +448,7 @@ jobs:
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s#@DD_API_KEY#$DD_API_KEY#g" .ebextensions/99datadog.config
           zip -r "deploy.zip" Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
@@ -508,3 +513,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
           SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
