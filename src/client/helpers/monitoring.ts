@@ -8,8 +8,8 @@ import { datadogRum } from '@datadog/browser-rum'
 // }
 
 datadogRum.init({
-  applicationId: process.env.DATADOG_APPLICATION_ID,
-  clientToken: process.env.REACT_APP_DATADOG_CLIENT_TOKEN,
+  applicationId: process.env.DATADOG_APPLICATION_ID as string,
+  clientToken: process.env.REACT_APP_DATADOG_CLIENT_TOKEN as string,
   site: 'datadoghq.com',
   service: 'gogovsg',
 
