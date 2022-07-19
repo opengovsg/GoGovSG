@@ -2,16 +2,16 @@ import { datadogRum } from '@datadog/browser-rum'
 
 const initMonitoringIfTokensPresent = () => {
   console.log('before dataDogRum init')
-  if (
-    !process.env.REACT_APP_DATADOG_APPLICATION_ID ||
-    !process.env.REACT_APP_DATADOG_CLIENT_TOKEN
-  ) {
-    console.log('dataDogRum init failed, missing env vars')
-    return
-  }
+  // if (
+  //   !process.env.REACT_APP_DATADOG_APPLICATION_ID ||
+  //   !process.env.REACT_APP_DATADOG_CLIENT_TOKEN
+  // ) {
+  //   console.log('dataDogRum init failed, missing env vars')
+  //   return
+  // }
   datadogRum.init({
-    applicationId: process.env.REACT_APP_DATADOG_APPLICATION_ID as string,
-    clientToken: process.env.REACT_APP_DATADOG_CLIENT_TOKEN as string,
+    applicationId: '898ea704-7347-45dc-b40c-bf85359e062e',
+    clientToken: 'pub40fb07aa43d3f6f034d8fcc7f1df867b',
     site: 'datadoghq.com',
     service: 'gogovsg',
 
