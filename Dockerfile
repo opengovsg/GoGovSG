@@ -5,8 +5,6 @@ LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 # Inject ASSET_VARIANT via build arguments for production
 ARG __ASSET_VARIANT
 ENV ASSET_VARIANT=${__ASSET_VARIANT:-gov}
-ENV DD_SERVICE=$ASSET_VARIANT
-ENV DD_ENV=$NODE_ENV
 
 WORKDIR /usr/src/gogovsg
 
