@@ -1,11 +1,11 @@
 import { datadogRum } from '@datadog/browser-rum'
 
-if (
-  !process.env.DATADOG_APPLICATION_ID ||
-  !process.env.REACT_APP_DATADOG_CLIENT_TOKEN
-) {
-  return
-}
+// if (
+//   !process.env.DATADOG_APPLICATION_ID ||
+//   !process.env.REACT_APP_DATADOG_CLIENT_TOKEN
+// ) {
+//   return
+// }
 
 datadogRum.init({
   applicationId: process.env.DATADOG_APPLICATION_ID,
