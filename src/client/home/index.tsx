@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import homeActions from './actions'
 import loginActions from '../login/actions'
@@ -14,6 +13,9 @@ import LandingGraphicSilver from './components/LandingGraphicSilver'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
+import initMonitoringIfTokensPresent from '../helpers/monitoring'
+
+initMonitoringIfTokensPresent()
 
 const HomePage: FunctionComponent = () => {
   const theme = useTheme()

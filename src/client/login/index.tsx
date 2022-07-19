@@ -25,7 +25,9 @@ import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
+import initMonitoringIfTokensPresent from '../helpers/monitoring'
 
+initMonitoringIfTokensPresent()
 type LoginPageProps = {
   location?: {
     state?: {
