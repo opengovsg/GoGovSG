@@ -32,7 +32,7 @@ The official Singapore government link shortener.
 
 ## Introduction
 
-GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve two link shortener environments, [for.edu.sg](https://www.for.edu.sg), and [Go.gov.sg](https://www.go.gov.sg).
+GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
 
 There are multiple reasons why we built an official government link shortener:
 
@@ -121,7 +121,7 @@ After these have been set up, set the environment variables according to the tab
 |CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
 |CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|
 |SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|
-|ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `edu`, `gov`|
+|ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `gov`, `edu`, `health`|
 |COOKIE_MAX_AGE|Yes|Session duration of cookie|
 |REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 
@@ -158,7 +158,7 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 
 |Environment Variable|Required|Description/Value|
 |:---:|:---:|:---|
-|EB_ENV_(EDU_)PRODUCTION, EB_ENV_(EDU_)STAGING|Yes|Elastic Beanstalk environment name|
+|EB_ENV_(EDU_/HEALTH_)PRODUCTION, EB_ENV_(EDU_/HEALTH_)STAGING|Yes|Elastic Beanstalk environment name|
 |EB_APP_PRODUCTION, EB_APP_STAGING|Yes|Elastic Beanstalk application name|
 |EB_BUCKET_PRODUCTION, EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|
 |PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
@@ -175,7 +175,7 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 
 Functions to safely transfer links to new owners can be accessed on AWS Lambda console (for authorized users only).
 
-To transfer a single link to a new email address (must be lowercase), please use the relevant Lambda function ([gogov-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/gogovsg-production-migrate-url-to-user?tab=testing), [edu-production]()) to create an event with the following event body:
+To transfer a single link to a new email address (must be lowercase), please use the relevant Lambda function ([gogov-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/gogovsg-production-migrate-url-to-user?tab=testing), [edu-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/edu-production-migrate-url-to-user?tab=testing), [health-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/health-production-migrate-url-to-user?tab=testing)) to create an event with the following event body:
 
 ```json
 {
@@ -184,7 +184,7 @@ To transfer a single link to a new email address (must be lowercase), please use
 }
 ```
 
-To transfer all links belonging to an account to another account, please use the relevant Lambda function ([gogov-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/gogovsg-production-migrate-user-links?tab=testing), [edu-production]()) to create an event with the following event body:
+To transfer all links belonging to an account to another account, please use the relevant Lambda function ([gogov-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/gogovsg-production-migrate-user-links?tab=testing), [edu-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/edu-production-migrate-user-links?tab=testing), [health-production](https://ap-southeast-1.console.aws.amazon.com/lambda/home?region=ap-southeast-1#/functions/health-production-migrate-user-links?tab=testing)) to create an event with the following event body:
 
 ```json
 {
@@ -201,7 +201,7 @@ All source code resides in the `src` directory. Inside `src`, there is `client` 
 
 ### Asset variants
 
-This repository serves as the codebase to serve two link shortener environments, [for.edu.sg](https://www.for.edu.sg), and [Go.gov.sg](https://www.go.gov.sg). These environments are run on separate infrastructure, and the deployment pipeline is set up to deploy any code changes in this codebase across all infrastructure environments. The environments are identical apart from the assets, copy and list of authorized users.
+This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg). These environments are run on separate infrastructure, and the deployment pipeline is set up to deploy any code changes in this codebase across all infrastructure environments. The environments are identical apart from the assets, copy and list of authorized users.
 
 ### Babel
 
