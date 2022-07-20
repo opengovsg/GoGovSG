@@ -217,6 +217,8 @@ jobs:
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-gogov.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -335,6 +337,8 @@ jobs:
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-edu.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.NODE_ENV }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -455,6 +459,8 @@ jobs:
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-health.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - run: |
           echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
