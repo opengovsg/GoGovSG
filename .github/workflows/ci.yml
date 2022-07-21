@@ -213,7 +213,7 @@ jobs:
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
           sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
-          zip -r "deploy.zip" Dockerrun.aws.json
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-gogov.outputs.tag }}
@@ -333,7 +333,7 @@ jobs:
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
           sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
-          zip -r "deploy.zip" Dockerrun.aws.json
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-edu.outputs.tag }}
@@ -455,7 +455,7 @@ jobs:
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
           sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
-          zip -r "deploy.zip" Dockerrun.aws.json
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-health.outputs.tag }}
