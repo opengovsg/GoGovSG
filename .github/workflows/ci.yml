@@ -208,6 +208,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
@@ -230,13 +237,6 @@ jobs:
         env:
           TAG: ${{ needs.build-gogov.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-      - run: |
-          echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
-          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-          fi
       - name: Select Elastic Beanstalk variables
         shell: python
         run: |
@@ -277,8 +277,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
           SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ${{ env.SERVERLESS_STAGE }}
   build-edu:
     name: Build and push for edu
     runs-on: ubuntu-18.04
@@ -328,6 +326,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
@@ -350,13 +355,6 @@ jobs:
         env:
           TAG: ${{ needs.build-edu.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-      - run: |
-          echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
-          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-          fi
       - name: Select Elastic Beanstalk variables
         shell: python
         run: |
@@ -399,8 +397,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
           SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ${{ env.SERVERLESS_STAGE }}
   build-health:
     name: Build and push for health
     runs-on: ubuntu-18.04
@@ -450,6 +446,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
@@ -461,13 +464,6 @@ jobs:
           TAG: ${{ needs.build-health.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_ENV: ${{ env.SERVERLESS_STAGE }}
-      - run: |
-          echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
-          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-          fi
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -521,5 +517,3 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
           SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ${{ env.SERVERLESS_STAGE }}
