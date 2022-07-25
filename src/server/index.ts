@@ -111,6 +111,7 @@ app.use(
           'https://www.google-analytics.com/',
           'https://ssl.google-analytics.com/',
           'https://www.googletagmanager.com/',
+          'https://*.browser-intake-datadoghq.com/',
         ],
         connectSrc,
         frameAncestors: ["'self'"],
