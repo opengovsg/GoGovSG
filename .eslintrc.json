@@ -1,8 +1,4 @@
 {
-  "globals": {
-    "DD_SERVICE": true,
-    "DD_ENV": true
-  },
   "parser": "@typescript-eslint/parser",
   "extends": [
     "airbnb",
