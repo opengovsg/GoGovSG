@@ -1,3 +1,4 @@
+import './util/tracing' // This is import has to be placed at the top for Tracing to work properly
 import 'reflect-metadata' // This import has to be placed at the top level for Dependency Injection
 import path from 'path'
 import bodyParser from 'body-parser'

@@ -155,6 +155,8 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |AWS_SECRET_ACCESS_KEY|Yes|AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3|
 |SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps|
 |GITHUB_TOKEN|Yes*|Used by Coveralls to verify test coverage on repo. Does not need to be manually specified as it is specified by Github Actions. [More Info](https://docs.github.com/en/actions/security-guides/automatic-token-authentication)
+|DD_API_KEY|Yes*|Datadog API Key used for integration with Datadog to Trace/Logs collection
+
 
 |Environment Variable|Required|Description/Value|
 |:---:|:---:|:---|

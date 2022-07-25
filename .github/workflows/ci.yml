@@ -208,14 +208,24 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          zip -r "deploy.zip" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-gogov.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -227,13 +237,6 @@ jobs:
         env:
           TAG: ${{ needs.build-gogov.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-      - run: |
-          echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
-          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-          fi
       - name: Select Elastic Beanstalk variables
         shell: python
         run: |
@@ -323,14 +326,24 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Package Dockerrun.aws.json
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          zip -r "deploy.zip" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-edu.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.NODE_ENV }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -342,13 +355,6 @@ jobs:
         env:
           TAG: ${{ needs.build-edu.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-      - run: |
-          echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
-          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-          fi
       - name: Select Elastic Beanstalk variables
         shell: python
         run: |
@@ -440,14 +446,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
-      - name: Package Dockerrun.aws.json
-        run: |
-          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
-          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          zip -r "deploy.zip" Dockerrun.aws.json
-        env:
-          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
-          TAG: ${{ needs.build-health.outputs.tag }}
       - run: |
           echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -455,6 +453,17 @@ jobs:
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
             echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
           fi
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build-health.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
