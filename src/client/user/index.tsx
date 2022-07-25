@@ -11,9 +11,7 @@ import useIsFiltered from './components/EmptyState/isFiltered'
 import loginActions from '../login/actions'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
-import initMonitoringIfTokensPresent from '../helpers/monitoring'
 
-initMonitoringIfTokensPresent()
 /**
  * Show the user page.
  */

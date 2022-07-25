@@ -16,9 +16,7 @@ import DirectoryResults from './components/DirectoryResults'
 import EmptyStateGraphic from './components/EmptySearchGraphic'
 import { defaultSortOption } from './constants'
 import { GAEvent, GAPageView } from '../app/util/ga'
-import initMonitoringIfTokensPresent from '../helpers/monitoring'
 
-initMonitoringIfTokensPresent()
 /**
  * Search query parameters for calling directory endpoint.
  */
