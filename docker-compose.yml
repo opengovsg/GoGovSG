@@ -47,6 +47,8 @@ services:
       - ASSET_VARIANT=gov
       - SES_HOST=maildev
       - SES_PORT=25
+      - DD_SERVICE=gov
+      - DD_ENV=staging
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src

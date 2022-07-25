@@ -129,6 +129,8 @@ module.exports = () => {
       }),
     ],
   }
+  console.log(`DD_SERVICE is: ${DD_SERVICE}`)
+  console.log(`DD_ENV is: ${DD_ENV}`)
   if (requiredSentryEnvVar.reduce((x, y) => x && y)) {
     console.log(
       '\x1b[32m[webpack-sentry-sourcemaps] Build will include upload of sourcemaps to Sentry.\x1b[0m',
