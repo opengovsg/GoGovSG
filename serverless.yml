@@ -4,7 +4,7 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: ${env:SERVERLESS_STAGE}
+  # stage: ${env:SERVERLESS_STAGE}
   region: ap-southeast-1
   memorySize: 256
 
