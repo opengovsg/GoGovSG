@@ -14,7 +14,9 @@ import LandingGraphicSilver from './components/LandingGraphicSilver'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
+import initMonitoringIfTokensPresent from '../app/helpers/monitoring'
 
+initMonitoringIfTokensPresent()
 const HomePage: FunctionComponent = () => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
