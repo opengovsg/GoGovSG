@@ -200,7 +200,7 @@ jobs:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image __DD_ENV=${SERVERLESS_STAGE} .
+          docker build --tag my-image --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-gogov:
@@ -324,7 +324,7 @@ jobs:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __ASSET_VARIANT=edu __DD_ENV=${SERVERLESS_STAGE} .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=edu --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-edu:
@@ -450,7 +450,7 @@ jobs:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __ASSET_VARIANT=health __DD_ENV=${SERVERLESS_STAGE} .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=health --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-health:
