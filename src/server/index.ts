@@ -115,6 +115,7 @@ app.use(
           'https://*.browser-intake-datadoghq.com/',
           'https://www.datadoghq-browser-agent.com/',
         ],
+        workerSrc: ['blob:'],
         connectSrc,
         frameAncestors: ["'self'"],
         ...(cspReportUri ? { reportUri: cspReportUri } : {}),
