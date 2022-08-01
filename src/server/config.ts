@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
 import { ConnectionOptions } from 'sequelize'
 import winston, { createLogger, format, transports } from 'winston'
+import DatadogWinston from 'datadog-winston'
 import minimatch from 'minimatch'
 import { parse } from 'url'
 import { parse as parseUri } from 'pg-connection-string'
@@ -61,6 +62,15 @@ export const logger: winston.Logger = createLogger({
     }),
   ],
 })
+
+// Export logs to Datadog
+logger.add(
+  new DatadogWinston({
+    apiKey: process.env.DD_API_KEY as string,
+    service: `${assetVariant}-${process.env.DD_ENV}`,
+    ddsource: 'nodejs',
+  }),
+)
 
 const exitIfAnyMissing = (vars: string[]) => {
   const err = vars.reduce((res, e) => {
