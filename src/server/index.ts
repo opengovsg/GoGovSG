@@ -78,7 +78,6 @@ const connectSrc = [
   'https://www.google-analytics.com/',
   'https://stats.g.doubleclick.net/',
   'https://*.browser-intake-datadoghq.com/',
-  'https://rum.browser-intake-datadoghq.com/',
 ]
 if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
