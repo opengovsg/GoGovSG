@@ -1,11 +1,11 @@
 useDotenv: true
 service: ${env:SERVERLESS_SERVICE}
 frameworkVersion: '3'
+configValidationMode: error
 
 provider:
   name: aws
   runtime: nodejs14.x
-  # stage: ${env:SERVERLESS_STAGE}
   region: ap-southeast-1
   memorySize: 256
 
@@ -21,7 +21,6 @@ functions:
     memorySize: 128
     description: Postgresql user-defined function for migrating a url to an existing user
     package:
-      excludeDevDependencies: false
       patterns:
           - '!./**' 
           - 'src/server/serverless/lambda-migrate-url-to-user/**'
@@ -32,7 +31,6 @@ functions:
     memorySize: 128
     description: Postgresql user-defined function for migrating a user's links to another existing user
     package: 
-      excludeDevDependencies: false
       patterns:
           - '!./**' 
           - 'src/server/serverless/lambda-migrate-user-links/**'
