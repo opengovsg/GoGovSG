@@ -449,9 +449,9 @@ jobs:
       - run: |
           echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            # echo BRANCH_ENV=staging >> $GITHUB_ENV;
+            echo BRANCH_ENV=staging >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            # echo BRANCH_ENV=production >> $GITHUB_ENV;
+            echo BRANCH_ENV=production >> $GITHUB_ENV;
           fi
       - name: Package Dockerrun.aws.json
         run: |
