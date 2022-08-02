@@ -276,7 +276,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          # SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
   build-edu:
     name: Build and push for edu
     runs-on: ubuntu-18.04
@@ -396,7 +395,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          # SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
   build-health:
     name: Build and push for health
     runs-on: ubuntu-18.04
@@ -516,4 +514,3 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          # SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
