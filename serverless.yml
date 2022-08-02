@@ -1,5 +1,6 @@
+useDotenv: true
 service: ${env:SERVERLESS_SERVICE}
-frameworkVersion: '2'
+frameworkVersion: '3'
 
 provider:
   name: aws

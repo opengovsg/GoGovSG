@@ -268,9 +268,9 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@master
+        uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal -v"
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -388,9 +388,9 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@master
+        uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal -v"
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -508,9 +508,9 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@master
+        uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal -v"
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
