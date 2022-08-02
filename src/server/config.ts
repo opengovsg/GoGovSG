@@ -60,13 +60,18 @@ export const logger: winston.Logger = createLogger({
         ),
       ),
     }),
-    new DatadogWinston({
-      apiKey: process.env.DD_API_KEY as string,
-      service: `go-${assetVariant}-${process.env.DD_ENV}`,
-      ddsource: 'nodejs',
-    }),
   ],
 })
+
+// Export logs to datadog on staging and production
+if (!DEV_ENV) {
+  logger.add(
+    new DatadogWinston({
+      apiKey: process.env.DD_API_KEY as string,
+      ddsource: 'nodejs',
+    }),
+  )
+}
 
 const exitIfAnyMissing = (vars: string[]) => {
   const err = vars.reduce((res, e) => {
