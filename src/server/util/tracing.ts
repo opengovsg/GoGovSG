@@ -1,8 +1,12 @@
 import tracer from 'dd-trace'
 import { ClientRequest, IncomingMessage } from 'http'
 import { Span } from 'opentracing'
+import assetVariant from '../../shared/util/asset-variant'
 
-tracer.init()
+tracer.init({
+  logInjection: true,
+  service: `go-${assetVariant}-${process.env.DD_ENV}`,
+})
 tracer.use('http', {
   client: {
     hooks: {
