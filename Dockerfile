@@ -6,6 +6,9 @@ LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 ARG __ASSET_VARIANT
 ENV ASSET_VARIANT=${__ASSET_VARIANT:-gov}
 
+ARG __DD_ENV
+ENV DD_ENV=${__DD_ENV}
+
 WORKDIR /usr/src/gogovsg
 
 # For Express server

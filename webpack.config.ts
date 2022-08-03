@@ -123,7 +123,6 @@ module.exports = () => {
         meta: metaVariant,
       }),
       new webpack.DefinePlugin({
-        'process.env.ASSET_VARIANT': JSON.stringify(assetVariant),
         DD_SERVICE: JSON.stringify(assetVariant),
         DD_ENV: JSON.stringify(ddEnv),
       }),
