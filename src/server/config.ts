@@ -64,10 +64,11 @@ export const logger: winston.Logger = createLogger({
 })
 
 // Export logs to datadog on staging and production
-if (!DEV_ENV) {
+const datadogApiKey: string | undefined = process.env.DD_API_KEY
+if (!DEV_ENV && !!datadogApiKey) {
   logger.add(
     new DatadogWinston({
-      apiKey: process.env.DD_API_KEY as string,
+      apiKey: datadogApiKey,
       ddsource: 'nodejs',
     }),
   )
