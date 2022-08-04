@@ -15,6 +15,14 @@ const initMonitoring = () => {
     premiumSampleRate: 100,
     trackInteractions: true,
     defaultPrivacyLevel: 'mask-user-input',
+    allowedTracingOrigins: [
+      'https://go.gov.sg',
+      'https://for.edu.sg',
+      'https://for.sg',
+      'https://staging.go.gov.sg',
+      'https://staging.for.edu.sg',
+      'https://staging.for.sg',
+    ],
   })
   datadogRum.startSessionReplayRecording()
 }
