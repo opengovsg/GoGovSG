@@ -1,5 +1,4 @@
 import { datadogRum } from '@datadog/browser-rum'
-import { DD_ENV, DD_SERVICE } from './helpers'
 
 const initMonitoring = () => {
   datadogRum.init({
