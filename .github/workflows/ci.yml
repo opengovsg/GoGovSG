@@ -189,12 +189,18 @@ jobs:
       - name: Login to Amazon ECR
         id: login_ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - run: |
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Build, tag, and push image to Amazon ECR
         env:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image .
+          docker build --tag my-image --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-gogov:
@@ -307,12 +313,18 @@ jobs:
       - name: Login to Amazon ECR
         id: login_ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - run: |
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Build, tag, and push image to Amazon ECR
         env:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __ASSET_VARIANT=edu .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=edu --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-edu:
@@ -343,7 +355,7 @@ jobs:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-edu.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_ENV: ${{ env.NODE_ENV }}
+          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -427,12 +439,18 @@ jobs:
       - name: Login to Amazon ECR
         id: login_ecr
         uses: aws-actions/amazon-ecr-login@v1
+      - run: |
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
       - name: Build, tag, and push image to Amazon ECR
         env:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __ASSET_VARIANT=health .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=health --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-health:
