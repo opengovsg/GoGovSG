@@ -5,8 +5,8 @@ const initMonitoring = () => {
     applicationId: '898ea704-7347-45dc-b40c-bf85359e062e',
     clientToken: 'pub40fb07aa43d3f6f034d8fcc7f1df867b',
     site: 'datadoghq.com',
-    service: DD_SERVICE,
-    env: DD_ENV,
+    service: process.env.ASSET_VARIANT,
+    env: process.env.DD_ENV,
     // Specify a version number to identify the deployed version of your application in Datadog
     // version: '1.0.0',
     sampleRate: 100,
