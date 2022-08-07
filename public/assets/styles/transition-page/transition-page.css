@@ -27,19 +27,34 @@ body {
   position: absolute;
   bottom: -56px;
   left: 50%;
+  margin-right: -50%;
   transform: translateX(-50%);
 }
 
 .top-half-content h3 {
   font-weight: 600;
-  margin-bottom: 6px;
+}
+
+.top-half-content p {
+  font-size: 16px;
 }
 
 .top-half-content a {
   display: block;
   color: var(--transition-top-half-content-link-color);
-  font-size: 16px;
-  margin-bottom: 35px;
+}
+
+#title {
+  margin-bottom: 16px;
+}
+
+#prompt {
+  margin-bottom: 16px;
+}
+
+#countdown {
+  font-size: 13px;
+  display: inline-block;
 }
 
 .browser-image {
@@ -61,13 +76,14 @@ body {
   width: 100%;
   height: 140px;
   padding-top: 75px;
-  padding-left: 165px;
+  padding-left: 182px;
   color: var(--transition-links-color);
 }
 
 .bottom-half {
   text-align: center;
   min-height: 250px;
+  padding: 0 8px; 
 }
 
 .bottom-half > p {
@@ -75,17 +91,34 @@ body {
   font-size: 13px;
 }
 
-#skip {
-  padding-top: 50px;
-  opacity: 1;
-  display: block;
+#url {
+  font-size: 13px;
   cursor: pointer;
+  display: inline-block;
+  margin-top: 50px;
+  color: var(--transition-skip-span-color);
 }
 
-#skip > span {
-  font-size: 13px;
-  color: var(--transition-skip-span-color);
+#url > span {
   text-decoration: underline;
+}
+
+#url:hover {
+   color: var(--transition-top-half-content-link-hover-color);
+}
+
+#more {
+  margin-top: 35px;
+  opacity: 1;
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 14px;
+  color: black;
+}
+
+#more:hover {
+  color: var(--transition-top-half-content-link-hover-color);
 }
 
 .footer {
@@ -106,11 +139,6 @@ body {
   display: none;
 }
 
-#url {
-  font-size: 13px;
-  display: inline;
-}
-
 #logo {
   padding-bottom: 20px;
 }
@@ -121,28 +149,49 @@ body {
 
 @media only screen and (max-width: 768px) {
   .links {
-    padding-top: 73px;
-    padding-left: 148px;
+    padding-top: 75px;
+    padding-left: 182px;
   }
 }
 
 @media only screen and (max-width: 512px) {
   .top-half {
-    height: 35vh;
+    height: max(35vh, 290px);
   }
 
   .top-half-content {
     bottom: -58px;
-    width: 80%;
   }
 
   .top-half-content h3 {
-    margin-bottom: 12px;
     font-size: 22px;
+    line-height: 1.5;
+  }
+
+  .top-half-content p {
+    font-size: 14px;
   }
 
   .top-half-content a {
     font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  #title {
+    margin-bottom: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  #prompt {
+    margin-bottom: 6px;
+  }
+
+  #url {
+    margin-bottom: 0;
+  }
+
+  #countdown {
     margin-bottom: 0;
   }
 
@@ -181,14 +230,19 @@ body {
   }
 
   .top-half-content h3 {
-    margin-bottom: 0;
-    margin-left: 8px;
-    margin-right: 8px;
+    font-size: 22px;
+    line-height: 1.5;
   }
 
   .top-half-content a {
     margin-left: 8px;
     margin-right: 8px;
+  }
+
+  #title {
+    margin-bottom: 12px;
+    margin-left: 8px;
+    margin-right: 8px; 
   }
 
   .browser-image {

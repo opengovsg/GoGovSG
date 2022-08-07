@@ -21,9 +21,12 @@
     <% } %>
     <div class="top-half">
         <div class="top-half-content">
-            <h3>Check your address bar</h3>
-            <a href="https://go.gov.sg/go-antiphishing" target="_blank" rel="noreferrer noopener">Beware of phishing! <br class="mobile-break">Make sure your link starts with <%- displayHostname.toLowerCase() %></a>
-            <p id="url" data-href="<%- escapedLongUrl %>">You will be redirected in <span id="countdown-seconds">6</span> second<span id="s">s</span></p>
+            <h3 id="title">Official short links by <%- displayHostname.toLowerCase() %></h3>
+            <p id="prompt">
+                Check your address bar.
+                <br class="mobile-break">Make sure the link starts with <%- displayHostname.toLowerCase() %>
+            </p>
+            <p id="countdown">You will be redirected in <span id="countdown-seconds">6</span> second<span id="s">s</span></p>
             <img id="spinner" src="/assets/<%- assetVariant %>/transition-page/images/spinner.gif" alt="loading" />
             <div class="browser-image" style="background-image: url('/assets/<%- assetVariant %>/transition-page/images/browser.svg');">
                 <div class="links" <% if(assetVariant !== 'gov') { %> <%-"style=padding-left:169px;"%> <% } %>><%- displayHostname.toLowerCase() %>/</div>
@@ -31,10 +34,12 @@
         </div>
     </div>
     <div class="bottom-half">
-        
-        <div id="skip">
+        <a id="url" data-href="<%- escapedLongUrl %>">
             <span>I've checked the link. Skip ahead</span>
             <img src="/assets/<%- assetVariant %>/transition-page/icons/icon-arrow-right.svg" alt="right arrow" />
+        </a>
+        <div>
+            <a id="more" href="{{ link to faq page, probably doesnt need to be a gogov link }}">Why are <%- displayHostname.toLowerCase() %> links safe? Find out more ➜</a>
         </div>
         <div class="footer">
             <div id="logo">
