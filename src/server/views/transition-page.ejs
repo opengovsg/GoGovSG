@@ -26,7 +26,9 @@
                 Check your address bar.
                 <br class="mobile-break">Make sure the link starts with <%- displayHostname.toLowerCase() %>
             </p>
-            <p id="countdown">You will be redirected in <span id="countdown-seconds">6</span> second<span id="s">s</span></p>
+            <p id="countdown">
+                You will be redirected to <a id="url-preview"><%- urlWithoutQuery %></a> in <span id="countdown-seconds">6</span> second<span id="s">s</span>
+            </p>
             <img id="spinner" src="/assets/<%- assetVariant %>/transition-page/images/spinner.gif" alt="loading" />
         </div>
     </div>

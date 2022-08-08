@@ -53,6 +53,9 @@ body {
 }
 
 #url-preview {
+  font-size: 13px;
+  cursor: pointer;
+  display: inline;
   text-decoration: underline;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -218,9 +221,5 @@ body {
   .top-half-content h3 {
     font-size: 22px;
     line-height: 1.5;
-  }
-
-  #title {
-    margin-bottom: 12px;
   }
 }

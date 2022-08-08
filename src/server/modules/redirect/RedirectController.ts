@@ -95,6 +95,7 @@ export class RedirectController {
 
         res.status(200).render(TRANSITION_PATH, {
           escapedLongUrl: RedirectController.encodeLongUrl(longUrl),
+          urlWithoutQuery: RedirectController.removeQueryString(longUrl),
           rootDomain,
           gaTrackingId,
           assetVariant,
@@ -131,6 +132,11 @@ export class RedirectController {
    */
   private static encodeLongUrl(longUrl: string) {
     return longUrl.replace(/["]/g, encodeURIComponent)
+  }
+
+  // remove query string as URL might be very long and look dodgy
+  private static removeQueryString(longUrl: string) {
+    return longUrl.split('?')[0]
   }
 }
 
