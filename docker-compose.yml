@@ -46,6 +46,7 @@ services:
       - SAFE_BROWSING_KEY=
       - CLOUDMERSIVE_KEY=
       - ASSET_VARIANT=gov
+      - DD_ENV=development
       - SES_HOST=maildev
       - SES_PORT=25
       - POSTMAN_API_KEY=

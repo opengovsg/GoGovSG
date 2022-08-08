@@ -2,6 +2,9 @@ import { datadogRum } from '@datadog/browser-rum'
 import { ddEnv, ddService } from '../../../shared/util/environment-variables'
 
 const initMonitoring = () => {
+  if (ddEnv === 'development') {
+    return
+  }
   datadogRum.init({
     applicationId: '898ea704-7347-45dc-b40c-bf85359e062e',
     clientToken: 'pub40fb07aa43d3f6f034d8fcc7f1df867b',
