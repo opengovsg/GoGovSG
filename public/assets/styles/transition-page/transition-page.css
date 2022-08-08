@@ -11,24 +11,18 @@ body {
   background: var(--transition-body-color);
 }
 
-#main-message p {
-  line-height: 2rem;
-}
-
 .top-half {
   background: var(--transition-top-half-color) ;
-  height: 50vh;
-  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .top-half-content {
   text-align: center;
   color: var(--transition-top-half-content-color);
-  position: absolute;
-  bottom: -56px;
-  left: 50%;
-  margin-right: -50%;
-  transform: translateX(-50%);
+  padding: 0 16px 115px;
 }
 
 .top-half-content h3 {
@@ -46,6 +40,7 @@ body {
 
 #title {
   margin-bottom: 16px;
+  margin-top: 8px;
 }
 
 #prompt {
@@ -54,36 +49,41 @@ body {
 
 #countdown {
   font-size: 13px;
-  display: inline-block;
+  display: inline;
+}
+
+#url-preview {
+  text-decoration: underline;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break:  break-word;
+  hyphens: auto;
 }
 
 .browser-image {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  max-width: 100%;
   height: 140px;
-  text-align: left;
-  margin-left: auto;
-  margin-right: auto;
-  min-width: 300px;
+  position: relative;
+  top: -95px;
 }
 
 .links {
-  width: 100%;
-  height: 140px;
-  padding-top: 75px;
-  padding-left: 182px;
   color: var(--transition-links-color);
+  position: relative;
+  top: 17px;
+  left: -16px;
 }
 
 .bottom-half {
   text-align: center;
-  min-height: 250px;
+  min-height: 290px;
   padding: 0 8px; 
+  margin-top: -145px;
 }
 
 .bottom-half > p {
@@ -147,27 +147,20 @@ body {
   height: 10px;
 }
 
-@media only screen and (max-width: 768px) {
-  .links {
-    padding-top: 75px;
-    padding-left: 182px;
-  }
-}
-
 @media only screen and (max-width: 512px) {
   .top-half {
-    height: max(35vh, 290px);
+    min-height: 35vh;
   }
 
   .top-half-content {
-    bottom: -58px;
+    padding-bottom: 82px;
   }
 
   .top-half-content h3 {
     font-size: 22px;
     line-height: 1.5;
   }
-
+  
   .top-half-content p {
     font-size: 14px;
   }
@@ -175,42 +168,39 @@ body {
   .top-half-content a {
     font-size: 14px;
     margin-bottom: 12px;
+    line-height: 20px;
   }
 
   #title {
     margin-bottom: 12px;
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-top: 22px;
   }
 
   #prompt {
     margin-bottom: 6px;
   }
-
-  #url {
-    margin-bottom: 0;
-  }
-
+  
   #countdown {
     margin-bottom: 0;
   }
-
+  
   .browser-image {
     width: 300px;
+    margin-left: auto; 
+    margin-right: auto;
+    top: -90px;
   }
 
   .links {
-    padding-top: 73px;
-    padding-left: 115px;
     font-size: 12px;
-    height: 120px;
-    box-sizing: border-box;
+    top: 12px;
+    left: -8px;
   }
-
-  .top-half-content a {
-    line-height: 20px;
+  
+  #url {
+    margin-bottom: 0;
   }
-
+  
   .footer {
     bottom: 30px;
   }
@@ -225,34 +215,12 @@ body {
 }
 
 @media only screen and (max-width: 374px) {
-  .top-half-content {
-    width: 100%;
-  }
-
   .top-half-content h3 {
     font-size: 22px;
     line-height: 1.5;
   }
 
-  .top-half-content a {
-    margin-left: 8px;
-    margin-right: 8px;
-  }
-
   #title {
     margin-bottom: 12px;
-    margin-left: 8px;
-    margin-right: 8px; 
-  }
-
-  .browser-image {
-    width: 300px;
-  }
-
-  .links {
-    padding-top: 73px;
-    padding-left: 115px;
-    font-size: 12px;
-    box-sizing: border-box;
   }
 }

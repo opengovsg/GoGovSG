@@ -28,10 +28,10 @@
             </p>
             <p id="countdown">You will be redirected in <span id="countdown-seconds">6</span> second<span id="s">s</span></p>
             <img id="spinner" src="/assets/<%- assetVariant %>/transition-page/images/spinner.gif" alt="loading" />
-            <div class="browser-image" style="background-image: url('/assets/<%- assetVariant %>/transition-page/images/browser.svg');">
-                <div class="links" <% if(assetVariant !== 'gov') { %> <%-"style=padding-left:169px;"%> <% } %>><%- displayHostname.toLowerCase() %>/</div>
-            </div>
         </div>
+    </div>
+    <div class="browser-image" style="background-image: url('/assets/<%- assetVariant %>/transition-page/images/browser.svg');">
+        <div class="links" <% if(assetVariant !== 'gov') { %> <%-"style=padding-left:169px;"%> <% } %>><%- displayHostname.toLowerCase() %>/</div>
     </div>
     <div class="bottom-half">
         <a id="url" data-href="<%- escapedLongUrl %>">
