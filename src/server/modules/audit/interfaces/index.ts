@@ -1,6 +1,8 @@
 export {
   LinkAudit,
   LinkAuditService,
-  LinkAuditService as default,
+  LinkChangeSet,
+  LinkChangeKey,
+  LinkChangeType,
 } from './LinkAuditService'
 export { UrlHistoryRecord, UrlHistoryRepository } from './UrlHistoryRepository'
