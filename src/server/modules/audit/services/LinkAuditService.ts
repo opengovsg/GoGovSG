@@ -52,7 +52,7 @@ export class LinkAuditService implements interfaces.LinkAuditService {
   }
 
   // Helper function to compute change sets for initial url creation
-  computeInitialChangeSets: (
+  computeInitialChangeSet: (
     currUrlHistory: interfaces.UrlHistoryRecord,
     keysToTrack?: interfaces.LinkChangeKey[],
   ) => interfaces.LinkChangeSet[] = (
@@ -86,7 +86,7 @@ export class LinkAuditService implements interfaces.LinkAuditService {
     }
     if (isLastCreate) {
       changeSets.push(
-        ...this.computeInitialChangeSets(urlHistories[urlHistories.length - 1]),
+        ...this.computeInitialChangeSet(urlHistories[urlHistories.length - 1]),
       )
     }
     return changeSets
@@ -95,8 +95,8 @@ export class LinkAuditService implements interfaces.LinkAuditService {
   getLinkAudit: (
     userId: number,
     shortUrl: string,
-    limit: number,
-    offset: number,
+    limit?: number,
+    offset?: number,
   ) => Promise<interfaces.LinkAudit | null> = async (
     userId,
     shortUrl,

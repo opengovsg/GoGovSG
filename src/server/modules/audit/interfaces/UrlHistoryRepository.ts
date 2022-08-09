@@ -1,10 +1,13 @@
-import { UrlHistoryType } from '../../../models/url'
-
-export type UrlHistoryRecord = Pick<
-  UrlHistoryType,
-  // to change depending on what records are requested for
-  'longUrl' | 'state' | 'shortUrl' | 'createdAt'
-> & { userEmail: string }
+export interface UrlHistoryRecord {
+  // to change depending on what records changes are requested for
+  userEmail: string
+  longUrl: string
+  shortUrl: string
+  state: string
+  description: string
+  isFile: boolean
+  createdAt: string
+}
 
 export interface UrlHistoryRepository {
   /**

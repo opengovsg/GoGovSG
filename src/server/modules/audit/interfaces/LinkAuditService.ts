@@ -12,8 +12,8 @@ export type LinkChangeType = 'create' | 'update'
 export interface LinkChangeSet {
   type: LinkChangeType
   key: LinkChangeKey
-  prevValue: string
-  currValue: string
+  prevValue: string | boolean
+  currValue: string | boolean
   updatedAt: string
 }
 
@@ -31,7 +31,7 @@ export interface LinkAuditService {
     keysToTrack?: LinkChangeKey[],
   ): LinkChangeSet[]
 
-  computeInitialChangeSets(
+  computeInitialChangeSet(
     currUrlHistory: UrlHistoryRecord,
     keysToTrack?: LinkChangeKey[],
   ): LinkChangeSet[]
