@@ -40,7 +40,12 @@ type UrlTypeStatic = typeof Sequelize.Model & {
  * Logs the creation and modification of shorturls.
  * ShortUrl is not included as it is the foreign key.
  */
-interface UrlHistoryType extends IdType, UrlBaseType, Sequelize.Model {}
+export interface UrlHistoryType extends IdType, UrlBaseType, Sequelize.Model {
+  readonly createdAt: string
+  readonly updatedAt: string
+  readonly urlShortUrl: string
+  readonly userId: Number
+}
 
 type UrlHistoryStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): UrlHistoryType

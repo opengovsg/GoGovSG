@@ -55,6 +55,7 @@ import {
 import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
 import { LinkAuditController } from './modules/audit'
 import { LinkAuditService } from './modules/audit/services'
+import { UrlHistoryRepository } from './modules/audit/repositories'
 
 import { SafeBrowsingMapper } from './modules/threat/mappers'
 import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
@@ -151,6 +152,7 @@ export default () => {
 
   bindIfUnbound(DependencyIds.linkAuditService, LinkAuditService)
   bindIfUnbound(DependencyIds.linkAuditController, LinkAuditController)
+  bindIfUnbound(DependencyIds.urlHistoryRepository, UrlHistoryRepository)
 
   container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
 

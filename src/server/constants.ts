@@ -37,6 +37,7 @@ export const DependencyIds = {
   linkStatisticsRepository: Symbol.for('linkStatisticsRepository'),
   linkAuditController: Symbol.for('linkAuditController'),
   linkAuditService: Symbol.for('linkAuditService'),
+  urlHistoryRepository: Symbol.for('urlHistoryRepository'),
   deviceCheckService: Symbol.for('deviceCheckService'),
   allowedFileExtensions: Symbol.for('allowedFileExtensions'),
   fileTypeFilterService: Symbol.for('fileTypeFilterService'),
