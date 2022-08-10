@@ -1,6 +1,10 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { loginMessage, validEmailDomainGlobExpression } from '../../config'
+import {
+  logger,
+  loginMessage,
+  validEmailDomainGlobExpression,
+} from '../../config'
 import { DependencyIds } from '../../constants'
 import jsonMessage from '../../util/json'
 import { AuthService } from './interfaces'
@@ -59,7 +63,7 @@ export class LoginController {
       const user = await this.authService.verifyOtp(email, otp)
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
-      console.info(`Login success for user:\t${user.email}`)
+      logger.info(`OTP login success for user:\t${user.email}`)
       return
     } catch (error) {
       if (error instanceof InvalidOtpError) {
@@ -68,12 +72,12 @@ export class LoginController {
             `OTP hash verification failed, ${error.retries} attempt(s) remaining.`,
           ),
         )
-        console.info(`Login OTP verification failed for user:\t${email}`)
+        logger.error(`Login OTP verification failed for user:\t${email}`)
         return
       }
       if (error instanceof NotFoundError) {
         res.unauthorized(jsonMessage('OTP expired/not found.'))
-        console.info(`Login email not found for user:\t${email}`)
+        logger.error(`Login email not found for user:\t${email}`)
         return
       }
       res.serverError(jsonMessage(error.message))
