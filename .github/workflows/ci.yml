@@ -200,7 +200,7 @@ jobs:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __DD_ENV=${SERVERLESS_STAGE} .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=gov --build-arg __DD_SERVICE=go-gov --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-gogov:
@@ -225,12 +225,13 @@ jobs:
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
           zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-gogov.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SERVICE: go-gov
           DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
@@ -324,7 +325,7 @@ jobs:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __ASSET_VARIANT=edu --build-arg __DD_ENV=${SERVERLESS_STAGE} .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=edu --build-arg __DD_SERVICE=go-edu --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-edu:
@@ -349,12 +350,13 @@ jobs:
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
           zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-edu.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SERVICE: go-edu
           DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
@@ -450,7 +452,7 @@ jobs:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
         run: |
-          docker build --tag my-image --build-arg __ASSET_VARIANT=health --build-arg __DD_ENV=${SERVERLESS_STAGE} .
+          docker build --tag my-image --build-arg __ASSET_VARIANT=health  --build-arg __DD_SERVICE=go-health --build-arg __DD_ENV=${SERVERLESS_STAGE} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
   deploy-health:
@@ -475,12 +477,13 @@ jobs:
         run: |
           sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
           sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
           zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
         env:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-health.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SERVICE: go-health
           DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
