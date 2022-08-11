@@ -68,7 +68,8 @@ export class MailerNode implements Mailer {
       if (e instanceof Error) {
         logger.error(e.message)
       }
-      throw e
+      // TODO: please help to check FE error handling before throwing the exception
+      // throw e
     }
 
     return
@@ -110,7 +111,7 @@ export class MailerNode implements Mailer {
       return Promise.resolve()
     }
 
-    const emailHTML = `Your OTP is <b>${otp}</b>. It wii'll expire in ${Math.floor(
+    const emailHTML = `Your OTP is <b>${otp}</b>. It will expire in ${Math.floor(
       otpExpiry / 60,
     )} minutes.
     Please use this to login to your account.
