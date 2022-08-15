@@ -6,10 +6,23 @@ import { WeekdayClicks } from './statistics/weekday'
 import { Devices } from './statistics/devices'
 import { UrlClicks } from './statistics/clicks'
 import { syncFunctions } from './functions'
+import { Tag } from './tag'
 
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
 Url.belongsTo(User, { foreignKey: { allowNull: false } })
+
+// An Url has many to many mapping to Tag
+Url.belongsToMany(Tag, {
+  through: 'url_tag',
+  as: 'tags',
+  foreignKey: 'url_id',
+})
+Tag.belongsToMany(Url, {
+  through: 'url_tag',
+  as: 'urls',
+  foreignKey: 'tag_id',
+})
 
 // A Url record can have many updates by many users
 User.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
