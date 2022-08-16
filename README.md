@@ -71,10 +71,8 @@ Note that 3000 is the port number that the webpack dev server listens on; the ba
 on port 8080 instead.
 
 Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
-but that is really being proxied to `localhost:8080/shortlink`. Also, given that GoGovSG will attempt to send
-emails directly from your computer when running on localhost, there is a chance that the email might land in
-spam or not be sent entirely. To mitigate this, we have set the one-time password for all log-in attempts
-on localhost to be `111111`.
+but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
+will use [maildev](https://github.com/maildev/maildev), accesed via `http://localhost:1080/`
 
 ### Setting up the infrastructure
 
