@@ -20,6 +20,10 @@ type LinkInformationProperties = {
 
 type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 
+type OptionalTagsProperty = {
+  tags?: string[] | undefined
+}
+
 type NewUserEmailProperty = {
   newUserEmail: string
 }
@@ -29,7 +33,8 @@ type OptionalStateProperty = {
 }
 
 export type UrlCreationRequest = ShortUrlOperationProperty &
-  OptionalLongUrlProperty
+  OptionalLongUrlProperty &
+  OptionalTagsProperty
 
 export type OldUrlEditRequest = ShortUrlOperationProperty &
   OptionalLongUrlProperty

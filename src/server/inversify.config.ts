@@ -27,6 +27,7 @@ import { TagRepository } from './repositories/TagRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
+import { TagMapper } from './mappers/TagMapper'
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
@@ -70,7 +71,6 @@ import { FileCheckController, UrlCheckController } from './modules/threat'
 
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
-import { TagMapper } from './mappers/TagMapper'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,

@@ -37,9 +37,9 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     shortUrl: string,
     longUrl?: string,
     file?: GoUploadedFile,
-  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file) => {
+    tags?: string[],
+  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file, tags) => {
     const user = await this.userRepository.findById(userId)
-
     if (!user) {
       throw new NotFoundError('User not found')
     }
@@ -58,13 +58,13 @@ export class UrlManagementService implements interfaces.UrlManagementService {
           mimetype: file.mimetype,
         }
       : undefined
-
     // Success
     const result = await this.urlRepository.create(
       {
         userId: user.id,
         longUrl,
         shortUrl,
+        tags,
       },
       storableFile,
     )

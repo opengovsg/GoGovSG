@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize'
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
+import { TAG_KEY_REGEX, TAG_STRING_REGEX } from '../../shared/util/validation'
 
 export interface TagType extends IdType, Sequelize.Model {
   readonly tagString: string
@@ -16,17 +17,23 @@ export const Tag = <TagTypeStatic>sequelize.define(
   'tag',
   {
     tagString: {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING(25),
       allowNull: false,
+      validate: {
+        is: TAG_STRING_REGEX,
+      },
     },
     tagKey: {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING(25),
       allowNull: false,
+      validate: {
+        is: TAG_KEY_REGEX,
+      },
     },
   },
   {
     hooks: {
-      afterCreate: async (tag: TagType, options) => {
+      afterCreate: async (_: TagType, options) => {
         if (!options.transaction) {
           return Promise.reject(
             new Error('Tag creation must be wrapped in a transaction'),

@@ -23,6 +23,7 @@ import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
+import { Tag } from '../models/tag'
 
 const { Public, Private } = FileVisibility
 
@@ -53,23 +54,52 @@ export class UrlRepository implements UrlRepositoryInterface {
     return this.urlMapper.persistenceToDto(url)
   }
 
+  // TODO: wrap this in try, catch block
   public create: (
-    properties: { userId: number; shortUrl: string; longUrl?: string },
+    properties: {
+      userId: number
+      shortUrl: string
+      longUrl?: string
+      tags?: string[]
+    },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
-      await Url.create(
-        {
-          ...properties,
-          longUrl: file
-            ? this.fileBucket.buildFileLongUrl(file.key)
-            : properties.longUrl,
-          isFile: !!file,
-        },
-        {
-          transaction: t,
-        },
-      )
+      const url = {
+        ...properties,
+        longUrl: file
+          ? this.fileBucket.buildFileLongUrl(file.key)
+          : properties.longUrl,
+        isFile: !!file,
+      }
+      const newlyCreatedUrl = await Url.create(url, {
+        transaction: t,
+      })
+      if (properties.tags) {
+        const promises = []
+        for (let i = 0; i < properties.tags.length; i += 1) {
+          promises.push(
+            Tag.upsert(
+              {
+                tagString: properties.tags[i],
+                tagKey: properties.tags[i].toLowerCase(),
+              },
+              {
+                transaction: t,
+              },
+            ),
+          )
+        }
+        const responses = await Promise.all(promises)
+        for (let ii = 0; ii < responses.length; ii += 1) {
+          const [tag, _] = responses[ii]
+          if (tag) {
+            // @ts-ignore, addTag is provided by Sequelize during run time.
+            newlyCreatedUrl.addTag(tag, { through: 'url_tag' })
+          }
+        }
+      }
+
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }

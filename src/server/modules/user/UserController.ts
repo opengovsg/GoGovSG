@@ -49,7 +49,7 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, longUrl, shortUrl }: UrlCreationRequest = req.body
+    const { userId, longUrl, shortUrl, tags }: UrlCreationRequest = req.body
     const file = req.files?.file
 
     if (Array.isArray(file)) {
@@ -65,6 +65,7 @@ export class UserController {
         shortUrl,
         longUrl,
         file,
+        tags,
       )
       res.ok(result)
       return
