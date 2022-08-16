@@ -15,6 +15,7 @@
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/jsx-no-duplicate-props": ["error", { "ignoreCase": false }],
     "react/require-default-props": "off",
     "comma-dangle": ["error", "always-multiline"],
     "import/first": "off",
