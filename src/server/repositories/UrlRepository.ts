@@ -91,8 +91,8 @@ export class UrlRepository implements UrlRepositoryInterface {
           )
         }
         const responses = await Promise.all(promises)
-        for (let ii = 0; ii < responses.length; ii += 1) {
-          const [tag, _] = responses[ii]
+        for (let i = 0; i < responses.length; i += 1) {
+          const [tag, _] = responses[i]
           if (tag) {
             // @ts-ignore, addTag is provided by Sequelize during run time.
             newlyCreatedUrl.addTag(tag, { through: 'url_tag' })
