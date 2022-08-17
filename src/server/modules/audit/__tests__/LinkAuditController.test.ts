@@ -3,6 +3,7 @@ import httpMocks from 'node-mocks-http'
 import { createRequestWithShortUrl } from '../../../../../test/server/api/util'
 import { UserType } from '../../../models/user'
 import { UrlType } from '../../../models/url'
+import { NotFoundError } from '../../../util/error'
 
 import { LinkAuditController } from '..'
 
@@ -108,7 +109,7 @@ describe('LinkAuditController test', () => {
     expect(responseSpy).toBeCalledWith(200)
   })
 
-  test('LinkAuditService throws error', async () => {
+  test('LinkAuditService throws error for invalid limit or offset', async () => {
     const req = createRequestWithShortUrl('')
     const res = httpMocks.createResponse()
     const responseSpy = jest.spyOn(res, 'status')
@@ -116,6 +117,25 @@ describe('LinkAuditController test', () => {
     req.session!.user = userCredentials
 
     getLinkAudit.mockRejectedValue(new Error(':('))
+
+    await controller.getLinkAudit(req, res)
+    expect(getLinkAudit).toBeCalledWith(
+      userCredentials.id,
+      'test',
+      undefined,
+      undefined,
+    )
+    expect(responseSpy).toBeCalledWith(400)
+  })
+
+  test('LinkAuditService throws NotFoundError', async () => {
+    const req = createRequestWithShortUrl('')
+    const res = httpMocks.createResponse()
+    const responseSpy = jest.spyOn(res, 'status')
+    req.query.url = 'test'
+    req.session!.user = userCredentials
+
+    getLinkAudit.mockRejectedValue(new NotFoundError(':('))
 
     await controller.getLinkAudit(req, res)
     expect(getLinkAudit).toBeCalledWith(
