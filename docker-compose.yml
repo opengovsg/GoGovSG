@@ -50,6 +50,7 @@ services:
       - POSTMAN_API_KEY=
       - POSTMAN_API_URL=
       - ACTIVATE_POSTMAN_FALLBACK=
+      - COOKIE_MAX_AGE = 18000000
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -62,7 +63,7 @@ services:
     ports:
       - '5432:5432' # Postgres
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./.pgdata:/var/lib/postgresql/data
   redis:
     image: redis:5.0.3-alpine
     ports:
