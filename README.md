@@ -15,7 +15,6 @@ The official Singapore government link shortener.
     - [Running Locally](#running-locally)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
     - [Deploying](#deploying)
-  - [Pre-release](#pre-release)
   - [Operations](#operations)
     - [Transferring links to a new owner or email address](#transferring-links-to-a-new-owner-or-email-address)
   - [Developer Documentation](#developer-documentation)
@@ -72,7 +71,7 @@ on port 8080 instead.
 
 Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
 but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
-are obtained using [maildev](https://github.com/maildev/maildev) and accesed via `http://localhost:1080/`.
+are obtained using [maildev](https://github.com/maildev/maildev) and accessed via `http://localhost:1080/`.
 
 ### Setting up the infrastructure
 
