@@ -72,7 +72,7 @@ on port 8080 instead.
 
 Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
 but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
-are obtained using [maildev](https://github.com/maildev/maildev) and accesed via `http://localhost:1080/`.
+are obtained using [maildev](https://github.com/maildev/maildev) and accessed via `http://localhost:1080/`.
 
 ### Setting up the infrastructure
 
