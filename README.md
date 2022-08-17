@@ -15,7 +15,6 @@ The official Singapore government link shortener.
     - [Running Locally](#running-locally)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
     - [Deploying](#deploying)
-  - [Pre-release](#pre-release)
   - [Operations](#operations)
     - [Transferring links to a new owner or email address](#transferring-links-to-a-new-owner-or-email-address)
   - [Developer Documentation](#developer-documentation)
