@@ -97,7 +97,7 @@ export class LinkAuditService implements interfaces.LinkAuditService {
     shortUrl: string,
     limit?: number,
     offset?: number,
-  ) => Promise<interfaces.LinkAudit | null> = async (
+  ) => Promise<interfaces.LinkAudit> = async (
     userId,
     shortUrl,
     limit = 10,
