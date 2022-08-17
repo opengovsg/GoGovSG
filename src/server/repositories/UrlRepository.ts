@@ -79,15 +79,13 @@ export class UrlRepository implements UrlRepositoryInterface {
         const promises = []
         for (let i = 0; i < properties.tags.length; i += 1) {
           promises.push(
-            Tag.upsert(
-              {
+            Tag.findOrCreate({
+              where: {
                 tagString: properties.tags[i],
                 tagKey: properties.tags[i].toLowerCase(),
               },
-              {
-                transaction: t,
-              },
-            ),
+              transaction: t,
+            }),
           )
         }
         const responses = await Promise.all(promises)
@@ -103,17 +101,29 @@ export class UrlRepository implements UrlRepositoryInterface {
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }
-
       // Do a fresh read which eagerly loads the associated UrlClicks field.
-      return Url.scope(['defaultScope', 'getClicks']).findByPk(
+      const newUrl = await Url.scope([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ]).findByPk(
+        // return Url.scope(['defaultScope']).findByPk(
         properties.shortUrl,
         {
           transaction: t,
         },
       )
+      if (newUrl) {
+        newUrl.tags = await newUrl.getTags()
+      }
+      return newUrl
     })
 
     if (!newUrl) throw new Error('Newly-created url is null')
+    // console.log(`urlRepo: ${JSON.stringify(newUrl)}`)
+    // const tags = await newUrl.getTags()
+    // console.log(`urlrepo printtags: ${JSON.stringify(tags)}`)
+    // console.log(`urlrepo printtags from eager loading: ${JSON.stringify(newUrl.tags)}`)
     return this.urlMapper.persistenceToDto(newUrl)
   }
 

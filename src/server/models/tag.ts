@@ -19,6 +19,7 @@ export const Tag = <TagTypeStatic>sequelize.define(
     tagString: {
       type: Sequelize.STRING(25),
       allowNull: false,
+      unique: true,
       validate: {
         is: TAG_STRING_REGEX,
       },
@@ -32,6 +33,18 @@ export const Tag = <TagTypeStatic>sequelize.define(
     },
   },
   {
+    defaultScope: {
+      useMaster: true,
+    },
+    scopes: {
+      /**
+       * Use the replica database for read queries. To be enabled
+       * when realtime data is not needed.
+       */
+      useReplica: {
+        useMaster: undefined,
+      },
+    },
     hooks: {
       afterCreate: async (_: TagType, options) => {
         if (!options.transaction) {

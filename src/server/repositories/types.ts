@@ -15,7 +15,7 @@ export type StorableUrl = Pick<
   | 'description'
   | 'contactEmail'
 > &
-  Pick<UrlClicksType, 'clicks'>
+  Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
 
 /**
  * A type that represents a file that can be stored in the data store.

@@ -13,7 +13,7 @@ import { IdType } from '../../types/server/models'
 import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
-import { Tag } from './tag'
+import { Tag, TagType } from './tag'
 
 export interface UrlBaseType extends IdType {
   readonly shortUrl: string
@@ -26,6 +26,7 @@ export interface UrlBaseType extends IdType {
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly UrlClicks?: UrlClicksType
+  tags?: TagType[]
   readonly createdAt: string
   readonly updatedAt: string
   readonly email: string
@@ -248,7 +249,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
         include: [
           {
             model: Tag,
-            as: 'Tags',
+            as: 'tags',
           },
         ],
       },
@@ -263,6 +264,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
   },
 )
 
-// A Url record can have many updates
+// An Url record can have many updates
 Url.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
 UrlHistory.belongsTo(Url, { foreignKey: { allowNull: false } })

@@ -3,6 +3,7 @@ import { injectable } from 'inversify'
 import { StorableUrl } from '../repositories/types'
 import { UrlType } from '../models/url'
 import { Mapper } from './Mapper'
+// import {TagType} from "../models/tag";
 
 @injectable()
 export class UrlMapper implements Mapper<StorableUrl, UrlType> {
@@ -14,11 +15,22 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
     const { UrlClicks: urlClicks } = urlType
     if (!urlClicks || !Number.isInteger(urlClicks.clicks))
       throw new Error('UrlClicks object not populated.')
+
+    const tagString: string[] = []
+    const { tags } = urlType
+    console.log(`urlMapper: ${tags}`)
+    if (tags) {
+      for (let i = 0; i < tags.length; i += 1) {
+        tagString.push(tags[i].tagString)
+      }
+    }
+
     return {
       shortUrl: urlType.shortUrl,
       longUrl: urlType.longUrl,
       state: urlType.state,
       clicks: urlClicks.clicks,
+      tags: tagString,
       isFile: urlType.isFile,
       createdAt: urlType.createdAt,
       updatedAt: urlType.updatedAt,
