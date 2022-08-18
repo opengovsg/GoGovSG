@@ -93,7 +93,7 @@ export class UrlRepository implements UrlRepositoryInterface {
           const [tag, _] = responses[i]
           if (tag) {
             // @ts-ignore, addTag is provided by Sequelize during run time.
-            newlyCreatedUrl.addTag(tag, { through: 'url_tag' })
+            newlyCreatedUrl.addTag(tag, { transaction: t })
           }
         }
       }
