@@ -15,7 +15,6 @@ The official Singapore government link shortener.
     - [Running Locally](#running-locally)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
     - [Deploying](#deploying)
-  - [Pre-release](#pre-release)
   - [Operations](#operations)
     - [Transferring links to a new owner or email address](#transferring-links-to-a-new-owner-or-email-address)
   - [Developer Documentation](#developer-documentation)
@@ -71,10 +70,8 @@ Note that 3000 is the port number that the webpack dev server listens on; the ba
 on port 8080 instead.
 
 Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
-but that is really being proxied to `localhost:8080/shortlink`. Also, given that GoGovSG will attempt to send
-emails directly from your computer when running on localhost, there is a chance that the email might land in
-spam or not be sent entirely. To mitigate this, we have set the one-time password for all log-in attempts
-on localhost to be `111111`.
+but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
+are obtained using [maildev](https://github.com/maildev/maildev) and accessed via `http://localhost:1080/`.
 
 ### Setting up the infrastructure
 
@@ -156,6 +153,8 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |SENTRY_AUTH_TOKEN|No|To get relevant permissions to upload the source maps|
 |GITHUB_TOKEN|Yes*|Used by Coveralls to verify test coverage on repo. Does not need to be manually specified as it is specified by Github Actions. [More Info](https://docs.github.com/en/actions/security-guides/automatic-token-authentication)
 |DD_API_KEY|Yes*|Datadog API Key used for integration with Datadog to Trace/Logs collection
+|DD_SERVICE|No|Datadog service name to be used for the application|
+|DD_ENV|No|Datadog application environment, e.g. `staging`, `production`|
 
 
 |Environment Variable|Required|Description/Value|

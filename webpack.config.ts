@@ -5,6 +5,7 @@ import SentryCliPlugin from '@sentry/webpack-plugin'
 import webpack from 'webpack'
 
 import assetVariant from './src/shared/util/asset-variant'
+import { ddEnv, ddService } from './src/shared/util/environment-variables'
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client/app')
@@ -123,6 +124,8 @@ module.exports = () => {
       }),
       new webpack.DefinePlugin({
         'process.env.ASSET_VARIANT': JSON.stringify(assetVariant),
+        'process.env.DD_SERVICE': JSON.stringify(ddService),
+        'process.env.DD_ENV': JSON.stringify(ddEnv),
       }),
     ],
   }

@@ -2,7 +2,9 @@ import tracer from 'dd-trace'
 import { ClientRequest, IncomingMessage } from 'http'
 import { Span } from 'opentracing'
 
-tracer.init()
+tracer.init({
+  logInjection: true,
+})
 tracer.use('http', {
   client: {
     hooks: {
