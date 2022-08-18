@@ -1,3 +1,4 @@
+import './util/tracing' // This is import has to be placed at the top for Tracing to work properly
 import 'reflect-metadata' // This import has to be placed at the top level for Dependency Injection
 import path from 'path'
 import bodyParser from 'body-parser'
@@ -76,6 +77,7 @@ const connectSrc = [
   "'self'",
   'https://www.google-analytics.com/',
   'https://stats.g.doubleclick.net/',
+  'https://*.browser-intake-datadoghq.com/',
 ]
 if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
@@ -109,7 +111,10 @@ app.use(
           'https://www.google-analytics.com/',
           'https://ssl.google-analytics.com/',
           'https://www.googletagmanager.com/',
+          'https://*.browser-intake-datadoghq.com/',
+          'https://www.datadoghq-browser-agent.com/',
         ],
+        workerSrc: ['blob:'],
         connectSrc,
         frameAncestors: ["'self'"],
         ...(cspReportUri ? { reportUri: cspReportUri } : {}),

@@ -37,4 +37,16 @@ functions:
           - 'src/server/serverless/lambda-migrate-user-links/**'
           - 'package-lock.json'
           - 'package.json'
+  capture-ses-events:
+    handler: src/server/serverless/capture-ses-events/index.handler
+    memorySize: 128
+    description: SNS subscriber for SES events
+    package:
+      excludeDevDependencies: true
+      patterns:
+          - '!./**'
+          - 'src/server/serverless/capture-ses-events/**'
+          - 'package-lock.json'
+          - 'package.json'
+
   

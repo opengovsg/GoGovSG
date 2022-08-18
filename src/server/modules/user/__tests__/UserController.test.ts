@@ -107,7 +107,9 @@ describe('UserController', () => {
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
 
-      urlManagementService.createUrl.mockRejectedValue(new ValidationError(''))
+      urlManagementService.createUrl.mockRejectedValue(
+        new ValidationError('', []),
+      )
 
       await controller.createUrl(req, res)
       expect(res.badRequest).toHaveBeenCalledWith({
