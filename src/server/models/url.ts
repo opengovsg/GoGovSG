@@ -249,7 +249,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
         include: [
           {
             model: Tag,
-            as: 'tags',
           },
         ],
       },

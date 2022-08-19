@@ -54,7 +54,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     return this.urlMapper.persistenceToDto(url)
   }
 
-  // TODO: wrap this in try, catch block
   public create: (
     properties: {
       userId: number
@@ -65,65 +64,52 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
-      const url = {
+      const urlStaticDTO = {
         ...properties,
         longUrl: file
           ? this.fileBucket.buildFileLongUrl(file.key)
           : properties.longUrl,
         isFile: !!file,
       }
-      const newlyCreatedUrl = await Url.create(url, {
+      const url = await Url.create(urlStaticDTO, {
         transaction: t,
       })
       if (properties.tags) {
-        const promises = []
-        for (let i = 0; i < properties.tags.length; i += 1) {
-          promises.push(
-            Tag.findOrCreate({
+        const tagCreationResponses = await Promise.all(
+          properties.tags.map(async (tag) => {
+            return Tag.findOrCreate({
               where: {
-                tagString: properties.tags[i],
-                tagKey: properties.tags[i].toLowerCase(),
+                tagString: tag,
+                tagKey: tag.toLowerCase(),
               },
               transaction: t,
-            }),
-          )
-        }
-        const responses = await Promise.all(promises)
-        for (let i = 0; i < responses.length; i += 1) {
-          const [tag, _] = responses[i]
-          if (tag) {
-            // @ts-ignore, addTag is provided by Sequelize during run time.
-            newlyCreatedUrl.addTag(tag, { transaction: t })
-          }
-        }
+            })
+          }),
+        )
+        await Promise.all(
+          tagCreationResponses.map(async (response) => {
+            const [tag, _] = response
+            if (tag) {
+              // @ts-ignore, addTag is provided by Sequelize during run time.
+              await url.addTag(tag, { transaction: t })
+            }
+          }),
+        )
       }
-
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }
+
       // Do a fresh read which eagerly loads the associated UrlClicks field.
-      const newUrl = await Url.scope([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ]).findByPk(
-        // return Url.scope(['defaultScope']).findByPk(
+      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findByPk(
         properties.shortUrl,
         {
           transaction: t,
         },
       )
-      if (newUrl) {
-        newUrl.tags = await newUrl.getTags()
-      }
-      return newUrl
     })
 
     if (!newUrl) throw new Error('Newly-created url is null')
-    // console.log(`urlRepo: ${JSON.stringify(newUrl)}`)
-    // const tags = await newUrl.getTags()
-    // console.log(`urlrepo printtags: ${JSON.stringify(tags)}`)
-    // console.log(`urlrepo printtags from eager loading: ${JSON.stringify(newUrl.tags)}`)
     return this.urlMapper.persistenceToDto(newUrl)
   }
 

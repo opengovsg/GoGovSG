@@ -18,7 +18,6 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
 
     const tagString: string[] = []
     const { tags } = urlType
-    console.log(`urlMapper: ${tags}`)
     if (tags) {
       for (let i = 0; i < tags.length; i += 1) {
         tagString.push(tags[i].tagString)

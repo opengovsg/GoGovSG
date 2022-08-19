@@ -12,17 +12,11 @@ import { Tag } from './tag'
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
 Url.belongsTo(User, { foreignKey: { allowNull: false } })
 
+export const UrlTag = sequelize.define('url_tag', {}, { timestamps: true })
+
 // An Url has many to many mapping to Tag
-Url.belongsToMany(Tag, {
-  through: 'url_tag',
-  as: 'tags',
-  foreignKey: 'url_id',
-})
-Tag.belongsToMany(Url, {
-  through: 'url_tag',
-  as: 'urls',
-  foreignKey: 'tag_id',
-})
+Url.belongsToMany(Tag, { through: UrlTag })
+Tag.belongsToMany(Url, { through: UrlTag })
 
 // A Url record can have many updates by many users
 User.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
