@@ -3,4 +3,3 @@ npm-debug.log
 docker-compose.yml
 Dockerfile
 .travis.yml
-.idea
