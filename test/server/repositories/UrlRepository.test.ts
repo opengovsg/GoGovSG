@@ -67,6 +67,11 @@ describe('UrlRepository', () => {
   const baseUserId = 2
   const baseShortUrl = 'abcdef'
   const baseLongUrl = 'https://www.agency.gov.sg'
+  const baseTags = [
+    { tagKey: 'tag1', tagString: 'Tag1' },
+    { tagKey: 'tag2', tagString: 'Tag2' },
+  ]
+  const baseTagStrings = ['Tag1', 'Tag2']
   const baseUrlClicks = {
     clicks: 2,
   }
@@ -75,19 +80,30 @@ describe('UrlRepository', () => {
     longUrl: baseLongUrl,
     state: 'ACTIVE',
     isFile: false,
-    tags: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
+    tags: [],
   }
   const baseUrl = {
     ...baseTemplate,
     UrlClicks: baseUrlClicks,
   }
+  const baseUrlWithTags = {
+    ...baseTemplate,
+    UrlClicks: baseUrlClicks,
+    tags: baseTags,
+    addTag: jest.fn(),
+  }
+
   const baseStorableUrl = {
     ...baseTemplate,
     ...baseUrlClicks,
+  }
+  const baseStorableUrlWithTags = {
+    ...baseStorableUrl,
+    tags: ['Tag1', 'Tag2'],
   }
   beforeEach(async () => {
     redisMockClient.flushall()
@@ -121,6 +137,7 @@ describe('UrlRepository', () => {
     const userId = 2
     const shortUrl = 'abcdef'
     const longUrl = 'https://www.agency.gov.sg'
+    const tags: string[] = ['Tag1', 'Tag2']
 
     beforeEach(() => {
       create.mockReset()
@@ -129,7 +146,7 @@ describe('UrlRepository', () => {
       scope.mockReset()
     })
 
-    it('creates the specified longUrl', async () => {
+    it('creates the specified longUrl without tag', async () => {
       findByPk.mockResolvedValueOnce(baseUrl)
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(baseTemplate)
@@ -153,7 +170,33 @@ describe('UrlRepository', () => {
       expect(putObject).not.toHaveBeenCalled()
     })
 
-    it('creates the specified public file', async () => {
+    it('creates the specified longUrl with tags', async () => {
+      findByPk.mockResolvedValueOnce(baseUrlWithTags)
+      scope.mockImplementationOnce(() => ({ findByPk }))
+      create.mockResolvedValue(baseUrlWithTags)
+      await expect(
+        repository.create({ userId, shortUrl, longUrl, tags }),
+      ).resolves.toStrictEqual(baseStorableUrlWithTags)
+      expect(create).toHaveBeenCalledWith(
+        {
+          longUrl,
+          shortUrl,
+          userId,
+          tags,
+          isFile: false,
+        },
+        expect.anything(),
+      )
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
+      expect(putObject).not.toHaveBeenCalled()
+      expect(baseUrlWithTags.addTag).toHaveBeenCalledTimes(2)
+    })
+
+    it('creates the specified public file without tag', async () => {
       const file = {
         data: Buffer.from(''),
         key: 'key',
@@ -197,6 +240,58 @@ describe('UrlRepository', () => {
         ACL: FileVisibility.Public,
         CacheControl: 'no-cache',
       })
+    })
+
+    it('creates the specified public file with tags', async () => {
+      const file = {
+        data: Buffer.from(''),
+        key: 'key',
+        mimetype: 'text/csv',
+      }
+      const url = {
+        ...baseUrlWithTags,
+        isFile: true,
+        longUrl: fileBucket.buildFileLongUrl(file.key),
+        addTag: jest.fn(),
+      }
+      const storableUrlWithTags = {
+        ...baseStorableUrlWithTags,
+        isFile: true,
+        longUrl: fileBucket.buildFileLongUrl(file.key),
+      }
+      findByPk.mockResolvedValueOnce(url)
+      scope.mockImplementationOnce(() => ({ findByPk }))
+      create.mockResolvedValue(url)
+      await expect(
+        repository.create(
+          { userId: baseUserId, shortUrl: baseShortUrl, tags: baseTagStrings },
+          file,
+        ),
+      ).resolves.toStrictEqual(storableUrlWithTags)
+      expect(create).toHaveBeenCalledWith(
+        {
+          longUrl: fileBucket.buildFileLongUrl(file.key),
+          shortUrl,
+          userId,
+          tags,
+          isFile: true,
+        },
+        expect.anything(),
+      )
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
+      expect(putObject).toHaveBeenCalledWith({
+        ContentType: file.mimetype,
+        Bucket: s3Bucket,
+        Body: file.data,
+        Key: file.key,
+        ACL: FileVisibility.Public,
+        CacheControl: 'no-cache',
+      })
+      expect(url.addTag).toHaveBeenCalledTimes(2)
     })
   })
 
