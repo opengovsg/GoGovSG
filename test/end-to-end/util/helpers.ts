@@ -71,8 +71,11 @@ export const largeFileError = Selector('div').withText(
 export const fileSubmitButton = Selector('button[type="submit"]')
 
 // User Page - filter search
-export const userFilterPanelButton = Selector('img[alt="Filter and sort icon"]')
-export const filterPanel = Selector('.MuiCollapse-root')
+export const userFilterSortPanelButton = Selector(
+  'img[alt="Filter and sort icon"]',
+)
+export const filterDrawer = Selector('.MuiCollapse-root').nth(0)
+export const filterSortPanel = Selector('.MuiCollapse-root').nth(1)
 export const userApplyButton = Selector('span').withText('Apply')
 export const userResetButton = Selector('span').withText('Reset')
 export const dateOfCreationButton = Selector('p').withText('Date of creation')
@@ -87,12 +90,12 @@ export const userInactiveButton = Selector('p')
   .child('button')
   .nth(1)
 export const userLinkButton = Selector('p')
-  .withText('Link')
+  .withExactText('Link')
   .parent()
   .child('button')
   .nth(0)
 export const userFileButton = Selector('p')
-  .withText('Link')
+  .withExactText('Link')
   .parent()
   .child('button')
   .nth(1)
