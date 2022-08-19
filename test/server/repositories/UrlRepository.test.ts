@@ -193,7 +193,7 @@ describe('UrlRepository', () => {
         'getTags',
       ])
       expect(putObject).not.toHaveBeenCalled()
-      expect(baseUrlWithTags.addTag).toHaveBeenCalledTimes(2)
+      expect(baseUrlWithTags.addTag).toHaveBeenCalledTimes(baseTags.length)
     })
 
     it('creates the specified public file without tag', async () => {
@@ -291,7 +291,7 @@ describe('UrlRepository', () => {
         ACL: FileVisibility.Public,
         CacheControl: 'no-cache',
       })
-      expect(url.addTag).toHaveBeenCalledTimes(2)
+      expect(url.addTag).toHaveBeenCalledTimes(baseTags.length)
     })
   })
 
