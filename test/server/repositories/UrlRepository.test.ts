@@ -7,6 +7,7 @@ import {
   mockTransaction,
   redisMockClient,
   sanitiseMock,
+  tagModelMock,
   urlClicksModelMock,
   urlModelMock,
 } from '../api/util'
@@ -22,6 +23,10 @@ import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
   sanitise: sanitiseMock,
+}))
+
+jest.mock('../../../src/server/models/tag', () => ({
+  Tag: tagModelMock,
 }))
 
 jest.mock('../../../src/server/models/statistics/clicks', () => ({
@@ -70,6 +75,7 @@ describe('UrlRepository', () => {
     longUrl: baseLongUrl,
     state: 'ACTIVE',
     isFile: false,
+    tags: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     description: 'An agency of the Singapore Government',
@@ -139,7 +145,11 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
       expect(putObject).not.toHaveBeenCalled()
     })
 
@@ -174,7 +184,11 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
       expect(putObject).toHaveBeenCalledWith({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
@@ -249,7 +263,12 @@ describe('UrlRepository', () => {
           url.description = description
         }),
       }
-      const expectedUrl = { ...baseStorableUrl, isFile: true, description }
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        description,
+        tags: [],
+      }
       scope.mockImplementationOnce(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
@@ -274,7 +293,7 @@ describe('UrlRepository', () => {
           url.state = state
         }),
       }
-      const expectedUrl = { ...baseStorableUrl, isFile: true }
+      const expectedUrl = { ...baseStorableUrl, isFile: true, tags: [] }
       scope.mockImplementationOnce(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
@@ -307,6 +326,7 @@ describe('UrlRepository', () => {
       const expectedUrl = {
         ...baseStorableUrl,
         isFile: true,
+        tags: [],
         state: StorableUrlState.Inactive,
       }
       scope.mockImplementationOnce(() => urlModelMock)
@@ -351,6 +371,7 @@ describe('UrlRepository', () => {
       const expectedUrl = {
         ...baseStorableUrl,
         isFile: true,
+        tags: [],
         longUrl: newLongUrl,
       }
 

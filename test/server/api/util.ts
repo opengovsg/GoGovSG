@@ -111,6 +111,11 @@ export const urlModelMock = sequelizeMock.define(
   },
 )
 
+export const tagModelMock = sequelizeMock.define('tag', {
+  tagString: 'Tag',
+  tagKey: 'tag',
+})
+
 export const urlClicksModelMock = sequelizeMock.define('url_clicks', {
   shortUrl: 'a',
   clicks: 3,

@@ -36,6 +36,7 @@ const url = {
 const expectedUrl = {
   ...baseUrlTemplate,
   ...urlClicks,
+  tags: [],
 }
 
 describe('UserRepository', () => {
