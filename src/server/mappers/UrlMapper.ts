@@ -3,7 +3,6 @@ import { injectable } from 'inversify'
 import { StorableUrl } from '../repositories/types'
 import { UrlType } from '../models/url'
 import { Mapper } from './Mapper'
-// import {TagType} from "../models/tag";
 
 @injectable()
 export class UrlMapper implements Mapper<StorableUrl, UrlType> {
