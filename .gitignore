@@ -12,3 +12,4 @@ coverage
 .dccache
 .idea
 .pgdata
+*.js
