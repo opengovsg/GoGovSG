@@ -50,11 +50,13 @@ describe('UserController', () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.gov.sg'
+      const tags = ['tag1', 'tag2']
       const req = httpMocks.createRequest({
         body: {
           userId,
           shortUrl,
           longUrl,
+          tags,
         },
       })
       const res: any = httpMocks.createResponse()
@@ -70,6 +72,7 @@ describe('UserController', () => {
         shortUrl,
         longUrl,
         undefined,
+        tags,
       )
     })
 
