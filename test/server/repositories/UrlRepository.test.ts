@@ -32,23 +32,18 @@ jest.mock('../../../src/server/models/tag', () => ({
 jest.mock('../../../src/server/models/statistics/clicks', () => ({
   UrlClicks: urlClicksModelMock,
 }))
-
 jest.mock('../../../src/server/models/statistics/daily', () => ({
   Clicks: clicksModelMock,
 }))
-
 jest.mock('../../../src/server/models/statistics/weekday', () => ({
   WeekdayClicks: heatMapModelMock,
 }))
-
 jest.mock('../../../src/server/models/statistics/devices', () => ({
   Devices: devicesModelMock,
 }))
-
 jest.mock('../../../src/server/redis', () => ({
   redirectClient: redisMockClient,
 }))
-
 jest.mock('../../../src/server/util/sequelize', () => ({
   transaction: mockTransaction,
   sequelize: { query: mockQuery, transaction: mockTransaction },
