@@ -3,7 +3,7 @@
 
 import { injectable } from 'inversify'
 import nodemailer from 'nodemailer'
-import axios from 'axios'
+import fetch from 'cross-fetch'
 import assetVariant from '../../shared/util/asset-variant'
 import {
   activatePostmanFallback,
@@ -41,6 +41,8 @@ export interface Mailer {
 
 @injectable()
 export class MailerNode implements Mailer {
+  public aFetch: any = fetch
+
   initMailer() {
     transporter = nodemailer.createTransport(transporterOptions)
   }
@@ -58,20 +60,24 @@ export class MailerNode implements Mailer {
       body,
     }
 
-    try {
-      await axios.post(postmanApiUrl, mail, {
-        headers: {
-          Authorization: `Bearer ${postmanApiKey}`,
-        },
-      })
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        logger.error(e.message)
-      }
+    const response = await fetch(postmanApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${postmanApiKey}`,
+      },
+      body: JSON.stringify(mail),
+    })
+    if (!response.ok) {
+      const error = new Error(
+        `Failed to send Postman mail:\tError: ${
+          response.statusText
+        }\thttpResponse: ${response.status}\t body:${JSON.stringify(response)}`,
+      )
+      logger.error(error.message)
       // TODO: please help to check FE error handling before throwing the exception
       // throw e
     }
-
     return
   }
 
