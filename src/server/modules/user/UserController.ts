@@ -98,6 +98,7 @@ export class UserController {
       state,
       description,
       contactEmail,
+      tags,
     }: UrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
@@ -127,6 +128,7 @@ export class UserController {
         file,
         contactEmail: newContactEmail,
         description: description?.trim(),
+        tags,
       })
       res.ok(url)
       return

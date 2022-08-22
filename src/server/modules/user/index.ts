@@ -45,7 +45,8 @@ export type OwnershipTransferRequest = ShortUrlOperationProperty &
 export type UrlEditRequest = ShortUrlOperationProperty &
   OptionalStateProperty &
   OptionalLongUrlProperty &
-  Partial<LinkInformationProperties>
+  Partial<LinkInformationProperties> &
+  OptionalTagsProperty
 
 export type GoUploadedFile = {
   data: Buffer
@@ -54,7 +55,10 @@ export type GoUploadedFile = {
 }
 
 export type UpdateUrlOptions = Partial<
-  Pick<StorableUrl, 'state' | 'longUrl' | 'description' | 'contactEmail'> & {
+  Pick<
+    StorableUrl,
+    'state' | 'longUrl' | 'description' | 'contactEmail' | `tags`
+  > & {
     file: GoUploadedFile
   }
 >

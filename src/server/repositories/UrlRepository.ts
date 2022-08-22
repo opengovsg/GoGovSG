@@ -23,7 +23,8 @@ import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
-import { Tag } from '../models/tag'
+import { Tag, TagType } from '../models/tag'
+import arraysContainSame from '../util/array'
 
 const { Public, Private } = FileVisibility
 
@@ -119,7 +120,11 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
-    const url = await Url.scope(['defaultScope', 'getClicks']).findOne({
+    const url = await Url.scope([
+      'defaultScope',
+      'getClicks',
+      'getTags',
+    ]).findOne({
       where: { shortUrl },
     })
     if (!url) {
@@ -127,8 +132,32 @@ export class UrlRepository implements UrlRepositoryInterface {
         `url not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-
-    const newUrl: UrlType = await sequelize.transaction(async (t) => {
+    const urlDto = this.urlMapper.persistenceToDto(url)
+    const newUrl = await sequelize.transaction(async (t) => {
+      if (!arraysContainSame(urlDto.tags, changes.tags)) {
+        const tagCreationResponses = changes.tags
+          ? await Promise.all(
+              changes.tags.map(async (tag) => {
+                return Tag.findOrCreate({
+                  where: {
+                    tagString: tag,
+                    tagKey: tag.toLowerCase(),
+                  },
+                  transaction: t,
+                })
+              }),
+            )
+          : []
+        const newTags: TagType[] = []
+        tagCreationResponses.forEach((response) => {
+          const [tag, _] = response
+          if (tag) {
+            newTags.push(tag)
+          }
+        })
+        // @ts-ignore provided by Sequelize during runtime
+        await url.setTags(newTags, { transaction: t })
+      }
       if (!url.isFile) {
         await url.update(changes, { transaction: t })
       } else {
@@ -152,11 +181,16 @@ export class UrlRepository implements UrlRepositoryInterface {
           )
         }
       }
-      return url
+      // Do a fresh read which eagerly loads the associated tags field.
+      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findByPk(
+        shortUrl,
+        {
+          transaction: t,
+        },
+      )
     })
-
     this.invalidateCache(shortUrl)
-
+    if (!newUrl) throw new Error('Newly-updated url is null')
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
