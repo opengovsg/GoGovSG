@@ -19,14 +19,15 @@ const domainVariantMap = {
   gov: 'go.gov.sg',
   edu: 'for.edu.sg',
   health: 'for.sg',
-}
+} as const
 const domainVariant = domainVariantMap[assetVariant]
 
-interface MailBody {
+type SenderDomain = typeof domainVariantMap[keyof typeof domainVariantMap]
+export interface MailBody {
   to: string
   body: string
   subject: string
-  senderDomain?: string
+  senderDomain: SenderDomain
 }
 
 let transporter: nodemailer.Transport
@@ -34,7 +35,7 @@ export interface Mailer {
   initMailer(): void
 
   /**
-   * Sends email to SES / MailDev to send out.
+   * Sends email to SES / MailDev to send out. Falls back to Postman.
    */
   mailOTP(email: string, otp: string, ip: string): Promise<void>
 }
