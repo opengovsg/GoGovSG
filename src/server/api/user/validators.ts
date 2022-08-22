@@ -65,6 +65,17 @@ export const urlEditSchema = Joi.object({
     }
     return url
   }),
+  tags: Joi.array()
+    .max(3)
+    .optional()
+    .items(
+      Joi.string().custom((tag: string, helpers) => {
+        if (!isValidTag(tag)) {
+          return helpers.message({ custom: `tag: ${tag} format is invalid` })
+        }
+        return tag
+      }),
+    ),
   files: Joi.object({
     file: Joi.object().keys().required(),
   }),
