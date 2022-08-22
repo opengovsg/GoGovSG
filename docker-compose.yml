@@ -62,7 +62,7 @@ services:
     ports:
       - '5432:5432' # Postgres
     volumes:
-      - ./.pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
   redis:
     image: redis:5.0.3-alpine
     ports:
