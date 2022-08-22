@@ -47,15 +47,13 @@ describe('Mailer tests', () => {
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
-    // TODO: uncomment this test when we fix the FE error handling
-    // it('should throw error if response is not ok', async () => {
-    //   const { MailerNode } = require('../email')
-    //   const service = new MailerNode()
-    //   mockFetch.mockResolvedValue({ ok: false })
+    it('should throw error if response is not ok', async () => {
+      const { MailerNode } = require('../email')
+      const service = new MailerNode()
+      mockFetch.mockResolvedValue({ ok: false })
 
-    //   await expect(service.sendPostmanMail(testMailBody)).toThrowError()
-    //   expect(mockFetch).toHaveBeenCalled()
-    // })
+      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrowError()
+    })
   })
 
   describe('sendMail', () => {

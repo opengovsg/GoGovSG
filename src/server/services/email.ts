@@ -76,8 +76,7 @@ export class MailerNode implements Mailer {
         }\thttpResponse: ${response.status}\t body:${JSON.stringify(response)}`,
       )
       logger.error(error.message)
-      // TODO: please help to check FE error handling before throwing the exception
-      // throw e
+      throw error
     }
     return
   }
