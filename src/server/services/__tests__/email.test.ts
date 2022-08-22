@@ -47,12 +47,42 @@ describe('Mailer tests', () => {
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
-    it('should throw error if response is not ok', async () => {
+    it('should throw error if postman fails to send mail', async () => {
+      jest.mock('cross-fetch', () => mockFetch)
+      jest.mock('../../config', () => ({
+        logger: console,
+        postmanApiKey: 'key',
+        postmanApiUrl: 'url',
+      }))
       const { MailerNode } = require('../email')
       const service = new MailerNode()
+
       mockFetch.mockResolvedValue({ ok: false })
 
       await expect(service.sendPostmanMail(testMailBody)).rejects.toThrowError()
+      expect(mockFetch).toHaveBeenCalled()
+    })
+  })
+
+  describe('sendTransporterMail', () => {
+    it('should throw error if transporter fails to send mail', async () => {
+      const sendMailMock = jest.fn((_, callback) => {
+        const err = new Error('error')
+        callback(err, null)
+      })
+      jest.mock('nodemailer', () => ({
+        createTransport: jest.fn().mockImplementation(() => ({
+          sendMail: sendMailMock,
+        })),
+      }))
+
+      const { MailerNode } = require('../email')
+      const service = new MailerNode()
+      service.initMailer()
+      await expect(
+        service.sendTransporterMail(testMailBody),
+      ).rejects.toThrowError()
+      expect(sendMailMock).toHaveBeenCalled()
     })
   })
 
@@ -96,9 +126,19 @@ describe('Mailer tests', () => {
     const { MailerNode } = require('../email')
     const service = new MailerNode()
 
-    it('should not send mail if email or otp is undefined', async () => {
+    it('should not send mail if otp is undefined', async () => {
       const testEmail = 'test@email.com'
       const testOtp = undefined
+      const testIp = '1.1.1.1'
+
+      const sendMailSpy = jest.spyOn(service, 'sendMail')
+      await service.mailOTP(testEmail, testOtp, testIp)
+      expect(sendMailSpy).not.toHaveBeenCalled()
+    })
+
+    it('should not send mail if email is undefined', async () => {
+      const testEmail = undefined
+      const testOtp = '111111'
       const testIp = '1.1.1.1'
 
       const sendMailSpy = jest.spyOn(service, 'sendMail')
