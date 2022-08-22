@@ -54,19 +54,20 @@ export class AuthService implements interfaces.AuthService {
         logger.error(`Could not save OTP hash:\t${saveError}`)
         throw new Error('Could not save OTP hash.')
       }
-      // Email out the otp (nodemailer)
-      try {
-        await this.mailer.mailOTP(email, otp, ip)
-      } catch (error) {
-        logger.error(`Error mailing OTP: ${error}`)
-        throw new Error('Error mailing OTP, please try again later.')
-      }
       logger.info(`OTP generation successful for ${email}`)
       dogstatsd.increment('otp.success', 1, 1)
     } catch (error) {
       logger.error(`OTP generation failed unexpectedly for ${email}:\t${error}`)
       dogstatsd.increment('otp.failure', 1, 1)
       throw new Error('OTP generation failed unexpectedly.')
+    }
+
+    // Email out the otp
+    try {
+      await this.mailer.mailOTP(email, otp, ip)
+    } catch (error) {
+      logger.error(`Error mailing OTP: ${error}`)
+      throw new Error('Error mailing OTP, please try again later.')
     }
   }
 
