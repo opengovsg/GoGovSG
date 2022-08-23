@@ -91,9 +91,3 @@ export type StorableOtp = {
 export type HasCacheDuration = {
   cacheDuration: string
 }
-
-export type StorableTag = {
-  id: number
-  tagString: string
-  tagKey: string
-}

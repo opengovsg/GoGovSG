@@ -210,6 +210,7 @@ export class UserController {
       res.ok({ urls, count })
       return
     } catch (error) {
+      console.log(`usercontroller.mesasge ${error.message}`)
       if (error instanceof NotFoundError) {
         res.notFound(error.message)
         return

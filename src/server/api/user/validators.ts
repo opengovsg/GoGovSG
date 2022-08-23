@@ -15,14 +15,15 @@ export const urlRetrievalSchema = Joi.object({
 })
 
 export const tagRetrievalSchema = Joi.object({
-  tagString: Joi.string()
-    .min(3)
-    .custom((tag: string, helpers) => {
-      if (!isValidTag(tag)) {
-        return helpers.message({ custom: `tag: ${tag} format is invalid` })
-      }
-      return tag
-    }),
+  userId: Joi.number().required(),
+  // tagString: Joi.string()
+  //   .min(3)
+  //   .custom((tag: string, helpers) => {
+  //     if (!isValidTag(tag)) {
+  //       return helpers.message({ custom: `tag: ${tag} format is invalid` })
+  //     }
+  //     return tag
+  //   }),
 })
 
 export const urlSchema = Joi.object({
