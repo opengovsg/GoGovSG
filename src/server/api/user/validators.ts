@@ -16,14 +16,22 @@ export const urlRetrievalSchema = Joi.object({
 
 export const tagRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
-  // tagString: Joi.string()
-  //   .min(3)
-  //   .custom((tag: string, helpers) => {
-  //     if (!isValidTag(tag)) {
-  //       return helpers.message({ custom: `tag: ${tag} format is invalid` })
-  //     }
-  //     return tag
-  //   }),
+})
+
+export const userTagsQueryConditions = Joi.object({
+  userId: Joi.number().required(),
+  searchText: Joi.string()
+    .min(3)
+    .custom((tag: string, helpers) => {
+      if (!isValidTag(tag)) {
+        return helpers.message({
+          custom: `tag: ${tag} query format is invalid.`,
+        })
+      }
+      return tag
+    })
+    .required(),
+  limit: Joi.number().required(),
 })
 
 export const urlSchema = Joi.object({

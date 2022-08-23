@@ -15,6 +15,7 @@ import { StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
 import { UrlManagementService } from './interfaces/UrlManagementService'
+import { userTagsQueryConditions } from '../../api/user/validators'
 
 type AnnouncementResponse = {
   message?: string
@@ -229,6 +230,11 @@ export class UserController {
     const limit = 5
     searchText = searchText.toString()
     const queryConditions = { searchText, userId, limit }
+    const validationResult = userTagsQueryConditions.validate(queryConditions)
+    if (validationResult.error) {
+      res.badRequest(validationResult.error.message)
+      return
+    }
     try {
       const tags = await this.urlManagementService.getTagsWithConditions(
         queryConditions,
