@@ -43,6 +43,12 @@ export type UserUrlsQueryConditions = {
   isFile: boolean | undefined
 }
 
+export type UserTagsQueryConditions = {
+  searchText: string
+  limit: number
+  userId: number
+}
+
 export type UrlPublic = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'description' | 'contactEmail' | 'isFile'

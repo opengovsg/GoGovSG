@@ -1,6 +1,7 @@
 import {
   StorableUrl,
   UrlsPaginated,
+  UserTagsQueryConditions,
   UserUrlsQueryConditions,
 } from '../../../repositories/types'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
@@ -26,6 +27,9 @@ export interface UrlManagementService {
   getUrlsWithConditions: (
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated>
+  getTagsWithConditions: (
+    conditions: UserTagsQueryConditions,
+  ) => Promise<string[]>
 }
 
 export default UrlManagementService

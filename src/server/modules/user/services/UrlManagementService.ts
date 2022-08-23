@@ -4,6 +4,7 @@ import {
   StorableFile,
   StorableUrl,
   UrlsPaginated,
+  UserTagsQueryConditions,
   UserUrlsQueryConditions,
 } from '../../../repositories/types'
 import {
@@ -11,6 +12,7 @@ import {
   AlreadyOwnLinkError,
   NotFoundError,
 } from '../../../util/error'
+import { TagRepositoryInterface } from '../../../repositories/interfaces/TagRepositoryInterface'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
@@ -23,13 +25,19 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
   private urlRepository: UrlRepositoryInterface
 
+  private tagRepository: TagRepositoryInterface
+
   constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
-    @inject(DependencyIds.urlRepository) urlRepository: UrlRepositoryInterface,
+    @inject(DependencyIds.urlRepository)
+    urlRepository: UrlRepositoryInterface,
+    @inject(DependencyIds.tagRepository)
+    tagRepository: TagRepositoryInterface,
   ) {
     this.userRepository = userRepository
     this.urlRepository = urlRepository
+    this.tagRepository = tagRepository
   }
 
   createUrl: (
@@ -59,7 +67,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         }
       : undefined
     // Success
-    const result = await this.urlRepository.create(
+    return this.urlRepository.create(
       {
         userId: user.id,
         longUrl,
@@ -68,8 +76,6 @@ export class UrlManagementService implements interfaces.UrlManagementService {
       },
       storableFile,
     )
-
-    return result
   }
 
   updateUrl: (
@@ -128,17 +134,21 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     }
 
     // Success
-    const result = await this.urlRepository.update(url, {
+    return this.urlRepository.update(url, {
       userId: newUserId,
     })
-
-    return result
   }
 
   getUrlsWithConditions: (
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = (conditions) => {
     return this.userRepository.findUrlsForUser(conditions)
+  }
+
+  getTagsWithConditions: (
+    conditions: UserTagsQueryConditions,
+  ) => Promise<string[]> = (conditions) => {
+    return this.tagRepository.findTagsWithConditions(conditions)
   }
 }
 

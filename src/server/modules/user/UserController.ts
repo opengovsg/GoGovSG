@@ -219,6 +219,31 @@ export class UserController {
     }
   }
 
+  public getTagsWithConditions: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId } = req.body
+    let { searchText = '' } = req.query
+    const limit = 5
+    searchText = searchText.toString()
+    const queryConditions = { searchText, userId, limit }
+    try {
+      const tags = await this.urlManagementService.getTagsWithConditions(
+        queryConditions,
+      )
+      res.ok(tags)
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.notFound(error.message)
+        return
+      }
+      res.serverError(jsonMessage('Error retrieving Tags for user'))
+      return
+    }
+  }
+
   public getUserMessage: (
     req: Express.Request,
     res: Express.Response,

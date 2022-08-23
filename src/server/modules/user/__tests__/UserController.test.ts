@@ -12,6 +12,7 @@ const urlManagementService = {
   updateUrl: jest.fn(),
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
+  getTagsWithConditions: jest.fn(),
 }
 
 const userMessage = 'The quick brown fox jumps over a lazy dog'
@@ -305,6 +306,50 @@ describe('UserController', () => {
         userId,
         shortUrl,
         newUserEmail,
+      )
+    })
+  })
+
+  describe('getTagsWithConditions', () => {
+    it('make sure urlManagementService.getTagsWithConditions is called exactly 1 time', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      await controller.getTagsWithConditions(req, res)
+      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
+        1,
+      )
+    })
+    it('processes query with defaults', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result: string[] = []
+      urlManagementService.getTagsWithConditions.mockResolvedValue(result)
+      await controller.getTagsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledWith({
+        limit: 5,
+        userId: undefined,
+        searchText: '',
+      })
+      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
+        1,
+      )
+    })
+    it('processes query with searchText=tag1', async () => {
+      const searchText = 'tag1'
+      const req = httpMocks.createRequest({
+        query: { searchText },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result: string[] = ['tag1', 'tag2']
+      urlManagementService.getTagsWithConditions.mockResolvedValue(result)
+      await controller.getTagsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledWith(
+        expect.objectContaining({ searchText }),
       )
     })
   })
