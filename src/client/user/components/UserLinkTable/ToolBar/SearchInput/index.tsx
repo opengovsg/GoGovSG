@@ -19,6 +19,7 @@ import FilterSortPanel from '../FilterSortPanel'
 import userActions from '../../../../actions'
 import useSearchInputHeight from './searchInputHeight'
 import ArrowDownIcon from '../../../../../app/components/widgets/ArrowDownIcon'
+import LinkIcon from '../../../../../app/components/widgets/LinkIcon'
 import SearchIcon from '../../../../../app/components/widgets/SearchIcon'
 import FilterDrawer from '../../../../../app/components/FilterDrawer'
 import { UrlTableConfig } from '../../../../reducers/types'
@@ -149,7 +150,7 @@ const SearchInput = () => {
       return <SearchIcon size={20} /> // TODO: change to tag icon
     }
     if (isMobileView && !isTag) {
-      return <SearchIcon size={20} /> // TODO: change to link icon
+      return <LinkIcon size={20} />
     }
     return (
       <span className={classes.labelWrapper}>{isTag ? 'Tag' : 'Link'}</span>
