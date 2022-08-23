@@ -16,6 +16,7 @@ import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
+import LinkHistoryToggle from './LinkHistoryToggle'
 import DrawerHeader from './DrawerHeader'
 import useShortLink from './util/shortlink'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
@@ -80,7 +81,8 @@ const useStyles = makeStyles((theme) =>
     },
     topBar: {
       width: '100%',
-      height: 110 + 33 /* 33px for copy button's height */,
+      height: 110 + 33 + 33,
+      /* 66 px for copy button's height and link history */
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       backgroundColor: theme.palette.background.default,
       position: 'absolute',
@@ -168,6 +170,7 @@ export default function ControlPanel() {
           <CloseIcon />
         </IconButton>
         <DrawerMargin>
+          <LinkHistoryToggle />
           <DrawerHeader />
           <LinkStateText />
           <DownloadButton />
