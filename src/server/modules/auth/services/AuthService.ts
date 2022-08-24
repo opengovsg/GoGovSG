@@ -7,7 +7,6 @@ import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRe
 import { StorableOtp, StorableUser } from '../../../repositories/types'
 import * as interfaces from '../interfaces'
 import { InvalidOtpError, NotFoundError } from '../../../util/error'
-import dogstatsd from '../../../util/dogstatsd'
 
 @injectable()
 export class AuthService implements interfaces.AuthService {
@@ -55,10 +54,8 @@ export class AuthService implements interfaces.AuthService {
         throw new Error('Could not save OTP hash.')
       }
       logger.info(`OTP generation successful for ${email}`)
-      dogstatsd.increment('otp.success', 1, 1)
     } catch (error) {
       logger.error(`OTP generation failed unexpectedly for ${email}:\t${error}`)
-      dogstatsd.increment('otp.failure', 1, 1)
       throw new Error('OTP generation failed unexpectedly.')
     }
 
@@ -66,7 +63,7 @@ export class AuthService implements interfaces.AuthService {
     try {
       await this.mailer.mailOTP(email, otp, ip)
     } catch (error) {
-      logger.error(`Error mailing OTP: ${error}`)
+      logger.error(`Error mailing OTP to ${email}: ${error}`)
       throw new Error('Error mailing OTP, please try again later.')
     }
   }
@@ -78,7 +75,7 @@ export class AuthService implements interfaces.AuthService {
       try {
         retrievedOtp = await this.otpRepository.getOtpForEmail(email)
       } catch (error) {
-        logger.error(`Error verifying OTP:\t${error}`)
+        logger.error(`Error verifying OTP for ${email}:\t${error}`)
         throw error
       }
 

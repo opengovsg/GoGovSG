@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify'
 
 import Sequelize from 'sequelize'
 import { OwnershipTransferRequest, UrlCreationRequest, UrlEditRequest } from '.'
+import dogstatsd from '../../util/dogstatsd'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import {
@@ -66,6 +67,7 @@ export class UserController {
         longUrl,
         file,
       )
+      dogstatsd.increment('shortlink.create', 1, 1, [`isfile:${!!file}`])
       res.ok(result)
       return
     } catch (error) {
