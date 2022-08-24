@@ -16,7 +16,7 @@ import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
-import LinkHistoryToggle from './LinkHistoryToggle'
+import LinkHistoryButton from './LinkHistoryButton'
 import DrawerHeader from './DrawerHeader'
 import useShortLink from './util/shortlink'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
@@ -170,7 +170,7 @@ export default function ControlPanel() {
           <CloseIcon />
         </IconButton>
         <DrawerMargin>
-          <LinkHistoryToggle />
+          <LinkHistoryButton />
           <DrawerHeader />
           <LinkStateText />
           <DownloadButton />
