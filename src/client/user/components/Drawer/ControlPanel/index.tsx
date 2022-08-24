@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Button,
   Divider,
   Drawer,
   Hidden,
@@ -11,6 +12,7 @@ import {
   useTheme,
 } from '@material-ui/core'
 
+import arrow from './assets/arrow-icon.svg'
 import { DrawerActions } from './util/reducers'
 import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
@@ -30,6 +32,12 @@ import { SEARCH_PAGE } from '../../../../app/util/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    backIcon: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      margin: theme.spacing(2),
+    },
     drawerPaper: {
       width: '100%',
       maxWidth: theme.breakpoints.width('md'),
@@ -82,7 +90,7 @@ const useStyles = makeStyles((theme) =>
     topBar: {
       width: '100%',
       height: 110 + 33 + 33,
-      /* 66 px for copy button's height and link history */
+      /* 66 px for copy button's height and link history button */
       boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.1)',
       backgroundColor: theme.palette.background.default,
       position: 'absolute',
@@ -133,6 +141,11 @@ export default function ControlPanel() {
     drawerStates.relevantShortLink!,
   )
 
+  // Toggle Link History
+  const [isHistoryToggled, setIsHistoryToggled] = React.useState(Boolean(false))
+
+  const toggleHistory: () => void = () => setIsHistoryToggled(!isHistoryToggled)
+
   // Manage values in our text fields.
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
   const editedDescription = shortLinkState?.editedDescription || ''
@@ -166,80 +179,105 @@ export default function ControlPanel() {
         <Hidden mdUp>
           <div className={classes.topBar} />
         </Hidden>
-        <IconButton className={classes.closeIcon} onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
-        <DrawerMargin>
-          <LinkHistoryButton />
-          <DrawerHeader />
-          <LinkStateText />
-          <DownloadButton />
-          <Hidden smDown>
-            <div className={classes.textFieldsTopSpacer} />
-          </Hidden>
-          <Hidden mdUp>
-            <Divider className={classes.divider} />
-          </Hidden>
-          {shortLinkState?.isFile ? <FileEditor /> : <LongUrlEditor />}
-          <Hidden mdUp>
-            <Divider className={classes.divider} />
-          </Hidden>
-          <LinkOwnershipField closeModal={handleClose} />
-          <div className={classes.inactiveDesc}>
-            <Divider className={classes.dividerInformation} />
-            <LinkInfoEditor
-              contactEmail={editedContactEmail}
-              description={editedDescription}
-              onContactEmailChange={(event) =>
-                shortLinkDispatch?.setEditContactEmail(event.target.value)
-              }
-              onDescriptionChange={(event) =>
-                shortLinkDispatch?.setEditDescription(
-                  event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
-                )
-              }
-              onContactEmailValidation={setContactEmailValid}
-              onDescriptionValidation={setDescriptionValid}
-            />
-            <div className={classes.saveLinkInformationButtonWrapper}>
-              <Link
-                target="_blank"
-                href={
-                  isDescriptionValid && isContactEmailValid && editedDescription
-                    ? `/#${SEARCH_PAGE}`
-                    : undefined
-                }
-                className={classes.previewButton}
-              >
-                <TrailingButton
-                  disabled={
-                    !originalDescription ||
-                    originalDescription !== editedDescription
+
+        {!isHistoryToggled && (
+          <>
+            <IconButton className={classes.closeIcon} onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+            <DrawerMargin>
+              <LinkHistoryButton clickHandler={toggleHistory} />
+              <DrawerHeader title="Edit Link" />
+              <LinkStateText />
+              <DownloadButton />
+              <Hidden smDown>
+                <div className={classes.textFieldsTopSpacer} />
+              </Hidden>
+              <Hidden mdUp>
+                <Divider className={classes.divider} />
+              </Hidden>
+              {shortLinkState?.isFile ? <FileEditor /> : <LongUrlEditor />}
+              <Hidden mdUp>
+                <Divider className={classes.divider} />
+              </Hidden>
+              <LinkOwnershipField closeModal={handleClose} />
+              <div className={classes.inactiveDesc}>
+                <Divider className={classes.dividerInformation} />
+                <LinkInfoEditor
+                  contactEmail={editedContactEmail}
+                  description={editedDescription}
+                  onContactEmailChange={(event) =>
+                    shortLinkDispatch?.setEditContactEmail(event.target.value)
                   }
-                  fullWidth={isMobileView}
-                  variant="outlined"
-                >
-                  Preview
-                </TrailingButton>
-              </Link>
-              <TrailingButton
-                disabled={
-                  !isDescriptionValid ||
-                  (editedContactEmail === originalContactEmail &&
-                    editedDescription === originalDescription) ||
-                  !isContactEmailValid
-                }
-                fullWidth={isMobileView}
-                variant={isMobileView ? 'contained' : 'outlined'}
-                onClick={shortLinkDispatch?.applyEditInformation}
-              >
-                Save
-              </TrailingButton>
-            </div>
-          </div>
-          <Divider className={classes.dividerAnalytics} />
-          <LinkAnalytics />
-        </DrawerMargin>
+                  onDescriptionChange={(event) =>
+                    shortLinkDispatch?.setEditDescription(
+                      event.target.value.replace(/(\r\n|\n|\r)/gm, ''),
+                    )
+                  }
+                  onContactEmailValidation={setContactEmailValid}
+                  onDescriptionValidation={setDescriptionValid}
+                />
+                <div className={classes.saveLinkInformationButtonWrapper}>
+                  <Link
+                    target="_blank"
+                    href={
+                      isDescriptionValid &&
+                      isContactEmailValid &&
+                      editedDescription
+                        ? `/#${SEARCH_PAGE}`
+                        : undefined
+                    }
+                    className={classes.previewButton}
+                  >
+                    <TrailingButton
+                      disabled={
+                        !originalDescription ||
+                        originalDescription !== editedDescription
+                      }
+                      fullWidth={isMobileView}
+                      variant="outlined"
+                    >
+                      Preview
+                    </TrailingButton>
+                  </Link>
+                  <TrailingButton
+                    disabled={
+                      !isDescriptionValid ||
+                      (editedContactEmail === originalContactEmail &&
+                        editedDescription === originalDescription) ||
+                      !isContactEmailValid
+                    }
+                    fullWidth={isMobileView}
+                    variant={isMobileView ? 'contained' : 'outlined'}
+                    onClick={shortLinkDispatch?.applyEditInformation}
+                  >
+                    Save
+                  </TrailingButton>
+                </div>
+              </div>
+              <Divider className={classes.dividerAnalytics} />
+              <LinkAnalytics />
+            </DrawerMargin>
+          </>
+        )}
+
+        {isHistoryToggled && (
+          <>
+            <Button
+              className={classes.backIcon}
+              onClick={toggleHistory}
+              size="large"
+              variant="text"
+              color="primary"
+            >
+              <img src={arrow} alt="arrow graphic" />
+              Edit link
+            </Button>
+            <DrawerMargin>
+              <DrawerHeader title="Link History" />
+            </DrawerMargin>
+          </>
+        )}
       </main>
     </Drawer>
   )

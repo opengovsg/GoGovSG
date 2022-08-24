@@ -3,22 +3,39 @@ import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 
 import historyIcon from './assets/history-icon.svg'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     rootDiv: {
       display: 'block',
       textAlign: 'right',
+      [theme.breakpoints.down('sm')]: {
+        textAlign: 'left',
+      },
+    },
+    linkButton: {
+      padding: 0,
+      backgroundColor: 'transparent',
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
     },
   }),
 )
-export default function LinkHistoryButton() {
+
+type LinkHistoryButtonProps = {
+  clickHandler: () => void
+}
+
+export default function LinkHistoryButton({
+  clickHandler,
+}: LinkHistoryButtonProps) {
   const classes = useStyles()
 
   return (
     <div className={classes.rootDiv}>
       <Button
-        // TODO
-        onClick={() => console.log('Pending OnClick implementation')}
+        className={classes.linkButton}
+        onClick={clickHandler}
         size="large"
         variant="text"
       >
