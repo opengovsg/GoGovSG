@@ -8,7 +8,7 @@
 -- Parameters:
 --   @from_user_email - email of transferrer
 --   @to_user_email   - email of transferree
--- Returns:     Void
+-- Returns:     Integer - number of links transferred
 --
 -- Change History:
 --   11 July 2019 Yuanruo Liang: Function created
@@ -20,14 +20,16 @@
 --                            isSearchable column
 --   01 Apr  2021 Alexis Goh: Update function's url_history insertion step to include
 --                            description column
+--   12 July 2022 Lim Zi Wei: Update function to return the number of migrated links
 -- =============================================
-CREATE OR REPLACE FUNCTION migrate_user_links(from_user_email text, to_user_email text) RETURNS void AS
+CREATE OR REPLACE FUNCTION migrate_user_links(from_user_email text, to_user_email text) RETURNS integer AS
 $BODY$
 DECLARE
     from_user_email text := from_user_email;
     to_user_email text := to_user_email;
     from_user_id integer;
     to_user_id integer;
+    num_migrated_links integer;
 BEGIN
 -- Look for the users in question
     SELECT id INTO from_user_id FROM users WHERE email = from_user_email LIMIT 1;
@@ -54,6 +56,8 @@ BEGIN
         SET "userId" = to_user_id,
             "updatedAt" = CURRENT_TIMESTAMP
         WHERE "userId" = from_user_id;
+    GET DIAGNOSTICS num_migrated_links = ROW_COUNT;
+    RETURN num_migrated_links;
 END
 $BODY$
 LANGUAGE plpgsql;
