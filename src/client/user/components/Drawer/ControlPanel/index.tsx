@@ -6,6 +6,7 @@ import {
   Hidden,
   IconButton,
   Link,
+  Typography,
   createStyles,
   makeStyles,
   useMediaQuery,
@@ -29,14 +30,18 @@ import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
 import { SEARCH_PAGE } from '../../../../app/util/types'
+import LinkHistory from './LinkHistory'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    backIcon: {
+    backButton: {
       position: 'absolute',
       top: 0,
       left: 0,
       margin: theme.spacing(2),
+    },
+    backButtonText: {
+      paddingLeft: 10,
     },
     drawerPaper: {
       width: '100%',
@@ -264,18 +269,21 @@ export default function ControlPanel() {
         {isHistoryToggled && (
           <>
             <Button
-              className={classes.backIcon}
+              className={classes.backButton}
               onClick={toggleHistory}
               size="large"
               variant="text"
               color="primary"
             >
               <img src={arrow} alt="arrow graphic" />
-              Edit link
+              <Typography variant="h6" className={classes.backButtonText}>
+                Edit Link
+              </Typography>
             </Button>
             <DrawerMargin>
               <DrawerHeader title="Link History" />
             </DrawerMargin>
+            <LinkHistory />
           </>
         )}
       </main>
