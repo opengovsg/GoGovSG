@@ -1,9 +1,13 @@
 import React from 'react'
 
 import { createStyles, makeStyles } from '@material-ui/core'
-
+import { useDispatch, useSelector } from 'react-redux'
 import { Timeline } from '@material-ui/lab/'
-import { changeSets } from './LinkHistoryDummyData'
+import { GoGovReduxState } from '../../../../app/reducers/types'
+import { useDrawerState } from '..'
+
+import userActions from '../../../actions'
+
 import LinkHistoryItem from './LinkHistoryItem'
 
 const useStyles = makeStyles(() =>
@@ -16,12 +20,19 @@ const useStyles = makeStyles(() =>
 )
 
 export default function LinkHistory() {
+  const dispatch = useDispatch()
+  const shortUrl = useDrawerState().relevantShortLink || ''
+  dispatch(userActions.getLinkHistoryForUser(shortUrl))
+  const linkHistory = useSelector(
+    (state: GoGovReduxState) => state.user.linkHistory,
+  )
+
   const classes = useStyles()
-  const changeSetLen = changeSets.length
+  const changeSetLen = linkHistory.length
   return (
     <Timeline className={classes.rootTimeline}>
-      {changeSets &&
-        changeSets.map((currSet, idx) => {
+      {linkHistory &&
+        linkHistory.map((currSet, idx) => {
           return (
             <LinkHistoryItem
               changeSet={currSet}
