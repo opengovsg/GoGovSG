@@ -49,6 +49,25 @@ export function createRequestWithUser(user: any): Request {
 }
 
 /**
+ * Creates a mock request with the input session user.
+ * @param  {any} user
+ * @returns A mock Request with the input session user.
+ */
+export function createGetTagsRequestWithUser(user: any): Request {
+  return httpMocks.createRequest({
+    session: {
+      user,
+    },
+    query: {
+      searchText: 'tag',
+    },
+    body: {
+      userId: 1,
+    },
+  })
+}
+
+/**
  * Creates a mock request with the input email in request body.
  * @param  {any} user
  * @returns A mock Request with the input email.

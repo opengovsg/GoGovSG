@@ -295,12 +295,13 @@ describe('UrlRepository', () => {
     const scope = jest.spyOn(urlModelMock, 'scope')
     const putObject = jest.spyOn(s3Client, 'putObject')
     const putObjectAcl = jest.spyOn(s3Client, 'putObjectAcl')
-
+    const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     beforeEach(() => {
       findOne.mockReset()
       scope.mockReset()
       putObject.mockClear()
       putObjectAcl.mockClear()
+      tagFindOrCreate.mockClear()
     })
 
     afterAll(() => {
@@ -357,7 +358,6 @@ describe('UrlRepository', () => {
       const update = jest.fn()
       const setTags = jest.fn()
       const newTags = ['tag1', 'tag2']
-      const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
       scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue({ ...baseUrl, isFile: false, update, setTags })
       await expect(
@@ -419,7 +419,6 @@ describe('UrlRepository', () => {
       const newTags = ['tag1', 'tag2']
       const update = jest.fn()
       const setTags = jest.fn()
-      const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
       const url: any = {
         ...baseUrl,
         isFile: true,

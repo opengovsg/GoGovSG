@@ -2,7 +2,10 @@
 import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
 import { StorableUrlState } from '../../../repositories/enums'
-import { createRequestWithUser } from '../../../../../test/server/api/util'
+import {
+  createGetTagsRequestWithUser,
+  createRequestWithUser,
+} from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
 import { AlreadyExistsError, NotFoundError } from '../../../util/error'
@@ -312,7 +315,7 @@ describe('UserController', () => {
 
   describe('getTagsWithConditions', () => {
     it('make sure urlManagementService.getTagsWithConditions is called exactly 1 time', async () => {
-      const req = createRequestWithUser(undefined)
+      const req = createGetTagsRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
       await controller.getTagsWithConditions(req, res)
@@ -320,8 +323,41 @@ describe('UserController', () => {
         1,
       )
     })
+    it('call getTagsWithConditions with invalid searchText, less than 3 characters', async () => {
+      const searchText = 't'
+      const req = httpMocks.createRequest({
+        query: { searchText },
+        body: {
+          userId: 1,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      await controller.getTagsWithConditions(req, res)
+      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
+        0,
+      )
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+    it('call getTagsWithConditions with invalid searchText, special characters', async () => {
+      const searchText = '#$%'
+      const req = httpMocks.createRequest({
+        query: { searchText },
+        body: {
+          userId: 1,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+      await controller.getTagsWithConditions(req, res)
+      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
+        0,
+      )
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
     it('processes query with defaults', async () => {
-      const req = createRequestWithUser(undefined)
+      const req = createGetTagsRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
       const result: string[] = []
@@ -341,6 +377,9 @@ describe('UserController', () => {
       const searchText = 'tag1'
       const req = httpMocks.createRequest({
         query: { searchText },
+        body: {
+          userId: 1,
+        },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
