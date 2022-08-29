@@ -352,6 +352,37 @@ describe('UrlRepository', () => {
       ])
     })
 
+    it('should update tags on non-file links', async () => {
+      const description = 'Changes made'
+      const update = jest.fn()
+      const setTags = jest.fn()
+      const newTags = ['tag1', 'tag2']
+      const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update, setTags })
+      await expect(
+        repository.update(
+          { shortUrl: baseShortUrl },
+          { description, tags: newTags },
+        ),
+      ).resolves.toStrictEqual(expect.objectContaining({ isFile: false }))
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
+      expect(putObject).not.toHaveBeenCalled()
+      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(tagFindOrCreate).toHaveBeenCalledTimes(2)
+      expect(update).toHaveBeenCalledWith(
+        { description, tags: newTags },
+        expect.anything(),
+      )
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
+    })
+
     it('should update non-state changes on file links', async () => {
       const description = 'Changes made'
       const update = jest.fn()
@@ -381,6 +412,45 @@ describe('UrlRepository', () => {
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
+    })
+
+    it('should update tags changes on file links', async () => {
+      const description = 'Changes made'
+      const newTags = ['tag1', 'tag2']
+      const update = jest.fn()
+      const setTags = jest.fn()
+      const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
+      const url: any = {
+        ...baseUrl,
+        isFile: true,
+        update: update.mockImplementationOnce(({ description }) => {
+          url.description = description
+        }),
+        setTags,
+      }
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        description,
+      }
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue(url)
+      await expect(
+        repository.update(
+          { shortUrl: baseShortUrl },
+          { description, tags: newTags },
+        ),
+      ).resolves.toEqual(expectedUrl)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
+      expect(tagFindOrCreate).toHaveBeenCalledTimes(2)
+      expect(putObject).not.toHaveBeenCalled()
+      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(update).toHaveBeenCalledWith(
+        { description, tags: newTags },
+        expect.anything(),
+      )
     })
 
     it('should update state change to Active on file links', async () => {
