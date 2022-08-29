@@ -182,12 +182,10 @@ export class UrlRepository implements UrlRepositoryInterface {
         }
       }
       // Do a fresh read which eagerly loads the associated tags field.
-      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findByPk(
-        shortUrl,
-        {
-          transaction: t,
-        },
-      )
+      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findOne({
+        where: { shortUrl },
+        transaction: t,
+      })
     })
     this.invalidateCache(shortUrl)
     if (!newUrl) throw new Error('Newly-updated url is null')

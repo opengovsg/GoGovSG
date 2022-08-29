@@ -323,14 +323,19 @@ describe('UrlRepository', () => {
       })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
-      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
     })
 
     it('should update non-file links', async () => {
       const description = 'Changes made'
       const update = jest.fn()
-      scope.mockImplementationOnce(() => urlModelMock)
-      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update })
+      const setTags = jest.fn()
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update, setTags })
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { description }),
       ).resolves.toStrictEqual(expect.objectContaining({ isFile: false }))
@@ -340,18 +345,24 @@ describe('UrlRepository', () => {
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
-      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+      expect(scope).toHaveBeenCalledWith([
+        'defaultScope',
+        'getClicks',
+        'getTags',
+      ])
     })
 
     it('should update non-state changes on file links', async () => {
       const description = 'Changes made'
       const update = jest.fn()
+      const setTags = jest.fn()
       const url: any = {
         ...baseUrl,
         isFile: true,
         update: update.mockImplementationOnce(({ description }) => {
           url.description = description
         }),
+        setTags,
       }
       const expectedUrl = {
         ...baseStorableUrl,
@@ -359,7 +370,7 @@ describe('UrlRepository', () => {
         description,
         tags: [],
       }
-      scope.mockImplementationOnce(() => urlModelMock)
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { description }),
@@ -375,6 +386,7 @@ describe('UrlRepository', () => {
     it('should update state change to Active on file links', async () => {
       const state = StorableUrlState.Active
       const update = jest.fn()
+      const setTags = jest.fn()
       const url = {
         ...baseUrl,
         isFile: true,
@@ -382,9 +394,10 @@ describe('UrlRepository', () => {
         update: update.mockImplementationOnce(({ state }) => {
           url.state = state
         }),
+        setTags,
       }
       const expectedUrl = { ...baseStorableUrl, isFile: true, tags: [] }
-      scope.mockImplementationOnce(() => urlModelMock)
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { state }),
@@ -405,6 +418,7 @@ describe('UrlRepository', () => {
     it('should update state change to Inactive on file links', async () => {
       const state = StorableUrlState.Inactive
       const update = jest.fn()
+      const setTags = jest.fn()
       const url = {
         ...baseUrl,
         isFile: true,
@@ -412,6 +426,7 @@ describe('UrlRepository', () => {
         update: update.mockImplementationOnce(({ state }) => {
           url.state = state
         }),
+        setTags,
       }
       const expectedUrl = {
         ...baseStorableUrl,
@@ -419,7 +434,7 @@ describe('UrlRepository', () => {
         tags: [],
         state: StorableUrlState.Inactive,
       }
-      scope.mockImplementationOnce(() => urlModelMock)
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { state }),
@@ -450,6 +465,7 @@ describe('UrlRepository', () => {
       }
 
       const update = jest.fn()
+      const setTags = jest.fn()
       const url = {
         ...baseUrl,
         isFile: true,
@@ -457,6 +473,7 @@ describe('UrlRepository', () => {
         update: update.mockImplementationOnce(({ longUrl }) => {
           url.longUrl = longUrl
         }),
+        setTags,
       }
       const expectedUrl = {
         ...baseStorableUrl,
@@ -465,7 +482,7 @@ describe('UrlRepository', () => {
         longUrl: newLongUrl,
       }
 
-      scope.mockImplementationOnce(() => urlModelMock)
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
 
       await expect(
