@@ -11,7 +11,7 @@ import {
   TimelineSeparator,
 } from '@material-ui/lab/'
 
-import { LinkChangeKey, LinkChangeSet } from '../../../reducers/types'
+import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types'
 
 const useStyles = makeStyles(() =>
   createStyles({

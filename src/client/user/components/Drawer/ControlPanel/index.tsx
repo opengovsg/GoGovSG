@@ -19,7 +19,8 @@ import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
-import LinkHistoryButton from './LinkHistoryButton'
+import LinkHistory from './LinkHistory/LinkHistory'
+import LinkHistoryButton from './LinkHistory/LinkHistoryButton'
 import DrawerHeader from './DrawerHeader'
 import useShortLink from './util/shortlink'
 import LinkInfoEditor from '../../../widgets/LinkInfoEditor'
@@ -30,7 +31,6 @@ import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
 import { SEARCH_PAGE } from '../../../../app/util/types'
-import LinkHistory from './LinkHistory'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -147,9 +147,9 @@ export default function ControlPanel() {
   )
 
   // Toggle Link History
-  const [isHistoryToggled, setIsHistoryToggled] = React.useState(Boolean(false))
-
-  const toggleHistory: () => void = () => setIsHistoryToggled(!isHistoryToggled)
+  const isHistoryToggled = drawerStates.linkHistoryIsToggled
+  const toggleHistory: () => void = () =>
+    modalDispatch({ type: DrawerActions.toggleLinkHistory })
 
   // Manage values in our text fields.
   const editedContactEmail = shortLinkState?.editedContactEmail || ''

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
-
-import historyIcon from './assets/history-icon.svg'
+import historyIcon from '../assets/history-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
