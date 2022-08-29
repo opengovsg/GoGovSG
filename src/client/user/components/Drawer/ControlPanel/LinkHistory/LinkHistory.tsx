@@ -22,10 +22,16 @@ const useStyles = makeStyles(() =>
 export default function LinkHistory() {
   const dispatch = useDispatch()
   const shortUrl = useDrawerState().relevantShortLink || ''
-  dispatch(userActions.getLinkHistoryForUser(shortUrl))
   const linkHistory = useSelector(
     (state: GoGovReduxState) => state.user.linkHistory,
   )
+
+  const getLinkHistoryForUser = () =>
+    dispatch(userActions.getLinkHistoryForUser(shortUrl))
+
+  React.useEffect(() => {
+    getLinkHistoryForUser()
+  }, [])
 
   const classes = useStyles()
   const changeSetLen = linkHistory.length
