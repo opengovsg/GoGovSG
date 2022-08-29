@@ -28,6 +28,7 @@ const initialState: UserState = {
   },
   isFetchingLinkHistory: false,
   linkHistory: [],
+  linkHistoryCount: 0,
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
@@ -220,7 +221,8 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       break
     case UserAction.GET_LINKHISTORY_FOR_USER_SUCCESS:
       nextState = {
-        linkHistory: action.payload,
+        linkHistory: action.payload.linkHistory,
+        linkHistoryCount: action.payload.totalCount,
       }
       break
     default:

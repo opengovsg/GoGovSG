@@ -238,7 +238,7 @@ async function handleError(
 const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
   json: {
     changes: Array<LinkChangeSet>
-    count: number
+    totalCount: number
     offset: number
     limit: number
     message?: string
@@ -262,15 +262,21 @@ const isFetchingLinkHistoryAction: (
 
 const isGetLinkHistoryForUserSuccess: (
   urls: Array<LinkChangeSet>,
-) => GetLinkHistoryForUserSuccessAction = (linkHistory) => ({
+  totalCount: number,
+) => GetLinkHistoryForUserSuccessAction = (linkHistory, totalCount) => ({
   type: UserAction.GET_LINKHISTORY_FOR_USER_SUCCESS,
-  payload: linkHistory,
+  payload: {
+    linkHistory,
+    totalCount,
+  },
 })
 
 // retrieves urls based on url table config
 const getLinkHistoryForUser =
   (
     shortUrl: string,
+    offset: number,
+    limit: number,
   ): ThunkAction<
     void,
     GoGovReduxState,
@@ -284,9 +290,6 @@ const getLinkHistoryForUser =
       | SetErrorMessageAction
     >,
   ) => {
-    const offset = 0
-    const limit = 10
-
     const queryObj = {
       limit,
       url: shortUrl,
@@ -298,7 +301,7 @@ const getLinkHistoryForUser =
 
     if (isOk) {
       dispatch<GetLinkHistoryForUserSuccessAction>(
-        isGetLinkHistoryForUserSuccess(json.changes),
+        isGetLinkHistoryForUserSuccess(json.changes, json.totalCount),
       )
     } else {
       dispatch<SetErrorMessageAction>(

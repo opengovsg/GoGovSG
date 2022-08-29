@@ -176,7 +176,10 @@ export type IsFetchingLinkHistoryAction = ReduxPayloadAction<
 >
 export type GetLinkHistoryForUserSuccessAction = ReduxPayloadAction<
   UserAction.GET_LINKHISTORY_FOR_USER_SUCCESS,
-  Array<LinkChangeSet>
+  {
+    linkHistory: Array<LinkChangeSet>
+    totalCount: number
+  }
 >
 
 export type UserActionType =

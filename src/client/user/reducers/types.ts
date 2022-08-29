@@ -85,4 +85,5 @@ export type UserState = {
   } | null
   isFetchingLinkHistory: boolean
   linkHistory: Array<LinkChangeSet>
+  linkHistoryCount: number
 }

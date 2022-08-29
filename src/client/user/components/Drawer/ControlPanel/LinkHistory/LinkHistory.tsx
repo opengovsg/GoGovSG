@@ -8,45 +8,64 @@ import { useDrawerState } from '../..'
 
 import userActions from '../../../../actions'
 
+import LinkHistoryPagination from './LinkHistoryPagination'
 import LinkHistoryItem from './LinkHistoryItem'
 
 const useStyles = makeStyles(() =>
   createStyles({
     rootTimeline: {
-      marginLeft: 15,
+      marginLeft: 0,
       marginRight: 15,
+      paddingLeft: 0,
     },
   }),
 )
 
 export default function LinkHistory() {
+  const ITEMS_PER_PAGE = 10
+  const [currentPage, setCurrentPage] = React.useState(1)
   const dispatch = useDispatch()
   const shortUrl = useDrawerState().relevantShortLink || ''
-  const linkHistory = useSelector(
-    (state: GoGovReduxState) => state.user.linkHistory,
+  const { linkHistory, linkHistoryCount } = useSelector(
+    (state: GoGovReduxState) => state.user,
   )
 
-  const getLinkHistoryForUser = () =>
-    dispatch(userActions.getLinkHistoryForUser(shortUrl))
+  const getLinkHistoryForUser = () => {
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE
+    dispatch(
+      userActions.getLinkHistoryForUser(shortUrl, offset, ITEMS_PER_PAGE),
+    )
+  }
 
+  const onPageChange = (page: number) => {
+    setCurrentPage(page)
+  }
   React.useEffect(() => {
     getLinkHistoryForUser()
-  }, [])
+  }, [currentPage])
 
   const classes = useStyles()
   const changeSetLen = linkHistory.length
   return (
-    <Timeline className={classes.rootTimeline}>
-      {linkHistory &&
-        linkHistory.map((currSet, idx) => {
-          return (
-            <LinkHistoryItem
-              changeSet={currSet}
-              // Remove bottom connector for the bottom item
-              removeBottomConnector={idx === changeSetLen - 1}
-            />
-          )
-        })}
-    </Timeline>
+    <>
+      <Timeline className={classes.rootTimeline}>
+        {linkHistory &&
+          linkHistory.map((currSet, idx) => {
+            return (
+              <LinkHistoryItem
+                key={`LinkHistoryItem-${currSet.updatedAt}`}
+                changeSet={currSet}
+                // Remove bottom connector for the bottom item
+                removeBottomConnector={idx === changeSetLen - 1}
+              />
+            )
+          })}
+      </Timeline>
+      <LinkHistoryPagination
+        page={currentPage}
+        pageCount={Math.ceil(linkHistoryCount / ITEMS_PER_PAGE)}
+        onChangePage={onPageChange}
+      />
+    </>
   )
 }

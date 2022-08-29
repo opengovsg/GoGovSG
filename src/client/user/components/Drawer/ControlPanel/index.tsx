@@ -282,8 +282,8 @@ export default function ControlPanel() {
             </Button>
             <DrawerMargin>
               <DrawerHeader title="Link History" />
+              <LinkHistory />
             </DrawerMargin>
-            <LinkHistory />
           </>
         )}
       </main>
