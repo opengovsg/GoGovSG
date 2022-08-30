@@ -196,7 +196,7 @@ export default class GoStack extends Stack {
        * is provided in the task subnets, set this option to true. This way,
        * each task gets a public IP (and can hence receive network response packets).
        */
-      assignPublicIp: false, // TODO: Remove if running in subnet with NAT gateway.
+      assignPublicIp: false,
     })
 
     const scalableTarget = service.service.autoScaleTaskCount({
