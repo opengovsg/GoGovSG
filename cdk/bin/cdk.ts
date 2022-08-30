@@ -5,6 +5,9 @@ import GoStack from '../lib/go-stack'
 
 const { CDK_DEPLOY_ACCOUNT, CDK_DEPLOY_REGION, ECS_SERVICE, ECS_ENV } =
   process.env
+if (!(CDK_DEPLOY_ACCOUNT && CDK_DEPLOY_REGION && ECS_SERVICE && ECS_ENV)) {
+  throw new Error('Missing env variables.')
+}
 
 const app = new cdk.App()
 
