@@ -34,10 +34,9 @@ export class TagRepository implements TagRepositoryInterface {
         },
       ],
     })
-    const tagStrings = tags.map((tagType) => {
+    return tags.map((tagType) => {
       return this.tagMapper.persistenceToDto(tagType)
     })
-    return tagStrings
   }
 }
 
