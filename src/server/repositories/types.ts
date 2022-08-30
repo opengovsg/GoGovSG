@@ -41,6 +41,7 @@ export type UserUrlsQueryConditions = {
   userId: number
   state: string | undefined
   isFile: boolean | undefined
+  tags: string[]
 }
 
 export type UserTagsQueryConditions = {

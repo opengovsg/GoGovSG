@@ -15,7 +15,10 @@ import { StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
 import { UrlManagementService } from './interfaces/UrlManagementService'
-import { userTagsQueryConditions } from '../../api/user/validators'
+import {
+  userTagsQueryConditions,
+  userUrlsQueryConditions,
+} from '../../api/user/validators'
 
 type AnnouncementResponse = {
   message?: string
@@ -188,7 +191,9 @@ export class UserController {
       sortDirection = 'desc',
       isFile,
       state,
+      tags = '',
     } = req.query
+    const tagList = tags ? tags.toString().toLowerCase().split(';') : []
     const queryConditions = {
       limit,
       offset: Number(offset),
@@ -198,11 +203,17 @@ export class UserController {
       userId,
       state: state?.toString(),
       isFile: undefined as boolean | undefined,
+      tags: tagList,
     }
     if (isFile === 'true') {
       queryConditions.isFile = true
     } else if (isFile === 'false') {
       queryConditions.isFile = false
+    }
+    const validationResult = userUrlsQueryConditions.validate(queryConditions)
+    if (validationResult.error) {
+      res.badRequest(validationResult.error.message)
+      return
     }
     // Find user and paginated urls
     try {

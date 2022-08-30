@@ -10,12 +10,38 @@ import {
 import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../shared/constants'
 import { isValidGovEmail } from '../../util/email'
 
+const MAX_TAG_COUNT = 3
+
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
 
 export const tagRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
+})
+
+export const userUrlsQueryConditions = Joi.object({
+  userId: Joi.number().required(),
+  limit: Joi.number().required(),
+  offset: Joi.number().required(),
+  orderBy: Joi.string().optional(),
+  sortDirection: Joi.string().optional(),
+  searchText: Joi.string().allow('').optional(),
+  state: Joi.string().allow('').optional(),
+  isFile: Joi.boolean().optional(),
+  tags: Joi.array()
+    .max(MAX_TAG_COUNT)
+    .optional()
+    .items(
+      Joi.string()
+        .optional()
+        .custom((tag: string, helpers) => {
+          if (!isValidTag(tag)) {
+            return helpers.message({ custom: `tag: ${tag} format is invalid` })
+          }
+          return tag
+        }),
+    ),
 })
 
 export const userTagsQueryConditions = Joi.object({
@@ -56,7 +82,7 @@ export const urlSchema = Joi.object({
     return url
   }),
   tags: Joi.array()
-    .max(3)
+    .max(MAX_TAG_COUNT)
     .optional()
     .items(
       Joi.string().custom((tag: string, helpers) => {
@@ -86,7 +112,7 @@ export const urlEditSchema = Joi.object({
     return url
   }),
   tags: Joi.array()
-    .max(3)
+    .max(MAX_TAG_COUNT)
     .optional()
     .items(
       Joi.string().custom((tag: string, helpers) => {

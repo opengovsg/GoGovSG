@@ -4,6 +4,7 @@ import { IdType, Settable } from '../../types/server/models'
 import { Url, UrlType } from './url'
 import { UrlClicks } from './statistics/clicks'
 import { emailValidator } from '../config'
+import { Tag } from './tag'
 
 // Users
 export interface UserType extends IdType, Sequelize.Model {
@@ -60,6 +61,7 @@ export const User = <UserTypeStatic>sequelize.define(
         userId: number
         state: string | undefined
         isFile: boolean | undefined
+        tags: string[]
       }) {
         const {
           limit,
@@ -70,6 +72,7 @@ export const User = <UserTypeStatic>sequelize.define(
           searchText,
           state,
           isFile,
+          tags,
         } = queryConditions
         const { Op } = Sequelize
         const whereUrlConditions: any = {
@@ -92,11 +95,26 @@ export const User = <UserTypeStatic>sequelize.define(
         if (isFile !== undefined) {
           whereUrlConditions.isFile = isFile
         }
+
         return {
           include: [
             {
-              model: Url.scope(['defaultScope', 'getClicks']),
+              model: Url.scope(['defaultScope', 'getClicks', 'getTags']),
               as: 'Urls',
+              include:
+                tags && tags.length > 0
+                  ? [
+                      {
+                        model: Tag,
+                        where: [{ tagKey: { [Op.in]: tags } }],
+                        group: ['shortUrl'],
+                        having: [
+                          'COUNT (DISTINCT "Urls->tags"."tagkey") = ?',
+                          tags.length.toString(),
+                        ],
+                      },
+                    ]
+                  : [],
               where: whereUrlConditions,
               // use left outer join instead of default inner join
               required: false,

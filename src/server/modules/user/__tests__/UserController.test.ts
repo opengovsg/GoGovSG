@@ -477,6 +477,80 @@ describe('UserController', () => {
       )
     })
 
+    it('processes query with empty tags', async () => {
+      const req = httpMocks.createRequest({
+        query: { isFile: 'false', tags: '' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
+        expect.objectContaining({ isFile: false, tags: [''] }),
+      )
+    })
+
+    it('processes query with non empty tags', async () => {
+      const req = httpMocks.createRequest({
+        query: { isFile: 'false', tags: 'tag1;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
+        expect.objectContaining({ isFile: false, tags: ['tag1', 'tag2'] }),
+      )
+    })
+
+    it('processes query with invalid tags-short', async () => {
+      const req = httpMocks.createRequest({
+        query: { isFile: 'false', tags: 'ta;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('processes query with invalid tags-long', async () => {
+      const req = httpMocks.createRequest({
+        query: { isFile: 'false', tags: '01234567890123456789012345;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('processes query with invalid tags-special character', async () => {
+      const req = httpMocks.createRequest({
+        query: { isFile: 'false', tags: 'tag1^%^;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
     it('reports serverError on Error', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
