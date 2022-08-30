@@ -335,9 +335,6 @@ describe('UserController', () => {
       res.ok = jest.fn()
       res.badRequest = jest.fn()
       await controller.getTagsWithConditions(req, res)
-      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
-        0,
-      )
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
     it('call getTagsWithConditions with invalid searchText, special characters', async () => {
@@ -351,9 +348,6 @@ describe('UserController', () => {
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
       await controller.getTagsWithConditions(req, res)
-      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
-        0,
-      )
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
     it('processes query with defaults', async () => {
@@ -366,12 +360,9 @@ describe('UserController', () => {
       expect(res.ok).toHaveBeenCalledWith(result)
       expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledWith({
         limit: 5,
-        userId: undefined,
-        searchText: '',
+        userId: 1,
+        searchText: 'tag',
       })
-      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
-        1,
-      )
     })
     it('processes query with searchText=tag1', async () => {
       const searchText = 'tag1'
