@@ -147,6 +147,15 @@ export default class GoStack extends Stack {
       vpc,
       description: 'ECS security group.',
     })
+    /**
+     * CDK will automatically add port 80 access to the ALB, which allows our starter
+     * application to work. However, the main app's container listens on port
+     * 8080, so we need to make an addition here.
+     */
+    ecsSecurityGroup.addIngressRule(
+      Peer.securityGroupId(albSecurityGroup.securityGroupId),
+      Port.tcp(8080),
+    )
 
     const alb = new ApplicationLoadBalancer(this, 'alb', {
       vpc,
