@@ -22,13 +22,17 @@ const useStyles = makeStyles(() =>
 )
 
 export default function LinkHistory() {
+  const classes = useStyles()
   const ITEMS_PER_PAGE = 10
   const [currentPage, setCurrentPage] = React.useState(1)
+
+  // Handles redux state for link history
   const dispatch = useDispatch()
   const shortUrl = useDrawerState().relevantShortLink || ''
   const { linkHistory, linkHistoryCount } = useSelector(
     (state: GoGovReduxState) => state.user,
   )
+  const changeSetLen = linkHistory.length
 
   const getLinkHistoryForUser = () => {
     const offset = (currentPage - 1) * ITEMS_PER_PAGE
@@ -44,8 +48,6 @@ export default function LinkHistory() {
     getLinkHistoryForUser()
   }, [currentPage])
 
-  const classes = useStyles()
-  const changeSetLen = linkHistory.length
   return (
     <>
       <Timeline className={classes.rootTimeline}>

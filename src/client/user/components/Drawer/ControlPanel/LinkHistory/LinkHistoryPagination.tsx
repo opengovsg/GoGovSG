@@ -25,7 +25,7 @@ const useStyles = makeStyles(() =>
         paddingLeft: 34,
       },
     },
-    gridVerticalyMiddle: {
+    gridAlignVerticalMid: {
       display: 'flex',
       alignContent: 'space-around',
       flexWrap: 'wrap',
@@ -55,7 +55,7 @@ export default function LinkHistoryPagination({
           <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
         </IconButton>
       </Grid>
-      <Grid item className={classes.gridVerticalyMiddle}>
+      <Grid item className={classes.gridAlignVerticalMid}>
         {`Page ${page} of ${pageCount}`}
       </Grid>
       <Grid item className={classes.gridItemHorizontalPadding}>
