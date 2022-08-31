@@ -48,7 +48,7 @@ import {
 } from '../../app/util/requests'
 import rootActions from '../../app/components/pages/RootPage/actions'
 import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url'
-import { isValidUrl } from '../../../shared/util/validation'
+import { isValidTags, isValidUrl } from '../../../shared/util/validation'
 import { LOGIN_PAGE } from '../../app/util/types'
 import {
   LinkChangeSet,
@@ -609,10 +609,11 @@ const urlCreated = (
  * If user is not logged in, the createUrl call returns unauthorized,
  * get them to login, else create the url.
  * @param history
+ * @param tags
  * @returns Promise<bool> Whether creation succeeded.
  */
 const createUrlOrRedirect =
-  (history: History) =>
+  (history: History, tags: string[]) =>
   async (
     dispatch: ThunkDispatch<
       GoGovReduxState,
@@ -663,7 +664,23 @@ const createUrlOrRedirect =
       return
     }
 
-    const response = await postJson('/api/user/url', { longUrl, shortUrl })
+    if (!isValidTags(tags)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with url unsuccessful')
+      GAEvent('modal page', 'create link from url', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+      return
+    }
+
+    const response = await postJson('/api/user/url', {
+      longUrl,
+      shortUrl,
+      tags,
+    })
 
     if (!response.ok) {
       // Sentry analytics: create link with url fail

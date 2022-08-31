@@ -66,8 +66,8 @@ const CreateUrlModal = () => {
   )
   const dispatch = useDispatch()
   const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
-  const onCreateUrl = (history: History) =>
-    dispatch(userActions.createUrlOrRedirect(history))
+  const onCreateUrl = (history: History, tags: string[]) =>
+    dispatch(userActions.createUrlOrRedirect(history, tags))
   const onUploadFile = (file: File | null) =>
     dispatch(userActions.uploadFile(file))
 

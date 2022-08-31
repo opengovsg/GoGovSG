@@ -38,7 +38,7 @@ import Tooltip from '../../widgets/Tooltip'
 import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
 type CreateLinkFormProps = {
-  onSubmitLink: (history: History) => {}
+  onSubmitLink: (history: History, tags: string[]) => {}
   onSubmitFile: (file: File | null) => {}
 }
 
@@ -117,7 +117,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             if (isFile) {
               onSubmitFile(file)
             } else {
-              onSubmitLink(history)
+              onSubmitLink(history, tags)
             }
           }}
         >
