@@ -77,7 +77,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const history = useHistory()
 
-  const [createType, setCreateType] = useState<CreateType>(CreateType.BULK)
+  const [createType, setCreateType] = useState<CreateType>(CreateType.LINK)
   const [file, setFile] = useState<File | null>(null)
 
   const classes = useCreateLinkFormStyles({
