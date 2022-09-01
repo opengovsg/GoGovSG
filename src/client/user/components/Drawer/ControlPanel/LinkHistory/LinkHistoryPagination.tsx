@@ -3,7 +3,7 @@ import { Grid, IconButton, createStyles, makeStyles } from '@material-ui/core'
 import arrowLeftIcon from '../assets/arrow-left-icon.svg'
 import arrowRightIcon from '../assets/arrow-right-icon.svg'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     pageSelectGrid: {
       fontWeight: 500,
@@ -14,6 +14,9 @@ const useStyles = makeStyles(() =>
       justifyContent: 'right',
       width: '100%',
       marginBottom: '60px',
+      [theme.breakpoints.down('md')]: {
+        justifyContent: 'center',
+      },
     },
     gridItemHorizontalPadding: {
       display: 'flex',

@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) =>
     },
     drawerPaper: {
       width: '100%',
+      height: '100%',
       maxWidth: theme.breakpoints.width('md'),
     },
     dialogContents: {
