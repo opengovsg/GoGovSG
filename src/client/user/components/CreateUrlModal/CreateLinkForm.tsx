@@ -37,6 +37,12 @@ type CreateLinkFormProps = {
   onSubmitFile: (file: File | null) => {}
 }
 
+enum CreateType {
+  LINK = 'link',
+  FILE = 'file',
+  BULK = 'bulk',
+}
+
 const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   onSubmitLink,
   onSubmitFile,
@@ -66,32 +72,35 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const history = useHistory()
 
-  const [isFile, setIsFile] = useState(false)
+  const [createType, setCreateType] = useState<CreateType>(CreateType.LINK)
   const [file, setFile] = useState<File | null>(null)
 
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
-    isFile,
+    isFile: createType === CreateType.FILE,
     uploadFileError,
     createShortLinkError,
   })
   const submitDisabled =
     !isValidShortUrl(shortUrl, false) ||
-    (!isFile && !isValidLongUrl(longUrl, false)) ||
-    (isFile && !file) ||
-    (isFile && !!uploadFileError) ||
+    (createType === CreateType.LINK && !isValidLongUrl(longUrl, false)) ||
+    (createType === CreateType.FILE && !file) ||
+    (createType === CreateType.FILE && !!uploadFileError) ||
     isUploading ||
     !!createShortLinkError
 
   useEffect(() => {
-    if (isFile) {
-      // Google Analytics: click on 'from file' tab
-      GAEvent('modal page', 'click file tab')
-    } else {
-      // Google Analytics: click on 'from url' tab
-      GAEvent('modal page', 'click url tab')
+    switch (createType) {
+      case CreateType.LINK:
+        GAEvent('modal page', 'click url tab')
+        break
+      case CreateType.FILE:
+        GAEvent('modal page', 'click file tab')
+        break
+      default:
+        console.log('error, unrecognised createType')
     }
-  }, [isFile])
+  }, [createType])
 
   return (
     <>
@@ -103,10 +112,15 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
           className={classes.form}
           onSubmit={(e) => {
             e.preventDefault()
-            if (isFile) {
-              onSubmitFile(file)
-            } else {
-              onSubmitLink(history)
+            switch (createType) {
+              case CreateType.LINK:
+                onSubmitLink(history)
+                break
+              case CreateType.FILE:
+                onSubmitFile(file)
+                break
+              default:
+                console.log('error, unrecognised createType')
             }
           }}
         >
@@ -114,19 +128,19 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             <CreateTypeButton
               InputProps={{ classes }}
               Icon={LinkIcon}
-              isEnabled={isFile}
-              onChange={() => setIsFile(false)}
+              isEnabled={createType !== CreateType.LINK}
+              onChange={() => setCreateType(CreateType.LINK)}
               childen="From URL"
             />
             <CreateTypeButton
               InputProps={{ classes }}
               Icon={FileIcon}
-              isEnabled={!isFile}
-              onChange={() => setIsFile(true)}
+              isEnabled={createType !== CreateType.FILE}
+              onChange={() => setCreateType(CreateType.FILE)}
               childen="To a File"
             />
           </div>
-          {!isFile && (
+          {createType === CreateType.LINK && (
             <>
               <Typography className={classes.labelText} variant="body1">
                 Original link (this will be <strong>publicly</strong> indexable
@@ -156,7 +170,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               />
             </>
           )}
-          {isFile && (
+          {createType === CreateType.FILE && (
             <>
               <div className={classes.fileInputDescWrapper}>
                 <Typography className={classes.labelText} variant="body1">
