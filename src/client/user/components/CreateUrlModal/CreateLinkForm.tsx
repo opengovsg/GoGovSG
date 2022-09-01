@@ -22,6 +22,7 @@ import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../../widgets/LinkIcon'
 import FileIcon from '../../widgets/FileIcon'
+import CsvIcon from '../../widgets/CsvIcon'
 import { formatBytes } from '../../../app/util/format'
 import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
 import CreateTypeButton from './components/CreateTypeButton'
@@ -35,6 +36,7 @@ import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
 type CreateLinkFormProps = {
   onSubmitLink: (history: History) => {}
   onSubmitFile: (file: File | null) => {}
+  onSubmitBulk: (file: File | null) => void // placeholder
 }
 
 enum CreateType {
@@ -46,6 +48,7 @@ enum CreateType {
 const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   onSubmitLink,
   onSubmitFile,
+  onSubmitBulk,
 }: CreateLinkFormProps) => {
   const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
   const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
@@ -97,6 +100,9 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
       case CreateType.FILE:
         GAEvent('modal page', 'click file tab')
         break
+      case CreateType.BULK:
+        GAEvent('modal page', 'click bulk tab')
+        break
       default:
         console.log('error, unrecognised createType')
     }
@@ -119,6 +125,9 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               case CreateType.FILE:
                 onSubmitFile(file)
                 break
+              case CreateType.BULK:
+                onSubmitBulk(file)
+                break
               default:
                 console.log('error, unrecognised createType')
             }
@@ -138,6 +147,13 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               isEnabled={createType !== CreateType.FILE}
               onChange={() => setCreateType(CreateType.FILE)}
               childen="To a File"
+            />
+            <CreateTypeButton
+              InputProps={{ classes }}
+              Icon={CsvIcon}
+              isEnabled={createType !== CreateType.BULK}
+              onChange={() => setCreateType(CreateType.BULK)}
+              childen="From a .csv"
             />
           </div>
           {createType === CreateType.LINK && (
@@ -221,70 +237,74 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               </CollapsibleMessage>
             </>
           )}
-          <div className={classes.labelText}>
-            <Typography variant="body1">
-              Short link (<strong>cannot be deleted</strong> after creation)
-            </Typography>
-          </div>
-          <div>
-            <TextField
-              disabled={isUploading}
-              error={!isValidShortUrl(shortUrl, true)}
-              className={classes.shortUrlInput}
-              InputProps={{
-                className: classes.outlinedInput,
-                classes: {
-                  input: classes.input,
-                  notchedOutline: classes.inputNotchedOutline,
-                },
-                startAdornment: (
-                  <FormStartAdorment>
-                    {i18next.t('general.shortUrlPrefix')}
-                  </FormStartAdorment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      className={classes.refreshIcon}
-                      onClick={() => {
-                        setRandomShortUrl()
-                        setCreateShortLinkError('')
-                      }}
-                      size="small"
-                      disabled={isUploading}
-                    >
-                      <img
-                        src={refreshIcon}
-                        className={classes.iconTest}
-                        alt="Get new short link"
-                      />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              required
-              variant="outlined"
-              placeholder="your customised link"
-              onChange={(event) => {
-                setShortUrl(event.target.value)
-                setCreateShortLinkError('')
-              }}
-              value={shortUrl}
-              helperText={
-                isValidShortUrl(shortUrl, true)
-                  ? ''
-                  : 'Short links should only consist of lowercase letters, numbers and hyphens.'
-              }
-            />
-            <CollapsibleMessage
-              visible={!!createShortLinkError}
-              type={CollapsibleMessageType.Error}
-            >
-              <a className={classes.shortLinkError} href="/#/directory">
-                {createShortLinkError}
-              </a>
-            </CollapsibleMessage>
-          </div>
+          {createType !== CreateType.BULK && (
+            <>
+              <div className={classes.labelText}>
+                <Typography variant="body1">
+                  Short link (<strong>cannot be deleted</strong> after creation)
+                </Typography>
+              </div>
+              <div>
+                <TextField
+                  disabled={isUploading}
+                  error={!isValidShortUrl(shortUrl, true)}
+                  className={classes.shortUrlInput}
+                  InputProps={{
+                    className: classes.outlinedInput,
+                    classes: {
+                      input: classes.input,
+                      notchedOutline: classes.inputNotchedOutline,
+                    },
+                    startAdornment: (
+                      <FormStartAdorment>
+                        {i18next.t('general.shortUrlPrefix')}
+                      </FormStartAdorment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          className={classes.refreshIcon}
+                          onClick={() => {
+                            setRandomShortUrl()
+                            setCreateShortLinkError('')
+                          }}
+                          size="small"
+                          disabled={isUploading}
+                        >
+                          <img
+                            src={refreshIcon}
+                            className={classes.iconTest}
+                            alt="Get new short link"
+                          />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  required
+                  variant="outlined"
+                  placeholder="your customised link"
+                  onChange={(event) => {
+                    setShortUrl(event.target.value)
+                    setCreateShortLinkError('')
+                  }}
+                  value={shortUrl}
+                  helperText={
+                    isValidShortUrl(shortUrl, true)
+                      ? ''
+                      : 'Short links should only consist of lowercase letters, numbers and hyphens.'
+                  }
+                />
+                <CollapsibleMessage
+                  visible={!!createShortLinkError}
+                  type={CollapsibleMessageType.Error}
+                >
+                  <a className={classes.shortLinkError} href="/#/directory">
+                    {createShortLinkError}
+                  </a>
+                </CollapsibleMessage>
+              </div>
+            </>
+          )}
           <Button
             className={classes.button}
             type="submit"
