@@ -85,15 +85,33 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     uploadFileError,
     createShortLinkError,
   })
-  const submitDisabled =
-    !isValidShortUrl(shortUrl, false) ||
-    (createType === CreateType.LINK && !isValidLongUrl(longUrl, false)) ||
-    (createType === CreateType.FILE && !file) ||
-    (createType === CreateType.FILE && !!uploadFileError) ||
-    isUploading ||
-    !!createShortLinkError
+
+  const submitDisabled = () => {
+    switch (createType) {
+      case CreateType.LINK:
+        return (
+          !isValidShortUrl(shortUrl, false) ||
+          !isValidLongUrl(longUrl, false) ||
+          !!createShortLinkError
+        )
+      case CreateType.FILE:
+        return (
+          !isValidShortUrl(shortUrl, false) ||
+          !file ||
+          !!uploadFileError ||
+          isUploading ||
+          !!createShortLinkError
+        )
+      case CreateType.BULK:
+        return !file || !!uploadFileError || isUploading
+      default:
+        console.log('error, unrecognised createType')
+        return true
+    }
+  }
 
   useEffect(() => {
+    setFile(null) // reset file state if toggling between createType
     switch (createType) {
       case CreateType.LINK:
         GAEvent('modal page', 'click url tab')
@@ -388,7 +406,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             size="large"
             variant="contained"
             color="primary"
-            disabled={submitDisabled}
+            disabled={submitDisabled()}
           >
             {isUploading ? (
               <CircularProgress color="primary" size={20} />
