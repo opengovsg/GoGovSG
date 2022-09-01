@@ -37,8 +37,18 @@ const useStyles = makeStyles((theme) =>
     backButton: {
       position: 'absolute',
       top: 0,
+      right: 'auto',
       left: 0,
-      margin: theme.spacing(2),
+      margin: 45,
+      padding: 0,
+      backgroundColor: 'transparent',
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
+      [theme.breakpoints.down('md')]: {
+        marginLeft: theme.spacing(4),
+        marginRight: theme.spacing(4),
+      },
     },
     backButtonText: {
       paddingLeft: 10,
@@ -48,7 +58,7 @@ const useStyles = makeStyles((theme) =>
       maxWidth: theme.breakpoints.width('md'),
     },
     dialogContents: {
-      marginTop: theme.spacing(6.5),
+      marginTop: theme.spacing(9),
       [theme.breakpoints.up('md')]: {
         marginTop: 116,
       },
@@ -277,7 +287,7 @@ export default function ControlPanel() {
             >
               <BackIcon color={theme.palette.primary.main} />
               <Typography variant="h6" className={classes.backButtonText}>
-                Edit Link
+                Back to Edit link
               </Typography>
             </Button>
             <DrawerMargin>
