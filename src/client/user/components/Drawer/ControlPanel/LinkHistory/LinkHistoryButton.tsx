@@ -1,6 +1,12 @@
 import React from 'react'
-import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
-import historyIcon from '../assets/history-icon.svg'
+import {
+  Button,
+  Typography,
+  createStyles,
+  makeStyles,
+  useTheme,
+} from '@material-ui/core'
+import HistoryIcon from '../assets/HistoryIcon'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -29,6 +35,7 @@ export default function LinkHistoryButton({
   clickHandler,
 }: LinkHistoryButtonProps) {
   const classes = useStyles()
+  const theme = useTheme()
 
   return (
     <div className={classes.rootDiv}>
@@ -41,7 +48,7 @@ export default function LinkHistoryButton({
         <Typography variant="body2" color="primary">
           View Link History
         </Typography>
-        <img src={historyIcon} alt="View Link History Icon" />
+        <HistoryIcon color={theme.palette.primary.main} />
       </Button>
     </div>
   )

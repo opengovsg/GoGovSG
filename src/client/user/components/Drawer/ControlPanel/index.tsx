@@ -13,7 +13,7 @@ import {
   useTheme,
 } from '@material-ui/core'
 
-import arrow from './assets/arrow-icon.svg'
+import BackIcon from './assets/BackIcon'
 import { DrawerActions } from './util/reducers'
 import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
@@ -275,7 +275,7 @@ export default function ControlPanel() {
               variant="text"
               color="primary"
             >
-              <img src={arrow} alt="arrow graphic" />
+              <BackIcon color={theme.palette.primary.main} />
               <Typography variant="h6" className={classes.backButtonText}>
                 Edit Link
               </Typography>

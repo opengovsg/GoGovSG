@@ -13,7 +13,7 @@ import {
 
 import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types'
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     content: {
       paddingTop: 2,
@@ -32,10 +32,10 @@ const useStyles = makeStyles(() =>
       fontWeight: 400,
     },
     timelineDot: {
-      backgroundColor: '#8CA6AD',
+      backgroundColor: theme.palette.primary.light,
     },
     timelineConnector: {
-      backgroundColor: '#8CA6AD',
+      backgroundColor: theme.palette.primary.light,
     },
   }),
 )
@@ -63,7 +63,6 @@ export default function LinkHistoryItem({
   removeBottomConnector,
 }: LinkHistoryItemProps) {
   const classes = useStyles()
-
   const createStatusText = (currValue: string | boolean) => {
     return (
       <Typography variant="h6">
