@@ -132,3 +132,14 @@ export const copyAlert = Selector('div').withText('Email has been copied')
 
 // Transition Page
 export const skipButton = Selector('#skip')
+
+// URL Drawer
+export const urlDisableToggleButton = Selector('input[type="checkbox"]')
+
+// Link History
+export const linkHistoryViewButton = Selector('p').withText('View Link History')
+export const linkHistoryCreateSpan = Selector('span').withText(' created')
+export const linkHistoryLinkStatusH6 = Selector('h6').withText('Link Status')
+export const linkHistoryOriginalLinkH6 =
+  Selector('h6').withText('Original Link')
+export const linkHistoryLinkOwnerH6 = Selector('h6').withText('Link Owner')
