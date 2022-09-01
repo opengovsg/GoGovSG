@@ -2,9 +2,7 @@ import Sequelize from 'sequelize'
 import { sequelize } from '../util/sequelize'
 import { IdType, Settable } from '../../types/server/models'
 import { Url, UrlType } from './url'
-import { UrlClicks } from './statistics/clicks'
 import { emailValidator } from '../config'
-import { Tag } from './tag'
 
 // Users
 export interface UserType extends IdType, Sequelize.Model {
@@ -40,105 +38,6 @@ export const User = <UserTypeStatic>sequelize.define(
       useMaster: true,
     },
     scopes: {
-      /**
-       * Fetches all Urls with the given settings.
-       * @param {Object} queryConditions
-       * @property {number} limit - Number of rows per page.
-       * @property {number} offset - (curr page number - 1) * limit.
-       * @property {string} orderBy - Column name.
-       * @property {string} sortDirection - ASC/DESC.
-       * @property {string} searchText - User's search input.
-       * @property {number} userId - UserId of requester.
-       * @property {string | undefined} state - State of urls.
-       * @property {boolean | undefined} isFile - Whether the url links to a file.
-       */
-      urlsWithQueryConditions(queryConditions: {
-        limit: number
-        offset: number
-        orderBy: string
-        sortDirection: string
-        searchText: string
-        userId: number
-        state: string | undefined
-        isFile: boolean | undefined
-        tags: string[]
-      }) {
-        const {
-          limit,
-          offset,
-          orderBy,
-          sortDirection,
-          userId,
-          searchText,
-          state,
-          isFile,
-          tags,
-        } = queryConditions
-        const { Op } = Sequelize
-        const whereUrlConditions: any = {
-          [Op.or]: [
-            {
-              shortUrl: {
-                [Op.substring]: searchText,
-              },
-            },
-            {
-              longUrl: {
-                [Op.substring]: searchText,
-              },
-            },
-          ],
-        }
-        if (state) {
-          whereUrlConditions.state = state
-        }
-        if (isFile !== undefined) {
-          whereUrlConditions.isFile = isFile
-        }
-
-        return {
-          include: [
-            {
-              model: Url.scope(['defaultScope', 'getClicks', 'getTags']),
-              as: 'Urls',
-              include:
-                tags && tags.length > 0
-                  ? [
-                      {
-                        model: Tag,
-                        where: [{ tagKey: { [Op.in]: tags } }],
-                        group: ['shortUrl'],
-                        having: [
-                          'COUNT (DISTINCT "Urls->tags"."tagkey") = ?',
-                          tags.length.toString(),
-                        ],
-                      },
-                    ]
-                  : [],
-              where: whereUrlConditions,
-              // use left outer join instead of default inner join
-              required: false,
-              right: false,
-            },
-          ],
-          order:
-            orderBy === 'clicks'
-              ? [
-                  [
-                    { model: Url, as: 'Urls' },
-                    { model: UrlClicks, as: 'UrlClicks' },
-                    orderBy,
-                    sortDirection,
-                  ],
-                ]
-              : [[{ model: Url, as: 'Urls' }, orderBy, sortDirection]],
-          where: {
-            id: userId,
-          },
-          offset,
-          limit,
-        }
-      },
       /**
        * Fetches a corresponding shortUrl that belongs to the user.
        * @param {string} shortUrl
