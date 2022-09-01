@@ -1,7 +1,7 @@
 import React from 'react'
 
 type LinkIconProps = {
-  color: string
+  color?: string
 }
 
 export default ({ color = '#384A51' }: LinkIconProps) => {

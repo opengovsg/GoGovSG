@@ -81,6 +81,10 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
     linkTypeButtonEnabled: {
       backgroundColor: `${theme.palette.primary.main} !important`,
       boxShadow: '0 0 20px 0 rgba(69, 102, 130, 0.7)',
+      color: theme.palette.background.default,
+    },
+    linkTypeButtonText: {
+      marginLeft: '4px',
     },
     linkTypeWrapper: {
       marginTop: theme.spacing(5),
@@ -91,16 +95,6 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       [theme.breakpoints.up('sm')]: {
         marginTop: theme.spacing(4),
       },
-    },
-    linkTypeUrlButtonText: {
-      color: (props: LinkFormStyles) =>
-        props.isFile ? 'unset' : theme.palette.background.default,
-      marginLeft: '4px',
-    },
-    linkTypeFileButtonText: {
-      color: (props: LinkFormStyles) =>
-        props.isFile ? theme.palette.background.default : 'unset',
-      marginLeft: '4px',
     },
     fileInputInvis: {
       display: 'none',

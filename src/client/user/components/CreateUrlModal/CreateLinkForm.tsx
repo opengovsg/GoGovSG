@@ -12,7 +12,6 @@ import {
   InputAdornment,
   TextField,
   Typography,
-  useTheme,
 } from '@material-ui/core'
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
@@ -25,6 +24,7 @@ import LinkIcon from '../../widgets/LinkIcon'
 import FileIcon from '../../widgets/FileIcon'
 import { formatBytes } from '../../../app/util/format'
 import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
+import CreateTypeButton from './components/CreateTypeButton'
 import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessage/types'
 import { FileInputField } from '../../widgets/FileInputField'
 import userActions from '../../actions'
@@ -53,7 +53,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     (state: GoGovReduxState) => state.user.uploadFileError,
   )
 
-  const theme = useTheme()
   const dispatch = useDispatch()
   const setShortUrl = (shortUrl: string) =>
     dispatch(userActions.setShortUrl(shortUrl))
@@ -112,48 +111,20 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
           }}
         >
           <div color="primary" className={classes.linkTypeWrapper}>
-            <Button
-              variant={isFile ? 'text' : 'contained'}
-              className={`${classes.linkTypeButton} ${
-                isFile ? '' : classes.linkTypeButtonEnabled
-              }`}
-              onClick={() => setIsFile(false)}
-            >
-              <LinkIcon
-                color={
-                  isFile
-                    ? theme.palette.primary.dark
-                    : theme.palette.background.default
-                }
-              />
-              <Typography
-                variant="body2"
-                className={classes.linkTypeUrlButtonText}
-              >
-                From URL
-              </Typography>
-            </Button>
-            <Button
-              variant={isFile ? 'contained' : 'text'}
-              className={`${classes.linkTypeButton} ${
-                isFile ? classes.linkTypeButtonEnabled : ''
-              }`}
-              onClick={() => setIsFile(true)}
-            >
-              <FileIcon
-                color={
-                  isFile
-                    ? theme.palette.background.default
-                    : theme.palette.primary.dark
-                }
-              />
-              <Typography
-                variant="body2"
-                className={classes.linkTypeFileButtonText}
-              >
-                From file
-              </Typography>
-            </Button>
+            <CreateTypeButton
+              InputProps={{ classes }}
+              Icon={LinkIcon}
+              isEnabled={isFile}
+              onChange={() => setIsFile(false)}
+              childen="From URL"
+            />
+            <CreateTypeButton
+              InputProps={{ classes }}
+              Icon={FileIcon}
+              isEnabled={!isFile}
+              onChange={() => setIsFile(true)}
+              childen="To a File"
+            />
           </div>
           {!isFile && (
             <>
