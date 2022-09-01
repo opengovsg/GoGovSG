@@ -223,6 +223,7 @@ describe('UserRepository', () => {
       userId: 2,
       state: undefined,
       isFile: undefined,
+      tags: [],
     }
 
     beforeEach(() => {

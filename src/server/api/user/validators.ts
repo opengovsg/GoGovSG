@@ -23,9 +23,9 @@ export const tagRetrievalSchema = Joi.object({
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
   limit: Joi.number().required(),
-  offset: Joi.number().required(),
-  orderBy: Joi.string().optional(),
-  sortDirection: Joi.string().optional(),
+  offset: Joi.number().optional(),
+  orderBy: Joi.string().valid('updatedAt', 'clicks').optional(),
+  sortDirection: Joi.string().valid('desc', 'asc').optional(),
   searchText: Joi.string().allow('').optional(),
   state: Joi.string().allow('').optional(),
   isFile: Joi.boolean().optional(),
@@ -35,6 +35,7 @@ export const userUrlsQueryConditions = Joi.object({
     .items(
       Joi.string()
         .optional()
+        .min(1)
         .custom((tag: string, helpers) => {
           if (!isValidTag(tag)) {
             return helpers.message({ custom: `tag: ${tag} format is invalid` })

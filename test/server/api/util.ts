@@ -44,7 +44,7 @@ export function createRequestWithUser(user: any): Request {
     session: {
       user,
     },
-    body: {},
+    body: { userId: 1 },
   })
 }
 

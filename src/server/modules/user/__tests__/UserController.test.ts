@@ -385,6 +385,9 @@ describe('UserController', () => {
   })
 
   describe('getUrlsWithConditions', () => {
+    beforeEach(() => {
+      urlManagementService.getUrlsWithConditions.mockReset()
+    })
     it('processes query with defaults', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
@@ -400,9 +403,10 @@ describe('UserController', () => {
         orderBy: 'updatedAt',
         sortDirection: 'desc',
         searchText: '',
-        userId: undefined,
+        userId: 1,
         state: undefined,
         isFile: undefined,
+        tags: [],
       })
     })
 
@@ -410,7 +414,7 @@ describe('UserController', () => {
       const userId = 2
       const limit = 500
       const offset = 1
-      const orderBy = 'popularity'
+      const orderBy = 'clicks'
       const sortDirection = 'asc'
       const searchText = 'TEXT'
       const state = 'ACTIVE'
@@ -442,11 +446,13 @@ describe('UserController', () => {
         userId,
         state,
         isFile: undefined,
+        tags: [],
       })
     })
 
     it('processes query with isFile=true', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'true' },
       })
       const res: any = httpMocks.createResponse()
@@ -463,6 +469,7 @@ describe('UserController', () => {
 
     it('processes query with isFile=false', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'false' },
       })
       const res: any = httpMocks.createResponse()
@@ -479,6 +486,7 @@ describe('UserController', () => {
 
     it('processes query with empty tags', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'false', tags: '' },
       })
       const res: any = httpMocks.createResponse()
@@ -489,12 +497,13 @@ describe('UserController', () => {
       await controller.getUrlsWithConditions(req, res)
       expect(res.ok).toHaveBeenCalledWith(result)
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
-        expect.objectContaining({ isFile: false, tags: [''] }),
+        expect.objectContaining({ isFile: false, tags: [] }),
       )
     })
 
     it('processes query with non empty tags', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'false', tags: 'tag1;tag2' },
       })
       const res: any = httpMocks.createResponse()
@@ -509,22 +518,9 @@ describe('UserController', () => {
       )
     })
 
-    it('processes query with invalid tags-short', async () => {
-      const req = httpMocks.createRequest({
-        query: { isFile: 'false', tags: 'ta;tag2' },
-      })
-      const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
-      res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
-
-      await controller.getUrlsWithConditions(req, res)
-      expect(res.badRequest).toHaveBeenCalledTimes(1)
-    })
-
     it('processes query with invalid tags-long', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'false', tags: '01234567890123456789012345;tag2' },
       })
       const res: any = httpMocks.createResponse()
@@ -539,6 +535,7 @@ describe('UserController', () => {
 
     it('processes query with invalid tags-special character', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'false', tags: 'tag1^%^;tag2' },
       })
       const res: any = httpMocks.createResponse()

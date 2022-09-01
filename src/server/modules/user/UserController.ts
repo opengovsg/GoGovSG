@@ -181,6 +181,29 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
+    const queryConditions = UserController.extractUrlQueryConditions(req)
+    const validationResult = userUrlsQueryConditions.validate(queryConditions)
+    if (validationResult.error) {
+      res.badRequest(validationResult.error.message)
+      return
+    }
+    // Find user and paginated urls
+    try {
+      const { urls, count } =
+        await this.urlManagementService.getUrlsWithConditions(queryConditions)
+      res.ok({ urls, count })
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.notFound(error.message)
+        return
+      }
+      res.serverError(jsonMessage('Error retrieving URLs for user'))
+      return
+    }
+  }
+
+  private static extractUrlQueryConditions(req: Express.Request) {
     const { userId } = req.body
     let { limit = 1000, searchText = '' } = req.query
     limit = Math.min(1000, Number(limit))
@@ -210,26 +233,7 @@ export class UserController {
     } else if (isFile === 'false') {
       queryConditions.isFile = false
     }
-    const validationResult = userUrlsQueryConditions.validate(queryConditions)
-    if (validationResult.error) {
-      res.badRequest(validationResult.error.message)
-      return
-    }
-    // Find user and paginated urls
-    try {
-      const { urls, count } =
-        await this.urlManagementService.getUrlsWithConditions(queryConditions)
-      res.ok({ urls, count })
-      return
-    } catch (error) {
-      console.log(`usercontroller.mesasge ${error.message}`)
-      if (error instanceof NotFoundError) {
-        res.notFound(error.message)
-        return
-      }
-      res.serverError(jsonMessage('Error retrieving URLs for user'))
-      return
-    }
+    return queryConditions
   }
 
   public getTagsWithConditions: (
