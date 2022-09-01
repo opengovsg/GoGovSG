@@ -125,6 +125,14 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
     bulkUploadDescText: {
       paddingLeft: '20px',
     },
+    bulkSampleDownloadText: {
+      fontWeight: 'bold',
+      textDecoration: 'underline',
+      cursor: 'pointer',
+      background: 'none!important',
+      border: 'none',
+      padding: '0!important',
+    },
     maxSizeText: {
       marginLeft: '4px',
       fontWeight: 500,

@@ -28,6 +28,7 @@ import { formatBytes } from '../../../app/util/format'
 import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
 import CreateTypeButton from './components/CreateTypeButton'
 import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessage/types'
+import { downloadSampleBulkCsv } from '../../../app/util/download'
 import { FileInputField } from '../../widgets/FileInputField'
 import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
@@ -335,7 +336,14 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                   New feature to shorten your original links in bulk! Here is
                   how:
                   <br />
-                  1. Download template .csv file
+                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                  1.{' '}
+                  <Button
+                    onClick={downloadSampleBulkCsv}
+                    className={classes.bulkSampleDownloadText}
+                  >
+                    Download template .csv file
+                  </Button>
                   <br />
                   2. Fill up the template file with your links (up to 1000
                   links)
