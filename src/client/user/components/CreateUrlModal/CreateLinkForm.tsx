@@ -23,6 +23,7 @@ import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../../widgets/LinkIcon'
 import FileIcon from '../../widgets/FileIcon'
 import CsvIcon from '../../widgets/CsvIcon'
+import StarIcon from '../../widgets/StarIcon'
 import { formatBytes } from '../../../app/util/format'
 import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
 import CreateTypeButton from './components/CreateTypeButton'
@@ -36,7 +37,7 @@ import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
 type CreateLinkFormProps = {
   onSubmitLink: (history: History) => {}
   onSubmitFile: (file: File | null) => {}
-  onSubmitBulk: (file: File | null) => void // placeholder
+  onSubmitBulk: (file: File | null) => void // TODO: update with API integration
 }
 
 enum CreateType {
@@ -75,7 +76,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const history = useHistory()
 
-  const [createType, setCreateType] = useState<CreateType>(CreateType.LINK)
+  const [createType, setCreateType] = useState<CreateType>(CreateType.BULK)
   const [file, setFile] = useState<File | null>(null)
 
   const classes = useCreateLinkFormStyles({
@@ -303,6 +304,82 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                   </a>
                 </CollapsibleMessage>
               </div>
+            </>
+          )}
+          {createType === CreateType.BULK && (
+            <>
+              <div className={classes.bulkUploadDescWrapper}>
+                <StarIcon />
+                <Typography
+                  className={`${classes.bulkUploadDescText}`}
+                  variant="body1"
+                >
+                  New feature to shorten your original links in bulk! Here is
+                  how:
+                  <br />
+                  1. Download template .csv file
+                  <br />
+                  2. Fill up the template file with your links (up to 1000
+                  links)
+                  <br />
+                  3. Upload the .csv file here <br />
+                </Typography>
+              </div>
+              <div className={classes.fileInputDescWrapper}>
+                <Typography className={classes.labelText} variant="body1">
+                  Choose your <b>.csv</b> file (the links in this file will be{' '}
+                  <b>publicly indexable</b> by search engines)
+                </Typography>
+                <div className={classes.maxSizeTextWrapper}>
+                  <Typography variant="caption" className={classes.maxSizeText}>
+                    Maximum size 10mb
+                  </Typography>
+                </div>
+              </div>
+              <FileInputField
+                textFieldHeight={TEXT_FIELD_HEIGHT}
+                text={file ? file.name : 'No file selected'}
+                uploadFileError={uploadFileError}
+                inputId="file"
+                setFile={setFile}
+                setUploadFileError={setUploadFileError}
+                endAdornment={
+                  <div className={classes.uploadFileInputEndWrapper}>
+                    <Typography
+                      variant="body2"
+                      className={classes.fileSizeText}
+                    >
+                      {file ? formatBytes(file.size) : ''}
+                    </Typography>
+                    {/* eslint-disable-next-line */}
+                    <label htmlFor="file">
+                      <Button
+                        variant="contained"
+                        className={classes.uploadFileButton}
+                        component="span"
+                        color="primary"
+                        disabled={isUploading}
+                      >
+                        Browse
+                      </Button>
+                    </label>
+                  </div>
+                }
+                acceptedTypes=".csv"
+              />
+              <div className={classes.maxSizeTextWrapper}>
+                <Typography variant="caption" className={classes.maxSizeText}>
+                  Only CSV format files are allowed. <br />
+                  If you have an Excel file, please convert it by going to File
+                  &gt; Save As &gt; CSV (Comma delimited).
+                </Typography>
+              </div>
+              <CollapsibleMessage
+                visible={!!uploadFileError}
+                type={CollapsibleMessageType.Error}
+              >
+                {uploadFileError}
+              </CollapsibleMessage>
             </>
           )}
           <Button

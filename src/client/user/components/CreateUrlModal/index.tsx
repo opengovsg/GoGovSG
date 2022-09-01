@@ -140,6 +140,9 @@ const CreateUrlModal = () => {
         <CreateLinkForm
           onSubmitLink={onCreateUrl}
           onSubmitFile={onUploadFile}
+          onSubmitBulk={(file) => {
+            console.log(file)
+          }} // TODO: add API integration
         />
       ) : (
         <AddDescriptionForm />

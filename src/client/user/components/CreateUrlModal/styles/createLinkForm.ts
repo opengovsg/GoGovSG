@@ -113,11 +113,24 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       border: (props: LinkFormStyles) =>
         props.uploadFileError ? '2px solid #C85151' : '',
     },
+    bulkUploadDescWrapper: {
+      marginTop: '32px',
+      backgroundColor: '#EAF9E7',
+      color: theme.palette.text.primary,
+      paddingLeft: '18px',
+      paddingTop: '12px',
+      paddingBottom: '12px',
+      display: 'flex',
+    },
+    bulkUploadDescText: {
+      paddingLeft: '20px',
+    },
     maxSizeText: {
       marginLeft: '4px',
       fontWeight: 500,
     },
     maxSizeTextWrapper: {
+      marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
       display: 'flex',
       alignItems: 'stretch',
