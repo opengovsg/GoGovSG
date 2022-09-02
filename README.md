@@ -15,7 +15,6 @@ The official Singapore government link shortener.
     - [Running Locally](#running-locally)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
     - [Deploying](#deploying)
-  - [Pre-release](#pre-release)
   - [Operations](#operations)
     - [Transferring links to a new owner or email address](#transferring-links-to-a-new-owner-or-email-address)
   - [Developer Documentation](#developer-documentation)
@@ -71,10 +70,8 @@ Note that 3000 is the port number that the webpack dev server listens on; the ba
 on port 8080 instead.
 
 Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
-but that is really being proxied to `localhost:8080/shortlink`. Also, given that GoGovSG will attempt to send
-emails directly from your computer when running on localhost, there is a chance that the email might land in
-spam or not be sent entirely. To mitigate this, we have set the one-time password for all log-in attempts
-on localhost to be `111111`.
+but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
+are obtained using [maildev](https://github.com/maildev/maildev) and accessed via `http://localhost:1080/`.
 
 ### Setting up the infrastructure
 

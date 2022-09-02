@@ -9,7 +9,6 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'bmp',
   'csv',
   'dgn',
-  'doc',
   'docx',
   'dwf',
   'dwg',
@@ -27,7 +26,6 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'ods',
   'pdf',
   'png',
-  'ppt',
   'pptx',
   'rtf',
   'sxc',
@@ -38,7 +36,6 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'tiff',
   'txt',
   'wmv',
-  'xls',
   'xlsx',
 ]
 

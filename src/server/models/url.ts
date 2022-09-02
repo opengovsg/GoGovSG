@@ -14,7 +14,7 @@ import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
 
-interface UrlBaseType extends IdType {
+export interface UrlBaseType extends IdType {
   readonly shortUrl: string
   readonly longUrl: string
   readonly state: StorableUrlState

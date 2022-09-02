@@ -47,6 +47,9 @@ services:
       - ASSET_VARIANT=gov
       - SES_HOST=maildev
       - SES_PORT=25
+      - POSTMAN_API_KEY=
+      - POSTMAN_API_URL=
+      - ACTIVATE_POSTMAN_FALLBACK=
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src

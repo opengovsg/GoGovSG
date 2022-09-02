@@ -1,2 +1,2 @@
-const ddEnv = process.env.DD_ENV
-export default ddEnv as string | undefined
+export const ddService: string | undefined = process.env.DD_SERVICE
+export const ddEnv: string | undefined = process.env.DD_ENV

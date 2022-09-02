@@ -1,11 +1,9 @@
 import { UrlHistoryRecord } from './UrlHistoryRepository'
+import { UrlBaseType } from '../../../models/url'
 
 export type LinkChangeKey =
-  | 'description'
-  | 'isFile'
-  | 'state'
+  | keyof Pick<UrlBaseType, 'description' | 'isFile' | 'state' | 'longUrl'>
   | 'userEmail'
-  | 'longUrl'
 
 export type LinkChangeType = 'create' | 'update'
 

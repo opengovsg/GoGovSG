@@ -1,6 +1,6 @@
 {
   "name": "GoGovSG",
-  "version": "1.67.0",
+  "version": "1.68.0",
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
   "scripts": {
@@ -74,7 +74,7 @@
     "lodash": "^4.17.21",
     "minimatch": "^3.0.4",
     "moment": "^2.29.4",
-    "moment-timezone": "^0.5.33",
+    "moment-timezone": "^0.5.35",
     "morgan": "^1.10.0",
     "nanoid": "^3.3.2",
     "nodemailer": "^6.6.2",
