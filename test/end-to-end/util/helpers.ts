@@ -13,6 +13,9 @@ export const shortUrlTextField = Selector(
 )
 export const longUrlTextField = Selector('input[placeholder="Enter URL"]')
 export const getLocation = ClientFunction(() => document.location.href)
+export const directoryPageButton = Selector('span')
+  .withText('Directory')
+  .parent()
 export const signOutButton = Selector('strong').withText('Sign out').parent()
 
 // Login Page
@@ -106,6 +109,8 @@ export const emailToggle = Selector('p').withText('Search by Email')
 export const directoryTextFieldEmail = Selector(
   'input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
 )
+export const directoryFilterPanelButton = Selector('.MuiIconButton-label')
+export const directoryFilterPanel = Selector('.MuiCollapse-wrapper')
 export const applyButton = Selector('span').withText('Apply').parent()
 export const resetButton = Selector('span').withText('Reset').parent()
 export const linkButton = Selector('p')
