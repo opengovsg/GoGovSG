@@ -12,6 +12,7 @@ import {
 } from '@material-ui/lab/'
 
 import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types'
+import { useDrawerState } from '../..'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -63,11 +64,15 @@ export default function LinkHistoryItem({
   removeBottomConnector,
 }: LinkHistoryItemProps) {
   const classes = useStyles()
+  const shortUrl = useDrawerState().relevantShortLink || ''
+  const fullURL = `${document.location.protocol}//${document.location.host}/${shortUrl}`
+
   const createStatusText = (currValue: string | boolean) => {
     return (
       <Typography variant="h6">
+        {fullURL}
+        <span className={classes.regularText}> created for </span>
         {currValue}
-        <span className={classes.regularText}> created</span>
       </Typography>
     )
   }

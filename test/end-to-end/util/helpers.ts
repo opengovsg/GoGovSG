@@ -138,7 +138,7 @@ export const urlDisableToggleButton = Selector('input[type="checkbox"]')
 
 // Link History
 export const linkHistoryViewButton = Selector('p').withText('View Link History')
-export const linkHistoryCreateSpan = Selector('span').withText(' created')
+export const linkHistoryCreateSpan = Selector('span').withText(' created for ')
 export const linkHistoryLinkStatusH6 = Selector('h6').withText('Link Status')
 export const linkHistoryOriginalLinkH6 =
   Selector('h6').withText('Original Link')
