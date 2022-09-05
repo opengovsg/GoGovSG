@@ -93,27 +93,8 @@ export class UserRepository implements UserRepositoryInterface {
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
-    const whereConditions: any = {
-      [Op.or]: [
-        {
-          shortUrl: {
-            [Op.substring]: conditions.searchText,
-          },
-        },
-        {
-          longUrl: {
-            [Op.substring]: conditions.searchText,
-          },
-        },
-      ],
-      userId: conditions.userId,
-    }
-    if (conditions.state) {
-      whereConditions.state = conditions.state
-    }
-    if (conditions.isFile !== undefined) {
-      whereConditions.isFile = conditions.isFile
-    }
+    const { whereConditions, includeConditions } =
+      UserRepository.buildQueryConditions(conditions)
     const urlsAndCount = await Url.scope([
       'defaultScope',
       'getClicks',
@@ -129,15 +110,7 @@ export class UserRepository implements UserRepositoryInterface {
           conditions.sortDirection,
         ],
       ],
-      include: [
-        {
-          model: Tag,
-          where:
-            conditions.tags && conditions.tags.length > 0
-              ? { tagKey: conditions.tags }
-              : {},
-        },
-      ],
+      include: [includeConditions],
     })
     if (!urlsAndCount) {
       throw new NotFoundError(notFoundMessage)
@@ -164,6 +137,37 @@ export class UserRepository implements UserRepositoryInterface {
       count = 0
     }
     return { urls, count }
+  }
+
+  private static buildQueryConditions(conditions: UserUrlsQueryConditions) {
+    const whereConditions: any = {
+      [Op.or]: [
+        {
+          shortUrl: {
+            [Op.substring]: conditions.searchText,
+          },
+        },
+        {
+          longUrl: {
+            [Op.substring]: conditions.searchText,
+          },
+        },
+      ],
+      userId: conditions.userId,
+    }
+    if (conditions.state) {
+      whereConditions.state = conditions.state
+    }
+    if (conditions.isFile !== undefined) {
+      whereConditions.isFile = conditions.isFile
+    }
+    const includeConditions: any = {
+      model: Tag,
+    }
+    if (conditions.tags && conditions.tags.length > 0) {
+      includeConditions.where = { tagKey: conditions.tags }
+    }
+    return { whereConditions, includeConditions }
   }
 }
 
