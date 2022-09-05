@@ -56,6 +56,15 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
       const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
       return this.allowedFileExtensions.includes(extension)
     }
+
+  isCSV: (file: { name: string; data: Buffer }) => Promise<boolean> = async ({
+    name,
+    data,
+  }) => {
+    const fileType = await FileType.fromBuffer(data)
+    const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
+    return extension === 'csv'
+  }
 }
 
 export default FileTypeFilterService

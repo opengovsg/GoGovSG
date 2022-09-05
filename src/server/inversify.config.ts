@@ -67,7 +67,11 @@ import {
   FileTypeFilterService,
   SafeBrowsingService,
 } from './modules/threat/services'
-import { FileCheckController, UrlCheckController } from './modules/threat'
+import {
+  CsvCheckController,
+  FileCheckController,
+  UrlCheckController,
+} from './modules/threat'
 
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
@@ -140,6 +144,7 @@ export default () => {
 
   bindIfUnbound(DependencyIds.virusScanService, CloudmersiveScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
+  bindIfUnbound(DependencyIds.csvCheckController, CsvCheckController)
 
   bindIfUnbound(DependencyIds.safeBrowsingMapper, SafeBrowsingMapper)
   bindIfUnbound(DependencyIds.safeBrowsingRepository, SafeBrowsingRepository)
