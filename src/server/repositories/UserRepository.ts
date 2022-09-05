@@ -144,7 +144,7 @@ export class UserRepository implements UserRepositoryInterface {
     }
     let { rows } = urlsAndCount
     let { count } = urlsAndCount
-    if (!rows) {
+    if (!rows || count === 0) {
       throw new NotFoundError(notFoundMessage)
     }
     if (conditions.tags && conditions.tags.length > 0) {
@@ -157,9 +157,6 @@ export class UserRepository implements UserRepositoryInterface {
         .findAll({
           where: { shortUrl: shortUrls },
         })
-    }
-    if (!rows) {
-      throw new NotFoundError(notFoundMessage)
     }
 
     const urls = rows.map((urlType) => this.urlMapper.persistenceToDto(urlType))
