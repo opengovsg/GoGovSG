@@ -24,7 +24,7 @@ export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
   limit: Joi.number().required(),
   offset: Joi.number().optional(),
-  orderBy: Joi.string().valid('createdAt', 'clicks').optional(),
+  orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
   sortDirection: Joi.string().valid('desc', 'asc').optional(),
   searchText: Joi.string().allow('').optional(),
   state: Joi.string().allow('').optional(),
