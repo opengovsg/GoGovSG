@@ -18,9 +18,14 @@ function createRequestWithFile(file: any): Request {
 describe('FileCheckController test', () => {
   const file = { data: Buffer.from('data'), name: 'file.csv' }
   const hasAllowedType = jest.fn()
+  const isCSV = jest.fn()
+
   const hasVirus = jest.fn()
 
-  const controller = new FileCheckController({ hasAllowedType }, { hasVirus })
+  const controller = new FileCheckController(
+    { hasAllowedType, isCSV },
+    { hasVirus },
+  )
   const badRequest = jest.fn()
 
   beforeEach(() => {
