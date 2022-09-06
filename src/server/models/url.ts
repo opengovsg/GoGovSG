@@ -26,7 +26,7 @@ export interface UrlBaseType extends IdType {
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly UrlClicks?: UrlClicksType
-  readonly tag?: TagType[]
+  readonly tags?: TagType[]
   readonly createdAt: string
   readonly updatedAt: string
   readonly email: string

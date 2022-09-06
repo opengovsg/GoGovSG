@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this */
 
 import { inject, injectable } from 'inversify'
-import { QueryTypes } from 'sequelize'
+import { QueryTypes, Transaction } from 'sequelize'
 import { Url, UrlType } from '../models/url'
-import { UrlClicks } from '../models/statistics/clicks'
+import { UrlClicks, UrlClicksType } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
@@ -28,7 +28,7 @@ import arraysContainSame from '../util/array'
 
 const { Public, Private } = FileVisibility
 
-const tagSeparator = ';'
+export const tagSeparator = ';'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -126,6 +126,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
+    let updateParams: any = { ...changes }
     const url = await Url.scope([
       'defaultScope',
       'getClicks',
@@ -141,40 +142,23 @@ export class UrlRepository implements UrlRepositoryInterface {
     const urlDto = this.urlMapper.persistenceToDto(url)
     const newUrl = await sequelize.transaction(async (t) => {
       if (changes.tags && !arraysContainSame(urlDto.tags, changes.tags)) {
-        const tagCreationResponses = changes.tags
-          ? await Promise.all(
-              changes.tags.map(async (tag) => {
-                return Tag.findOrCreate({
-                  where: {
-                    tagString: tag,
-                    tagKey: tag.toLowerCase(),
-                  },
-                  transaction: t,
-                })
-              }),
-            )
-          : []
-        const newTags: TagType[] = []
-        tagCreationResponses.forEach((response) => {
-          const [tag, _] = response
-          if (tag) {
-            newTags.push(tag)
-          }
-        })
+        const newTags = await this.upsertTags(changes, t)
         // @ts-ignore provided by Sequelize during runtime
         await url.setTags(newTags, { transaction: t })
+        updateParams = {
+          ...updateParams,
+          tagStrings: updateParams.tags.join(tagSeparator),
+        }
       }
-      const tagStrings = changes.tags ? changes.tags.join(tagSeparator) : ''
       if (!url.isFile) {
-        await url.update({ ...changes, tagStrings }, { transaction: t })
+        await url.update(updateParams, { transaction: t })
       } else {
         let currentKey = this.fileBucket.getKeyFromLongUrl(url.longUrl)
         if (file) {
           const newKey = file.key
           await url.update(
             {
-              ...changes,
-              tagStrings,
+              ...updateParams,
               longUrl: this.fileBucket.buildFileLongUrl(newKey),
             },
             { transaction: t },
@@ -183,12 +167,12 @@ export class UrlRepository implements UrlRepositoryInterface {
           await this.fileBucket.uploadFileToS3(file.data, newKey, file.mimetype)
           currentKey = newKey
         } else {
-          await url.update({ ...changes, tagStrings }, { transaction: t })
+          await url.update(updateParams, { transaction: t })
         }
-        if (changes.state) {
+        if (updateParams.state) {
           await this.fileBucket.setS3ObjectACL(
             currentKey,
-            changes.state === StorableUrlState.Active ? Public : Private,
+            updateParams.state === StorableUrlState.Active ? Public : Private,
           )
         }
       }
@@ -201,6 +185,47 @@ export class UrlRepository implements UrlRepositoryInterface {
     this.invalidateCache(shortUrl)
     if (!newUrl) throw new Error('Newly-updated url is null')
     return this.urlMapper.persistenceToDto(newUrl)
+  }
+
+  private async upsertTags(
+    changes: Partial<
+      Pick<
+        UrlType,
+        | 'shortUrl'
+        | 'longUrl'
+        | 'state'
+        | 'isFile'
+        | 'createdAt'
+        | 'updatedAt'
+        | 'description'
+        | 'contactEmail'
+        | 'tagStrings'
+      > &
+        Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
+    >,
+    t: Transaction,
+  ) {
+    const tagCreationResponses = changes.tags
+      ? await Promise.all(
+          changes.tags.map(async (tag: string) => {
+            return Tag.findOrCreate({
+              where: {
+                tagString: tag,
+                tagKey: tag.toLowerCase(),
+              },
+              transaction: t,
+            })
+          }),
+        )
+      : []
+    const newTags: TagType[] = []
+    tagCreationResponses.forEach((response) => {
+      const [tag, _] = response
+      if (tag) {
+        newTags.push(tag)
+      }
+    })
+    return newTags
   }
 
   public getLongUrl: (shortUrl: string) => Promise<string> = async (
