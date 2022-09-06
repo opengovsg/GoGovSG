@@ -28,6 +28,8 @@ import arraysContainSame from '../util/array'
 
 const { Public, Private } = FileVisibility
 
+const tagSeparator = ';'
+
 /**
  * A url repository that handles access to the data store of Urls.
  * The following implementation uses Sequelize, AWS S3 and Redis.
@@ -65,12 +67,16 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
+      const tagStrings = properties.tags
+        ? properties.tags.join(tagSeparator)
+        : ''
       const urlStaticDTO = {
         ...properties,
         longUrl: file
           ? this.fileBucket.buildFileLongUrl(file.key)
           : properties.longUrl,
         isFile: !!file,
+        tagStrings,
       }
       const url = await Url.create(urlStaticDTO, {
         transaction: t,
@@ -158,21 +164,26 @@ export class UrlRepository implements UrlRepositoryInterface {
         // @ts-ignore provided by Sequelize during runtime
         await url.setTags(newTags, { transaction: t })
       }
+      const tagStrings = changes.tags ? changes.tags.join(tagSeparator) : ''
       if (!url.isFile) {
-        await url.update(changes, { transaction: t })
+        await url.update({ ...changes, tagStrings }, { transaction: t })
       } else {
         let currentKey = this.fileBucket.getKeyFromLongUrl(url.longUrl)
         if (file) {
           const newKey = file.key
           await url.update(
-            { ...changes, longUrl: this.fileBucket.buildFileLongUrl(newKey) },
+            {
+              ...changes,
+              tagStrings,
+              longUrl: this.fileBucket.buildFileLongUrl(newKey),
+            },
             { transaction: t },
           )
           await this.fileBucket.setS3ObjectACL(currentKey, Private)
           await this.fileBucket.uploadFileToS3(file.data, newKey, file.mimetype)
           currentKey = newKey
         } else {
-          await url.update({ ...changes }, { transaction: t })
+          await url.update({ ...changes, tagStrings }, { transaction: t })
         }
         if (changes.state) {
           await this.fileBucket.setS3ObjectACL(

@@ -26,10 +26,11 @@ export interface UrlBaseType extends IdType {
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly UrlClicks?: UrlClicksType
-  tags?: TagType[]
+  readonly tag?: TagType[]
   readonly createdAt: string
   readonly updatedAt: string
   readonly email: string
+  readonly tagStrings: string
 }
 
 // For sequelize define
@@ -78,6 +79,11 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
     allowNull: false,
     defaultValue: '',
   },
+  tagStrings: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+    defaultValue: '',
+  },
 })
 
 /**
@@ -98,6 +104,7 @@ const writeToUrlHistory = async (
       isFile: urlObj.isFile,
       contactEmail: urlObj.contactEmail,
       description: urlObj.description,
+      tagStrings: urlObj.tagStrings,
     },
     {
       transaction: options.transaction,
@@ -166,6 +173,11 @@ export const Url = <UrlTypeStatic>sequelize.define(
       },
     },
     description: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
+    tagStrings: {
       type: Sequelize.TEXT,
       allowNull: false,
       defaultValue: '',
