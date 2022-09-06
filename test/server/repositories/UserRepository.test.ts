@@ -41,6 +41,7 @@ const expectedUrl = {
   ...baseUrlTemplate,
   ...urlClicks,
   tags: [],
+  tagStrings: undefined,
 }
 
 describe('UserRepository', () => {
