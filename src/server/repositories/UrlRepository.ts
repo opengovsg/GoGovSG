@@ -140,7 +140,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
     const urlDto = this.urlMapper.persistenceToDto(url)
     const newUrl = await sequelize.transaction(async (t) => {
-      if (!arraysContainSame(urlDto.tags, changes.tags)) {
+      if (changes.tags && !arraysContainSame(urlDto.tags, changes.tags)) {
         const tagCreationResponses = changes.tags
           ? await Promise.all(
               changes.tags.map(async (tag) => {
