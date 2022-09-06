@@ -34,6 +34,7 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
       updatedAt: urlType.updatedAt,
       description: urlType.description,
       contactEmail: urlType.contactEmail,
+      tagStrings: urlType.tagStrings,
     }
   }
 }
