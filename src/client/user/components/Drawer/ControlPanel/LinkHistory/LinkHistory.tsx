@@ -24,7 +24,7 @@ const useStyles = makeStyles(() =>
 export default function LinkHistory() {
   const classes = useStyles()
   const ITEMS_PER_PAGE = 10
-  const [currentPage, setCurrentPage] = React.useState(1)
+  const [currentPage, setCurrentPage] = React.useState(0)
 
   // Handles redux state for link history
   const dispatch = useDispatch()
@@ -35,7 +35,7 @@ export default function LinkHistory() {
   const changeSetLen = linkHistory.length
 
   const getLinkHistoryForUser = () => {
-    const offset = (currentPage - 1) * ITEMS_PER_PAGE
+    const offset = currentPage * ITEMS_PER_PAGE
     dispatch(
       userActions.getLinkHistoryForUser(shortUrl, offset, ITEMS_PER_PAGE),
     )

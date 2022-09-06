@@ -51,20 +51,17 @@ export default function LinkHistoryPagination({
   return (
     <Grid className={classes.pageSelectGrid}>
       <Grid item className={classes.gridItemHorizontalPadding}>
-        <IconButton
-          onClick={() => onChangePage(page - 1)}
-          disabled={page - 1 <= 0}
-        >
+        <IconButton onClick={() => onChangePage(page - 1)} disabled={page <= 0}>
           <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
         </IconButton>
       </Grid>
       <Grid item className={classes.gridAlignVerticalMid}>
-        {`Page ${page} of ${pageCount}`}
+        {`Page ${page + 1} of ${pageCount}`}
       </Grid>
       <Grid item className={classes.gridItemHorizontalPadding}>
         <IconButton
           onClick={() => onChangePage(page + 1)}
-          disabled={pageCount < page + 1}
+          disabled={pageCount <= page + 1}
         >
           <img src={arrowRightIcon} alt="Next page" draggable={false} />
         </IconButton>
