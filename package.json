@@ -21,6 +21,7 @@
     "test": "jest --collectCoverage",
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
     "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
+    "test:e2e:debug": "testcafe $NODE_DEBUG_OPTION chrome",
     "cz": "git-cz",
     "prepare": "husky install"
   },
