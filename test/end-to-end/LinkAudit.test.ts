@@ -1,6 +1,7 @@
 import { Selector } from 'testcafe'
 import { rootLocation, subUrl, transferEmail } from './util/config'
 import {
+  activeSwitch,
   closeButtonSnackBar,
   linkHistoryCreateSpan,
   linkHistoryLinkOwnerH6,
@@ -11,7 +12,6 @@ import {
   longUrl,
   signOutButton,
   transferButton,
-  urlDisableToggleButton,
   urlSaveButton,
 } from './util/helpers'
 
@@ -44,7 +44,7 @@ test('Disabling the link should update the link history with Link Status update 
   // Click the url in the table to open the drawer
   await t.click(linkRow)
   // Disable the link
-  await t.click(urlDisableToggleButton)
+  await t.click(activeSwitch)
   // Go to link history
   await t.click(linkHistoryViewButton)
   // Check if the link history span is created
@@ -76,7 +76,7 @@ test('Changing the link owner should update the link history with Link Owner upd
   const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
   // Click the url in the table to open the drawer
   await t.click(linkRow)
-  // Transfer ownershio of the link
+  // Transfer ownership of the link
   await t
     .click(linkTransferField)
     .pressKey('ctrl+a delete')

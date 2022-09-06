@@ -36,8 +36,7 @@ export enum UserAction {
   SET_USER_ANNOUNCEMENT = 'SET_USER_ANNOUNCEMENT',
   SET_URL_UPLOAD_STATE = 'SET_URL_UPLOAD_STATE',
   SET_FILE_UPLOAD_STATE = 'SET_FILE_UPLOAD_STATE',
-  IS_FETCHING_LINKHISTORY = 'IS_FETCHING_LINKHISTORY',
-  GET_LINKHISTORY_FOR_USER_SUCCESS = 'GET_LINKHISTORY_FOR_USER_SUCCESS',
+  GET_LINK_HISTORY_FOR_USER_SUCCESS = 'GET_LINK_HISTORY_FOR_USER_SUCCESS',
 }
 
 export type SetUrlUploadStateAction = ReduxPayloadAction<
@@ -170,12 +169,8 @@ export type SetUrlFilterAction = ReduxPayloadAction<
   UrlTableFilterConfig
 >
 
-export type IsFetchingLinkHistoryAction = ReduxPayloadAction<
-  UserAction.IS_FETCHING_LINKHISTORY,
-  boolean
->
 export type GetLinkHistoryForUserSuccessAction = ReduxPayloadAction<
-  UserAction.GET_LINKHISTORY_FOR_USER_SUCCESS,
+  UserAction.GET_LINK_HISTORY_FOR_USER_SUCCESS,
   {
     linkHistory: Array<LinkChangeSet>
     totalCount: number
@@ -209,5 +204,4 @@ export type UserActionType =
   | SetUserAnnouncementAction
   | SetUrlUploadStateAction
   | SetFileUploadStateAction
-  | IsFetchingLinkHistoryAction
   | GetLinkHistoryForUserSuccessAction

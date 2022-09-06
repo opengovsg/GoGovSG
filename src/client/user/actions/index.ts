@@ -9,7 +9,6 @@ import {
   CloseCreateUrlModalAction,
   GetLinkHistoryForUserSuccessAction,
   GetUrlsForUserSuccessAction,
-  IsFetchingLinkHistoryAction,
   IsFetchingUrlsAction,
   OpenCreateUrlModalAction,
   ResetUserStateAction,
@@ -253,23 +252,33 @@ const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
   })
 }
 
-const isFetchingLinkHistoryAction: (
-  payload: boolean,
-) => IsFetchingLinkHistoryAction = (payload) => ({
-  type: UserAction.IS_FETCHING_LINKHISTORY,
-  payload,
-})
-
 const isGetLinkHistoryForUserSuccess: (
   urls: Array<LinkChangeSet>,
   totalCount: number,
 ) => GetLinkHistoryForUserSuccessAction = (linkHistory, totalCount) => ({
-  type: UserAction.GET_LINKHISTORY_FOR_USER_SUCCESS,
+  type: UserAction.GET_LINK_HISTORY_FOR_USER_SUCCESS,
   payload: {
     linkHistory,
     totalCount,
   },
 })
+
+const resetLinkHistory =
+  (): ThunkAction<
+    void,
+    GoGovReduxState,
+    void,
+    UserActionType | RootActionType
+  > =>
+  async (
+    dispatch: Dispatch<
+      GetLinkHistoryForUserSuccessAction | SetErrorMessageAction
+    >,
+  ) => {
+    dispatch<GetLinkHistoryForUserSuccessAction>(
+      isGetLinkHistoryForUserSuccess([], 0),
+    )
+  }
 
 // retrieves urls based on url table config
 const getLinkHistoryForUser =
@@ -285,9 +294,7 @@ const getLinkHistoryForUser =
   > =>
   async (
     dispatch: Dispatch<
-      | GetLinkHistoryForUserSuccessAction
-      | IsFetchingLinkHistoryAction
-      | SetErrorMessageAction
+      GetLinkHistoryForUserSuccessAction | SetErrorMessageAction
     >,
   ) => {
     const queryObj = {
@@ -296,7 +303,6 @@ const getLinkHistoryForUser =
       offset,
     }
 
-    dispatch<IsFetchingLinkHistoryAction>(isFetchingLinkHistoryAction(true))
     const { json, isOk } = await getLinkHistory(queryObj)
 
     if (isOk) {
@@ -306,11 +312,10 @@ const getLinkHistoryForUser =
     } else {
       dispatch<SetErrorMessageAction>(
         rootActions.setErrorMessage(
-          json.message || 'Error fetching LinkHistory',
+          json.message || 'Error fetching link history',
         ),
       )
     }
-    dispatch<IsFetchingLinkHistoryAction>(isFetchingLinkHistoryAction(false))
   }
 
 // retrieve urls based on query object
@@ -782,6 +787,7 @@ const uploadFile =
 export default {
   getUrlsForUser,
   getLinkHistoryForUser,
+  resetLinkHistory,
   isFetchingUrls,
   createUrlOrRedirect,
   setShortUrl,

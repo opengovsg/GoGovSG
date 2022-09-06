@@ -12,14 +12,15 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
+import { useDispatch } from 'react-redux'
 
-import BackIcon from './assets/BackIcon'
+import BackIcon from './widgets/BackIcon'
 import { DrawerActions } from './util/reducers'
 import { useDrawerDispatch, useDrawerState } from '..'
 import DrawerMargin from './DrawerMargin'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import LinkAnalytics from './LinkAnalytics'
-import LinkHistory from './LinkHistory/LinkHistory'
+import LinkHistory from './LinkHistory'
 import LinkHistoryButton from './LinkHistory/LinkHistoryButton'
 import DrawerHeader from './DrawerHeader'
 import useShortLink from './util/shortlink'
@@ -31,6 +32,7 @@ import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
 import { SEARCH_PAGE } from '../../../../app/util/types'
+import userActions from '../../../actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -151,6 +153,7 @@ export default function ControlPanel() {
   const drawerStates = useDrawerState()
   const drawerIsOpen = drawerStates.controlPanelIsOpen
   const modalDispatch = useDrawerDispatch()
+  const dispatch = useDispatch()
 
   // Fetch short link state and dispatches from redux store through our helper hook.
   const { shortLinkState, shortLinkDispatch } = useShortLink(
@@ -158,8 +161,8 @@ export default function ControlPanel() {
   )
 
   // Toggle Link History
-  const isHistoryToggled = drawerStates.linkHistoryIsToggled
-  const toggleHistory: () => void = () =>
+  const isLinkHistoryToggled = drawerStates.linkHistoryIsToggled
+  const toggleLinkHistory: () => void = () =>
     modalDispatch({ type: DrawerActions.toggleLinkHistory })
 
   // Manage values in our text fields.
@@ -180,6 +183,7 @@ export default function ControlPanel() {
     shortLinkDispatch?.setEditDescription(originalDescription)
     shortLinkDispatch?.setEditContactEmail(originalContactEmail)
     modalDispatch({ type: DrawerActions.closeControlPanel })
+    dispatch(userActions.resetLinkHistory())
   }
 
   return (
@@ -196,13 +200,13 @@ export default function ControlPanel() {
           <div className={classes.topBar} />
         </Hidden>
 
-        {!isHistoryToggled && (
+        {!isLinkHistoryToggled && (
           <>
             <IconButton className={classes.closeIcon} onClick={handleClose}>
               <CloseIcon />
             </IconButton>
             <DrawerMargin>
-              <LinkHistoryButton clickHandler={toggleHistory} />
+              <LinkHistoryButton clickHandler={toggleLinkHistory} />
               <DrawerHeader title="Edit Link" />
               <LinkStateText />
               <DownloadButton />
@@ -277,11 +281,11 @@ export default function ControlPanel() {
           </>
         )}
 
-        {isHistoryToggled && (
+        {isLinkHistoryToggled && (
           <>
             <Button
               className={classes.backButton}
-              onClick={toggleHistory}
+              onClick={toggleLinkHistory}
               size="large"
               variant="text"
               color="primary"

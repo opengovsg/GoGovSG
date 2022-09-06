@@ -214,12 +214,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
         },
       }
       break
-    case UserAction.IS_FETCHING_LINKHISTORY:
-      nextState = {
-        isFetchingLinkHistory: action.payload,
-      }
-      break
-    case UserAction.GET_LINKHISTORY_FOR_USER_SUCCESS:
+    case UserAction.GET_LINK_HISTORY_FOR_USER_SUCCESS:
       nextState = {
         linkHistory: action.payload.linkHistory,
         linkHistoryCount: action.payload.totalCount,

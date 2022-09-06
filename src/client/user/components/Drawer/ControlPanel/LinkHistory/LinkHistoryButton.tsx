@@ -6,16 +6,13 @@ import {
   makeStyles,
   useTheme,
 } from '@material-ui/core'
-import HistoryIcon from '../assets/HistoryIcon'
+import HistoryIcon from '../widgets/HistoryIcon'
 
 const useStyles = makeStyles(() =>
   createStyles({
     rootDiv: {
       display: 'block',
       textAlign: 'right',
-      // [theme.breakpoints.down('sm')]: {
-      //   // textAlign: 'left',
-      // },
     },
     linkButton: {
       padding: 0,
