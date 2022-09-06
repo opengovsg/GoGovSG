@@ -159,22 +159,25 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               Icon={LinkIcon}
               isEnabled={createType !== CreateType.LINK}
               onChange={() => setCreateType(CreateType.LINK)}
-              childen="From URL"
-            />
+            >
+              From URL
+            </CreateTypeButton>
             <CreateTypeButton
               InputProps={{ classes }}
               Icon={FileIcon}
               isEnabled={createType !== CreateType.FILE}
               onChange={() => setCreateType(CreateType.FILE)}
-              childen="To a File"
-            />
+            >
+              To a File
+            </CreateTypeButton>
             <CreateTypeButton
               InputProps={{ classes }}
               Icon={CsvIcon}
               isEnabled={createType !== CreateType.BULK}
               onChange={() => setCreateType(CreateType.BULK)}
-              childen="From a .csv"
-            />
+            >
+              From a .csv
+            </CreateTypeButton>
           </div>
           {createType === CreateType.LINK && (
             <>

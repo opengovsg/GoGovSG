@@ -7,7 +7,7 @@ type CreateTypeButtonProps = {
   Icon: ComponentType<IconProps>
   isEnabled: boolean
   onChange: () => void
-  childen: string
+  children: string
 }
 
 const CreateTypeButton: FunctionComponent<CreateTypeButtonProps> = ({
@@ -15,7 +15,7 @@ const CreateTypeButton: FunctionComponent<CreateTypeButtonProps> = ({
   Icon,
   isEnabled,
   onChange,
-  childen,
+  children,
 }: CreateTypeButtonProps) => {
   const { classes } = InputProps
   const theme = useTheme()
@@ -35,7 +35,7 @@ const CreateTypeButton: FunctionComponent<CreateTypeButtonProps> = ({
         }
       />
       <Typography variant="body2" className={classes.linkTypeButtonText}>
-        {childen}
+        {children}
       </Typography>
     </Button>
   )
