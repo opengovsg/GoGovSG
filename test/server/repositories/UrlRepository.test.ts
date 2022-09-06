@@ -97,10 +97,12 @@ describe('UrlRepository', () => {
   const baseStorableUrl = {
     ...baseTemplate,
     ...baseUrlClicks,
+    tagStrings: undefined,
   }
   const baseStorableUrlWithTags = {
     ...baseStorableUrl,
     tags: baseTags,
+    tagStrings: baseTagStrings,
   }
   beforeEach(async () => {
     redisMockClient.flushall()
