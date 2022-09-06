@@ -159,7 +159,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               isEnabled={createType !== CreateType.LINK}
               onChange={() => setCreateType(CreateType.LINK)}
             >
-              From URL
+              To a URL
             </CreateTypeButton>
             <CreateTypeButton
               InputProps={{ classes }}

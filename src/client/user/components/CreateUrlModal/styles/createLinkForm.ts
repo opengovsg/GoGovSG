@@ -131,6 +131,8 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       background: 'none!important',
       border: 'none',
       padding: '0!important',
+      fontSize: '1rem',
+      lineHeight: '1.5625',
     },
     maxSizeText: {
       marginLeft: '4px',
