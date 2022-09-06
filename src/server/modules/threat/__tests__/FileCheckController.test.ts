@@ -18,14 +18,10 @@ function createRequestWithFile(file: any): Request {
 describe('FileCheckController test', () => {
   const file = { data: Buffer.from('data'), name: 'file.csv' }
   const hasAllowedType = jest.fn()
-  const isCSV = jest.fn()
 
   const hasVirus = jest.fn()
 
-  const controller = new FileCheckController(
-    { hasAllowedType, isCSV },
-    { hasVirus },
-  )
+  const controller = new FileCheckController({ hasAllowedType }, { hasVirus })
   const badRequest = jest.fn()
 
   beforeEach(() => {
@@ -39,7 +35,8 @@ describe('FileCheckController test', () => {
     const res = httpMocks.createResponse()
     const next = jest.fn()
 
-    await controller.checkFile(req, res, next)
+    await controller.fileExtensionCheck(req, res, next)
+    await controller.fileVirusCheck(req, res, next)
 
     expect(hasAllowedType).not.toHaveBeenCalled()
     expect(hasVirus).not.toHaveBeenCalled()
@@ -53,7 +50,8 @@ describe('FileCheckController test', () => {
 
     res.unprocessableEntity = badRequest
 
-    await controller.checkFile(req, res, next)
+    await controller.fileExtensionCheck(req, res, next)
+    await controller.fileVirusCheck(req, res, next)
 
     expect(hasAllowedType).not.toHaveBeenCalled()
     expect(hasVirus).not.toHaveBeenCalled()
@@ -69,7 +67,8 @@ describe('FileCheckController test', () => {
     hasAllowedType.mockResolvedValue(false)
     res.unsupportedMediaType = badRequest
 
-    await controller.checkFile(req, res, next)
+    await controller.fileExtensionCheck(req, res, next)
+    await controller.fileVirusCheck(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).not.toHaveBeenCalled()
@@ -86,7 +85,8 @@ describe('FileCheckController test', () => {
     hasVirus.mockRejectedValue(false)
     res.badRequest = badRequest
 
-    await controller.checkFile(req, res, next)
+    await controller.fileExtensionCheck(req, res, next)
+    await controller.fileVirusCheck(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).toHaveBeenCalled()
@@ -103,7 +103,8 @@ describe('FileCheckController test', () => {
     hasVirus.mockResolvedValue(true)
     res.badRequest = badRequest
 
-    await controller.checkFile(req, res, next)
+    await controller.fileExtensionCheck(req, res, next)
+    await controller.fileVirusCheck(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).toHaveBeenCalled()
@@ -121,7 +122,8 @@ describe('FileCheckController test', () => {
     res.badRequest = badRequest
     res.serverError = badRequest
 
-    await controller.checkFile(req, res, next)
+    await controller.fileExtensionCheck(req, res, next)
+    await controller.fileVirusCheck(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).toHaveBeenCalled()

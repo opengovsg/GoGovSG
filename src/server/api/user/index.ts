@@ -84,7 +84,8 @@ router.post(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.checkFile,
+  fileCheckController.fileExtensionCheck,
+  fileCheckController.fileVirusCheck,
   urlCheckController.checkUrl,
   validator.body(urlSchema),
   userController.createUrl,
@@ -100,10 +101,11 @@ router.post(
  */
 
 router.post(
-  '/url/validate-csv',
+  '/url/bulk-link',
   bulkCSVUploadMiddleware,
   preprocessPotentialIncomingFile,
-  csvCheckController.checkCsvFile,
+  fileCheckController.csvExtensionCheck,
+  fileCheckController.fileVirusCheck,
   csvCheckController.finalValidation,
 )
 
@@ -124,7 +126,8 @@ router.patch(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.checkFile,
+  fileCheckController.fileExtensionCheck,
+  fileCheckController.fileVirusCheck,
   urlCheckController.checkUrl,
   validator.body(urlEditSchema),
   userController.updateUrl,

@@ -50,20 +50,22 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     this.allowedFileExtensions = allowedFileExtensions
   }
 
-  hasAllowedType: (file: { name: string; data: Buffer }) => Promise<boolean> =
-    async ({ name, data }) => {
-      const fileType = await FileType.fromBuffer(data)
-      const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
-      return this.allowedFileExtensions.includes(extension)
-    }
-
-  isCSV: (file: { name: string; data: Buffer }) => Promise<boolean> = async ({
-    name,
-    data,
-  }) => {
+  hasAllowedType: (
+    file: {
+      name: string
+      data: Buffer
+    },
+    inputExtension?: string,
+  ) => Promise<boolean> = async ({ name, data }, inputExtension) => {
     const fileType = await FileType.fromBuffer(data)
     const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
-    return extension === 'csv'
+    console.log(`inputExtension: ${inputExtension}`)
+    console.log(`extension: ${extension}`)
+
+    if (inputExtension) {
+      return inputExtension === extension
+    }
+    return this.allowedFileExtensions.includes(extension)
   }
 }
 
