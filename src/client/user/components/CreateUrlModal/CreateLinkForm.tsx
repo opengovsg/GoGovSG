@@ -82,7 +82,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
-    isFile: createType === CreateType.FILE,
     uploadFileError,
     createShortLinkError,
   })
