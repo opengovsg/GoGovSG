@@ -36,6 +36,7 @@ import {
 import {
   RootActionType,
   SetErrorMessageAction,
+  SetInfoMessageAction,
   SetSuccessMessageAction,
 } from '../../app/components/pages/RootPage/actions/types'
 import {
@@ -517,6 +518,24 @@ const urlCreated = (
   )
 }
 
+const bulkUrlStarted = (
+  dispatch: ThunkDispatch<
+    GoGovReduxState,
+    void,
+    CloseCreateUrlModalAction | ResetUserStateAction | SetInfoMessageAction
+  >,
+  fileName: string,
+) => {
+  dispatch<void>(getUrlsForUser())
+  dispatch<ResetUserStateAction>(resetUserState())
+  // TODO: placeholder before we add progress bar
+  const infoMessage = `
+    Link creations from ${fileName} are in progress.
+    We will notify you via email once it has completed.
+  `
+  dispatch<SetInfoMessageAction>(rootActions.setInfoMessage(infoMessage))
+}
+
 /**
  * API call to create URL
  * If user is not logged in, the createUrl call returns unauthorized,
@@ -697,6 +716,76 @@ const uploadFile =
     }
   }
 
+/**
+ * API call to upload a file.
+ * @param file
+ * @returns Promise<bool> Whether file upload succeeded.
+ */
+const bulkCreateUrl =
+  (file: File | null) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
+      | SetInfoMessageAction
+      | SetErrorMessageAction
+      | SetIsUploadingAction
+      | SetFileUploadStateAction
+    >,
+  ) => {
+    if (file === null) {
+      // Sentry analytics: bulk create link with file fail
+      Sentry.captureMessage('start bulk create link from file unsuccessful')
+      GAEvent('modal page', 'start bulk create link from file', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('File is missing.'),
+      )
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+
+      // TODO: check file format
+      // } else if (file) {
+      //   dispatch<SetErrorMessageAction>(
+      //     rootActions.setErrorMessage('File format is rejected.'),
+      //   )
+      //   dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    } else {
+      dispatch<SetIsUploadingAction>(setIsUploading(true))
+      const data = new FormData()
+      data.append('file', file, file.name)
+
+      // TODO: API integration
+      // const response = await postFormData('/api/user/bulk', data)
+      const response = {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          fileName: 'test.csv',
+        }),
+      }
+      dispatch<SetIsUploadingAction>(setIsUploading(false))
+      if (!response.ok) {
+        // Sentry analytics: create link with file fail
+        Sentry.captureMessage('start bulk create link from file unsuccessful')
+        GAEvent(
+          'modal page',
+          'start bulk create link from file',
+          'unsuccessful',
+        )
+
+        await handleError(dispatch, response as unknown as Response)
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      } else {
+        GAEvent('modal page', 'start bulk create link from file', 'successful')
+        const json = await response.json()
+        bulkUrlStarted(dispatch, json.fileName)
+        dispatch<SetFileUploadStateAction>(setFileUploadState(true))
+      }
+    }
+  }
+
 export default {
   getUrlsForUser,
   isFetchingUrls,
@@ -714,6 +803,7 @@ export default {
   updateLongUrl,
   updateUrlCount,
   uploadFile,
+  bulkCreateUrl,
   setUrlTableConfig,
   getUrls,
   setUploadFileError,

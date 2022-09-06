@@ -70,6 +70,8 @@ const CreateUrlModal = () => {
     dispatch(userActions.createUrlOrRedirect(history))
   const onUploadFile = (file: File | null) =>
     dispatch(userActions.uploadFile(file))
+  const onBulkCreateUrl = (file: File | null) =>
+    dispatch(userActions.bulkCreateUrl(file))
 
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
@@ -140,9 +142,7 @@ const CreateUrlModal = () => {
         <CreateLinkForm
           onSubmitLink={onCreateUrl}
           onSubmitFile={onUploadFile}
-          onSubmitBulk={(file) => {
-            console.log(file)
-          }} // TODO: add API integration
+          onSubmitBulk={onBulkCreateUrl}
         />
       ) : (
         <AddDescriptionForm />
