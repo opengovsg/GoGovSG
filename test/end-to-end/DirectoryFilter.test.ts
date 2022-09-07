@@ -1,6 +1,5 @@
 import { rootLocation, testEmail } from './util/config'
 import {
-  activeButton,
   activeButtonStyle,
   clickAway,
   directoryFilterPanel,
@@ -12,12 +11,12 @@ import {
   fileButtonStyle,
   getLocation,
   inactiveButtonStyle,
-  linkButton,
   linkButtonStyle,
   mostPopularFilter,
   mostRecentFilter,
   toggle,
   urlTable,
+  userApplyButton,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import linkCreationProcedure from './util/LinkCreationProcedure'
@@ -35,7 +34,8 @@ test('Populate with links', async (t) => {
   t.fixtureCtx.createdLinks = createdLinks
 })
 
-test('Default settings', async (t) => {
+// eslint-disable-next-line jest/no-disabled-tests
+test.skip('Default settings', async (t) => {
   // Clicking on the directory page button brings user to directory page
   await t
     .click(directoryPageButton)
@@ -74,16 +74,11 @@ test('Default settings', async (t) => {
     .ok()
     .expect(mostRecentFilter.hasClass('makeStyles-sortButtonSelected-304'))
     .ok()
-
-  // const smth = await mostPopularFilter.classNames
-
-  // console.log('smth', smth)
 })
 
-test('Directory Page test search by keyword and email', async (t) => {
-  const { generatedUrlFile, generatedUrlInactive, generatedUrlActive } =
-    t.fixtureCtx.createdLinks
-  // const generatedUrlFile = '4o43mm-kkillj'
+// eslint-disable-next-line jest/no-disabled-tests
+test.skip('Directory Page test search by keyword and email', async (t) => {
+  const { generatedUrlFile } = t.fixtureCtx.createdLinks
 
   // Clicking on the directory page button brings user to directory page
   await t.click(directoryPageButton)
@@ -117,4 +112,81 @@ test('Directory Page test search by keyword and email', async (t) => {
     // // change in url (isEmail in url)
     .expect(getLocation())
     .match(/isEmail=true/)
+})
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page test recency sort order', async (t) => {
+  const {
+    generatedUrlFile,
+    generatedUrlInactive,
+    generatedUrlActive,
+    searchKey,
+  } = t.fixtureCtx.createdLinks
+
+  /*
+  
+  Based on LinkCreationProcedure recency sort order (most recent on top):
+  1. generatedUrlFile,
+  2. generatedUrlInactive,
+  3. generatedUrlActive
+
+  */
+
+  await t
+    .click(directoryPageButton)
+    // search by search key
+    .typeText(directoryTextFieldKeyword, searchKey)
+    // first row
+    .expect(
+      // eslint-disable-next-line newline-per-chained-call
+      urlTable.child(0).child(0).child('p').child(1).child('span').innerText,
+    )
+    .eql(`/${generatedUrlFile}`)
+    // second row
+    .expect(
+      // eslint-disable-next-line newline-per-chained-call
+      urlTable.child(1).child(0).child('p').child(1).child('span').innerText,
+    )
+    .eql(`/${generatedUrlInactive}`)
+    // third row
+    .expect(
+      // eslint-disable-next-line newline-per-chained-call
+      urlTable.child(2).child(0).child('p').child(1).child('span').innerText,
+    )
+    .eql(`/${generatedUrlActive}`)
+})
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page test popularity sort order', async (t) => {
+  const { generatedUrlMostPopular, generatedUrlSecondMostPopular, searchKey } =
+    t.fixtureCtx.createdLinks
+
+  /*
+  
+  Based on LinkCreationProcedure popularity sort order (most popular on top):
+  1. generatedUrlMostPopular
+  2. generatedUrlSecondMostPopular
+
+  */
+
+  await t
+    .click(directoryPageButton)
+    // change filter to 'most popularity'
+    .click(directoryFilterPanelButton)
+    .click(mostPopularFilter)
+    .click(userApplyButton)
+    // search by search key
+    .typeText(directoryTextFieldKeyword, searchKey)
+    // first row
+    .expect(
+      // eslint-disable-next-line newline-per-chained-call
+      urlTable.child(0).child(0).child('p').child(1).child('span').innerText,
+    )
+    .eql(`/${generatedUrlMostPopular}`)
+    // second row
+    .expect(
+      // eslint-disable-next-line newline-per-chained-call
+      urlTable.child(1).child(0).child('p').child(1).child('span').innerText,
+    )
+    .eql(`/${generatedUrlSecondMostPopular}`)
 })

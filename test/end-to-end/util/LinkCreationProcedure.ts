@@ -10,6 +10,7 @@ import { createEmptyFileOfSize, deleteFile } from './fileHandle'
 import firstLinkHandle from './FirstLinkHandle'
 import {
   activeSwitch,
+  closeDrawerButton,
   createLinkButton,
   drawer,
   fileTab,
@@ -25,6 +26,39 @@ const LENGTH = 6
 const generate = customAlphabet(ALPHABET, LENGTH)
 
 /**
+ * Fetch link multiple times to increase usage of link.
+ */
+const fetchLink = async (url, numberOfFetches) => {
+  const get = async (url) => {
+    const res = await fetch(url) // "GET" is the default method
+    return res.ok
+  }
+
+  Promise.all(new Array(numberOfFetches).fill(get(url))).then(
+    (values: boolean[]) => {
+      console.log(
+        `Url: ${url} was fetched ${values.filter(Boolean).length} times`,
+      )
+    },
+  )
+}
+
+const getUrlAndFetch = async (t, generatedUrl, numberOfFetches) => {
+  const linkRowPopular = Selector(`h6[title="${generatedUrl}"]`)
+  await t.click(linkRowPopular)
+
+  const shortLink = Selector(
+    '.MuiTypography-root.MuiTypography-subtitle2',
+  ).withText(generatedUrl)
+
+  const shortUrlValue = await shortLink.innerText
+
+  await t.click(closeDrawerButton)
+
+  await fetchLink(shortUrlValue, numberOfFetches)
+}
+
+/**
  * Process of creating various types of links into test account.
  */
 const linkCreationProcedure = async (t) => {
@@ -32,9 +66,9 @@ const linkCreationProcedure = async (t) => {
   const searchKey = generate()
   const searchKeyWithDash = `-${searchKey}`
 
-  // Save short url 1 - active link
+  // Save url - most popularlink
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
-  const generatedUrlActive = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  const generatedUrlMostPopular = `${await shortUrlTextField.value}${searchKeyWithDash}`
 
   await t
     .typeText(shortUrlTextField, searchKeyWithDash)
@@ -42,7 +76,29 @@ const linkCreationProcedure = async (t) => {
 
   await firstLinkHandle(t)
 
-  // Save short url 2 - inactive link
+  await getUrlAndFetch(t, generatedUrlMostPopular, 10)
+
+  // Save url - 2nd most popular link
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+  const generatedUrlSecondMostPopular = `${await shortUrlTextField.value}${searchKeyWithDash}`
+
+  await t
+    .typeText(shortUrlTextField, searchKeyWithDash)
+    .typeText(longUrlTextField, `${shortUrl}`)
+    .click(createLinkButton.nth(2))
+
+  await getUrlAndFetch(t, generatedUrlSecondMostPopular, 8)
+
+  // Save url - active link + 3rd most recent link
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+  const generatedUrlActive = `${await shortUrlTextField.value}${searchKeyWithDash}`
+
+  await t
+    .typeText(shortUrlTextField, searchKeyWithDash)
+    .typeText(longUrlTextField, `${shortUrl}`)
+    .click(createLinkButton.nth(2))
+
+  // Save url - inactive link + 2nd most recent link
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrlInactive = `${await shortUrlTextField.value}${searchKeyWithDash}`
@@ -57,11 +113,9 @@ const linkCreationProcedure = async (t) => {
     .expect(longUrl.value)
     .eql(`${shortUrl}`)
 
-  await t
-    .click(activeSwitch)
-    .click(drawer.child(2).child('main').child('button'))
+  await t.click(activeSwitch).click(closeDrawerButton)
 
-  // // Save short url 3 - file link
+  // Save url - file link + most recent link
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrlFile = `${await shortUrlTextField.value}${searchKeyWithDash}`
@@ -81,6 +135,8 @@ const linkCreationProcedure = async (t) => {
     generatedUrlActive,
     generatedUrlInactive,
     generatedUrlFile,
+    generatedUrlMostPopular,
+    generatedUrlSecondMostPopular,
   }
 }
 
