@@ -35,6 +35,7 @@ export type UrlType = {
   longUrl: string
   shortUrl: string
   state: UrlState
+  tags: string[]
   updatedAt: string
   userId: number
   description: string

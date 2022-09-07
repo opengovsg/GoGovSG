@@ -14,6 +14,7 @@ import linkIcon from '@assets/components/user/user-link-table/link-icon.svg'
 import fileIcon from '@assets/components/user/user-link-table/file-icon.svg'
 import clickCountIcon from '@assets/components/user/user-link-table/click-count-icon.svg'
 
+import TableTag from './TableTag'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import { DrawerActions } from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
@@ -46,6 +47,18 @@ const useStyles = makeStyles((theme) => {
         textAlign: 'end',
         paddingTop: '0px',
         paddingRight: theme.spacing(1.5),
+        paddingLeft: (props: StyleProps) => props.appMargins,
+      },
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
+    },
+    leftCellWithTags: {
+      [theme.breakpoints.up('md')]: {
+        textAlign: 'end',
+        paddingTop: '0px',
+        paddingRight: theme.spacing(1.5),
+        paddingBottom: '61px',
         paddingLeft: (props: StyleProps) => props.appMargins,
       },
       [theme.breakpoints.down('sm')]: {
@@ -182,9 +195,22 @@ export default function EnhancedTableBody() {
   )
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const dispatch = useDrawerDispatch()
+  const drawerDispatch = useDrawerDispatch()
   const openControlPanel = (shortlink: string) =>
-    dispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
+    drawerDispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
+
+  const applySearchByTag = (tag: string) => {
+    // TODO: apply searching by tag
+    console.log(tag)
+    // dispatch(userActions.isFetchingUrls(true))
+    // dispatch(
+    //   userActions.setUrlTableConfig({
+    //     searchText: tag,
+    //     pageNumber: 0,
+    //   } as UrlTableConfig),
+    // )
+    // dispatch(userActions.getUrlsForUser())
+  }
 
   if (urls.length > 0) {
     // If user has existing links, show the user's list of stored links.
@@ -198,7 +224,13 @@ export default function EnhancedTableBody() {
             }`}
             onClick={() => openControlPanel(row.shortUrl)}
           >
-            <TableCell className={classes.leftCell}>
+            <TableCell
+              className={
+                row.tags.length > 0
+                  ? classes.leftCellWithTags
+                  : classes.leftCell
+              }
+            >
               <img
                 className={classes.icon}
                 src={row.isFile ? fileIcon : linkIcon}
@@ -221,6 +253,19 @@ export default function EnhancedTableBody() {
                     </Typography>
                   </Grid>
                 </Hidden>
+                {row.tags.length > 0 && (
+                  <Hidden smDown>
+                    <Grid item className={classes.longUrlGrid}>
+                      {row.tags.map((tag: string) => (
+                        <TableTag
+                          key={tag}
+                          tag={tag}
+                          onClick={() => applySearchByTag(tag)}
+                        />
+                      ))}
+                    </Grid>
+                  </Hidden>
+                )}
               </Grid>
             </TableCell>
             <Hidden smDown>
