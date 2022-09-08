@@ -14,12 +14,10 @@ import {
   Typography,
   useTheme,
 } from '@material-ui/core'
-import { Autocomplete } from '@material-ui/lab'
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
   isValidShortUrl,
-  isValidTag,
 } from '../../../../shared/util/validation'
 import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
 import ModalMargins from './ModalMargins'
@@ -34,8 +32,8 @@ import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
 import { GoGovReduxState } from '../../../app/reducers/types'
 import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
-import FormTag from './FormTag'
 import Tooltip from '../../widgets/Tooltip'
+import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
 type CreateLinkFormProps = {
   onSubmitLink: (history: History) => {}
@@ -317,64 +315,13 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             </Typography>
           </div>
           <div>
-            <Autocomplete
-              multiple
-              options={['']}
-              value={tags}
-              PaperComponent={React.forwardRef(() => null)}
-              popupIcon={null}
-              closeIcon={null}
+            <TagsAutocomplete
+              tags={tags}
+              setTags={setTags}
+              tagInput={tagInput}
+              setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
-              renderTags={(tags) =>
-                tags.map((tag) => (
-                  <FormTag
-                    key={tag}
-                    tag={tag}
-                    onClose={() => setTags(tags.filter((t) => t !== tag))}
-                  />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField
-                  disabled={params.disabled}
-                  error={!isValidTag(tagInput, true) || tags.includes(tagInput)}
-                  className={classes.tagsText}
-                  onKeyDown={(event) => {
-                    if (event.key !== 'Enter') return
-                    event.preventDefault() // prevent form from submitting
-                    if (isValidTag(tagInput) && !tags.includes(tagInput)) {
-                      setTagInput('')
-                      setTags([...tags, tagInput])
-                    }
-                  }}
-                  inputProps={params.inputProps}
-                  InputProps={{
-                    startAdornment: params.InputProps.startAdornment,
-                    className: classes.outlinedTagsTextInput,
-                    classes: {
-                      input: classes.tagsTextInput,
-                      notchedOutline: classes.inputNotchedOutline,
-                    },
-                  }}
-                  variant="outlined"
-                  placeholder={
-                    tags.length < MAX_NUM_TAGS_PER_LINK ? 'Add tag' : ''
-                  }
-                  onChange={(event) => {
-                    setTagInput(event.target.value)
-                  }}
-                  value={tagInput}
-                  helperText={(() => {
-                    if (!isValidTag(tagInput, true)) {
-                      return 'Tags should only consist of letters, numbers and hyphens and be no more than 25 characters long.'
-                    }
-                    if (tags.includes(tagInput)) {
-                      return 'This tag already exists.'
-                    }
-                    return ''
-                  })()}
-                />
-              )}
+              placeholder={tags.length < MAX_NUM_TAGS_PER_LINK ? 'Add tag' : ''}
             />
           </div>
           <Button
