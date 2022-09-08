@@ -46,6 +46,9 @@ export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
 export const urlTable = Selector('tbody')
+export const urlTableRowText = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(0).child('p').child(1).child('span').innerText
 export const searchBar = Selector('input[placeholder="Search links"]')
 export const downloadLinkButton = Selector('p')
   .withText('Download links')
@@ -112,6 +115,8 @@ export const directoryTextFieldEmail = Selector(
 )
 export const directoryFilterPanelButton = Selector('.MuiIconButton-label')
 export const directoryFilterPanel = Selector('.MuiCollapse-wrapper')
+export const sortButtonSelectedClass = 'makeStyles-sortButtonSelected-304'
+export const sortButtonUnselectedClass = 'makeStyles-sortButton-303'
 export const mostRecentFilter = Selector('p')
   .withText('Most recent')
   .parent()
@@ -122,6 +127,8 @@ export const mostPopularFilter = Selector('p')
   .parent()
 export const applyButton = Selector('span').withText('Apply').parent()
 export const resetButton = Selector('span').withText('Reset').parent()
+export const uncheckedButtonClass = 'makeStyles-uncheckedIcon-458'
+export const checkedButtonClass = 'makeStyles-filled-459'
 export const linkButton = Selector('p')
   .withText('Link')
   .parent()

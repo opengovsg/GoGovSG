@@ -1,6 +1,8 @@
 import { rootLocation, testEmail } from './util/config'
 import {
+  activeButton,
   activeButtonStyle,
+  checkedButtonClass,
   clickAway,
   directoryFilterPanel,
   directoryFilterPanelButton,
@@ -8,14 +10,22 @@ import {
   directoryTextFieldEmail,
   directoryTextFieldKeyword,
   emailToggle,
+  fileButton,
   fileButtonStyle,
   getLocation,
+  inactiveButton,
   inactiveButtonStyle,
+  linkButton,
   linkButtonStyle,
   mostPopularFilter,
   mostRecentFilter,
+  resetButton,
+  sortButtonSelectedClass,
+  sortButtonUnselectedClass,
   toggle,
+  uncheckedButtonClass,
   urlTable,
+  urlTableRowText,
   userApplyButton,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
@@ -28,6 +38,7 @@ fixture(`Directory Filter`)
     await LoginProcedure(t)
   })
 
+// eslint-disable-next-line jest/no-disabled-tests
 test('Populate with links', async (t) => {
   const createdLinks = await linkCreationProcedure(t)
   // eslint-disable-next-line no-param-reassign
@@ -35,7 +46,7 @@ test('Populate with links', async (t) => {
 })
 
 // eslint-disable-next-line jest/no-disabled-tests
-test.skip('Default settings', async (t) => {
+test('Default settings', async (t) => {
   // Clicking on the directory page button brings user to directory page
   await t
     .click(directoryPageButton)
@@ -62,22 +73,22 @@ test.skip('Default settings', async (t) => {
     .ok()
     .expect(directoryTextFieldEmail.exists)
     .notOk()
-    .expect(linkButtonStyle.hasClass('makeStyles-uncheckedIcon-458'))
+    .expect(linkButtonStyle.hasClass(uncheckedButtonClass))
     .ok()
-    .expect(fileButtonStyle.hasClass('makeStyles-uncheckedIcon-458'))
+    .expect(fileButtonStyle.hasClass(uncheckedButtonClass))
     .ok()
-    .expect(activeButtonStyle.hasClass('makeStyles-uncheckedIcon-458'))
+    .expect(activeButtonStyle.hasClass(uncheckedButtonClass))
     .ok()
-    .expect(inactiveButtonStyle.hasClass('makeStyles-uncheckedIcon-458'))
+    .expect(inactiveButtonStyle.hasClass(uncheckedButtonClass))
     .ok()
-    .expect(mostPopularFilter.hasClass('makeStyles-sortButton-303'))
+    .expect(mostPopularFilter.hasClass(sortButtonUnselectedClass))
     .ok()
-    .expect(mostRecentFilter.hasClass('makeStyles-sortButtonSelected-304'))
+    .expect(mostRecentFilter.hasClass(sortButtonSelectedClass))
     .ok()
 })
 
 // eslint-disable-next-line jest/no-disabled-tests
-test.skip('Directory Page test search by keyword and email', async (t) => {
+test('Directory Page test search by keyword and email', async (t) => {
   const { generatedUrlFile } = t.fixtureCtx.createdLinks
 
   // Clicking on the directory page button brings user to directory page
@@ -86,10 +97,7 @@ test.skip('Directory Page test search by keyword and email', async (t) => {
   // search by keyword
   await t
     .typeText(directoryTextFieldKeyword, `${generatedUrlFile}`)
-    .expect(
-      // eslint-disable-next-line newline-per-chained-call
-      urlTable.child(0).child(0).child('p').child(1).child('span').innerText,
-    )
+    .expect(urlTableRowText(0))
     .eql(`/${generatedUrlFile}`)
     // change in url
     .expect(getLocation())
@@ -137,22 +145,13 @@ test('Directory Page test recency sort order', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(
-      // eslint-disable-next-line newline-per-chained-call
-      urlTable.child(0).child(0).child('p').child(1).child('span').innerText,
-    )
+    .expect(urlTableRowText(0))
     .eql(`/${generatedUrlFile}`)
     // second row
-    .expect(
-      // eslint-disable-next-line newline-per-chained-call
-      urlTable.child(1).child(0).child('p').child(1).child('span').innerText,
-    )
+    .expect(urlTableRowText(1))
     .eql(`/${generatedUrlInactive}`)
     // third row
-    .expect(
-      // eslint-disable-next-line newline-per-chained-call
-      urlTable.child(2).child(0).child('p').child(1).child('span').innerText,
-    )
+    .expect(urlTableRowText(2))
     .eql(`/${generatedUrlActive}`)
 })
 
@@ -178,15 +177,191 @@ test('Directory Page test popularity sort order', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(
-      // eslint-disable-next-line newline-per-chained-call
-      urlTable.child(0).child(0).child('p').child(1).child('span').innerText,
-    )
+    .expect(urlTableRowText(0))
     .eql(`/${generatedUrlMostPopular}`)
     // second row
-    .expect(
-      // eslint-disable-next-line newline-per-chained-call
-      urlTable.child(1).child(0).child('p').child(1).child('span').innerText,
-    )
+    .expect(urlTableRowText(1))
     .eql(`/${generatedUrlSecondMostPopular}`)
 })
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page filter by active', async (t) => {
+  const { generatedUrlFile, generatedUrlActive, searchKey } =
+    t.fixtureCtx.createdLinks
+
+  /*
+  
+  Based on LinkCreationProcedure with sorting by recency and active:
+  1. generatedUrlFile,
+  2. generatedUrlActive
+
+  */
+
+  await t
+    .click(directoryPageButton)
+    // change filter to active
+    .click(directoryFilterPanelButton)
+    .click(activeButton)
+    .click(userApplyButton)
+    // search by search key
+    .typeText(directoryTextFieldKeyword, searchKey)
+    // first row
+    .expect(urlTableRowText(0))
+    .eql(`/${generatedUrlFile}`)
+    // second row
+    .expect(urlTableRowText(1))
+    .eql(`/${generatedUrlActive}`)
+})
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page filter by inactive', async (t) => {
+  const { generatedUrlInactive, searchKey } = t.fixtureCtx.createdLinks
+
+  /*
+  
+  Based on LinkCreationProcedure with sorting by recency and inactive:
+  1. generatedUrlInactive
+  */
+
+  await t
+    .click(directoryPageButton)
+    // change filter to inactive
+    .click(directoryFilterPanelButton)
+    .click(inactiveButton)
+    .click(userApplyButton)
+    // search by search key
+    .typeText(directoryTextFieldKeyword, searchKey)
+    // first row
+    .expect(urlTableRowText(0))
+    .eql(`/${generatedUrlInactive}`)
+})
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page filter by file', async (t) => {
+  const { generatedUrlFile, searchKey } = t.fixtureCtx.createdLinks
+
+  /*
+  
+  Based on LinkCreationProcedure with sorting by recency and file:
+  1. generatedUrlFile,
+
+  */
+
+  await t
+    .click(directoryPageButton)
+    // change filter to file
+    .click(directoryFilterPanelButton)
+    .click(fileButton)
+    .click(userApplyButton)
+    // search by search key
+    .typeText(directoryTextFieldKeyword, searchKey)
+    // first row
+    .expect(urlTableRowText(0))
+    .eql(`/${generatedUrlFile}`)
+})
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page filter by url', async (t) => {
+  const { generatedUrlInactive, generatedUrlActive, searchKey } =
+    t.fixtureCtx.createdLinks
+
+  /*
+  
+  Based on LinkCreationProcedure with sorting by recency and url:
+  1. generatedUrlInactive
+  2. generatedUrlFile,
+
+  */
+
+  await t
+    .click(directoryPageButton)
+    // change filter to file
+    .click(directoryFilterPanelButton)
+    .click(linkButton)
+    .click(userApplyButton)
+    // search by search key
+    .typeText(directoryTextFieldKeyword, searchKey)
+    // first row
+    .expect(urlTableRowText(0))
+    .eql(`/${generatedUrlInactive}`)
+    // second row
+    .expect(urlTableRowText(1))
+    .eql(`/${generatedUrlActive}`)
+})
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page test reset filter', async (t) => {
+  /*
+  
+  Based on LinkCreationProcedure with sorting by recency and url:
+  1. generatedUrlInactive
+  2. generatedUrlFile,
+
+  */
+
+  await t
+    .click(directoryPageButton)
+    // change filter to file
+    .click(directoryFilterPanelButton)
+    .click(mostPopularFilter)
+    .click(activeButton)
+    .click(inactiveButton)
+    .click(linkButton)
+    .click(fileButton)
+    .click(userApplyButton)
+    // check all styles of selected values
+    .expect(linkButtonStyle.hasClass(checkedButtonClass))
+    .ok()
+    .expect(fileButtonStyle.hasClass(checkedButtonClass))
+    .ok()
+    .expect(activeButtonStyle.hasClass(checkedButtonClass))
+    .ok()
+    .expect(inactiveButtonStyle.hasClass(checkedButtonClass))
+    .ok()
+    .expect(mostPopularFilter.hasClass(sortButtonSelectedClass))
+    .ok()
+    .expect(mostRecentFilter.hasClass(sortButtonUnselectedClass))
+    .ok()
+
+  // reset
+  await t
+    .click(directoryFilterPanelButton)
+    .click(resetButton)
+    .expect(linkButtonStyle.hasClass(uncheckedButtonClass))
+    .ok()
+    .expect(linkButtonStyle.hasClass(checkedButtonClass))
+    .notOk()
+    .expect(fileButtonStyle.hasClass(uncheckedButtonClass))
+    .ok()
+    .expect(fileButtonStyle.hasClass(checkedButtonClass))
+    .notOk()
+    .expect(activeButtonStyle.hasClass(uncheckedButtonClass))
+    .ok()
+    .expect(activeButtonStyle.hasClass(checkedButtonClass))
+    .notOk()
+    .expect(inactiveButtonStyle.hasClass(uncheckedButtonClass))
+    .ok()
+    .expect(inactiveButtonStyle.hasClass(checkedButtonClass))
+    .notOk()
+    .expect(mostPopularFilter.hasClass(sortButtonUnselectedClass))
+    .ok()
+    .expect(mostRecentFilter.hasClass(sortButtonSelectedClass))
+    .ok()
+})
+/*
+
+TODO:
+
+Directory - desktop view
+
+ It should redirect to the short url link when the row is clicked for active link
+ It should underline the user email when hovering on the email
+ It should copy the user's email when click on the email
+
+
+Directory - mobile view
+ It should open the bottom mobile panel when row is clicked
+ It should redirect to the short url link when the redirect icon is clicked for active link in bottom mobile panel
+ It should copy the user email when user icon clicked in the bottom mobile panel
+
+*/
