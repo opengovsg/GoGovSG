@@ -26,7 +26,6 @@ const initialState: UserState = {
     urlUpload: false,
     fileUpload: false,
   },
-  isFetchingLinkHistory: false,
   linkHistory: [],
   linkHistoryCount: 0,
 }

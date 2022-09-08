@@ -83,7 +83,6 @@ export type UserState = {
     url: string | undefined
     image: string | undefined
   } | null
-  isFetchingLinkHistory: boolean
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
 }
