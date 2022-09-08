@@ -4,7 +4,6 @@ type IconProps = {
   color: string
 }
 
-// The history icon will have a different color for go, edu and health
 export default function HistoryIcon({ color }: IconProps) {
   const historySvg = (
     <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24">

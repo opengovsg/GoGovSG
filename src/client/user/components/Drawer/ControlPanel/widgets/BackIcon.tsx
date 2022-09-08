@@ -4,7 +4,6 @@ type IconProps = {
   color: string
 }
 
-// The back icon will have a different color for go, edu and health
 export default function BackIcon({ color }: IconProps) {
   const backSvg = (
     <svg role="img" xmlns="http://www.w3.org/2000/svg" width="16" height="14">

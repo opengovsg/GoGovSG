@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const LinkChangeKeyDictionary: { [key: string]: string } = {
+const linkChangeKeyDictionary: { [key in LinkChangeKey]: string } = {
   description: 'Description',
   isFile: 'File',
   state: 'Link Status',
@@ -84,7 +84,7 @@ export default function LinkHistoryItem({
   ) => {
     return (
       <Typography variant="h6">
-        {LinkChangeKeyDictionary[currKey]}
+        {linkChangeKeyDictionary[currKey]}
         <span className={classes.regularText}> was updated from </span>
         {prevValue}
         <span className={classes.regularText}> to </span>

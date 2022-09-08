@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { createStyles, makeStyles } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
@@ -41,10 +41,7 @@ export default function LinkHistory() {
     )
   }
 
-  const onPageChange = (page: number) => {
-    setCurrentPage(page)
-  }
-  React.useEffect(() => {
+  useEffect(() => {
     getLinkHistoryForUser()
   }, [currentPage])
 
@@ -66,7 +63,7 @@ export default function LinkHistory() {
       <LinkHistoryPagination
         page={currentPage}
         pageCount={Math.ceil(linkHistoryCount / ITEMS_PER_PAGE)}
-        onChangePage={onPageChange}
+        onChangePage={setCurrentPage}
       />
     </>
   )
