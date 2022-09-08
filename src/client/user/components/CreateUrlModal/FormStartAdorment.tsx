@@ -5,9 +5,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-
-// Height of the text field in the create link dialog.
-export const TEXT_FIELD_HEIGHT = 44
+import { TEXT_FIELD_HEIGHT } from '../../constants'
 
 type StyleProps = {
   textFieldHeight: number

@@ -6,18 +6,12 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-
-// Height of the text field in the create link dialog.
-const TEXT_FIELD_HEIGHT = 44
-
-type PrefixAdornmentStylesProps = {
-  textFieldHeight: number
-}
+import { TEXT_FIELD_HEIGHT } from '../constants'
 
 const usePrefixAdornmentStyles = makeStyles(() =>
   createStyles({
     startAdornment: {
-      minHeight: (props: PrefixAdornmentStylesProps) => props.textFieldHeight,
+      minHeight: TEXT_FIELD_HEIGHT,
       backgroundColor: '#f0f0f0',
       borderRight: 'solid 1px #d8d8d8',
       marginRight: 0,
@@ -34,9 +28,7 @@ type PrefixAdornmentProps = {
 }
 
 const PrefixAdornment = ({ children }: PrefixAdornmentProps) => {
-  const classes = usePrefixAdornmentStyles({
-    textFieldHeight: TEXT_FIELD_HEIGHT,
-  })
+  const classes = usePrefixAdornmentStyles()
   return (
     <InputAdornment className={classes.startAdornment} position="start">
       <Typography className={classes.startAdornmentText} color="textSecondary">

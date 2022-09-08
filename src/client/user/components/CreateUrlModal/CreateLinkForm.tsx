@@ -18,6 +18,7 @@ import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
   isValidShortUrl,
+  isValidTag,
 } from '../../../../shared/util/validation'
 import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
 import ModalMargins from './ModalMargins'
@@ -31,7 +32,8 @@ import { FileInputField } from '../../widgets/FileInputField'
 import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
 import { GoGovReduxState } from '../../../app/reducers/types'
-import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
+import { TEXT_FIELD_HEIGHT } from '../../constants'
+import FormStartAdorment from './FormStartAdorment'
 import Tooltip from '../../widgets/Tooltip'
 import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
@@ -87,7 +89,10 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     (isFile && !file) ||
     (isFile && !!uploadFileError) ||
     isUploading ||
-    !!createShortLinkError
+    !!createShortLinkError ||
+    tags.some((tag) => !isValidTag(tag)) ||
+    !isValidTag(tagInput, true) ||
+    tags.includes(tagInput)
 
   useEffect(() => {
     if (isFile) {

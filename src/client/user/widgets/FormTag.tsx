@@ -6,7 +6,7 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import CloseIcon from '../../app/components/widgets/CloseIcon'
-import { TEXT_FIELD_HEIGHT } from '../components/CreateUrlModal/FormStartAdorment' // TODO
+import { TEXT_FIELD_HEIGHT } from '../constants'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

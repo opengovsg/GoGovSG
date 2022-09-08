@@ -2,7 +2,7 @@ import React from 'react'
 import { TextField, createStyles, makeStyles } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import { isValidTag } from '../../../shared/util/validation'
-import { TEXT_FIELD_HEIGHT } from '../components/CreateUrlModal/FormStartAdorment' // TODO
+import { TEXT_FIELD_HEIGHT } from '../constants'
 import FormTag from './FormTag'
 
 const useStyles = makeStyles((theme) =>
@@ -69,7 +69,7 @@ export default function TagsAutocomplete({
           onKeyDown={(event) => {
             if (event.key !== 'Enter') return
             event.preventDefault() // prevent form from submitting
-            event.stopPropagation()
+            event.stopPropagation() // prevent freeSolo from clearing text input
             if (isValidTag(tagInput) && !tags.includes(tagInput)) {
               setTagInput('')
               setTags([...tags, tagInput])
