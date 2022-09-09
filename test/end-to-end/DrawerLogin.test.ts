@@ -157,10 +157,6 @@ test.before(async (t) => {
   // login to the transfer email to activate it, then logout
   await LoginProcedure(t, transferEmail)
 
-  if (await userModal.exists) {
-    await t.click(userModalCloseButton)
-  }
-
   await t.click(signOutButton).navigateTo(`${rootLocation}`)
 
   await LoginProcedure(t)
