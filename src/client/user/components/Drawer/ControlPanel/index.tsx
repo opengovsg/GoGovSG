@@ -161,7 +161,7 @@ export default function ControlPanel() {
   )
 
   // Toggle Link History
-  const isLinkHistoryToggled = drawerStates.linkHistoryIsToggled
+  const isLinkHistoryActive = drawerStates.linkHistoryIsToggled
   const toggleLinkHistory: () => void = () =>
     modalDispatch({ type: DrawerActions.toggleLinkHistory })
 
@@ -200,7 +200,7 @@ export default function ControlPanel() {
           <div className={classes.topBar} />
         </Hidden>
 
-        {!isLinkHistoryToggled && (
+        {!isLinkHistoryActive && (
           <>
             <IconButton className={classes.closeIcon} onClick={handleClose}>
               <CloseIcon />
@@ -281,7 +281,7 @@ export default function ControlPanel() {
           </>
         )}
 
-        {isLinkHistoryToggled && (
+        {isLinkHistoryActive && (
           <>
             <Button
               className={classes.backButton}
