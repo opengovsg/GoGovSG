@@ -161,9 +161,9 @@ export default function ControlPanel() {
   )
 
   // Toggle Link History
-  const isLinkHistoryActive = drawerStates.linkHistoryIsToggled
+  const isLinkHistoryActive = drawerStates.linkHistoryIsActive
   const toggleLinkHistory: () => void = () =>
-    modalDispatch({ type: DrawerActions.toggleLinkHistory })
+    modalDispatch({ type: DrawerActions.activateLinkHistory })
 
   // Manage values in our text fields.
   const editedContactEmail = shortLinkState?.editedContactEmail || ''
