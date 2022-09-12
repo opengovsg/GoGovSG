@@ -12,11 +12,11 @@ import {
   activeSwitch,
   closeDrawerButton,
   createLinkButton,
-  drawer,
   fileTab,
   generateUrlImage,
   longUrl,
   longUrlTextField,
+  mobileCreateLinkButton,
   shortUrlTextField,
   uploadFile,
 } from './helpers'
@@ -58,13 +58,44 @@ const getUrlAndFetch = async (t, generatedUrl, numberOfFetches) => {
   await fetchLink(shortUrlValue, numberOfFetches)
 }
 
-/**
- * Process of creating various types of links into test account.
- */
-const linkCreationProcedure = async (t) => {
+const generateSearchKey = () => {
   // create key to searchBy
   const searchKey = generate()
   const searchKeyWithDash = `-${searchKey}`
+
+  return { searchKey, searchKeyWithDash }
+}
+
+const clickCreateLinkButton = async (t) => {
+  if (await createLinkButton.nth(0).exists) {
+    await t.click(createLinkButton.nth(0))
+  } else {
+    await t.click(mobileCreateLinkButton)
+  }
+  await t.click(generateUrlImage)
+}
+
+export const singleLinkCreationProcedure = async (t) => {
+  const { searchKey, searchKeyWithDash } = generateSearchKey()
+
+  // Save url - active link + 3rd most recent link
+  await clickCreateLinkButton(t)
+  const generatedUrlActive = `${await shortUrlTextField.value}${searchKeyWithDash}`
+
+  await t
+    .typeText(shortUrlTextField, searchKeyWithDash)
+    .typeText(longUrlTextField, `${shortUrl}`)
+
+  await firstLinkHandle(t)
+
+  return { searchKey, generatedUrlActive }
+}
+/**
+ * Process of creating various types of links into test account.
+ */
+export const linkCreationProcedure = async (t) => {
+  // create key to searchBy
+  const { searchKey, searchKeyWithDash } = generateSearchKey()
 
   // Save url - most popularlink
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
@@ -139,5 +170,3 @@ const linkCreationProcedure = async (t) => {
     generatedUrlSecondMostPopular,
   }
 }
-
-export default linkCreationProcedure

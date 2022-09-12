@@ -4,6 +4,7 @@ import {
   activeButtonStyle,
   checkedButtonClass,
   clickAway,
+  copyAlert,
   directoryFilterPanel,
   directoryFilterPanelButton,
   directoryPageButton,
@@ -26,10 +27,11 @@ import {
   uncheckedButtonClass,
   urlTable,
   urlTableRowText,
+  urlTableRowUrl,
   userApplyButton,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
-import linkCreationProcedure from './util/LinkCreationProcedure'
+import { linkCreationProcedure } from './util/LinkCreationProcedure'
 
 // eslint-disable-next-line no-undef
 fixture(`Directory Filter`)
@@ -64,7 +66,6 @@ test('Default settings', async (t) => {
   // .expect(directoryFilterPanel.getStyleProperty('height'))
   // .eql('0px')
 
-  // TODO: set classes as constants somewhere
   // Default search results should be by keyword, sort by recency, with all states, both url and file types
   await t
     .click(directoryPageButton)
@@ -291,14 +292,6 @@ test('Directory Page filter by url', async (t) => {
 
 // eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test reset filter', async (t) => {
-  /*
-  
-  Based on LinkCreationProcedure with sorting by recency and url:
-  1. generatedUrlInactive
-  2. generatedUrlFile,
-
-  */
-
   await t
     .click(directoryPageButton)
     // change filter to file
@@ -348,6 +341,33 @@ test('Directory Page test reset filter', async (t) => {
     .expect(mostRecentFilter.hasClass(sortButtonSelectedClass))
     .ok()
 })
+
+// eslint-disable-next-line jest/no-disabled-tests
+test('Directory Page test url row interactions', async (t) => {
+  const { generatedUrlActive } = t.fixtureCtx.createdLinks
+
+  const emailField = urlTable.child(0).child(2).child('p')
+  await t
+    .click(directoryPageButton)
+    // search by url
+    .typeText(directoryTextFieldKeyword, generatedUrlActive)
+    // first row
+    .expect(urlTableRowText(0))
+    .eql(`/${generatedUrlActive}`)
+    // test hover over email
+    .expect(emailField.getStyleProperty('text-decoration'))
+    .notContains('underline')
+    .hover(emailField)
+    .expect(emailField.getStyleProperty('text-decoration'))
+    .contains('underline')
+    // copy email
+    .setNativeDialogHandler(() => true)
+    .click(emailField.child())
+    // Testcafe does not have any inbuilt clipboard
+    .expect(copyAlert.visible)
+    .ok()
+})
+
 /*
 
 TODO:
@@ -355,13 +375,7 @@ TODO:
 Directory - desktop view
 
  It should redirect to the short url link when the row is clicked for active link
- It should underline the user email when hovering on the email
- It should copy the user's email when click on the email
-
 
 Directory - mobile view
- It should open the bottom mobile panel when row is clicked
  It should redirect to the short url link when the redirect icon is clicked for active link in bottom mobile panel
- It should copy the user email when user icon clicked in the bottom mobile panel
-
 */

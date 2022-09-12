@@ -4,6 +4,10 @@ import { ClientFunction, Selector } from 'testcafe'
 export const loginButton = Selector('span').withText('Sign in')
 export const signInButton = Selector('button[type="submit"]')
 export const createLinkButton = Selector('span').withText('Create link')
+export const mobileCreateLinkButton = Selector('img').withAttribute(
+  'alt',
+  'Create link',
+)
 export const loginSuccessAlert = Selector('div[role="alert"]').child(1).child(0)
 export const userModal = Selector('div[aria-labelledby="userModal"]')
 export const userModalCloseButton = userModal.child(0).child(0).child(1)
@@ -15,6 +19,10 @@ export const longUrlTextField = Selector('input[placeholder="Enter URL"]')
 export const getLocation = ClientFunction(() => document.location.href)
 export const directoryPageButton = Selector('span')
   .withText('Directory')
+  .parent()
+export const mobileDirectoryPageButton = Selector('img')
+  .withAttribute('alt', 'Directory')
+  .parent()
   .parent()
 export const signOutButton = Selector('strong').withText('Sign out').parent()
 
@@ -49,6 +57,12 @@ export const urlTable = Selector('tbody')
 export const urlTableRowText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
   urlTable.child(index).child(0).child('p').child(1).child('span').innerText
+export const urlTableRowUrl = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(0).child('p').child(1).child('span')
+export const urlTableRowEmail = (index: number) =>
+  urlTable.child(index).child(2).child('p')
+
 export const searchBar = Selector('input[placeholder="Search links"]')
 export const downloadLinkButton = Selector('p')
   .withText('Download links')
@@ -156,5 +170,10 @@ export const inactiveButtonStyle = linkButton.child().child()
 
 export const copyAlert = Selector('div').withText('Email has been copied')
 
+export const bottomMobilePanel = Selector('div.MuiDrawer-paper')
+export const mobileCopyEmailIcon = Selector('input').withAttribute(
+  'alt',
+  'email icon',
+)
 // Transition Page
 export const skipButton = Selector('#skip')
