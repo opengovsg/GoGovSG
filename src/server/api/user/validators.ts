@@ -61,6 +61,18 @@ export const userTagsQueryConditions = Joi.object({
   limit: Joi.number().required(),
 })
 
+const tagSchema = Joi.array()
+  .max(MAX_TAG_COUNT)
+  .optional()
+  .items(
+    Joi.string().custom((tag: string, helpers) => {
+      if (!isValidTag(tag)) {
+        return helpers.message({ custom: `tag: ${tag} format is invalid` })
+      }
+      return tag
+    }),
+  )
+
 export const urlSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string()
@@ -82,17 +94,7 @@ export const urlSchema = Joi.object({
     }
     return url
   }),
-  tags: Joi.array()
-    .max(MAX_TAG_COUNT)
-    .optional()
-    .items(
-      Joi.string().custom((tag: string, helpers) => {
-        if (!isValidTag(tag)) {
-          return helpers.message({ custom: `tag: ${tag} format is invalid` })
-        }
-        return tag
-      }),
-    ),
+  tags: tagSchema,
   files: Joi.object({
     file: Joi.object().keys().required(),
   }),
@@ -112,17 +114,7 @@ export const urlEditSchema = Joi.object({
     }
     return url
   }),
-  tags: Joi.array()
-    .max(MAX_TAG_COUNT)
-    .optional()
-    .items(
-      Joi.string().custom((tag: string, helpers) => {
-        if (!isValidTag(tag)) {
-          return helpers.message({ custom: `tag: ${tag} format is invalid` })
-        }
-        return tag
-      }),
-    ),
+  tags: tagSchema,
   files: Joi.object({
     file: Joi.object().keys().required(),
   }),

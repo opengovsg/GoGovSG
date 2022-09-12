@@ -15,12 +15,10 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
     if (!urlClicks || !Number.isInteger(urlClicks.clicks))
       throw new Error('UrlClicks object not populated.')
 
-    const tagStrings: string[] = []
+    let tagStrings: string[] = []
     const { tags } = urlType
     if (tags) {
-      for (let i = 0; i < tags.length; i += 1) {
-        tagStrings.push(tags[i].tagString)
-      }
+      tagStrings = tags.map((tag) => tag.tagString)
     }
 
     return {

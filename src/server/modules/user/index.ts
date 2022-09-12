@@ -57,7 +57,7 @@ export type GoUploadedFile = {
 export type UpdateUrlOptions = Partial<
   Pick<
     StorableUrl,
-    'state' | 'longUrl' | 'description' | 'contactEmail' | `tags`
+    'state' | 'longUrl' | 'description' | 'contactEmail' | 'tags'
   > & {
     file: GoUploadedFile
   }

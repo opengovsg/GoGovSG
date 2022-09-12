@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import arraysContainSame from '../array'
 
 describe('arraysContainSame tests', () => {
@@ -23,5 +24,10 @@ describe('arraysContainSame tests', () => {
   })
   it('two numeric arrays with diff order should return true', () => {
     expect(arraysContainSame([1, 2, 3], [1, 3, 2])).toStrictEqual(true)
+  })
+  it('two numeric arrays with diff order should return true using isEqual', () => {
+    expect(_.isEqual(_.sortBy([1, 2, 3]), _.sortBy([1, 3, 2]))).toStrictEqual(
+      true,
+    )
   })
 })

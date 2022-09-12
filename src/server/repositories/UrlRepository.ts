@@ -2,8 +2,9 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes, Transaction } from 'sequelize'
+import _ from 'lodash'
 import { Url, UrlType } from '../models/url'
-import { UrlClicks, UrlClicksType } from '../models/statistics/clicks'
+import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
 import { logger, redirectExpiry } from '../config'
@@ -24,7 +25,6 @@ import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { Tag, TagType } from '../models/tag'
-import arraysContainSame from '../util/array'
 
 const { Public, Private } = FileVisibility
 
@@ -93,15 +93,16 @@ export class UrlRepository implements UrlRepositoryInterface {
             })
           }),
         )
-        await Promise.all(
-          tagCreationResponses.map(async (response) => {
-            const [tag, _] = response
-            if (tag) {
-              // @ts-ignore, addTag is provided by Sequelize during run time.
-              await url.addTag(tag, { transaction: t })
-            }
-          }),
-        )
+        const tags: TagType[] = []
+        tagCreationResponses.forEach((response) => {
+          const [tag, _] = response
+          if (tag) {
+            tags.push(tag)
+          }
+        })
+        // @ts-ignore, addTag is provided by Sequelize during run time
+        // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+        await url.addTags(tags, { transaction: t })
       }
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
@@ -141,7 +142,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
     const urlDto = this.urlMapper.persistenceToDto(url)
     const newUrl = await sequelize.transaction(async (t) => {
-      if (changes.tags && !arraysContainSame(urlDto.tags, changes.tags)) {
+      if (
+        changes.tags &&
+        _.isEqual(_.sortBy(urlDto.tags), _.sortBy(changes.tags))
+      ) {
         const newTags = await this.upsertTags(changes, t)
         // @ts-ignore provided by Sequelize during runtime
         await url.setTags(newTags, { transaction: t })
@@ -187,24 +191,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
-  private async upsertTags(
-    changes: Partial<
-      Pick<
-        UrlType,
-        | 'shortUrl'
-        | 'longUrl'
-        | 'state'
-        | 'isFile'
-        | 'createdAt'
-        | 'updatedAt'
-        | 'description'
-        | 'contactEmail'
-        | 'tagStrings'
-      > &
-        Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
-    >,
-    t: Transaction,
-  ) {
+  private async upsertTags(changes: Partial<StorableUrl>, t: Transaction) {
     const tagCreationResponses = changes.tags
       ? await Promise.all(
           changes.tags.map(async (tag: string) => {
