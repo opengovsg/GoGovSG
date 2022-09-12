@@ -17,7 +17,7 @@ export const Tag = <TagTypeStatic>sequelize.define(
   'tag',
   {
     tagString: {
-      type: Sequelize.STRING(25),
+      type: Sequelize.STRING(255),
       allowNull: false,
       unique: true,
       validate: {
