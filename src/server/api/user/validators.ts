@@ -20,6 +20,18 @@ export const tagRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
 
+const tagSchema = Joi.array()
+  .max(MAX_TAG_COUNT)
+  .optional()
+  .items(
+    Joi.string().custom((tag: string, helpers) => {
+      if (!isValidTag(tag)) {
+        return helpers.message({ custom: `tag: ${tag} format is invalid` })
+      }
+      return tag
+    }),
+  )
+
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
   limit: Joi.number().required(),
@@ -29,20 +41,7 @@ export const userUrlsQueryConditions = Joi.object({
   searchText: Joi.string().allow('').optional(),
   state: Joi.string().allow('').optional(),
   isFile: Joi.boolean().optional(),
-  tags: Joi.array()
-    .max(MAX_TAG_COUNT)
-    .optional()
-    .items(
-      Joi.string()
-        .optional()
-        .min(1)
-        .custom((tag: string, helpers) => {
-          if (!isValidTag(tag)) {
-            return helpers.message({ custom: `tag: ${tag} format is invalid` })
-          }
-          return tag
-        }),
-    ),
+  tags: tagSchema,
 })
 
 export const userTagsQueryConditions = Joi.object({
@@ -60,18 +59,6 @@ export const userTagsQueryConditions = Joi.object({
     .required(),
   limit: Joi.number().required(),
 })
-
-const tagSchema = Joi.array()
-  .max(MAX_TAG_COUNT)
-  .optional()
-  .items(
-    Joi.string().custom((tag: string, helpers) => {
-      if (!isValidTag(tag)) {
-        return helpers.message({ custom: `tag: ${tag} format is invalid` })
-      }
-      return tag
-    }),
-  )
 
 export const urlSchema = Joi.object({
   userId: Joi.number().required(),
