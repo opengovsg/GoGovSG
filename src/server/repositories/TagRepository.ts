@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 import { Tag, TagType } from '../models/tag'
 import { Url } from '../models/url'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
@@ -38,6 +38,31 @@ export class TagRepository implements TagRepositoryInterface {
       return this.tagMapper.persistenceToDto(tagType)
     })
   }
+
+  public upsertTags: (tags: string[], t: Transaction) => Promise<TagType[]> =
+    async (tags, t) => {
+      const tagCreationResponses = tags
+        ? await Promise.all(
+            tags.map(async (tag: string) => {
+              return Tag.findOrCreate({
+                where: {
+                  tagString: tag,
+                  tagKey: tag.toLowerCase(),
+                },
+                transaction: t,
+              })
+            }),
+          )
+        : []
+      const newTags: TagType[] = []
+      tagCreationResponses.forEach((response) => {
+        const [tag, _] = response
+        if (tag) {
+          newTags.push(tag)
+        }
+      })
+      return newTags
+    }
 }
 
 export default TagRepository

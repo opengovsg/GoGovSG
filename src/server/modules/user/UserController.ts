@@ -19,6 +19,7 @@ import {
   userTagsQueryConditions,
   userUrlsQueryConditions,
 } from '../../api/user/validators'
+import TagManagementServiceInterface from './interfaces/TagManagementService'
 
 type AnnouncementResponse = {
   message?: string
@@ -36,6 +37,8 @@ export class UserController {
 
   private userAnnouncement: AnnouncementResponse
 
+  private tagManagementService: TagManagementServiceInterface
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
@@ -43,10 +46,13 @@ export class UserController {
     userMessage: string,
     @inject(DependencyIds.userAnnouncement)
     userAnnouncement: AnnouncementResponse,
+    @inject(DependencyIds.tagManagementService)
+    tagManagementService: TagManagementServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
+    this.tagManagementService = tagManagementService
   }
 
   public createUrl: (
@@ -251,7 +257,7 @@ export class UserController {
       return
     }
     try {
-      const tags = await this.urlManagementService.getTagsWithConditions(
+      const tags = await this.tagManagementService.getTagsWithConditions(
         queryConditions,
       )
       res.ok(tags)

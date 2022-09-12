@@ -21,6 +21,7 @@ import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
+import { TagRepositoryMock } from '../mocks/repositories/TagRepository'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -54,8 +55,9 @@ const s3Bucket = 'bucket'
 const fileURLPrefix = 'prefix'
 
 const fileBucket = new S3ServerSide(s3Client, s3Bucket, fileURLPrefix)
+const tagRepository = new TagRepositoryMock()
 
-const repository = new UrlRepository(fileBucket, new UrlMapper())
+const repository = new UrlRepository(fileBucket, new UrlMapper(), tagRepository)
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
 describe('UrlRepository', () => {
@@ -107,6 +109,7 @@ describe('UrlRepository', () => {
   beforeEach(async () => {
     redisMockClient.flushall()
     cacheGetSpy.mockClear()
+    jest.clearAllMocks()
   })
 
   it('passes findByShortUrl through to Url.findOne', async () => {
@@ -378,7 +381,7 @@ describe('UrlRepository', () => {
       })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
-      expect(tagFindOrCreate).toHaveBeenCalledTimes(2)
+      expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
       expect(update).toHaveBeenCalledWith(
         { description, tags: newTags, tagStrings: baseTagStrings },
         expect.anything(),
@@ -450,7 +453,7 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(tagFindOrCreate).toHaveBeenCalledTimes(2)
+      expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith(

@@ -15,6 +15,9 @@ const urlManagementService = {
   updateUrl: jest.fn(),
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
+}
+
+const tagManagementService = {
   getTagsWithConditions: jest.fn(),
 }
 
@@ -31,6 +34,7 @@ describe('UserController', () => {
     urlManagementService,
     userMessage,
     userAnnouncement,
+    tagManagementService,
   )
 
   describe('createUrl', () => {
@@ -319,7 +323,7 @@ describe('UserController', () => {
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
       await controller.getTagsWithConditions(req, res)
-      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
+      expect(tagManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
         1,
       )
     })
@@ -355,10 +359,10 @@ describe('UserController', () => {
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
       const result: string[] = []
-      urlManagementService.getTagsWithConditions.mockResolvedValue(result)
+      tagManagementService.getTagsWithConditions.mockResolvedValue(result)
       await controller.getTagsWithConditions(req, res)
       expect(res.ok).toHaveBeenCalledWith(result)
-      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledWith({
+      expect(tagManagementService.getTagsWithConditions).toHaveBeenCalledWith({
         limit: 5,
         userId: 1,
         searchText: 'tag',
@@ -375,10 +379,10 @@ describe('UserController', () => {
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
       const result: string[] = ['tag1', 'tag2']
-      urlManagementService.getTagsWithConditions.mockResolvedValue(result)
+      tagManagementService.getTagsWithConditions.mockResolvedValue(result)
       await controller.getTagsWithConditions(req, res)
       expect(res.ok).toHaveBeenCalledWith(result)
-      expect(urlManagementService.getTagsWithConditions).toHaveBeenCalledWith(
+      expect(tagManagementService.getTagsWithConditions).toHaveBeenCalledWith(
         expect.objectContaining({ searchText }),
       )
     })

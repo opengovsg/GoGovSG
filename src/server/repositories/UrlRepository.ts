@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import { inject, injectable } from 'inversify'
-import { QueryTypes, Transaction } from 'sequelize'
+import { QueryTypes } from 'sequelize'
 import _ from 'lodash'
 import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
@@ -25,6 +25,7 @@ import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { Tag, TagType } from '../models/tag'
+import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 
 const { Public, Private } = FileVisibility
 
@@ -40,12 +41,16 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private urlMapper: Mapper<StorableUrl, UrlType>
 
+  private tagRepository: TagRepositoryInterface
+
   public constructor(
     @inject(DependencyIds.s3) fileBucket: S3Interface,
     @inject(DependencyIds.urlMapper) urlMapper: Mapper<StorableUrl, UrlType>,
+    @inject(DependencyIds.tagRepository) tagRepository: TagRepositoryInterface,
   ) {
     this.fileBucket = fileBucket
     this.urlMapper = urlMapper
+    this.tagRepository = tagRepository
   }
 
   public findByShortUrlWithTotalClicks: (
@@ -146,7 +151,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         changes.tags &&
         !_.isEqual(_.sortBy(urlDto.tags), _.sortBy(changes.tags))
       ) {
-        const newTags = await this.upsertTags(changes, t)
+        const newTags = await this.tagRepository.upsertTags(changes.tags, t)
         // @ts-ignore provided by Sequelize during runtime
         await url.setTags(newTags, { transaction: t })
         updateParams = {
@@ -189,30 +194,6 @@ export class UrlRepository implements UrlRepositoryInterface {
     this.invalidateCache(shortUrl)
     if (!newUrl) throw new Error('Newly-updated url is null')
     return this.urlMapper.persistenceToDto(newUrl)
-  }
-
-  private async upsertTags(changes: Partial<StorableUrl>, t: Transaction) {
-    const tagCreationResponses = changes.tags
-      ? await Promise.all(
-          changes.tags.map(async (tag: string) => {
-            return Tag.findOrCreate({
-              where: {
-                tagString: tag,
-                tagKey: tag.toLowerCase(),
-              },
-              transaction: t,
-            })
-          }),
-        )
-      : []
-    const newTags: TagType[] = []
-    tagCreationResponses.forEach((response) => {
-      const [tag, _] = response
-      if (tag) {
-        newTags.push(tag)
-      }
-    })
-    return newTags
   }
 
   public getLongUrl: (shortUrl: string) => Promise<string> = async (
