@@ -24,15 +24,7 @@ describe('UrlManagementService', () => {
     rawDirectorySearch: jest.fn(),
   }
 
-  const tagRepository = {
-    findTagsWithConditions: jest.fn(),
-  }
-
-  const service = new UrlManagementService(
-    userRepository,
-    urlRepository,
-    tagRepository,
-  )
+  const service = new UrlManagementService(userRepository, urlRepository)
 
   describe('createUrl', () => {
     const userId = 2
@@ -273,21 +265,5 @@ describe('UrlManagementService', () => {
       service.getUrlsWithConditions(conditions),
     ).resolves.toStrictEqual(urls)
     expect(userRepository.findUrlsForUser).toHaveBeenCalledWith(conditions)
-  })
-
-  it('passes through getTagsWithConditions to TagRepository', async () => {
-    const conditions = {
-      limit: 5,
-      searchText: 'tag1',
-      userId: 1,
-    }
-    const tags = ['tag1', 'tag2']
-    tagRepository.findTagsWithConditions.mockResolvedValue(tags)
-    await expect(
-      service.getTagsWithConditions(conditions),
-    ).resolves.toStrictEqual(tags)
-    expect(tagRepository.findTagsWithConditions).toHaveBeenCalledWith(
-      conditions,
-    )
   })
 })

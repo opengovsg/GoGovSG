@@ -21,7 +21,7 @@ import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
 import { StorableUrlState } from '../../../src/server/repositories/enums'
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
-import { TagRepositoryMock } from '../mocks/repositories/TagRepository'
+import TagRepositoryMock from '../mocks/repositories/TagRepository'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
