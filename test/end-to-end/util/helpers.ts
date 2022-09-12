@@ -129,8 +129,8 @@ export const directoryTextFieldEmail = Selector(
 )
 export const directoryFilterPanelButton = Selector('.MuiIconButton-label')
 export const directoryFilterPanel = Selector('.MuiCollapse-wrapper')
-export const sortButtonSelectedClass = 'makeStyles-sortButtonSelected-304'
-export const sortButtonUnselectedClass = 'makeStyles-sortButton-303'
+export const sortButtonSelectedClass = 'makeStyles-sortButtonSelected-307'
+export const sortButtonUnselectedClass = 'makeStyles-sortButton-306'
 export const mostRecentFilter = Selector('p')
   .withText('Most recent')
   .parent()
@@ -141,8 +141,8 @@ export const mostPopularFilter = Selector('p')
   .parent()
 export const applyButton = Selector('span').withText('Apply').parent()
 export const resetButton = Selector('span').withText('Reset').parent()
-export const uncheckedButtonClass = 'makeStyles-uncheckedIcon-458'
-export const checkedButtonClass = 'makeStyles-filled-459'
+export const uncheckedButtonClass = 'makeStyles-uncheckedIcon-461'
+export const checkedButtonClass = 'makeStyles-filled-462'
 export const linkButton = Selector('p')
   .withText('Link')
   .parent()
@@ -154,19 +154,19 @@ export const fileButton = Selector('p')
   .parent()
   .child('button')
   .nth(1)
-export const fileButtonStyle = linkButton.child().child()
+export const fileButtonStyle = fileButton.child().child()
 export const activeButton = Selector('p')
   .withText('Active')
   .parent()
   .child('button')
   .nth(0)
-export const activeButtonStyle = linkButton.child().child()
+export const activeButtonStyle = activeButton.child().child()
 export const inactiveButton = Selector('p')
   .withText('Inactive')
   .parent()
   .child('button')
   .nth(1)
-export const inactiveButtonStyle = linkButton.child().child()
+export const inactiveButtonStyle = inactiveButton.child().child()
 
 export const copyAlert = Selector('div').withText('Email has been copied')
 
