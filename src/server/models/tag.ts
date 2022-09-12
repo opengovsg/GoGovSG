@@ -25,7 +25,7 @@ export const Tag = <TagTypeStatic>sequelize.define(
       },
     },
     tagKey: {
-      type: Sequelize.STRING(25),
+      type: Sequelize.STRING(255),
       allowNull: false,
       validate: {
         is: TAG_KEY_REGEX,

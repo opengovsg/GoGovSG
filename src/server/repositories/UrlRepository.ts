@@ -144,7 +144,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const newUrl = await sequelize.transaction(async (t) => {
       if (
         changes.tags &&
-        _.isEqual(_.sortBy(urlDto.tags), _.sortBy(changes.tags))
+        !_.isEqual(_.sortBy(urlDto.tags), _.sortBy(changes.tags))
       ) {
         const newTags = await this.upsertTags(changes, t)
         // @ts-ignore provided by Sequelize during runtime

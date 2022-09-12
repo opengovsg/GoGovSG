@@ -91,7 +91,7 @@ describe('UrlRepository', () => {
     UrlClicks: baseUrlClicks,
     tags: baseTagObjects,
     tagStrings: baseTagStrings,
-    addTag: jest.fn(),
+    addTags: jest.fn(),
   }
 
   const baseStorableUrl = {
@@ -193,9 +193,7 @@ describe('UrlRepository', () => {
         'getTags',
       ])
       expect(putObject).not.toHaveBeenCalled()
-      expect(baseUrlWithTags.addTag).toHaveBeenCalledTimes(
-        baseTagObjects.length,
-      )
+      expect(baseUrlWithTags.addTags).toHaveBeenCalledTimes(1)
     })
 
     it('creates the specified public file without tag', async () => {
@@ -255,7 +253,7 @@ describe('UrlRepository', () => {
         ...baseUrlWithTags,
         isFile: true,
         longUrl: fileBucket.buildFileLongUrl(file.key),
-        addTag: jest.fn(),
+        addTags: jest.fn(),
       }
       const storableUrlWithTags = {
         ...baseStorableUrlWithTags,
@@ -295,7 +293,7 @@ describe('UrlRepository', () => {
         ACL: FileVisibility.Public,
         CacheControl: 'no-cache',
       })
-      expect(url.addTag).toHaveBeenCalledTimes(baseTagObjects.length)
+      expect(url.addTags).toHaveBeenCalledTimes(1)
     })
   })
 
