@@ -33,7 +33,11 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function DrawerHeader() {
+type DrawerHeaderProps = {
+  title: string
+}
+
+export default function DrawerHeader({ title }: DrawerHeaderProps) {
   const classes = useStyles()
   const shortUrl = useDrawerState().relevantShortLink || ''
   const theme = useTheme()
@@ -46,7 +50,7 @@ export default function DrawerHeader() {
         color="primary"
         className={classes.headerText}
       >
-        Edit link
+        {title}
       </Typography>
       <div className={classes.copyButtonWrapper}>
         <CopyButton shortUrl={shortUrl} iconSize={20} />
