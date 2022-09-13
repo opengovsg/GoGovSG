@@ -57,6 +57,24 @@ describe('FileCheckController test', () => {
     expect(next).not.toHaveBeenCalled()
   })
 
+  it('unsupportedMediaType when file is not a csv', async () => {
+    const nonCsvFile = { data: Buffer.from('data'), name: 'file.pdf' }
+
+    const req = createRequestWithFile(nonCsvFile)
+    const res = httpMocks.createResponse() as any
+    const next = jest.fn()
+
+    hasAllowedType.mockResolvedValue(false)
+    res.unsupportedMediaType = badRequest
+
+    await controller.fileExtensionCheck(req, res, next)
+
+    expect(hasAllowedType).toHaveBeenCalled()
+    expect(hasVirus).not.toHaveBeenCalled()
+    expect(res.unsupportedMediaType).toHaveBeenCalled()
+    expect(next).not.toHaveBeenCalled()
+  })
+
   it('returns bad request on file type failure', async () => {
     const req = createRequestWithFile(file)
     const res = httpMocks.createResponse() as any
@@ -65,7 +83,7 @@ describe('FileCheckController test', () => {
     hasAllowedType.mockResolvedValue(false)
     res.unsupportedMediaType = badRequest
 
-    await controller.fileExtensionCheck(req, res, next)
+    await controller.csvExtensionCheck(req, res, next)
 
     expect(hasAllowedType).toHaveBeenCalled()
     expect(hasVirus).not.toHaveBeenCalled()
