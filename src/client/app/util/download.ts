@@ -5,6 +5,26 @@ import userActions from '../../user/actions'
 import useIsIE from '../components/BaseLayout/util/ie'
 import { GAEvent } from './ga'
 
+export const downloadCsv = (csvString: string, filename: string) => {
+  const blob = new Blob([csvString], {
+    type: 'text/csv;charset=utf-8',
+  })
+
+  if (useIsIE()) {
+    navigator.msSaveBlob(blob, filename)
+  } else {
+    saveAs(blob, filename)
+  }
+}
+
+export const downloadSampleBulkCsv = () => {
+  const headers = 'Original links to be shortened'
+  const body = ['https://www.link1.com', 'https://www.link2.com']
+  const content = [headers, ...body].join('\r\n')
+  downloadCsv(content, 'sample_bulk.csv')
+  GAEvent('modal page', 'downloaded bulk sample', 'successful')
+}
+
 export const downloadUrls = async (urlCount: number, tableConfig: any) => {
   const urlsArr = []
   // set headers to csv
@@ -80,15 +100,7 @@ export const downloadUrls = async (urlCount: number, tableConfig: any) => {
     })
   })
 
-  const blob = new Blob([urlsArr.join('')], {
-    type: 'text/csv;charset=utf-8',
-  })
-
-  if (useIsIE()) {
-    navigator.msSaveBlob(blob, 'urls.csv')
-  } else {
-    saveAs(blob, 'urls.csv')
-  }
+  downloadCsv(urlsArr.join(''), 'urls.csv')
 
   // Google Analytics: Download links button events
   GAEvent('user page', 'download links button', 'successful')
@@ -96,5 +108,6 @@ export const downloadUrls = async (urlCount: number, tableConfig: any) => {
 }
 
 export default {
+  downloadSampleBulkCsv,
   downloadUrls,
 }
