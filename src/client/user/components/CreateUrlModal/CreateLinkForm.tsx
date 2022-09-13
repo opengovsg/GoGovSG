@@ -223,33 +223,13 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               </div>
               <FileInputField
                 textFieldHeight={TEXT_FIELD_HEIGHT}
-                text={file ? file.name : 'No file selected'}
+                fileNameText={file ? file.name : 'No file selected'}
                 uploadFileError={uploadFileError}
-                inputId="file"
                 setFile={setFile}
                 setUploadFileError={setUploadFileError}
-                endAdornment={
-                  <div className={classes.uploadFileInputEndWrapper}>
-                    <Typography
-                      variant="body2"
-                      className={classes.fileSizeText}
-                    >
-                      {file ? formatBytes(file.size) : ''}
-                    </Typography>
-                    {/* eslint-disable-next-line */}
-                    <label htmlFor="file">
-                      <Button
-                        variant="contained"
-                        className={classes.uploadFileButton}
-                        component="span"
-                        color="primary"
-                        disabled={isUploading}
-                      >
-                        Browse
-                      </Button>
-                    </label>
-                  </div>
-                }
+                buttonText="Browse"
+                fileSizeText={file ? formatBytes(file.size) : ''}
+                isUploading={isUploading}
               />
               <CollapsibleMessage
                 visible={!!uploadFileError}
@@ -366,35 +346,21 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               </div>
               <FileInputField
                 textFieldHeight={TEXT_FIELD_HEIGHT}
-                text={file ? file.name : 'No file selected'}
+                fileNameText={file ? file.name : 'No file selected'}
                 uploadFileError={uploadFileError}
-                inputId="file"
                 setFile={setFile}
                 setUploadFileError={setUploadFileError}
-                endAdornment={
-                  <div className={classes.uploadFileInputEndWrapper}>
-                    <Typography
-                      variant="body2"
-                      className={classes.fileSizeText}
-                    >
-                      {file ? formatBytes(file.size) : ''}
-                    </Typography>
-                    {/* eslint-disable-next-line */}
-                    <label htmlFor="file">
-                      <Button
-                        variant="contained"
-                        className={classes.uploadFileButton}
-                        component="span"
-                        color="primary"
-                        disabled={isUploading}
-                      >
-                        Browse
-                      </Button>
-                    </label>
-                  </div>
-                }
+                buttonText="Browse"
+                fileSizeText={file ? formatBytes(file.size) : ''}
+                isUploading={isUploading}
                 acceptedTypes=".csv"
               />
+              <CollapsibleMessage
+                visible={!!uploadFileError}
+                type={CollapsibleMessageType.Error}
+              >
+                {uploadFileError}
+              </CollapsibleMessage>
               <div className={classes.maxSizeTextWrapper}>
                 <Typography variant="caption" className={classes.maxSizeText}>
                   Only CSV format files are allowed. <br />
@@ -402,12 +368,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                   &gt; Save As &gt; CSV (Comma delimited).
                 </Typography>
               </div>
-              <CollapsibleMessage
-                visible={!!uploadFileError}
-                type={CollapsibleMessageType.Error}
-              >
-                {uploadFileError}
-              </CollapsibleMessage>
             </>
           )}
           <Button
