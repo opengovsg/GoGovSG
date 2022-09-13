@@ -8,8 +8,8 @@ import {
   urlTableRowText,
   urlTableRowUrl,
 } from './util/helpers'
-import LoginProcedure from './util/LoginProcedure'
 import { singleLinkCreationProcedure } from './util/LinkCreationProcedure'
+import LoginProcedure from './util/LoginProcedure'
 
 // eslint-disable-next-line no-undef
 fixture(`Directory Filter Mobile view`)
@@ -26,7 +26,6 @@ test('Populate with links', async (t) => {
   t.fixtureCtx.createdLinks = createdLinks
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test url row interactions', async (t) => {
   const { generatedUrlActive } = t.fixtureCtx.createdLinks
 

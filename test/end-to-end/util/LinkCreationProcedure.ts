@@ -30,7 +30,7 @@ const generate = customAlphabet(ALPHABET, LENGTH)
  */
 const fetchLink = async (url, numberOfFetches) => {
   const get = async (url) => {
-    const res = await fetch(url) // "GET" is the default method
+    const res = await fetch(url)
     return res.ok
   }
 

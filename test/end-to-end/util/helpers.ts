@@ -128,7 +128,7 @@ export const directoryTextFieldEmail = Selector(
   'input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
 )
 export const directoryFilterPanelButton = Selector('.MuiIconButton-label')
-export const directoryFilterPanel = Selector('.MuiCollapse-wrapper')
+export const directoryFilterPanel = Selector('.MuiCollapse-root').nth(1)
 export const sortButtonSelectedClass = 'makeStyles-sortButtonSelected-307'
 export const sortButtonUnselectedClass = 'makeStyles-sortButton-306'
 export const mostRecentFilter = Selector('p')

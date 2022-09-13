@@ -27,11 +27,10 @@ import {
   uncheckedButtonClass,
   urlTable,
   urlTableRowText,
-  urlTableRowUrl,
   userApplyButton,
 } from './util/helpers'
-import LoginProcedure from './util/LoginProcedure'
 import { linkCreationProcedure } from './util/LinkCreationProcedure'
+import LoginProcedure from './util/LoginProcedure'
 
 // eslint-disable-next-line no-undef
 fixture(`Directory Filter`)
@@ -40,14 +39,12 @@ fixture(`Directory Filter`)
     await LoginProcedure(t)
   })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Populate with links', async (t) => {
   const createdLinks = await linkCreationProcedure(t)
   // eslint-disable-next-line no-param-reassign
   t.fixtureCtx.createdLinks = createdLinks
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Default settings', async (t) => {
   // Clicking on the directory page button brings user to directory page
   await t
@@ -58,13 +55,12 @@ test('Default settings', async (t) => {
   // Clicking on the button at the end of the search input should open the sort and filter panel
   await t
     .click(directoryFilterPanelButton)
-    .expect(directoryFilterPanel.getStyleProperty('height'))
-    .notEql('0px')
+    .expect(directoryFilterPanel.visible)
+    .ok()
     // Panel should be closed when clicking outside of it
     .click(clickAway)
-  // TODO: find the right element to measure height from
-  // .expect(directoryFilterPanel.getStyleProperty('height'))
-  // .eql('0px')
+    .expect(directoryFilterPanel.visible)
+    .notOk()
 
   // Default search results should be by keyword, sort by recency, with all states, both url and file types
   await t
@@ -88,7 +84,6 @@ test('Default settings', async (t) => {
     .ok()
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test search by keyword and email', async (t) => {
   const { generatedUrlFile } = t.fixtureCtx.createdLinks
 
@@ -123,7 +118,6 @@ test('Directory Page test search by keyword and email', async (t) => {
     .match(/isEmail=true/)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test recency sort order', async (t) => {
   const {
     generatedUrlFile,
@@ -156,7 +150,6 @@ test('Directory Page test recency sort order', async (t) => {
     .eql(`/${generatedUrlActive}`)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test popularity sort order', async (t) => {
   const { generatedUrlMostPopular, generatedUrlSecondMostPopular, searchKey } =
     t.fixtureCtx.createdLinks
@@ -185,7 +178,6 @@ test('Directory Page test popularity sort order', async (t) => {
     .eql(`/${generatedUrlSecondMostPopular}`)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page filter by active', async (t) => {
   const { generatedUrlFile, generatedUrlActive, searchKey } =
     t.fixtureCtx.createdLinks
@@ -214,7 +206,6 @@ test('Directory Page filter by active', async (t) => {
     .eql(`/${generatedUrlActive}`)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page filter by inactive', async (t) => {
   const { generatedUrlInactive, searchKey } = t.fixtureCtx.createdLinks
 
@@ -237,7 +228,6 @@ test('Directory Page filter by inactive', async (t) => {
     .eql(`/${generatedUrlInactive}`)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page filter by file', async (t) => {
   const { generatedUrlFile, searchKey } = t.fixtureCtx.createdLinks
 
@@ -261,7 +251,6 @@ test('Directory Page filter by file', async (t) => {
     .eql(`/${generatedUrlFile}`)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page filter by url', async (t) => {
   const { generatedUrlInactive, generatedUrlActive, searchKey } =
     t.fixtureCtx.createdLinks
@@ -290,7 +279,6 @@ test('Directory Page filter by url', async (t) => {
     .eql(`/${generatedUrlActive}`)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test reset filter', async (t) => {
   await t
     .click(directoryPageButton)
@@ -342,7 +330,6 @@ test('Directory Page test reset filter', async (t) => {
     .ok()
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test('Directory Page test url row interactions', async (t) => {
   const { generatedUrlActive } = t.fixtureCtx.createdLinks
 
@@ -367,15 +354,3 @@ test('Directory Page test url row interactions', async (t) => {
     .expect(copyAlert.visible)
     .ok()
 })
-
-/*
-
-TODO:
-
-Directory - desktop view
-
- It should redirect to the short url link when the row is clicked for active link
-
-Directory - mobile view
- It should redirect to the short url link when the redirect icon is clicked for active link in bottom mobile panel
-*/
