@@ -43,7 +43,7 @@ export class TagRepository implements TagRepositoryInterface {
     async (tags, t) => {
       const tagCreationResponses = tags
         ? await Promise.all(
-            tags.map(async (tag: string) => {
+            tags.map((tag: string) => {
               return Tag.findOrCreate({
                 where: {
                   tagString: tag,

@@ -24,7 +24,6 @@ import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
-import { Tag, TagType } from '../models/tag'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 
 const { Public, Private } = FileVisibility
@@ -87,24 +86,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         transaction: t,
       })
       if (properties.tags) {
-        const tagCreationResponses = await Promise.all(
-          properties.tags.map((tag) => {
-            return Tag.findOrCreate({
-              where: {
-                tagString: tag,
-                tagKey: tag.toLowerCase(),
-              },
-              transaction: t,
-            })
-          }),
-        )
-        const tags: TagType[] = []
-        tagCreationResponses.forEach((response) => {
-          const [tag, _] = response
-          if (tag) {
-            tags.push(tag)
-          }
-        })
+        const tags = this.tagRepository.upsertTags(properties.tags, t)
         // @ts-ignore, addTag is provided by Sequelize during run time
         // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
         await url.addTags(tags, { transaction: t })
@@ -191,8 +173,8 @@ export class UrlRepository implements UrlRepositoryInterface {
         transaction: t,
       })
     })
-    this.invalidateCache(shortUrl)
     if (!newUrl) throw new Error('Newly-updated url is null')
+    this.invalidateCache(shortUrl)
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
