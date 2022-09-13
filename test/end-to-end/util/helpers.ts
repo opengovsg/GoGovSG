@@ -29,7 +29,7 @@ export const resultTable = Selector('table')
 
 // User Page - general
 export const drawer = Selector('div[role="presentation"]')
-export const fileTab = Selector('p').withText('From file')
+export const fileTab = Selector('p').withText('To a File')
 export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')

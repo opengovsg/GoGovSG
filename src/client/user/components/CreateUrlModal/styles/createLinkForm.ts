@@ -2,7 +2,6 @@ import { createStyles, makeStyles } from '@material-ui/core'
 
 type LinkFormStyles = {
   textFieldHeight: number
-  isFile: boolean
   uploadFileError: string | null
   createShortLinkError: string | null
 }
@@ -81,6 +80,10 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
     linkTypeButtonEnabled: {
       backgroundColor: `${theme.palette.primary.main} !important`,
       boxShadow: '0 0 20px 0 rgba(69, 102, 130, 0.7)',
+      color: theme.palette.background.default,
+    },
+    linkTypeButtonText: {
+      marginLeft: '4px',
     },
     linkTypeWrapper: {
       marginTop: theme.spacing(5),
@@ -91,16 +94,6 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       [theme.breakpoints.up('sm')]: {
         marginTop: theme.spacing(4),
       },
-    },
-    linkTypeUrlButtonText: {
-      color: (props: LinkFormStyles) =>
-        props.isFile ? 'unset' : theme.palette.background.default,
-      marginLeft: '4px',
-    },
-    linkTypeFileButtonText: {
-      color: (props: LinkFormStyles) =>
-        props.isFile ? theme.palette.background.default : 'unset',
-      marginLeft: '4px',
     },
     fileInputInvis: {
       display: 'none',
@@ -119,11 +112,34 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       border: (props: LinkFormStyles) =>
         props.uploadFileError ? '2px solid #C85151' : '',
     },
+    bulkUploadDescWrapper: {
+      marginTop: '32px',
+      backgroundColor: '#EAF9E7',
+      color: theme.palette.text.primary,
+      paddingLeft: '18px',
+      paddingTop: '12px',
+      paddingBottom: '12px',
+      display: 'flex',
+    },
+    bulkUploadDescText: {
+      paddingLeft: '20px',
+    },
+    bulkSampleDownloadText: {
+      fontWeight: 'bold',
+      textDecoration: 'underline',
+      cursor: 'pointer',
+      background: 'none!important',
+      border: 'none',
+      padding: '0!important',
+      fontSize: '1rem',
+      lineHeight: '1.5625',
+    },
     maxSizeText: {
       marginLeft: '4px',
       fontWeight: 500,
     },
     maxSizeTextWrapper: {
+      marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1),
       display: 'flex',
       alignItems: 'stretch',

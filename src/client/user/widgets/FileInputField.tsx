@@ -23,6 +23,7 @@ type FileInputFieldProps = {
   setFile: (file: File | null) => void
   setUploadFileError: (error: string) => void
   className?: string
+  acceptedTypes?: string
 }
 
 const useStyles = makeStyles((theme) =>
@@ -80,6 +81,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   setFile,
   setUploadFileError,
   className,
+  acceptedTypes = '',
 }: FileInputFieldProps) => {
   const theme = useTheme()
   const classes = useStyles({ textFieldHeight, uploadFileError })
@@ -116,6 +118,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
             setUploadFileError('')
             setFile(chosenFile)
           }}
+          accept={acceptedTypes}
         />
         {endAdornment}
       </div>
