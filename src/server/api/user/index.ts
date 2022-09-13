@@ -106,7 +106,7 @@ router.post(
   preprocessPotentialIncomingFile,
   fileCheckController.csvExtensionCheck,
   fileCheckController.fileVirusCheck,
-  csvCheckController.finalValidation,
+  csvCheckController.csvValidation,
 )
 
 router.patch(
