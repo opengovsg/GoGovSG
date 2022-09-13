@@ -31,6 +31,7 @@ const tagSchema = Joi.array()
       return tag
     }),
   )
+  .unique((a, b) => a === b)
 
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),

@@ -21,7 +21,7 @@ type LinkInformationProperties = {
 type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 
 type OptionalTagsProperty = {
-  tags?: string[] | undefined
+  tags?: string[]
 }
 
 type NewUserEmailProperty = {

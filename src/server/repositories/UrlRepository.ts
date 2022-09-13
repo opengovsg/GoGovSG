@@ -88,7 +88,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       })
       if (properties.tags) {
         const tagCreationResponses = await Promise.all(
-          properties.tags.map(async (tag) => {
+          properties.tags.map((tag) => {
             return Tag.findOrCreate({
               where: {
                 tagString: tag,
