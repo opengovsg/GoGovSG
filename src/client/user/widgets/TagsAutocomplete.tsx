@@ -1,7 +1,7 @@
 import React from 'react'
 import { TextField, createStyles, makeStyles } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
-import { isValidTag } from '../../../shared/util/validation'
+import { MAX_TAG_LENGTH, isValidTag } from '../../../shared/util/validation'
 import { TEXT_FIELD_HEIGHT } from '../constants'
 import FormTag from './FormTag'
 
@@ -91,7 +91,7 @@ export default function TagsAutocomplete({
           value={tagInput}
           helperText={(() => {
             if (!isValidTag(tagInput, true)) {
-              return 'Tags should only consist of letters, numbers and hyphens and be no more than 25 characters long.'
+              return `Tags should only consist of letters, numbers and hyphens and be no more than ${MAX_TAG_LENGTH} characters long.`
             }
             if (tags.includes(tagInput)) {
               return 'This tag already exists.'
