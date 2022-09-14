@@ -2,7 +2,6 @@ import { rootLocation, testEmail } from './util/config'
 import {
   activeButton,
   activeButtonStyle,
-  checkedButtonClass,
   clickAway,
   copyAlert,
   directoryFilterPanel,
@@ -21,10 +20,9 @@ import {
   mostPopularFilter,
   mostRecentFilter,
   resetButton,
-  sortButtonSelectedClass,
-  sortButtonUnselectedClass,
+  sortButtonSelectedBackground,
   toggle,
-  uncheckedButtonClass,
+  uncheckedButtonBackground,
   urlTable,
   urlTableRowText,
   userApplyButton,
@@ -70,18 +68,18 @@ test('Default settings', async (t) => {
     .ok()
     .expect(directoryTextFieldEmail.exists)
     .notOk()
-    .expect(linkButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(fileButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(activeButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(inactiveButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(mostPopularFilter.hasClass(sortButtonUnselectedClass))
-    .ok()
-    .expect(mostRecentFilter.hasClass(sortButtonSelectedClass))
-    .ok()
+    .expect(linkButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(fileButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(activeButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(inactiveButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(mostPopularFilter.getStyleProperty('background-color'))
+    .notEql(sortButtonSelectedBackground)
+    .expect(mostRecentFilter.getStyleProperty('background-color'))
+    .eql(sortButtonSelectedBackground)
 })
 
 test('Directory Page test search by keyword and email', async (t) => {
@@ -291,43 +289,35 @@ test('Directory Page test reset filter', async (t) => {
     .click(fileButton)
     .click(userApplyButton)
     // check all styles of selected values
-    .expect(linkButtonStyle.hasClass(checkedButtonClass))
-    .ok()
-    .expect(fileButtonStyle.hasClass(checkedButtonClass))
-    .ok()
-    .expect(activeButtonStyle.hasClass(checkedButtonClass))
-    .ok()
-    .expect(inactiveButtonStyle.hasClass(checkedButtonClass))
-    .ok()
-    .expect(mostPopularFilter.hasClass(sortButtonSelectedClass))
-    .ok()
-    .expect(mostRecentFilter.hasClass(sortButtonUnselectedClass))
-    .ok()
+    .expect(linkButtonStyle.getStyleProperty('background-color'))
+    .notEql(uncheckedButtonBackground)
+    .expect(fileButtonStyle.getStyleProperty('background-color'))
+    .notEql(uncheckedButtonBackground)
+    .expect(activeButtonStyle.getStyleProperty('background-color'))
+    .notEql(uncheckedButtonBackground)
+    .expect(inactiveButtonStyle.getStyleProperty('background-color'))
+    .notEql(uncheckedButtonBackground)
+    .expect(mostPopularFilter.getStyleProperty('background-color'))
+    .eql(sortButtonSelectedBackground)
+    .expect(mostRecentFilter.getStyleProperty('background-color'))
+    .notEql(sortButtonSelectedBackground)
 
   // reset
   await t
     .click(directoryFilterPanelButton)
     .click(resetButton)
-    .expect(linkButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(linkButtonStyle.hasClass(checkedButtonClass))
-    .notOk()
-    .expect(fileButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(fileButtonStyle.hasClass(checkedButtonClass))
-    .notOk()
-    .expect(activeButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(activeButtonStyle.hasClass(checkedButtonClass))
-    .notOk()
-    .expect(inactiveButtonStyle.hasClass(uncheckedButtonClass))
-    .ok()
-    .expect(inactiveButtonStyle.hasClass(checkedButtonClass))
-    .notOk()
-    .expect(mostPopularFilter.hasClass(sortButtonUnselectedClass))
-    .ok()
-    .expect(mostRecentFilter.hasClass(sortButtonSelectedClass))
-    .ok()
+    .expect(linkButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(fileButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(activeButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(inactiveButtonStyle.getStyleProperty('background-color'))
+    .eql(uncheckedButtonBackground)
+    .expect(mostPopularFilter.getStyleProperty('background-color'))
+    .notEql(sortButtonSelectedBackground)
+    .expect(mostRecentFilter.getStyleProperty('background-color'))
+    .eql(sortButtonSelectedBackground)
 })
 
 test('Directory Page test url row interactions', async (t) => {

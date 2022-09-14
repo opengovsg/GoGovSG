@@ -1,5 +1,6 @@
 import { Selector } from 'testcafe'
 import { customAlphabet } from 'nanoid'
+import { fetch } from 'cross-fetch'
 import {
   dummyFilePath,
   dummyRelativePath,
