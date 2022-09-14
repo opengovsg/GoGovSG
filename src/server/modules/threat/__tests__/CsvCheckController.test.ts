@@ -1,6 +1,6 @@
 import httpMocks from 'node-mocks-http'
 import { Request } from 'express'
-
+import { BULK_UPLOAD_HEADER } from '../../../constants'
 import { CsvCheckController } from '..'
 
 /**
@@ -16,7 +16,6 @@ function createRequestWithFile(file: any): Request {
 }
 
 describe('CsvCheckController test', () => {
-  const csvHeader = 'Original URL that needs to be shortened'
   const controller = new CsvCheckController()
   const badRequest = jest.fn()
 
@@ -48,7 +47,7 @@ describe('CsvCheckController test', () => {
 
   it('passes with valid file', async () => {
     const file = {
-      data: Buffer.from(`${csvHeader}\r\nhttps://nusmods.com`),
+      data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\nhttps://nusmods.com`),
       name: 'file.csv',
     }
 
@@ -64,7 +63,7 @@ describe('CsvCheckController test', () => {
   })
   it('fails with empty url', async () => {
     const file = {
-      data: Buffer.from(`${csvHeader}\r\n'`),
+      data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\n'`),
       name: 'file.csv',
     }
 
@@ -80,7 +79,7 @@ describe('CsvCheckController test', () => {
   })
   it('fails with non https url', async () => {
     const file = {
-      data: Buffer.from(`${csvHeader}\r\nhttp://nusmods.com`),
+      data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\nhttp://nusmods.com`),
       name: 'file.csv',
     }
 
@@ -97,7 +96,7 @@ describe('CsvCheckController test', () => {
   it('fails with a row with more than one column', async () => {
     const file = {
       data: Buffer.from(
-        `${csvHeader}\r\nhttps://nusmods.com,http://nusmods.com`,
+        `${BULK_UPLOAD_HEADER}\r\nhttps://nusmods.com,http://nusmods.com`,
       ),
       name: 'file.csv',
     }
@@ -114,7 +113,7 @@ describe('CsvCheckController test', () => {
   })
   it('fails with a row with blacklisted url', async () => {
     const file = {
-      data: Buffer.from(`${csvHeader}\r\nhttps://rebrand.ly`),
+      data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\nhttps://rebrand.ly`),
       name: 'file.csv',
     }
 
@@ -130,7 +129,9 @@ describe('CsvCheckController test', () => {
   })
   it('fails with rows with invalid characters', async () => {
     const file = {
-      data: Buffer.from(`${csvHeader}\r\nhttps://nusmods.comヽ(•‿•)ノ`),
+      data: Buffer.from(
+        `${BULK_UPLOAD_HEADER}\r\nhttps://nusmods.comヽ(•‿•)ノ`,
+      ),
       name: 'file.csv',
     }
 

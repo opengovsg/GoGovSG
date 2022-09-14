@@ -2,6 +2,8 @@ import { bool } from 'aws-sdk/clients/signer'
 import { Request, Response } from 'express'
 import { injectable } from 'inversify'
 import paparse from 'papaparse'
+import { BULK_UPLOAD_HEADER, BULK_UPLOAD_LIMIT } from '../../constants'
+
 import * as validators from '../../../shared/util/validation'
 
 import jsonMessage from '../../util/json'
@@ -27,11 +29,9 @@ export class CsvCheckController {
         const rowData = step.data as string[]
         let validRow = true
         if (schema.rows === 1) {
-          validRow =
-            schema.rows === 1 &&
-            rowData[0] === 'Original URL that needs to be shortened'
+          validRow = schema.rows === 1 && rowData[0] === BULK_UPLOAD_HEADER
         } else {
-          const acceptableLinkCount = schema.rows < 1001
+          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_LIMIT
           const onlyOneColumn = rowData.length === 1
           const isNotBlacklisted = !validators.isBlacklisted(rowData[0])
           const isNotEmpty = rowData[0].length > 0
