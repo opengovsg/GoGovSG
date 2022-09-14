@@ -86,7 +86,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         transaction: t,
       })
       if (properties.tags) {
-        const tags = this.tagRepository.upsertTags(properties.tags, t)
+        const tags = await this.tagRepository.upsertTags(properties.tags, t)
         // @ts-ignore, addTag is provided by Sequelize during run time
         // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
         await url.addTags(tags, { transaction: t })
