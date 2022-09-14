@@ -7,7 +7,7 @@ export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
 export const SHORT_URL_REGEX = /^[a-z0-9-]+$/
 
-export const TAG_KEY_REGEX = /^[a-z0-9-]+$/
+export const TAG_KEY_REGEX = /^[a-z0-9-_]+$/
 
 export const TAG_STRING_REGEX = /^[A-Za-z0-9-_]+$/
 

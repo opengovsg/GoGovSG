@@ -4,7 +4,6 @@ import {
   dummyFilePath,
   dummyRelativePath,
   largeFileSize,
-  otp,
   rootLocation,
   shortUrl,
   smallFileSize,
@@ -25,20 +24,15 @@ import {
   largeFileError,
   linkErrorSnackBar,
   linkTransferField,
-  loginButton,
-  loginSuccessAlert,
   longUrl,
   longUrlTextField,
   shortUrlTextField,
-  signInButton,
   signOutButton,
   successSnackBar,
   transferButton,
   uploadFile,
   urlSaveButton,
   urlUpdatedToaster,
-  userModal,
-  userModalCloseButton,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import firstLinkHandle from './util/FirstLinkHandle'
