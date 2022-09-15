@@ -10,6 +10,7 @@ import {
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
 import { UrlType } from '../models/url'
+import dogstatsd from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
 
 /**
@@ -49,7 +50,12 @@ export class UserRepository implements UserRepositoryInterface {
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
     email,
   ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, _]) => user)
+    return User.findOrCreate({ where: { email } }).then(([user, created]) => {
+      if (created) {
+        dogstatsd.increment('user.new', 1, 1)
+      }
+      return user
+    })
   }
 
   public findOneUrlForUser: (

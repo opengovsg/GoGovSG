@@ -11,6 +11,7 @@ import { AuthService } from './interfaces'
 import { InvalidOtpError, NotFoundError } from '../../util/error'
 import { EmailProperty, VerifyOtpRequest } from '.'
 import getIp from '../../util/request'
+import dogstatsd from '../../util/dogstatsd'
 
 @injectable()
 export class LoginController {
@@ -45,10 +46,12 @@ export class LoginController {
     try {
       await this.authService.generateOtp(email, getIp(req))
     } catch (error) {
+      dogstatsd.increment('otp.generate.failure', 1, 1)
       res.serverError(jsonMessage(error.message))
       return
     }
 
+    dogstatsd.increment('otp.generate.success', 1, 1)
     res.ok(jsonMessage('OTP generated and sent.'))
     return
   }
@@ -63,9 +66,11 @@ export class LoginController {
       const user = await this.authService.verifyOtp(email, otp)
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
+      dogstatsd.increment('otp.verify.success', 1, 1)
       logger.info(`OTP login success for user:\t${user.email}`)
       return
     } catch (error) {
+      dogstatsd.increment('otp.verify.failure', 1, 1)
       if (error instanceof InvalidOtpError) {
         res.unauthorized(
           jsonMessage(
