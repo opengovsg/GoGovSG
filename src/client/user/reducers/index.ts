@@ -26,6 +26,8 @@ const initialState: UserState = {
     urlUpload: false,
     fileUpload: false,
   },
+  linkHistory: [],
+  linkHistoryCount: 0,
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
@@ -209,6 +211,12 @@ const user: (state: UserState, action: UserActionType) => UserState = (
           ...state.uploadState,
           fileUpload: action.payload,
         },
+      }
+      break
+    case UserAction.GET_LINK_HISTORY_FOR_USER_SUCCESS:
+      nextState = {
+        linkHistory: action.payload.linkHistory,
+        linkHistoryCount: action.payload.totalCount,
       }
       break
     default:

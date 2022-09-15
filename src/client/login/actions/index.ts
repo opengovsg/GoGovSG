@@ -1,3 +1,4 @@
+import { datadogRum } from '@datadog/browser-rum'
 import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
@@ -211,8 +212,13 @@ const isLoggedIn =
       return response.json().then((json) => {
         if (isOk) {
           const { user } = json
+          datadogRum.setUser({
+            id: user.id,
+            email: user.email,
+          })
           dispatch<IsLoggedInSuccessAction>(isLoggedInSuccess(user))
         } else {
+          datadogRum.removeUser()
           dispatch<IsLoggedOutAction>(isLoggedOut())
         }
       })

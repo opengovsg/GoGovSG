@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify'
 import { Op } from 'sequelize'
+import dogstatsd from '../util/dogstatsd'
 import {
   StorableUrl,
   StorableUser,
@@ -52,7 +53,12 @@ export class UserRepository implements UserRepositoryInterface {
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
     email,
   ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, _]) => user)
+    return User.findOrCreate({ where: { email } }).then(([user, created]) => {
+      if (created) {
+        dogstatsd.increment('user.new', 1, 1)
+      }
+      return user
+    })
   }
 
   public findOneUrlForUser: (

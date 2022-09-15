@@ -6,6 +6,7 @@ import {
   UrlsPaginated,
   UserUrlsQueryConditions,
 } from '../../../repositories/types'
+import dogstatsd from '../../../util/dogstatsd'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
@@ -60,6 +61,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         }
       : undefined
     // Success
+    dogstatsd.increment('shortlink.create', 1, 1, [`isfile:${!!file}`])
     return this.urlRepository.create(
       {
         userId: user.id,
