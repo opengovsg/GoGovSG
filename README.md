@@ -14,12 +14,15 @@ The official Singapore government link shortener.
   - [Getting Started](#getting-started)
     - [Running Locally](#running-locally)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
+      - [Server](#server)
+      - [Serverless functions for link migration](#serverless-functions-for-link-migration)
+      - [Batch functions for backups](#batch-functions-for-backups)
     - [Deploying](#deploying)
-  - [Pre-release](#pre-release)
   - [Operations](#operations)
     - [Transferring links to a new owner or email address](#transferring-links-to-a-new-owner-or-email-address)
   - [Developer Documentation](#developer-documentation)
     - [Folder Structure](#folder-structure)
+    - [Asset variants](#asset-variants)
     - [Babel](#babel)
     - [ESLint](#eslint)
     - [Webpack](#webpack)
@@ -29,6 +32,7 @@ The official Singapore government link shortener.
     - [Concurrently](#concurrently)
     - [VSCode + ESLint](#vscode--eslint)
     - [Redux Devtools](#redux-devtools)
+    - [Infrastructure](#infrastructure)
 
 ## Introduction
 
@@ -45,6 +49,8 @@ With GoGovSg, citizens are safe in the knowledge that the links are **official**
 ## Getting Started
 
 Make sure you have node version `14`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
+
+> *For Mac computers with Apple silicon, you will need Rosetta to be installed in order for `docker-compose@v1` to work. You can do so using the following command: `softwareupdate --install-rosetta`.
 
 Start by cloning the repository and installing dependencies.
 
@@ -70,26 +76,27 @@ Once the setup is complete, the local version of GoGovSG can be accessed on your
 Note that 3000 is the port number that the webpack dev server listens on; the backend server actually listens
 on port 8080 instead.
 
-Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`, 
-but that is really being proxied to `localhost:8080/shortlink`. Also, given that GoGovSG will attempt to send
-emails directly from your computer when running on localhost, there is a chance that the email might land in
-spam or not be sent entirely. To mitigate this, we have set the one-time password for all log-in attempts
-on localhost to be `111111`.
+Because redirects are served directly from the backend, shortlinks can be accessed via `localhost:3000/shortlink`,
+but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
+are obtained using [maildev](https://github.com/maildev/maildev) and accessed via `http://localhost:1080/`.
 
 ### Setting up the infrastructure
 
 Much of this step will involve setting up key infrastructure components since we do not have docker-compose
 to do that for us. On top of running the server, GoGovSG minimally requires the following infrastructure to be available:
+
 - A PostgreSQL database (for storing short-long URL mappings)
 - A Redis server (transient storage of sessions, one-time passwords, click statistics and frequently used shortlinks)
 
 Other optional infrastructure used in GoGovSG:
+
 - Serverless functions (for migrating user links)
 - Batch jobs (for backups of our database to external source)
 
 After these have been set up, set the environment variables according to the table below:
 
 #### Server
+
 |Environment Variable|Required|Description/Value|
 |:---:|:---:|:---|
 |NODE_ENV|Yes|`production`|
@@ -126,11 +133,13 @@ After these have been set up, set the environment variables according to the tab
 |REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 
 #### Serverless functions for link migration
+
 |Secrets|Required|Description/Value|Shared across environments|
 |:---:|:---:|:---:|:---|
 |DATABASE_URL|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|No|
 
 #### Batch functions for backups
+
 |Secrets|Required|Description/Value|Shared across environments|
 |:---:|:---:|:---:|:---|
 |DB_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|No|
@@ -158,7 +167,6 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |DD_API_KEY|Yes*|Datadog API Key used for integration with Datadog to Trace/Logs collection
 |DD_SERVICE|No|Datadog service name to be used for the application|
 |DD_ENV|No|Datadog application environment, e.g. `staging`, `production`|
-
 
 |Environment Variable|Required|Description/Value|
 |:---:|:---:|:---|
@@ -210,7 +218,7 @@ This repository serves as the codebase to serve three link shortener environment
 ### Babel
 
 [Babel](https://babeljs.io/) helps us to write code in the latest version of JavaScript. If an environment does not support certain features natively, Babel will help us to compile those features down to a supported version. It also helps us to convert JSX to Javascript.
-[babel.config.json file](https://babeljs.io/docs/en/configuration#babelconfigjson) is used to describe the configurations required for Babel. 
+[babel.config.json file](https://babeljs.io/docs/en/configuration#babelconfigjson) is used to describe the configurations required for Babel.
 
 Babel requires plugins to do the transformation. Presets are the set of plugins defined by Babel. Preset **env** allows to use babel-preset-es2015, babel-preset-es2016, and babel-preset-es2017 and it will transform them to ES5. Preset **react** allows us to use JSX syntax and it will transform JSX to Javascript.
 
@@ -231,7 +239,7 @@ Babel requires plugins to do the transformation. Presets are the set of plugins 
 1. **entry:** entry: ./src/client/app/index.tsx is where the application starts executing and webpack starts bundling.
     Note: babel-polyfill is added to support async/await. Read more [here](https://babeljs.io/docs/en/babel-polyfill#usage-in-node-browserify-webpack).
 2. **output path and filename:** the target directory and the filename for the bundled output
-3. **resolve:** We use aliasing at bundle time to inject and resolve the right asset variant path, which allows us to easily switch between asset folders for the different environments. 
+3. **resolve:** We use aliasing at bundle time to inject and resolve the right asset variant path, which allows us to easily switch between asset folders for the different environments.
 4. **module loaders:** Module loaders are transformations that are applied on the source code of a module. We pass all the js file through [babel-loader](https://github.com/babel/babel-loader) to transform JSX to Javascript. Fonts and images are loaded through [file-loader](https://github.com/webpack-contrib/file-loader).
 5. **Dev Server:** Configurations for the webpack-dev-server which will be described incoming section.
 6. **plugins:** [clean-webpack-plugin](https://github.com/johnagan/clean-webpack-plugin) is a webpack plugin to remove the build folder(s) before building. [html-webpack-plugin](https://github.com/jantimon/html-webpack-plugin) simplifies creation of HTML files to serve your webpack bundles. It loads the template (public/index.html) and injects the output bundle.
@@ -297,7 +305,6 @@ Express is a web application framework for Node.js. It is used to build our back
 Developer Tools to power-up [Redux](https://github.com/reactjs/redux) development workflow.
 
 It can be used as a browser extension (for [Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd), [Edge](https://microsoftedge.microsoft.com/addons/detail/redux-devtools/nnkgneoiohoecpdiaponcejilbhhikei) and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/reduxdevtools/)), as [a standalone app](https://github.com/zalmoxisus/remotedev-app) or as [a React component](https://github.com/reduxjs/redux-devtools/tree/master/packages/redux-devtools) integrated in the client app.
-
 
 ### Infrastructure
 

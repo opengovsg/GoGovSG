@@ -217,9 +217,9 @@ jobs:
       - run: |
           echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+            echo BRANCH_ENV=staging >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+            echo BRANCH_ENV=production >> $GITHUB_ENV;
           fi
       - name: Package Dockerrun.aws.json
         run: |
@@ -231,8 +231,8 @@ jobs:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-gogov.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
           DD_SERVICE: go-gov
-          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -275,15 +275,14 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@master
+        uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --conceal -v"
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
   build-edu:
     name: Build and push for edu
     runs-on: ubuntu-18.04
@@ -342,9 +341,9 @@ jobs:
       - run: |
           echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+            echo BRANCH_ENV=staging >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+            echo BRANCH_ENV=production >> $GITHUB_ENV;
           fi
       - name: Package Dockerrun.aws.json
         run: |
@@ -356,8 +355,8 @@ jobs:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-edu.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
           DD_SERVICE: go-edu
-          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -402,15 +401,14 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@master
+        uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --conceal -v"
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
   build-health:
     name: Build and push for health
     runs-on: ubuntu-18.04
@@ -469,9 +467,9 @@ jobs:
       - run: |
           echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+            echo BRANCH_ENV=staging >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+            echo BRANCH_ENV=production >> $GITHUB_ENV;
           fi
       - name: Package Dockerrun.aws.json
         run: |
@@ -483,8 +481,8 @@ jobs:
           REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
           TAG: ${{ needs.build-health.outputs.tag }}
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
           DD_SERVICE: go-health
-          DD_ENV: ${{ env.SERVERLESS_STAGE }}
       - name: Get timestamp
         shell: bash
         run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
@@ -529,12 +527,11 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
       - name: serverless deploy
-        uses: opengovsg/serverless-github-action@master
+        uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --conceal -v"
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          SERVERLESS_STAGE: ${{ env.SERVERLESS_STAGE }}
