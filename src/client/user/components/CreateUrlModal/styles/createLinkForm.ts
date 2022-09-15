@@ -174,27 +174,6 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       display: 'flex',
       alignItems: 'center',
     },
-    fileSizeText: {
-      fontWeight: 400,
-      display: 'flex',
-      alignItems: 'center',
-      paddingRight: theme.spacing(1.5),
-    },
-    uploadFileInputEndWrapper: {
-      display: 'flex',
-      alignItems: 'stretch',
-    },
-    uploadFileButton: {
-      padding: 0,
-      margin: 0,
-      width: '81px',
-      height: '100%',
-      borderRadius: 0,
-      color: theme.palette.background.default,
-      [theme.breakpoints.up('sm')]: {
-        width: '146px',
-      },
-    },
     shortLinkError: {
       color: 'black',
       textDecoration: 'none',
