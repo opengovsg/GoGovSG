@@ -4,6 +4,10 @@ import { ClientFunction, Selector } from 'testcafe'
 export const loginButton = Selector('span').withText('Sign in')
 export const signInButton = Selector('button[type="submit"]')
 export const createLinkButton = Selector('span').withText('Create link')
+export const mobileCreateLinkButton = Selector('img').withAttribute(
+  'alt',
+  'Create link',
+)
 export const loginSuccessAlert = Selector('div[role="alert"]').child(1).child(0)
 export const userModal = Selector('div[aria-labelledby="userModal"]')
 export const userModalCloseButton = userModal.child(0).child(0).child(1)
@@ -13,6 +17,13 @@ export const shortUrlTextField = Selector(
 )
 export const longUrlTextField = Selector('input[placeholder="Enter URL"]')
 export const getLocation = ClientFunction(() => document.location.href)
+export const directoryPageButton = Selector('span')
+  .withText('Directory')
+  .parent()
+export const mobileDirectoryPageButton = Selector('img')
+  .withAttribute('alt', 'Directory')
+  .parent()
+  .parent()
 export const signOutButton = Selector('strong').withText('Sign out').parent()
 
 // Login Page
@@ -43,11 +54,21 @@ export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
 export const urlTable = Selector('tbody')
+export const urlTableRowText = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(0).child('p').child(1).child('span').innerText
+export const urlTableRowUrl = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(0).child('p').child(1).child('span')
+export const urlTableRowEmail = (index: number) =>
+  urlTable.child(index).child(2).child('p')
+
 export const searchBar = Selector('input[placeholder="Search links"]')
 export const downloadLinkButton = Selector('p')
   .withText('Download links')
   .parent()
   .parent()
+export const closeDrawerButton = drawer.child(2).child('main').child('button')
 export const longUrl = Selector('input[placeholder="Original link"]')
 export const inactiveWord = Selector('span').withText('inactive')
 export const urlSaveButton = Selector('span').withText('Save')
@@ -106,30 +127,53 @@ export const emailToggle = Selector('p').withText('Search by Email')
 export const directoryTextFieldEmail = Selector(
   'input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
 )
+export const directoryFilterPanelButton = Selector('.MuiIconButton-label')
+export const directoryFilterPanel = Selector('.MuiCollapse-root').nth(1)
+export const sortButtonSelectedBackground = 'rgb(249, 249, 249)'
+export const mostRecentFilter = Selector('p')
+  .withText('Most recent')
+  .parent()
+  .parent()
+export const mostPopularFilter = Selector('p')
+  .withText('Most popular')
+  .parent()
+  .parent()
 export const applyButton = Selector('span').withText('Apply').parent()
 export const resetButton = Selector('span').withText('Reset').parent()
+export const uncheckedButtonBackground = 'rgba(0, 0, 0, 0)'
+
 export const linkButton = Selector('p')
   .withText('Link')
   .parent()
   .child('button')
   .nth(0)
+export const linkButtonStyle = linkButton.child().child()
 export const fileButton = Selector('p')
   .withText('File')
   .parent()
   .child('button')
   .nth(1)
+export const fileButtonStyle = fileButton.child().child()
 export const activeButton = Selector('p')
   .withText('Active')
   .parent()
   .child('button')
   .nth(0)
+export const activeButtonStyle = activeButton.child().child()
 export const inactiveButton = Selector('p')
   .withText('Inactive')
   .parent()
   .child('button')
   .nth(1)
+export const inactiveButtonStyle = inactiveButton.child().child()
+
 export const copyAlert = Selector('div').withText('Email has been copied')
 
+export const bottomMobilePanel = Selector('div.MuiDrawer-paper')
+export const mobileCopyEmailIcon = Selector('input').withAttribute(
+  'alt',
+  'email icon',
+)
 // Transition Page
 export const skipButton = Selector('#skip')
 
