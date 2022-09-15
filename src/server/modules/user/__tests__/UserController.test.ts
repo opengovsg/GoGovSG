@@ -552,10 +552,10 @@ describe('UserController', () => {
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
-    it('processes query with more than 3 tags', async () => {
+    it('processes query with more than 5 tags', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
-        query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4' },
+        query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4;tag5;tag6' },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
