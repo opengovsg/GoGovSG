@@ -60,7 +60,7 @@ type ConfigOptionProps = {
   mobile?: boolean
   subtitle?: string
   leading?: React.ReactNode
-  trailing: React.ReactNode
+  trailing?: React.ReactNode
   trailingPosition: TrailingPosition
   wrapTrailing?: boolean
 }

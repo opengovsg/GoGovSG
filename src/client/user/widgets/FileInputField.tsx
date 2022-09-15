@@ -1,5 +1,7 @@
-import React, { FunctionComponent, ReactElement } from 'react'
+import React, { FunctionComponent } from 'react'
 import {
+  Button,
+  CircularProgress,
   Hidden,
   Typography,
   createStyles,
@@ -17,11 +19,12 @@ type FileInputFieldStyleProps = {
 type FileInputFieldProps = {
   uploadFileError: string | null
   textFieldHeight: number | string
-  text: string
-  endAdornment?: ReactElement
-  inputId: string
+  fileNameText: string
+  fileSizeText?: string
+  buttonText?: string
   setFile: (file: File | null) => void
   setUploadFileError: (error: string) => void
+  isUploading: boolean
   className?: string
   acceptedTypes?: string
 }
@@ -69,17 +72,36 @@ const useStyles = makeStyles((theme) =>
         backgroundColor: '#e8e8e8',
       },
     },
+    fileSizeText: {
+      fontWeight: 400,
+      display: 'flex',
+      alignItems: 'center',
+      paddingRight: theme.spacing(1.5),
+    },
+    fileInputEndWrapper: {
+      display: 'flex',
+      alignItems: 'stretch',
+    },
+    uploadButtonText: {
+      padding: 0,
+      margin: 0,
+      width: '120px',
+      height: '100%',
+      borderRadius: 0,
+      color: theme.palette.background.default,
+    },
   }),
 )
 
 export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   textFieldHeight,
-  text,
-  uploadFileError,
-  endAdornment,
-  inputId,
+  fileNameText = '',
+  fileSizeText = '',
+  buttonText = '',
   setFile,
+  uploadFileError,
   setUploadFileError,
+  isUploading = false,
   className,
   acceptedTypes = '',
 }: FileInputFieldProps) => {
@@ -94,11 +116,11 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
       </Hidden>
       <div className={classes.fileInput}>
         <Typography variant="body2" className={classes.fileNameText}>
-          {text}
+          {fileNameText}
         </Typography>
         <input
           type="file"
-          id={inputId}
+          id="file"
           className={classes.fileInputInvis}
           onChange={(event) => {
             if (!event.target.files) {
@@ -120,7 +142,27 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
           }}
           accept={acceptedTypes}
         />
-        {endAdornment}
+        <Typography variant="body2" className={classes.fileSizeText}>
+          {fileSizeText}
+        </Typography>
+      </div>
+      <div className={classes.fileInputEndWrapper}>
+        {/* eslint-disable-next-line */}
+        <label htmlFor="file">
+          <Button
+            variant="contained"
+            className={classes.uploadButtonText}
+            component="span"
+            color="primary"
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <CircularProgress color="primary" size={20} />
+            ) : (
+              buttonText
+            )}
+          </Button>
+        </label>
       </div>
     </div>
   )
