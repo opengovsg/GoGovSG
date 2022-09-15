@@ -42,7 +42,7 @@ export const userUrlsQueryConditions = Joi.object({
   searchText: Joi.string().allow('').optional(),
   state: Joi.string().allow('').optional(),
   isFile: Joi.boolean().optional(),
-  tags: tagSchema,
+  tags: tagSchema.max(5),
 })
 
 export const userTagsQueryConditions = Joi.object({
