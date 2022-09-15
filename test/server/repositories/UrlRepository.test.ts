@@ -131,6 +131,7 @@ describe('UrlRepository', () => {
     const create = jest.spyOn(urlModelMock, 'create')
     const scope = jest.spyOn(urlModelMock, 'scope')
     const putObject = jest.spyOn(s3Client, 'putObject')
+    const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     const findByPk = jest.fn()
 
     // @ts-ignore
@@ -145,6 +146,7 @@ describe('UrlRepository', () => {
       putObject.mockClear()
       findByPk.mockReset()
       scope.mockReset()
+      tagFindOrCreate.mockReset()
     })
 
     it('creates the specified longUrl without tag', async () => {
@@ -164,6 +166,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
+      expect(tagFindOrCreate).toHaveBeenCalledTimes(0)
       expect(scope).toHaveBeenCalledWith([
         'defaultScope',
         'getClicks',
@@ -382,6 +385,11 @@ describe('UrlRepository', () => {
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
+      expect(tagRepository.upsertTags).toHaveBeenCalledWith(
+        baseTags,
+        expect.anything(),
+      )
+      expect(setTags).toHaveBeenCalledTimes(1)
       expect(update).toHaveBeenCalledWith(
         { description, tags: newTags, tagStrings: baseTagStrings },
         expect.anything(),

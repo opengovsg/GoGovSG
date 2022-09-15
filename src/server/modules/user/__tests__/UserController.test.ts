@@ -552,6 +552,21 @@ describe('UserController', () => {
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
+    it('processes query with more than 3 tags', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
     it('reports serverError on Error', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()

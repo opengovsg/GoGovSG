@@ -140,7 +140,7 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   private static buildQueryConditions(conditions: UserUrlsQueryConditions) {
-    const whereConditions: any = {
+    const searchTextCondition = {
       [Op.or]: [
         {
           shortUrl: {
@@ -153,8 +153,14 @@ export class UserRepository implements UserRepositoryInterface {
           },
         },
       ],
-      userId: conditions.userId,
     }
+    const whereConditions: any =
+      conditions.searchText.length > 0
+        ? {
+            ...searchTextCondition,
+            userId: conditions.userId,
+          }
+        : { userId: conditions.userId }
     if (conditions.state) {
       whereConditions.state = conditions.state
     }
@@ -165,7 +171,11 @@ export class UserRepository implements UserRepositoryInterface {
       model: Tag,
     }
     if (conditions.tags && conditions.tags.length > 0) {
-      includeConditions.where = { tagKey: conditions.tags }
+      includeConditions.where = {
+        [Op.or]: conditions.tags.map((tag) => {
+          return { tagKey: { [Op.substring]: `${tag}` } }
+        }),
+      }
     }
     return { whereConditions, includeConditions }
   }
