@@ -121,7 +121,7 @@ router.patch(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.fileExtensionCheck,
+  fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.checkUrl,
   validator.body(urlEditSchema),

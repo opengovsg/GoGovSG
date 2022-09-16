@@ -55,13 +55,13 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
       name: string
       data: Buffer
     },
-    inputExtensions?: string[],
-  ) => Promise<boolean> = async ({ name, data }, inputExtension) => {
+    allowedExtensions?: string[],
+  ) => Promise<boolean> = async ({ name, data }, allowedExtensions) => {
     const fileType = await FileType.fromBuffer(data)
     const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
 
-    if (inputExtension) {
-      return inputExtension.includes(extension)
+    if (allowedExtensions) {
+      return allowedExtensions.includes(extension)
     }
     return this.allowedFileExtensions.includes(extension)
   }

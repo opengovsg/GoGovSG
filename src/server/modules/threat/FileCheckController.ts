@@ -23,7 +23,7 @@ export class FileCheckController {
   }
 
   public fileExtensionCheck =
-    (fileExtensions?: string[]) =>
+    (allowedExtensions?: string[]) =>
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const file = req.files?.file
 
@@ -37,7 +37,7 @@ export class FileCheckController {
         if (
           !(await this.fileTypeFilterService.hasAllowedType(
             file,
-            fileExtensions,
+            allowedExtensions,
           ))
         ) {
           res.unsupportedMediaType(jsonMessage('File type disallowed.'))
