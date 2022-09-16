@@ -4,7 +4,7 @@ export interface FileTypeFilterService {
       name: string
       data: Buffer
     },
-    inputExtension?: string,
+    inputExtensions?: string[],
   ) => Promise<boolean>
 }
 

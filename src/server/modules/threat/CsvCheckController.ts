@@ -2,6 +2,7 @@ import { bool } from 'aws-sdk/clients/signer'
 import { Request, Response } from 'express'
 import { injectable } from 'inversify'
 import paparse from 'papaparse'
+import { ogHostname } from '../../config'
 import { BULK_UPLOAD_HEADER, BULK_UPLOAD_LIMIT } from '../../constants'
 
 import * as validators from '../../../shared/util/validation'
@@ -37,8 +38,13 @@ export class CsvCheckController {
           const isNotEmpty = rowData[0].length > 0
           const isHttps = validators.isHttps(rowData[0])
           const validCharacters = validators.isPrintableAscii(rowData[0])
+          const isNotCircularRedirect = !validators.isCircularRedirects(
+            rowData[0],
+            ogHostname,
+          )
           const noParsingError = step.errors.length === 0
           validRow =
+            isNotCircularRedirect &&
             acceptableLinkCount &&
             onlyOneColumn &&
             isNotBlacklisted &&

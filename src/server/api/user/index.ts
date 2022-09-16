@@ -84,7 +84,7 @@ router.post(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.fileExtensionCheck,
+  fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.checkUrl,
   validator.body(urlSchema),
@@ -92,19 +92,14 @@ router.post(
 )
 
 /**
- * Endpoint for a user to check validity of csv uploaded
- * In order to create a file URL, provide the `isFile` parameter set to `true`, and supply
- * the binary in a multipart/form-data under the field titled `file`. The longUrl
- * parameter in the request body must point to the s3 bucket with the correct key. For
- * example, a file upload request for the shortUrl named `test` should have `longUrl` set
- * to `https://file[-staging].go.gov.sg/test`.
+ * Endpoint for a user to check validity of uploaded csv.
  */
 
 router.post(
   '/url/bulk-link',
   bulkCSVUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.csvExtensionCheck,
+  fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,
   csvCheckController.csvValidation,
 )

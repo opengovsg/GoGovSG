@@ -22,52 +22,31 @@ export class FileCheckController {
     this.virusScanService = virusScanService
   }
 
-  public fileExtensionCheck: (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => Promise<void> = async (req, res, next) => {
-    const file = req.files?.file
+  public fileExtensionCheck =
+    (fileExtensions?: string[]) =>
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      const file = req.files?.file
 
-    if (Array.isArray(file)) {
-      res.unprocessableEntity(
-        jsonMessage('Only single file uploads are supported.'),
-      )
-      return
-    }
-    if (file) {
-      if (!(await this.fileTypeFilterService.hasAllowedType(file))) {
-        res.unsupportedMediaType(jsonMessage('File type disallowed.'))
+      if (Array.isArray(file)) {
+        res.unprocessableEntity(
+          jsonMessage('Only single file uploads are supported.'),
+        )
         return
       }
-    }
-
-    next()
-  }
-
-  public csvExtensionCheck: (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => Promise<void> = async (req, res, next) => {
-    const file = req.files?.file
-
-    if (Array.isArray(file)) {
-      res.unprocessableEntity(
-        jsonMessage('Only single file uploads are supported.'),
-      )
-      return
-    }
-
-    if (file) {
-      console.log('csvExtensionCheck')
-      if (!(await this.fileTypeFilterService.hasAllowedType(file, 'csv'))) {
-        res.unsupportedMediaType(jsonMessage('File type is not csv.'))
-        return
+      if (file) {
+        if (
+          !(await this.fileTypeFilterService.hasAllowedType(
+            file,
+            fileExtensions,
+          ))
+        ) {
+          res.unsupportedMediaType(jsonMessage('File type disallowed.'))
+          return
+        }
       }
+
+      next()
     }
-    next()
-  }
 
   public fileVirusCheck: (
     req: Request,
