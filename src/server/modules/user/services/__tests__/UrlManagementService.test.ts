@@ -258,6 +258,7 @@ describe('UrlManagementService', () => {
       userId: 2,
       state: undefined,
       isFile: undefined,
+      tags: [],
     }
     const urls = { urls: [], count: 0 }
     userRepository.findUrlsForUser.mockResolvedValue(urls)

@@ -7,6 +7,12 @@ export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
 export const SHORT_URL_REGEX = /^[a-z0-9-]+$/
 
+export const TAG_KEY_REGEX = /^[a-z0-9-_]+$/
+
+export const TAG_STRING_REGEX = /^[A-Za-z0-9-_]+$/
+
+export const MAX_TAG_LENGTH = 25
+
 export const URL_OPTS: validator.IsURLOptions = {
   protocols: ['https'],
   require_tld: true,
@@ -44,6 +50,10 @@ export function isValidUrl(url: string, useWhitelist = false): boolean {
 // Tests if a short link consists of alphanumeric and hyphen characters.
 export function isValidShortUrl(url: string, allowBlank = false): boolean {
   return allowBlank ? /^[a-z0-9-]*$/.test(url) : SHORT_URL_REGEX.test(url)
+}
+
+export function isValidTag(tag: string): boolean {
+  return TAG_STRING_REGEX.test(tag) && tag.length <= MAX_TAG_LENGTH
 }
 
 // Tests the validity of a long url. Will return true if blank.

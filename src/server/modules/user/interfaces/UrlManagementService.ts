@@ -13,6 +13,7 @@ export interface UrlManagementService {
     shortUrl: string,
     longUrl?: string,
     file?: GoUploadedFile,
+    tags?: string[],
   ) => Promise<StorableUrl>
   updateUrl: (
     userId: number,

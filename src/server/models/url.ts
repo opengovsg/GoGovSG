@@ -13,6 +13,7 @@ import { IdType } from '../../types/server/models'
 import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlSource, StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
+import { Tag, TagType } from './tag'
 
 export interface UrlBaseType extends IdType {
   readonly shortUrl: string
@@ -26,9 +27,11 @@ export interface UrlBaseType extends IdType {
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly UrlClicks?: UrlClicksType
+  readonly tags?: TagType[]
   readonly createdAt: string
   readonly updatedAt: string
   readonly email: string
+  readonly tagStrings: string
 }
 
 // For sequelize define
@@ -80,6 +83,11 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
   source: {
     type: 'enum_urls_source',
   },
+  tagStrings: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+    defaultValue: '',
+  },
 })
 
 /**
@@ -101,6 +109,7 @@ const writeToUrlHistory = async (
       contactEmail: urlObj.contactEmail,
       description: urlObj.description,
       source: urlObj.source,
+      tagStrings: urlObj.tagStrings,
     },
     {
       transaction: options.transaction,
@@ -215,6 +224,11 @@ export const Url = <UrlTypeStatic>sequelize.define(
       type: Sequelize.ENUM,
       values: [BULK, API, CONSOLE],
     },
+    tagStrings: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
   },
   {
     hooks: {
@@ -305,6 +319,13 @@ export const Url = <UrlTypeStatic>sequelize.define(
           },
         ],
       },
+      getTags: {
+        include: [
+          {
+            model: Tag,
+          },
+        ],
+      },
       /**
        * Use the replica database for read queries. To be enabled
        * when realtime data is not needed.
@@ -316,6 +337,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
   },
 )
 
-// A Url record can have many updates
+// An Url record can have many updates
 Url.hasMany(UrlHistory, { foreignKey: { allowNull: false } })
 UrlHistory.belongsTo(Url, { foreignKey: { allowNull: false } })

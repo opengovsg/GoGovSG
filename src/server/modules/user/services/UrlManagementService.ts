@@ -28,7 +28,8 @@ export class UrlManagementService implements interfaces.UrlManagementService {
   constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
-    @inject(DependencyIds.urlRepository) urlRepository: UrlRepositoryInterface,
+    @inject(DependencyIds.urlRepository)
+    urlRepository: UrlRepositoryInterface,
   ) {
     this.userRepository = userRepository
     this.urlRepository = urlRepository
@@ -39,9 +40,9 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     shortUrl: string,
     longUrl?: string,
     file?: GoUploadedFile,
-  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file) => {
+    tags?: string[],
+  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file, tags) => {
     const user = await this.userRepository.findById(userId)
-
     if (!user) {
       throw new NotFoundError('User not found')
     }
@@ -60,19 +61,17 @@ export class UrlManagementService implements interfaces.UrlManagementService {
           mimetype: file.mimetype,
         }
       : undefined
-
     // Success
-    const result = await this.urlRepository.create(
+    dogstatsd.increment('shortlink.create', 1, 1, [`isfile:${!!file}`])
+    return this.urlRepository.create(
       {
         userId: user.id,
         longUrl,
         shortUrl,
+        tags,
       },
       storableFile,
     )
-    dogstatsd.increment('shortlink.create', 1, 1, [`isfile:${!!file}`])
-
-    return result
   }
 
   updateUrl: (
@@ -80,7 +79,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     shortUrl: string,
     options: UpdateUrlOptions,
   ) => Promise<StorableUrl> = async (userId, shortUrl, options) => {
-    const { state, longUrl, file, description, contactEmail } = options
+    const { state, longUrl, file, description, contactEmail, tags } = options
 
     const url = await this.userRepository.findOneUrlForUser(userId, shortUrl)
 
@@ -98,7 +97,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
     return this.urlRepository.update(
       url,
-      { longUrl, state, description, contactEmail },
+      { longUrl, state, description, contactEmail, tags },
       storableFile,
     )
   }
@@ -131,11 +130,9 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     }
 
     // Success
-    const result = await this.urlRepository.update(url, {
+    return this.urlRepository.update(url, {
       userId: newUserId,
     })
-
-    return result
   }
 
   getUrlsWithConditions: (

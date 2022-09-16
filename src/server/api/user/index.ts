@@ -9,6 +9,7 @@ import {
 } from '../../../shared/constants'
 import {
   ownershipTransferSchema,
+  tagRetrievalSchema,
   urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
@@ -138,6 +139,12 @@ router.get(
   '/url',
   validator.body(urlRetrievalSchema),
   userController.getUrlsWithConditions,
+)
+
+router.get(
+  '/tag',
+  validator.body(tagRetrievalSchema),
+  userController.getTagsWithConditions,
 )
 
 router.get('/message', userController.getUserMessage)

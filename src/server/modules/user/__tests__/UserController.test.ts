@@ -2,7 +2,10 @@
 import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
 import { StorableUrlState } from '../../../repositories/enums'
-import { createRequestWithUser } from '../../../../../test/server/api/util'
+import {
+  createGetTagsRequestWithUser,
+  createRequestWithUser,
+} from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
 import { AlreadyExistsError, NotFoundError } from '../../../util/error'
@@ -13,6 +16,10 @@ const urlManagementService = {
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
   bulkCreate: jest.fn(),
+}
+
+const tagManagementService = {
+  getTagsWithConditions: jest.fn(),
 }
 
 const userMessage = 'The quick brown fox jumps over a lazy dog'
@@ -28,6 +35,7 @@ describe('UserController', () => {
     urlManagementService,
     userMessage,
     userAnnouncement,
+    tagManagementService,
   )
 
   describe('createUrl', () => {
@@ -51,11 +59,13 @@ describe('UserController', () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.gov.sg'
+      const tags = ['tag1', 'tag2', 'tag3']
       const req = httpMocks.createRequest({
         body: {
           userId,
           shortUrl,
           longUrl,
+          tags,
         },
       })
       const res: any = httpMocks.createResponse()
@@ -71,6 +81,7 @@ describe('UserController', () => {
         shortUrl,
         longUrl,
         undefined,
+        tags,
       )
     })
 
@@ -307,7 +318,81 @@ describe('UserController', () => {
     })
   })
 
+  describe('getTagsWithConditions', () => {
+    it('make sure urlManagementService.getTagsWithConditions is called exactly 1 time', async () => {
+      const req = createGetTagsRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      await controller.getTagsWithConditions(req, res)
+      expect(tagManagementService.getTagsWithConditions).toHaveBeenCalledTimes(
+        1,
+      )
+    })
+    it('call getTagsWithConditions with invalid searchText, less than 3 characters', async () => {
+      const searchText = 't'
+      const req = httpMocks.createRequest({
+        query: { searchText },
+        body: {
+          userId: 1,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      await controller.getTagsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+    it('call getTagsWithConditions with invalid searchText, special characters', async () => {
+      const searchText = '#$%'
+      const req = httpMocks.createRequest({
+        query: { searchText },
+        body: {
+          userId: 1,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+      await controller.getTagsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+    it('processes query with defaults', async () => {
+      const req = createGetTagsRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result: string[] = []
+      tagManagementService.getTagsWithConditions.mockResolvedValue(result)
+      await controller.getTagsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(tagManagementService.getTagsWithConditions).toHaveBeenCalledWith({
+        limit: 5,
+        userId: 1,
+        searchText: 'tag',
+      })
+    })
+    it('processes query with searchText=tag1', async () => {
+      const searchText = 'tag1'
+      const req = httpMocks.createRequest({
+        query: { searchText },
+        body: {
+          userId: 1,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result: string[] = ['tag1', 'tag2']
+      tagManagementService.getTagsWithConditions.mockResolvedValue(result)
+      await controller.getTagsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(tagManagementService.getTagsWithConditions).toHaveBeenCalledWith(
+        expect.objectContaining({ searchText }),
+      )
+    })
+  })
+
   describe('getUrlsWithConditions', () => {
+    beforeEach(() => {
+      urlManagementService.getUrlsWithConditions.mockReset()
+    })
     it('processes query with defaults', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
@@ -323,9 +408,10 @@ describe('UserController', () => {
         orderBy: 'updatedAt',
         sortDirection: 'desc',
         searchText: '',
-        userId: undefined,
+        userId: 1,
         state: undefined,
         isFile: undefined,
+        tags: [],
       })
     })
 
@@ -333,7 +419,7 @@ describe('UserController', () => {
       const userId = 2
       const limit = 500
       const offset = 1
-      const orderBy = 'popularity'
+      const orderBy = 'clicks'
       const sortDirection = 'asc'
       const searchText = 'TEXT'
       const state = 'ACTIVE'
@@ -365,11 +451,13 @@ describe('UserController', () => {
         userId,
         state,
         isFile: undefined,
+        tags: [],
       })
     })
 
     it('processes query with isFile=true', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'true' },
       })
       const res: any = httpMocks.createResponse()
@@ -386,6 +474,7 @@ describe('UserController', () => {
 
     it('processes query with isFile=false', async () => {
       const req = httpMocks.createRequest({
+        body: { userId: 1 },
         query: { isFile: 'false' },
       })
       const res: any = httpMocks.createResponse()
@@ -398,6 +487,85 @@ describe('UserController', () => {
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
         expect.objectContaining({ isFile: false }),
       )
+    })
+
+    it('processes query with empty tags', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', tags: '' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
+        expect.objectContaining({ isFile: false, tags: [] }),
+      )
+    })
+
+    it('processes query with non empty tags', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', tags: 'tag1;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
+        expect.objectContaining({ isFile: false, tags: ['tag1', 'tag2'] }),
+      )
+    })
+
+    it('processes query with invalid tags-long', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', tags: '01234567890123456789012345;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('processes query with invalid tags-special character', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', tags: 'tag1^%^;tag2' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('processes query with more than 5 tags', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4;tag5;tag6' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
     it('reports serverError on Error', async () => {
