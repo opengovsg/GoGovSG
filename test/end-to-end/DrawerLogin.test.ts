@@ -4,7 +4,6 @@ import {
   dummyFilePath,
   dummyRelativePath,
   largeFileSize,
-  otp,
   rootLocation,
   shortUrl,
   smallFileSize,
@@ -25,20 +24,15 @@ import {
   largeFileError,
   linkErrorSnackBar,
   linkTransferField,
-  loginButton,
-  loginSuccessAlert,
   longUrl,
   longUrlTextField,
   shortUrlTextField,
-  signInButton,
   signOutButton,
   successSnackBar,
   transferButton,
   uploadFile,
   urlSaveButton,
   urlUpdatedToaster,
-  userModal,
-  userModalCloseButton,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import firstLinkHandle from './util/FirstLinkHandle'
@@ -156,10 +150,6 @@ test('Drawer functionality test for file.', async (t) => {
 test.before(async (t) => {
   // login to the transfer email to activate it, then logout
   await LoginProcedure(t, transferEmail)
-
-  if (await userModal.exists) {
-    await t.click(userModalCloseButton)
-  }
 
   await t.click(signOutButton).navigateTo(`${rootLocation}`)
 

@@ -2,7 +2,6 @@ import { ClientFunction, Selector } from 'testcafe'
 import {
   incorrectEmail,
   incorrectOtp,
-  otp,
   rootLocation,
   testEmail,
 } from './util/config'

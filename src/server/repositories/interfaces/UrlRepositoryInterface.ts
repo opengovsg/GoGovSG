@@ -22,12 +22,17 @@ export interface UrlRepositoryInterface {
 
   /**
    * Create a new Url in the data store.
-   * @param  {{userId:number;shortUrl:string;longUrl?:string}} properties Properties of new Url.
+   * @param  {{userId:number;shortUrl:string;longUrl?:string;tags?:string[]}} properties Properties of new Url.
    * @param  {StorableFile} file? File that this Url leads to, if any.
    * @returns Promise that resolves to the newly created url.
    */
   create(
-    properties: { userId: number; shortUrl: string; longUrl?: string },
+    properties: {
+      userId: number
+      shortUrl: string
+      longUrl?: string
+      tags?: string[]
+    },
     file?: StorableFile,
   ): Promise<StorableUrl>
 
