@@ -2,6 +2,7 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
+import _ from 'lodash'
 import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
@@ -23,8 +24,11 @@ import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
+import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 
 const { Public, Private } = FileVisibility
+
+export const tagSeparator = ';'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -36,12 +40,16 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private urlMapper: Mapper<StorableUrl, UrlType>
 
+  private tagRepository: TagRepositoryInterface
+
   public constructor(
     @inject(DependencyIds.s3) fileBucket: S3Interface,
     @inject(DependencyIds.urlMapper) urlMapper: Mapper<StorableUrl, UrlType>,
+    @inject(DependencyIds.tagRepository) tagRepository: TagRepositoryInterface,
   ) {
     this.fileBucket = fileBucket
     this.urlMapper = urlMapper
+    this.tagRepository = tagRepository
   }
 
   public findByShortUrlWithTotalClicks: (
@@ -54,28 +62,41 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   public create: (
-    properties: { userId: number; shortUrl: string; longUrl?: string },
+    properties: {
+      userId: number
+      shortUrl: string
+      longUrl?: string
+      tags?: string[]
+    },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
-      await Url.create(
-        {
-          ...properties,
-          longUrl: file
-            ? this.fileBucket.buildFileLongUrl(file.key)
-            : properties.longUrl,
-          isFile: !!file,
-        },
-        {
-          transaction: t,
-        },
-      )
+      const tagStrings = properties.tags
+        ? properties.tags.join(tagSeparator)
+        : ''
+      const urlStaticDTO = {
+        ...properties,
+        longUrl: file
+          ? this.fileBucket.buildFileLongUrl(file.key)
+          : properties.longUrl,
+        isFile: !!file,
+        tagStrings,
+      }
+      const url = await Url.create(urlStaticDTO, {
+        transaction: t,
+      })
+      if (properties.tags) {
+        const tags = await this.tagRepository.upsertTags(properties.tags, t)
+        // @ts-ignore, addTag is provided by Sequelize during run time
+        // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+        await url.addTags(tags, { transaction: t })
+      }
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }
 
       // Do a fresh read which eagerly loads the associated UrlClicks field.
-      return Url.scope(['defaultScope', 'getClicks']).findByPk(
+      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findByPk(
         properties.shortUrl,
         {
           transaction: t,
@@ -93,7 +114,12 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
-    const url = await Url.scope(['defaultScope', 'getClicks']).findOne({
+    let updateParams: any = { ...changes }
+    const url = await Url.scope([
+      'defaultScope',
+      'getClicks',
+      'getTags',
+    ]).findOne({
       where: { shortUrl },
     })
     if (!url) {
@@ -101,36 +127,54 @@ export class UrlRepository implements UrlRepositoryInterface {
         `url not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-
-    const newUrl: UrlType = await sequelize.transaction(async (t) => {
+    const urlDto = this.urlMapper.persistenceToDto(url)
+    const newUrl = await sequelize.transaction(async (t) => {
+      if (
+        changes.tags &&
+        !_.isEqual(_.sortBy(urlDto.tags), _.sortBy(changes.tags))
+      ) {
+        const newTags = await this.tagRepository.upsertTags(changes.tags, t)
+        // @ts-ignore provided by Sequelize during runtime
+        await url.setTags(newTags, { transaction: t })
+        updateParams = {
+          ...updateParams,
+          tagStrings: updateParams.tags.join(tagSeparator),
+        }
+      }
       if (!url.isFile) {
-        await url.update(changes, { transaction: t })
+        await url.update(updateParams, { transaction: t })
       } else {
         let currentKey = this.fileBucket.getKeyFromLongUrl(url.longUrl)
         if (file) {
           const newKey = file.key
           await url.update(
-            { ...changes, longUrl: this.fileBucket.buildFileLongUrl(newKey) },
+            {
+              ...updateParams,
+              longUrl: this.fileBucket.buildFileLongUrl(newKey),
+            },
             { transaction: t },
           )
           await this.fileBucket.setS3ObjectACL(currentKey, Private)
           await this.fileBucket.uploadFileToS3(file.data, newKey, file.mimetype)
           currentKey = newKey
         } else {
-          await url.update({ ...changes }, { transaction: t })
+          await url.update(updateParams, { transaction: t })
         }
-        if (changes.state) {
+        if (updateParams.state) {
           await this.fileBucket.setS3ObjectACL(
             currentKey,
-            changes.state === StorableUrlState.Active ? Public : Private,
+            updateParams.state === StorableUrlState.Active ? Public : Private,
           )
         }
       }
-      return url
+      // Do a fresh read which eagerly loads the associated tags field.
+      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findOne({
+        where: { shortUrl },
+        transaction: t,
+      })
     })
-
+    if (!newUrl) throw new Error('Newly-updated url is null')
     this.invalidateCache(shortUrl)
-
     return this.urlMapper.persistenceToDto(newUrl)
   }
 

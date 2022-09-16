@@ -14,16 +14,25 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
     const { UrlClicks: urlClicks } = urlType
     if (!urlClicks || !Number.isInteger(urlClicks.clicks))
       throw new Error('UrlClicks object not populated.')
+
+    let tagStrings: string[] = []
+    const { tags } = urlType
+    if (tags) {
+      tagStrings = tags.map((tag) => tag.tagString)
+    }
+
     return {
       shortUrl: urlType.shortUrl,
       longUrl: urlType.longUrl,
       state: urlType.state,
       clicks: urlClicks.clicks,
+      tags: tagStrings,
       isFile: urlType.isFile,
       createdAt: urlType.createdAt,
       updatedAt: urlType.updatedAt,
       description: urlType.description,
       contactEmail: urlType.contactEmail,
+      tagStrings: urlType.tagStrings,
     }
   }
 }

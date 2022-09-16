@@ -6,10 +6,17 @@ import { WeekdayClicks } from './statistics/weekday'
 import { Devices } from './statistics/devices'
 import { UrlClicks } from './statistics/clicks'
 import { syncFunctions } from './functions'
+import { Tag } from './tag'
 
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
 Url.belongsTo(User, { foreignKey: { allowNull: false } })
+
+export const UrlTag = sequelize.define('url_tag', {}, { timestamps: true })
+
+// An Url has many to many mapping to Tag
+Url.belongsToMany(Tag, { through: UrlTag })
+Tag.belongsToMany(Url, { through: UrlTag })
 
 // A Url record can have many updates by many users
 User.hasMany(UrlHistory, { foreignKey: { allowNull: false } })

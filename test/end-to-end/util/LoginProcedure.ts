@@ -12,6 +12,7 @@ import {
  * Process of login into test account.
  */
 const loginProcedure = async (t, loginEmail = testEmail) => {
+  await t.maximizeWindow()
   await t
     .click(loginButton)
     .typeText('#email', `${loginEmail}`)
