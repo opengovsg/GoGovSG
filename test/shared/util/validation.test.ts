@@ -185,7 +185,7 @@ describe('Test valid tag check', () => {
 
 describe('Test valid tags check', () => {
   test('check passes with at most 3 unique and valid tags', () => {
-    expect(validation.isValidTags(['tag', '2tag', 'OnE-2-ThrEe'])).toBe(true)
+    expect(validation.isValidTags(['tag', '2tag', 'OnE-2_ThrEe'])).toBe(true)
     expect(validation.isValidTags(['tag', 'TAG'])).toBe(true)
     expect(validation.isValidTags([])).toBe(true)
   })
@@ -196,7 +196,7 @@ describe('Test valid tags check', () => {
   })
 
   test('check fails with any invalid tag', () => {
-    expect(validation.isValidTags(['valid', 'valid-2', 'invalid_tag'])).toBe(
+    expect(validation.isValidTags(['valid', 'valid-2', 'invalid,tag'])).toBe(
       false,
     )
     expect(validation.isValidTags([' test '])).toBe(false)
