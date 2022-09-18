@@ -15,11 +15,8 @@ import {
   urlSchema,
 } from './validators'
 import { UserController } from '../../modules/user'
-import {
-  CsvCheckController,
-  FileCheckController,
-  UrlCheckController,
-} from '../../modules/threat'
+import { BulkController } from '../../modules/bulk'
+import { FileCheckController, UrlCheckController } from '../../modules/threat'
 
 const router = Express.Router()
 
@@ -35,8 +32,8 @@ const urlCheckController = container.get<UrlCheckController>(
   DependencyIds.urlCheckController,
 )
 
-const csvCheckController = container.get<CsvCheckController>(
-  DependencyIds.csvCheckController,
+const bulkController = container.get<BulkController>(
+  DependencyIds.bulkController,
 )
 
 const fileUploadMiddleware = fileUpload({
@@ -101,7 +98,7 @@ router.post(
   preprocessPotentialIncomingFile,
   fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,
-  csvCheckController.csvValidation,
+  bulkController.csvValidation,
 )
 
 router.patch(

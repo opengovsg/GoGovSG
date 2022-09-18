@@ -1,7 +1,7 @@
 import httpMocks from 'node-mocks-http'
 import { Request } from 'express'
 import { BULK_UPLOAD_HEADER } from '../../../constants'
-import { CsvCheckController } from '..'
+import { BulkController } from '../BulkController'
 
 /**
  * Creates a mock request with mock file in request body.
@@ -15,8 +15,8 @@ function createRequestWithFile(file: any): Request {
   })
 }
 
-describe('CsvCheckController test', () => {
-  const controller = new CsvCheckController()
+describe('BulkController test', () => {
+  const controller = new BulkController()
   const badRequest = jest.fn()
 
   beforeEach(() => {

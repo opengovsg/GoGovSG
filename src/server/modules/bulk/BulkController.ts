@@ -15,7 +15,7 @@ type CSVSchema = {
 }
 
 @injectable()
-export class CsvCheckController {
+export class BulkController {
   private parseCSV = (dataString: string): CSVSchema => {
     const schema = {
       rows: 0,
@@ -88,4 +88,4 @@ export class CsvCheckController {
   }
 }
 
-export default CsvCheckController
+export default BulkController
