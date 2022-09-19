@@ -7,10 +7,11 @@ import {
   isValidShortUrl,
   isValidTag,
 } from '../../../shared/util/validation'
-import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../shared/constants'
+import {
+  LINK_DESCRIPTION_MAX_LENGTH,
+  MAX_NUM_TAGS_PER_LINK,
+} from '../../../shared/constants'
 import { isValidGovEmail } from '../../util/email'
-
-const MAX_TAG_COUNT = 3
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
@@ -21,7 +22,7 @@ export const tagRetrievalSchema = Joi.object({
 })
 
 const tagSchema = Joi.array()
-  .max(MAX_TAG_COUNT)
+  .max(MAX_NUM_TAGS_PER_LINK)
   .optional()
   .items(
     Joi.string().custom((tag: string, helpers) => {

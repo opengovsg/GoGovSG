@@ -18,7 +18,9 @@ import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
   isValidShortUrl,
+  isValidTag,
 } from '../../../../shared/util/validation'
+import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
 import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../../widgets/LinkIcon'
@@ -30,7 +32,10 @@ import { FileInputField } from '../../widgets/FileInputField'
 import userActions from '../../actions'
 import { GAEvent } from '../../../app/util/ga'
 import { GoGovReduxState } from '../../../app/reducers/types'
-import FormStartAdorment, { TEXT_FIELD_HEIGHT } from './FormStartAdorment'
+import { TEXT_FIELD_HEIGHT } from '../../constants'
+import FormStartAdorment from './FormStartAdorment'
+import Tooltip from '../../widgets/Tooltip'
+import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
 type CreateLinkFormProps = {
   onSubmitLink: (history: History) => {}
@@ -69,6 +74,8 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  const [tags, setTags] = useState<string[]>([])
+  const [tagInput, setTagInput] = useState('')
 
   const classes = useCreateLinkFormStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
@@ -82,7 +89,10 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     (isFile && !file) ||
     (isFile && !!uploadFileError) ||
     isUploading ||
-    !!createShortLinkError
+    !!createShortLinkError ||
+    tags.some((tag) => !isValidTag(tag)) ||
+    !isValidTag(tagInput, true) ||
+    tags.includes(tagInput)
 
   useEffect(() => {
     if (isFile) {
@@ -299,6 +309,25 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 {createShortLinkError}
               </a>
             </CollapsibleMessage>
+          </div>
+          <div className={classes.labelText}>
+            <Typography variant="body1">
+              Tag (add up to <strong>{MAX_NUM_TAGS_PER_LINK} tags</strong>){' '}
+              <Tooltip
+                title="Tags are words, or combinations of words, you can use to classify or describe your link."
+                imageAltText="Tags help"
+              />
+            </Typography>
+          </div>
+          <div>
+            <TagsAutocomplete
+              tags={tags}
+              setTags={setTags}
+              tagInput={tagInput}
+              setTagInput={setTagInput}
+              disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
+              placeholder={tags.length < MAX_NUM_TAGS_PER_LINK ? 'Add tag' : ''}
+            />
           </div>
           <Button
             className={classes.button}
