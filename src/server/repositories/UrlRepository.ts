@@ -544,13 +544,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     return shortLinksObj
   }
 
-  public bulkCreate: (
-    properties: {
-      userId: number
-      tags?: string[]
-    },
-    file?: StorableFile,
-  ) => Promise<StorableUrl> = async (properties) => {
+  public bulkCreate: (properties: {
+    userId: number
+    tags?: string[]
+  }) => Promise<StorableUrl> = async (properties) => {
     await sequelize.transaction(async (t) => {
       const tagStrings = properties.tags
         ? properties.tags.join(tagSeparator)

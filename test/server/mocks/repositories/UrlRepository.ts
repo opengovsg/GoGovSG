@@ -56,6 +56,13 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     })
   }
 
+  bulkCreate: (properties: {
+    userId: number
+    tags?: string[]
+  }) => Promise<StorableUrl> = () => {
+    return Promise.resolve({} as StorableUrl)
+  }
+
   plainTextSearch: (
     query: string,
     order: SearchResultsSortOrder,

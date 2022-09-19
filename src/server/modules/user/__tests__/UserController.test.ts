@@ -15,6 +15,7 @@ const urlManagementService = {
   updateUrl: jest.fn(),
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
+  bulkCreate: jest.fn(),
 }
 
 const tagManagementService = {

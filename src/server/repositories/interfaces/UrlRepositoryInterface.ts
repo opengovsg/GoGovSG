@@ -55,11 +55,8 @@ export interface UrlRepositoryInterface {
     conditions: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated>
 
-  bulkCreate(
-    properties: {
-      userId: number
-      tags?: string[]
-    },
-    file?: StorableFile,
-  ): Promise<StorableUrl>
+  bulkCreate(properties: {
+    userId: number
+    tags?: string[]
+  }): Promise<StorableUrl>
 }
