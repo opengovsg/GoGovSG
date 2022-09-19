@@ -84,8 +84,6 @@ export function isCircularRedirects(
   url: string,
   hostname?: string | null,
 ): boolean {
-  console.log(`hostname: ${hostname}`)
-  console.log(`urlHostname: ${parse(url).hostname}`)
   return Boolean(hostname) && parse(url).hostname === hostname
 }
 
