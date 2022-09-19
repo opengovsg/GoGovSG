@@ -551,7 +551,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties) => {
-    const newUrl = await sequelize.transaction(async (t) => {
+    await sequelize.transaction(async (t) => {
       const tagStrings = properties.tags
         ? properties.tags.join(tagSeparator)
         : ''
