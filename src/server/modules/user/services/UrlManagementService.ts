@@ -147,6 +147,20 @@ export class UrlManagementService implements interfaces.UrlManagementService {
   ) => Promise<UrlsPaginated> = (conditions) => {
     return this.userRepository.findUrlsForUser(conditions)
   }
+
+  bulkCreate: (
+    userId: number,
+    shortUrl: string,
+    longUrl?: string,
+    tags?: string[],
+  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, tags) => {
+    return this.urlRepository.bulkCreate({
+      userId,
+      longUrl,
+      shortUrl,
+      tags,
+    })
+  }
 }
 
 export default UrlManagementService

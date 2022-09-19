@@ -55,6 +55,38 @@ export class UserController {
     this.tagManagementService = tagManagementService
   }
 
+  public bulkCreate: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId, longUrl, shortUrl, tags }: UrlCreationRequest = req.body
+    try {
+      const result = await this.urlManagementService.bulkCreate(
+        userId,
+        shortUrl,
+        longUrl,
+        tags,
+      )
+      res.ok(result)
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.notFound(jsonMessage(error.message))
+        return
+      }
+      if (error instanceof AlreadyExistsError) {
+        res.badRequest(jsonMessage(error.message, MessageType.ShortUrlError))
+        return
+      }
+      if (error instanceof Sequelize.ValidationError) {
+        res.badRequest(jsonMessage(error.message))
+      }
+      logger.error(`Error creating short URL:\t${error}`)
+      res.badRequest(jsonMessage('Server Error.'))
+      return
+    }
+  }
+
   public createUrl: (
     req: Express.Request,
     res: Express.Response,

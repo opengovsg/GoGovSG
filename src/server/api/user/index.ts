@@ -114,4 +114,10 @@ router.get('/message', userController.getUserMessage)
 
 router.get('/announcement', userController.getUserAnnouncement)
 
+router.post(
+  '/url/bulk-performance-test',
+  urlCheckController.checkUrl,
+  userController.bulkCreate,
+)
+
 export = router

@@ -512,6 +512,72 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
     return rankingAlgorithm
   }
+
+  private randomString = (length = 10): string => {
+    return Math.random().toString(16).substring(2, length)
+  }
+
+  private createShortlinksObj(tags: string): {
+    shortUrl: string
+    longUrl: string
+    userId: number
+    tagStrings: string
+    isFile: boolean
+  }[] {
+    const shortLinks: string[] = []
+    for (let i = 0; i < 1000; i += 1) {
+      shortLinks.push(this.randomString(10))
+    }
+    const shortLinksObj = shortLinks.map((shortlink) => {
+      return {
+        shortUrl: shortlink,
+        longUrl: 'https://nusmods.com',
+        userId: 1,
+        tagStrings: tags,
+        isFile: false,
+      }
+    })
+
+    return shortLinksObj
+  }
+
+  public bulkCreate: (
+    properties: {
+      userId: number
+      shortUrl: string
+      longUrl?: string
+      tags?: string[]
+    },
+    file?: StorableFile,
+  ) => Promise<StorableUrl> = async (properties) => {
+    const newUrl = await sequelize.transaction(async (t) => {
+      const tagStrings = properties.tags
+        ? properties.tags.join(tagSeparator)
+        : ''
+      const shortLinksObj = this.createShortlinksObj(tagStrings)
+
+      const urls = await Url.bulkCreate(shortLinksObj, {
+        transaction: t,
+        individualHooks: false,
+      })
+      if (properties.tags) {
+        const tags = await this.tagRepository.upsertTags(properties.tags, t)
+        // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+
+        await Promise.all(
+          tags.map((tag) => {
+            // @ts-ignore, addTag is provided by Sequelize during run time
+            return tag.addUrls(urls, { transaction: t })
+          }),
+        )
+      }
+
+      // Do a fresh read which eagerly loads the associated UrlClicks field.
+      return {}
+    })
+
+    return {} as StorableUrl
+  }
 }
 
 export default UrlRepository

@@ -54,4 +54,14 @@ export interface UrlRepositoryInterface {
   rawDirectorySearch: (
     conditions: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated>
+
+  bulkCreate(
+    properties: {
+      userId: number
+      shortUrl: string
+      longUrl?: string
+      tags?: string[]
+    },
+    file?: StorableFile,
+  ): Promise<StorableUrl>
 }
