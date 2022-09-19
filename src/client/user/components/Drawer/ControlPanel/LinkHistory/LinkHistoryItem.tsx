@@ -41,6 +41,12 @@ const useStyles = makeStyles((theme) =>
     timelineConnector: {
       backgroundColor: theme.palette.primary.light,
     },
+    chip: {
+      backgroundColor: theme.palette.primary.light,
+      color: '#FFFFFF',
+      borderRadius: 5,
+      marginRight: 2,
+    },
   }),
 )
 
@@ -64,12 +70,13 @@ type LinkHistoryItemProps = {
 }
 
 function TagList({ tagStrings }: { tagStrings: string }) {
+  const classes = useStyles()
   const tags = tagStrings.split(TAG_SEPARATOR)
   return (
     <>
       {tagStrings === ''
         ? 'no tag'
-        : tags.map((tag) => <Chip label={tag} style={{ marginRight: 2 }} />)}
+        : tags.map((tag) => <Chip label={tag} className={classes.chip} />)}
     </>
   )
 }
