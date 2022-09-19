@@ -22,7 +22,7 @@ export class TagRepository implements TagRepositoryInterface {
   ) => Promise<string[]> = async (conditions) => {
     const tags = await Tag.scope(['defaultScope']).findAll({
       where: {
-        tagString: {
+        tagKey: {
           [Op.like]: `${conditions.searchText}%`,
         },
       },
