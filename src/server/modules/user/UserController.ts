@@ -249,7 +249,7 @@ export class UserController {
     const { userId } = req.body
     let { searchText = '' } = req.query
     const limit = 5
-    searchText = searchText.toString()
+    searchText = searchText.toString().toLowerCase()
     const queryConditions = { searchText, userId, limit }
     const validationResult = userTagsQueryConditions.validate(queryConditions)
     if (validationResult.error) {
