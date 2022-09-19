@@ -135,6 +135,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                     ? theme.palette.primary.dark
                     : theme.palette.background.default
                 }
+                size={16}
               />
               <Typography
                 variant="body2"
