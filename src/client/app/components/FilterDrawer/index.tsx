@@ -9,11 +9,12 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import SortButton from '../../../../../app/components/widgets/SortPanel/SortButton'
+import SortButton from '../widgets/SortPanel/SortButton'
 
 type FilterDrawerProps = {
-  onClick: (email: boolean) => void
-  selected: boolean
+  labels: string[]
+  selectedLabel: string
+  onClick: (label: string) => void
   isFilterOpen: boolean
   isMobileView: boolean
   setIsFilterOpen: (isFilterOpen: boolean) => void
@@ -34,11 +35,12 @@ const useStyles = makeStyles((theme) =>
 )
 
 /**
- * @component Filter dropdown that filters the search by keyword or email.
+ * @component Filter dropdown that filters the search by the given labels.
  */
 const FilterDrawer: FunctionComponent<FilterDrawerProps> = ({
+  labels,
+  selectedLabel,
   onClick,
-  selected,
   isFilterOpen,
   isMobileView,
   setIsFilterOpen,
@@ -65,22 +67,17 @@ const FilterDrawer: FunctionComponent<FilterDrawerProps> = ({
               </Typography>
               <Divider />
               <Grid>
-                <SortButton
-                  onClick={() => {
-                    onClick(false)
-                    setIsFilterOpen(false)
-                  }}
-                  columnLabel="Keyword"
-                  isSelected={!selected}
-                />
-                <SortButton
-                  onClick={() => {
-                    onClick(true)
-                    setIsFilterOpen(false)
-                  }}
-                  columnLabel="Email"
-                  isSelected={selected}
-                />
+                {labels.map((label) => (
+                  <SortButton
+                    onClick={() => {
+                      onClick(label)
+                      setIsFilterOpen(false)
+                    }}
+                    key={label}
+                    columnLabel={label}
+                    isSelected={label === selectedLabel}
+                  />
+                ))}
               </Grid>
             </Paper>
           </Collapse>
@@ -89,22 +86,17 @@ const FilterDrawer: FunctionComponent<FilterDrawerProps> = ({
         <Collapse in={isFilterOpen}>
           <Paper className={classes.filterPanel}>
             <Grid>
-              <SortButton
-                onClick={() => {
-                  onClick(false)
-                  setIsFilterOpen(false)
-                }}
-                columnLabel="Search by Keyword"
-                isSelected={!selected}
-              />
-              <SortButton
-                onClick={() => {
-                  onClick(true)
-                  setIsFilterOpen(false)
-                }}
-                columnLabel="Search by Email"
-                isSelected={selected}
-              />
+              {labels.map((label) => (
+                <SortButton
+                  onClick={() => {
+                    onClick(label)
+                    setIsFilterOpen(false)
+                  }}
+                  key={label}
+                  columnLabel={`Search by ${label}`}
+                  isSelected={label === selectedLabel}
+                />
+              ))}
             </Grid>
           </Paper>
         </Collapse>

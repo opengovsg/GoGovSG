@@ -13,7 +13,7 @@ import {
   dateOfCreationButton,
   drawer,
   fileTab,
-  filterPanel,
+  filterSortPanel,
   generateUrlImage,
   longUrl,
   longUrlTextField,
@@ -23,7 +23,7 @@ import {
   userActiveButton,
   userApplyButton,
   userFileButton,
-  userFilterPanelButton,
+  userFilterSortPanelButton,
   userInactiveButton,
   userLinkButton,
   userResetButton,
@@ -83,8 +83,8 @@ test('User Page test on filter search`', async (t) => {
 
   // Clicking on the button at the end of the search input should open the sort and filter panel
   await t
-    .click(userFilterPanelButton)
-    .expect(filterPanel.getStyleProperty('height'))
+    .click(userFilterSortPanelButton)
+    .expect(filterSortPanel.getStyleProperty('height'))
     .notEql('0px')
 
   // Links should be sorted by their created time in descending order when enabling sort by Date of creation and clicking apply
@@ -104,10 +104,10 @@ test('User Page test on filter search`', async (t) => {
   // Inactive links should be filtered out by checking only Active and clicking apply
   // Panel should be closed when apply is clicked
   await t
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userActiveButton)
     .click(userApplyButton)
-    .expect(filterPanel.getStyleProperty('height'))
+    .expect(filterSortPanel.getStyleProperty('height'))
     .eql('0px')
     // eslint-disable-next-line
     .expect(urlTable.child(1).child(1).child('div').child(0).child('h6').innerText)
@@ -116,9 +116,9 @@ test('User Page test on filter search`', async (t) => {
   // Active links should be filtered out by checking only Inactive and clicking apply
   // Panel should be closed and links sorted by created time with no filtering after clicking on reset. All links and files should be visible.
   await t
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userResetButton) // resets
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userInactiveButton)
     .click(userApplyButton)
     // eslint-disable-next-line
@@ -127,9 +127,9 @@ test('User Page test on filter search`', async (t) => {
 
   // File links should be filtered out by checking only Link and clicking apply
   await t
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userResetButton) // resets
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userLinkButton)
     .click(userApplyButton)
     // eslint-disable-next-line
@@ -138,9 +138,9 @@ test('User Page test on filter search`', async (t) => {
 
   // Non-file links should be filtered out by checking only File and clicking apply
   await t
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userResetButton) // resets
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(userFileButton)
     .click(userApplyButton)
     // eslint-disable-next-line
@@ -149,8 +149,8 @@ test('User Page test on filter search`', async (t) => {
 
   // Panel should be closed when clicking outside of it
   await t
-    .click(userFilterPanelButton)
+    .click(userFilterSortPanelButton)
     .click(clickAway)
-    .expect(filterPanel.getStyleProperty('height'))
+    .expect(filterSortPanel.getStyleProperty('height'))
     .eql('0px')
 })
