@@ -28,6 +28,7 @@ const prevUrlHistory = {
   userEmail: 'alexis@open.gov.sg',
   description: '',
   isFile: true,
+  tagStrings: '',
 }
 const currUrlHistory = {
   longUrl: 'https://google.com',
@@ -37,6 +38,39 @@ const currUrlHistory = {
   userEmail: 'alexis@open.gov.sg',
   description: '',
   isFile: true,
+  tagStrings: '',
+}
+
+const prevUrlHistoryWithTags = {
+  longUrl: 'https://abc.com',
+  state: 'INACTIVE',
+  shortUrl: 'abc',
+  createdAt: '2022-08-05T11:57:41.309Z',
+  userEmail: 'alexis@open.gov.sg',
+  description: '',
+  isFile: true,
+  tagStrings: 'one;tag-2;TaG_3',
+}
+const currUrlHistoryWithTags = {
+  longUrl: 'https://google.com',
+  state: 'INACTIVE',
+  shortUrl: 'abc',
+  createdAt: '2022-10-01T13:31:39.419Z',
+  userEmail: 'alexis@open.gov.sg',
+  description: '',
+  isFile: true,
+  tagStrings: 'one;tag-2',
+}
+
+const mockUrl = {
+  shortUrl: 'hello',
+  longUrl: 'https://open.gov.sg',
+  tagStrings: 'testing;akjhdksah',
+  state: 'ACTIVE',
+  clicks: 100,
+  isFile: false,
+  createdAt: '',
+  updatedAt: '',
 }
 
 /**
@@ -45,7 +79,37 @@ const currUrlHistory = {
 describe('LinkAuditService tests', () => {
   describe('computePairwiseChangeSet', () => {
     it('should correctly compute changes between two url records for all tracked keys', () => {
-      const keysToTrack = ['longUrl', 'state', 'userEmail'] as LinkChangeKey[]
+      const keysToTrack = [
+        'longUrl',
+        'state',
+        'userEmail',
+        'tagStrings',
+      ] as LinkChangeKey[]
+      const expectedChangeSet = service.computePairwiseChangeSet(
+        currUrlHistoryWithTags,
+        prevUrlHistoryWithTags,
+        keysToTrack,
+      )
+      expect(expectedChangeSet).toEqual(
+        expect.arrayContaining([
+          {
+            type: 'update',
+            key: 'tagStrings',
+            prevValue: 'one;tag-2;TaG_3',
+            currValue: 'one;tag-2',
+            updatedAt: '2022-10-01T13:31:39.419Z',
+          },
+          {
+            type: 'update',
+            key: 'longUrl',
+            prevValue: 'https://abc.com',
+            currValue: 'https://google.com',
+            updatedAt: '2022-10-01T13:31:39.419Z',
+          },
+        ]),
+      )
+      expect(expectedChangeSet).toHaveLength(2)
+
       expect(
         service.computePairwiseChangeSet(
           currUrlHistory,
@@ -77,9 +141,9 @@ describe('LinkAuditService tests', () => {
 
   describe('computeInitialChangeSet', () => {
     it('should correctly compute initial change set for all tracked keys', () => {
-      const keysToTrack = ['longUrl', 'state'] as LinkChangeKey[]
+      const keysToTrack = ['longUrl', 'state', 'tagStrings'] as LinkChangeKey[]
       expect(
-        service.computeInitialChangeSet(currUrlHistory, keysToTrack),
+        service.computeInitialChangeSet(currUrlHistoryWithTags, keysToTrack),
       ).toStrictEqual([
         {
           type: 'create',
@@ -93,6 +157,13 @@ describe('LinkAuditService tests', () => {
           key: 'state',
           prevValue: '',
           currValue: 'INACTIVE',
+          updatedAt: '2022-10-01T13:31:39.419Z',
+        },
+        {
+          type: 'create',
+          key: 'tagStrings',
+          prevValue: '',
+          currValue: 'one;tag-2',
           updatedAt: '2022-10-01T13:31:39.419Z',
         },
       ])
@@ -169,7 +240,6 @@ describe('LinkAuditService tests', () => {
 
   describe('findByShortUrl', () => {
     it('should retrieve url history records from repository', async () => {
-      const shortUrl = 'hello'
       const defaultLimit = 10
       const defaultOffset = 0
       const urlHistories = [currUrlHistory, prevUrlHistory]
@@ -191,29 +261,23 @@ describe('LinkAuditService tests', () => {
         },
       ] as LinkChangeSet[]
 
-      findOneUrlForUser.mockResolvedValue({
-        shortUrl,
-        longUrl: 'https://open.gov.sg',
-        state: 'ACTIVE',
-        clicks: 100,
-        isFile: false,
-        createdAt: '',
-        updatedAt: '',
-      })
+      findOneUrlForUser.mockResolvedValue(mockUrl)
       findByShortUrl.mockResolvedValue(urlHistories)
       getCountByShortUrl.mockResolvedValue(totalUrlHistories)
 
       jest.spyOn(service, 'getChangeSets').mockImplementation(() => changeSets)
 
-      await expect(service.getLinkAudit(123, shortUrl)).resolves.toStrictEqual({
+      await expect(
+        service.getLinkAudit(123, mockUrl.shortUrl),
+      ).resolves.toStrictEqual({
         changes: changeSets,
         totalCount: totalUrlHistories,
         limit: defaultLimit,
         offset: defaultOffset,
       })
-      expect(getCountByShortUrl).toHaveBeenCalledWith(shortUrl)
+      expect(getCountByShortUrl).toHaveBeenCalledWith(mockUrl.shortUrl)
       expect(findByShortUrl).toHaveBeenCalledWith(
-        shortUrl,
+        mockUrl.shortUrl,
         defaultLimit + 1,
         defaultOffset,
       )
@@ -222,7 +286,6 @@ describe('LinkAuditService tests', () => {
     })
 
     it('should forward limit and offset to repository', async () => {
-      const shortUrl = 'hello'
       const limit = 1
       const offset = 0
       const urlHistories = [currUrlHistory, prevUrlHistory]
@@ -237,52 +300,39 @@ describe('LinkAuditService tests', () => {
         },
       ] as LinkChangeSet[]
 
-      findOneUrlForUser.mockResolvedValue({
-        shortUrl,
-        longUrl: 'https://open.gov.sg',
-        state: 'ACTIVE',
-        clicks: 100,
-        isFile: false,
-        createdAt: '',
-        updatedAt: '',
-      })
+      findOneUrlForUser.mockResolvedValue(mockUrl)
       findByShortUrl.mockResolvedValue(urlHistories)
       getCountByShortUrl.mockResolvedValue(totalUrlHistories)
 
       jest.spyOn(service, 'getChangeSets').mockImplementation(() => changeSets)
 
       await expect(
-        service.getLinkAudit(123, shortUrl, limit, offset),
+        service.getLinkAudit(123, mockUrl.shortUrl, limit, offset),
       ).resolves.toStrictEqual({
         changes: changeSets,
         totalCount: totalUrlHistories,
         limit,
         offset,
       })
-      expect(getCountByShortUrl).toHaveBeenCalledWith(shortUrl)
-      expect(findByShortUrl).toHaveBeenCalledWith(shortUrl, limit + 1, offset)
+      expect(getCountByShortUrl).toHaveBeenCalledWith(mockUrl.shortUrl)
+      expect(findByShortUrl).toHaveBeenCalledWith(
+        mockUrl.shortUrl,
+        limit + 1,
+        offset,
+      )
       expect(service.getChangeSets).toHaveBeenCalledWith(urlHistories, false)
       jest.restoreAllMocks()
     })
 
     it('should throw error if invalid offset or limit provided', async () => {
-      const shortUrl = 'hello'
       const limit = 10
       const offset = 100000002
 
-      findOneUrlForUser.mockResolvedValue({
-        shortUrl,
-        longUrl: 'https://open.gov.sg',
-        state: 'ACTIVE',
-        clicks: 100,
-        isFile: false,
-        createdAt: '',
-        updatedAt: '',
-      })
+      findOneUrlForUser.mockResolvedValue(mockUrl)
       findByShortUrl.mockResolvedValue([])
 
       await expect(
-        service.getLinkAudit(123, shortUrl, limit, offset),
+        service.getLinkAudit(123, mockUrl.shortUrl, limit, offset),
       ).rejects.toThrow('Invalid offset or limit provided')
     })
   })

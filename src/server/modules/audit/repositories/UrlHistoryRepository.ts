@@ -39,6 +39,7 @@ export class UrlHistoryRepository implements interfaces.UrlHistoryRepository {
         userEmail: urlHistory.user.email,
         description: urlHistory.description,
         isFile: urlHistory.isFile,
+        tagStrings: urlHistory.tagStrings,
       }
     })
   }
