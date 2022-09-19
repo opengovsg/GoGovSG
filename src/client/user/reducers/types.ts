@@ -53,6 +53,7 @@ export type LinkChangeKey =
   | 'state'
   | 'userEmail'
   | 'longUrl'
+  | 'tagStrings'
 
 export interface LinkChangeSet {
   type: LinkChangeType

@@ -1,7 +1,7 @@
 import React from 'react'
 import moment from 'moment-timezone'
 
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Chip, Typography, createStyles, makeStyles } from '@material-ui/core'
 import {
   TimelineConnector,
   TimelineContent,
@@ -13,6 +13,9 @@ import {
 
 import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types'
 import { useDrawerState } from '../..'
+import { TAG_SEPARATOR } from '../../../../../../shared/constants'
+
+const TAG_STRING_FIELD = 'tagStrings'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -47,6 +50,7 @@ const linkChangeKeyDictionary: { [key in LinkChangeKey]: string } = {
   state: 'Link Status',
   userEmail: 'Link Owner',
   longUrl: 'Original Link',
+  tagStrings: 'Link Tags',
 }
 
 const convertToDateString = (oldDateString: string): string => {
@@ -57,6 +61,17 @@ const convertToDateString = (oldDateString: string): string => {
 type LinkHistoryItemProps = {
   changeSet: LinkChangeSet
   removeBottomConnector: boolean
+}
+
+function TagList({ tagStrings }: { tagStrings: string }) {
+  const tags = tagStrings.split(TAG_SEPARATOR)
+  return (
+    <>
+      {tagStrings === ''
+        ? 'no tag'
+        : tags.map((tag) => <Chip label={tag} style={{ marginRight: 2 }} />)}
+    </>
+  )
 }
 
 export default function LinkHistoryItem({
@@ -86,9 +101,17 @@ export default function LinkHistoryItem({
       <Typography variant="h6">
         {linkChangeKeyDictionary[currKey]}
         <span className={classes.regularText}> was updated from </span>
-        {prevValue}
+        {currKey === TAG_STRING_FIELD ? (
+          <TagList tagStrings={prevValue.toString()} />
+        ) : (
+          prevValue
+        )}
         <span className={classes.regularText}> to </span>
-        {currValue}
+        {currKey === TAG_STRING_FIELD ? (
+          <TagList tagStrings={currValue.toString()} />
+        ) : (
+          currValue
+        )}
       </Typography>
     )
   }
