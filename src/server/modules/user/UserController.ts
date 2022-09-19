@@ -59,14 +59,9 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, longUrl, shortUrl, tags }: UrlCreationRequest = req.body
+    const { userId, tags }: UrlCreationRequest = req.body
     try {
-      const result = await this.urlManagementService.bulkCreate(
-        userId,
-        shortUrl,
-        longUrl,
-        tags,
-      )
+      const result = await this.urlManagementService.bulkCreate(userId, tags)
       res.ok(result)
       return
     } catch (error) {

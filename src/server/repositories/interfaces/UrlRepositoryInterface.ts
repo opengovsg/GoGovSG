@@ -58,8 +58,6 @@ export interface UrlRepositoryInterface {
   bulkCreate(
     properties: {
       userId: number
-      shortUrl: string
-      longUrl?: string
       tags?: string[]
     },
     file?: StorableFile,

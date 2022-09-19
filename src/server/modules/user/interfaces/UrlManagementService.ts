@@ -6,12 +6,7 @@ import {
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 
 export interface UrlManagementService {
-  bulkCreate: (
-    userId: number,
-    shortUrl: string,
-    longUrl?: string,
-    tags?: string[],
-  ) => Promise<StorableUrl>
+  bulkCreate: (userId: number, tags?: string[]) => Promise<StorableUrl>
   createUrl: (
     userId: number,
     shortUrl: string,

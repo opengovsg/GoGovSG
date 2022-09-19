@@ -517,7 +517,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     return Math.random().toString(16).substring(2, length)
   }
 
-  private createShortlinksObj(tags: string): {
+  private createShortlinksObj(
+    user: number,
+    tags: string,
+  ): {
     shortUrl: string
     longUrl: string
     userId: number
@@ -532,7 +535,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       return {
         shortUrl: shortlink,
         longUrl: 'https://nusmods.com',
-        userId: 1,
+        userId: user,
         tagStrings: tags,
         isFile: false,
       }
@@ -544,8 +547,6 @@ export class UrlRepository implements UrlRepositoryInterface {
   public bulkCreate: (
     properties: {
       userId: number
-      shortUrl: string
-      longUrl?: string
       tags?: string[]
     },
     file?: StorableFile,
@@ -554,7 +555,10 @@ export class UrlRepository implements UrlRepositoryInterface {
       const tagStrings = properties.tags
         ? properties.tags.join(tagSeparator)
         : ''
-      const shortLinksObj = this.createShortlinksObj(tagStrings)
+      const shortLinksObj = this.createShortlinksObj(
+        properties.userId,
+        tagStrings,
+      )
 
       const urls = await Url.bulkCreate(shortLinksObj, {
         transaction: t,
