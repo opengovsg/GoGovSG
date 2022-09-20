@@ -52,8 +52,12 @@ export function isValidShortUrl(url: string, allowBlank = false): boolean {
   return allowBlank ? /^[a-z0-9-]*$/.test(url) : SHORT_URL_REGEX.test(url)
 }
 
-export function isValidTag(tag: string): boolean {
-  return TAG_STRING_REGEX.test(tag) && tag.length <= MAX_TAG_LENGTH
+// Tests if a tag is valid.
+export function isValidTag(tag: string, allowBlank = false): boolean {
+  return (
+    (allowBlank && tag === '') ||
+    (TAG_STRING_REGEX.test(tag) && tag.length <= MAX_TAG_LENGTH)
+  )
 }
 
 // Tests the validity of a long url. Will return true if blank.

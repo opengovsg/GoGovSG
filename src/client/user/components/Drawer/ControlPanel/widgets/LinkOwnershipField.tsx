@@ -7,7 +7,7 @@ import ConfigOption, {
 } from '../../../../widgets/ConfigOption'
 import { useDrawerState } from '../../index'
 import useShortLink from '../util/shortlink'
-import DrawerTooltip from './DrawerTooltip'
+import Tooltip from '../../../../widgets/Tooltip'
 import PrefixableTextField from '../../../../widgets/PrefixableTextField'
 import TrailingButton from './TrailingButton'
 
@@ -27,7 +27,7 @@ const LinkOwnershipField: FunctionComponent<LinkOwnershipFieldProps> = ({
   const linkOwnershipHelp = (
     <>
       Link owner{' '}
-      <DrawerTooltip
+      <Tooltip
         title={`Links can only be transferred to an existing ${i18next.t(
           'general.appTitle',
         )} user`}

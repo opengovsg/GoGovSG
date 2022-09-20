@@ -10,6 +10,8 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
+import FilterDrawer from '../../../../app/components/FilterDrawer'
+import ArrowDownIcon from '../../../../app/components/widgets/ArrowDownIcon'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
 import SearchSortIcon from '../../../../app/components/widgets/SearchSortIcon'
 import SearchIcon from '../../../../app/components/widgets/SearchIcon'
@@ -17,8 +19,6 @@ import EmailIcon from '../../../../app/components/widgets/EmailIcon'
 import { sortOptions } from '../../../constants'
 import { SearchResultsSortOrder } from '../../../../../shared/search'
 import SortDrawer from './SortDrawer'
-import ArrowDownIcon from './SortDrawer/widgets/ArrowDownIcon'
-import FilterDrawer from './FilterDrawer'
 
 type DirectoryInputProps = {
   showAdornments?: boolean
@@ -290,8 +290,11 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
           }}
         />
         <FilterDrawer
-          onClick={setIsEmail}
-          selected={isEmail}
+          labels={['Keyword', 'Email']}
+          selectedLabel={isEmail ? 'Email' : 'Keyword'}
+          onClick={(label) => {
+            setIsEmail(label === 'Email')
+          }}
           isFilterOpen={isFilterOpen}
           isMobileView={isMobileView}
           setIsFilterOpen={setIsFilterOpen}
