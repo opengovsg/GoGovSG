@@ -38,7 +38,7 @@ import Tooltip from '../../widgets/Tooltip'
 import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
 type CreateLinkFormProps = {
-  onSubmitLink: (history: History, tags: string[]) => {}
+  onSubmitLink: (history: History) => {}
   onSubmitFile: (file: File | null) => {}
 }
 
@@ -48,6 +48,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 }: CreateLinkFormProps) => {
   const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
   const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
+  const tags = useSelector((state: GoGovReduxState) => state.user.tags)
   const isUploading = useSelector(
     (state: GoGovReduxState) => state.user.isUploading,
   )
@@ -74,7 +75,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState<File | null>(null)
-  const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
 
   const classes = useCreateLinkFormStyles({
@@ -117,7 +117,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             if (isFile) {
               onSubmitFile(file)
             } else {
-              onSubmitLink(history, tags)
+              onSubmitLink(history)
             }
           }}
         >
@@ -321,12 +321,9 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
           </div>
           <div>
             <TagsAutocomplete
-              tags={tags}
-              setTags={setTags}
               tagInput={tagInput}
               setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
-              placeholder={tags.length < MAX_NUM_TAGS_PER_LINK ? 'Add tag' : ''}
             />
           </div>
           <Button

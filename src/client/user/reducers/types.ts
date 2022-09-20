@@ -86,4 +86,5 @@ export type UserState = {
   } | null
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
+  tags: string[]
 }

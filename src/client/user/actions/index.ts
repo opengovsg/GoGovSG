@@ -22,6 +22,7 @@ import {
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
+  SetTagsAction,
   SetUploadFileErrorAction,
   SetUrlFilterAction,
   SetUrlTableConfigAction,
@@ -613,7 +614,7 @@ const urlCreated = (
  * @returns Promise<bool> Whether creation succeeded.
  */
 const createUrlOrRedirect =
-  (history: History, tags: string[]) =>
+  (history: History) =>
   async (
     dispatch: ThunkDispatch<
       GoGovReduxState,
@@ -628,7 +629,7 @@ const createUrlOrRedirect =
     getState: GetReduxState,
   ) => {
     const { user } = getState()
-    const { shortUrl } = user
+    const { shortUrl, tags } = user
     let { longUrl } = user
 
     // Test for malformed short URL
@@ -801,6 +802,12 @@ const uploadFile =
     }
   }
 
+// For setting tags value in the tags autocomplete input box
+const setTags: (tags: string[]) => SetTagsAction = (tags) => ({
+  type: UserAction.SET_TAGS,
+  payload: tags,
+})
+
 export default {
   getUrlsForUser,
   getLinkHistoryForUser,
@@ -833,4 +840,5 @@ export default {
   updateUrlInformation,
   setFileUploadState,
   setUrlUploadState,
+  setTags,
 }
