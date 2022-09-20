@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Grid,
   Hidden,
@@ -15,11 +15,14 @@ import fileIcon from '@assets/components/user/user-link-table/file-icon.svg'
 import clickCountIcon from '@assets/components/user/user-link-table/click-count-icon.svg'
 
 import TableTag from './TableTag'
+import userActions from '../../../../actions'
+import { UrlTableConfig } from '../../../../reducers/types'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import { DrawerActions } from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../app/util/format'
 import CopyButton from '../../../../widgets/CopyButton'
+import { GoGovReduxState } from '../../../../../app/reducers/types'
 
 type StyleProps = {
   appMargins: number
@@ -189,27 +192,31 @@ const useStyles = makeStyles((theme) => {
 })
 
 export default function EnhancedTableBody() {
-  const urls: any[] = useSelector((state: any) => state.user.urls)
+  const urls = useSelector((state: GoGovReduxState) => state.user.urls)
+  const tableConfig = useSelector(
+    (state: GoGovReduxState) => state.user.tableConfig,
+  )
   const lastCreatedLink = useSelector(
     (state: any) => state.user.lastCreatedLink,
   )
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
+  const dispatch = useDispatch()
   const drawerDispatch = useDrawerDispatch()
   const openControlPanel = (shortlink: string) =>
     drawerDispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
-  const applySearchByTag = (tag: string) => {
-    // TODO: apply searching by tag
-    console.log(tag)
-    // dispatch(userActions.isFetchingUrls(true))
-    // dispatch(
-    //   userActions.setUrlTableConfig({
-    //     searchText: tag,
-    //     pageNumber: 0,
-    //   } as UrlTableConfig),
-    // )
-    // dispatch(userActions.getUrlsForUser())
+  const setSearchByTag = (tag: string) => {
+    // TODO: refactor to use TAG_SEPARATOR instead of ';'
+    const newSearchText =
+      tableConfig.isTag && tableConfig.searchText
+        ? `${tableConfig.searchText};${tag}` // append tag to existing tags
+        : tag
+    const newConfig: Partial<UrlTableConfig> = {
+      isTag: true,
+      searchText: newSearchText,
+    }
+    dispatch(userActions.setUrlTableConfig(newConfig))
   }
 
   if (urls.length > 0) {
@@ -260,7 +267,7 @@ export default function EnhancedTableBody() {
                         <TableTag
                           key={tag}
                           tag={tag}
-                          onClick={() => applySearchByTag(tag)}
+                          onClick={() => setSearchByTag(tag)}
                         />
                       ))}
                     </Grid>

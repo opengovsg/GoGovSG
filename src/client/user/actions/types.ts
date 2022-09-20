@@ -141,7 +141,7 @@ export type ToggleUrlStateSuccessAction = ReduxPayloadAction<
 
 export type SetUrlTableConfigAction = ReduxPayloadAction<
   UserAction.SET_URL_TABLE_CONFIG,
-  UrlTableConfig
+  Partial<UrlTableConfig>
 >
 
 export type UpdateUrlCountAction = ReduxPayloadAction<

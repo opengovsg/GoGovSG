@@ -19,6 +19,7 @@ export enum SortDirection {
 }
 
 export type UrlTableConfig = {
+  isTag: boolean
   numberOfRows: number
   pageNumber: number
   sortDirection: SortDirection
