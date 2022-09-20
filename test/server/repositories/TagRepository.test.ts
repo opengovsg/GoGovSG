@@ -32,7 +32,7 @@ describe('TagRepository', () => {
     expect(scope).toHaveBeenCalledWith(['defaultScope'])
     expect(findAll).toHaveBeenCalledWith({
       where: {
-        tagString: {
+        tagKey: {
           [Op.like]: `${conditions.searchText}%`,
         },
       },
