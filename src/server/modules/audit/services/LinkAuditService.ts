@@ -29,7 +29,7 @@ export class LinkAuditService implements interfaces.LinkAuditService {
   ) => interfaces.LinkChangeSet[] = (
     currUrlHistory,
     prevUrlHistory,
-    keysToTrack = ['state', 'userEmail', 'longUrl'],
+    keysToTrack = ['state', 'userEmail', 'longUrl', 'tagStrings'],
   ) => {
     const changeSets: interfaces.LinkChangeSet[] = []
 

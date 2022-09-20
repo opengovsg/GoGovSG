@@ -1,11 +1,15 @@
 import React, { FunctionComponent } from 'react'
-import { Tooltip, createStyles, makeStyles } from '@material-ui/core'
+import {
+  Tooltip as MuiTooltip,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core'
 
 import helpIcon from '@assets/shared/help-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    drawerTooltip: {
+    tooltip: {
       whiteSpace: 'nowrap',
       maxWidth: 'unset',
       [theme.breakpoints.up('md')]: {
@@ -20,23 +24,23 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-type DrawerTooltipProps = {
+type TooltipProps = {
   title: string
   imageAltText: string
 }
 
-const DrawerTooltip: FunctionComponent<DrawerTooltipProps> = ({
+const Tooltip: FunctionComponent<TooltipProps> = ({
   title,
   imageAltText,
-}: DrawerTooltipProps) => {
+}: TooltipProps) => {
   const classes = useStyles()
 
   return (
-    <Tooltip
+    <MuiTooltip
       title={title}
       arrow
       placement="top"
-      classes={{ tooltip: classes.drawerTooltip }}
+      classes={{ tooltip: classes.tooltip }}
     >
       <img
         className={classes.ownershipHelpIcon}
@@ -44,8 +48,8 @@ const DrawerTooltip: FunctionComponent<DrawerTooltipProps> = ({
         alt={imageAltText}
         draggable={false}
       />
-    </Tooltip>
+    </MuiTooltip>
   )
 }
 
-export default DrawerTooltip
+export default Tooltip

@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify'
 import { Op } from 'sequelize'
-import dogstatsd from '../util/dogstatsd'
 import {
   StorableUrl,
   StorableUser,
@@ -12,6 +11,7 @@ import { User, UserType } from '../models/user'
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
 import { Url, UrlType } from '../models/url'
+import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
 import { Tag } from '../models/tag'
 import { UrlClicks } from '../models/statistics/clicks'
@@ -55,7 +55,7 @@ export class UserRepository implements UserRepositoryInterface {
   ) => {
     return User.findOrCreate({ where: { email } }).then(([user, created]) => {
       if (created) {
-        dogstatsd.increment('user.new', 1, 1)
+        dogstatsd.increment(USER_NEW, 1, 1)
       }
       return user
     })
