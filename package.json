@@ -58,7 +58,7 @@
     "dd-trace": "^2.11.0",
     "ejs": "^3.1.7",
     "express": "^4.16.3",
-    "express-fileupload": "^1.2.1",
+    "express-fileupload": "^1.4.0",
     "express-joi-validation": "^4.0.3",
     "express-rate-limit": "^5.3.0",
     "express-session": "^1.17.2",
