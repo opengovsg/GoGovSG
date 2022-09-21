@@ -60,7 +60,7 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     const fileType = await FileType.fromBuffer(data)
     const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
 
-    if (allowedExtensions) {
+    if (allowedExtensions && allowedExtensions.length > 0) {
       return allowedExtensions.includes(extension)
     }
     return this.allowedFileExtensions.includes(extension)
