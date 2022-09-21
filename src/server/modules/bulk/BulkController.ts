@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { injectable } from 'inversify'
 import paparse from 'papaparse'
 import { ogHostname } from '../../config'
-import { BULK_UPLOAD_HEADER, BULK_UPLOAD_LIMIT } from '../../constants'
+import { BULK_UPLOAD_HEADER, BULK_UPLOAD_MAX } from '../../constants'
 
 import * as validators from '../../../shared/util/validation'
 
@@ -32,7 +32,7 @@ export class BulkController {
         if (schema.rows === 1) {
           validRow = schema.rows === 1 && rowData[0] === BULK_UPLOAD_HEADER
         } else {
-          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_LIMIT
+          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX + 1 // rows include header
           const onlyOneColumn = rowData.length === 1
           const isNotBlacklisted = !validators.isBlacklisted(rowData[0])
           const isNotEmpty = rowData[0].length > 0

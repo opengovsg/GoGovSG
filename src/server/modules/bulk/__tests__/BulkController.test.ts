@@ -1,8 +1,9 @@
 import httpMocks from 'node-mocks-http'
 import { Request } from 'express'
-import { BULK_UPLOAD_HEADER } from '../../../constants'
+import { BULK_UPLOAD_HEADER, BULK_UPLOAD_MAX } from '../../../constants'
 import { BulkController } from '../BulkController'
 import blackListedSites from '../../../resources/blacklist'
+import { ogHostname } from '../../../config'
 
 /**
  * Creates a mock request with mock file in request body.
@@ -16,31 +17,56 @@ function createRequestWithFile(file: any): Request {
   })
 }
 
-type InvalidUrlTest = {
-  invalidUrl: string
+type UrlTest = {
+  url: string
   testName: string
 }
 
-const invalidUrlTests: InvalidUrlTest[] = [
+const invalidUrlTests: UrlTest[] = [
   {
-    invalidUrl: '',
+    url: '',
     testName: 'fails with empty row',
   },
   {
-    invalidUrl: 'http://nusmods.com`',
+    url: 'http://nusmods.com',
     testName: 'fails with non http url',
   },
   {
-    invalidUrl: 'https://nusmods.com,http://nusmods.com',
+    url: 'https://nusmods.com,http://nusmods.com',
     testName: 'fails with a row with more than one column',
   },
   {
-    invalidUrl: `${blackListedSites[0]}`,
+    url: `${blackListedSites[0]}`,
     testName: 'fails with a row with blacklisted url',
   },
   {
-    invalidUrl: 'https://nusmods.comヽ(•‿•)ノ',
+    url: 'https://nusmods.comヽ(•‿•)ノ',
     testName: 'fails with rows with invalid characters',
+  },
+  {
+    url: `https://${ogHostname}/shortlink`,
+    testName: 'fails with rows with circular redirects',
+  },
+  {
+    url: Array(BULK_UPLOAD_MAX + 1)
+      .fill(1)
+      .map((_) => 'https://nusmods.com')
+      .join('\r\n'),
+    testName: 'fails with more than 1000 valid links',
+  },
+]
+
+const validUrlTests: UrlTest[] = [
+  {
+    url: `https://nusmods.com`,
+    testName: 'passes with one valid row',
+  },
+  {
+    url: Array(BULK_UPLOAD_MAX)
+      .fill(1)
+      .map((_) => 'https://nusmods.com')
+      .join('\r\n'),
+    testName: 'passes with maximum valid rows',
   },
 ]
 describe('BulkController test', () => {
@@ -49,7 +75,10 @@ describe('BulkController test', () => {
 
   beforeEach(() => {
     badRequest.mockClear()
+    jest.resetModules()
   })
+
+  afterAll(jest.resetModules)
 
   it('does not accept file array', async () => {
     const req = createRequestWithFile([])
@@ -73,28 +102,27 @@ describe('BulkController test', () => {
     })
   })
 
-  it('passes with valid file', async () => {
-    const file = {
-      data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\nhttps://nusmods.com`),
-      name: 'file.csv',
-    }
+  validUrlTests.forEach((validUrlTest) => {
+    it(validUrlTest.testName, async () => {
+      const file = {
+        data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\n${validUrlTest.url}`),
+        name: 'file.csv',
+      }
+      const req = createRequestWithFile(file)
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
 
-    const req = createRequestWithFile(file)
-    const res: any = httpMocks.createResponse()
-    res.ok = jest.fn()
+      await controller.csvValidation(req, res)
 
-    await controller.csvValidation(req, res)
-
-    expect(res.ok).toHaveBeenCalledWith({
-      isValid: true,
+      expect(res.ok).toHaveBeenCalledWith({
+        isValid: true,
+      })
     })
   })
   invalidUrlTests.forEach((invalidUrlTest) => {
     it(invalidUrlTest.testName, async () => {
       const file = {
-        data: Buffer.from(
-          `${BULK_UPLOAD_HEADER}\r\n${invalidUrlTest.invalidUrl}`,
-        ),
+        data: Buffer.from(`${BULK_UPLOAD_HEADER}\r\n${invalidUrlTest.url}`),
         name: 'file.csv',
       }
       const req = createRequestWithFile(file)
