@@ -22,6 +22,7 @@ import {
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
+  SetTagsAction,
   SetUploadFileErrorAction,
   SetUrlFilterAction,
   SetUrlTableConfigAction,
@@ -48,7 +49,7 @@ import {
 } from '../../app/util/requests'
 import rootActions from '../../app/components/pages/RootPage/actions'
 import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url'
-import { isValidUrl } from '../../../shared/util/validation'
+import { isValidTags, isValidUrl } from '../../../shared/util/validation'
 import { LOGIN_PAGE } from '../../app/util/types'
 import {
   LinkChangeSet,
@@ -609,6 +610,7 @@ const urlCreated = (
  * If user is not logged in, the createUrl call returns unauthorized,
  * get them to login, else create the url.
  * @param history
+ * @param tags
  * @returns Promise<bool> Whether creation succeeded.
  */
 const createUrlOrRedirect =
@@ -627,7 +629,7 @@ const createUrlOrRedirect =
     getState: GetReduxState,
   ) => {
     const { user } = getState()
-    const { shortUrl } = user
+    const { shortUrl, tags } = user
     let { longUrl } = user
 
     // Test for malformed short URL
@@ -663,7 +665,23 @@ const createUrlOrRedirect =
       return
     }
 
-    const response = await postJson('/api/user/url', { longUrl, shortUrl })
+    if (!isValidTags(tags)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with url unsuccessful')
+      GAEvent('modal page', 'create link from url', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+      return
+    }
+
+    const response = await postJson('/api/user/url', {
+      longUrl,
+      shortUrl,
+      tags,
+    })
 
     if (!response.ok) {
       // Sentry analytics: create link with url fail
@@ -784,6 +802,12 @@ const uploadFile =
     }
   }
 
+// For setting tags value in the tags autocomplete input box
+const setTags: (tags: string[]) => SetTagsAction = (tags) => ({
+  type: UserAction.SET_TAGS,
+  payload: tags,
+})
+
 export default {
   getUrlsForUser,
   getLinkHistoryForUser,
@@ -816,4 +840,5 @@ export default {
   updateUrlInformation,
   setFileUploadState,
   setUrlUploadState,
+  setTags,
 }
