@@ -2,6 +2,7 @@ import validator from 'validator'
 import { parse } from 'url'
 
 import blacklist from '../../server/resources/blacklist'
+import { MAX_NUM_TAGS_PER_LINK } from '../constants'
 
 export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
@@ -57,6 +58,15 @@ export function isValidTag(tag: string, allowBlank = false): boolean {
   return (
     (allowBlank && tag === '') ||
     (TAG_STRING_REGEX.test(tag) && tag.length <= MAX_TAG_LENGTH)
+  )
+}
+
+// Tests if a set of tags for a link is valid.
+export function isValidTags(tags: string[]): boolean {
+  return (
+    tags.every((tag) => isValidTag(tag)) &&
+    tags.length <= MAX_NUM_TAGS_PER_LINK &&
+    new Set(tags).size === tags.length
   )
 }
 
