@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { createStyles, makeStyles } from '@material-ui/core'
+import {
+  createStyles,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core'
+import _ from 'lodash'
 
 import useShortLink from '../util/shortlink'
 import { useDrawerState } from '../../index'
@@ -9,6 +15,8 @@ import ConfigOption, {
 import TagsAutocomplete from '../../../../widgets/TagsAutocomplete'
 import Tooltip from '../../../../widgets/Tooltip'
 import { MAX_NUM_TAGS_PER_LINK } from '../../../../../../shared/constants'
+import TrailingButton from './TrailingButton'
+import { isValidTags } from '../../../../../../shared/util/validation'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -19,7 +27,9 @@ const useStyles = makeStyles((theme) =>
 )
 
 export default function TagsEditor() {
+  const theme = useTheme()
   const classes = useStyles()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
   const drawerStates = useDrawerState()
   const { shortLinkState, shortLinkDispatch } = useShortLink(
@@ -28,11 +38,6 @@ export default function TagsEditor() {
   const initialTags = shortLinkState?.tags || []
   const [tags, setTags] = useState<string[]>(initialTags)
   const [tagInput, setTagInput] = useState('')
-
-  const setTagsAndApplyEdit = (tags: string[]) => {
-    setTags(tags)
-    shortLinkDispatch?.applyEditTags(tags)
-  }
 
   return (
     <ConfigOption
@@ -49,15 +54,28 @@ export default function TagsEditor() {
         <div className={classes.tagsAutoCompleteWrapper}>
           <TagsAutocomplete
             tags={tags}
-            setTags={setTagsAndApplyEdit}
+            setTags={setTags}
             tagInput={tagInput}
             setTagInput={setTagInput}
             disabled={tags.length >= MAX_NUM_TAGS_PER_LINK}
           />
         </div>
       }
-      trailing={null}
-      trailingPosition={TrailingPosition.none}
+      trailing={
+        <TrailingButton
+          disabled={
+            !isValidTags(tags) ||
+            _.isEqual([...tags].sort(), [...initialTags].sort())
+          }
+          onClick={() => shortLinkDispatch?.applyEditTags(tags)}
+          fullWidth={isMobileView}
+          variant={isMobileView ? 'contained' : 'outlined'}
+        >
+          Save
+        </TrailingButton>
+      }
+      wrapTrailing={isMobileView}
+      trailingPosition={TrailingPosition.end}
     />
   )
 }
