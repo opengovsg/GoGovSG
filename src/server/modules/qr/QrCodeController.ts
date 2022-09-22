@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
+import jszip from 'jszip'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import png from 'upng-js'
 import { UrlRepositoryInterface } from '../../repositories/interfaces/UrlRepositoryInterface'
 
 import ImageFormat from '../../../shared/util/image-format'
@@ -31,6 +34,10 @@ export class QrCodeController {
     return !!(await this.urlRepository.findByShortUrlWithTotalClicks(shortUrl))
   }
 
+  private randomString = (length = 10): string => {
+    return Math.random().toString(16).substring(2, length)
+  }
+
   createGoQrCode: (req: Request, res: Response) => Promise<void> = async (
     req,
     res,
@@ -48,7 +55,31 @@ export class QrCodeController {
 
     // Creates the QR code and sends it to the client.
     const buffer = await this.qrCodeService.createGoQrCode(goShortLink, format)
-    // Provides callee a proposed filename for image.
+
+    const startTime = Date.now()
+    const shortLinks: string[] = []
+    for (let i = 0; i < 1; i += 1) {
+      shortLinks.push(`${this.ogUrl}/${this.randomString(10)}`)
+    }
+
+    // Creates the QR code and sends it to the client.
+    const buffers = await Promise.all(
+      shortLinks.map((link) => this.qrCodeService.createGoQrCode(link, format)),
+    )
+    const pngImages = await Promise.all(
+      buffers.map((buffer) => png.decode(buffer)),
+    )
+    const zippp = jszip()
+    pngImages.forEach((image, idx) => zippp.file(`image${idx}`, image.data))
+    if (jszip.support.uint8array) {
+      zippp.generateAsync({ type: 'uint8array' })
+    } else {
+      zippp.generateAsync({ type: 'string' })
+    }
+    const endTime = Date.now()
+    console.log(`took ${endTime - startTime} to run`)
+    console.log(`array length = ${pngImages.length}`)
+
     res.set('Filename', goShortLink)
     res.contentType(format)
     res.end(buffer)
