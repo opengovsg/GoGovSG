@@ -42,6 +42,7 @@ export type UrlType = {
   contactEmail: string
   editedContactEmail: string
   email: string
+  tags: string[]
   tagStrings: string
 }
 

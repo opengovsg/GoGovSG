@@ -51,6 +51,9 @@ export default function useShortLink(shortLink: string) {
     applyNewOwner: (newOwner: string, onSuccess: () => void) => {
       dispatch(userActions.transferOwnership(shortLink, newOwner, onSuccess))
     },
+    applyEditTags: (editedTags: string[]) => {
+      dispatch(userActions.updateTags(shortLink, editedTags))
+    },
     replaceFile: (newFile: File | null, onError: (error: string) => void) => {
       if (!newFile) {
         return

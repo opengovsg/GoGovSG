@@ -70,6 +70,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     dispatch(userActions.setUploadFileError(error))
   const setCreateShortLinkError = (error: string) =>
     dispatch(userActions.setCreateShortLinkError(error))
+  const setTags = (tags: string[]) => dispatch(userActions.setTags(tags))
 
   const history = useHistory()
 
@@ -322,6 +323,8 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
           </div>
           <div>
             <TagsAutocomplete
+              tags={tags}
+              setTags={setTags}
               tagInput={tagInput}
               setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
