@@ -808,6 +808,41 @@ const setTags: (tags: string[]) => SetTagsAction = (tags) => ({
   payload: tags,
 })
 
+// API call to update tags
+const updateTags =
+  (shortUrl: string, tags: string[]) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetErrorMessageAction | SetSuccessMessageAction
+    >,
+  ) => {
+    if (!isValidTags(tags)) {
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      return null
+    }
+
+    return patch('/api/user/url', { shortUrl, tags }).then((response) => {
+      if (response.ok) {
+        dispatch<void>(getUrlsForUser())
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage('Tags are updated.'),
+        )
+        return null
+      }
+
+      return response.json().then((json) => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
+        return null
+      })
+    })
+  }
+
 export default {
   getUrlsForUser,
   getLinkHistoryForUser,
@@ -841,4 +876,5 @@ export default {
   setFileUploadState,
   setUrlUploadState,
   setTags,
+  updateTags,
 }
