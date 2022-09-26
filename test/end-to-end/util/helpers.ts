@@ -1,4 +1,6 @@
+import { customAlphabet } from 'nanoid'
 import { ClientFunction, Selector } from 'testcafe'
+import { tagText1, tagText2, tagText3 } from './config'
 
 // General
 export const loginButton = Selector('span').withText('Sign in')
@@ -16,6 +18,8 @@ export const shortUrlTextField = Selector(
   'input[placeholder="your customised link"]',
 )
 export const longUrlTextField = Selector('input[placeholder="Enter URL"]')
+export const tagsAutocompleteInput = Selector('input[placeholder="Add tag"]')
+export const tagsAutocompleteTags = tagsAutocompleteInput.sibling('div')
 export const getLocation = ClientFunction(() => document.location.href)
 export const directoryPageButton = Selector('span')
   .withText('Directory')
@@ -54,16 +58,15 @@ export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
 export const urlTable = Selector('tbody')
-export const urlTableRowText = (index: number) =>
+export const urlTableRowUrlText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
-  urlTable.child(index).child(0).child('p').child(1).child('span').innerText
-export const urlTableRowUrl = (index: number) =>
-  // eslint-disable-next-line newline-per-chained-call
-  urlTable.child(index).child(0).child('p').child(1).child('span')
-export const urlTableRowEmail = (index: number) =>
-  urlTable.child(index).child(2).child('p')
+  urlTable.child(index).child(1).child('div').child(0).child('h6').innerText
 
-export const searchBar = Selector('input[placeholder="Search links"]')
+export const searchBarLinksInput = Selector('input[placeholder="Search links"]')
+export const searchBarTagsInput = Selector('input[placeholder="Search tags"]')
+export const searchBarLinkButton = Selector('span').withExactText('Link')
+export const searchBarTagButton = Selector('span').withExactText('Tag')
+export const searchBarSearchByTag = Selector('p').withExactText('Search by Tag')
 export const downloadLinkButton = Selector('p')
   .withText('Download links')
   .parent()
@@ -71,8 +74,11 @@ export const downloadLinkButton = Selector('p')
 export const closeDrawerButton = drawer.child(2).child('main').child('button')
 export const longUrl = Selector('input[placeholder="Original link"]')
 export const inactiveWord = Selector('span').withText('inactive')
-export const urlSaveButton = Selector('span').withText('Save')
-export const urlUpdatedToaster = Selector('div').withText('URL is updated.')
+export const urlSaveButton = Selector('span').withText('Save').nth(0)
+export const urlUpdatedSnackbar =
+  Selector('.MuiSnackbar-root').withExactText('URL is updated.')
+export const tagsUpdatedSnackbar =
+  Selector('.MuiSnackbar-root').withExactText('Tags are updated.')
 export const helperText = Selector('p').withText(
   `This doesn't look like a valid url.`,
 )
@@ -80,6 +86,7 @@ export const linkTransferField = Selector(
   'input[placeholder="Email of link recipient"]',
 )
 export const transferButton = Selector('span').withText('Transfer')
+export const tagsSaveButton = Selector('span').withText('Save').nth(1)
 export const successSnackBar = Selector('.MuiSnackbar-root') // MuiSnackbarContent-message
 export const closeButtonSnackBar = Selector(
   'div[class="MuiSnackbarContent-action"]',
@@ -90,6 +97,12 @@ export const largeFileError = Selector('div').withText(
   'File too large, please upload a file smaller than 10mb',
 )
 export const fileSubmitButton = Selector('button[type="submit"]')
+export const tag1 = Selector('p').withExactText(tagText1).parent()
+export const tag2 = Selector('p').withExactText(tagText2).parent()
+export const tag3 = Selector('p').withExactText(tagText3).parent()
+export const tagCloseButton1 = tag1.child('button')
+export const tagCloseButton2 = tag2.child('button')
+export const tagCloseButton3 = tag3.child('button')
 
 // User Page - filter search
 export const userFilterSortPanelButton = Selector(
@@ -122,6 +135,13 @@ export const userFileButton = Selector('p')
   .nth(1)
 
 // Directory Page
+export const directoryUrlTableRowUrl = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(0).child('p').child(1).child('span')
+export const directoryUrlTableRowUrlText = (index: number) =>
+  directoryUrlTableRowUrl(index).innerText
+export const directoryUrlTableRowEmail = (index: number) =>
+  urlTable.child(index).child(2).child('p')
 export const directoryTextFieldKeyword = Selector(
   'input[placeholder="Enter a keyword"]',
 )
@@ -187,3 +207,10 @@ export const linkHistoryLinkStatusH6 = Selector('h6').withText('Link Status')
 export const linkHistoryOriginalLinkH6 =
   Selector('h6').withText('Original Link')
 export const linkHistoryLinkOwnerH6 = Selector('h6').withText('Link Owner')
+export const linkHistoryTagsH6 = Selector('h6').withText('Tags')
+
+// Helper Functions
+export function generateRandomString(length: number): string {
+  const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
+  return customAlphabet(ALPHABET, length)()
+}
