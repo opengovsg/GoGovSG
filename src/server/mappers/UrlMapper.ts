@@ -16,7 +16,7 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
     if (!urlClicks || !Number.isInteger(urlClicks.clicks))
       throw new Error('UrlClicks object not populated.')
     let tags: string[] = []
-    if (urlType.tagStrings !== '') {
+    if (urlType.tagStrings !== undefined) {
       tags = urlType.tagStrings.split(TAG_SEPARATOR)
     }
     return {
