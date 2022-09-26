@@ -143,6 +143,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       nextState = {
         shortUrl: '',
         longUrl: '',
+        tags: [],
       }
       break
     case UserAction.WIPE_USER_STATE:
