@@ -13,7 +13,6 @@ import { DependencyIds } from '../constants'
 import { Url, UrlType } from '../models/url'
 import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
-import { Tag } from '../models/tag'
 import { UrlClicks } from '../models/statistics/clicks'
 
 /**
@@ -99,14 +98,12 @@ export class UserRepository implements UserRepositoryInterface {
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
-    const { whereConditions, includeConditions } =
-      UserRepository.buildQueryConditions(conditions)
+    const whereConditions = UserRepository.buildQueryConditions(conditions)
     const urlsAndCount = await Url.scope([
       'defaultScope',
       'getClicks',
     ]).findAndCountAll({
       where: whereConditions,
-      distinct: true,
       limit: conditions.limit,
       offset: conditions.offset,
       order: [
@@ -116,32 +113,16 @@ export class UserRepository implements UserRepositoryInterface {
           conditions.sortDirection,
         ],
       ],
-      include: [includeConditions],
     })
     if (!urlsAndCount) {
       throw new NotFoundError(notFoundMessage)
     }
-    let { rows } = urlsAndCount
-    let { count } = urlsAndCount
+    const { rows } = urlsAndCount
+    const { count } = urlsAndCount
     if (!rows || count === 0) {
       throw new NotFoundError(notFoundMessage)
     }
-    if (conditions.tags && conditions.tags.length > 0) {
-      // Perform a second DB read to retrieve all tags
-      const shortUrls = rows.map((urlType) => {
-        return urlType.shortUrl
-      })
-      rows = await Url.scope()
-        .scope(['defaultScope', 'getClicks', 'getTags'])
-        .findAll({
-          where: { shortUrl: shortUrls },
-        })
-    }
-
     const urls = rows.map((urlType) => this.urlMapper.persistenceToDto(urlType))
-    if (urls.length === 0) {
-      count = 0
-    }
     return { urls, count }
   }
 
@@ -160,30 +141,28 @@ export class UserRepository implements UserRepositoryInterface {
         },
       ],
     }
-    const whereConditions: any =
+    let whereConditions: any =
       conditions.searchText.length > 0
         ? {
             ...searchTextCondition,
             userId: conditions.userId,
           }
         : { userId: conditions.userId }
+    if (conditions.tags && conditions.tags.length > 0) {
+      const searchTagConditions = {
+        [Op.or]: conditions.tags.map((tag) => {
+          return { tagStrings: { [Op.substring]: `${tag}` } }
+        }),
+      }
+      whereConditions = { ...whereConditions, searchTagConditions }
+    }
     if (conditions.state) {
       whereConditions.state = conditions.state
     }
     if (conditions.isFile !== undefined) {
       whereConditions.isFile = conditions.isFile
     }
-    const includeConditions: any = {
-      model: Tag,
-    }
-    if (conditions.tags && conditions.tags.length > 0) {
-      includeConditions.where = {
-        [Op.or]: conditions.tags.map((tag) => {
-          return { tagKey: { [Op.substring]: `${tag}` } }
-        }),
-      }
-    }
-    return { whereConditions, includeConditions }
+    return whereConditions
   }
 }
 
