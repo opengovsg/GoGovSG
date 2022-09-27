@@ -154,7 +154,7 @@ export class UserRepository implements UserRepositoryInterface {
           return { tagStrings: { [Op.substring]: `${tag}` } }
         }),
       }
-      whereConditions = { ...whereConditions, searchTagConditions }
+      whereConditions = { ...whereConditions, ...searchTagConditions }
     }
     if (conditions.state) {
       whereConditions.state = conditions.state
