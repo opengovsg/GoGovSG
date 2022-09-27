@@ -70,8 +70,14 @@ morgan.token('userId', (req: express.Request) =>
 )
 
 const MORGAN_LOG_FORMAT =
-  ':client-ip - [:date[clf]] ":method :url HTTP/:http-version" :status ' +
+  ':client-ip - ":method :url HTTP/:http-version" :status ' +
   '":redirectUrl" ":userId" :res[content-length] ":referrer" ":user-agent" :response-time ms'
+
+const morganOutputStream = {
+  write: (message: string) => {
+    logger.info(message.trim())
+  },
+}
 
 const connectSrc = [
   "'self'",
@@ -178,7 +184,7 @@ initDb()
     ]
 
     // Log http requests
-    app.use(morgan(MORGAN_LOG_FORMAT))
+    app.use(morgan(MORGAN_LOG_FORMAT, { stream: morganOutputStream }))
 
     const redirectController = container.get<RedirectController>(
       DependencyIds.redirectController,

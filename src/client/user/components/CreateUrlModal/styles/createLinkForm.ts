@@ -23,6 +23,10 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
     outlinedInput: {
       padding: theme.spacing(0),
     },
+    outlinedTagsTextInput: {
+      padding: theme.spacing(0),
+      flexWrap: 'wrap',
+    },
     input: {
       flexGrow: 1,
       height: '100%',
@@ -46,6 +50,16 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
         backgroundColor: '#e8e8e8',
       },
     },
+    tagsTextInput: {
+      flexGrow: 1,
+      height: '100%',
+      minHeight: (props: LinkFormStyles) => props.textFieldHeight,
+      width: 0,
+      minWidth: '50px',
+      padding: theme.spacing(0),
+      marginLeft: theme.spacing(1),
+      lineHeight: 1.5,
+    },
     button: {
       height: '44px',
       margin: theme.spacing(6, 0, 2),
@@ -59,6 +73,9 @@ const useCreateLinkFormStyles = makeStyles((theme) =>
       },
     },
     shortUrlInput: {
+      width: '100%',
+    },
+    tagsText: {
       width: '100%',
     },
     inputNotchedOutline: (props: LinkFormStyles) =>

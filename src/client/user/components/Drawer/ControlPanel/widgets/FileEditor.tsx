@@ -9,7 +9,7 @@ import {
 import ConfigOption, {
   TrailingPosition,
 } from '../../../../widgets/ConfigOption'
-import DrawerTooltip from './DrawerTooltip'
+import Tooltip from '../../../../widgets/Tooltip'
 import useShortLink from '../util/shortlink'
 import { useDrawerState } from '../../index'
 import { removeHttpsProtocol } from '../../../../../app/util/url'
@@ -43,7 +43,7 @@ export default function FileEditor() {
   const replaceFileHelp = (
     <div className={classes.originalFileLabel}>
       Original file{' '}
-      <DrawerTooltip
+      <Tooltip
         title="Original file will be replaced after you select file. Maximum file size is 10mb."
         imageAltText="Replace file help"
       />

@@ -23,9 +23,11 @@ import { MailerNode } from './services/email'
 import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
+import { TagRepository } from './repositories/TagRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
+import { TagMapper } from './mappers/TagMapper'
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
@@ -69,6 +71,7 @@ import { FileCheckController, UrlCheckController } from './modules/threat'
 
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
+import TagManagementService from './modules/user/services/TagManagementService'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -92,10 +95,12 @@ export default () => {
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
+  bindIfUnbound(DependencyIds.tagMapper, TagMapper)
   bindIfUnbound(DependencyIds.analyticsLoggerService, AnalyticsLoggerService)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducerService)
   bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
+  bindIfUnbound(DependencyIds.tagRepository, TagRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
   bindIfUnbound(DependencyIds.gaController, GaController)
@@ -110,6 +115,7 @@ export default () => {
   bindIfUnbound(DependencyIds.authService, AuthService)
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
+  bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
   bindIfUnbound(DependencyIds.qrCodeController, QrCodeController)

@@ -1,16 +1,20 @@
 import { inject, injectable } from 'inversify'
-import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
-import { User, UserType } from '../models/user'
+import { Op } from 'sequelize'
 import {
   StorableUrl,
   StorableUser,
   UrlsPaginated,
   UserUrlsQueryConditions,
 } from './types'
+import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
+import { User, UserType } from '../models/user'
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
-import { UrlType } from '../models/url'
+import { Url, UrlType } from '../models/url'
+import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
+import { Tag } from '../models/tag'
+import { UrlClicks } from '../models/statistics/clicks'
 
 /**
  * A user repository that handles access to the data store of Users.
@@ -49,7 +53,12 @@ export class UserRepository implements UserRepositoryInterface {
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
     email,
   ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, _]) => user)
+    return User.findOrCreate({ where: { email } }).then(([user, created]) => {
+      if (created) {
+        dogstatsd.increment(USER_NEW, 1, 1)
+      }
+      return user
+    })
   }
 
   public findOneUrlForUser: (
@@ -90,38 +99,91 @@ export class UserRepository implements UserRepositoryInterface {
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
-    const userCountAndArray = await User.scope([
+    const { whereConditions, includeConditions } =
+      UserRepository.buildQueryConditions(conditions)
+    const urlsAndCount = await Url.scope([
       'defaultScope',
-      {
-        method: ['urlsWithQueryConditions', conditions],
-      },
+      'getClicks',
     ]).findAndCountAll({
-      subQuery: false, // set limit and offset at end of main query instead of subquery
+      where: whereConditions,
+      distinct: true,
+      limit: conditions.limit,
+      offset: conditions.offset,
+      order: [
+        [
+          { model: UrlClicks, as: 'UrlClicks' },
+          conditions.orderBy,
+          conditions.sortDirection,
+        ],
+      ],
+      include: [includeConditions],
     })
-
-    if (!userCountAndArray) {
+    if (!urlsAndCount) {
       throw new NotFoundError(notFoundMessage)
     }
-
-    const { rows } = userCountAndArray
-    let { count } = userCountAndArray
-    const [userUrls] = rows
-
-    if (!userUrls) {
+    let { rows } = urlsAndCount
+    let { count } = urlsAndCount
+    if (!rows || count === 0) {
       throw new NotFoundError(notFoundMessage)
     }
+    if (conditions.tags && conditions.tags.length > 0) {
+      // Perform a second DB read to retrieve all tags
+      const shortUrls = rows.map((urlType) => {
+        return urlType.shortUrl
+      })
+      rows = await Url.scope()
+        .scope(['defaultScope', 'getClicks', 'getTags'])
+        .findAll({
+          where: { shortUrl: shortUrls },
+        })
+    }
 
-    const urls = userUrls.Urls.map((urlType) =>
-      this.urlMapper.persistenceToDto(urlType),
-    )
-
-    // count will always be >= 1 due to left outer join on user and url tables
-    // to handle edge case where count === 1 but user does not have any urls
+    const urls = rows.map((urlType) => this.urlMapper.persistenceToDto(urlType))
     if (urls.length === 0) {
       count = 0
     }
-
     return { urls, count }
+  }
+
+  private static buildQueryConditions(conditions: UserUrlsQueryConditions) {
+    const searchTextCondition = {
+      [Op.or]: [
+        {
+          shortUrl: {
+            [Op.substring]: conditions.searchText,
+          },
+        },
+        {
+          longUrl: {
+            [Op.substring]: conditions.searchText,
+          },
+        },
+      ],
+    }
+    const whereConditions: any =
+      conditions.searchText.length > 0
+        ? {
+            ...searchTextCondition,
+            userId: conditions.userId,
+          }
+        : { userId: conditions.userId }
+    if (conditions.state) {
+      whereConditions.state = conditions.state
+    }
+    if (conditions.isFile !== undefined) {
+      whereConditions.isFile = conditions.isFile
+    }
+    const includeConditions: any = {
+      model: Tag,
+    }
+    if (conditions.tags && conditions.tags.length > 0) {
+      includeConditions.where = {
+        [Op.or]: conditions.tags.map((tag) => {
+          return { tagKey: { [Op.substring]: `${tag}` } }
+        }),
+      }
+    }
+    return { whereConditions, includeConditions }
   }
 }
 

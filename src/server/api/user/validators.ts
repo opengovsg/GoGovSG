@@ -5,12 +5,61 @@ import {
   isHttps,
   isPrintableAscii,
   isValidShortUrl,
+  isValidTag,
 } from '../../../shared/util/validation'
-import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../shared/constants'
+import {
+  LINK_DESCRIPTION_MAX_LENGTH,
+  MAX_NUM_TAGS_PER_LINK,
+} from '../../../shared/constants'
 import { isValidGovEmail } from '../../util/email'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
+})
+
+export const tagRetrievalSchema = Joi.object({
+  userId: Joi.number().required(),
+})
+
+const tagSchema = Joi.array()
+  .max(MAX_NUM_TAGS_PER_LINK)
+  .optional()
+  .items(
+    Joi.string().custom((tag: string, helpers) => {
+      if (!isValidTag(tag)) {
+        return helpers.message({ custom: `tag: ${tag} format is invalid` })
+      }
+      return tag
+    }),
+  )
+  .unique((a, b) => a === b)
+
+export const userUrlsQueryConditions = Joi.object({
+  userId: Joi.number().required(),
+  limit: Joi.number().required(),
+  offset: Joi.number().optional(),
+  orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
+  sortDirection: Joi.string().valid('desc', 'asc').optional(),
+  searchText: Joi.string().allow('').optional(),
+  state: Joi.string().allow('').optional(),
+  isFile: Joi.boolean().optional(),
+  tags: tagSchema.max(5),
+})
+
+export const userTagsQueryConditions = Joi.object({
+  userId: Joi.number().required(),
+  searchText: Joi.string()
+    .min(3)
+    .custom((tag: string, helpers) => {
+      if (!isValidTag(tag)) {
+        return helpers.message({
+          custom: `tag: ${tag} query format is invalid.`,
+        })
+      }
+      return tag
+    })
+    .required(),
+  limit: Joi.number().required(),
 })
 
 export const urlSchema = Joi.object({
@@ -34,6 +83,7 @@ export const urlSchema = Joi.object({
     }
     return url
   }),
+  tags: tagSchema,
   files: Joi.object({
     file: Joi.object().keys().required(),
   }),
@@ -53,6 +103,7 @@ export const urlEditSchema = Joi.object({
     }
     return url
   }),
+  tags: tagSchema,
   files: Joi.object({
     file: Joi.object().keys().required(),
   }),

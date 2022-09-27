@@ -2,10 +2,17 @@ import validator from 'validator'
 import { parse } from 'url'
 
 import blacklist from '../../server/resources/blacklist'
+import { MAX_NUM_TAGS_PER_LINK } from '../constants'
 
 export const WHITELIST = [new RegExp('^http://localhost:4566')]
 
 export const SHORT_URL_REGEX = /^[a-z0-9-]+$/
+
+export const TAG_KEY_REGEX = /^[a-z0-9-_]+$/
+
+export const TAG_STRING_REGEX = /^[A-Za-z0-9-_]+$/
+
+export const MAX_TAG_LENGTH = 25
 
 export const URL_OPTS: validator.IsURLOptions = {
   protocols: ['https'],
@@ -44,6 +51,23 @@ export function isValidUrl(url: string, useWhitelist = false): boolean {
 // Tests if a short link consists of alphanumeric and hyphen characters.
 export function isValidShortUrl(url: string, allowBlank = false): boolean {
   return allowBlank ? /^[a-z0-9-]*$/.test(url) : SHORT_URL_REGEX.test(url)
+}
+
+// Tests if a tag is valid.
+export function isValidTag(tag: string, allowBlank = false): boolean {
+  return (
+    (allowBlank && tag === '') ||
+    (TAG_STRING_REGEX.test(tag) && tag.length <= MAX_TAG_LENGTH)
+  )
+}
+
+// Tests if a set of tags for a link is valid.
+export function isValidTags(tags: string[]): boolean {
+  return (
+    tags.every((tag) => isValidTag(tag)) &&
+    tags.length <= MAX_NUM_TAGS_PER_LINK &&
+    new Set(tags).size === tags.length
+  )
 }
 
 // Tests the validity of a long url. Will return true if blank.

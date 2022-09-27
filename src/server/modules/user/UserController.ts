@@ -15,6 +15,11 @@ import { StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
 import { UrlManagementService } from './interfaces/UrlManagementService'
+import {
+  userTagsQueryConditions,
+  userUrlsQueryConditions,
+} from '../../api/user/validators'
+import TagManagementServiceInterface from './interfaces/TagManagementService'
 
 type AnnouncementResponse = {
   message?: string
@@ -32,6 +37,8 @@ export class UserController {
 
   private userAnnouncement: AnnouncementResponse
 
+  private tagManagementService: TagManagementServiceInterface
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
@@ -39,17 +46,20 @@ export class UserController {
     userMessage: string,
     @inject(DependencyIds.userAnnouncement)
     userAnnouncement: AnnouncementResponse,
+    @inject(DependencyIds.tagManagementService)
+    tagManagementService: TagManagementServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
+    this.tagManagementService = tagManagementService
   }
 
   public createUrl: (
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, longUrl, shortUrl }: UrlCreationRequest = req.body
+    const { userId, longUrl, shortUrl, tags }: UrlCreationRequest = req.body
     const file = req.files?.file
 
     if (Array.isArray(file)) {
@@ -65,6 +75,7 @@ export class UserController {
         shortUrl,
         longUrl,
         file,
+        tags,
       )
       res.ok(result)
       return
@@ -97,6 +108,7 @@ export class UserController {
       state,
       description,
       contactEmail,
+      tags,
     }: UrlEditRequest = req.body
     const file = req.files?.file
     if (Array.isArray(file)) {
@@ -126,6 +138,7 @@ export class UserController {
         file,
         contactEmail: newContactEmail,
         description: description?.trim(),
+        tags,
       })
       res.ok(url)
       return
@@ -174,31 +187,11 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId } = req.body
-    let { limit = 1000, searchText = '' } = req.query
-    limit = Math.min(1000, Number(limit))
-    searchText = searchText.toString().toLowerCase()
-    const {
-      offset = 0,
-      orderBy = 'updatedAt',
-      sortDirection = 'desc',
-      isFile,
-      state,
-    } = req.query
-    const queryConditions = {
-      limit,
-      offset: Number(offset),
-      orderBy: orderBy.toString(),
-      sortDirection: sortDirection.toString(),
-      searchText,
-      userId,
-      state: state?.toString(),
-      isFile: undefined as boolean | undefined,
-    }
-    if (isFile === 'true') {
-      queryConditions.isFile = true
-    } else if (isFile === 'false') {
-      queryConditions.isFile = false
+    const queryConditions = UserController.extractUrlQueryConditions(req)
+    const validationResult = userUrlsQueryConditions.validate(queryConditions)
+    if (validationResult.error) {
+      res.badRequest(validationResult.error.message)
+      return
     }
     // Find user and paginated urls
     try {
@@ -212,6 +205,69 @@ export class UserController {
         return
       }
       res.serverError(jsonMessage('Error retrieving URLs for user'))
+      return
+    }
+  }
+
+  private static extractUrlQueryConditions(req: Express.Request) {
+    const { userId } = req.body
+    let { limit = 1000, searchText = '' } = req.query
+    limit = Math.min(1000, Number(limit))
+    searchText = searchText.toString().toLowerCase()
+    const {
+      offset = 0,
+      orderBy = 'updatedAt',
+      sortDirection = 'desc',
+      isFile,
+      state,
+      tags = '',
+    } = req.query
+    const tagList = tags ? tags.toString().toLowerCase().split(';') : []
+    const queryConditions = {
+      limit,
+      offset: Number(offset),
+      orderBy: orderBy.toString(),
+      sortDirection: sortDirection.toString(),
+      searchText,
+      userId,
+      state: state?.toString(),
+      isFile: undefined as boolean | undefined,
+      tags: tagList,
+    }
+    if (isFile === 'true') {
+      queryConditions.isFile = true
+    } else if (isFile === 'false') {
+      queryConditions.isFile = false
+    }
+    return queryConditions
+  }
+
+  public getTagsWithConditions: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId } = req.body
+    let { searchText = '' } = req.query
+    const limit = 5
+    searchText = searchText.toString().toLowerCase()
+    const queryConditions = { searchText, userId, limit }
+    const validationResult = userTagsQueryConditions.validate(queryConditions)
+    if (validationResult.error) {
+      res.badRequest(validationResult.error.message)
+      return
+    }
+    try {
+      const tags = await this.tagManagementService.getTagsWithConditions(
+        queryConditions,
+      )
+      res.ok(tags)
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.notFound(error.message)
+        return
+      }
+      res.serverError(jsonMessage('Error retrieving Tags for user'))
       return
     }
   }

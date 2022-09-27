@@ -74,6 +74,7 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           description: '',
           contactEmail: null,
           clicks: 0,
+          tagStrings: '',
         },
       ],
       count: 0,

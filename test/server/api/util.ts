@@ -44,7 +44,26 @@ export function createRequestWithUser(user: any): Request {
     session: {
       user,
     },
-    body: {},
+    body: { userId: 1 },
+  })
+}
+
+/**
+ * Creates a mock request with the input session user.
+ * @param  {any} user
+ * @returns A mock Request with the input session user.
+ */
+export function createGetTagsRequestWithUser(user: any): Request {
+  return httpMocks.createRequest({
+    session: {
+      user,
+    },
+    query: {
+      searchText: 'tag',
+    },
+    body: {
+      userId: 1,
+    },
   })
 }
 
@@ -107,9 +126,15 @@ export const urlModelMock = sequelizeMock.define(
     instanceMethods: {
       findOne: () => {},
       increment: () => {},
+      findByPk: () => {},
     },
   },
 )
+
+export const tagModelMock = sequelizeMock.define('tag', {
+  tagString: 'Tag',
+  tagKey: 'tag',
+})
 
 export const urlClicksModelMock = sequelizeMock.define('url_clicks', {
   shortUrl: 'a',
