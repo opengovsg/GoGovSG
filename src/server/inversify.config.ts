@@ -72,6 +72,7 @@ import { FileCheckController, UrlCheckController } from './modules/threat'
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
 import TagManagementService from './modules/user/services/TagManagementService'
+import { BulkController } from './modules/bulk'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -140,6 +141,7 @@ export default () => {
 
   bindIfUnbound(DependencyIds.virusScanService, CloudmersiveScanService)
   bindIfUnbound(DependencyIds.fileCheckController, FileCheckController)
+  bindIfUnbound(DependencyIds.bulkController, BulkController)
 
   bindIfUnbound(DependencyIds.safeBrowsingMapper, SafeBrowsingMapper)
   bindIfUnbound(DependencyIds.safeBrowsingRepository, SafeBrowsingRepository)

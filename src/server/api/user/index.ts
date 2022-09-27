@@ -3,7 +3,10 @@ import fileUpload from 'express-fileupload'
 import { createValidator } from 'express-joi-validation'
 import { DependencyIds } from '../../constants'
 import { container } from '../../util/inversify'
-import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
+import {
+  MAX_CSV_UPLOAD_SIZE,
+  MAX_FILE_UPLOAD_SIZE,
+} from '../../../shared/constants'
 import {
   ownershipTransferSchema,
   tagRetrievalSchema,
@@ -12,6 +15,7 @@ import {
   urlSchema,
 } from './validators'
 import { UserController } from '../../modules/user'
+import { BulkController } from '../../modules/bulk'
 import { FileCheckController, UrlCheckController } from '../../modules/threat'
 
 const router = Express.Router()
@@ -28,9 +32,20 @@ const urlCheckController = container.get<UrlCheckController>(
   DependencyIds.urlCheckController,
 )
 
+const bulkController = container.get<BulkController>(
+  DependencyIds.bulkController,
+)
+
 const fileUploadMiddleware = fileUpload({
   limits: {
     fileSize: MAX_FILE_UPLOAD_SIZE, // 10MB
+    files: 1,
+  },
+})
+
+const bulkCSVUploadMiddleware = fileUpload({
+  limits: {
+    fileSize: MAX_CSV_UPLOAD_SIZE, // 0.2MB
     files: 1,
   },
 })
@@ -66,10 +81,26 @@ router.post(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.checkFile,
+  fileCheckController.singleFileCheck,
+  fileCheckController.fileExtensionCheck(),
+  fileCheckController.fileVirusCheck,
   urlCheckController.checkUrl,
   validator.body(urlSchema),
   userController.createUrl,
+)
+
+/**
+ * Endpoint for a user to check validity of uploaded csv.
+ */
+
+router.post(
+  '/url/bulk-link',
+  bulkCSVUploadMiddleware,
+  preprocessPotentialIncomingFile,
+  fileCheckController.singleFileCheck,
+  fileCheckController.fileExtensionCheck(['csv']),
+  fileCheckController.fileVirusCheck,
+  bulkController.csvValidation,
 )
 
 router.patch(
@@ -89,7 +120,9 @@ router.patch(
   '/url',
   fileUploadMiddleware,
   preprocessPotentialIncomingFile,
-  fileCheckController.checkFile,
+  fileCheckController.singleFileCheck,
+  fileCheckController.fileExtensionCheck(),
+  fileCheckController.fileVirusCheck,
   urlCheckController.checkUrl,
   validator.body(urlEditSchema),
   userController.updateUrl,
