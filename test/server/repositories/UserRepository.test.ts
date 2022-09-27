@@ -246,14 +246,6 @@ describe('UserRepository', () => {
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
-    it('throws NotFoundError on findAndCountAll without user', async () => {
-      findAndCountAll.mockResolvedValue({ rows: [], count: 0 })
-      await expect(userRepo.findUrlsForUser(conditions)).rejects.toBeInstanceOf(
-        NotFoundError,
-      )
-      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
-    })
-
     it('returns result on user with urls', async () => {
       const rows = [url]
       findAndCountAll.mockResolvedValue({ rows, count: rows.length })
@@ -269,8 +261,11 @@ describe('UserRepository', () => {
     it('returns empty result on user no url', async () => {
       const rows: any = []
       findAndCountAll.mockResolvedValue({ rows, count: rows.length })
-      await expect(userRepo.findUrlsForUser(conditions)).rejects.toBeInstanceOf(
-        NotFoundError,
+      await expect(userRepo.findUrlsForUser(conditions)).resolves.toStrictEqual(
+        {
+          urls: [],
+          count: 0,
+        },
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })

@@ -123,9 +123,6 @@ export class UserRepository implements UserRepositoryInterface {
     }
     let { rows } = urlsAndCount
     let { count } = urlsAndCount
-    if (!rows || count === 0) {
-      throw new NotFoundError(notFoundMessage)
-    }
     if (conditions.tags && conditions.tags.length > 0) {
       // Perform a second DB read to retrieve all tags
       const shortUrls = rows.map((urlType) => {

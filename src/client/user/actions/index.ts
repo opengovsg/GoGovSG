@@ -244,13 +244,12 @@ const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
     message?: string
   }
   isOk: boolean
-}> = (queryObj) => {
+}> = async (queryObj) => {
   const query = querystring.stringify(queryObj)
-
-  return get(`/api/link-audit?${query}`).then((response) => {
-    const isOk = response.ok
-    return response.json().then((json) => ({ json, isOk }))
-  })
+  const response = await get(`/api/link-audit?${query}`)
+  const isOk = response.ok
+  const json = await response.json()
+  return { json, isOk }
 }
 
 const isGetLinkHistoryForUserSuccess: (
@@ -304,17 +303,17 @@ const getLinkHistoryForUser =
       offset,
     }
 
-    const { json, isOk } = await getLinkHistory(queryObj)
-
-    if (isOk) {
+    try {
+      const { json, isOk } = await getLinkHistory(queryObj)
+      if (!isOk) {
+        throw new Error(json.message || 'Error fetching link history')
+      }
       dispatch<GetLinkHistoryForUserSuccessAction>(
         isGetLinkHistoryForUserSuccess(json.changes, json.totalCount),
       )
-    } else {
+    } catch (error) {
       dispatch<SetErrorMessageAction>(
-        rootActions.setErrorMessage(
-          json.message || 'Error fetching link history',
-        ),
+        rootActions.setErrorMessage(String(error)),
       )
     }
   }
@@ -323,13 +322,12 @@ const getLinkHistoryForUser =
 const getUrls: (queryObj: ParsedUrlQueryInput) => Promise<{
   json: { urls: Array<UrlType>; count: number; message?: string }
   isOk: boolean
-}> = (queryObj) => {
+}> = async (queryObj) => {
   const query = querystring.stringify(queryObj)
-
-  return get(`/api/user/url?${query}`).then((response) => {
-    const isOk = response.ok
-    return response.json().then((json) => ({ json, isOk }))
-  })
+  const response = await get(`/api/user/url?${query}`)
+  const isOk = response.ok
+  const json = await response.json()
+  return { json, isOk }
 }
 
 // retrieves urls based on url table config
@@ -372,9 +370,11 @@ const getUrlsForUser =
     }
 
     dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
-    const { json, isOk } = await getUrls(queryObj)
-
-    if (isOk) {
+    try {
+      const { json, isOk } = await getUrls(queryObj)
+      if (!isOk) {
+        throw new Error(json.message || 'Error fetching URLs')
+      }
       json.urls.forEach((url: UrlType) => {
         /* eslint-disable no-param-reassign */
         url.createdAt = moment(url.createdAt)
@@ -387,12 +387,13 @@ const getUrlsForUser =
       })
       dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
       dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
-    } else {
+    } catch (error) {
       dispatch<SetErrorMessageAction>(
-        rootActions.setErrorMessage(json.message || 'Error fetching URLs'),
+        rootActions.setErrorMessage(String(error)),
       )
+    } finally {
+      dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
     }
-    dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
   }
 
 const resetUserState: () => ResetUserStateAction = () => ({
