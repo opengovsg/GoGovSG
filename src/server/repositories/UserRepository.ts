@@ -150,7 +150,7 @@ export class UserRepository implements UserRepositoryInterface {
     if (conditions.tags && conditions.tags.length > 0) {
       const searchTagConditions = {
         [Op.or]: conditions.tags.map((tag) => {
-          return { tagStrings: { [Op.substring]: `%${tag}%` } }
+          return { tagStrings: { [Op.iLike]: `%${tag}%` } }
         }),
       }
       whereConditions = { ...whereConditions, ...searchTagConditions }
