@@ -8,6 +8,7 @@ import {
   MAX_FILE_UPLOAD_SIZE,
 } from '../../../shared/constants'
 import {
+  bulkSchema,
   ownershipTransferSchema,
   tagRetrievalSchema,
   urlEditSchema,
@@ -97,6 +98,7 @@ router.post(
   '/url/bulk-link',
   bulkCSVUploadMiddleware,
   preprocessPotentialIncomingFile,
+  validator.body(bulkSchema),
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,

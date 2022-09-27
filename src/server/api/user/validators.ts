@@ -62,6 +62,14 @@ export const userTagsQueryConditions = Joi.object({
   limit: Joi.number().required(),
 })
 
+export const bulkSchema = Joi.object({
+  userId: Joi.number().required(),
+  tags: tagSchema,
+  files: Joi.object({
+    file: Joi.object().keys().required(),
+  }).required(),
+})
+
 export const urlSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string()
