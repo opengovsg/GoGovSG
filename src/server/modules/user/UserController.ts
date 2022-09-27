@@ -20,6 +20,7 @@ import {
   userUrlsQueryConditions,
 } from '../../api/user/validators'
 import TagManagementServiceInterface from './interfaces/TagManagementService'
+import ApiKeyManagementServiceInterface from './interfaces/ApiKeyManagementServiceInterface'
 
 type AnnouncementResponse = {
   message?: string
@@ -39,6 +40,8 @@ export class UserController {
 
   private tagManagementService: TagManagementServiceInterface
 
+  private apiKeyManagementService: ApiKeyManagementServiceInterface
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
@@ -48,11 +51,14 @@ export class UserController {
     userAnnouncement: AnnouncementResponse,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,
+    @inject(DependencyIds.apiKeyManagementService)
+    apiKeyManagementService: ApiKeyManagementServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
     this.tagManagementService = tagManagementService
+    this.apiKeyManagementService = apiKeyManagementService
   }
 
   public createUrl: (
@@ -268,6 +274,20 @@ export class UserController {
         return
       }
       res.serverError(jsonMessage('Error retrieving Tags for user'))
+      return
+    }
+  }
+
+  public createAPIKey: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (_, res) => {
+    try {
+      const apiKey = await this.apiKeyManagementService.createApiKey()
+      res.ok(apiKey)
+      return
+    } catch (error) {
+      res.serverError(jsonMessage('Error creating APIKey for user'))
       return
     }
   }

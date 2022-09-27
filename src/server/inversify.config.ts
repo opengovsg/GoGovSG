@@ -72,6 +72,7 @@ import { FileCheckController, UrlCheckController } from './modules/threat'
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
 import TagManagementService from './modules/user/services/TagManagementService'
+import ApiKeyManagementService from './modules/user/services/ApiKeyManagementService'
 
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
@@ -119,6 +120,7 @@ export default () => {
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)
+  bindIfUnbound(DependencyIds.apiKeyManagementService, ApiKeyManagementService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
   bindIfUnbound(DependencyIds.qrCodeController, QrCodeController)
