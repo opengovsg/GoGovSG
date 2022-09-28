@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
   ClickAwayListener,
@@ -16,9 +15,7 @@ import {
 } from '../../../shared/constants'
 import { MAX_TAG_LENGTH, isValidTag } from '../../../shared/util/validation'
 import { SEARCH_TIMEOUT, TEXT_FIELD_HEIGHT } from '../constants'
-import { GoGovReduxState } from '../../app/reducers/types'
 import { get } from '../../app/util/requests'
-import userActions from '../actions'
 import FormTag from './FormTag'
 
 const useStyles = makeStyles((theme) =>
@@ -58,20 +55,20 @@ const useStyles = makeStyles((theme) =>
 )
 
 type TagsAutocompleteProps = {
+  tags: string[]
+  setTags: (tags: string[]) => void
   tagInput: string
   setTagInput: (tagInput: string) => void
   disabled: boolean
 }
 
 export default function TagsAutocomplete({
+  tags,
+  setTags,
   tagInput,
   setTagInput,
   disabled,
 }: TagsAutocompleteProps) {
-  const tags = useSelector((state: GoGovReduxState) => state.user.tags)
-  const dispatch = useDispatch()
-  const setTags = (tags: string[]) => dispatch(userActions.setTags(tags))
-
   const classes = useStyles()
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([])
   const [tagAnchorEl, setTagAnchorEl] = useState<HTMLElement | null>(null)
