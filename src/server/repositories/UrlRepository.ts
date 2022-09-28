@@ -95,7 +95,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       }
 
       // Do a fresh read which eagerly loads the associated UrlClicks field.
-      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findByPk(
+      return Url.scope(['defaultScope', 'getClicks']).findByPk(
         properties.shortUrl,
         {
           transaction: t,
@@ -114,11 +114,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
     let updateParams: any = { ...changes }
-    const url = await Url.scope([
-      'defaultScope',
-      'getClicks',
-      'getTags',
-    ]).findOne({
+    const url = await Url.scope(['defaultScope', 'getClicks']).findOne({
       where: { shortUrl },
     })
     if (!url) {
@@ -167,7 +163,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         }
       }
       // Do a fresh read which eagerly loads the associated tags field.
-      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findOne({
+      return Url.scope(['defaultScope', 'getClicks']).findOne({
         where: { shortUrl },
         transaction: t,
       })
