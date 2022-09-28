@@ -47,7 +47,7 @@ const fileUploadMiddleware = fileUpload({
 
 const bulkCSVUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_CSV_UPLOAD_SIZE, // 1MB
+    fileSize: MAX_CSV_UPLOAD_SIZE, // 5MB
     files: 1,
   },
 })
@@ -60,20 +60,20 @@ const validator = createValidator({ passError: true })
  */
 function preprocessPotentialIncomingFile(
   req: Express.Request,
-  res: Express.Response,
+  _: Express.Response,
   next: Express.NextFunction,
 ) {
   if (req.files) {
     req.body.files = req.files
-    if (req.body.tags) {
-      // Tags for files sent as FormData should be deserialised from JSON format
-      try {
-        req.body.tags = JSON.parse(req.body.tags)
-      } catch (e) {
-        res.badRequest(jsonMessage('Tags are invalid.'))
-        return
-      }
-    }
+    // if (req.body.tags) {
+    //   // Tags for files sent as FormData should be deserialised from JSON format
+    //   try {
+    //     req.body.tags = JSON.parse(req.body.tags)
+    //   } catch (e) {
+    //     res.badRequest(jsonMessage('Tags are invalid.'))
+    //     return
+    //   }
+    // }
   }
   next()
 }
