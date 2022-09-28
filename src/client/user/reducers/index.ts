@@ -12,6 +12,7 @@ const initialState: UserState = {
   tags: [],
   createUrlModal: false,
   tableConfig: {
+    isTag: false,
     numberOfRows: 10,
     pageNumber: 0,
     searchText: '',
