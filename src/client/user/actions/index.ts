@@ -5,6 +5,7 @@ import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import * as Sentry from '@sentry/react'
+import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   CloseCreateUrlModalAction,
   GetLinkHistoryForUserSuccessAction,
@@ -612,7 +613,7 @@ const urlCreated = (
   )
 }
 
-const bulkUrlStarted = (
+const bulkQRCodesStarted = (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
@@ -624,8 +625,8 @@ const bulkUrlStarted = (
   dispatch<ResetUserStateAction>(resetUserState())
   // TODO: placeholder before we add progress bar
   const infoMessage = `
-    Link creations from ${fileName} are in progress.
-    We will notify you via email once it has completed.
+    Your links have been successfully created from ${fileName}.
+    A link to download your QR codes will be sent to you via email once they have been generated.
   `
   dispatch<SetInfoMessageAction>(rootActions.setInfoMessage(infoMessage))
 }
@@ -901,9 +902,9 @@ const updateTags =
   }
 
 /**
- * API call to upload a file.
+ * API call to upload file for bulk creation.
  * @param file
- * @returns Promise<bool> Whether file upload succeeded.
+ * @returns Promise<bool> Whether bulk creation succeeded.
  */
 const bulkCreateUrl =
   (file: File | null) =>
@@ -918,55 +919,86 @@ const bulkCreateUrl =
       | SetIsUploadingAction
       | SetFileUploadStateAction
     >,
+    getState: GetReduxState,
   ) => {
+    const {
+      user: { tags },
+    } = getState()
+
     if (file === null) {
       // Sentry analytics: bulk create link with file fail
-      Sentry.captureMessage('start bulk create link from file unsuccessful')
-      GAEvent('modal page', 'start bulk create link from file', 'unsuccessful')
+      Sentry.captureMessage('bulk create upload missing file')
+      GAEvent('modal page', 'bulk create upload', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
         rootActions.setErrorMessage('File is missing.'),
       )
       dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-
-      // TODO: check file format
-      // } else if (file) {
-      //   dispatch<SetErrorMessageAction>(
-      //     rootActions.setErrorMessage('File format is rejected.'),
-      //   )
-      //   dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-    } else {
-      dispatch<SetIsUploadingAction>(setIsUploading(true))
-      const data = new FormData()
-      data.append('file', file, file.name)
-
-      // TODO: API integration
-      // const response = await postFormData('/api/user/bulk', data)
-      const response = {
-        ok: true,
-        status: 200,
-        json: async () => ({
-          fileName: 'test.csv',
-        }),
-      }
-      dispatch<SetIsUploadingAction>(setIsUploading(false))
-      if (!response.ok) {
-        // Sentry analytics: create link with file fail
-        Sentry.captureMessage('start bulk create link from file unsuccessful')
-        GAEvent(
-          'modal page',
-          'start bulk create link from file',
-          'unsuccessful',
+      return
+    }
+    if (file) {
+      const fileName = file.name
+      if (!fileName.includes('.') || !fileName.split('.').pop()) {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('File is invalid.'),
         )
-
-        await handleError(dispatch, response as unknown as Response)
         dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-      } else {
-        GAEvent('modal page', 'start bulk create link from file', 'successful')
-        const json = await response.json()
-        bulkUrlStarted(dispatch, json.fileName)
-        dispatch<SetFileUploadStateAction>(setFileUploadState(true))
+        Sentry.captureMessage('bulk create upload invalid file')
+        GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+        return
       }
+      if (fileName.split('.').pop() !== 'csv') {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('Only csv files are allowed.'),
+        )
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+        Sentry.captureMessage('bulk create upload invalid file')
+        GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+        return
+      }
+
+      if (file.size > MAX_CSV_UPLOAD_SIZE) {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('Bulk csv file exceeds the size limit'),
+        )
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+        Sentry.captureMessage('bulk create upload invalid file')
+        GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+        return
+      }
+    }
+
+    console.log(tags, isValidTags(tags))
+    if (!isValidTags(tags)) {
+      Sentry.captureMessage('bulk create upload invalid tags')
+      GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      return
+    }
+
+    dispatch<SetIsUploadingAction>(setIsUploading(true))
+    const data = new FormData()
+    data.append('file', file, file.name)
+    tags.forEach((tag) => data.append('tags', tag))
+
+    const response = await postFormData('/api/user/url/bulk', data)
+    dispatch<SetIsUploadingAction>(setIsUploading(false))
+    if (!response.ok) {
+      Sentry.captureMessage('bulk creation invalid')
+      GAEvent('modal page', 'bulk creation', 'unsuccessful')
+
+      await handleError(dispatch, response)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    } else {
+      Sentry.captureMessage('bulk creation success')
+      GAEvent('modal page', 'bulk creation', 'successful')
+      await response.json()
+      bulkQRCodesStarted(dispatch, file.name)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(true))
     }
   }
 
