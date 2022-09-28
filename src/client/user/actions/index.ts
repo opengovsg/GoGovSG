@@ -887,63 +887,56 @@ const bulkCreateUrl =
     const {
       user: { tags },
     } = getState()
+    const handleBulkErrors: (errorMessage: string) => void = (errorMessage) => {
+      Sentry.captureMessage('bulk create links from file unsuccessful')
+      GAEvent(
+        'modal page',
+        'bulk create links from file unsuccessful',
+        'unsuccessful',
+      )
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(errorMessage))
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    }
 
     if (file === null) {
-      // Sentry analytics: bulk create link with file fail
-      Sentry.captureMessage('start bulk create link from file unsuccessful')
-      GAEvent('modal page', 'start bulk create link from file', 'unsuccessful')
-
-      dispatch<SetErrorMessageAction>(
-        rootActions.setErrorMessage('File is missing.'),
-      )
-      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      handleBulkErrors('csv file is missing.')
       return
     }
-    if (file) {
-      const fileName = file.name
-      if (!fileName.includes('.') || !fileName.split('.').pop()) {
-        dispatch<SetErrorMessageAction>(
-          rootActions.setErrorMessage('File name is invalid.'),
-        )
-        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    const fileName = file.name
+    const validations: { condition: boolean; errorMessage: string }[] = [
+      {
+        condition: !fileName.includes('.') || !fileName.split('.').pop(),
+        errorMessage: 'File name is invalid.',
+      },
+      {
+        condition: fileName.split('.').pop() !== 'csv',
+        errorMessage: 'Only csv files are allowed.',
+      },
+      {
+        condition: file.size > MAX_BULK_CSV_UPLOAD_SIZE,
+        errorMessage: 'Bulk csv file exceeds the size limit.',
+      },
+      {
+        condition: !isValidTags(tags),
+        errorMessage: 'Tags are invalid.',
+      },
+    ]
+
+    validations.forEach((validation) => {
+      if (validation.condition) {
+        handleBulkErrors(validation.errorMessage)
         return
       }
-      if (fileName.split('.').pop() !== 'csv') {
-        dispatch<SetErrorMessageAction>(
-          rootActions.setErrorMessage('Only csv files are allowed.'),
-        )
-        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-        return
-      }
-
-      if (file.size > MAX_BULK_CSV_UPLOAD_SIZE) {
-        dispatch<SetErrorMessageAction>(
-          rootActions.setErrorMessage('Bulk csv file exceeds the size limit'),
-        )
-        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-        return
-      }
-    }
-
-    if (!isValidTags(tags)) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
-      GAEvent('modal page', 'create link from url', 'unsuccessful')
-
-      dispatch<SetErrorMessageAction>(
-        rootActions.setErrorMessage('Tags are invalid.'),
-      )
-      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-      return
-    }
+    })
 
     dispatch<SetIsUploadingAction>(setIsUploading(true))
     const data = new FormData()
-    data.append('file', file, file.name)
+    data.append('file', file, fileName)
+    // form data management for tags needs to be changed after merging with latest develop
     tags.forEach((tag) => data.append('tags', tag))
-
     const response = await postFormData('/api/user/url/bulk-link', data)
     dispatch<SetIsUploadingAction>(setIsUploading(false))
+
     if (!response.ok) {
       // Sentry analytics: create link with file fail
       Sentry.captureMessage('start bulk create link from file unsuccessful')
