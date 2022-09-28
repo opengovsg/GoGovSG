@@ -147,11 +147,12 @@ const isGetUrlsForUserSuccess: (
  * key-value pairs for the tableConfig.
  * @example [ ['orderBy', 'shortUrl'], ['sortDirection', 'desc'] ]
  */
-const setUrlTableConfig: (payload: UrlTableConfig) => SetUrlTableConfigAction =
-  (payload) => ({
-    type: UserAction.SET_URL_TABLE_CONFIG,
-    payload,
-  })
+const setUrlTableConfig: (
+  payload: Partial<UrlTableConfig>,
+) => SetUrlTableConfigAction = (payload) => ({
+  type: UserAction.SET_URL_TABLE_CONFIG,
+  payload,
+})
 
 const setUrlFilter: (payload: UrlTableFilterConfig) => SetUrlFilterAction = (
   payload,
@@ -330,7 +331,7 @@ const getUrls: (queryObj: ParsedUrlQueryInput) => Promise<{
   return { json, isOk }
 }
 
-// retrieves urls based on url table config
+// retrieves urls based on url table config, with search by either link or tags
 const getUrlsForUser =
   (): ThunkAction<
     void,
@@ -350,6 +351,7 @@ const getUrlsForUser =
     const state = getState()
     const { tableConfig } = state.user
     const {
+      isTag,
       numberOfRows,
       pageNumber,
       sortDirection,
@@ -359,15 +361,18 @@ const getUrlsForUser =
     } = tableConfig
     const offset = pageNumber * numberOfRows
 
-    const queryObj = {
+    const baseQueryObj = {
       limit: numberOfRows,
       offset,
       orderBy,
       sortDirection,
-      searchText,
       state: urlState,
       isFile,
     }
+    // Search by either tags or link search text
+    const queryObj = isTag
+      ? { ...baseQueryObj, tags: searchText }
+      : { ...baseQueryObj, searchText }
 
     dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
     try {

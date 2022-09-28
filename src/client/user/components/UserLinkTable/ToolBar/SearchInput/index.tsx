@@ -111,26 +111,28 @@ const textFieldHeight = useSearchInputHeight()
 // Search Input field.
 const SearchInput = () => {
   const dispatch = useDispatch()
-  const [query, setQuery] = useState('')
 
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,
   )
+  const { isTag, searchText } = tableConfig
   const searchInputHeight = useSearchInputHeight()
   const classes = useStyles({ textFieldHeight, searchInputHeight })
 
-  const changeSearchTextHandler = (e: string) => {
-    setQuery(e)
+  const setSearchText = (searchText: string) => {
+    const newConfig: Partial<UrlTableConfig> = { searchText }
+    dispatch(userActions.setUrlTableConfig(newConfig))
+  }
+
+  const setIsTag = (isTag: boolean) => {
+    const newConfig: Partial<UrlTableConfig> = { isTag }
+    dispatch(userActions.setUrlTableConfig(newConfig))
   }
 
   const applySearch = () => {
+    const newConfig: Partial<UrlTableConfig> = { pageNumber: 0 }
     dispatch(userActions.isFetchingUrls(true))
-    dispatch(
-      userActions.setUrlTableConfig({
-        searchText: query,
-        pageNumber: 0,
-      } as UrlTableConfig),
-    )
+    dispatch(userActions.setUrlTableConfig(newConfig))
     dispatch(userActions.getUrlsForUser())
   }
 
@@ -139,11 +141,10 @@ const SearchInput = () => {
       applySearch()
     }, SEARCH_TIMEOUT)
     return () => clearTimeout(timeoutId)
-  }, [query])
+  }, [searchText])
 
   const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
   const [isSearchFilterOpen, setIsSearchFilterOpen] = useState(false)
-  const [isTag, setIsTag] = useState(false)
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -172,15 +173,15 @@ const SearchInput = () => {
             autoFocus
             className={classes.searchTextField}
             variant="outlined"
-            value={query}
-            onChange={(e) => changeSearchTextHandler(e.target.value)}
-            onBlur={(e) => changeSearchTextHandler(e.target.value)}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onBlur={(e) => setSearchText(e.target.value)}
             onKeyDown={(e) => {
               const target = e.target as HTMLTextAreaElement
               switch (e.key) {
                 case 'Escape':
                   target.value = ''
-                  changeSearchTextHandler('')
+                  setSearchText('')
                   break
                 case 'Enter':
                   break
@@ -232,7 +233,7 @@ const SearchInput = () => {
             selectedLabel={isTag ? 'Tag' : 'Link'}
             onClick={(label) => {
               setIsTag(label === 'Tag')
-              setQuery('')
+              setSearchText('')
             }}
             isFilterOpen={isSearchFilterOpen}
             isMobileView={isMobileView}
