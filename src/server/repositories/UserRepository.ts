@@ -140,13 +140,11 @@ export class UserRepository implements UserRepositoryInterface {
         },
       ],
     }
-    let whereConditions: any =
-      conditions.searchText.length > 0
-        ? {
-            ...searchTextCondition,
-            userId: conditions.userId,
-          }
-        : { userId: conditions.userId }
+    let whereConditions: any = { userId: conditions.userId }
+    if (conditions.searchText.length > 0) {
+      whereConditions = { ...whereConditions, ...searchTextCondition }
+    }
+
     if (conditions.tags && conditions.tags.length > 0) {
       const searchTagConditions = {
         [Op.or]: conditions.tags.map((tag) => {
