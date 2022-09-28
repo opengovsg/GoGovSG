@@ -260,11 +260,8 @@ describe('UserRepository', () => {
     it('returns empty result on user no url', async () => {
       const rows: any = []
       findAndCountAll.mockResolvedValue({ rows, count: rows.length })
-      await expect(userRepo.findUrlsForUser(conditions)).resolves.toStrictEqual(
-        {
-          urls: [],
-          count: 0,
-        },
+      await expect(userRepo.findUrlsForUser(conditions)).rejects.toBeInstanceOf(
+        NotFoundError,
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
