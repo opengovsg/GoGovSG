@@ -22,6 +22,7 @@ import {
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
+  SetTagsAction,
   SetUploadFileErrorAction,
   SetUrlFilterAction,
   SetUrlTableConfigAction,
@@ -48,7 +49,7 @@ import {
 } from '../../app/util/requests'
 import rootActions from '../../app/components/pages/RootPage/actions'
 import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url'
-import { isValidUrl } from '../../../shared/util/validation'
+import { isValidTags, isValidUrl } from '../../../shared/util/validation'
 import { LOGIN_PAGE } from '../../app/util/types'
 import {
   LinkChangeSet,
@@ -244,13 +245,12 @@ const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
     message?: string
   }
   isOk: boolean
-}> = (queryObj) => {
+}> = async (queryObj) => {
   const query = querystring.stringify(queryObj)
-
-  return get(`/api/link-audit?${query}`).then((response) => {
-    const isOk = response.ok
-    return response.json().then((json) => ({ json, isOk }))
-  })
+  const response = await get(`/api/link-audit?${query}`)
+  const isOk = response.ok
+  const json = await response.json()
+  return { json, isOk }
 }
 
 const isGetLinkHistoryForUserSuccess: (
@@ -304,17 +304,17 @@ const getLinkHistoryForUser =
       offset,
     }
 
-    const { json, isOk } = await getLinkHistory(queryObj)
-
-    if (isOk) {
+    try {
+      const { json, isOk } = await getLinkHistory(queryObj)
+      if (!isOk) {
+        throw new Error(json.message || 'Error fetching link history')
+      }
       dispatch<GetLinkHistoryForUserSuccessAction>(
         isGetLinkHistoryForUserSuccess(json.changes, json.totalCount),
       )
-    } else {
+    } catch (error) {
       dispatch<SetErrorMessageAction>(
-        rootActions.setErrorMessage(
-          json.message || 'Error fetching link history',
-        ),
+        rootActions.setErrorMessage(String(error)),
       )
     }
   }
@@ -323,13 +323,12 @@ const getLinkHistoryForUser =
 const getUrls: (queryObj: ParsedUrlQueryInput) => Promise<{
   json: { urls: Array<UrlType>; count: number; message?: string }
   isOk: boolean
-}> = (queryObj) => {
+}> = async (queryObj) => {
   const query = querystring.stringify(queryObj)
-
-  return get(`/api/user/url?${query}`).then((response) => {
-    const isOk = response.ok
-    return response.json().then((json) => ({ json, isOk }))
-  })
+  const response = await get(`/api/user/url?${query}`)
+  const isOk = response.ok
+  const json = await response.json()
+  return { json, isOk }
 }
 
 // retrieves urls based on url table config, with search by either link or tags
@@ -376,9 +375,11 @@ const getUrlsForUser =
       : { ...baseQueryObj, searchText }
 
     dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
-    const { json, isOk } = await getUrls(queryObj)
-
-    if (isOk) {
+    try {
+      const { json, isOk } = await getUrls(queryObj)
+      if (!isOk) {
+        throw new Error(json.message || 'Error fetching URLs')
+      }
       json.urls.forEach((url: UrlType) => {
         /* eslint-disable no-param-reassign */
         url.createdAt = moment(url.createdAt)
@@ -391,12 +392,13 @@ const getUrlsForUser =
       })
       dispatch<GetUrlsForUserSuccessAction>(isGetUrlsForUserSuccess(json.urls))
       dispatch<UpdateUrlCountAction>(updateUrlCount(json.count))
-    } else {
+    } catch (error) {
       dispatch<SetErrorMessageAction>(
-        rootActions.setErrorMessage(json.message || 'Error fetching URLs'),
+        rootActions.setErrorMessage(String(error)),
       )
+    } finally {
+      dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
     }
-    dispatch<IsFetchingUrlsAction>(isFetchingUrls(false))
   }
 
 const resetUserState: () => ResetUserStateAction = () => ({
@@ -614,6 +616,7 @@ const urlCreated = (
  * If user is not logged in, the createUrl call returns unauthorized,
  * get them to login, else create the url.
  * @param history
+ * @param tags
  * @returns Promise<bool> Whether creation succeeded.
  */
 const createUrlOrRedirect =
@@ -632,7 +635,7 @@ const createUrlOrRedirect =
     getState: GetReduxState,
   ) => {
     const { user } = getState()
-    const { shortUrl } = user
+    const { shortUrl, tags } = user
     let { longUrl } = user
 
     // Test for malformed short URL
@@ -668,7 +671,23 @@ const createUrlOrRedirect =
       return
     }
 
-    const response = await postJson('/api/user/url', { longUrl, shortUrl })
+    if (!isValidTags(tags)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with url unsuccessful')
+      GAEvent('modal page', 'create link from url', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
+      return
+    }
+
+    const response = await postJson('/api/user/url', {
+      longUrl,
+      shortUrl,
+      tags,
+    })
 
     if (!response.ok) {
       // Sentry analytics: create link with url fail
@@ -789,6 +808,47 @@ const uploadFile =
     }
   }
 
+// For setting tags value in the tags autocomplete input box
+const setTags: (tags: string[]) => SetTagsAction = (tags) => ({
+  type: UserAction.SET_TAGS,
+  payload: tags,
+})
+
+// API call to update tags
+const updateTags =
+  (shortUrl: string, tags: string[]) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetErrorMessageAction | SetSuccessMessageAction
+    >,
+  ) => {
+    if (!isValidTags(tags)) {
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      return null
+    }
+
+    return patch('/api/user/url', { shortUrl, tags }).then((response) => {
+      if (response.ok) {
+        dispatch<void>(getUrlsForUser())
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage('Tags are updated.'),
+        )
+        return null
+      }
+
+      return response.json().then((json) => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage(json.message),
+        )
+        return null
+      })
+    })
+  }
+
 export default {
   getUrlsForUser,
   getLinkHistoryForUser,
@@ -821,4 +881,6 @@ export default {
   updateUrlInformation,
   setFileUploadState,
   setUrlUploadState,
+  setTags,
+  updateTags,
 }

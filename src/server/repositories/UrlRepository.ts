@@ -25,10 +25,9 @@ import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
+import { TAG_SEPARATOR } from '../../shared/constants'
 
 const { Public, Private } = FileVisibility
-
-export const tagSeparator = ';'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -72,7 +71,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
       const tagStrings = properties.tags
-        ? properties.tags.join(tagSeparator)
+        ? properties.tags.join(TAG_SEPARATOR)
         : ''
       const urlStaticDTO = {
         ...properties,
@@ -138,7 +137,7 @@ export class UrlRepository implements UrlRepositoryInterface {
         await url.setTags(newTags, { transaction: t })
         updateParams = {
           ...updateParams,
-          tagStrings: updateParams.tags.join(tagSeparator),
+          tagStrings: updateParams.tags.join(TAG_SEPARATOR),
         }
       }
       if (!url.isFile) {

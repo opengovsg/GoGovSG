@@ -48,6 +48,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 }: CreateLinkFormProps) => {
   const shortUrl = useSelector((state: GoGovReduxState) => state.user.shortUrl)
   const longUrl = useSelector((state: GoGovReduxState) => state.user.longUrl)
+  const tags = useSelector((state: GoGovReduxState) => state.user.tags)
   const isUploading = useSelector(
     (state: GoGovReduxState) => state.user.isUploading,
   )
@@ -69,12 +70,12 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     dispatch(userActions.setUploadFileError(error))
   const setCreateShortLinkError = (error: string) =>
     dispatch(userActions.setCreateShortLinkError(error))
+  const setTags = (tags: string[]) => dispatch(userActions.setTags(tags))
 
   const history = useHistory()
 
   const [isFile, setIsFile] = useState(false)
   const [file, setFile] = useState<File | null>(null)
-  const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
 
   const classes = useCreateLinkFormStyles({
@@ -327,7 +328,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               tagInput={tagInput}
               setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
-              placeholder={tags.length < MAX_NUM_TAGS_PER_LINK ? 'Add tag' : ''}
             />
           </div>
           <Button

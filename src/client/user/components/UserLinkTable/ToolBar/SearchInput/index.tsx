@@ -25,6 +25,7 @@ import SearchIcon from '../../../../../app/components/widgets/SearchIcon'
 import FilterDrawer from '../../../../../app/components/FilterDrawer'
 import { UrlTableConfig } from '../../../../reducers/types'
 import { GoGovReduxState } from '../../../../../app/reducers/types'
+import { SEARCH_TIMEOUT } from '../../../../constants'
 
 type StyleProps = {
   searchInputHeight: number
@@ -138,7 +139,7 @@ const SearchInput = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       applySearch()
-    }, 500)
+    }, SEARCH_TIMEOUT)
     return () => clearTimeout(timeoutId)
   }, [searchText])
 

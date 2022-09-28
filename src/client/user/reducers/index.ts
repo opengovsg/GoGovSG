@@ -9,6 +9,7 @@ const initialState: UserState = {
   isUploading: false,
   shortUrl: '',
   longUrl: '',
+  tags: [],
   createUrlModal: false,
   tableConfig: {
     isTag: false,
@@ -218,6 +219,11 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       nextState = {
         linkHistory: action.payload.linkHistory,
         linkHistoryCount: action.payload.totalCount,
+      }
+      break
+    case UserAction.SET_TAGS:
+      nextState = {
+        tags: action.payload,
       }
       break
     default:

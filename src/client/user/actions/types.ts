@@ -37,6 +37,7 @@ export enum UserAction {
   SET_URL_UPLOAD_STATE = 'SET_URL_UPLOAD_STATE',
   SET_FILE_UPLOAD_STATE = 'SET_FILE_UPLOAD_STATE',
   GET_LINK_HISTORY_FOR_USER_SUCCESS = 'GET_LINK_HISTORY_FOR_USER_SUCCESS',
+  SET_TAGS = 'SET_TAGS',
 }
 
 export type SetUrlUploadStateAction = ReduxPayloadAction<
@@ -177,6 +178,8 @@ export type GetLinkHistoryForUserSuccessAction = ReduxPayloadAction<
   }
 >
 
+export type SetTagsAction = ReduxPayloadAction<UserAction.SET_TAGS, string[]>
+
 export type UserActionType =
   | UpdateUrlCountAction
   | SetUrlTableConfigAction
@@ -205,3 +208,4 @@ export type UserActionType =
   | SetUrlUploadStateAction
   | SetFileUploadStateAction
   | GetLinkHistoryForUserSuccessAction
+  | SetTagsAction

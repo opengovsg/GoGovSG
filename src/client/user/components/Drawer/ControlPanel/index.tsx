@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   Divider,
@@ -31,6 +31,7 @@ import TrailingButton from './widgets/TrailingButton'
 import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
+import TagsEditor from './widgets/TagsEditor'
 import { SEARCH_PAGE } from '../../../../app/util/types'
 import userActions from '../../../actions'
 
@@ -171,10 +172,10 @@ export default function ControlPanel() {
   const originalDescription = shortLinkState?.description || ''
   const originalContactEmail = shortLinkState?.contactEmail || ''
 
-  const [isContactEmailValid, setContactEmailValid] = React.useState(
+  const [isContactEmailValid, setContactEmailValid] = useState(
     Boolean(originalContactEmail),
   )
-  const [isDescriptionValid, setDescriptionValid] = React.useState(
+  const [isDescriptionValid, setDescriptionValid] = useState(
     Boolean(originalDescription),
   )
 
@@ -221,6 +222,10 @@ export default function ControlPanel() {
                 <Divider className={classes.divider} />
               </Hidden>
               <LinkOwnershipField closeModal={handleClose} />
+              <Hidden mdUp>
+                <Divider className={classes.divider} />
+              </Hidden>
+              <TagsEditor />
               <div className={classes.inactiveDesc}>
                 <Divider className={classes.dividerInformation} />
                 <LinkInfoEditor

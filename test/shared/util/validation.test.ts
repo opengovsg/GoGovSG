@@ -182,3 +182,27 @@ describe('Test valid tag check', () => {
     expect(validation.isValidTag('')).toBe(false)
   })
 })
+
+describe('Test valid tags check', () => {
+  test('check passes with at most 3 unique and valid tags', () => {
+    expect(validation.isValidTags(['tag', '2tag', 'OnE-2_ThrEe'])).toBe(true)
+    expect(validation.isValidTags(['tag', 'TAG'])).toBe(true)
+    expect(validation.isValidTags([])).toBe(true)
+  })
+
+  test('check fails with duplicate tags', () => {
+    expect(validation.isValidTags(['TesT', 'TesT'])).toBe(false)
+    expect(validation.isValidTags(['foo', 'bar', 'foo'])).toBe(false)
+  })
+
+  test('check fails with any invalid tag', () => {
+    expect(validation.isValidTags(['valid', 'valid-2', 'invalid,tag'])).toBe(
+      false,
+    )
+    expect(validation.isValidTags([' test '])).toBe(false)
+  })
+
+  test('check fails with more than 3 tags', () => {
+    expect(validation.isValidTags(['one', 'two', 'three', 'four'])).toBe(false)
+  })
+})

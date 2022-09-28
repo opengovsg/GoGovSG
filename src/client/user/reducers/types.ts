@@ -44,6 +44,7 @@ export type UrlType = {
   contactEmail: string
   editedContactEmail: string
   email: string
+  tags: string[]
   tagStrings: string
 }
 
@@ -55,6 +56,7 @@ export type LinkChangeKey =
   | 'state'
   | 'userEmail'
   | 'longUrl'
+  | 'tagStrings'
 
 export interface LinkChangeSet {
   type: LinkChangeType
@@ -88,4 +90,5 @@ export type UserState = {
   } | null
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
+  tags: string[]
 }
