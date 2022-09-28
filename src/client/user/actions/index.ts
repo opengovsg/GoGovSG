@@ -774,7 +774,7 @@ const uploadFile =
     getState: GetReduxState,
   ) => {
     const {
-      user: { shortUrl },
+      user: { shortUrl, tags },
     } = getState()
     if (file === null) {
       // Sentry analytics: create link with file fail
@@ -785,26 +785,55 @@ const uploadFile =
         rootActions.setErrorMessage('File is missing.'),
       )
       dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-    } else {
-      dispatch<SetIsUploadingAction>(setIsUploading(true))
-      const data = new FormData()
-      data.append('file', file, file.name)
-      data.append('shortUrl', shortUrl)
-      const response = await postFormData('/api/user/url', data)
-      dispatch<SetIsUploadingAction>(setIsUploading(false))
-      if (!response.ok) {
-        // Sentry analytics: create link with file fail
-        Sentry.captureMessage('create link with file unsuccessful')
-        GAEvent('modal page', 'create link from file', 'unsuccessful')
+      return
+    }
 
-        await handleError(dispatch, response)
-        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-      } else {
-        GAEvent('modal page', 'create link from file', 'successful')
-        const json = await response.json()
-        urlCreated(dispatch, json.shortUrl)
-        dispatch<SetFileUploadStateAction>(setFileUploadState(true))
-      }
+    if (!/^[a-z0-9-]/.test(shortUrl)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with file unsuccessful')
+      GAEvent('modal page', 'create link from file', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage(
+          'Short links should only consist of a-z, 0-9 and hyphens.',
+        ),
+      )
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      return
+    }
+
+    if (!isValidTags(tags)) {
+      // Sentry analytics: create link with url fail
+      Sentry.captureMessage('create link with file unsuccessful')
+      GAEvent('modal page', 'create link from file', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      return
+    }
+
+    dispatch<SetIsUploadingAction>(setIsUploading(true))
+    const data = new FormData()
+    data.append('file', file, file.name)
+    data.append('shortUrl', shortUrl)
+    tags.forEach((tag) => data.append('tags', tag))
+
+    const response = await postFormData('/api/user/url', data)
+    dispatch<SetIsUploadingAction>(setIsUploading(false))
+    if (!response.ok) {
+      // Sentry analytics: create link with file fail
+      Sentry.captureMessage('create link with file unsuccessful')
+      GAEvent('modal page', 'create link from file', 'unsuccessful')
+
+      await handleError(dispatch, response)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    } else {
+      GAEvent('modal page', 'create link from file', 'successful')
+      const json = await response.json()
+      urlCreated(dispatch, json.shortUrl)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(true))
     }
   }
 
