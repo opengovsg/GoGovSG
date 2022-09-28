@@ -784,8 +784,8 @@ const uploadFile =
 
     if (!/^[a-z0-9-]/.test(shortUrl)) {
       // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
-      GAEvent('modal page', 'create link from url', 'unsuccessful')
+      Sentry.captureMessage('create link with file unsuccessful')
+      GAEvent('modal page', 'create link from file', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
         rootActions.setErrorMessage(
@@ -798,8 +798,8 @@ const uploadFile =
 
     if (!isValidTags(tags)) {
       // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
-      GAEvent('modal page', 'create link from url', 'unsuccessful')
+      Sentry.captureMessage('create link with file unsuccessful')
+      GAEvent('modal page', 'create link from file', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
         rootActions.setErrorMessage('Tags are invalid.'),
