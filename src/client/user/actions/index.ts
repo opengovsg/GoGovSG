@@ -818,7 +818,10 @@ const uploadFile =
     const data = new FormData()
     data.append('file', file, file.name)
     data.append('shortUrl', shortUrl)
-    tags.forEach((tag) => data.append('tags', tag))
+    if (tags) {
+      // Serialize the tags in JSON format as a string
+      data.append('tags', JSON.stringify(tags))
+    }
 
     const response = await postFormData('/api/user/url', data)
     dispatch<SetIsUploadingAction>(setIsUploading(false))
