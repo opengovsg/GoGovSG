@@ -171,11 +171,7 @@ describe('UrlRepository', () => {
         expect.anything(),
       )
       expect(tagFindOrCreate).toHaveBeenCalledTimes(0)
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).not.toHaveBeenCalled()
     })
 
@@ -198,11 +194,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).not.toHaveBeenCalled()
       expect(baseUrlWithTags.addTags).toHaveBeenCalledTimes(1)
     })
@@ -240,11 +232,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).toHaveBeenCalledWith({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
@@ -293,11 +281,7 @@ describe('UrlRepository', () => {
         },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).toHaveBeenCalledWith({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
@@ -344,11 +328,7 @@ describe('UrlRepository', () => {
       })
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
     it('should update non-file links', async () => {
@@ -366,11 +346,7 @@ describe('UrlRepository', () => {
       expect(putObject).not.toHaveBeenCalled()
       expect(putObjectAcl).not.toHaveBeenCalled()
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
     it('should update tags on non-file links', async () => {
@@ -401,11 +377,7 @@ describe('UrlRepository', () => {
         { description, tags: newTags, tagStrings: baseTagStrings },
         expect.anything(),
       )
-      expect(scope).toHaveBeenCalledWith([
-        'defaultScope',
-        'getClicks',
-        'getTags',
-      ])
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
     it('should update non-state changes on file links', async () => {

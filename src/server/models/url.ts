@@ -13,7 +13,7 @@ import { IdType } from '../../types/server/models'
 import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlSource, StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
-import { Tag, TagType } from './tag'
+import { TagType } from './tag'
 
 export interface UrlBaseType extends IdType {
   readonly shortUrl: string
@@ -316,13 +316,6 @@ export const Url = <UrlTypeStatic>sequelize.define(
           {
             model: UrlClicks,
             as: 'UrlClicks',
-          },
-        ],
-      },
-      getTags: {
-        include: [
-          {
-            model: Tag,
           },
         ],
       },
