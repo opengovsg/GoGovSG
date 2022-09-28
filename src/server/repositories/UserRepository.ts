@@ -118,9 +118,6 @@ export class UserRepository implements UserRepositoryInterface {
       throw new NotFoundError(notFoundMessage)
     }
     const { rows, count } = urlsAndCount
-    if (!rows || count === 0) {
-      throw new NotFoundError(notFoundMessage)
-    }
     const urls = rows.map((urlType) => this.urlMapper.persistenceToDto(urlType))
     return { urls, count }
   }
