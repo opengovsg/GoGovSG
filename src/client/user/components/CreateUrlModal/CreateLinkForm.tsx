@@ -319,25 +319,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                   </a>
                 </CollapsibleMessage>
               </div>
-
-              <div className={classes.labelText}>
-                <Typography variant="body1">
-                  Tag (add up to <strong>{MAX_NUM_TAGS_PER_LINK} tags</strong>){' '}
-                  <Tooltip
-                    title="Tags are words, or combinations of words, you can use to classify or describe your link."
-                    imageAltText="Tags help"
-                  />
-                </Typography>
-              </div>
-              <div>
-                <TagsAutocomplete
-                  tags={tags}
-                  setTags={setTags}
-                  tagInput={tagInput}
-                  setTagInput={setTagInput}
-                  disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
-                />
-              </div>
             </>
           )}
           {createType === CreateType.BULK && (
@@ -403,6 +384,24 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               </div>
             </>
           )}
+          <div className={classes.labelText}>
+            <Typography variant="body1">
+              Tag (add up to <strong>{MAX_NUM_TAGS_PER_LINK} tags</strong>){' '}
+              <Tooltip
+                title="Tags are words, or combinations of words, you can use to classify or describe your link."
+                imageAltText="Tags help"
+              />
+            </Typography>
+          </div>
+          <div>
+            <TagsAutocomplete
+              tags={tags}
+              setTags={setTags}
+              tagInput={tagInput}
+              setTagInput={setTagInput}
+              disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
+            />
+          </div>
           <Button
             className={classes.button}
             type="submit"
@@ -414,7 +413,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             {isUploading ? (
               <CircularProgress color="primary" size={20} />
             ) : (
-              'Create link'
+              `Create link${createType === CreateType.BULK ? 's' : ''}`
             )}
           </Button>
         </form>

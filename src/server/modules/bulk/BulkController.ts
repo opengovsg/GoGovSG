@@ -81,9 +81,9 @@ export class BulkController {
 
     const schema = this.parseCSV(file.data.toString())
     if (schema.isValid) {
-      res.ok({ isValid: schema.isValid })
+      res.ok({ fileName: file.name })
     } else {
-      res.badRequest({ isValid: schema.isValid })
+      res.badRequest(jsonMessage(`Invalid csv file contents"`))
     }
   }
 }

@@ -115,7 +115,7 @@ describe('BulkController test', () => {
       await controller.csvValidation(req, res)
 
       expect(res.ok).toHaveBeenCalledWith({
-        isValid: true,
+        fileName: 'file.csv',
       })
     })
   })
@@ -130,7 +130,7 @@ describe('BulkController test', () => {
       res.badRequest = badRequest
       await controller.csvValidation(req, res)
       expect(res.badRequest).toHaveBeenCalledWith({
-        isValid: false,
+        message: expect.any(String),
       })
     })
   })

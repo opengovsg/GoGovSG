@@ -4,7 +4,7 @@ import { createValidator } from 'express-joi-validation'
 import { DependencyIds } from '../../constants'
 import { container } from '../../util/inversify'
 import {
-  MAX_CSV_UPLOAD_SIZE,
+  MAX_BULK_CSV_UPLOAD_SIZE,
   MAX_FILE_UPLOAD_SIZE,
 } from '../../../shared/constants'
 import {
@@ -46,7 +46,7 @@ const fileUploadMiddleware = fileUpload({
 
 const bulkCSVUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_CSV_UPLOAD_SIZE, // 0.2MB
+    fileSize: MAX_BULK_CSV_UPLOAD_SIZE, // 0.2MB
     files: 1,
   },
 })
