@@ -3,6 +3,7 @@ import fileUpload from 'express-fileupload'
 import { createValidator } from 'express-joi-validation'
 import { DependencyIds } from '../../constants'
 import { container } from '../../util/inversify'
+import jsonMessage from '../../util/json'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   ownershipTransferSchema,
@@ -43,11 +44,20 @@ const validator = createValidator({ passError: true })
  */
 function preprocessPotentialIncomingFile(
   req: Express.Request,
-  _: Express.Response,
+  res: Express.Response,
   next: Express.NextFunction,
 ) {
   if (req.files) {
     req.body.files = req.files
+    if (req.body.tags) {
+      // Tags for files sent as FormData should be deserialised from JSON format
+      try {
+        req.body.tags = JSON.parse(req.body.tags)
+      } catch (e) {
+        res.badRequest(jsonMessage('Tags are invalid.'))
+        return
+      }
+    }
   }
   next()
 }
