@@ -21,10 +21,9 @@ export class BulkService implements interfaces.BulkService {
       skipEmptyLines: false,
       delimiter: ',',
       step(step, parser) {
-        schema.rows += 1
         const rowData = step.data as string[]
         let validRow = true
-        if (schema.rows === 1) {
+        if (schema.rows === 0) {
           // if header is invalid
           if (rowData[0] !== BULK_UPLOAD_HEADER) {
             schema.isValid = false
@@ -58,6 +57,7 @@ export class BulkService implements interfaces.BulkService {
           }
           schema.longUrls.push(rowData[0])
         }
+        schema.rows += 1
       },
     })
     return schema
