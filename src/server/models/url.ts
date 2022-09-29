@@ -102,6 +102,43 @@ const writeToUrlHistory = async (
     },
   )
 }
+const writeToUrlClicksBulk = async (
+  urls: UrlType[],
+  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
+): Promise<UrlClicksType[]> => {
+  const linkHistoryUrlObjects = urls.map((url) => {
+    const jsonObject = url.toJSON()
+    return {
+      shortUrl: jsonObject.shortUrl,
+      clicks: 0,
+    }
+  })
+  return UrlClicks.bulkCreate(linkHistoryUrlObjects, {
+    transaction: options.transaction,
+  })
+}
+
+const writeToUrlHistoryBulk = async (
+  urls: UrlType[],
+  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
+): Promise<UrlHistoryType[]> => {
+  const linkHistoryUrlObjects = urls.map((url) => {
+    const jsonObject = url.toJSON()
+    return {
+      userId: jsonObject.userId,
+      state: jsonObject.state,
+      urlShortUrl: jsonObject.shortUrl,
+      longUrl: jsonObject.longUrl,
+      isFile: jsonObject.isFile,
+      contactEmail: jsonObject.contactEmail,
+      description: jsonObject.description,
+    }
+  })
+
+  return UrlHistory.bulkCreate(linkHistoryUrlObjects, {
+    transaction: options.transaction,
+  })
+}
 
 export const Url = <UrlTypeStatic>sequelize.define(
   'url',
@@ -171,6 +208,21 @@ export const Url = <UrlTypeStatic>sequelize.define(
   },
   {
     hooks: {
+      afterBulkCreate: async (urls: UrlType[], options) => {
+        await writeToUrlHistoryBulk(
+          urls,
+          options as Sequelize.CreateOptions & {
+            transaction: Sequelize.Transaction
+          },
+        )
+        await writeToUrlClicksBulk(
+          urls,
+          options as Sequelize.CreateOptions & {
+            transaction: Sequelize.Transaction
+          },
+        )
+        return Promise.resolve()
+      },
       afterCreate: async (url: UrlType, options) => {
         if (!options.transaction) {
           return Promise.reject(
