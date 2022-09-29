@@ -4,8 +4,9 @@ import * as interfaces from '../interfaces/BulkService'
 
 import { ogHostname } from '../../../config'
 import { BULK_UPLOAD_HEADER, BULK_UPLOAD_MAX } from '../../../constants'
-
+import { BulkUrlMapping } from '../../../repositories/types'
 import * as validators from '../../../../shared/util/validation'
+import generateShortUrl from '../../../util/url'
 
 @injectable()
 export class BulkService implements interfaces.BulkService {
@@ -13,6 +14,7 @@ export class BulkService implements interfaces.BulkService {
     const schema = {
       rows: 0,
       isValid: true,
+      longUrls: [],
     } as interfaces.CSVSchema
 
     paparse.parse(dataString, {
@@ -23,7 +25,11 @@ export class BulkService implements interfaces.BulkService {
         const rowData = step.data as string[]
         let validRow = true
         if (schema.rows === 1) {
-          validRow = schema.rows === 1 && rowData[0] === BULK_UPLOAD_HEADER
+          // if header is invalid
+          if (rowData[0] !== BULK_UPLOAD_HEADER) {
+            schema.isValid = false
+            parser.abort()
+          }
         } else {
           const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX + 1 // rows include header
           const onlyOneColumn = rowData.length === 1
@@ -45,15 +51,30 @@ export class BulkService implements interfaces.BulkService {
             isHttps &&
             validCharacters &&
             noParsingError
-        }
 
-        if (!validRow) {
-          schema.isValid = false
-          parser.abort()
+          if (!validRow) {
+            schema.isValid = false
+            parser.abort()
+          }
+          schema.longUrls.push(rowData[0])
         }
       },
     })
     return schema
+  }
+
+  generateUrlMappings: (
+    longUrls: string[],
+    length?: number,
+  ) => Promise<BulkUrlMapping[]> = async (longUrls, length = 8) => {
+    return Promise.all(
+      longUrls.map(async (longUrl) => {
+        return {
+          longUrl,
+          shortUrl: await generateShortUrl(length),
+        }
+      }),
+    )
   }
 }
 
