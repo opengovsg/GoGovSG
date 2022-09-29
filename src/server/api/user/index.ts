@@ -50,6 +50,7 @@ function preprocessPotentialIncomingFile(
   if (req.files) {
     req.body.files = req.files
     if (req.body.tags) {
+      // Tags for files sent as FormData should be deserialised from JSON format
       try {
         req.body.tags = JSON.parse(req.body.tags)
       } catch (e) {
