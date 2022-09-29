@@ -1,4 +1,9 @@
-import { StorableFile, StorableUrl, UrlDirectoryPaginated } from '../types'
+import {
+  BulkUrlMapping,
+  StorableFile,
+  StorableUrl,
+  UrlDirectoryPaginated,
+} from '../types'
 import { DirectoryQueryConditions } from '../../modules/directory'
 
 /**
@@ -49,4 +54,9 @@ export interface UrlRepositoryInterface {
   rawDirectorySearch: (
     conditions: DirectoryQueryConditions,
   ) => Promise<UrlDirectoryPaginated>
+
+  bulkCreate(properties: {
+    userId: number
+    urlMappings: BulkUrlMapping[]
+  }): Promise<void>
 }

@@ -32,6 +32,8 @@ export type StorableUser = {
   id: number
 }
 
+export type BulkUrlMapping = Pick<StorableUrl, 'shortUrl' | 'longUrl'>
+
 export type UserUrlsQueryConditions = {
   limit: number
   offset: number

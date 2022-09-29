@@ -12,6 +12,7 @@ import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import {
+  BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlDirectory,
@@ -467,6 +468,28 @@ export class UrlRepository implements UrlRepositoryInterface {
         throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
     }
     return rankingAlgorithm
+  }
+
+  public bulkCreate: (properties: {
+    userId: number
+    urlMappings: BulkUrlMapping[]
+  }) => Promise<void> = async (properties) => {
+    const { urlMappings, userId } = properties
+    await sequelize.transaction(async (t) => {
+      const bulkUrlObject = urlMappings.map(({ shortUrl, longUrl }) => {
+        return {
+          shortUrl,
+          longUrl,
+          userId,
+          isFile: false,
+        }
+      })
+      // sequelize method
+      await Url.bulkCreate(bulkUrlObject, {
+        transaction: t,
+        individualHooks: false,
+      })
+    })
   }
 }
 
