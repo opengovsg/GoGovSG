@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import {
+  BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlsPaginated,
@@ -142,6 +143,14 @@ export class UrlManagementService implements interfaces.UrlManagementService {
   ) => Promise<UrlsPaginated> = (conditions) => {
     return this.userRepository.findUrlsForUser(conditions)
   }
+
+  bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void> =
+    async (userId, urlMappings) => {
+      return this.urlRepository.bulkCreate({
+        userId,
+        urlMappings,
+      })
+    }
 }
 
 export default UrlManagementService
