@@ -93,13 +93,13 @@ router.post(
  */
 
 router.post(
-  '/url/bulk-link',
+  '/url/bulk',
   bulkCSVUploadMiddleware,
   preprocessPotentialIncomingFile,
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,
-  bulkController.csvValidation,
+  bulkController.bulkCreate,
 )
 
 router.patch(
