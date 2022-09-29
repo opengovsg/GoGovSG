@@ -35,4 +35,26 @@ describe('FileTypeFilterService', () => {
     })
     expect(result).toBeFalsy()
   })
+
+  it('allow files not detected by file-type from custom file extensions', async () => {
+    const result = await service.hasAllowedType(
+      {
+        data: Buffer.from('name,phone\nabc,123\n'),
+        name: 'file.png',
+      },
+      ['png'],
+    )
+    expect(result).toBeTruthy()
+  })
+
+  it('does not allow files not detected by file-type from custom file extensions', async () => {
+    const result = await service.hasAllowedType(
+      {
+        data: Buffer.from('name,phone\nabc,123\n'),
+        name: 'file.jpeg',
+      },
+      ['png'],
+    )
+    expect(result).toBeFalsy()
+  })
 })

@@ -53,6 +53,9 @@ export const DependencyIds = {
   linksToRotate: Symbol.for('linksToRotate'),
   ogUrl: Symbol.for('ogUrl'),
   gaTrackingId: Symbol.for('gaTrackingId'),
+  bulkController: Symbol.for('bulkController'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
+export const BULK_UPLOAD_MAX = 1000
+export const BULK_UPLOAD_HEADER = 'Original URL that needs to be shortened'
