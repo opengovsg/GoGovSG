@@ -3,6 +3,7 @@
 import { injectable } from 'inversify'
 import { UrlRepositoryInterface } from '../../../../src/server/repositories/interfaces/UrlRepositoryInterface'
 import {
+  BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlDirectoryPaginated,
@@ -78,6 +79,13 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
       ],
       count: 0,
     })
+  }
+
+  bulkCreate: (properties: {
+    userId: number
+    urlMappings: BulkUrlMapping[]
+  }) => Promise<void> = () => {
+    return Promise.resolve()
   }
 }
 
