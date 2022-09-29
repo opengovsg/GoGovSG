@@ -190,7 +190,7 @@ export class UserController {
     const queryConditions = UserController.extractUrlQueryConditions(req)
     const validationResult = userUrlsQueryConditions.validate(queryConditions)
     if (validationResult.error) {
-      res.badRequest(validationResult.error.message)
+      res.badRequest(jsonMessage(validationResult.error.message))
       return
     }
     // Find user and paginated urls
@@ -201,7 +201,7 @@ export class UserController {
       return
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.notFound(error.message)
+        res.notFound(jsonMessage(error.message))
         return
       }
       res.serverError(jsonMessage('Error retrieving URLs for user'))
@@ -253,7 +253,7 @@ export class UserController {
     const queryConditions = { searchText, userId, limit }
     const validationResult = userTagsQueryConditions.validate(queryConditions)
     if (validationResult.error) {
-      res.badRequest(validationResult.error.message)
+      res.badRequest(jsonMessage(validationResult.error.message))
       return
     }
     try {
@@ -264,7 +264,7 @@ export class UserController {
       return
     } catch (error) {
       if (error instanceof NotFoundError) {
-        res.notFound(error.message)
+        res.notFound(jsonMessage(error.message))
         return
       }
       res.serverError(jsonMessage('Error retrieving Tags for user'))
