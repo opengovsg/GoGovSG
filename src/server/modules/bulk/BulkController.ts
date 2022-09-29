@@ -5,6 +5,7 @@ import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
+import dogstatsd from '../../util/dogstatsd'
 
 @injectable()
 export class BulkController {
@@ -48,10 +49,10 @@ export class BulkController {
     try {
       await this.urlManagementService.bulkCreate(userId, urlMappings)
     } catch (e) {
-      // TODO: hash collision
+      dogstatsd.increment('bulk.hash.failure', 1, 1)
     }
 
-    // TODO: start QR code generation
+    dogstatsd.increment('bulk.hash.success', 1, 1)
     res.ok()
   }
 }
