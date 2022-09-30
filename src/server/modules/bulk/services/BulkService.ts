@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import paparse from 'papaparse'
+import * as Papa from 'papaparse'
 import { UploadedFile } from 'express-fileupload'
 import * as interfaces from '../interfaces/BulkService'
 
@@ -32,7 +32,7 @@ export class BulkService implements interfaces.BulkService {
       return schema
     }
 
-    paparse.parse(dataString, {
+    Papa.parse(dataString, {
       skipEmptyLines: false,
       delimiter: ',',
       step(step, parser) {
