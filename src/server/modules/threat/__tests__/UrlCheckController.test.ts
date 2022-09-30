@@ -17,15 +17,19 @@ function createRequestWithUser(user: any): Request {
   })
 }
 
+const mockUrlThreatScanService = {
+  isThreat: jest.fn(),
+  isThreatBulk: jest.fn(),
+}
+
 describe('UrlCheckController test', () => {
   const url = 'https://example.com'
-  const isThreat = jest.fn()
 
-  const controller = new UrlCheckController({ isThreat })
+  const controller = new UrlCheckController(mockUrlThreatScanService)
   const badRequest = jest.fn()
 
   beforeEach(() => {
-    isThreat.mockClear()
+    mockUrlThreatScanService.isThreat.mockClear()
     badRequest.mockClear()
   })
 
@@ -36,7 +40,7 @@ describe('UrlCheckController test', () => {
 
     await controller.checkUrl(req, res, next)
 
-    expect(isThreat).not.toHaveBeenCalled()
+    expect(mockUrlThreatScanService.isThreat).not.toHaveBeenCalled()
     expect(next).toHaveBeenCalled()
   })
 
@@ -46,12 +50,12 @@ describe('UrlCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const next = jest.fn()
 
-    isThreat.mockRejectedValue(false)
+    mockUrlThreatScanService.isThreat.mockRejectedValue(false)
     res.serverError = badRequest
 
     await controller.checkUrl(req, res, next)
 
-    expect(isThreat).toHaveBeenCalled()
+    expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
     expect(badRequest).toHaveBeenCalled()
     expect(next).not.toHaveBeenCalled()
   })
@@ -62,12 +66,12 @@ describe('UrlCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const next = jest.fn()
 
-    isThreat.mockResolvedValue(true)
+    mockUrlThreatScanService.isThreat.mockResolvedValue(true)
     res.badRequest = badRequest
 
     await controller.checkUrl(req, res, next)
 
-    expect(isThreat).toHaveBeenCalled()
+    expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
     expect(badRequest).toHaveBeenCalled()
     expect(next).not.toHaveBeenCalled()
   })
@@ -78,13 +82,13 @@ describe('UrlCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const next = jest.fn()
 
-    isThreat.mockResolvedValue(false)
+    mockUrlThreatScanService.isThreat.mockResolvedValue(false)
     res.badRequest = badRequest
     res.serverError = badRequest
 
     await controller.checkUrl(req, res, next)
 
-    expect(isThreat).toHaveBeenCalled()
+    expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
     expect(badRequest).not.toHaveBeenCalled()
     expect(next).toHaveBeenCalled()
   })

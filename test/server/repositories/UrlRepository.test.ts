@@ -15,7 +15,10 @@ import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { SearchResultsSortOrder } from '../../../src/shared/search'
 import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
-import { StorableUrlState } from '../../../src/server/repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../src/server/repositories/enums'
 
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
 
@@ -137,6 +140,7 @@ describe('UrlRepository', () => {
           shortUrl,
           userId,
           isFile: false,
+          source: StorableUrlSource.Console,
         },
         expect.anything(),
       )
@@ -172,6 +176,7 @@ describe('UrlRepository', () => {
           shortUrl,
           userId,
           isFile: true,
+          source: StorableUrlSource.Console,
         },
         expect.anything(),
       )
