@@ -2,11 +2,18 @@ import { injectable } from 'inversify'
 import paparse from 'papaparse'
 import * as interfaces from '../interfaces/BulkService'
 
-import { ogHostname } from '../../../config'
-import { BULK_UPLOAD_HEADER, BULK_UPLOAD_MAX } from '../../../constants'
+import {
+  bulkUploadMaxNum,
+  bulkUploadRandomStrLength,
+  ogHostname,
+} from '../../../config'
+import { BULK_UPLOAD_HEADER } from '../../../../shared/constants'
 import { BulkUrlMapping } from '../../../repositories/types'
 import * as validators from '../../../../shared/util/validation'
 import generateShortUrl from '../../../util/url'
+
+const BULK_UPLOAD_RANDOM_STRING_LENGTH = bulkUploadRandomStrLength
+const BULK_UPLOAD_MAX_NUM = bulkUploadMaxNum
 
 @injectable()
 export class BulkService implements interfaces.BulkService {
@@ -30,7 +37,7 @@ export class BulkService implements interfaces.BulkService {
             parser.abort()
           }
         } else {
-          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX + 1 // rows include header
+          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX_NUM + 1 // rows include header
           const onlyOneColumn = rowData.length === 1
           const isNotBlacklisted = !validators.isBlacklisted(rowData[0])
           const isNotEmpty = rowData[0].length > 0
@@ -63,19 +70,17 @@ export class BulkService implements interfaces.BulkService {
     return schema
   }
 
-  generateUrlMappings: (
-    longUrls: string[],
-    length?: number,
-  ) => Promise<BulkUrlMapping[]> = async (longUrls, length = 8) => {
-    return Promise.all(
-      longUrls.map(async (longUrl) => {
-        return {
-          longUrl,
-          shortUrl: await generateShortUrl(length),
-        }
-      }),
-    )
-  }
+  generateUrlMappings: (longUrls: string[]) => Promise<BulkUrlMapping[]> =
+    async (longUrls) => {
+      return Promise.all(
+        longUrls.map(async (longUrl) => {
+          return {
+            longUrl,
+            shortUrl: await generateShortUrl(BULK_UPLOAD_RANDOM_STRING_LENGTH),
+          }
+        }),
+      )
+    }
 }
 
 export default BulkService

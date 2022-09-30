@@ -44,7 +44,7 @@ const fileUploadMiddleware = fileUpload({
 
 const bulkCSVUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_CSV_UPLOAD_SIZE, // 0.4MB
+    fileSize: MAX_CSV_UPLOAD_SIZE, // 1MB
     files: 1,
   },
 })
