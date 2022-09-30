@@ -67,6 +67,13 @@ export class CloudmersiveScanService
     }
     return false
   }
+
+  public isThreatBulk: (urls: string[]) => Promise<boolean> = async (urls) => {
+    // TODO Delete this
+    const dummyValue = await this.scanUrlPromise(urls[0])
+    console.log(dummyValue)
+    return false
+  }
 }
 
 export default CloudmersiveScanService

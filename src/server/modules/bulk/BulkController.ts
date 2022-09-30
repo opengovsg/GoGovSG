@@ -6,6 +6,7 @@ import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
+import { UrlThreatScanService } from '../threat/interfaces'
 
 @injectable()
 export class BulkController {
@@ -13,14 +14,19 @@ export class BulkController {
 
   private bulkService: BulkService
 
+  private urlThreatScanService: UrlThreatScanService
+
   public constructor(
     @inject(DependencyIds.bulkService)
     bulkService: BulkService,
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
+    @inject(DependencyIds.urlThreatScanService)
+    urlThreatScanService: UrlThreatScanService,
   ) {
     this.bulkService = bulkService
     this.urlManagementService = urlManagementService
+    this.urlThreatScanService = urlThreatScanService
   }
 
   public bulkCreate: (req: Request, res: Response) => Promise<void> = async (
@@ -38,6 +44,16 @@ export class BulkController {
     const schema = this.bulkService.parseCsv(file.data.toString())
     if (!schema.isValid) {
       res.badRequest(jsonMessage('Csv is wrongly formatted.'))
+      return
+    }
+
+    // safe browsing check for all long urls
+    const containsMaliciousLinks = await this.urlThreatScanService.isThreatBulk(
+      schema.longUrls,
+    )
+    if (containsMaliciousLinks) {
+      res.badRequest(jsonMessage('Malicious link(s) detected.'))
+      return
     }
 
     // generate url mappings
