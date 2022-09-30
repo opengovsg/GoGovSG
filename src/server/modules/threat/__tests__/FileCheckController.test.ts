@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import httpMocks from 'node-mocks-http'
 import { Request } from 'express'
 
@@ -5,10 +6,10 @@ import { FileCheckController } from '..'
 
 /**
  * Creates a mock request with mock file in request body.
- * @param  {any} user
+ * @param  {any} file
  * @returns A mock Request with mock file.
  */
-function createRequestWithFile(file: any): Request {
+export function createRequestWithFile(file: any): Request {
   // @ts-ignore
   return httpMocks.createRequest({
     files: { file },
