@@ -9,7 +9,10 @@ import {
   UrlDirectoryPaginated,
   UrlsPaginated,
 } from '../../../../src/server/repositories/types'
-import { StorableUrlState } from '../../../../src/server/repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../../src/server/repositories/enums'
 import { SearchResultsSortOrder } from '../../../../src/shared/search'
 import { DirectoryQueryConditions } from '../../../../src/server/modules/directory'
 
@@ -75,6 +78,7 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           description: '',
           contactEmail: null,
           clicks: 0,
+          source: StorableUrlSource.Console,
         },
       ],
       count: 0,

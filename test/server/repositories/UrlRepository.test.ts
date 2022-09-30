@@ -74,6 +74,7 @@ describe('UrlRepository', () => {
     updatedAt: new Date(),
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
+    source: 'CONSOLE',
   }
   const baseUrl = {
     ...baseTemplate,

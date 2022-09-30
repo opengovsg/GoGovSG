@@ -18,7 +18,7 @@ import {
   UrlDirectory,
   UrlDirectoryPaginated,
 } from './types'
-import { StorableUrlState } from './enums'
+import { StorableUrlSource, StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
@@ -66,6 +66,7 @@ export class UrlRepository implements UrlRepositoryInterface {
             ? this.fileBucket.buildFileLongUrl(file.key)
             : properties.longUrl,
           isFile: !!file,
+          source: StorableUrlSource.Console,
         },
         {
           transaction: t,
@@ -476,16 +477,17 @@ export class UrlRepository implements UrlRepositoryInterface {
   }) => Promise<void> = async (properties) => {
     const { urlMappings, userId } = properties
     await sequelize.transaction(async (t) => {
-      const bulkUrlObject = urlMappings.map(({ shortUrl, longUrl }) => {
+      const bulkUrlObjects = urlMappings.map(({ shortUrl, longUrl }) => {
         return {
           shortUrl,
           longUrl,
           userId,
           isFile: false,
+          source: StorableUrlSource.Bulk,
         }
       })
-      // sequelize method
-      await Url.bulkCreate(bulkUrlObject, {
+      // sequelize model method
+      await Url.bulkCreate(bulkUrlObjects, {
         transaction: t,
         individualHooks: false,
       })

@@ -14,6 +14,7 @@ export type StorableUrl = Pick<
   | 'updatedAt'
   | 'description'
   | 'contactEmail'
+  | 'source'
 > &
   Pick<UrlClicksType, 'clicks'>
 
