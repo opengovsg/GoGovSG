@@ -62,7 +62,7 @@ export class BulkController {
     }
 
     dogstatsd.increment('bulk.hash.success', 1, 1)
-    res.ok()
+    res.ok(jsonMessage(`${urlMappings.length} links created`))
   }
 }
 
