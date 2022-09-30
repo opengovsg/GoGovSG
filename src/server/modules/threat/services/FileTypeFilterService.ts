@@ -58,7 +58,8 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     allowedExtensions?: string[],
   ) => Promise<boolean> = async ({ name, data }, allowedExtensions) => {
     const fileType = await FileType.fromBuffer(data)
-    const extension = fileType?.ext || `${`${name}`.split('.').pop()}`
+    const extension = fileType?.ext || name.split('.').pop()
+    if (!extension) return false
 
     if (allowedExtensions && allowedExtensions.length > 0) {
       return allowedExtensions.includes(extension)
