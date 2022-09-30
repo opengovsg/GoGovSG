@@ -185,6 +185,15 @@ export class UserRepository implements UserRepositoryInterface {
     }
     return { whereConditions, includeConditions }
   }
+
+  public saveApiKeyHash(userId: number, apiKeyHash: string) {
+    console.log(userId)
+    console.log(apiKeyHash)
+
+    // TODO: remove below
+    this.userMapper.persistenceToDto(null)
+    return Promise.resolve('')
+  }
 }
 
 export default UserRepository

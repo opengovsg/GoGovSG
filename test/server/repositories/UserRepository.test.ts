@@ -274,4 +274,8 @@ describe('UserRepository', () => {
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
   })
+
+  describe('createApiKey', () => {
+    // const apiKey =
+  })
 })
