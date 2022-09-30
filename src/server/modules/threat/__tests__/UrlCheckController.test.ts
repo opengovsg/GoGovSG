@@ -23,7 +23,7 @@ const mockUrlThreatScanService = {
 }
 
 describe('UrlCheckController test', () => {
-  describe('checkUrl tests', () => {
+  describe('singleUrlCheck tests', () => {
     const url = 'https://example.com'
 
     const controller = new UrlCheckController(mockUrlThreatScanService)
@@ -39,7 +39,7 @@ describe('UrlCheckController test', () => {
       const res = httpMocks.createResponse()
       const next = jest.fn()
 
-      await controller.checkUrl(req, res, next)
+      await controller.singleUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreat).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
@@ -54,7 +54,7 @@ describe('UrlCheckController test', () => {
       mockUrlThreatScanService.isThreat.mockRejectedValue(false)
       res.serverError = badRequest
 
-      await controller.checkUrl(req, res, next)
+      await controller.singleUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
       expect(badRequest).toHaveBeenCalled()
@@ -70,7 +70,7 @@ describe('UrlCheckController test', () => {
       mockUrlThreatScanService.isThreat.mockResolvedValue(true)
       res.badRequest = badRequest
 
-      await controller.checkUrl(req, res, next)
+      await controller.singleUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
       expect(badRequest).toHaveBeenCalled()
@@ -87,7 +87,7 @@ describe('UrlCheckController test', () => {
       res.badRequest = badRequest
       res.serverError = badRequest
 
-      await controller.checkUrl(req, res, next)
+      await controller.singleUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
       expect(badRequest).not.toHaveBeenCalled()
@@ -95,7 +95,7 @@ describe('UrlCheckController test', () => {
     })
   })
 
-  describe('checkUrlBulk tests', () => {
+  describe('bulkUrlCheck tests', () => {
     const urls = ['https://example.com', 'https://example1.com']
 
     const controller = new UrlCheckController(mockUrlThreatScanService)
@@ -111,7 +111,7 @@ describe('UrlCheckController test', () => {
       const res = httpMocks.createResponse()
       const next = jest.fn()
 
-      await controller.checkUrlBulk(req, res, next)
+      await controller.bulkUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreatBulk).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
@@ -126,7 +126,7 @@ describe('UrlCheckController test', () => {
       mockUrlThreatScanService.isThreatBulk.mockRejectedValue(false)
       res.serverError = badRequest
 
-      await controller.checkUrlBulk(req, res, next)
+      await controller.bulkUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
       expect(badRequest).toHaveBeenCalled()
@@ -142,7 +142,7 @@ describe('UrlCheckController test', () => {
       mockUrlThreatScanService.isThreatBulk.mockResolvedValue(true)
       res.badRequest = badRequest
 
-      await controller.checkUrlBulk(req, res, next)
+      await controller.bulkUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
       expect(badRequest).toHaveBeenCalled()
@@ -159,7 +159,7 @@ describe('UrlCheckController test', () => {
       res.badRequest = badRequest
       res.serverError = badRequest
 
-      await controller.checkUrlBulk(req, res, next)
+      await controller.bulkUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
       expect(badRequest).not.toHaveBeenCalled()

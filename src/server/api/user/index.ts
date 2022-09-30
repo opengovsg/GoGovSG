@@ -83,7 +83,7 @@ router.post(
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
-  urlCheckController.checkUrl,
+  urlCheckController.singleUrlCheck,
   validator.body(urlSchema),
   userController.createUrl,
 )
@@ -102,7 +102,7 @@ router.post(
   fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,
   bulkController.validateAndParseCsv,
-  urlCheckController.checkUrlBulk,
+  urlCheckController.bulkUrlCheck,
   bulkController.bulkCreate,
 )
 
@@ -126,7 +126,7 @@ router.patch(
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
-  urlCheckController.checkUrl,
+  urlCheckController.singleUrlCheck,
   validator.body(urlEditSchema),
   userController.updateUrl,
 )
