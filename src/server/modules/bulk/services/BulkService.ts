@@ -37,10 +37,11 @@ export class BulkService implements interfaces.BulkService {
       delimiter: ',',
       step(step, parser) {
         const rowData = step.data as string[]
+        const stringData = rowData[0]
         let validRow = true
         if (schema.rows === 0) {
           // if header is invalid
-          if (rowData[0] !== BULK_UPLOAD_HEADER) {
+          if (stringData !== BULK_UPLOAD_HEADER) {
             schema.isValid = false
             parser.abort()
             return
@@ -48,12 +49,12 @@ export class BulkService implements interfaces.BulkService {
         } else {
           const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX_NUM // rows include header
           const onlyOneColumn = rowData.length === 1
-          const isNotBlacklisted = !validators.isBlacklisted(rowData[0])
-          const isNotEmpty = rowData[0].length > 0
-          const isHttps = validators.isHttps(rowData[0])
-          const validCharacters = validators.isPrintableAscii(rowData[0])
+          const isNotBlacklisted = !validators.isBlacklisted(stringData)
+          const isNotEmpty = stringData.length > 0
+          const isHttps = validators.isHttps(stringData)
+          const validCharacters = validators.isPrintableAscii(stringData)
           const isNotCircularRedirect = !validators.isCircularRedirects(
-            rowData[0],
+            stringData,
             ogHostname,
           )
           const noParsingError = step.errors.length === 0
@@ -72,7 +73,7 @@ export class BulkService implements interfaces.BulkService {
             parser.abort()
             return
           }
-          schema.longUrls.push(rowData[0])
+          schema.longUrls.push(stringData)
         }
         schema.rows += 1
       },
