@@ -1,5 +1,5 @@
 interface ApiKeyManagementServiceInterface {
-  createApiKey: () => Promise<string>
+  createApiKey: (userId: number) => Promise<string>
 }
 
 export default ApiKeyManagementServiceInterface
