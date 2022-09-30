@@ -99,6 +99,8 @@ router.post(
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,
+  bulkController.validateAndParseCsv,
+  urlCheckController.checkUrlBulk,
   bulkController.bulkCreate,
 )
 

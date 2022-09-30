@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { UploadedFile } from 'express-fileupload'
 import jsonMessage from '../../util/json'
@@ -6,7 +6,6 @@ import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
-import { UrlThreatScanService } from '../threat/interfaces'
 
 @injectable()
 export class BulkController {
@@ -14,53 +13,45 @@ export class BulkController {
 
   private bulkService: BulkService
 
-  private urlThreatScanService: UrlThreatScanService
-
   public constructor(
     @inject(DependencyIds.bulkService)
     bulkService: BulkService,
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
-    @inject(DependencyIds.urlThreatScanService)
-    urlThreatScanService: UrlThreatScanService,
   ) {
     this.bulkService = bulkService
     this.urlManagementService = urlManagementService
-    this.urlThreatScanService = urlThreatScanService
+  }
+
+  public validateAndParseCsv: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
+    const file = req.files?.file as UploadedFile | undefined
+    if (!file) {
+      res.badRequest(jsonMessage('Unable to detect file.'))
+      return
+    }
+
+    const schema = this.bulkService.parseCsv(file.data.toString())
+    if (!schema.isValid) {
+      res.badRequest(jsonMessage('Csv is wrongly formatted.'))
+      return
+    }
+    // put longUrls on the req body so that it can be used by other controllers
+    req.body.longUrls = schema.longUrls
+    next()
   }
 
   public bulkCreate: (req: Request, res: Response) => Promise<void> = async (
     req,
     res,
   ) => {
-    const file = req.files?.file as UploadedFile | undefined
-    const { userId } = req.body
-    if (!file) {
-      res.badRequest(jsonMessage('Unable to detect file.'))
-      return
-    }
-
-    // validate csv and return long urls if valid
-    const schema = this.bulkService.parseCsv(file.data.toString())
-    if (!schema.isValid) {
-      res.badRequest(jsonMessage('Csv is wrongly formatted.'))
-      return
-    }
-
-    // safe browsing check for all long urls
-    const containsMaliciousLinks = await this.urlThreatScanService.isThreatBulk(
-      schema.longUrls,
-    )
-    if (containsMaliciousLinks) {
-      res.badRequest(jsonMessage('Malicious link(s) detected.'))
-      return
-    }
-
+    const { userId, longUrls } = req.body
     // generate url mappings
-    const urlMappings = await this.bulkService.generateUrlMappings(
-      schema.longUrls,
-    )
 
+    const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
     // bulk create
     try {
       await this.urlManagementService.bulkCreate(userId, urlMappings)

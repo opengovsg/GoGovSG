@@ -45,6 +45,37 @@ export class UrlCheckController {
       }
       next()
     }
+
+  checkUrlBulk: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
+    const { longUrls }: { longUrls: string[] } = req.body
+
+    if (longUrls) {
+      try {
+        const isThreat = await this.urlThreatScanService.isThreatBulk(longUrls)
+        if (isThreat) {
+          const user = req.session?.user
+          logger.warn(
+            `Malicious link attempt: User ${user?.id} tried to create a malicious url via bulk upload`,
+          )
+          res.badRequest(
+            jsonMessage(
+              'Csv contains a link that is likely to be malicious, please contact us for further assistance',
+            ),
+          )
+          return
+        }
+      } catch (error) {
+        logger.error(error)
+        res.serverError(jsonMessage(error.message))
+        return
+      }
+    }
+    next()
+  }
 }
 
 export default UrlCheckController
