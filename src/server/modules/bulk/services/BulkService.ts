@@ -1,5 +1,6 @@
 import { injectable } from 'inversify'
 import paparse from 'papaparse'
+import { UploadedFile } from 'express-fileupload'
 import * as interfaces from '../interfaces/BulkService'
 
 import {
@@ -17,12 +18,19 @@ const BULK_UPLOAD_MAX_NUM = bulkUploadMaxNum
 
 @injectable()
 export class BulkService implements interfaces.BulkService {
-  parseCsv: (dataString: string) => interfaces.CSVSchema = (dataString) => {
+  parseCsv: (file: UploadedFile) => interfaces.CSVSchema = (file) => {
+    const dataString = file.data?.toString()
+
     const schema = {
       rows: 0,
       isValid: true,
       longUrls: [],
     } as interfaces.CSVSchema
+
+    if (!dataString) {
+      schema.isValid = false
+      return schema
+    }
 
     paparse.parse(dataString, {
       skipEmptyLines: false,
@@ -35,6 +43,7 @@ export class BulkService implements interfaces.BulkService {
           if (rowData[0] !== BULK_UPLOAD_HEADER) {
             schema.isValid = false
             parser.abort()
+            return
           }
         } else {
           const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX_NUM + 1 // rows include header
@@ -61,6 +70,7 @@ export class BulkService implements interfaces.BulkService {
           if (!validRow) {
             schema.isValid = false
             parser.abort()
+            return
           }
           schema.longUrls.push(rowData[0])
         }

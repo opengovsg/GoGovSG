@@ -34,7 +34,7 @@ export class BulkController {
       return
     }
 
-    const schema = this.bulkService.parseCsv(file.data.toString())
+    const schema = this.bulkService.parseCsv(file)
     if (!schema.isValid) {
       res.badRequest(jsonMessage('Csv is wrongly formatted.'))
       return
