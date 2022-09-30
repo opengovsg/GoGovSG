@@ -91,6 +91,10 @@ export class SafeBrowsingService implements UrlThreatScanService {
     return matches
   }
 
+  // TODO: deduplicate this function with the lookup function above
+  // ideally, we should do a non-block write for any matched viruses
+  // into the redis cache. the write above is blocking so we chose to
+  // bypass the write for now
   private async lookupBulk(urls: string[]) {
     let matches = null
     const request = { ...this.requestTemplate } as any

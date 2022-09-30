@@ -1,13 +1,11 @@
 import { inject, injectable } from 'inversify'
 import { ScanApi } from 'cloudmersive-virus-api-client'
-import { UrlThreatScanService, VirusScanService } from '../interfaces'
+import { VirusScanService } from '../interfaces'
 import { logger } from '../../../config'
 import { DependencyIds } from '../../../constants'
 
 @injectable()
-export class CloudmersiveScanService
-  implements VirusScanService, UrlThreatScanService
-{
+export class CloudmersiveScanService implements VirusScanService {
   private cloudmersiveKey: string
 
   private api: ScanApi
@@ -56,6 +54,8 @@ export class CloudmersiveScanService
       return this.scanFilePromise(file.data)
     }
 
+  // Note: This function is no longer used as we now use Google Safe Browsing
+  // to scan URLs instead. We can consider removing this functionality.
   public isThreat: (url: string) => Promise<boolean> = async (url) => {
     if (!this.cloudmersiveKey) {
       logger.warn(`No Cloudmersive API key provided. Not scanning url: ${url}`)
@@ -65,13 +65,6 @@ export class CloudmersiveScanService
     if (isThreat) {
       logger.info(`Considered threat by Cloudmersive but ignoring: ${url}`)
     }
-    return false
-  }
-
-  public isThreatBulk: (urls: string[]) => Promise<boolean> = async (urls) => {
-    // TODO Delete this
-    const dummyValue = await this.scanUrlPromise(urls[0])
-    console.log(dummyValue)
     return false
   }
 }
