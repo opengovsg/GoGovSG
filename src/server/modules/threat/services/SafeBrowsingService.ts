@@ -150,12 +150,12 @@ export class SafeBrowsingService implements UrlThreatScanService {
       return false
     }
 
-    for (let i = 0; i < urlChunks.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      const match = await this.lookupBulk(urlChunks[i])
-      if (!safeBrowsingLogOnly && Boolean(match)) {
-        return true
-      }
+    const matches = await Promise.all(
+      urlChunks.map((urlChunk) => this.lookupBulk(urlChunk)),
+    )
+    const isThreat = matches.some((match) => Boolean(match) === true)
+    if (!safeBrowsingLogOnly && isThreat) {
+      return true
     }
 
     return false
