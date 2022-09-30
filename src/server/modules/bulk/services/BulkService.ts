@@ -13,7 +13,7 @@ import { BulkUrlMapping } from '../../../repositories/types'
 import * as validators from '../../../../shared/util/validation'
 import generateShortUrl from '../../../util/url'
 
-const BULK_UPLOAD_RANDOM_STRING_LENGTH = bulkUploadRandomStrLength
+const BULK_UPLOAD_RANDOM_STR_LENGTH = bulkUploadRandomStrLength
 const BULK_UPLOAD_MAX_NUM = bulkUploadMaxNum
 
 @injectable()
@@ -46,7 +46,7 @@ export class BulkService implements interfaces.BulkService {
             return
           }
         } else {
-          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX_NUM + 1 // rows include header
+          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX_NUM // rows include header
           const onlyOneColumn = rowData.length === 1
           const isNotBlacklisted = !validators.isBlacklisted(rowData[0])
           const isNotEmpty = rowData[0].length > 0
@@ -86,7 +86,7 @@ export class BulkService implements interfaces.BulkService {
         longUrls.map(async (longUrl) => {
           return {
             longUrl,
-            shortUrl: await generateShortUrl(BULK_UPLOAD_RANDOM_STRING_LENGTH),
+            shortUrl: await generateShortUrl(BULK_UPLOAD_RANDOM_STR_LENGTH),
           }
         }),
       )

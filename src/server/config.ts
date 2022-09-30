@@ -244,4 +244,4 @@ export const activatePostmanFallback: boolean =
 export const bulkUploadMaxNum: number =
   Number(process.env.BULK_UPLOAD_MAX_NUM) || 1000
 export const bulkUploadRandomStrLength: number =
-  Number(process.env.BULK_UPLOAD_RANDOM_STRING_LENGTH) || 8
+  Number(process.env.BULK_UPLOAD_RANDOM_STR_LENGTH) || 8
