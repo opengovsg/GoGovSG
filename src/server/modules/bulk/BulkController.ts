@@ -66,6 +66,8 @@ export class BulkController {
       await this.urlManagementService.bulkCreate(userId, urlMappings)
     } catch (e) {
       dogstatsd.increment('bulk.hash.failure', 1, 1)
+      res.badRequest(jsonMessage('Something went wrong, please try again.'))
+      return
     }
 
     dogstatsd.increment('bulk.hash.success', 1, 1)
