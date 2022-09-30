@@ -31,7 +31,9 @@ export class UrlCheckController {
         if (isThreat) {
           const user = req.session?.user
           logger.warn(
-            `Malicious link attempt: User ${user?.id} tried to link ${shortUrl} to ${longUrl}`,
+            `Malicious link attempt: User ${
+              user?.email || user?.id
+            } tried to link ${shortUrl} to ${longUrl}`,
           )
           res.badRequest(
             jsonMessage(
@@ -62,7 +64,9 @@ export class UrlCheckController {
         if (isThreat) {
           const user = req.session?.user
           logger.warn(
-            `Malicious link attempt: User ${user?.id} tried to create a malicious url via bulk upload`,
+            `Malicious link attempt: User ${
+              user?.email || user?.id
+            } tried to create a malicious url via bulk upload`,
           )
           res.badRequest(
             jsonMessage(
