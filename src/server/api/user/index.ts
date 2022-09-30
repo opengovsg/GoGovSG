@@ -89,7 +89,9 @@ router.post(
 )
 
 /**
- * Endpoint for a user to check validity of uploaded csv.
+ * Endpoint for a user to bulk create URLs via CSV upload.
+ *
+ * Validates CSV and throws error if CSV is malformatted or contains malicious links.
  */
 
 router.post(
