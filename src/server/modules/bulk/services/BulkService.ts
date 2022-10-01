@@ -51,8 +51,7 @@ export class BulkService implements interfaces.BulkService {
           const onlyOneColumn = rowData.length === 1
           const isNotBlacklisted = !validators.isBlacklisted(stringData)
           const isNotEmpty = stringData.length > 0
-          const isHttps = validators.isHttps(stringData)
-          const validCharacters = validators.isPrintableAscii(stringData)
+          const isValidUrl = validators.isValidUrl(stringData)
           const isNotCircularRedirect = !validators.isCircularRedirects(
             stringData,
             ogHostname,
@@ -64,8 +63,7 @@ export class BulkService implements interfaces.BulkService {
             onlyOneColumn &&
             isNotBlacklisted &&
             isNotEmpty &&
-            isHttps &&
-            validCharacters &&
+            isValidUrl &&
             noParsingError
 
           if (!validRow) {
