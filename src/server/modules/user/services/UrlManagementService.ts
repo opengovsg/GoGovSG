@@ -146,14 +146,13 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
   bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void> =
     async (userId, urlMappings) => {
-      const result = await this.urlRepository.bulkCreate({
+      await this.urlRepository.bulkCreate({
         userId,
         urlMappings,
       })
       dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
         `isbulk:true`,
       ]) // TODO: extract metric and tag names
-      return result
     }
 }
 
