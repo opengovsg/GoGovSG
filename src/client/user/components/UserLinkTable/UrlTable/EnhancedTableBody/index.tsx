@@ -23,6 +23,7 @@ import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../app/util/format'
 import CopyButton from '../../../../widgets/CopyButton'
 import { GoGovReduxState } from '../../../../../app/reducers/types'
+import { TAG_SEPARATOR } from '../../../../../../shared/constants'
 
 type StyleProps = {
   appMargins: number
@@ -207,14 +208,13 @@ export default function EnhancedTableBody() {
     drawerDispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
   const setSearchByTag = (tag: string) => {
-    // TODO: refactor to use TAG_SEPARATOR instead of ';'
-    const newSearchText =
+    const newSearchTextInput =
       tableConfig.isTag && tableConfig.searchText
-        ? `${tableConfig.searchText};${tag}` // append tag to existing tags
+        ? `${tableConfig.searchText}${TAG_SEPARATOR}${tag}` // append tag to existing tags
         : tag
     const newConfig: Partial<UrlTableConfig> = {
       isTag: true,
-      searchText: newSearchText,
+      searchTextInput: newSearchTextInput,
     }
     dispatch(userActions.setUrlTableConfig(newConfig))
   }

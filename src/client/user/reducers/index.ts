@@ -16,6 +16,7 @@ const initialState: UserState = {
     numberOfRows: 10,
     pageNumber: 0,
     searchText: '',
+    searchTextInput: '',
     filter: {},
     ...initialSortConfig,
   },
