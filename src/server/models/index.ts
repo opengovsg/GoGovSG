@@ -7,10 +7,15 @@ import { Devices } from './statistics/devices'
 import { UrlClicks } from './statistics/clicks'
 import { syncFunctions } from './functions'
 import { Tag } from './tag'
+import { AsyncJob } from './job'
 
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
 Url.belongsTo(User, { foreignKey: { allowNull: false } })
+
+// One user can run many jobs but each job can only be mapped to one user.
+User.hasMany(AsyncJob, { as: 'AsyncJob', foreignKey: { allowNull: false } })
+AsyncJob.belongsTo(User, { foreignKey: { allowNull: false } })
 
 export const UrlTag = sequelize.define('url_tag', {}, { timestamps: true })
 
