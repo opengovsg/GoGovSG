@@ -68,24 +68,25 @@ export class BulkService implements interfaces.BulkService {
             noParsingError
 
           if (!validRow) {
+            const updatedRow = schema.rows + 1
             switch (validRow) {
               case acceptableLinkCount:
                 schema.errorMessage = `File exceeded ${BULK_UPLOAD_MAX_NUM} original URLs to shorten`
                 break
               case onlyOneColumn:
-                schema.errorMessage = `${rowData} contains more than one column of data`
-                break
-              case isNotBlacklisted:
-                schema.errorMessage = `${stringData} is blacklisted`
-                break
-              case isNotEmpty:
-                schema.errorMessage = `Row ${schema.rows + 1} is empty`
+                schema.errorMessage = `Row ${updatedRow}: ${rowData} contains more than one column of data`
                 break
               case isValidUrl:
-                schema.errorMessage = `${stringData} is not valid`
+                schema.errorMessage = `Row ${updatedRow}: ${stringData} is not valid`
+                break
+              case isNotBlacklisted:
+                schema.errorMessage = `Row ${updatedRow}: ${stringData} is blacklisted`
+                break
+              case isNotEmpty:
+                schema.errorMessage = `Row ${updatedRow} is empty`
                 break
               case isNotCircularRedirect:
-                schema.errorMessage = `${stringData} redirects back to ${ogHostname}`
+                schema.errorMessage = `Row ${updatedRow}: ${stringData} redirects back to ${ogHostname}`
                 break
               default:
                 schema.errorMessage = 'Parsing error'
