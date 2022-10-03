@@ -25,6 +25,7 @@ export class BulkService implements interfaces.BulkService {
       rows: 0,
       isValid: true,
       longUrls: [],
+      errorMessage: '',
     } as interfaces.CSVSchema
 
     if (!dataString) {
@@ -67,6 +68,28 @@ export class BulkService implements interfaces.BulkService {
             noParsingError
 
           if (!validRow) {
+            switch (validRow) {
+              case acceptableLinkCount:
+                schema.errorMessage = `File exceeded ${BULK_UPLOAD_MAX_NUM} original URLs to shorten`
+                break
+              case onlyOneColumn:
+                schema.errorMessage = `${rowData} contains more than one column of data`
+                break
+              case isNotBlacklisted:
+                schema.errorMessage = `${stringData} is blacklisted`
+                break
+              case isNotEmpty:
+                schema.errorMessage = `Row ${schema.rows + 1} is empty`
+                break
+              case isValidUrl:
+                schema.errorMessage = `${stringData} is not valid`
+                break
+              case isNotCircularRedirect:
+                schema.errorMessage = `${stringData} redirects back to ${ogHostname}`
+                break
+              default:
+                schema.errorMessage = 'Parsing error'
+            }
             schema.isValid = false
             parser.abort()
             return

@@ -5,6 +5,7 @@ export type CSVSchema = {
   rows: number
   isValid: boolean
   longUrls: string[]
+  errorMessage: string
 }
 
 export interface BulkService {

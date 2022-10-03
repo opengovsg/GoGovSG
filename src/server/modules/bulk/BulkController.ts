@@ -36,7 +36,7 @@ export class BulkController {
 
     const schema = this.bulkService.parseCsv(file)
     if (!schema.isValid) {
-      res.badRequest(jsonMessage('Csv is wrongly formatted.'))
+      res.badRequest(jsonMessage(schema.errorMessage))
       return
     }
     // put longUrls on the req body so that it can be used by other controllers
