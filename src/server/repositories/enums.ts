@@ -16,5 +16,3 @@ export enum JobStatus {
 export enum JobType {
   QRCodeGeneration = 'QR_CODE_GENERATION',
 }
-
-export default { StorableUrlState }

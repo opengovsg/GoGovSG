@@ -31,18 +31,24 @@ export const AsyncJob = <AsyncJobStatic>sequelize.define(
     },
 
     status: {
-      // we do not use Sequelize.ENUM so that all the migration code is handled by sql scripts
-      type: 'enum_job_status',
+      type: Sequelize.ENUM,
+      values: [
+        JobStatus.Ready,
+        JobStatus.InProgress,
+        JobStatus.Failed,
+        JobStatus.Success,
+      ],
+      defaultValue: JobStatus.Ready,
       allowNull: false,
     },
     message: {
       type: Sequelize.TEXT,
     },
     type: {
-      type: 'enum_job_type',
+      type: Sequelize.ENUM,
+      values: [JobType.QRCodeGeneration],
       allowNull: false,
     },
-
     params: {
       type: Sequelize.JSON,
       allowNull: false,
