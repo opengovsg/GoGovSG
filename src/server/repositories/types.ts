@@ -1,4 +1,5 @@
 import { UrlType } from '../models/url'
+import { AsyncJobType } from '../models/job'
 import { UrlClicksType } from '../models/statistics/clicks'
 
 /**
@@ -93,3 +94,15 @@ export type StorableOtp = {
 export type HasCacheDuration = {
   cacheDuration: string
 }
+
+export type StorableAsyncJob = Pick<
+  AsyncJobType,
+  | 'id'
+  | 'status'
+  | 'message'
+  | 'type'
+  | 'params'
+  | 'outputs'
+  | 'userId'
+  | 'completedAt'
+>

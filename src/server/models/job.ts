@@ -2,16 +2,18 @@ import Sequelize from 'sequelize'
 import { JobStatus, JobType } from '../repositories/enums'
 import { sequelize } from '../util/sequelize'
 
+// userId is included through a foreign key
 export interface AsyncJobType extends Sequelize.Model {
   readonly id: string
   readonly status: JobStatus
-  readonly message: string
+  readonly message?: string
   readonly type: JobType
   readonly params: JSON
-  readonly outputs: JSON
+  readonly outputs?: JSON
   readonly userId: Number
   readonly createdAt: string
-  readonly completedAt: string
+  readonly updatedAt: string
+  readonly completedAt?: string
 }
 
 // For sequelize define
@@ -29,12 +31,12 @@ export const AsyncJob = <AsyncJobStatic>sequelize.define(
     },
 
     status: {
+      // we do not use Sequelize.ENUM so that all the migration code is handled by sql scripts
       type: 'enum_job_status',
       allowNull: false,
     },
     message: {
       type: Sequelize.TEXT,
-      allowNull: false,
     },
     type: {
       type: 'enum_job_type',
