@@ -6,4 +6,15 @@ export enum StorableUrlState {
   Inactive = 'INACTIVE',
 }
 
+export enum JobStatusEnum {
+  Ready = 'READY',
+  InProgress = 'IN_PROGRESS',
+  Success = 'SUCCESS',
+  Failed = 'FAILED',
+}
+
+export enum JobTypeEnum {
+  QRCodeGeneration = 'QR_CODE_GENERATION',
+}
+
 export default { StorableUrlState }

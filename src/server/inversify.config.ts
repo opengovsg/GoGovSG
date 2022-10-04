@@ -24,10 +24,15 @@ import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { TagRepository } from './repositories/TagRepository'
+import { JobRepository } from './repositories/JobRepository'
+import { JobItemRepository } from './repositories/JobItemRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
 import { TagMapper } from './mappers/TagMapper'
+import { JobItemMapper } from './mappers/JobItemMapper'
+import { JobMapper } from './mappers/JobMapper'
+
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
@@ -96,11 +101,15 @@ export default () => {
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.tagMapper, TagMapper)
+  bindIfUnbound(DependencyIds.jobMapper, JobMapper)
+  bindIfUnbound(DependencyIds.jobItemMapper, JobItemMapper)
   bindIfUnbound(DependencyIds.analyticsLoggerService, AnalyticsLoggerService)
   bindIfUnbound(DependencyIds.cookieReducer, CookieArrayReducerService)
   bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.tagRepository, TagRepository)
+  bindIfUnbound(DependencyIds.jobRepository, JobRepository)
+  bindIfUnbound(DependencyIds.jobItemRepository, JobItemRepository)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
   bindIfUnbound(DependencyIds.gaController, GaController)
