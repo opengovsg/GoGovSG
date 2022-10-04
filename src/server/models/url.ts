@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 import { UrlClicks, UrlClicksType } from './statistics/clicks'
-import { ACTIVE, INACTIVE } from './types'
+import { ACTIVE, API, BULK, CONSOLE, INACTIVE } from './types'
 import {
   SHORT_URL_REGEX,
   isBlacklisted,
@@ -11,7 +11,7 @@ import {
 import { sequelize } from '../util/sequelize'
 import { IdType } from '../../types/server/models'
 import { DEV_ENV, emailValidator, ogHostname } from '../config'
-import { StorableUrlState } from '../repositories/enums'
+import { StorableUrlSource, StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
 
 export interface UrlBaseType extends IdType {
@@ -21,6 +21,7 @@ export interface UrlBaseType extends IdType {
   readonly isFile: boolean
   readonly contactEmail: string | null
   readonly description: string
+  readonly source: StorableUrlSource
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
@@ -56,9 +57,9 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
     type: Sequelize.TEXT,
     allowNull: false,
   },
-  // UrlHistory table relies on `enum_urls_state` enum type for the `state`
-  // column, which is created by Url table, so this table must be defined
-  // after `Url` table.
+  // UrlHistory table relies on `enum_urls_state` and `enum_urls_source`
+  // enum types for the `state` and `source` columns, which is created by
+  // Url table, so this table must be defined after `Url` table.
   state: {
     type: 'enum_urls_state',
     allowNull: false,
@@ -75,6 +76,9 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
     type: Sequelize.TEXT,
     allowNull: false,
     defaultValue: '',
+  },
+  source: {
+    type: 'enum_urls_source',
   },
 })
 
@@ -96,11 +100,50 @@ const writeToUrlHistory = async (
       isFile: urlObj.isFile,
       contactEmail: urlObj.contactEmail,
       description: urlObj.description,
+      source: urlObj.source,
     },
     {
       transaction: options.transaction,
     },
   )
+}
+const writeToUrlClicksBulk = async (
+  urls: UrlType[],
+  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
+): Promise<UrlClicksType[]> => {
+  const linkHistoryUrlObjects = urls.map((url) => {
+    const jsonObject = url.toJSON()
+    return {
+      shortUrl: jsonObject.shortUrl,
+      clicks: 0,
+    }
+  })
+  return UrlClicks.bulkCreate(linkHistoryUrlObjects, {
+    transaction: options.transaction,
+  })
+}
+
+const writeToUrlHistoryBulk = async (
+  urls: UrlType[],
+  options: Sequelize.CreateOptions & { transaction: Sequelize.Transaction },
+): Promise<UrlHistoryType[]> => {
+  const linkHistoryUrlObjects = urls.map((url) => {
+    const jsonObject = url.toJSON()
+    return {
+      userId: jsonObject.userId,
+      state: jsonObject.state,
+      urlShortUrl: jsonObject.shortUrl,
+      longUrl: jsonObject.longUrl,
+      isFile: jsonObject.isFile,
+      contactEmail: jsonObject.contactEmail,
+      description: jsonObject.description,
+      source: jsonObject.source,
+    }
+  })
+
+  return UrlHistory.bulkCreate(linkHistoryUrlObjects, {
+    transaction: options.transaction,
+  })
 }
 
 export const Url = <UrlTypeStatic>sequelize.define(
@@ -168,9 +211,28 @@ export const Url = <UrlTypeStatic>sequelize.define(
       allowNull: false,
       defaultValue: '',
     },
+    source: {
+      type: Sequelize.ENUM,
+      values: [BULK, API, CONSOLE],
+    },
   },
   {
     hooks: {
+      afterBulkCreate: async (urls: UrlType[], options) => {
+        await writeToUrlHistoryBulk(
+          urls,
+          options as Sequelize.CreateOptions & {
+            transaction: Sequelize.Transaction
+          },
+        )
+        await writeToUrlClicksBulk(
+          urls,
+          options as Sequelize.CreateOptions & {
+            transaction: Sequelize.Transaction
+          },
+        )
+        return Promise.resolve()
+      },
       afterCreate: async (url: UrlType, options) => {
         if (!options.transaction) {
           return Promise.reject(

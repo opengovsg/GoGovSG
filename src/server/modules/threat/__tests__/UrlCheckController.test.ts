@@ -17,75 +17,153 @@ function createRequestWithUser(user: any): Request {
   })
 }
 
+const mockUrlThreatScanService = {
+  isThreat: jest.fn(),
+  isThreatBulk: jest.fn(),
+}
+
 describe('UrlCheckController test', () => {
-  const url = 'https://example.com'
-  const isThreat = jest.fn()
+  describe('singleUrlCheck tests', () => {
+    const url = 'https://example.com'
 
-  const controller = new UrlCheckController({ isThreat })
-  const badRequest = jest.fn()
+    const controller = new UrlCheckController(mockUrlThreatScanService)
+    const badRequest = jest.fn()
 
-  beforeEach(() => {
-    isThreat.mockClear()
-    badRequest.mockClear()
+    beforeEach(() => {
+      mockUrlThreatScanService.isThreat.mockClear()
+      badRequest.mockClear()
+    })
+
+    it('does not invoke checks if no urls', async () => {
+      const req = createRequestWithUser(undefined)
+      const res = httpMocks.createResponse()
+      const next = jest.fn()
+
+      await controller.singleUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreat).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
+
+    it('reports on server error', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.longUrl = url
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreat.mockRejectedValue(false)
+      res.serverError = badRequest
+
+      await controller.singleUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
+      expect(badRequest).toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
+    })
+
+    it('rejects on bad URL', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.longUrl = url
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreat.mockResolvedValue(true)
+      res.badRequest = badRequest
+
+      await controller.singleUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
+      expect(badRequest).toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
+    })
+
+    it('passes through on good URL', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.longUrl = url
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreat.mockResolvedValue(false)
+      res.badRequest = badRequest
+      res.serverError = badRequest
+
+      await controller.singleUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
+      expect(badRequest).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
   })
 
-  it('does not invoke checks if no urls', async () => {
-    const req = createRequestWithUser(undefined)
-    const res = httpMocks.createResponse()
-    const next = jest.fn()
+  describe('bulkUrlCheck tests', () => {
+    const urls = ['https://example.com', 'https://example1.com']
 
-    await controller.checkUrl(req, res, next)
+    const controller = new UrlCheckController(mockUrlThreatScanService)
+    const badRequest = jest.fn()
 
-    expect(isThreat).not.toHaveBeenCalled()
-    expect(next).toHaveBeenCalled()
-  })
+    beforeEach(() => {
+      mockUrlThreatScanService.isThreat.mockClear()
+      badRequest.mockClear()
+    })
 
-  it('reports on server error', async () => {
-    const req = createRequestWithUser(undefined)
-    req.body.longUrl = url
-    const res = httpMocks.createResponse() as any
-    const next = jest.fn()
+    it('does not invoke checks if no urls', async () => {
+      const req = createRequestWithUser(undefined)
+      const res = httpMocks.createResponse()
+      const next = jest.fn()
 
-    isThreat.mockRejectedValue(false)
-    res.serverError = badRequest
+      await controller.bulkUrlCheck(req, res, next)
 
-    await controller.checkUrl(req, res, next)
+      expect(mockUrlThreatScanService.isThreatBulk).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
 
-    expect(isThreat).toHaveBeenCalled()
-    expect(badRequest).toHaveBeenCalled()
-    expect(next).not.toHaveBeenCalled()
-  })
+    it('reports on server error', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.longUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
 
-  it('rejects on bad URL', async () => {
-    const req = createRequestWithUser(undefined)
-    req.body.longUrl = url
-    const res = httpMocks.createResponse() as any
-    const next = jest.fn()
+      mockUrlThreatScanService.isThreatBulk.mockRejectedValue(false)
+      res.serverError = badRequest
 
-    isThreat.mockResolvedValue(true)
-    res.badRequest = badRequest
+      await controller.bulkUrlCheck(req, res, next)
 
-    await controller.checkUrl(req, res, next)
+      expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
+      expect(badRequest).toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
+    })
 
-    expect(isThreat).toHaveBeenCalled()
-    expect(badRequest).toHaveBeenCalled()
-    expect(next).not.toHaveBeenCalled()
-  })
+    it('rejects on bad URLs', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.longUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
 
-  it('passes through on good URL', async () => {
-    const req = createRequestWithUser(undefined)
-    req.body.longUrl = url
-    const res = httpMocks.createResponse() as any
-    const next = jest.fn()
+      mockUrlThreatScanService.isThreatBulk.mockResolvedValue(true)
+      res.badRequest = badRequest
 
-    isThreat.mockResolvedValue(false)
-    res.badRequest = badRequest
-    res.serverError = badRequest
+      await controller.bulkUrlCheck(req, res, next)
 
-    await controller.checkUrl(req, res, next)
+      expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
+      expect(badRequest).toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
+    })
 
-    expect(isThreat).toHaveBeenCalled()
-    expect(badRequest).not.toHaveBeenCalled()
-    expect(next).toHaveBeenCalled()
+    it('passes through on good URLs', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.longUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreatBulk.mockResolvedValue(false)
+      res.badRequest = badRequest
+      res.serverError = badRequest
+
+      await controller.bulkUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
+      expect(badRequest).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
   })
 })
