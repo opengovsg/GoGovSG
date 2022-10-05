@@ -285,7 +285,7 @@ export class UserController {
     try {
       const { userId } = req.body
       const apiKey = await this.apiKeyManagementService.createApiKey(userId)
-      res.ok(apiKey)
+      res.ok(jsonMessage(apiKey))
       return
     } catch (error) {
       res.serverError(jsonMessage('Error creating APIKey for user'))

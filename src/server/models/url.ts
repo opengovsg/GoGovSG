@@ -23,6 +23,7 @@ export interface UrlBaseType extends IdType {
   readonly contactEmail: string | null
   readonly description: string
   readonly tagStrings: string
+  readonly apiKeyHash: string
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
