@@ -44,6 +44,23 @@ export type UrlType = {
   email: string
 }
 
+export type LinkChangeType = 'create' | 'update'
+
+export type LinkChangeKey =
+  | 'description'
+  | 'isFile'
+  | 'state'
+  | 'userEmail'
+  | 'longUrl'
+
+export interface LinkChangeSet {
+  type: LinkChangeType
+  key: LinkChangeKey
+  prevValue: string | boolean
+  currValue: string | boolean
+  updatedAt: string
+}
+
 export type UserState = {
   initialised: boolean
   isFetchingUrls: boolean
@@ -66,4 +83,6 @@ export type UserState = {
     url: string | undefined
     image: string | undefined
   } | null
+  linkHistory: Array<LinkChangeSet>
+  linkHistoryCount: number
 }

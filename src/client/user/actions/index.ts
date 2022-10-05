@@ -7,6 +7,7 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import * as Sentry from '@sentry/react'
 import {
   CloseCreateUrlModalAction,
+  GetLinkHistoryForUserSuccessAction,
   GetUrlsForUserSuccessAction,
   IsFetchingUrlsAction,
   OpenCreateUrlModalAction,
@@ -50,6 +51,7 @@ import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url'
 import { isValidUrl } from '../../../shared/util/validation'
 import { LOGIN_PAGE } from '../../app/util/types'
 import {
+  LinkChangeSet,
   UrlState,
   UrlTableConfig,
   UrlTableFilterConfig,
@@ -230,6 +232,91 @@ async function handleError(
       break
   }
 }
+
+// retrieve linkHistory based on query object
+const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
+  json: {
+    changes: Array<LinkChangeSet>
+    totalCount: number
+    offset: number
+    limit: number
+    message?: string
+  }
+  isOk: boolean
+}> = (queryObj) => {
+  const query = querystring.stringify(queryObj)
+
+  return get(`/api/link-audit?${query}`).then((response) => {
+    const isOk = response.ok
+    return response.json().then((json) => ({ json, isOk }))
+  })
+}
+
+const isGetLinkHistoryForUserSuccess: (
+  urls: Array<LinkChangeSet>,
+  totalCount: number,
+) => GetLinkHistoryForUserSuccessAction = (linkHistory, totalCount) => ({
+  type: UserAction.GET_LINK_HISTORY_FOR_USER_SUCCESS,
+  payload: {
+    linkHistory,
+    totalCount,
+  },
+})
+
+const resetLinkHistory =
+  (): ThunkAction<
+    void,
+    GoGovReduxState,
+    void,
+    UserActionType | RootActionType
+  > =>
+  async (
+    dispatch: Dispatch<
+      GetLinkHistoryForUserSuccessAction | SetErrorMessageAction
+    >,
+  ) => {
+    dispatch<GetLinkHistoryForUserSuccessAction>(
+      isGetLinkHistoryForUserSuccess([], 0),
+    )
+  }
+
+// retrieves urls based on url table config
+const getLinkHistoryForUser =
+  (
+    shortUrl: string,
+    offset: number,
+    limit: number,
+  ): ThunkAction<
+    void,
+    GoGovReduxState,
+    void,
+    UserActionType | RootActionType
+  > =>
+  async (
+    dispatch: Dispatch<
+      GetLinkHistoryForUserSuccessAction | SetErrorMessageAction
+    >,
+  ) => {
+    const queryObj = {
+      limit,
+      url: shortUrl,
+      offset,
+    }
+
+    const { json, isOk } = await getLinkHistory(queryObj)
+
+    if (isOk) {
+      dispatch<GetLinkHistoryForUserSuccessAction>(
+        isGetLinkHistoryForUserSuccess(json.changes, json.totalCount),
+      )
+    } else {
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage(
+          json.message || 'Error fetching link history',
+        ),
+      )
+    }
+  }
 
 // retrieve urls based on query object
 const getUrls: (queryObj: ParsedUrlQueryInput) => Promise<{
@@ -699,6 +786,8 @@ const uploadFile =
 
 export default {
   getUrlsForUser,
+  getLinkHistoryForUser,
+  resetLinkHistory,
   isFetchingUrls,
   createUrlOrRedirect,
   setShortUrl,
