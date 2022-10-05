@@ -48,9 +48,11 @@ export class JobItemRepository implements JobItemRepositoryInterface {
     changes: Partial<StorableJobItem>,
   ) => Promise<StorableJobItem> = async (jobItem, changes) => {
     const { id } = jobItem
-    const dbJobItem = await JobItem.findByPk(id)
-    if (dbJobItem === null) {
-      throw new NotFoundError(`job item not found in database`)
+    const dbJobItem = await JobItem.scope(['defaultScope']).findOne({
+      where: { id },
+    })
+    if (!dbJobItem) {
+      throw new NotFoundError(`job item is not found in database`)
     }
     const updatedJobItem = await dbJobItem.update({ ...changes })
     if (!updatedJobItem) throw new Error('Newly-updated job item is null')

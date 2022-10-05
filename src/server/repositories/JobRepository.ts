@@ -18,9 +18,10 @@ export class JobRepository implements JobRepositoryInterface {
   }
 
   findById: (id: number) => Promise<StorableJob | null> = async (id) => {
-    return this.jobMapper.persistenceToDto(
+    const job = this.jobMapper.persistenceToDto(
       await Job.scope(['defaultScope']).findOne({ where: { id } }),
     )
+    return job
   }
 
   create: (userId: Number) => Promise<StorableJob> = async (userId) => {
