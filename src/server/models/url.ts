@@ -24,6 +24,7 @@ export interface UrlBaseType extends IdType {
   readonly description: string
   readonly source: StorableUrlSource
   readonly tagStrings: string
+  readonly apiKeyHash: string
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {

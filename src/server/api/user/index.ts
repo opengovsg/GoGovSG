@@ -157,6 +157,8 @@ router.get(
   userController.getTagsWithConditions,
 )
 
+router.post('/apiKey', userController.createAPIKey)
+
 router.get('/message', userController.getUserMessage)
 
 router.get('/announcement', userController.getUserAnnouncement)
