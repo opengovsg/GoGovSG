@@ -1,7 +1,11 @@
-import fileUpload from 'express-fileupload'
-
 export interface FileTypeFilterService {
-  hasAllowedType(file: fileUpload.UploadedFile): Promise<boolean>
+  hasAllowedType: (
+    file: {
+      name: string
+      data: Buffer
+    },
+    allowedExtensions?: string[],
+  ) => Promise<boolean>
 }
 
 export default FileTypeFilterService

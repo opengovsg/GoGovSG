@@ -18,6 +18,8 @@
 --                                      isSearchable column
 --   01 Apr  2021 Alexis Goh:           Update function's url_history insertion step to include
 --                                      description column
+--   03 Oct  2022 Alexis Goh:           Update function's url_history insertion step to include
+--                                      source column
 -- =============================================
 CREATE OR REPLACE FUNCTION migrate_url_to_user(short_url_value text, to_user_email text) RETURNS void AS
 $BODY$
@@ -49,8 +51,8 @@ BEGIN
         RAISE EXCEPTION 'No transferring of links to the same user';
     END IF;
 -- Insert the intended changes into URL history table
-    INSERT INTO url_histories ("urlShortUrl","longUrl","state","userId","isFile","description","createdAt","updatedAt")
-        SELECT "shortUrl", "longUrl", "state", "to_user_id", "isFile", "description", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    INSERT INTO url_histories ("urlShortUrl","longUrl","state","userId","isFile","source","description","createdAt","updatedAt")
+        SELECT "shortUrl", "longUrl", "state", "to_user_id", "isFile", "source", "description", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         FROM urls
         WHERE "shortUrl" = short_url LIMIT 1;
 -- Update the link in the URL table

@@ -49,6 +49,7 @@ export class MockUserRepository implements UserRepositoryInterface {
       shortUrl,
       longUrl: 'https://open.gov.sg',
       state: 'ACTIVE',
+      source: 'CONSOLE',
       clicks: 100,
       isFile: false,
       createdAt: '',

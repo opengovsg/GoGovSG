@@ -1,6 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import {
+  BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlsPaginated,
@@ -142,6 +143,17 @@ export class UrlManagementService implements interfaces.UrlManagementService {
   ) => Promise<UrlsPaginated> = (conditions) => {
     return this.userRepository.findUrlsForUser(conditions)
   }
+
+  bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void> =
+    async (userId, urlMappings) => {
+      await this.urlRepository.bulkCreate({
+        userId,
+        urlMappings,
+      })
+      dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
+        `isbulk:true`,
+      ]) // TODO: extract metric and tag names
+    }
 }
 
 export default UrlManagementService
