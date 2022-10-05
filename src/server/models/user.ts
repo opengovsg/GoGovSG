@@ -7,6 +7,7 @@ import { emailValidator } from '../config'
 // Users
 export interface UserType extends IdType, Sequelize.Model {
   readonly email: string
+  readonly apiKeyHash: string
   readonly Urls: UrlType[]
 }
 
@@ -31,6 +32,11 @@ export const User = <UserTypeStatic>sequelize.define(
         // must save email as lowercase
         this.setDataValue('email', email.trim().toLowerCase())
       },
+    },
+    apiKeyHash: {
+      type: Sequelize.TEXT,
+      unique: true,
+      allowNull: false,
     },
   },
   {
