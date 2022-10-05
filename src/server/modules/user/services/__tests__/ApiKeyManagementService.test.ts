@@ -10,17 +10,17 @@ const userRepository = {
   saveApiKeyHash: jest.fn(),
 }
 const baseUserId = 1
-const baseApiKey = 'ApiKey'
 describe('ApiKeyManagementService', () => {
   beforeEach(() => {
     userRepository.saveApiKeyHash.mockReset()
   })
   it('should call userRepository.createApiKey', async () => {
-    userRepository.saveApiKeyHash.mockResolvedValue(baseApiKey)
     const apiManagementService = new ApiKeyManagementService(userRepository)
-    const apiKey = await apiManagementService.createApiKey(baseUserId)
-    expect(apiKey).toBe(baseApiKey)
+    await apiManagementService.createApiKey(baseUserId)
     expect(userRepository.saveApiKeyHash).toHaveBeenCalledTimes(1)
-    expect(userRepository.saveApiKeyHash).toHaveBeenCalledWith(baseUserId)
+    expect(userRepository.saveApiKeyHash).toHaveBeenCalledWith(
+      baseUserId,
+      expect.any(String),
+    )
   })
 })
