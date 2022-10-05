@@ -159,14 +159,18 @@ export class UserRepository implements UserRepositoryInterface {
     return whereConditions
   }
 
-  public saveApiKeyHash(userId: number, apiKeyHash: string) {
-    console.log(userId)
-    console.log(apiKeyHash)
-
-    // TODO: remove below
-    this.userMapper.persistenceToDto(null)
-    return Promise.resolve('')
-  }
+  public saveApiKeyHash: (userId: number, apiKeyHash: string) => Promise<void> =
+    async (userId, apiKeyHash) => {
+      const user = await User.scope(['defaultScope']).findOne({
+        where: { id: userId },
+      })
+      if (!user) {
+        throw new NotFoundError('User not found')
+      }
+      await user.update({
+        apiKeyHash,
+      })
+    }
 }
 
 export default UserRepository
