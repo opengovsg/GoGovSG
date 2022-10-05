@@ -34,9 +34,9 @@ type AnnouncementResponse = {
 export class UserController {
   private urlManagementService: UrlManagementService
 
-  private userMessage: string
+  private readonly userMessage: string
 
-  private userAnnouncement: AnnouncementResponse
+  private readonly userAnnouncement: AnnouncementResponse
 
   private tagManagementService: TagManagementServiceInterface
 
@@ -281,9 +281,10 @@ export class UserController {
   public createAPIKey: (
     req: Express.Request,
     res: Express.Response,
-  ) => Promise<void> = async (_, res) => {
+  ) => Promise<void> = async (req, res) => {
     try {
-      const apiKey = await this.apiKeyManagementService.createApiKey()
+      const { userId } = req.body
+      const apiKey = await this.apiKeyManagementService.createApiKey(userId)
       res.ok(apiKey)
       return
     } catch (error) {

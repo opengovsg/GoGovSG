@@ -63,5 +63,5 @@ export interface UserRepositoryInterface {
    * Create ApiKey for user.
    * @param userId
    */
-  saveApiKeyHash(userId: number, apiKeyHash: string): Promise<string>
+  saveApiKeyHash(userId: number, apiKeyHash: string): Promise<void>
 }

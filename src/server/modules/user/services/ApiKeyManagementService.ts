@@ -1,10 +1,15 @@
 import { inject, injectable } from 'inversify'
 import bcrypt from 'bcrypt'
+import _crypto from 'crypto'
 import ApiKeyManagementServiceInterface from '../interfaces/ApiKeyManagementServiceInterface'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../../constants'
 
-const API_KEY_SALT = 'keySalt'
+const BASE64_ENCODING = 'base64'
+// TODO: move these to env vars
+const API_KEY_SALT = '$2b$10$VWCoSLIDq/gA9WZh7jZBiu'
+const API_KEY_VERSION = '1'
+const API_ENV = 'test'
 @injectable()
 class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
   private userRepository: UserRepositoryInterface
@@ -20,13 +25,12 @@ class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
     userId: number,
   ) => {
     const apiKey = ApiKeyManagementService.generateApiKey()
-    const apiKeyHash = await ApiKeyManagementService.getApiKeyHash(apiKey)
+    const apiKeyHash = await this.getApiKeyHash(apiKey)
     await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
-    return Promise.resolve(apiKeyHash)
-    // return await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
+    return apiKeyHash
   }
 
-  private static getApiKeyHash: (apiKey: string) => Promise<string> = async (
+  getApiKeyHash: (apiKey: string) => Promise<string> = async (
     apiKey: string,
   ) => {
     const [name, version, key] = apiKey.split('_')
@@ -35,7 +39,8 @@ class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
   }
 
   private static generateApiKey(): string {
-    return ''
+    const randomString = _crypto.randomBytes(32).toString(BASE64_ENCODING)
+    return `${API_ENV}_${API_KEY_VERSION}_${randomString}`
   }
 }
 
