@@ -20,7 +20,7 @@ import {
   userUrlsQueryConditions,
 } from '../../api/user/validators'
 import TagManagementServiceInterface from './interfaces/TagManagementService'
-import ApiKeyManagementServiceInterface from './interfaces/ApiKeyManagementServiceInterface'
+import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
 
 type AnnouncementResponse = {
   message?: string
@@ -40,7 +40,7 @@ export class UserController {
 
   private tagManagementService: TagManagementServiceInterface
 
-  private apiKeyManagementService: ApiKeyManagementServiceInterface
+  private apiKeyAuthService: ApiKeyAuthServiceInterface
 
   public constructor(
     @inject(DependencyIds.urlManagementService)
@@ -51,14 +51,14 @@ export class UserController {
     userAnnouncement: AnnouncementResponse,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,
-    @inject(DependencyIds.apiKeyManagementService)
-    apiKeyManagementService: ApiKeyManagementServiceInterface,
+    @inject(DependencyIds.apiKeyAuthService)
+    apiKeyAuthService: ApiKeyAuthServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
     this.tagManagementService = tagManagementService
-    this.apiKeyManagementService = apiKeyManagementService
+    this.apiKeyAuthService = apiKeyAuthService
   }
 
   public createUrl: (
@@ -284,7 +284,7 @@ export class UserController {
   ) => Promise<void> = async (req, res) => {
     try {
       const { userId } = req.body
-      const apiKey = await this.apiKeyManagementService.createApiKey(userId)
+      const apiKey = await this.apiKeyAuthService.createApiKey(userId)
       res.ok(jsonMessage(apiKey))
       return
     } catch (error) {

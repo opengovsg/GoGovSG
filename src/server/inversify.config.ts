@@ -72,7 +72,7 @@ import { FileCheckController, UrlCheckController } from './modules/threat'
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
 import TagManagementService from './modules/user/services/TagManagementService'
-import ApiKeyManagementService from './modules/user/services/ApiKeyManagementService'
+import ApiKeyAuthService from './modules/user/services/ApiKeyAuthService'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -117,7 +117,7 @@ export default () => {
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)
-  bindIfUnbound(DependencyIds.apiKeyManagementService, ApiKeyManagementService)
+  bindIfUnbound(DependencyIds.apiKeyAuthService, ApiKeyAuthService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
   bindIfUnbound(DependencyIds.qrCodeController, QrCodeController)
