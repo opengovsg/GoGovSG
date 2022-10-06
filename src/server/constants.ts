@@ -58,7 +58,7 @@ export const DependencyIds = {
   bulkController: Symbol.for('bulkController'),
   bulkService: Symbol.for('bulkService'),
   tagManagementService: Symbol.for('tagManagementService'),
-  apiKeyManagementService: Symbol.for('apiKeyManagementService'),
+  apiKeyAuthService: Symbol.for('apiKeyAuthService'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
