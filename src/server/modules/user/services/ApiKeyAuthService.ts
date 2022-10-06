@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import bcrypt from 'bcrypt'
 import _crypto from 'crypto'
-import ApiKeyManagementServiceInterface from '../interfaces/ApiKeyManagementServiceInterface'
+import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../../constants'
 
@@ -11,7 +11,7 @@ const API_KEY_SALT = '$2b$10$VWCoSLIDq/gA9WZh7jZBiu'
 const API_KEY_VERSION = '1'
 const API_ENV = 'test'
 @injectable()
-class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
+class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   private userRepository: UserRepositoryInterface
 
   constructor(
@@ -24,7 +24,7 @@ class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
   createApiKey: (userId: number) => Promise<string> = async (
     userId: number,
   ) => {
-    const apiKey = ApiKeyManagementService.generateApiKey()
+    const apiKey = ApiKeyAuthService.generateApiKey()
     const apiKeyHash = await this.getApiKeyHash(apiKey)
     await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
     return apiKey
@@ -44,4 +44,4 @@ class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
   }
 }
 
-export default ApiKeyManagementService
+export default ApiKeyAuthService
