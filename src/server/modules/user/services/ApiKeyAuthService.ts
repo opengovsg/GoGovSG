@@ -4,6 +4,7 @@ import _crypto from 'crypto'
 import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../../constants'
+import { StorableUser } from '../../../repositories/types'
 
 const BASE64_ENCODING = 'base64'
 // TODO: move these to env vars
@@ -25,12 +26,19 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
     userId: number,
   ) => {
     const apiKey = ApiKeyAuthService.generateApiKey()
-    const apiKeyHash = await this.getApiKeyHash(apiKey)
+    const apiKeyHash = await ApiKeyAuthService.getApiKeyHash(apiKey)
     await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
     return apiKey
   }
 
-  getApiKeyHash: (apiKey: string) => Promise<string> = async (
+  getUserByApiKey: (apiKey: string) => Promise<StorableUser | null> = async (
+    apiKey: string,
+  ) => {
+    const apiKeyHash = await ApiKeyAuthService.getApiKeyHash(apiKey)
+    return this.userRepository.findUserByApiKey(apiKeyHash)
+  }
+
+  private static getApiKeyHash: (apiKey: string) => Promise<string> = async (
     apiKey: string,
   ) => {
     const [name, version, key] = apiKey.split('_')
