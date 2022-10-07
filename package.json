@@ -22,6 +22,7 @@
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
     "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
     "test:e2e-headless": "testcafe chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
+    "test:integration": "jest --config=./test/integration/jest.config.js --runInBand ./test/integration",
     "cz": "git-cz",
     "prepare": "husky install"
   },
@@ -179,6 +180,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "form-data": "^4.0.0",
     "husky": "^7.0.0",
     "jest": "^26.6.3",
     "jsqr": "^1.4.0",
