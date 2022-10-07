@@ -1,5 +1,6 @@
 import fetch from 'cross-fetch'
 import { inject, injectable } from 'inversify'
+import _ from 'lodash'
 import { UrlThreatScanService } from '../interfaces'
 import { logger, safeBrowsingKey, safeBrowsingLogOnly } from '../../../config'
 import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository'
@@ -52,50 +53,12 @@ export class SafeBrowsingService implements UrlThreatScanService {
     }
     let matches = await this.safeBrowsingRepository.get(url)
     if (!matches) {
-      matches = await this.lookup(url)
+      matches = await this.lookup([url])
     }
     return !safeBrowsingLogOnly && Boolean(matches)
   }
 
-  private async lookup(url: string) {
-    let matches = null
-    const request = { ...this.requestTemplate } as any
-    request.threatInfo.threatEntries = [{ url }]
-    const response = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
-    })
-    if (!response.ok) {
-      const error = new Error(
-        `Safe Browsing failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
-      )
-      if (safeBrowsingLogOnly) {
-        logger.error(error)
-      } else {
-        throw error
-      }
-    } else {
-      const result = await response.json()
-      if (result?.matches) {
-        await this.safeBrowsingRepository.set(url, result.matches)
-        const prefix = safeBrowsingLogOnly
-          ? 'Considered threat by Safe Browsing but ignoring'
-          : 'Malicious link content'
-        logger.warn(
-          `${prefix}: ${url} yields ${JSON.stringify(result.matches, null, 2)}`,
-        )
-        matches = result.matches
-      }
-    }
-    return matches
-  }
-
-  // TODO: deduplicate this function with the lookup function above
-  // ideally, we should do a non-block write for any matched viruses
-  // into the redis cache. the write above is blocking so we chose to
-  // bypass the write for now
-  private async lookupBulk(urls: string[]) {
+  private async lookup(urls: string[]) {
     let matches = null
     const request = { ...this.requestTemplate } as any
 
@@ -123,35 +86,57 @@ export class SafeBrowsingService implements UrlThreatScanService {
         const prefix = safeBrowsingLogOnly
           ? 'Considered threat by Safe Browsing but ignoring'
           : 'Malicious link content'
-        result.matches.forEach((threatMatch: any) => {
-          logger.warn(
-            `${prefix}: ${threatMatch.threat.url} yields ${JSON.stringify(
-              threatMatch,
-              null,
-              2,
-            )}`,
-          )
-        })
+
+        /**
+         * Result.matches is a list of threat matches for all matched urls, example:
+         * [{ "threatType": "SOCIAL_ENGINEERING", "threat": { "url": "https://testsafebrowsing.appspot.com/s/phishing.html" } }]
+         * we use _.groupBy to group threat matches by url so that the serialized form
+         * matches what is currently written into our repository for single url lookups.
+         */
+        const matchesByUrl = _.groupBy(result.matches, (obj) => obj.threat.url)
+        Object.entries(matchesByUrl).forEach(
+          ([url, threatMatch]: [string, any]) => {
+            logger.warn(
+              `${prefix}: ${url} yields ${JSON.stringify(
+                threatMatch,
+                null,
+                2,
+              )}`,
+            )
+            try {
+              // writing to the safeBrowsingRepository should be non-blocking
+              this.safeBrowsingRepository.set(url, threatMatch)
+            } catch (e) {
+              // writes are wrapped in a try-catch block to prevent errors from bubbling up
+              logger.warn(
+                `failed to set ${url} in safeBrowsingRepository, skipping`,
+              )
+            }
+          },
+        )
         matches = result.matches
       }
     }
     return matches
   }
 
-  public isThreatBulk: (urls: string[]) => Promise<boolean> = async (urls) => {
-    const urlChunks: string[][] = []
-
-    for (let i = 0; i < urls.length; i += SAFE_BROWSING_LIMIT) {
-      urlChunks.push(urls.slice(i, i + SAFE_BROWSING_LIMIT))
-    }
-
+  public isThreatBulk: (
+    urls: string[],
+    batchSize?: number,
+  ) => Promise<boolean> = async (urls, batchSize = SAFE_BROWSING_LIMIT) => {
     if (!safeBrowsingKey) {
       logger.warn(`No Safe Browsing API key provided. Not scanning in bulk`)
       return false
     }
 
+    const urlChunks: string[][] = []
+
+    for (let i = 0; i < urls.length; i += batchSize) {
+      urlChunks.push(urls.slice(i, i + batchSize))
+    }
+
     const matches = await Promise.all(
-      urlChunks.map((urlChunk) => this.lookupBulk(urlChunk)),
+      urlChunks.map((urlChunk) => this.lookup(urlChunk)),
     )
     const isThreat = matches.some((match) => Boolean(match) === true)
     if (!safeBrowsingLogOnly && isThreat) {
