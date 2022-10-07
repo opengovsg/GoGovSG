@@ -22,10 +22,6 @@ const tagManagementService = {
   getTagsWithConditions: jest.fn(),
 }
 
-const tagManagementService = {
-  getTagsWithConditions: jest.fn(),
-}
-
 const userMessage = 'The quick brown fox jumps over a lazy dog'
 const userAnnouncement = {
   title: 'title',

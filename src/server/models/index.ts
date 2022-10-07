@@ -9,7 +9,6 @@ import { syncFunctions } from './functions'
 import { Tag } from './tag'
 import { Job, JobItem } from './job'
 
-
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
 Url.belongsTo(User, { foreignKey: { allowNull: false } })

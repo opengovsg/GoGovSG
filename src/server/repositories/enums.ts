@@ -6,6 +6,12 @@ export enum StorableUrlState {
   Inactive = 'INACTIVE',
 }
 
+export enum StorableUrlSource {
+  Bulk = 'BULK',
+  Api = 'API',
+  Console = 'CONSOLE',
+}
+
 export enum JobStatusEnum {
   Ready = 'READY',
   InProgress = 'IN_PROGRESS',
@@ -16,12 +22,3 @@ export enum JobStatusEnum {
 export enum JobTypeEnum {
   QRCodeGeneration = 'QR_CODE_GENERATION',
 }
-
-export default { StorableUrlState }
-export enum StorableUrlSource {
-  Bulk = 'BULK',
-  Api = 'API',
-  Console = 'CONSOLE',
-}
-
-export default { StorableUrlState, StorableUrlSource }
