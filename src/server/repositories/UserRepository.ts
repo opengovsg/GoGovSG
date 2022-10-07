@@ -35,6 +35,14 @@ export class UserRepository implements UserRepositoryInterface {
     this.urlMapper = urlMapper
   }
 
+  public findUserByApiKey: (
+    apiKeyHash: string,
+  ) => Promise<StorableUser | null> = async (apiKeyHash: string) => {
+    return this.userMapper.persistenceToDto(
+      await User.findOne({ where: { apiKeyHash } }),
+    )
+  }
+
   public findById: (userId: number) => Promise<StorableUser | null> = async (
     userId,
   ) => {
