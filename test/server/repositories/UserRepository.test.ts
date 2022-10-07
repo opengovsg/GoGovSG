@@ -26,6 +26,7 @@ const baseUrlTemplate = {
   updatedAt: Date.now(),
   description: 'An agency of the Singapore Government',
   contactEmail: 'contact-us@agency.gov.sg',
+  source: 'CONSOLE',
 }
 
 const urlClicks = {

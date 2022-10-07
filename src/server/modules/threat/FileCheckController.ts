@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
+import fileUpload from 'express-fileupload'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { FileTypeFilterService, VirusScanService } from './interfaces'
@@ -22,7 +23,7 @@ export class FileCheckController {
     this.virusScanService = virusScanService
   }
 
-  public checkFile: (
+  public singleFileCheck: (
     req: Request,
     res: Response,
     next: NextFunction,
@@ -35,13 +36,34 @@ export class FileCheckController {
       )
       return
     }
+    next()
+  }
 
-    if (file) {
-      if (!(await this.fileTypeFilterService.hasAllowedType(file))) {
+  public fileExtensionCheck =
+    (allowedExtensions?: string[]) =>
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      const file = req.files?.file as fileUpload.UploadedFile | undefined
+      if (
+        file &&
+        !(await this.fileTypeFilterService.hasAllowedType(
+          file,
+          allowedExtensions,
+        ))
+      ) {
         res.unsupportedMediaType(jsonMessage('File type disallowed.'))
         return
       }
 
+      next()
+    }
+
+  public fileVirusCheck: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
+    const file = req.files?.file as fileUpload.UploadedFile | undefined
+    if (file) {
       try {
         const hasVirus = await this.virusScanService.hasVirus(file)
         if (hasVirus) {
@@ -62,7 +84,6 @@ export class FileCheckController {
         return
       }
     }
-
     next()
   }
 }

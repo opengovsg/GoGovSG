@@ -49,7 +49,7 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  max-width: 100%;
+  width: 433px;
   height: 140px;
   text-align: left;
   margin-left: auto;
@@ -61,8 +61,18 @@ body {
   width: 100%;
   height: 140px;
   padding-top: 75px;
-  padding-left: 165px;
+  padding-left: 167px;
   color: var(--transition-links-color);
+}
+
+.links-health {
+  padding-top: 77px;
+  padding-left: 167px; 
+}
+
+.links-edu {
+  padding-top: 77px;
+  padding-left: 172px; 
 }
 
 .bottom-half {
@@ -121,8 +131,22 @@ body {
 
 @media only screen and (max-width: 768px) {
   .links {
+    padding-top: 71px;
+    padding-left: 134px;
+  }
+
+  .links-health {
     padding-top: 73px;
-    padding-left: 148px;
+    padding-left: 133px; 
+  }
+
+  .links-edu {
+    padding-top: 74px;
+    padding-left: 139px; 
+  }
+
+  .browser-image {
+    width: 350px;
   }
 }
 
@@ -152,12 +176,22 @@ body {
 
   .links {
     padding-top: 73px;
-    padding-left: 115px;
+    padding-left: 116px;
     font-size: 12px;
     height: 120px;
     box-sizing: border-box;
   }
 
+  .links-health {
+    padding-top: 74px;
+    padding-left: 114px; 
+  }
+
+  .links-edu {
+    padding-top: 75px;
+    padding-left: 119px; 
+  }
+  
   .top-half-content a {
     line-height: 20px;
   }
@@ -193,12 +227,5 @@ body {
 
   .browser-image {
     width: 300px;
-  }
-
-  .links {
-    padding-top: 73px;
-    padding-left: 115px;
-    font-size: 12px;
-    box-sizing: border-box;
   }
 }

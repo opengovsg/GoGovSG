@@ -18,3 +18,10 @@ export enum JobTypeEnum {
 }
 
 export default { StorableUrlState }
+export enum StorableUrlSource {
+  Bulk = 'BULK',
+  Api = 'API',
+  Console = 'CONSOLE',
+}
+
+export default { StorableUrlState, StorableUrlSource }

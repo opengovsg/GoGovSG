@@ -16,7 +16,11 @@ import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { SearchResultsSortOrder } from '../../../src/shared/search'
 import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
 import { NotFoundError } from '../../../src/server/util/error'
-import { StorableUrlState } from '../../../src/server/repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../src/server/repositories/enums'
+
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
 import TagRepositoryMock from '../mocks/repositories/TagRepository'
 import { TAG_SEPARATOR } from '../../../src/shared/constants'
@@ -80,6 +84,7 @@ describe('UrlRepository', () => {
     updatedAt: new Date(),
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
+    source: 'CONSOLE',
     tags: [],
   }
   const baseUrl = {
@@ -160,6 +165,7 @@ describe('UrlRepository', () => {
           shortUrl,
           userId,
           isFile: false,
+          source: StorableUrlSource.Console,
           tagStrings: '',
         },
         expect.anything(),
@@ -184,6 +190,7 @@ describe('UrlRepository', () => {
           tags: baseTags,
           isFile: false,
           tagStrings: baseTagStrings,
+          source: StorableUrlSource.Console,
         },
         expect.anything(),
       )
@@ -220,6 +227,7 @@ describe('UrlRepository', () => {
           shortUrl,
           userId,
           isFile: true,
+          source: StorableUrlSource.Console,
           tagStrings: '',
         },
         expect.anything(),
@@ -269,6 +277,7 @@ describe('UrlRepository', () => {
           tags: baseTags,
           isFile: true,
           tagStrings: baseTagStrings,
+          source: StorableUrlSource.Console,
         },
         expect.anything(),
       )

@@ -61,6 +61,9 @@ export const DependencyIds = {
   gaTrackingId: Symbol.for('gaTrackingId'),
   tagManagementService: Symbol.for('tagManagementService'),
   jobManagementService: Symbol.for('jobManagementService'),
+  bulkController: Symbol.for('bulkController'),
+  bulkService: Symbol.for('bulkService'),
+  tagManagementService: Symbol.for('tagManagementService'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'

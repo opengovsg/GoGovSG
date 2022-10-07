@@ -22,6 +22,7 @@ describe('UrlManagementService', () => {
     getLongUrl: jest.fn(),
     plainTextSearch: jest.fn(),
     rawDirectorySearch: jest.fn(),
+    bulkCreate: jest.fn(),
   }
 
   const service = new UrlManagementService(userRepository, urlRepository)

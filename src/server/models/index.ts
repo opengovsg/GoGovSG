@@ -9,6 +9,7 @@ import { syncFunctions } from './functions'
 import { Tag } from './tag'
 import { Job, JobItem } from './job'
 
+
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
 Url.belongsTo(User, { foreignKey: { allowNull: false } })
@@ -17,7 +18,7 @@ Url.belongsTo(User, { foreignKey: { allowNull: false } })
 User.hasMany(Job, { as: 'Job', foreignKey: { allowNull: false } })
 Job.belongsTo(User, { foreignKey: { allowNull: false } })
 
-// One user can run many jobs but each job can only be mapped to one user.
+// One job can run many jobItems but each jobItem can only be mapped to one job.
 Job.hasMany(JobItem, { as: 'JobItem', foreignKey: { allowNull: false } })
 JobItem.belongsTo(Job, { foreignKey: { allowNull: false } })
 

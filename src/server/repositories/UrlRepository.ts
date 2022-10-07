@@ -13,12 +13,13 @@ import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import {
+  BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlDirectory,
   UrlDirectoryPaginated,
 } from './types'
-import { StorableUrlState } from './enums'
+import { StorableUrlSource, StorableUrlState } from './enums'
 import { Mapper } from '../mappers/Mapper'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
@@ -80,6 +81,7 @@ export class UrlRepository implements UrlRepositoryInterface {
           : properties.longUrl,
         isFile: !!file,
         tagStrings,
+        source: StorableUrlSource.Console,
       }
       const url = await Url.create(urlStaticDTO, {
         transaction: t,
@@ -506,6 +508,29 @@ export class UrlRepository implements UrlRepositoryInterface {
         throw new Error(`Unsupported SearchResultsSortOrder: ${order}`)
     }
     return rankingAlgorithm
+  }
+
+  public bulkCreate: (properties: {
+    userId: number
+    urlMappings: BulkUrlMapping[]
+  }) => Promise<void> = async (properties) => {
+    const { urlMappings, userId } = properties
+    await sequelize.transaction(async (t) => {
+      const bulkUrlObjects = urlMappings.map(({ shortUrl, longUrl }) => {
+        return {
+          shortUrl,
+          longUrl,
+          userId,
+          isFile: false,
+          source: StorableUrlSource.Bulk,
+        }
+      })
+      // sequelize model method
+      await Url.bulkCreate(bulkUrlObjects, {
+        transaction: t,
+        individualHooks: false,
+      })
+    })
   }
 }
 

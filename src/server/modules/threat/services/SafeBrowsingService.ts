@@ -6,6 +6,7 @@ import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository'
 import { DependencyIds } from '../../../constants'
 
 const ENDPOINT = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${safeBrowsingKey}`
+const SAFE_BROWSING_LIMIT = 500
 
 @injectable()
 export class SafeBrowsingService implements UrlThreatScanService {
@@ -88,6 +89,76 @@ export class SafeBrowsingService implements UrlThreatScanService {
       }
     }
     return matches
+  }
+
+  // TODO: deduplicate this function with the lookup function above
+  // ideally, we should do a non-block write for any matched viruses
+  // into the redis cache. the write above is blocking so we chose to
+  // bypass the write for now
+  private async lookupBulk(urls: string[]) {
+    let matches = null
+    const request = { ...this.requestTemplate } as any
+
+    request.threatInfo.threatEntries = urls.map((url) => {
+      return { url }
+    })
+
+    const response = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    if (!response.ok) {
+      const error = new Error(
+        `Safe Browsing failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
+      )
+      if (safeBrowsingLogOnly) {
+        logger.error(error)
+      } else {
+        throw error
+      }
+    } else {
+      const result = await response.json()
+      if (result?.matches) {
+        const prefix = safeBrowsingLogOnly
+          ? 'Considered threat by Safe Browsing but ignoring'
+          : 'Malicious link content'
+        result.matches.forEach((threatMatch: any) => {
+          logger.warn(
+            `${prefix}: ${threatMatch.threat.url} yields ${JSON.stringify(
+              threatMatch,
+              null,
+              2,
+            )}`,
+          )
+        })
+        matches = result.matches
+      }
+    }
+    return matches
+  }
+
+  public isThreatBulk: (urls: string[]) => Promise<boolean> = async (urls) => {
+    const urlChunks: string[][] = []
+
+    for (let i = 0; i < urls.length; i += SAFE_BROWSING_LIMIT) {
+      urlChunks.push(urls.slice(i, i + SAFE_BROWSING_LIMIT))
+    }
+
+    if (!safeBrowsingKey) {
+      logger.warn(`No Safe Browsing API key provided. Not scanning in bulk`)
+      return false
+    }
+
+    const matches = await Promise.all(
+      urlChunks.map((urlChunk) => this.lookupBulk(urlChunk)),
+    )
+    const isThreat = matches.some((match) => Boolean(match) === true)
+    if (!safeBrowsingLogOnly && isThreat) {
+      return true
+    }
+
+    return false
   }
 }
 
