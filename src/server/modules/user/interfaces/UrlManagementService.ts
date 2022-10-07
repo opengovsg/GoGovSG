@@ -7,7 +7,11 @@ import {
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 
 export interface UrlManagementService {
-  bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void>
+  bulkCreate: (
+    userId: number,
+    urlMappings: BulkUrlMapping[],
+    tags?: string[],
+  ) => Promise<void>
   createUrl: (
     userId: number,
     shortUrl: string,

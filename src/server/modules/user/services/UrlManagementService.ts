@@ -149,16 +149,20 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     return this.userRepository.findUrlsForUser(conditions)
   }
 
-  bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void> =
-    async (userId, urlMappings) => {
-      await this.urlRepository.bulkCreate({
-        userId,
-        urlMappings,
-      })
-      dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
-        `isbulk:true`,
-      ]) // TODO: extract metric and tag names
-    }
+  bulkCreate: (
+    userId: number,
+    urlMappings: BulkUrlMapping[],
+    tags?: string[],
+  ) => Promise<void> = async (userId, urlMappings, tags) => {
+    await this.urlRepository.bulkCreate({
+      userId,
+      urlMappings,
+      tags,
+    })
+    dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
+      `isbulk:true`,
+    ]) // TODO: extract metric and tag names
+  }
 }
 
 export default UrlManagementService

@@ -89,6 +89,14 @@ export const urlSchema = Joi.object({
   }),
 }).xor('longUrl', 'files')
 
+export const urlBulkSchema = Joi.object({
+  userId: Joi.number().required(),
+  tags: tagSchema,
+  files: Joi.object({
+    file: Joi.object().keys().required(),
+  }),
+})
+
 export const urlEditSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
