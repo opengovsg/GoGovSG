@@ -30,8 +30,6 @@ import { TAG_SEPARATOR } from '../../shared/constants'
 
 const { Public, Private } = FileVisibility
 
-export const tagSeparator = ';'
-
 /**
  * A url repository that handles access to the data store of Urls.
  * The following implementation uses Sequelize, AWS S3 and Redis.

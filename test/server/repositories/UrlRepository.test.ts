@@ -11,10 +11,7 @@ import {
   urlClicksModelMock,
   urlModelMock,
 } from '../api/util'
-import {
-  UrlRepository,
-  tagSeparator,
-} from '../../../src/server/repositories/UrlRepository'
+import { UrlRepository } from '../../../src/server/repositories/UrlRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { SearchResultsSortOrder } from '../../../src/shared/search'
 import { FileVisibility, S3ServerSide } from '../../../src/server/services/aws'
