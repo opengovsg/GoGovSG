@@ -71,7 +71,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
   const setCreateShortLinkError = (error: string) =>
     dispatch(userActions.setCreateShortLinkError(error))
   const setTags = (tags: string[]) => dispatch(userActions.setTags(tags))
-
   const history = useHistory()
 
   const [isFile, setIsFile] = useState(false)
