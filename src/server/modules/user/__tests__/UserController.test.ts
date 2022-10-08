@@ -21,7 +21,6 @@ const urlManagementService = {
 const tagManagementService = {
   getTagsWithConditions: jest.fn(),
 }
-
 const apiKeyManagementService = {
   createApiKey: jest.fn(),
 }
