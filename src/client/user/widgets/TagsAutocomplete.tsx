@@ -9,14 +9,17 @@ import {
   makeStyles,
 } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   MAX_NUM_TAGS_PER_LINK,
   MIN_TAG_SEARCH_LENGTH,
 } from '../../../shared/constants'
+import userActions from '../actions'
 import { MAX_TAG_LENGTH, isValidTag } from '../../../shared/util/validation'
 import { SEARCH_TIMEOUT, TEXT_FIELD_HEIGHT } from '../constants'
 import { get } from '../../app/util/requests'
 import FormTag from './FormTag'
+import { GoGovReduxState } from '../../app/reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -55,20 +58,20 @@ const useStyles = makeStyles((theme) =>
 )
 
 type TagsAutocompleteProps = {
-  tags: string[]
-  setTags: (tags: string[]) => void
   tagInput: string
   setTagInput: (tagInput: string) => void
   disabled: boolean
 }
 
 export default function TagsAutocomplete({
-  tags,
-  setTags,
   tagInput,
   setTagInput,
   disabled,
 }: TagsAutocompleteProps) {
+  const tags = useSelector((state: GoGovReduxState) => state.user.tags)
+  const dispatch = useDispatch()
+  const setTags = (tags: string[]) => dispatch(userActions.setTags(tags))
+
   const classes = useStyles()
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([])
   const [tagAnchorEl, setTagAnchorEl] = useState<HTMLElement | null>(null)

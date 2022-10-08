@@ -322,8 +322,6 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
           </div>
           <div>
             <TagsAutocomplete
-              tags={tags}
-              setTags={setTags}
               tagInput={tagInput}
               setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}

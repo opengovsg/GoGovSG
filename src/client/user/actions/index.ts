@@ -840,12 +840,6 @@ const uploadFile =
     }
   }
 
-// For setting tags value in the tags autocomplete input box
-const setTags: (tags: string[]) => SetTagsAction = (tags) => ({
-  type: UserAction.SET_TAGS,
-  payload: tags,
-})
-
 // API call to update tags
 const updateTags =
   (shortUrl: string, tags: string[]) =>
@@ -880,6 +874,12 @@ const updateTags =
       })
     })
   }
+
+// For setting tags value in the tags autocomplete input box
+const setTags: (tags: string[]) => SetTagsAction = (tags) => ({
+  type: UserAction.SET_TAGS,
+  payload: tags,
+})
 
 export default {
   getUrlsForUser,
