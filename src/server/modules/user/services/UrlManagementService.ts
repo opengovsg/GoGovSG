@@ -64,9 +64,11 @@ export class UrlManagementService implements interfaces.UrlManagementService {
           mimetype: file.mimetype,
         }
       : undefined
-
     // Success
-    const result = await this.urlRepository.create(
+    dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
+      `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
+    ])
+    return this.urlRepository.create(
       {
         userId: user.id,
         longUrl,
@@ -75,11 +77,6 @@ export class UrlManagementService implements interfaces.UrlManagementService {
       },
       storableFile,
     )
-    dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
-      `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
-    ])
-
-    return result
   }
 
   updateUrl: (

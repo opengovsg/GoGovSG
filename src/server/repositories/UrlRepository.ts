@@ -30,6 +30,8 @@ import { TAG_SEPARATOR } from '../../shared/constants'
 
 const { Public, Private } = FileVisibility
 
+export const tagSeparator = ';'
+
 /**
  * A url repository that handles access to the data store of Urls.
  * The following implementation uses Sequelize, AWS S3 and Redis.
@@ -97,7 +99,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       }
 
       // Do a fresh read which eagerly loads the associated UrlClicks field.
-      return Url.scope(['defaultScope', 'getClicks']).findByPk(
+      return Url.scope(['defaultScope', 'getClicks', 'getTags']).findByPk(
         properties.shortUrl,
         {
           transaction: t,

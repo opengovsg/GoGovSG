@@ -13,7 +13,7 @@ import { IdType } from '../../types/server/models'
 import { DEV_ENV, emailValidator, ogHostname } from '../config'
 import { StorableUrlSource, StorableUrlState } from '../repositories/enums'
 import { urlSearchVector } from './search'
-import { TagType } from './tag'
+import { Tag, TagType } from './tag'
 
 export interface UrlBaseType extends IdType {
   readonly shortUrl: string
@@ -32,6 +32,7 @@ export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
   readonly createdAt: string
   readonly updatedAt: string
   readonly email: string
+  readonly tagStrings: string
 }
 
 // For sequelize define
@@ -80,13 +81,13 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
     allowNull: false,
     defaultValue: '',
   },
-  source: {
-    type: 'enum_urls_source',
-  },
   tagStrings: {
     type: Sequelize.TEXT,
     allowNull: false,
     defaultValue: '',
+  },
+  source: {
+    type: 'enum_urls_source',
   },
 })
 
@@ -316,6 +317,13 @@ export const Url = <UrlTypeStatic>sequelize.define(
           {
             model: UrlClicks,
             as: 'UrlClicks',
+          },
+        ],
+      },
+      getTags: {
+        include: [
+          {
+            model: Tag,
           },
         ],
       },

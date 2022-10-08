@@ -13,6 +13,8 @@ import {
 } from '../../../shared/constants'
 import { isValidGovEmail } from '../../util/email'
 
+const MAX_TAG_COUNT = 3
+
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
