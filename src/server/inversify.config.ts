@@ -21,6 +21,7 @@ import { OtpRepository } from './modules/auth/repositories'
 import { MailerNode } from './services/email'
 
 import { S3ServerSide } from './services/aws'
+import { SQSService } from './services/sqs'
 import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { TagRepository } from './repositories/TagRepository'
@@ -178,6 +179,16 @@ export default () => {
       endpoint: bucketEndpoint,
       s3ForcePathStyle: true,
     })
+
+    const sqsClient = new AWS.SQS({
+      accessKeyId: 'foobar',
+      secretAccessKey: 'foobar',
+      endpoint: accessEndpoint,
+      region: 'us-east-1',
+    })
+
+    container.bind(DependencyIds.sqsClient).toConstantValue(sqsClient)
+
     container
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
@@ -185,7 +196,9 @@ export default () => {
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
+    container.bind(DependencyIds.sqsClient).toConstantValue(new AWS.SQS())
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
+  bindIfUnbound(DependencyIds.sqsService, SQSService)
 }

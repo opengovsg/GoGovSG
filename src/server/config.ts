@@ -226,7 +226,11 @@ export const bucketEndpoint =
   process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
 export const accessEndpoint =
   process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
-
+export const sqsBulkQRCodeGenerateStartName =
+  process.env.AWS_SQS_BULK_QRCODE_GENERATE_START || 'bulk-qrcode-generate-start'
+export const sqsBulkQRCodeStartUrl =
+  process.env.AWS_SQS_BULK_QRCODE_GENERATE_START_URL ||
+  `http://localstack:4566/000000000000/bulk-qrcode-generate-start`
 export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
 export const sentryDns: string | undefined = process.env.SENTRY_DNS
