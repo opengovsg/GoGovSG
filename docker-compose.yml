@@ -76,11 +76,12 @@ services:
       - '4566:4566'
       - '8055:8080' # View deployed resources @ http://localhost:8055/#!/infra.
     environment:
-      - SERVICES=s3 # AWS services to emulate.
+      - SERVICES=sqs,s3 # AWS services to emulate.
       - DEBUG=1 # Display relevant logs.
       - DATA_DIR=/tmp/localstack/data # Directory Localstack saves data internally.
       - HOSTNAME_EXTERNAL=localstack
       - AWS_BUCKET_NAME=local-bucket
+      - AWS_SQS_BULK_QRCODE_GENERATE_START=bulk-qrcode-generate-start
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     volumes:
