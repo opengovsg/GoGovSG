@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import _crypto from 'crypto'
 import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
-import { DependencyIds } from '../../../constants'
+import { API_KEY_SEPARATOR, DependencyIds } from '../../../constants'
 import { StorableUser } from '../../../repositories/types'
 import { apiEnv, apiKeySalt, apiKeyVersion } from '../../../config'
 
@@ -12,22 +12,18 @@ const BASE64_ENCODING = 'base64'
 class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   private userRepository: UserRepositoryInterface
 
-  private readonly apiKeySalt: string
-
   constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
-    apiKeySaltString?: string,
   ) {
     this.userRepository = userRepository
-    this.apiKeySalt = apiKeySaltString || apiKeySalt
   }
 
   createApiKey: (userId: number) => Promise<string> = async (
     userId: number,
   ) => {
     const apiKey = ApiKeyAuthService.generateApiKey()
-    const apiKeyHash = await this.getApiKeyHash(apiKey)
+    const apiKeyHash = await ApiKeyAuthService.getApiKeyHash(apiKey)
     await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
     return apiKey
   }
@@ -35,16 +31,14 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   getUserByApiKey: (apiKey: string) => Promise<StorableUser | null> = async (
     apiKey: string,
   ) => {
-    const apiKeyHash = await this.getApiKeyHash(apiKey)
+    const apiKeyHash = await ApiKeyAuthService.getApiKeyHash(apiKey)
     return this.userRepository.findUserByApiKey(apiKeyHash)
   }
 
-  private getApiKeyHash: (apiKey: string) => Promise<string> = async (
-    apiKey: string,
-  ) => {
-    const [name, version, key] = apiKey.split('_')
-    const hash = await bcrypt.hash(key, this.apiKeySalt)
-    return `${name}_${version}_${hash.replace(this.apiKeySalt, '')}`
+  static async getApiKeyHash(apiKey: string): Promise<string> {
+    const [name, version, key] = apiKey.split(API_KEY_SEPARATOR)
+    const hash = await bcrypt.hash(key, apiKeySalt)
+    return `${name}_${version}_${hash.replace(apiKeySalt, '')}`
   }
 
   private static generateApiKey(): string {

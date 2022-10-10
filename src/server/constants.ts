@@ -62,3 +62,4 @@ export const DependencyIds = {
 }
 
 export const ERROR_404_PATH = '404.error.ejs'
+export const API_KEY_SEPARATOR = '_'
