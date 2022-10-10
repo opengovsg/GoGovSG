@@ -36,7 +36,7 @@ export const User = <UserTypeStatic>sequelize.define(
     apiKeyHash: {
       type: Sequelize.TEXT,
       unique: true,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {
