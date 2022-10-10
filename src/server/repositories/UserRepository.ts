@@ -169,7 +169,7 @@ export class UserRepository implements UserRepositoryInterface {
 
   public saveApiKeyHash: (userId: number, apiKeyHash: string) => Promise<void> =
     async (userId, apiKeyHash) => {
-      const user = await User.scope(['defaultScope']).findOne({
+      const user = await User.findOne({
         where: { id: userId },
       })
       if (!user) {
