@@ -10,4 +10,3 @@ COMMIT;
 
 -- Down migration
 -- ALTER TABLE users DROP COLUMN "apiKeyHash";
--- DROP TYPE enum_urls_source;
