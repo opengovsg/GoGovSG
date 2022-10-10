@@ -38,7 +38,7 @@ function userGuard(
 }
 
 /**
- * To protect external APIs by APIKey.
+ * To protect external-v1 APIs by APIKey.
  * */
 async function apiKeyAuthMiddleware(
   req: Express.Request,
@@ -92,7 +92,7 @@ router.use('/link-audit', userGuard, require('./link-audit'))
 router.use('/directory', userGuard, require('./directory'))
 
 /* Register APIKey protected endpoints */
-router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external'))
+router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
 
 router.use((_, res) => {
   res.status(404).render(ERROR_404_PATH, {

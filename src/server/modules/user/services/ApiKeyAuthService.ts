@@ -5,12 +5,9 @@ import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../../constants'
 import { StorableUser } from '../../../repositories/types'
+import { apiEnv, apiKeySalt, apiKeyVersion } from '../../../config'
 
 const BASE64_ENCODING = 'base64'
-// TODO: move these to env vars
-const API_KEY_SALT = '$2b$10$VWCoSLIDq/gA9WZh7jZBiu'
-const API_KEY_VERSION = '1'
-const API_ENV = 'test'
 @injectable()
 class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   private userRepository: UserRepositoryInterface
@@ -42,13 +39,13 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
     apiKey: string,
   ) => {
     const [name, version, key] = apiKey.split('_')
-    const hash = await bcrypt.hash(key, API_KEY_SALT)
-    return `${name}_${version}_${hash.replace(API_KEY_SALT, '')}`
+    const hash = await bcrypt.hash(key, apiKeySalt)
+    return `${name}_${version}_${hash.replace(apiKeySalt, '')}`
   }
 
   private static generateApiKey(): string {
     const randomString = _crypto.randomBytes(32).toString(BASE64_ENCODING)
-    return `${API_ENV}_${API_KEY_VERSION}_${randomString}`
+    return `${apiEnv}_${apiKeyVersion}_${randomString}`
   }
 }
 
