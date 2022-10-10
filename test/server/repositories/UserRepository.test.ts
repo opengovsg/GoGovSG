@@ -371,6 +371,9 @@ describe('UserRepository', () => {
   describe('findUserByApiKey', async () => {
     const apiKeyHash = 'apiKeyHash'
     const findOne = jest.spyOn(userModelMock, 'findOne')
+    beforeEach(() => {
+      findOne.mockReset()
+    })
     it('call find one with correct param', async () => {
       await userRepo.findUserByApiKey(apiKeyHash)
       expect(findOne).toHaveBeenCalledTimes(1)
