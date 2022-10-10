@@ -3,10 +3,10 @@ import {
   bottomMobilePanel,
   copyAlert,
   directoryTextFieldKeyword,
+  directoryUrlTableRowUrl,
+  directoryUrlTableRowUrlText,
   mobileCopyEmailIcon,
   mobileDirectoryPageButton,
-  urlTableRowText,
-  urlTableRowUrl,
 } from './util/helpers'
 import { singleLinkCreationProcedure } from './util/LinkCreationProcedure'
 import LoginProcedure from './util/LoginProcedure'
@@ -34,12 +34,12 @@ test('Directory Page test url row interactions', async (t) => {
     // search by url
     .typeText(directoryTextFieldKeyword, generatedUrlActive)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlActive}`)
     // test bottom panel appears
     .expect(bottomMobilePanel.exists)
     .notOk()
-    .click(urlTableRowUrl(0))
+    .click(directoryUrlTableRowUrl(0))
     .expect(bottomMobilePanel.exists)
     .ok()
     // copy email

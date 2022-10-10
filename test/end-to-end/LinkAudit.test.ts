@@ -1,5 +1,12 @@
 import { Selector } from 'testcafe'
-import { rootLocation, subUrl, transferEmail } from './util/config'
+import {
+  rootLocation,
+  subUrl,
+  tagText1,
+  tagText2,
+  tagText3,
+  transferEmail,
+} from './util/config'
 import {
   activeSwitch,
   closeButtonSnackBar,
@@ -7,10 +14,14 @@ import {
   linkHistoryLinkOwnerH6,
   linkHistoryLinkStatusH6,
   linkHistoryOriginalLinkH6,
+  linkHistoryTagsH6,
   linkHistoryViewButton,
   linkTransferField,
   longUrl,
   signOutButton,
+  tagCloseButton1,
+  tagsAutocompleteInput,
+  tagsSaveButton,
   transferButton,
   urlSaveButton,
 } from './util/helpers'
@@ -37,7 +48,7 @@ test('Creating a new url updates the link history with create change set', async
   await t.expect(linkHistoryCreateSpan.exists).ok()
 })
 
-test('Disabling the link should update the link history with Link Status update change set ', async (t) => {
+test('Disabling the link should update the link history with Link Status update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
   const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
@@ -51,7 +62,7 @@ test('Disabling the link should update the link history with Link Status update 
   await t.expect(linkHistoryLinkStatusH6.exists).ok()
 })
 
-test('Changing the original link should update the link history with Original Link update change set ', async (t) => {
+test('Changing the original link should update the link history with Original Link update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
   const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
@@ -70,7 +81,7 @@ test('Changing the original link should update the link history with Original Li
   await t.expect(linkHistoryOriginalLinkH6.exists).ok()
 })
 
-test('Changing the link owner should update the link history with Link Owner update change set ', async (t) => {
+test('Changing the link owner should update the link history with Link Owner update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
   const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
@@ -94,4 +105,33 @@ test('Changing the link owner should update the link history with Link Owner upd
   await t.click(linkHistoryViewButton)
   // Check if the link history span is created
   await t.expect(linkHistoryLinkOwnerH6.exists).ok()
+})
+
+test('Changing the tags should update the link history with Tags update change set', async (t) => {
+  // Create new link
+  const generatedShortLink = await CreateNewLink(t)
+  const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
+  // Click the url in the table to open the drawer
+  await t.click(linkRow)
+  // Remove one existing tag and add two new tags
+  await t
+    .click(tagCloseButton1)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText2)
+    .pressKey('enter')
+    .typeText(tagsAutocompleteInput, tagText3)
+    .pressKey('enter')
+    .click(tagsSaveButton)
+  // Go to link history
+  await t.click(linkHistoryViewButton)
+  // Check if the link history span is created
+  await t
+    .expect(linkHistoryTagsH6.exists)
+    .ok()
+    .expect(Selector('.MuiChip-label').withExactText(tagText1).exists)
+    .ok()
+    .expect(Selector('.MuiChip-label').withExactText(tagText2).exists)
+    .ok()
+    .expect(Selector('.MuiChip-label').withExactText(tagText3).exists)
+    .ok()
 })

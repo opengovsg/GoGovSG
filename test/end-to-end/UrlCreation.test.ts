@@ -8,6 +8,8 @@ import {
   rootLocation,
   shortUrl,
   smallFileSize,
+  tagText1,
+  tagText2,
 } from './util/config'
 import {
   blacklistValidationError,
@@ -16,13 +18,22 @@ import {
   createUrlModal,
   fileSubmitButton,
   fileTab,
+  generateRandomString,
   generateUrlImage,
   largeFileError,
   longUrlTextField,
   resultTable,
-  searchBar,
+  searchBarLinkButton,
+  searchBarLinksInput,
+  searchBarSearchByTag,
+  searchBarTagButton,
+  searchBarTagsInput,
   shortUrlTextField,
   successUrlCreation,
+  tag1,
+  tagCloseButton1,
+  tagCloseButton2,
+  tagsAutocompleteInput,
   uploadFile,
   urlTable,
 } from './util/helpers'
@@ -46,6 +57,7 @@ test('The URL based shortlink test.', async (t) => {
 
   const generatedUrl = await shortUrlTextField.value
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkTableRow = linkRow.parent('tr')
 
   // It should prevent creation of short urls pointing to long urls hosted on blacklisted domains
   await t.typeText(longUrlTextField, `${invalidShortUrl}`)
@@ -72,6 +84,15 @@ test('The URL based shortlink test.', async (t) => {
 
   await t.expect(circularRedirectValidationError.exists).ok()
 
+  // Add and remove tags from the tags autocomplete field
+  await t
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
+    .typeText(tagsAutocompleteInput, tagText2)
+    .pressKey('enter')
+    .click(tagCloseButton1)
+
   await t
     .click(longUrlTextField)
     .pressKey('ctrl+a delete')
@@ -83,12 +104,23 @@ test('The URL based shortlink test.', async (t) => {
     // It should show an success snackbar when a new url has been added
     .expect(successUrlCreation.exists)
     .ok()
-    // It should show the new short url on the users’ links table when a new link is created
+    // It should show the new short url on the user's links table when a new link is created
     .expect(linkRow.exists)
     .ok()
-    // The new short url should be highlighted on the users' links table when a new link is created
+    // The new short url should be highlighted on the user's links table when a new link is created
     .expect(urlTable.child(0).getStyleProperty('background-color'))
     .eql('rgb(249, 249, 249)')
+    // It should show the tag on the new short url
+    .expect(linkTableRow.find('span').withExactText(tagText2).exists)
+    .ok()
+
+  // It should show an autocomplete option for the previously created tag when creating a new link
+  await t
+    .click(createLinkButton.nth(0))
+    .typeText(tagsAutocompleteInput, 'tag')
+    .wait(1000)
+    .expect(Selector('button').withExactText(tagText2).exists)
+    .ok()
 })
 
 test('The file based shortlink test.', async (t) => {
@@ -96,6 +128,7 @@ test('The file based shortlink test.', async (t) => {
 
   const generatedfileUrl = await shortUrlTextField.value
   const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const fileTableRow = fileRow.parent('tr')
 
   // Generate 1mb file
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
@@ -103,16 +136,24 @@ test('The file based shortlink test.', async (t) => {
   await t
     .click(fileTab)
     .setFilesToUpload(uploadFile, dummyRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
     .click(createLinkButton.nth(2))
+
+  await t
     // It should show an success snackbar when a new file link has been added
     .expect(successUrlCreation.exists)
     .ok()
-    // It should show the short url on users' link table when a new file link is created
+    // It should show the short url on the user's link table when a new file link is created
     .expect(fileRow.exists)
     .ok()
-    // The new short url should be highlighted on the users' links table when a new file link is created
+    // The new short url should be highlighted on the user's links table when a new file link is created
     .expect(urlTable.child(0).getStyleProperty('background-color'))
     .eql('rgb(249, 249, 249)') // #f9f9f9 in rgb
+    // It should show the tags on the new short url
+    .expect(fileTableRow.find('span').withExactText(tagText1).exists)
+    .ok()
 
   // Delete 1mb file
   await deleteFile(dummyFilePath)
@@ -124,6 +165,9 @@ test('The file based shortlink test.', async (t) => {
     .click(createLinkButton.nth(0))
     .click(fileTab)
     .setFilesToUpload(uploadFile, dummyRelativePath)
+    // It should clear tags input after the previous link was successfully created
+    .expect(tag1.exists)
+    .notOk()
     // It should show an error below the file input when a file larger than 10MB is chosen
     .expect(largeFileError.exists)
     .ok()
@@ -139,16 +183,37 @@ test('The URL searching test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrlActive = await shortUrlTextField.value
+  const randomTagText = generateRandomString(10)
 
   await t
     .typeText(shortUrlTextField, '-search')
     .typeText(longUrlTextField, `${shortUrl}`)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, randomTagText)
+    .pressKey('enter')
     .click(createLinkButton.nth(2))
 
   await t
-    .typeText(searchBar, 'search')
+    .typeText(searchBarLinksInput, 'search')
     .wait(1000)
     // Searching on the user page search bar shows links that are relevant to the search term.
+    // eslint-disable-next-line
+    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
+    .eql(`/${generatedUrlActive}-search`)
+
+  await t
+    .click(searchBarLinkButton)
+    .click(searchBarSearchByTag)
+    // Toggling the search bar to search by tags should change button text and clear search input
+    .expect(searchBarTagButton.exists)
+    .ok()
+    .expect(searchBarTagsInput.innerText)
+    .eql('')
+
+  await t
+    .typeText(searchBarTagsInput, randomTagText)
+    .wait(3000)
+    // Searching by tags on the user page search bar shows links that are relevant to the search term.
     // eslint-disable-next-line
     .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
     .eql(`/${generatedUrlActive}-search`)
