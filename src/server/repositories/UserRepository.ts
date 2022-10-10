@@ -10,10 +10,11 @@ import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
 import { User, UserType } from '../models/user'
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
+import { UrlClicks } from '../models/statistics/clicks'
 import { Url, UrlType } from '../models/url'
 import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
-import { UrlClicks } from '../models/statistics/clicks'
+import { escapeWildcard } from '../util/sequelize'
 
 /**
  * A user repository that handles access to the data store of Users.
@@ -145,7 +146,7 @@ export class UserRepository implements UserRepositoryInterface {
     if (conditions.tags && conditions.tags.length > 0) {
       const searchTagConditions = {
         [Op.or]: conditions.tags.map((tag) => {
-          return { tagStrings: { [Op.iLike]: `%${tag}%` } }
+          return { tagStrings: { [Op.iLike]: `%${escapeWildcard(tag)}%` } }
         }),
       }
       whereConditions = { ...whereConditions, ...searchTagConditions }
