@@ -268,7 +268,6 @@ test('User page test on filter search by tags', async (t) => {
   await t
     .typeText(searchBarTagsInput, 'TaG_')
     // Link table should show urls 2 and 1 on top
-    // TODO: pending bug fix
     .expect(urlTableRowUrlText(0))
     .eql(`/${generatedUrl2}`)
     .expect(urlTableRowUrlText(1))
