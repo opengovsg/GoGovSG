@@ -65,15 +65,26 @@ function preprocessPotentialIncomingFile(
 ) {
   if (req.files) {
     req.body.files = req.files
-    // if (req.body.tags) {
-    //   // Tags for files sent as FormData should be deserialised from JSON format
-    //   try {
-    //     req.body.tags = JSON.parse(req.body.tags)
-    //   } catch (e) {
-    //     res.badRequest(jsonMessage('Tags are invalid.'))
-    //     return
-    //   }
-    // }
+  }
+  next()
+}
+
+/**
+ * Parse FormData-stringified tags so that it can be
+ * validated together with the other fields by Joi.
+ */
+function preprocessFormDataTags(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
+  if (req.body.tags) {
+    try {
+      req.body.tags = JSON.parse(req.body.tags)
+    } catch (e) {
+      res.badRequest(jsonMessage('Tags are invalid.'))
+      return
+    }
   }
   next()
 }
@@ -110,6 +121,7 @@ router.post(
   '/url/bulk',
   bulkCSVUploadMiddleware,
   preprocessPotentialIncomingFile,
+  preprocessFormDataTags,
   validator.body(urlBulkSchema),
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(['csv']),
