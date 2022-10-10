@@ -968,7 +968,6 @@ const bulkCreateUrl =
       }
     }
 
-    console.log(tags, isValidTags(tags))
     if (!isValidTags(tags)) {
       Sentry.captureMessage('bulk create upload invalid tags')
       GAEvent('modal page', 'bulk create upload', 'unsuccessful')
@@ -983,7 +982,7 @@ const bulkCreateUrl =
     dispatch<SetIsUploadingAction>(setIsUploading(true))
     const data = new FormData()
     data.append('file', file, file.name)
-    tags.forEach((tag) => data.append('tags', tag))
+    data.append('tags', JSON.stringify(tags))
 
     const response = await postFormData('/api/user/url/bulk', data)
     dispatch<SetIsUploadingAction>(setIsUploading(false))

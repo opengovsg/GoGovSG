@@ -55,25 +55,25 @@ const bulkCSVUploadMiddleware = fileUpload({
 const validator = createValidator({ passError: true })
 
 /**
- * Place incoming file into the request body so that it can be
+ * Place incoming file into the request body and
+ * deserialize tags in FormData so that they can be
  * validated together with the other fields by Joi.
  */
-function preprocessPotentialIncomingFile(
+function preprocessFormData(
   req: Express.Request,
-  _: Express.Response,
+  res: Express.Response,
   next: Express.NextFunction,
 ) {
   if (req.files) {
     req.body.files = req.files
-    // if (req.body.tags) {
-    //   // Tags for files sent as FormData should be deserialised from JSON format
-    //   try {
-    //     req.body.tags = JSON.parse(req.body.tags)
-    //   } catch (e) {
-    //     res.badRequest(jsonMessage('Tags are invalid.'))
-    //     return
-    //   }
-    // }
+    if (req.body.tags) {
+      try {
+        req.body.tags = JSON.parse(req.body.tags)
+      } catch (e) {
+        res.badRequest(jsonMessage('Tags are invalid.'))
+        return
+      }
+    }
   }
   next()
 }
@@ -91,7 +91,7 @@ function preprocessPotentialIncomingFile(
 router.post(
   '/url',
   fileUploadMiddleware,
-  preprocessPotentialIncomingFile,
+  preprocessFormData,
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
@@ -109,7 +109,7 @@ router.post(
 router.post(
   '/url/bulk',
   bulkCSVUploadMiddleware,
-  preprocessPotentialIncomingFile,
+  preprocessFormData,
   validator.body(urlBulkSchema),
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(['csv']),
@@ -135,7 +135,7 @@ router.patch(
 router.patch(
   '/url',
   fileUploadMiddleware,
-  preprocessPotentialIncomingFile,
+  preprocessFormData,
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
