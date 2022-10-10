@@ -149,7 +149,7 @@ export default function TagsAutocomplete({
               value={tagInput}
               helperText={(() => {
                 if (!isValidTag(tagInput, true)) {
-                  return `Tags should only consist of letters, numbers and hyphens and be no more than ${MAX_TAG_LENGTH} characters long.`
+                  return `Tags should only consist of letters, numbers, hyphens and underscores and be no more than ${MAX_TAG_LENGTH} characters long.`
                 }
                 if (tags.includes(tagInput)) {
                   return 'This tag already exists.'
