@@ -1,6 +1,8 @@
 import { Selector } from 'testcafe'
 import {
   circularRedirectUrl,
+  dummyBulkCsv,
+  dummyBulkCsvRelativePath,
   dummyFilePath,
   dummyRelativePath,
   invalidShortUrl,
@@ -10,16 +12,20 @@ import {
   smallFileSize,
   tagText1,
   tagText2,
+  tagText3,
 } from './util/config'
 import {
   blacklistValidationError,
+  bulkTab,
   circularRedirectValidationError,
   createLinkButton,
   createUrlModal,
+  csvOnlyError,
   fileSubmitButton,
   fileTab,
   generateRandomString,
   generateUrlImage,
+  getLinkCount,
   largeFileError,
   longUrlTextField,
   resultTable,
@@ -29,17 +35,22 @@ import {
   searchBarTagButton,
   searchBarTagsInput,
   shortUrlTextField,
+  successBulkCreation,
   successUrlCreation,
   tag1,
+  tag3,
   tagCloseButton1,
-  tagCloseButton2,
   tagsAutocompleteInput,
   uploadFile,
   urlTable,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import firstLinkHandle from './util/FirstLinkHandle'
-import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
+import {
+  createBulkCsv,
+  createEmptyFileOfSize,
+  deleteFile,
+} from './util/fileHandle'
 
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
@@ -217,4 +228,57 @@ test('The URL searching test.', async (t) => {
     // eslint-disable-next-line
     .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
     .eql(`/${generatedUrlActive}-search`)
+})
+
+test('The bulk based test.', async (t) => {
+  await t.click(createLinkButton.nth(0))
+
+  const longUrls = Array(100).fill('https://google.com')
+  const currLinkCount = await getLinkCount()
+  const expectedLinkCount = currLinkCount + longUrls.length
+
+  // valid file
+  await createBulkCsv(dummyBulkCsv, longUrls)
+
+  await t
+    .click(bulkTab)
+    .setFilesToUpload(uploadFile, dummyBulkCsvRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText3)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+
+  await t
+    // It should show an success snackbar when a new file link has been added
+    .expect(successBulkCreation.exists)
+    .ok()
+    // The number of links should increase by numLongUrls
+    .expect(await getLinkCount())
+    .eql(expectedLinkCount)
+    // // The new short url should be highlighted on the user's links table when a new file link is created
+    // .expect(urlTable.child(0).getStyleProperty('background-color'))
+    // .eql('rgb(249, 249, 249)') // #f9f9f9 in rgb
+    // It should show tags on the newly created short urls
+    .expect(urlTable.child(0).find('span').withExactText(tagText3).exists)
+    .ok()
+
+  // Delete valid file
+  await deleteFile(dummyBulkCsv)
+
+  // invalid file (non-csv)
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
+  await t
+    .click(createLinkButton.nth(0))
+    .click(bulkTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    // It should clear tags input after bulk creation was successful
+    .expect(tag3.exists)
+    .notOk()
+    .click(createLinkButton.nth(2))
+    .expect(csvOnlyError.exists)
+    .ok()
+
+  // Delete invalid file (non-csv)
+  await deleteFile(dummyFilePath)
 })

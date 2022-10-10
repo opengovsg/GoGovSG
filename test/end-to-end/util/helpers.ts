@@ -5,7 +5,7 @@ import { tagText1, tagText2, tagText3 } from './config'
 // General
 export const loginButton = Selector('span').withText('Sign in')
 export const signInButton = Selector('button[type="submit"]')
-export const createLinkButton = Selector('span').withText('Create link')
+export const createLinkButton = Selector('span').withText('Create')
 export const mobileCreateLinkButton = Selector('img').withAttribute(
   'alt',
   'Create link',
@@ -43,8 +43,11 @@ export const recencyButton = Selector('p').withText('Most recent')
 export const resultTable = Selector('table')
 
 // User Page - general
+export const linkCountHeaderText = () =>
+  Selector('h3').withText('links').innerText
 export const drawer = Selector('div[role="presentation"]')
 export const fileTab = Selector('p').withText('To a File')
+export const bulkTab = Selector('p').withText('From a .csv')
 export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
@@ -56,6 +59,9 @@ export const circularRedirectValidationError = Selector('div').withText(
 )
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
+)
+export const successBulkCreation = Selector('div').withText(
+  'Your links have been successfully created',
 )
 export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
@@ -95,6 +101,9 @@ export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
 export const clickAway = Selector('h3')
 export const largeFileError = Selector('div').withText(
   'File too large, please upload a file smaller than 10mb',
+)
+export const csvOnlyError = Selector('div').withText(
+  'Only csv files are allowed',
 )
 export const fileSubmitButton = Selector('button[type="submit"]')
 export const tag1 = Selector('p').withExactText(tagText1).parent()
@@ -213,4 +222,10 @@ export const linkHistoryTagsH6 = Selector('h6').withText('Tags')
 export function generateRandomString(length: number): string {
   const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
   return customAlphabet(ALPHABET, length)()
+}
+
+export async function getLinkCount(): Promise<number> {
+  const currLinkCountHeaderText = await linkCountHeaderText()
+  // currLinkCountHeaderText is a string with format "<numOfLinks> links"
+  return parseInt(currLinkCountHeaderText.split(' ')[0], 10)
 }

@@ -14,5 +14,7 @@ export const apiLocation = 'http://localhost:8080'
 export const otp = '111111'
 export const dummyFilePath = './test/end-to-end/anotherDummy.txt'
 export const dummyRelativePath = './anotherDummy.txt'
+export const dummyBulkCsv = './test/end-to-end/bulkCsv.csv'
+export const dummyBulkCsvRelativePath = './bulkCsv.csv'
 export const smallFileSize = 1024 * 1024 * 1
 export const largeFileSize = 1024 * 1024 * 11
