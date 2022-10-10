@@ -17,7 +17,7 @@ const router = Express.Router()
 
 router.post(
   '/urls',
-  urlCheckController.checkUrl,
+  urlCheckController.singleUrlCheck,
   validator.body(urlSchema),
   userController.createUrl,
 )

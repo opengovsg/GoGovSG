@@ -20,6 +20,8 @@ export class MockUserRepository implements UserRepositoryInterface {
 
   conditions?: UserUrlsQueryConditions
 
+  apiKeyHash?: string
+
   findById(userId: number): Promise<StorableUser | null> {
     this.userId = userId
     return Promise.resolve(null)
@@ -64,6 +66,17 @@ export class MockUserRepository implements UserRepositoryInterface {
   findUrlsForUser(conditions: UserUrlsQueryConditions): Promise<UrlsPaginated> {
     this.conditions = conditions
     return Promise.resolve({ count: 0, urls: [] })
+  }
+
+  saveApiKeyHash(userId: number, apiKeyHash: string): Promise<void> {
+    this.userId = userId
+    this.apiKeyHash = apiKeyHash
+    return Promise.resolve()
+  }
+
+  findUserByApiKey(apiKeyHash: string): Promise<StorableUser | null> {
+    this.apiKeyHash = apiKeyHash
+    return Promise.resolve({ id: 1, email: 'test@open.gov.sg' })
   }
 }
 
