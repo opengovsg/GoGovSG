@@ -5,7 +5,7 @@ import { tagText1, tagText2, tagText3 } from './config'
 // General
 export const loginButton = Selector('span').withText('Sign in')
 export const signInButton = Selector('button[type="submit"]')
-export const createLinkButton = Selector('span').withText('Create link')
+export const createLinkButton = Selector('span').withText('Create')
 export const mobileCreateLinkButton = Selector('img').withAttribute(
   'alt',
   'Create link',
