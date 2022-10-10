@@ -513,9 +513,11 @@ export class UrlRepository implements UrlRepositoryInterface {
   public bulkCreate: (properties: {
     userId: number
     urlMappings: BulkUrlMapping[]
+    tags?: string[]
   }) => Promise<void> = async (properties) => {
-    const { urlMappings, userId } = properties
+    const { urlMappings, userId, tags } = properties
     await sequelize.transaction(async (t) => {
+      const tagStrings = tags ? tags.join(TAG_SEPARATOR) : ''
       const bulkUrlObjects = urlMappings.map(({ shortUrl, longUrl }) => {
         return {
           shortUrl,
@@ -523,13 +525,24 @@ export class UrlRepository implements UrlRepositoryInterface {
           userId,
           isFile: false,
           source: StorableUrlSource.Bulk,
+          tagStrings,
         }
       })
       // sequelize model method
-      await Url.bulkCreate(bulkUrlObjects, {
+      const urls = await Url.bulkCreate(bulkUrlObjects, {
         transaction: t,
         individualHooks: false,
       })
+
+      if (tags) {
+        const createdTags = await this.tagRepository.upsertTags(tags, t)
+        await Promise.all(
+          // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+          // We use addUrls instead of addTags to avoid looping over all urls
+          // @ts-ignore, addUrls is provided by Sequelize during run time
+          createdTags.map((tag) => tag.addUrls(urls, { transaction: t })),
+        )
+      }
     })
   }
 }

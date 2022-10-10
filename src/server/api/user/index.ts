@@ -11,6 +11,7 @@ import {
 import {
   ownershipTransferSchema,
   tagRetrievalSchema,
+  urlBulkSchema,
   urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
@@ -109,6 +110,7 @@ router.post(
   '/url/bulk',
   bulkCSVUploadMiddleware,
   preprocessPotentialIncomingFile,
+  validator.body(urlBulkSchema),
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(['csv']),
   fileCheckController.fileVirusCheck,
