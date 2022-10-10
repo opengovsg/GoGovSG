@@ -48,13 +48,12 @@ export class BulkController {
     req,
     res,
   ) => {
-    const { userId, longUrls } = req.body
+    const { userId, longUrls, tags } = req.body
     // generate url mappings
-
     const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
     // bulk create
     try {
-      await this.urlManagementService.bulkCreate(userId, urlMappings)
+      await this.urlManagementService.bulkCreate(userId, urlMappings, tags)
     } catch (e) {
       dogstatsd.increment('bulk.hash.failure', 1, 1)
       res.badRequest(jsonMessage('Something went wrong, please try again.'))

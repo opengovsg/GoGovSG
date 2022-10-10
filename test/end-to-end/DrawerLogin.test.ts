@@ -8,6 +8,9 @@ import {
   shortUrl,
   smallFileSize,
   subUrl,
+  tagText1,
+  tagText2,
+  tagText3,
   testEmail,
   transferEmail,
 } from './util/config'
@@ -15,6 +18,7 @@ import {
   activeSwitch,
   clickAway,
   closeButtonSnackBar,
+  closeDrawerButton,
   createLinkButton,
   drawer,
   fileTab,
@@ -29,10 +33,18 @@ import {
   shortUrlTextField,
   signOutButton,
   successSnackBar,
+  tag1,
+  tag2,
+  tag3,
+  tagCloseButton1,
+  tagsAutocompleteInput,
+  tagsAutocompleteTags,
+  tagsSaveButton,
+  tagsUpdatedSnackbar,
   transferButton,
   uploadFile,
   urlSaveButton,
-  urlUpdatedToaster,
+  urlUpdatedSnackbar,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import firstLinkHandle from './util/FirstLinkHandle'
@@ -52,6 +64,9 @@ test('Drawer functionality test for url.', async (t) => {
 
   const generatedUrl = await shortUrlTextField.value
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkTableRow = linkRow.parent('tr')
+
+  await t.typeText(tagsAutocompleteInput, tagText1).pressKey('enter')
 
   await t.typeText(longUrlTextField, `${shortUrl}`)
 
@@ -61,12 +76,14 @@ test('Drawer functionality test for url.', async (t) => {
     .click(linkRow)
     .expect(drawer.exists)
     .ok()
-    // Drawer should open with the correct long url and state when a short url row is clicked
+    // Drawer should open with the correct long url and tags when a short url row is clicked
     .expect(longUrl.value)
     .eql(`${shortUrl}`)
+    .expect(tag1.exists)
+    .ok()
 
   await t
-    .click(drawer.child(2).child('main').child('button'))
+    .click(closeDrawerButton)
     // Drawer can be closed on clickaway or when the close button is clicked.
     .expect(drawer.exists)
     .notOk()
@@ -82,9 +99,10 @@ test('Drawer functionality test for url.', async (t) => {
     .click(longUrl)
     .pressKey('ctrl+a delete')
     .typeText(longUrl, `${subUrl}`)
-    .click(drawer.child(2).child('main').child('button'))
+    .click(tagCloseButton1)
+    .click(closeDrawerButton)
     .click(linkRow)
-    // Url reverts to original when user enters a new url, then re-opens the drawer without clicking "save"
+    // Url and tags revert to original when user enters a new url, then re-opens the drawer without clicking "save"
     .expect(longUrl.value)
     .eql('google.com')
 
@@ -93,16 +111,51 @@ test('Drawer functionality test for url.', async (t) => {
     .pressKey('ctrl+a delete')
     .typeText(longUrl, `${subUrl}`)
     .click(urlSaveButton)
-    // It should show a success snackbar when long url is changed
-    .expect(urlUpdatedToaster.exists)
+    // It should show a success snackbar when long url is changed, and the drawer should remain open
+    .expect(urlUpdatedSnackbar.exists)
+    .ok()
+    .expect(drawer.exists)
     .ok()
 
   await t
-    .click(drawer.child(2).child('main').child('button'))
+    .click(tagCloseButton1)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText2)
+    .pressKey('enter')
+    .typeText(tagsAutocompleteInput, tagText3)
+    .pressKey('enter')
+    .click(tagsSaveButton)
+    // It should show a success snackbar when tags are added and removed, and the drawer should remain open
+    .expect(tagsUpdatedSnackbar.exists)
+    .ok()
+    .expect(drawer.exists)
+    .ok()
+
+  await t
+    .click(closeDrawerButton)
+    // Updated url and tags should be updated on the link row after closing drawer
+    .expect(linkTableRow.find('span').withText(shortUrl).exists)
+    .notOk()
+    .expect(linkTableRow.find('span').withText(subUrl).exists)
+    .ok()
+    .expect(linkTableRow.find('span').withExactText(tagText1).exists)
+    .notOk()
+    .expect(linkTableRow.find('span').withExactText(tagText2).exists)
+    .ok()
+    .expect(linkTableRow.find('span').withExactText(tagText3).exists)
+    .ok()
+
+  await t
     .click(linkRow)
-    // Url is updated/saved when user enters a new url, then clicks "save" - check textfield
+    // Updated url and tags should be displayed corectly when re-opening drawer
     .expect(longUrl.value)
     .eql(`${subUrl}`)
+    .expect(tagsAutocompleteTags.count)
+    .eql(2)
+    .expect(tag2.exists)
+    .ok()
+    .expect(tag3.exists)
+    .ok()
 
   await t
     .click(longUrl)
@@ -156,9 +209,11 @@ test.before(async (t) => {
   await LoginProcedure(t)
 })('Link transfer test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+  await t.typeText(tagsAutocompleteInput, tagText1).pressKey('enter')
 
   const generatedUrl = await shortUrlTextField.value
   const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkTableRow = linkRow.parent('tr')
 
   await t
     .typeText(longUrlTextField, `${shortUrl}`)
@@ -200,6 +255,9 @@ test.before(async (t) => {
   await LoginProcedure(t, transferEmail)
 
   await t.expect(linkRow.exists).ok()
+
+  // Verify the tag is transferred along with the link
+  await t.expect(linkTableRow.find('span').withExactText(tagText1).exists).ok()
 })
 
 test('Link transfer toast test.', async (t) => {

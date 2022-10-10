@@ -63,5 +63,6 @@ export interface UrlRepositoryInterface {
   bulkCreate(properties: {
     userId: number
     urlMappings: BulkUrlMapping[]
+    tags?: string[]
   }): Promise<void>
 }

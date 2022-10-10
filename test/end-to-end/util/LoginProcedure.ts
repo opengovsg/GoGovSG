@@ -43,6 +43,9 @@ const loginProcedure = async (t, loginEmail = testEmail) => {
     method: 'DELETE',
   })
 
+  // TODO: is there a better way?
+  await t.wait(1000)
+
   if (await userModal.exists) {
     await t.click(userModalCloseButton)
   }

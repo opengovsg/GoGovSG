@@ -20,6 +20,8 @@
 --                                      description column
 --   03 Oct  2022 Alexis Goh:           Update function's url_history insertion step to include
 --                                      source column
+--   07 Oct  2022 Lim Zi Wei:           Update function's url_history insertion step to include
+--                                      tagStrings column
 -- =============================================
 CREATE OR REPLACE FUNCTION migrate_url_to_user(short_url_value text, to_user_email text) RETURNS void AS
 $BODY$
@@ -51,8 +53,8 @@ BEGIN
         RAISE EXCEPTION 'No transferring of links to the same user';
     END IF;
 -- Insert the intended changes into URL history table
-    INSERT INTO url_histories ("urlShortUrl","longUrl","state","userId","isFile","source","description","createdAt","updatedAt")
-        SELECT "shortUrl", "longUrl", "state", "to_user_id", "isFile", "source", "description", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+    INSERT INTO url_histories ("urlShortUrl","longUrl","state","userId","isFile","source","tagStrings","description","createdAt","updatedAt")
+        SELECT "shortUrl", "longUrl", "state", "to_user_id", "isFile", "source", "tagStrings", "description", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         FROM urls
         WHERE "shortUrl" = short_url LIMIT 1;
 -- Update the link in the URL table

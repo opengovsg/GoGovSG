@@ -232,6 +232,18 @@ describe('UserRepository', () => {
       tags: [],
     }
 
+    const conditionsWithTags = {
+      limit: 2,
+      offset: 0,
+      orderBy: 'date',
+      sortDirection: 'asc',
+      searchText: '',
+      userId: 2,
+      state: undefined,
+      isFile: undefined,
+      tags: ['tag', 'tag_foo_bar'],
+    }
+
     beforeEach(() => {
       scope.mockReset()
       findAndCountAll.mockReset()
@@ -268,6 +280,20 @@ describe('UserRepository', () => {
         },
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+    })
+
+    it('escapes underscores in tags', async () => {
+      const rows: any = []
+      findAndCountAll.mockResolvedValue({ rows, count: rows.length })
+      await userRepo.findUrlsForUser(conditionsWithTags)
+      expect(findAndCountAll).toHaveBeenCalled()
+      expect(findAndCountAll.mock.calls[0][0].where).toMatchObject({
+        userId: 2,
+        [Symbol('or')]: [
+          { tagStrings: { [Symbol('iLike')]: '%tag%' } },
+          { tagStrings: { [Symbol('iLike')]: '%tag\\_foo\\_bar%' } },
+        ],
+      })
     })
   })
 })
