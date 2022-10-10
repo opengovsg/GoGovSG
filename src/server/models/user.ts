@@ -40,6 +40,12 @@ export const User = <UserTypeStatic>sequelize.define(
     },
   },
   {
+    indexes: [
+      {
+        unique: true,
+        fields: ['apiKeyHash'],
+      },
+    ],
     defaultScope: {
       useMaster: true,
     },
