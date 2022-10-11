@@ -5,6 +5,7 @@ import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
+import { SQSInterface } from '../../services/sqs'
 import dogstatsd from '../../util/dogstatsd'
 
 @injectable()
@@ -13,14 +14,19 @@ export class BulkController {
 
   private bulkService: BulkService
 
+  private sqsService: SQSInterface
+
   public constructor(
     @inject(DependencyIds.bulkService)
     bulkService: BulkService,
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
+    @inject(DependencyIds.sqsService)
+    sqsService: SQSInterface,
   ) {
     this.bulkService = bulkService
     this.urlManagementService = urlManagementService
+    this.sqsService = sqsService
   }
 
   public validateAndParseCsv: (
@@ -49,6 +55,7 @@ export class BulkController {
     res,
   ) => {
     const { userId, longUrls } = req.body
+
     // generate url mappings
 
     const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
@@ -62,6 +69,7 @@ export class BulkController {
     }
 
     dogstatsd.increment('bulk.hash.success', 1, 1)
+    await this.sqsService.sendMessage(urlMappings)
     res.ok(jsonMessage(`${urlMappings.length} links created`))
   }
 }

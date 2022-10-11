@@ -76,6 +76,8 @@ import TagManagementService from './modules/user/services/TagManagementService'
 
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
+// import { initSQSConsumer } from './services/consumer'
+import TestController from './modules/bulk/TestController'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -161,6 +163,7 @@ export default () => {
     DependencyIds.linkStatisticsRepository,
     LinkStatisticsRepository,
   )
+  bindIfUnbound(DependencyIds.testController, TestController)
 
   bindIfUnbound(DependencyIds.linkAuditService, LinkAuditService)
   bindIfUnbound(DependencyIds.linkAuditController, LinkAuditController)
@@ -185,9 +188,18 @@ export default () => {
       secretAccessKey: 'foobar',
       endpoint: accessEndpoint,
       region: 'us-east-1',
+      apiVersion: '2012-11-05',
     })
 
     container.bind(DependencyIds.sqsClient).toConstantValue(sqsClient)
+    // initSQSConsumer(
+    //   {
+    //     sqs: sqsClient,
+    //     queueUrl:
+    //       'http://localstack:4566/000000000000/bulk-qrcode-generate-start',
+    //   },
+    //   // (messageBody) => console.log(`Message body: ${messageBody}`),
+    // )
 
     container
       .bind(DependencyIds.fileURLPrefix)

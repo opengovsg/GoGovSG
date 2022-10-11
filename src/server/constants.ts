@@ -60,6 +60,7 @@ export const DependencyIds = {
   bulkController: Symbol.for('bulkController'),
   bulkService: Symbol.for('bulkService'),
   tagManagementService: Symbol.for('tagManagementService'),
+  testController: Symbol.for('testController'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'

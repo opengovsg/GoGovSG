@@ -19,15 +19,10 @@ export class SQSService implements SQSInterface {
   sendMessage: (mappings: BulkUrlMapping[]) => Promise<void> = async (
     mappings,
   ) => {
+    console.log(`sqs-url: ${sqsBulkQRCodeStartUrl}`)
     await this.sqsClient.sendMessage(
       {
-        MessageAttributes: {
-          Mappings: {
-            DataType: 'String',
-            StringValue: JSON.stringify(mappings),
-          },
-        },
-        MessageBody: 'This is a message',
+        MessageBody: JSON.stringify(mappings),
         QueueUrl: sqsBulkQRCodeStartUrl,
       },
       (err, data) => {
