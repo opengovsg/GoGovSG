@@ -54,4 +54,5 @@ jest.mock('../../src/server/config', () => ({
   gaTrackingId: 'UA-000000-2',
   otpRateLimit: 5,
   ogHostname: 'go.gov.sg',
+  sqsBulkQRCodeEndUrl: `http://localstack:4566/000000000000/bulk-qrcode-generate-start`,
 }))

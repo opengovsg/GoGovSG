@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { UploadedFile } from 'express-fileupload'
+import { SQS } from 'aws-sdk'
+import { Consumer } from 'sqs-consumer'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
@@ -63,6 +65,39 @@ export class BulkController {
 
     dogstatsd.increment('bulk.hash.success', 1, 1)
     res.ok(jsonMessage(`${urlMappings.length} links created`))
+  }
+
+  public init: (
+    sqs: SQS,
+    queueUrl: string,
+    batchSize?: number,
+    visibilityTimeout?: number,
+  ) => Promise<void> = async (sqs, queueUrl, batchSize, visibilityTimeout) => {
+    const consumer = Consumer.create({
+      sqs,
+      queueUrl,
+      batchSize: batchSize || 1,
+      visibilityTimeout: visibilityTimeout || 15,
+      handleMessage: async (message: SQS.Message) => {
+        try {
+          if (message.Body) {
+            const messageBody = JSON.parse(message.Body)
+            console.log(
+              `polling message from ${queueUrl}: ${messageBody.transaction_id}`,
+            )
+            // validate messageBody
+
+            // add service layer code to manage jobs
+          } else {
+            console.log(`empty sqs message body from ${queueUrl}`)
+          }
+        } catch (e) {
+          throw new Error(`Unable to parse message sqs message: ${message}`)
+        }
+      },
+    })
+
+    consumer.start()
   }
 }
 

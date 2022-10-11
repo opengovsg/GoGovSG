@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import AWS, { SQS } from 'aws-sdk'
 
 import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
 
@@ -11,6 +11,7 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  sqsBulkQRCodeEndUrl,
   userAnnouncement,
   userMessage,
 } from './config'
@@ -203,4 +204,10 @@ export default () => {
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
   bindIfUnbound(DependencyIds.sqsService, SQSService)
+
+  const bulkController = container.get<BulkController>(
+    DependencyIds.bulkController,
+  )
+  const sqsClient = container.get<AWS.SQS>(DependencyIds.sqsClient)
+  bulkController.init(sqsClient, sqsBulkQRCodeEndUrl)
 }
