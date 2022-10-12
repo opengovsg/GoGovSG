@@ -10,4 +10,5 @@ ALTER TABLE users ADD CONSTRAINT users_apiKeyHash_unique UNIQUE ("apiKeyHash");
 COMMIT;
 
 -- Down migration
+-- ALTER TABLE users DROP CONSTRAINT users_apiKeyHash_unique;
 -- ALTER TABLE users DROP COLUMN "apiKeyHash";
