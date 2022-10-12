@@ -284,7 +284,7 @@ export class UserController {
   ) => Promise<void> = async (req, res) => {
     try {
       const { userId } = req.body
-      const apiKey = await this.apiKeyAuthService.createApiKey(userId)
+      const apiKey = await this.apiKeyAuthService.upsertApiKey(userId)
       res.ok(jsonMessage(apiKey))
       return
     } catch (error) {

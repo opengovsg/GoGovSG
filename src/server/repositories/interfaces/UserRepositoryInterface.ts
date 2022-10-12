@@ -60,7 +60,7 @@ export interface UserRepositoryInterface {
   findUrlsForUser(conditions: UserUrlsQueryConditions): Promise<UrlsPaginated>
 
   /**
-   * Create ApiKey for user.
+   * Save ApiKey for user.
    * @param userId
    * @param apiKeyHash
    */

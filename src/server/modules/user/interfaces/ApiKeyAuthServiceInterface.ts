@@ -1,5 +1,5 @@
 interface ApiKeyAuthServiceInterface {
-  createApiKey: (userId: number) => Promise<string>
+  upsertApiKey: (userId: number) => Promise<string>
 }
 
 export default ApiKeyAuthServiceInterface

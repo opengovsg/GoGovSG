@@ -19,7 +19,7 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
     this.userRepository = userRepository
   }
 
-  createApiKey: (userId: number) => Promise<string> = async (
+  upsertApiKey: (userId: number) => Promise<string> = async (
     userId: number,
   ) => {
     const apiKey = ApiKeyAuthService.generateApiKey()

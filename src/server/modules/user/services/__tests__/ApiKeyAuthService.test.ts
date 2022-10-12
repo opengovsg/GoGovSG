@@ -19,7 +19,7 @@ describe('ApiKeyAuthService', () => {
     userRepository.saveApiKeyHash.mockReset()
   })
   it('createApiKey should call userRepository.saveApiKeyHash', async () => {
-    await apiAuthService.createApiKey(baseUserId)
+    await apiAuthService.upsertApiKey(baseUserId)
     expect(userRepository.saveApiKeyHash).toHaveBeenCalledTimes(1)
     expect(userRepository.saveApiKeyHash).toHaveBeenCalledWith(
       baseUserId,
