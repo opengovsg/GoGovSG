@@ -78,6 +78,18 @@ export default function TagsAutocomplete({
     setTagSuggestions([])
   }
 
+  function addTagInputToTags() {
+    if (isValidTag(tagInput) && !tags.includes(tagInput)) {
+      setTagInput('')
+      setTags([...tags, tagInput])
+    }
+  }
+
+  function onClickAway() {
+    resetTagSuggestions()
+    addTagInputToTags()
+  }
+
   useEffect(() => {
     async function getTagSuggestions() {
       const res = await get(`/api/user/tag?searchText=${tagInput}`)
@@ -101,7 +113,7 @@ export default function TagsAutocomplete({
   }, [tagInput])
 
   return (
-    <ClickAwayListener onClickAway={resetTagSuggestions}>
+    <ClickAwayListener onClickAway={onClickAway}>
       <div>
         <Autocomplete
           multiple
@@ -124,13 +136,11 @@ export default function TagsAutocomplete({
               error={!isValidTag(tagInput, true) || tags.includes(tagInput)}
               className={classes.tagsText}
               onKeyDown={(event) => {
-                if (event.key !== 'Enter') return
-                event.preventDefault() // prevent form from submitting
+                // Use enter, comma, or space to create a new tag
+                if (!['Enter', ',', ' '].includes(event.key)) return
+                event.preventDefault() // prevent form from submitting when enter key is pressed
                 event.stopPropagation() // prevent freeSolo from clearing text input
-                if (isValidTag(tagInput) && !tags.includes(tagInput)) {
-                  setTagInput('')
-                  setTags([...tags, tagInput])
-                }
+                addTagInputToTags()
               }}
               inputProps={params.inputProps}
               InputProps={{
