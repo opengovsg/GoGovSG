@@ -4,7 +4,8 @@
 
 BEGIN TRANSACTION;
 
-ALTER TABLE users ADD "apiKeyHash" text NOT NULL DEFAULT '';
+ALTER TABLE users ADD "apiKeyHash" text;
+ALTER TABLE users ADD CONSTRAINT users_apiKeyHash_unique UNIQUE ("apiKeyHash");
 
 COMMIT;
 
