@@ -68,10 +68,11 @@ export default function TagsEditor() {
         <TrailingButton
           disabled={
             !isValidTags(tags) ||
-            _.isEqual([...tags].sort(), [...initialTags].sort())
+            _.isEqual([...tags].sort(), [...initialTags].sort()) ||
+            !isValidTag(tagInput, true)
           }
           onClick={() => {
-            // Ensure that tags are updated with any remaining tag input before saving -- might be hacky though
+            // Ensure tags are updated with any remaining tag input before saving
             const tagsForSaving =
               tagInput && isValidTag(tagInput) && !tags.includes(tagInput)
                 ? [...tags, tagInput]

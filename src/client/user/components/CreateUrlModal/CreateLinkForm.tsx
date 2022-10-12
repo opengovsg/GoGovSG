@@ -19,6 +19,7 @@ import {
   isValidLongUrl,
   isValidShortUrl,
   isValidTag,
+  isValidTags,
 } from '../../../../shared/util/validation'
 import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
 import ModalMargins from './ModalMargins'
@@ -91,7 +92,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     (isFile && !!uploadFileError) ||
     isUploading ||
     !!createShortLinkError ||
-    tags.some((tag) => !isValidTag(tag)) ||
+    !isValidTags(tags) ||
     !isValidTag(tagInput, true) ||
     tags.includes(tagInput)
 
