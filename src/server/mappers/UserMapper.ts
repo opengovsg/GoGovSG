@@ -28,6 +28,7 @@ export class UserMapper implements Mapper<StorableUser, UserType> {
       urls: userType.Urls
         ? userType.Urls.map((url) => this.urlMapper.persistenceToDto(url))
         : undefined,
+      hasApiKey: userType.apiKeyHash,
     }
   }
 }
