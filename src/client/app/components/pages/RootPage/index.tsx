@@ -15,6 +15,7 @@ import NotFoundPage from '../NotFoundPage'
 import DirectoryPage from '../../../../directory'
 import MessageSnackbar from '../../MessageSnackbar'
 import ScrollToTop from './ScrollToTop'
+import ApiIntegrationPage from '../../../../apiintegration'
 
 // Add extra favicons to webpack bundle
 import '@assets/favicon/android-chrome-192x192.png'
@@ -32,7 +33,6 @@ import {
   USER_PAGE,
 } from '../../../util/types'
 import theme from '../../../theme'
-import ApiIntegrationPage from '../../../../api_integration'
 
 type RootProps = {
   store: Store
