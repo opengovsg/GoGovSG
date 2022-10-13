@@ -154,11 +154,19 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       mobileOrder: 2,
     },
     {
+      text: 'API Integration',
+      link: i18next.t('general.links.api_integration'),
+      public: false,
+      icon: helpIcon,
+      mobileOrder: 3,
+      internalLink: true,
+    },
+    {
       text: 'Help us improve',
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
-      mobileOrder: 3,
+      mobileOrder: 4,
     },
   ]
 

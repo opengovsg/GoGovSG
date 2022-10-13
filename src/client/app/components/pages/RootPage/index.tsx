@@ -24,6 +24,7 @@ import '@assets/favicon/favicon-16x16.png'
 import '@assets/favicon/favicon-32x32.png'
 
 import {
+  API_INTEGRATION_PAGE,
   DIRECTORY_PAGE,
   HOME_PAGE,
   LOGIN_PAGE,
@@ -31,6 +32,7 @@ import {
   USER_PAGE,
 } from '../../../util/types'
 import theme from '../../../theme'
+import ApiIntegrationPage from '../../../../api_integration'
 
 type RootProps = {
   store: Store
@@ -48,6 +50,10 @@ const Root: FunctionComponent<RootProps> = ({ store, history }: RootProps) => (
             <PrivateRoute path={USER_PAGE} component={UserPage} />
             <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
             <PrivateRoute path={DIRECTORY_PAGE} component={DirectoryPage} />
+            <PrivateRoute
+              path={API_INTEGRATION_PAGE}
+              component={ApiIntegrationPage}
+            />
             <Route component={NotFoundPage} />
           </Switch>
         </ScrollToTop>
