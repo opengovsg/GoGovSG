@@ -255,9 +255,6 @@ test('The bulk based test.', async (t) => {
     // The number of links should increase by numLongUrls
     .expect(await getLinkCount())
     .eql(expectedLinkCount)
-    // // The new short url should be highlighted on the user's links table when a new file link is created
-    // .expect(urlTable.child(0).getStyleProperty('background-color'))
-    // .eql('rgb(249, 249, 249)') // #f9f9f9 in rgb
     // It should show tags on the newly created short urls
     .expect(urlTable.child(0).find('span').withExactText(tagText3).exists)
     .ok()
