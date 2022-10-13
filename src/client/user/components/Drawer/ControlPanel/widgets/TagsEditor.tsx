@@ -16,7 +16,10 @@ import TagsAutocomplete from '../../../../widgets/TagsAutocomplete'
 import Tooltip from '../../../../widgets/Tooltip'
 import { MAX_NUM_TAGS_PER_LINK } from '../../../../../../shared/constants'
 import TrailingButton from './TrailingButton'
-import { isValidTags } from '../../../../../../shared/util/validation'
+import {
+  isValidTag,
+  isValidTags,
+} from '../../../../../../shared/util/validation'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -65,9 +68,17 @@ export default function TagsEditor() {
         <TrailingButton
           disabled={
             !isValidTags(tags) ||
-            _.isEqual([...tags].sort(), [...initialTags].sort())
+            _.isEqual([...tags].sort(), [...initialTags].sort()) ||
+            !isValidTag(tagInput, true)
           }
-          onClick={() => shortLinkDispatch?.applyEditTags(tags)}
+          onClick={() => {
+            // Ensure tags are updated with any remaining tag input before saving
+            const tagsForSaving =
+              tagInput && isValidTag(tagInput) && !tags.includes(tagInput)
+                ? [...tags, tagInput]
+                : tags
+            shortLinkDispatch?.applyEditTags(tagsForSaving)
+          }}
           fullWidth={isMobileView}
           variant={isMobileView ? 'contained' : 'outlined'}
         >
