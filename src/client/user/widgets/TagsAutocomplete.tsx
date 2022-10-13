@@ -114,7 +114,11 @@ export default function TagsAutocomplete({
               <FormTag
                 key={tag}
                 tag={tag}
-                onClose={() => setTags(tags.filter((t) => t !== tag))}
+                onClose={() => {
+                  setTags(tags.filter((t) => t !== tag))
+                  setTagInput('')
+                  resetTagSuggestions()
+                }}
               />
             ))
           }
