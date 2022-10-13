@@ -312,3 +312,11 @@ It can be used as a browser extension (for [Chrome](https://chrome.google.com/we
 ### Infrastructure
 
 Diagrams for our infrastructure setup can be found [here](https://lucid.app/lucidchart/81dee53d-5fdc-4c79-a3ca-018287531ab3/view?page=0_0#).
+
+## Mics
+
+### Salt generation
+
+```javascript
+let salt = bcrypt.genSaltSync(10)
+```
