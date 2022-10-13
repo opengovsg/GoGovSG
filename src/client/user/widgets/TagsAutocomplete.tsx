@@ -20,6 +20,12 @@ import FormTag from './FormTag'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    fixedHelperText: {
+      position: 'absolute',
+      top: '100%',
+      left: 0,
+      width: 'auto',
+    },
     menuPopper: {
       zIndex: 1301, // To place popper above create link modal with default z-index of 1300
     },
@@ -60,6 +66,7 @@ type TagsAutocompleteProps = {
   tagInput: string
   setTagInput: (tagInput: string) => void
   disabled: boolean
+  fixHelperTextPosition: boolean
 }
 
 export default function TagsAutocomplete({
@@ -68,6 +75,7 @@ export default function TagsAutocomplete({
   tagInput,
   setTagInput,
   disabled,
+  fixHelperTextPosition,
 }: TagsAutocompleteProps) {
   const classes = useStyles()
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([])
@@ -170,6 +178,11 @@ export default function TagsAutocomplete({
                 }
                 return ''
               })()}
+              FormHelperTextProps={
+                fixHelperTextPosition
+                  ? { className: classes.fixedHelperText }
+                  : {}
+              }
             />
           )}
         />

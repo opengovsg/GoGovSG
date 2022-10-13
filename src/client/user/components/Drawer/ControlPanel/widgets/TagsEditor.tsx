@@ -61,6 +61,7 @@ export default function TagsEditor() {
             tagInput={tagInput}
             setTagInput={setTagInput}
             disabled={tags.length >= MAX_NUM_TAGS_PER_LINK}
+            fixHelperTextPosition
           />
         </div>
       }
