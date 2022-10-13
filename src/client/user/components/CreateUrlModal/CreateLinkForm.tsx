@@ -328,6 +328,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               tagInput={tagInput}
               setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
+              fixHelperTextPosition={false}
             />
           </div>
           <Button
