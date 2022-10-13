@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
+import dogstatsd, { MALICIOUS_ACTIVITY_LINK } from '../../util/dogstatsd'
 import jsonMessage from '../../util/json'
 import { UrlCreationRequest } from '../user'
 import { UrlThreatScanService } from './interfaces'
@@ -35,6 +36,7 @@ export class UrlCheckController {
               user?.email || user?.id
             } tried to link ${shortUrl} to ${longUrl}`,
           )
+          dogstatsd.increment(MALICIOUS_ACTIVITY_LINK, 1, 1)
           res.badRequest(
             jsonMessage(
               'Link is likely to be malicious, please contact us for further assistance',
