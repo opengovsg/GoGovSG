@@ -183,7 +183,7 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |       SENTRY_PROJECT_PRODUCTION, SENTRY_PROJECT_STAGING       |    No    | Sentry.io project name                                                              |
 |                          SENTRY_URL                           |    No    | Sentry.io URL e.g. `https://sentry.io/`                                             |
 |           SENTRY_DNS_PRODUCTION,SENTRY_DNS_STAGING            |    No    | Sentry.io endpoint to post client-side errors to                                    |
-|                         API_KEY_SALT                          |   Yes    | Salt used for APIKey hashing, guide to salt generation [here](###saltgeneration)    |
+|                         API_KEY_SALT                          |   Yes    | Salt used for APIKey hashing, guide to salt generation [here](#-salt-generation)    |
 
 ## Operations
 
@@ -316,7 +316,7 @@ Diagrams for our infrastructure setup can be found [here](https://lucid.app/luci
 
 ## Mics
 
-### <a name="saltgeneration"></a> Salt generation
+### Salt generation
 
 ```javascript
 let salt = bcrypt.genSaltSync(10)
