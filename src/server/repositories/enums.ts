@@ -13,7 +13,6 @@ export enum StorableUrlSource {
 }
 
 export enum JobItemStatusEnum {
-  Ready = 'READY',
   InProgress = 'IN_PROGRESS',
   Success = 'SUCCESS',
   Failed = 'FAILED',
