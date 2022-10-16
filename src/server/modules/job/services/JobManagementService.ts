@@ -75,18 +75,34 @@ class JobManagementService implements JobManagementServiceInterface {
     return jobItems
   }
 
-  isJobSuccess: (jobId: number) => Promise<boolean> = async (jobId) => {
+  // 'success' when all related job items are also successful
+  // 'failed' if at least one of them job item failed
+  // 'in progress' if at least one of the job item is in progress (while the rest are either in progress or successful)
+  getJobStatus: (jobId: number) => Promise<JobItemStatusEnum> = async (
+    jobId,
+  ) => {
     const jobItems = await this.findJobItemsByJobId(jobId)
 
     if (jobItems.length === 0) {
       throw new Error('Job does not have any job items')
     }
 
-    return jobItems.reduce(
-      (result: boolean, current: StorableJobItem) =>
-        result && current.status === JobItemStatusEnum.Success,
-      true,
-    )
+    let isInProgress = false
+
+    for (let i = 0; i < jobItems.length; i += 1) {
+      const { status } = jobItems[i]
+      if (status === JobItemStatusEnum.Failed) {
+        return JobItemStatusEnum.Failed
+      }
+      if (status === JobItemStatusEnum.InProgress) {
+        isInProgress = true
+      }
+    }
+
+    if (isInProgress) {
+      return JobItemStatusEnum.InProgress
+    }
+    return JobItemStatusEnum.Success
   }
 }
 

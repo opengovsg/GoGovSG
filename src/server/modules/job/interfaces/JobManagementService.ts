@@ -16,6 +16,6 @@ interface JobManagementServiceInterface {
     changes: Partial<StorableJobItem>,
   ): Promise<StorableJobItem>
   findJobItemsByJobId(jobId: number): Promise<StorableJobItem[]>
-  isJobSuccess(jobId: number): Promise<boolean>
+  getJobStatus(jobId: number): Promise<JobItemStatusEnum>
 }
 export default JobManagementServiceInterface
