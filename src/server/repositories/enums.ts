@@ -18,7 +18,3 @@ export enum JobItemStatusEnum {
   Success = 'SUCCESS',
   Failed = 'FAILED',
 }
-
-export enum JobTypeEnum {
-  QRCodeGeneration = 'QR_CODE_GENERATION',
-}

@@ -101,5 +101,5 @@ export type HasCacheDuration = {
 export type StorableJob = Pick<JobType, 'uuid' | 'id'>
 export type StorableJobItem = Pick<
   JobItemType,
-  'id' | 'status' | 'message' | 'type' | 'params' | 'jobId'
+  'id' | 'status' | 'message' | 'params' | 'jobId'
 >
