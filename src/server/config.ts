@@ -173,6 +173,8 @@ export const userAnnouncement = {
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
+export const sqsBulkQRCodeStartUrl =
+  process.env.AWS_SQS_BULK_QRCODE_GENERATE_START_URL || ''
 
 const parseDbUri = (uri: string): ConnectionOptions => {
   const { host, user, password, database, port } = parseUri(uri)
