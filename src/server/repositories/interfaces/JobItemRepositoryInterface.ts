@@ -1,4 +1,4 @@
-import { JobItemStatusEnum, JobTypeEnum } from '../enums'
+import { JobItemStatusEnum } from '../enums'
 import { StorableJobItem } from '../types'
 
 export interface JobItemRepositoryInterface {
@@ -6,7 +6,6 @@ export interface JobItemRepositoryInterface {
   create(properties: {
     status: JobItemStatusEnum
     message: string
-    type: JobTypeEnum
     params: JSON
     jobId: number
   }): Promise<StorableJobItem>

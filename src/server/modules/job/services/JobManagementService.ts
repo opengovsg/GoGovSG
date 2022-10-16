@@ -5,7 +5,7 @@ import { JobRepositoryInterface } from '../../../repositories/interfaces/JobRepo
 import { DependencyIds } from '../../../constants'
 import JobManagementServiceInterface from '../interfaces/JobManagementService'
 import { StorableJob, StorableJobItem } from '../../../repositories/types'
-import { JobItemStatusEnum, JobTypeEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 
 @injectable()
@@ -46,7 +46,6 @@ class JobManagementService implements JobManagementServiceInterface {
   createJobItem: (properties: {
     status: JobItemStatusEnum
     message: string
-    type: JobTypeEnum
     params: JSON
     jobId: number
   }) => Promise<StorableJobItem> = async (properties) => {

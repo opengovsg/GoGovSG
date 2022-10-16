@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 import { IdType } from '../../types/server/models'
-import { JobItemStatusEnum, JobTypeEnum } from '../repositories/enums'
+import { JobItemStatusEnum } from '../repositories/enums'
 import { sequelize } from '../util/sequelize'
 
 export interface JobType extends IdType, Sequelize.Model {
@@ -33,7 +33,6 @@ export const Job = <JobStatic>sequelize.define(
 export interface JobItemType extends IdType, Sequelize.Model {
   readonly status: JobItemStatusEnum
   readonly message: string
-  readonly type: JobTypeEnum
   readonly params: JSON
   readonly jobId: Number
   readonly createdAt: string
@@ -60,11 +59,6 @@ export const JobItem = <JobItemStatic>sequelize.define(
     message: {
       type: Sequelize.STRING,
       defaultValue: '',
-      allowNull: false,
-    },
-    type: {
-      type: Sequelize.ENUM,
-      values: [JobTypeEnum.QRCodeGeneration],
       allowNull: false,
     },
     params: {

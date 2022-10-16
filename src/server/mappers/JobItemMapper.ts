@@ -15,7 +15,6 @@ export class JobItemMapper implements Mapper<StorableJobItem, JobItemType> {
       id: jobItemType.id,
       status: jobItemType.status,
       message: jobItemType.message,
-      type: jobItemType.type,
       jobId: jobItemType.jobId,
       params: jobItemType.params,
     }
