@@ -50,12 +50,11 @@ export const JobItem = <JobItemStatic>sequelize.define(
     status: {
       type: Sequelize.ENUM,
       values: [
-        JobItemStatusEnum.Ready,
         JobItemStatusEnum.InProgress,
         JobItemStatusEnum.Success,
         JobItemStatusEnum.Failed,
       ],
-      defaultValue: JobItemStatusEnum.Ready,
+      defaultValue: JobItemStatusEnum.InProgress,
       allowNull: false,
     },
     message: {
