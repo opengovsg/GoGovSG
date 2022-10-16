@@ -79,6 +79,7 @@ import TagManagementService from './modules/user/services/TagManagementService'
 import JobManagementService from './modules/job/services/JobManagementService'
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
+import { SQSService } from './services/sqs'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -194,7 +195,11 @@ export default () => {
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
+    container
+      .bind(DependencyIds.sqsClient)
+      .toConstantValue(new AWS.SQS({ apiVersion: '2012-11-05' }))
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
+  bindIfUnbound(DependencyIds.sqsService, SQSService)
 }
