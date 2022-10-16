@@ -46,5 +46,14 @@ functions:
           - 'src/server/serverless/capture-ses-events/**'
           - 'package-lock.json'
           - 'package.json'
-
+  bulk-qrcode-generation:
+    handler: src/server/serverless/bulk-qrcode-generation/index.handler
+    memorySize: 512
+    description: Bulk generates QR codes in svg and png from shortUrl-longUrl mappings
+    package:
+      patterns:
+          - '!./**'
+          - 'src/server/serverless/bulk-qrcode-generation/**'
+          - 'package-lock.json'
+          - 'package.json'
   
