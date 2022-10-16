@@ -12,7 +12,7 @@ export enum StorableUrlSource {
   Console = 'CONSOLE',
 }
 
-export enum JobStatusEnum {
+export enum JobItemStatusEnum {
   Ready = 'READY',
   InProgress = 'IN_PROGRESS',
   Success = 'SUCCESS',

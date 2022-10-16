@@ -4,7 +4,7 @@ import { JobItem, JobItemType } from '../models/job'
 import { DependencyIds } from '../constants'
 import { StorableJobItem } from './types'
 import { JobItemRepositoryInterface } from './interfaces/JobItemRepositoryInterface'
-import { JobStatusEnum, JobTypeEnum } from './enums'
+import { JobItemStatusEnum, JobTypeEnum } from './enums'
 import { NotFoundError } from '../util/error'
 
 @injectable()
@@ -31,7 +31,7 @@ export class JobItemRepository implements JobItemRepositoryInterface {
   }
 
   create: (properties: {
-    status: JobStatusEnum
+    status: JobItemStatusEnum
     message: string
     type: JobTypeEnum
     params: JSON

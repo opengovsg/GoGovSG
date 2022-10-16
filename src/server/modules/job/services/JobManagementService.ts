@@ -5,7 +5,7 @@ import { JobRepositoryInterface } from '../../../repositories/interfaces/JobRepo
 import { DependencyIds } from '../../../constants'
 import JobManagementServiceInterface from '../interfaces/JobManagementService'
 import { StorableJob, StorableJobItem } from '../../../repositories/types'
-import { JobStatusEnum, JobTypeEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum, JobTypeEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 
 @injectable()
@@ -44,7 +44,7 @@ class JobManagementService implements JobManagementServiceInterface {
   }
 
   createJobItem: (properties: {
-    status: JobStatusEnum
+    status: JobItemStatusEnum
     message: string
     type: JobTypeEnum
     params: JSON
@@ -84,7 +84,7 @@ class JobManagementService implements JobManagementServiceInterface {
 
     return jobItems.reduce(
       (result: boolean, current: StorableJobItem) =>
-        result && current.status === JobStatusEnum.Success,
+        result && current.status === JobItemStatusEnum.Success,
       true,
     )
   }

@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 import { IdType } from '../../types/server/models'
-import { JobStatusEnum, JobTypeEnum } from '../repositories/enums'
+import { JobItemStatusEnum, JobTypeEnum } from '../repositories/enums'
 import { sequelize } from '../util/sequelize'
 
 export interface JobType extends IdType, Sequelize.Model {
@@ -31,7 +31,7 @@ export const Job = <JobStatic>sequelize.define(
 )
 
 export interface JobItemType extends IdType, Sequelize.Model {
-  readonly status: JobStatusEnum
+  readonly status: JobItemStatusEnum
   readonly message: string
   readonly type: JobTypeEnum
   readonly params: JSON
@@ -50,12 +50,12 @@ export const JobItem = <JobItemStatic>sequelize.define(
     status: {
       type: Sequelize.ENUM,
       values: [
-        JobStatusEnum.Ready,
-        JobStatusEnum.InProgress,
-        JobStatusEnum.Success,
-        JobStatusEnum.Failed,
+        JobItemStatusEnum.Ready,
+        JobItemStatusEnum.InProgress,
+        JobItemStatusEnum.Success,
+        JobItemStatusEnum.Failed,
       ],
-      defaultValue: JobStatusEnum.Ready,
+      defaultValue: JobItemStatusEnum.Ready,
       allowNull: false,
     },
     message: {
