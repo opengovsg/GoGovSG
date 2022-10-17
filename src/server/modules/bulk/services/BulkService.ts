@@ -30,6 +30,7 @@ export class BulkService implements interfaces.BulkService {
 
     if (!dataString) {
       schema.isValid = false
+      schema.errorMessage = 'csv file is empty'
       return schema
     }
 
@@ -44,6 +45,7 @@ export class BulkService implements interfaces.BulkService {
           // if header is invalid
           if (stringData !== BULK_UPLOAD_HEADER) {
             schema.isValid = false
+            schema.errorMessage = 'bulk upload header is invalid'
             parser.abort()
             return
           }
