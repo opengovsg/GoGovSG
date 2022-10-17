@@ -192,6 +192,10 @@ export default () => {
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
+
+    container
+      .bind(DependencyIds.sqsClient)
+      .toConstantValue(new AWS.SQS({ apiVersion: '2012-11-05' }))
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
