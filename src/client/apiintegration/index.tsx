@@ -32,6 +32,9 @@ const ApiIntegrationPage = () => {
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
   const isMinified = useMinifiedActions()
+  const hasApiKey = useSelector(
+    (state: GoGovReduxState) => state.login.user.hasApiKey,
+  )
   const classes = useStyles()
   useEffect(() => {
     if (isLoggedIn) {
@@ -50,6 +53,7 @@ const ApiIntegrationPage = () => {
           >
             API Integration
           </Typography>
+          {hasApiKey ? <div>Has API Key</div> : <div>No API Key</div>}
         </ApplyAppMargins>
       </BaseLayout>
     )
