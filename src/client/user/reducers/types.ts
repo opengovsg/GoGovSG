@@ -96,4 +96,9 @@ export type UserState = {
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
   tags: string[]
+  statusBarMessage: {
+    header: string
+    body: string
+    variant: StatusBarVariant
+  }
 }

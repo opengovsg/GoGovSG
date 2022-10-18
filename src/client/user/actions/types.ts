@@ -38,6 +38,10 @@ export enum UserAction {
   SET_FILE_UPLOAD_STATE = 'SET_FILE_UPLOAD_STATE',
   GET_LINK_HISTORY_FOR_USER_SUCCESS = 'GET_LINK_HISTORY_FOR_USER_SUCCESS',
   SET_TAGS = 'SET_TAGS',
+  CLOSE_STATUS_BAR = 'CLOSE_STATUS_BAR',
+  SET_STATUS_BAR_ERROR_MESSAGE = 'SET_STATUS_BAR_ERROR_MESSAGE',
+  SET_STATUS_BAR_INFO_MESSAGE = 'SET_STATUS_BAR_INFO_MESSAGE',
+  SET_STATUS_BAR_SUCCESS_MESSAGE = 'SET_STATUS_BAR_SUCCESS_MESSAGE',
 }
 
 export type SetUrlUploadStateAction = ReduxPayloadAction<
@@ -180,6 +184,32 @@ export type GetLinkHistoryForUserSuccessAction = ReduxPayloadAction<
 
 export type SetTagsAction = ReduxPayloadAction<UserAction.SET_TAGS, string[]>
 
+export type CloseStatusBarAction = ReduxAction<UserAction.CLOSE_STATUS_BAR>
+
+export type SetStatusBarErrorMessageAction = ReduxPayloadAction<
+  UserAction.SET_STATUS_BAR_ERROR_MESSAGE,
+  {
+    header: string
+    body: string
+  }
+>
+
+export type SetStatusBarInfoMessageAction = ReduxPayloadAction<
+  UserAction.SET_STATUS_BAR_INFO_MESSAGE,
+  {
+    header: string
+    body: string
+  }
+>
+
+export type SetStatusBarSuccessMessageAction = ReduxPayloadAction<
+  UserAction.SET_STATUS_BAR_SUCCESS_MESSAGE,
+  {
+    header: string
+    body: string
+  }
+>
+
 export type UserActionType =
   | UpdateUrlCountAction
   | SetUrlTableConfigAction
@@ -209,3 +239,7 @@ export type UserActionType =
   | SetFileUploadStateAction
   | GetLinkHistoryForUserSuccessAction
   | SetTagsAction
+  | CloseStatusBarAction
+  | SetStatusBarErrorMessageAction
+  | SetStatusBarInfoMessageAction
+  | SetStatusBarSuccessMessageAction

@@ -8,6 +8,7 @@ import * as Sentry from '@sentry/react'
 import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   CloseCreateUrlModalAction,
+  CloseStatusBarAction,
   GetLinkHistoryForUserSuccessAction,
   GetUrlsForUserSuccessAction,
   IsFetchingUrlsAction,
@@ -23,6 +24,9 @@ import {
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
+  SetStatusBarErrorMessageAction,
+  SetStatusBarInfoMessageAction,
+  SetStatusBarSuccessMessageAction,
   SetTagsAction,
   SetUploadFileErrorAction,
   SetUrlFilterAction,
@@ -236,6 +240,34 @@ async function handleError(
       break
   }
 }
+
+const closeStatusBar: () => CloseStatusBarAction = () => ({
+  type: UserAction.CLOSE_STATUS_BAR,
+})
+
+const setStatusBarErrorMessage: (
+  header: string,
+  body: string,
+) => SetStatusBarErrorMessageAction = (header: string, body: string) => ({
+  type: UserAction.SET_STATUS_BAR_ERROR_MESSAGE,
+  payload: { header, body },
+})
+
+const setStatusBarInfoMessage: (
+  header: string,
+  body: string,
+) => SetStatusBarInfoMessageAction = (header: string, body: string) => ({
+  type: UserAction.SET_STATUS_BAR_INFO_MESSAGE,
+  payload: { header, body },
+})
+
+const setStatusBarSuccessMessage: (
+  header: string,
+  body: string,
+) => SetStatusBarSuccessMessageAction = (header: string, body: string) => ({
+  type: UserAction.SET_STATUS_BAR_SUCCESS_MESSAGE,
+  payload: { header, body },
+})
 
 // retrieve linkHistory based on query object
 const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
@@ -1002,6 +1034,10 @@ const bulkCreateUrl =
   }
 
 export default {
+  closeStatusBar,
+  setStatusBarErrorMessage,
+  setStatusBarInfoMessage,
+  setStatusBarSuccessMessage,
   getUrlsForUser,
   getLinkHistoryForUser,
   resetLinkHistory,
