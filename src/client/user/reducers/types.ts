@@ -24,8 +24,9 @@ export type UrlTableConfig = {
   pageNumber: number
   sortDirection: SortDirection
   orderBy: string
-  searchText: string // search text that is actually used for searching
-  searchTextInput: string // search bar text input that has yet to be applied for search (for debouncing purposes)
+  searchText: string
+  tags: string
+  searchInput: string // search bar input that has yet to be applied for search (for debouncing purposes)
   filter: UrlTableFilterConfig
 }
 
