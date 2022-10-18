@@ -148,11 +148,19 @@ export default function TagsAutocomplete({
               error={!isValidTag(tagInput, true) || tags.includes(tagInput)}
               className={classes.tagsText}
               onKeyDown={(event) => {
-                // Use enter, comma, or space to create a new tag
-                if (!['Enter', ',', ' '].includes(event.key)) return
-                event.preventDefault() // prevent form from submitting when enter key is pressed
-                event.stopPropagation() // prevent freeSolo from clearing text input
-                addTagInputToTags()
+                if (['Enter', ',', ' '].includes(event.key)) {
+                  // Use enter, comma, or space to create a new tag
+                  event.preventDefault() // prevent form from submitting when enter key is pressed
+                  event.stopPropagation() // prevent freeSolo from clearing text input
+                  addTagInputToTags()
+                } else if (
+                  event.key === 'Backspace' &&
+                  tagInput === '' &&
+                  tags.length > 0
+                ) {
+                  // Use backspace to remove existing tag
+                  setTags(tags.slice(0, -1))
+                }
               }}
               inputProps={params.inputProps}
               InputProps={{
