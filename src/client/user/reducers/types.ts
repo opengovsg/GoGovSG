@@ -65,6 +65,12 @@ export interface LinkChangeSet {
   updatedAt: string
 }
 
+export enum StatusBarVariant {
+  Success = 'SUCCESS',
+  Error = 'ERROR',
+  Info = 'INFO',
+}
+
 export type UserState = {
   initialised: boolean
   isFetchingUrls: boolean
