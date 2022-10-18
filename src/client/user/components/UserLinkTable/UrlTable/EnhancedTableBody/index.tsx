@@ -129,6 +129,7 @@ const useStyles = makeStyles((theme) => {
     },
     clicksCellTooltipContent: {
       display: 'inline-block',
+      float: 'right',
     },
     rightCell: {
       [theme.breakpoints.up('md')]: {
@@ -172,7 +173,7 @@ const useStyles = makeStyles((theme) => {
     },
     clicksText: {
       color: '#767676',
-      paddingLeft: '4px',
+      paddingRight: '4px',
     },
     hoverRow: {
       [theme.breakpoints.down('sm')]: {
