@@ -351,28 +351,26 @@ const getUrlsForUser =
     const state = getState()
     const { tableConfig } = state.user
     const {
-      isTag,
       numberOfRows,
       pageNumber,
       sortDirection,
       orderBy,
       searchText,
+      tags,
       filter: { state: urlState, isFile },
     } = tableConfig
     const offset = pageNumber * numberOfRows
 
-    const baseQueryObj = {
+    const queryObj = {
       limit: numberOfRows,
       offset,
       orderBy,
       sortDirection,
       state: urlState,
       isFile,
+      searchText,
+      tags,
     }
-    // Search by either tags or link search text
-    const queryObj = isTag
-      ? { ...baseQueryObj, tags: searchText }
-      : { ...baseQueryObj, searchText }
 
     dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
     try {

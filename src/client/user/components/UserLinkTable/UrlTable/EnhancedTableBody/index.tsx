@@ -208,13 +208,13 @@ export default function EnhancedTableBody() {
     drawerDispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
 
   const setSearchByTag = (tag: string) => {
-    const newSearchTextInput =
-      tableConfig.isTag && tableConfig.searchText
-        ? `${tableConfig.searchText}${TAG_SEPARATOR}${tag}` // append tag to existing tags
+    const newSearchInput =
+      tableConfig.isTag && tableConfig.searchInput
+        ? `${tableConfig.searchInput}${TAG_SEPARATOR}${tag}` // append tag to existing tags in search input
         : tag
     const newConfig: Partial<UrlTableConfig> = {
       isTag: true,
-      searchTextInput: newSearchTextInput,
+      searchInput: newSearchInput,
     }
     dispatch(userActions.setUrlTableConfig(newConfig))
   }
