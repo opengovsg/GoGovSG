@@ -6,6 +6,7 @@ import { GoGovReduxState } from '../app/reducers/types'
 import BaseLayout from '../app/components/BaseLayout'
 import useMinifiedActions from '../user/components/CreateUrlModal/helpers/minifiedActions'
 import { ApplyAppMargins } from '../app/components/AppMargins'
+import NoApiKeyGraphic from './components/NoApiKeyGraphic'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -53,7 +54,7 @@ const ApiIntegrationPage = () => {
           >
             API Integration
           </Typography>
-          {hasApiKey ? <div>Has API Key</div> : <div>No API Key</div>}
+          {hasApiKey ? <NoApiKeyGraphic /> : <div>No API Key</div>}
         </ApplyAppMargins>
       </BaseLayout>
     )

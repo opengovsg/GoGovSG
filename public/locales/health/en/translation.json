@@ -18,6 +18,7 @@
     "links": {
       "contribute": "https://go.gov.sg/go-opensource",
       "directory": "/directory",
+      "apiintegration": "/apiintegration",
       "faq": "https://guide.for.sg",
       "privacy": "https://guide.for.sg/privacy",
       "terms": "https://guide.for.sg/termsofuse",
