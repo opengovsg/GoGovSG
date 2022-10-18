@@ -1,12 +1,14 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
-
 import { Alert, AlertTitle } from '@material-ui/lab'
 import StatusBarCompletedIcon from '../../../widgets/StatusBarCompletedIcon'
 import StatusBarFailedIcon from '../../../widgets/StatusBarFailedIcon'
 import StatusBarInProgressIcon from '../../../widgets/StatusBarInProgressIcon'
+import userActions from '../../../actions'
 import useAppMargins from '../../../../app/components/AppMargins/appMargins'
 import { StatusBarVariant } from '../../../reducers/types'
+import { GoGovReduxState } from '../../../../app/reducers/types'
 
 type StyleProps = {
   appMargins: number
@@ -56,11 +58,19 @@ const StatusBar = () => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
 
-  const header = 'Link creation from <name.csv> file is in progress.'
-  const body = 'We will notify you via email once it is completed.'
-  const variant = 'INFO' as StatusBarVariant
+  const header = useSelector(
+    (state: GoGovReduxState) => state.user.statusBarMessage.header,
+  )
+  const body = useSelector(
+    (state: GoGovReduxState) => state.user.statusBarMessage.body,
+  )
+  const variant = useSelector(
+    (state: GoGovReduxState) => state.user.statusBarMessage.variant,
+  )
 
   const hasStatusBarAlert = !!(header || body)
+  const dispatch = useDispatch()
+
   let colorClass = ''
   let icon: JSX.Element = <></>
   switch (variant) {
@@ -80,7 +90,9 @@ const StatusBar = () => {
       break
   }
 
-  const dispatchCloseStatusBar = () => {}
+  const dispatchCloseStatusBar = () => {
+    dispatch(userActions.closeStatusBar())
+  }
 
   return (
     <>
