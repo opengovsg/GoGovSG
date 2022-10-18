@@ -223,6 +223,17 @@ initDb()
         res.badRequest(jsonMessage(err.error.toString()))
         return
       }
+
+      if (
+        err instanceof SyntaxError &&
+        err.statusCode === 400 &&
+        'body' in err &&
+        err.type === 'entity.parse.failed'
+      ) {
+        console.error(err)
+        res.badRequest(jsonMessage('Bad Request. JSON is malformed'))
+      }
+
       res.status(500).render('500.error.ejs')
       return
     }
