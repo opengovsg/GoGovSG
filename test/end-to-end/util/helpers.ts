@@ -60,8 +60,8 @@ export const circularRedirectValidationError = Selector('div').withText(
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
-export const successBulkCreation = Selector('div').withText(
-  'Your links have been successfully created',
+export const successBulkCreation = Selector('span').withText(
+  'We will notify you via email once it is completed.',
 )
 export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
