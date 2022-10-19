@@ -649,18 +649,19 @@ const bulkQRCodesStarted = (
   dispatch: ThunkDispatch<
     GoGovReduxState,
     void,
-    CloseCreateUrlModalAction | ResetUserStateAction | SetInfoMessageAction
+    | CloseCreateUrlModalAction
+    | ResetUserStateAction
+    | SetStatusBarInfoMessageAction
   >,
   fileName: string,
 ) => {
   dispatch<void>(getUrlsForUser())
   dispatch<ResetUserStateAction>(resetUserState())
-  // TODO: placeholder before we add progress bar
-  const infoMessage = `
-    Your links have been successfully created from ${fileName}.
-    A link to download your QR codes will be sent to you via email once they have been generated.
-  `
-  dispatch<SetInfoMessageAction>(rootActions.setInfoMessage(infoMessage))
+
+  const header = `QR code creation from ${fileName} file is in progress.`
+  const body = `We will notify you via email once it is completed.`
+
+  dispatch<SetStatusBarInfoMessageAction>(setStatusBarInfoMessage(header, body))
 }
 
 /**
