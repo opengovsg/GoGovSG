@@ -12,7 +12,10 @@ import downloadIcon from '../assets/download-icon.svg'
 const useStyles = makeStyles(() =>
   createStyles({
     textDiv: {
-      width: '55%',
+      paddingLeft: 20,
+    },
+    icon: {
+      paddingRight: 20,
     },
     menuPaper: {
       marginTop: 6,
@@ -38,6 +41,7 @@ export type DropdownOption = {
 
 export type DropdownButtonProps = {
   className?: string
+  fullWidth?: boolean
   variant?: 'text' | 'outlined' | 'contained'
   buttonText: string
   options: DropdownOption[]
@@ -47,6 +51,7 @@ export function DropdownButton({
   className,
   buttonText,
   options,
+  fullWidth,
 }: DropdownButtonProps) {
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -65,9 +70,15 @@ export function DropdownButton({
         className={className}
         variant={variant || 'outlined'}
         onClick={handleClick}
+        fullWidth={fullWidth}
       >
         <div className={classes.textDiv}>{buttonText}</div>
-        <img src={downloadIcon} alt="Download" draggable={false} />
+        <img
+          className={classes.icon}
+          src={downloadIcon}
+          alt="Download"
+          draggable={false}
+        />
       </TrailingButton>
       <Menu
         classes={{
@@ -76,8 +87,8 @@ export function DropdownButton({
         MenuListProps={{ style: { padding: '5 0', height: '100%' } }}
         anchorEl={anchorEl}
         getContentAnchorEl={null}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
