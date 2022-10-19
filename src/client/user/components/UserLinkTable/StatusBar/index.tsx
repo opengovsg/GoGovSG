@@ -9,6 +9,7 @@ import userActions from '../../../actions'
 import useAppMargins from '../../../../app/components/AppMargins/appMargins'
 import { StatusBarVariant } from '../../../reducers/types'
 import { GoGovReduxState } from '../../../../app/reducers/types'
+import CloseButton from '../../../widgets/CloseButton'
 
 type StyleProps = {
   appMargins: number
@@ -98,7 +99,7 @@ const StatusBar = () => {
         <Alert
           icon={icon}
           className={`${colorClass} ${classes.content}`}
-          onClose={dispatchCloseStatusBar}
+          action={<CloseButton onClick={dispatchCloseStatusBar} />}
         >
           <AlertTitle>{header}</AlertTitle>
           <Typography variant="caption" className={classes.messageBody}>
