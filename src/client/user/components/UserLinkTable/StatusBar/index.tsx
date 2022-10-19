@@ -10,6 +10,7 @@ import useAppMargins from '../../../../app/components/AppMargins/appMargins'
 import { StatusBarVariant } from '../../../reducers/types'
 import { GoGovReduxState } from '../../../../app/reducers/types'
 import CloseButton from '../../../widgets/CloseButton'
+import DownloadBulkButton from '../DownloadBulkButton'
 
 type StyleProps = {
   appMargins: number
@@ -99,7 +100,12 @@ const StatusBar = () => {
         <Alert
           icon={icon}
           className={`${colorClass} ${classes.content}`}
-          action={<CloseButton onClick={dispatchCloseStatusBar} />}
+          action={
+            <>
+              {variant === StatusBarVariant.Success && <DownloadBulkButton />}
+              <CloseButton onClick={dispatchCloseStatusBar} />
+            </>
+          }
         >
           <AlertTitle>{header}</AlertTitle>
           <Typography variant="caption" className={classes.messageBody}>
