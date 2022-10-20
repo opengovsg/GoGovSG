@@ -230,6 +230,7 @@ initDb()
         'body' in err &&
         err.type === 'entity.parse.failed'
       ) {
+        // This catches body-parser errors and returns a 400 error message
         console.error(err)
         res.badRequest(jsonMessage('Bad Request. JSON is malformed'))
       }
