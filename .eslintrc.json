@@ -56,6 +56,8 @@
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {
+          // Disabling `no-undef` lint rule in favor of Typescript checking
+          // https://github.com/typescript-eslint/typescript-eslint/blob/main/docs/linting/TROUBLESHOOTING.md#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
           "no-undef": "off"
       }
     }
