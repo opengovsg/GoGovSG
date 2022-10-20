@@ -16,9 +16,6 @@ type StyleProps = {
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    root: {
-      alignItems: 'stretch',
-    },
     error: {
       backgroundColor: '#FFEDED',
       color: theme.palette.text.primary,
@@ -32,6 +29,7 @@ const useStyles = makeStyles((theme) =>
       color: theme.palette.text.primary,
     },
     content: {
+      alignItems: 'stretch',
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
       [theme.breakpoints.up('md')]: {
@@ -99,7 +97,7 @@ const StatusBar = () => {
       {hasStatusBarAlert && (
         <Alert
           icon={icon}
-          className={`${colorClass} ${classes.root} ${classes.content}`}
+          className={`${colorClass} ${classes.content}`}
           onClose={dispatchCloseStatusBar}
         >
           <AlertTitle>{header}</AlertTitle>
