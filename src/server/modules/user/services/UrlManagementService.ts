@@ -10,6 +10,7 @@ import {
 import dogstatsd, {
   SHORTLINK_CREATE,
   SHORTLINK_CREATE_TAG_IS_FILE,
+  SHORTLINK_CREATE_TAG_SOURCE,
 } from '../../../util/dogstatsd'
 import {
   AlreadyExistsError,
@@ -20,6 +21,7 @@ import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepo
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 import { DependencyIds } from '../../../constants'
+import { BULK, CONSOLE } from '../../../models/types'
 import * as interfaces from '../interfaces'
 
 @injectable()
@@ -77,6 +79,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     )
     dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
       `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${CONSOLE}`, // TODO: distinguish between console and API sources eventually
     ])
 
     return result
@@ -159,9 +162,10 @@ export class UrlManagementService implements interfaces.UrlManagementService {
       urlMappings,
       tags,
     })
-    dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
-      `isbulk:true`,
-    ]) // TODO: extract metric and tag names
+    dogstatsd.increment(SHORTLINK_CREATE, urlMappings.length, 1, [
+      `${SHORTLINK_CREATE_TAG_IS_FILE}:false`,
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${BULK}`,
+    ])
   }
 }
 
