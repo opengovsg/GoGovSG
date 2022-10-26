@@ -328,7 +328,7 @@ describe('UserController', () => {
         1,
       )
     })
-    it('call getTagsWithConditions with invalid searchText, less than 3 characters', async () => {
+    it('reports bad request on calling getTagsWithConditions with invalid searchText, less than 3 characters', async () => {
       const searchText = 't'
       const req = httpMocks.createRequest({
         query: { searchText },
@@ -342,7 +342,7 @@ describe('UserController', () => {
       await controller.getTagsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
-    it('call getTagsWithConditions with invalid searchText, special characters', async () => {
+    it('reports bad request on calling getTagsWithConditions with invalid searchText, special characters', async () => {
       const searchText = '#$%'
       const req = httpMocks.createRequest({
         query: { searchText },
@@ -523,7 +523,7 @@ describe('UserController', () => {
       )
     })
 
-    it('processes query with invalid tags-long', async () => {
+    it('reports bad request on query with invalid tags-long', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
         query: { isFile: 'false', tags: '01234567890123456789012345;tag2' },
@@ -538,7 +538,7 @@ describe('UserController', () => {
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
-    it('processes query with invalid tags-special character', async () => {
+    it('reports bad request on query with invalid tags-special character', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
         query: { isFile: 'false', tags: 'tag1^%^;tag2' },
@@ -553,10 +553,25 @@ describe('UserController', () => {
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
-    it('processes query with more than 5 tags', async () => {
+    it('reports bad request on query with more than 5 tags', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
         query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4;tag5;tag6' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      res.badRequest = jest.fn()
+      const result = { urls: [], count: 0 }
+      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('reports bad request on query with invalid state', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', state: 'invalid' },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
