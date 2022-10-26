@@ -3,6 +3,7 @@ import { createValidator } from 'express-joi-validation'
 import Joi from '@hapi/joi'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
+import { ACTIVE, INACTIVE } from '../models/types'
 import { DirectoryController } from '../modules/directory'
 import { SearchResultsSortOrder } from '../../shared/search'
 
@@ -14,7 +15,7 @@ const urlSearchRequestSchema = Joi.object({
     .only(),
   limit: Joi.number(),
   offset: Joi.number(),
-  state: Joi.string().allow(''),
+  state: Joi.string().valid(ACTIVE, INACTIVE, ''),
   isFile: Joi.string().allow(''),
   isEmail: Joi.string().required(),
 })
