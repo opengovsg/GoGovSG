@@ -15,7 +15,7 @@ const urlSearchRequestSchema = Joi.object({
     .only(),
   limit: Joi.number(),
   offset: Joi.number(),
-  state: Joi.string().valid(ACTIVE, INACTIVE, ''),
+  state: Joi.string().valid(ACTIVE, INACTIVE),
   isFile: Joi.string().allow(''),
   isEmail: Joi.string().required(),
 })
