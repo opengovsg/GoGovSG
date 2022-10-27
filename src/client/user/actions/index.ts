@@ -366,7 +366,7 @@ const getUrlsForUser =
       offset,
       orderBy,
       sortDirection,
-      state: urlState,
+      ...(urlState && { state: urlState }),
       isFile,
       searchText,
       tags,

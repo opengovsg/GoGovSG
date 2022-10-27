@@ -529,10 +529,7 @@ describe('UserController', () => {
         query: { isFile: 'false', tags: '01234567890123456789012345;tag2' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
@@ -544,10 +541,7 @@ describe('UserController', () => {
         query: { isFile: 'false', tags: 'tag1^%^;tag2' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
@@ -559,10 +553,7 @@ describe('UserController', () => {
         query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4;tag5;tag6' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
@@ -574,10 +565,19 @@ describe('UserController', () => {
         query: { isFile: 'false', state: 'invalid' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('reports bad request on query with empty state', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', state: '' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
