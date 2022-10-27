@@ -113,6 +113,7 @@ export class UserRepository implements UserRepositoryInterface {
           conditions.orderBy,
           conditions.sortDirection,
         ],
+        ['shortUrl', 'asc'],
       ],
     })
     if (!urlsAndCount) {
