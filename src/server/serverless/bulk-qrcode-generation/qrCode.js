@@ -4,9 +4,9 @@ const QRCode = require('qrcode')
 
 const { resolve } = require('path')
 const sharp = require('sharp')
-const JSZip = require('jszip')
+const archiver = require('archiver')
 
-// const { domain } = require('process')
+const { streamTo } = require('./s3')
 
 const IMAGE_WIDTH = 1000
 const QR_CODE_DIMENSIONS = 800
@@ -161,35 +161,49 @@ async function makeGoQrCode(shortUrl) {
 }
 
 // Build QR code of specified file format as a string or buffer.
-async function createQRCodesBuffer(urls, format) {
-  const jsZip = new JSZip()
-  const extension =
-    format === ImageFormat.SVG ? FileExtension.SVG : FileExtension.PNG
-  await Promise.all(
-    urls.map(async (shortUrl, idx) => {
-      const [qrSvgString, imageHeight] = await makeGoQrCode(
-        `https://${domain}/${shortUrl}`,
-      )
+async function createQRCodesBuffer(urls, format, filePath) {
+  try {
+    const extension =
+      format === ImageFormat.SVG ? FileExtension.SVG : FileExtension.PNG
 
-      if (format === ImageFormat.SVG) {
-        jsZip.file(`qrcodes/${urls[idx]}.${extension}`, qrSvgString, {})
-      } else if (format === ImageFormat.PNG) {
-        const buffer = sharp(Buffer.from(qrSvgString))
-          .resize(IMAGE_WIDTH, imageHeight)
-          .png()
-          .toBuffer()
-        jsZip.file(`qrcodes/${urls[idx]}.${extension}`, buffer, {})
-      } else {
-        throw Error('Invalid format')
-      }
-    }),
-  )
-  const contentBuffer = await jsZip.generateAsync({
-    type: 'nodebuffer',
-    compression: 'DEFLATE',
-  })
+    const zipStream = streamTo(`${filePath}/generated_${extension}.zip`)
 
-  return contentBuffer
+    const archive = archiver('zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    })
+    archive.on('error', (err) => {
+      throw new Error(err)
+    })
+
+    archive.pipe(zipStream)
+
+    await Promise.all(
+      urls.map(async (shortUrl, idx) => {
+        const [qrSvgString, imageHeight] = await makeGoQrCode(
+          `https://${domain}/${shortUrl}`,
+        )
+
+        if (format === ImageFormat.SVG) {
+          archive.append(qrSvgString, {
+            name: `qrcodes/${urls[idx]}.${extension}`,
+          })
+        } else if (format === ImageFormat.PNG) {
+          const buffer = await sharp(Buffer.from(qrSvgString))
+            .resize(IMAGE_WIDTH, imageHeight)
+            .png()
+            .toBuffer()
+          archive.append(buffer, {
+            name: `qrcodes/${urls[idx]}.${extension}`,
+          })
+        } else {
+          throw Error('Invalid format')
+        }
+      }),
+    )
+    archive.finalize()
+  } catch (error) {
+    throw Error(`Zip stream error: ${error}`)
+  }
 }
 
 module.exports.createQRCodesBuffer = createQRCodesBuffer

@@ -12,24 +12,16 @@ async function handler(event) {
     const csvBuffer = await createCsv(mappings)
     await uploadToS3(csvBuffer, 'text/csv', `${filePath}/generated.csv`)
 
-    const svgBuffer = await createQRCodesBuffer(
+    await createQRCodesBuffer(
       mappings.map((mapping) => mapping.shortUrl),
       ImageFormat.SVG,
-    )
-    await uploadToS3(
-      svgBuffer,
-      'application/zip',
-      `${filePath}/generated_svg.zip`,
+      filePath,
     )
 
-    const pngBuffer = await createQRCodesBuffer(
+    await createQRCodesBuffer(
       mappings.map((mapping) => mapping.shortUrl),
       ImageFormat.PNG,
-    )
-    await uploadToS3(
-      pngBuffer,
-      'application/zip',
-      `${filePath}/generated_png.zip`,
+      filePath,
     )
 
     console.log(`Uploaded files to ${filePath}`)
