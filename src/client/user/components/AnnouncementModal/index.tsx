@@ -220,6 +220,7 @@ const AnnouncementModal = () => {
           className={classes.message}
           variant="body2"
           dangerouslySetInnerHTML={{
+            // Enable line break
             __html: htmlSanitizer(announcement.message.replace(/\\n/g, '\n')),
           }}
         />
