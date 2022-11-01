@@ -265,14 +265,24 @@ export class UrlRepository implements UrlRepositoryInterface {
       AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
       AND "urls"."isFile" IN (:queryFile)
       AND "urls"."state" In (:queryState)
-      ORDER BY (${rankingAlgorithm}) DESC`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT :limit OFFSET :offset`
+    const countQuery = `
+      SELECT count(*)
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
+      AND "urls"."isFile" IN (:queryFile)
+      AND "urls"."state" In (:queryState)`
 
-    // Search only once to get both urls and count
-    const urlsModel = (await sequelize.query(rawQuery, {
+    const urls = (await sequelize.query(rawQuery, {
       replacements: {
         likeQuery,
         queryFile,
         queryState,
+        limit,
+        offset,
       },
       type: QueryTypes.SELECT,
       model: Url,
@@ -280,12 +290,20 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
       useMaster: true,
     })) as Array<UrlDirectory>
+    const countResult = (await sequelize.query(countQuery, {
+      replacements: {
+        likeQuery,
+        queryFile,
+        queryState,
+      },
+      type: QueryTypes.SELECT,
+      raw: true,
+      plain: true,
+      useMaster: true,
+    })) as { count: string }
 
-    const count = urlsModel.length
-    const ending = Math.min(count, offset + limit)
-    const slicedUrlsModel = urlsModel.slice(offset, ending)
-
-    return { count, urls: slicedUrlsModel }
+    const count = Number(countResult.count)
+    return { urls, count }
   }
 
   /**
@@ -313,6 +331,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const newQuery = extractShortUrl(query) || query
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
+
     const rawQuery = `
       SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
@@ -320,16 +339,25 @@ export class UrlRepository implements UrlRepositoryInterface {
       ON "urls"."shortUrl" = "url_clicks"."shortUrl"
       JOIN users
       ON "urls"."userId" = "users"."id"
-      JOIN plainto_tsquery('english', $newQuery) query
+      JOIN plainto_tsquery('english', :newQuery) query
       ON query @@ (${urlVector})
       ${queryFile}
       ${queryState}
-      ORDER BY (${rankingAlgorithm}) DESC`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT :limit OFFSET :offset`
+    const countQuery = `
+      SELECT count(*)
+      FROM urls AS "urls"
+      JOIN plainto_tsquery('english', :newQuery) query
+      ON query @@ (${urlVector})
+      ${queryFile}
+      ${queryState}`
 
-    // Search only once to get both urls and count
-    const urlsModel = (await sequelize.query(rawQuery, {
-      bind: {
+    const urls = (await sequelize.query(rawQuery, {
+      replacements: {
         newQuery,
+        limit,
+        offset,
       },
       raw: true,
       type: QueryTypes.SELECT,
@@ -337,12 +365,18 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
       useMaster: true,
     })) as Array<UrlDirectory>
+    const countResult = (await sequelize.query(countQuery, {
+      replacements: {
+        newQuery,
+      },
+      raw: true,
+      plain: true,
+      type: QueryTypes.SELECT,
+      useMaster: true,
+    })) as { count: string }
 
-    const count = urlsModel.length
-    const ending = Math.min(count, offset + limit)
-    const slicedUrlsModel = urlsModel.slice(offset, ending)
-
-    return { count, urls: slicedUrlsModel }
+    const count = Number(countResult.count)
+    return { urls, count }
   }
 
   /**

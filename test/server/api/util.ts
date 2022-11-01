@@ -216,6 +216,10 @@ export const mockQuery = jest.fn()
 export const mockDefine = jest.fn()
 
 mockQuery.mockImplementation((query: string) => {
+  // For rawDirectorySearch count queries
+  if (query.includes('count(*)')) {
+    return { count: 1 }
+  }
   // For rawDirectorySearch -> email
   if (query.includes('queryFile')) {
     return [
@@ -226,9 +230,6 @@ mockQuery.mockImplementation((query: string) => {
         isFile: false,
       },
     ]
-  }
-  if (query.includes('count(*)')) {
-    return [{ count: 10 }]
   }
   // For rawDirectorySearch -> plain text
   if (query.includes('JOIN')) {
