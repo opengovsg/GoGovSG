@@ -14,6 +14,7 @@ import userActions from '../../actions'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 import CloseIcon from '../../../app/components/widgets/CloseIcon'
 import { GAEvent } from '../../../app/util/ga'
+import { htmlSanitizer } from '../../../app/util/format'
 
 type StyleProps = {
   isFullScreenDialog: boolean
@@ -66,7 +67,8 @@ const useStyles = makeStyles((theme) =>
         width: '100%',
       },
     },
-    messagePadding: {
+    message: {
+      display: 'block',
       paddingLeft: theme.spacing(4),
       paddingRight: theme.spacing(4),
       whiteSpace: 'pre-line',
@@ -215,12 +217,12 @@ const AnnouncementModal = () => {
       ) : null}
       {announcement?.message ? (
         <Typography
-          className={`${classes.justifyCenter} ${classes.messagePadding}`}
+          className={classes.message}
           variant="body2"
-        >
-          {/* Enable line break */}
-          {announcement.message.replace(/\\n/g, '\n')}
-        </Typography>
+          dangerouslySetInnerHTML={{
+            __html: htmlSanitizer(announcement.message.replace(/\\n/g, '\n')),
+          }}
+        />
       ) : null}
       <div className={`${classes.justifyCenter} ${classes.modalBottom}`}>
         {announcement?.url ? (
