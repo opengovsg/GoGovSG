@@ -42,7 +42,7 @@
     "@types/papaparse": "^5.3.5",
     "aws-sdk": "^2.1101.0",
     "babel-polyfill": "^6.26.0",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.18.3",
     "chart.js": "^2.9.4",
     "cheerio": "^1.0.0-rc.10",
