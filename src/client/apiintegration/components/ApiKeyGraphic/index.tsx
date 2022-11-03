@@ -1,21 +1,27 @@
-import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 import React, { FunctionComponent } from 'react'
-import noApiKeyGraphic from '@assets/components/apiintegration/empty-api-key-graphic/empty-api-key-graphic.svg'
-import plusIcon from '@assets/components/app/base-layout/plus-icon.svg'
+
+import {
+  Button,
+  TextField,
+  Typography,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core'
+import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       display: 'flex',
       flexDirection: 'column',
-      marginTop: theme.spacing(6),
-      alignItems: 'center',
+      marginTop: theme.spacing(3),
+      alignItems: 'left',
       [theme.breakpoints.up('md')]: {
-        marginTop: theme.spacing(12),
+        marginTop: theme.spacing(6),
       },
     },
-    emptyStateBodyText: {
-      textAlign: 'center',
+    apiKeyInfoText: {
+      textAlign: 'left',
     },
     createApiKeyButton: {
       marginTop: '41px',
@@ -38,18 +44,27 @@ const useStyles = makeStyles((theme) =>
     },
   }),
 )
+
 /**
- * @component Default display component in place of api key generation.
+ * @component Default display component in place of generated api key.
  */
-const NoApiKeyGraphic: FunctionComponent = () => {
+const ApiKeyGraphic: FunctionComponent = () => {
   const classes = useStyles()
   return (
     <div className={classes.root}>
-      <Typography variant="body1" className={classes.emptyStateBodyText}>
-        GoGovSG API enables you to programmatically generate your short links.
+      <Typography variant="body1" className={classes.apiKeyInfoText}>
+        After generating your API key, please make a copy of it immediately as
+        it will only be shown once. Upon leaving or refreshing this page, the
+        key will be hidden.
         <br />
-        Refer to our API Documentation for more information.
+        Your API Key
       </Typography>
+      <TextField
+        disabled
+        variant="outlined"
+        type="text"
+        value="******************"
+      />
       <Button
         className={classes.createApiKeyButton}
         // key={}
@@ -60,15 +75,12 @@ const NoApiKeyGraphic: FunctionComponent = () => {
         Generate API Key&nbsp;
         <img
           className={classes.plusIcon}
-          src={plusIcon}
+          src={retryIcon}
           alt="generate api key"
         />
       </Button>
-      <div className={classes.emptyStateGraphic}>
-        <img src={noApiKeyGraphic} alt="empty api key graphic" />
-      </div>
     </div>
   )
 }
 
-export default NoApiKeyGraphic
+export default ApiKeyGraphic

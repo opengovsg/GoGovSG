@@ -7,6 +7,7 @@ import BaseLayout from '../app/components/BaseLayout'
 import useMinifiedActions from '../user/components/CreateUrlModal/helpers/minifiedActions'
 import { ApplyAppMargins } from '../app/components/AppMargins'
 import NoApiKeyGraphic from './components/NoApiKeyGraphic'
+import ApiKeyGraphic from './components/ApiKeyGraphic'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -54,7 +55,7 @@ const ApiIntegrationPage = () => {
           >
             API Integration
           </Typography>
-          {hasApiKey ? <NoApiKeyGraphic /> : <div>No API Key</div>}
+          {hasApiKey ? <ApiKeyGraphic /> : <NoApiKeyGraphic />}
         </ApplyAppMargins>
       </BaseLayout>
     )
