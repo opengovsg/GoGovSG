@@ -316,7 +316,7 @@ Diagrams for our infrastructure setup can be found [here](https://lucid.app/luci
 
 ## Mics
 
-### Salt generation
+### <a name="saltgeneration"></a> Salt generation
 
 ```javascript
 let salt = bcrypt.genSaltSync(10)
