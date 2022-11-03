@@ -1,7 +1,10 @@
 /* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
-import { StorableUrlState } from '../../../repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../repositories/enums'
 import {
   createGetTagsRequestWithUser,
   createRequestWithUser,
@@ -64,6 +67,7 @@ describe('UserController', () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.gov.sg'
+      const source = StorableUrlSource.Console
       const tags = ['tag1', 'tag2', 'tag3']
       const req = httpMocks.createRequest({
         body: {
@@ -84,6 +88,7 @@ describe('UserController', () => {
       expect(urlManagementService.createUrl).toHaveBeenCalledWith(
         userId,
         shortUrl,
+        source,
         longUrl,
         undefined,
         tags,

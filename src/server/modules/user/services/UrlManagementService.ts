@@ -17,11 +17,12 @@ import {
   AlreadyOwnLinkError,
   NotFoundError,
 } from '../../../util/error'
+import { StorableUrlSource } from '../../../repositories/enums'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 import { DependencyIds } from '../../../constants'
-import { BULK, CONSOLE } from '../../../models/types'
+import { BULK } from '../../../models/types'
 import * as interfaces from '../interfaces'
 
 @injectable()
@@ -43,20 +44,26 @@ export class UrlManagementService implements interfaces.UrlManagementService {
   createUrl: (
     userId: number,
     shortUrl: string,
+    source: StorableUrlSource.Console | StorableUrlSource.Api,
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
-  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file, tags) => {
+  ) => Promise<StorableUrl> = async (
+    userId,
+    shortUrl,
+    source,
+    longUrl,
+    file,
+    tags,
+  ) => {
     const user = await this.userRepository.findById(userId)
     if (!user) {
-      throw new NotFoundError('User not found')
+      throw new NotFoundError('User not found.')
     }
 
     const owner = await this.userRepository.findUserByUrl(shortUrl)
     if (owner) {
-      throw new AlreadyExistsError(
-        `Short link "${shortUrl}" is used. Click here to find out more`,
-      )
+      throw new AlreadyExistsError(`Short link "${shortUrl}" is already used.`)
     }
 
     const storableFile: StorableFile | undefined = file
@@ -74,12 +81,13 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         longUrl,
         shortUrl,
         tags,
+        source,
       },
       storableFile,
     )
     dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
       `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
-      `${SHORTLINK_CREATE_TAG_SOURCE}:${CONSOLE}`, // TODO: distinguish between console and API sources eventually
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${source}`,
     ])
 
     return result

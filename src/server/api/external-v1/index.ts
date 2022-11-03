@@ -1,13 +1,14 @@
 import Express from 'express'
 import { createValidator } from 'express-joi-validation'
 import { container } from '../../util/inversify'
+import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
-import { urlSchema } from '../user/validators'
-import { UserController } from '../../modules/user'
+import { ApiController } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
+import urlSchema from './validators'
 
-const userController = container.get<UserController>(
-  DependencyIds.userController,
+const apiController = container.get<ApiController>(
+  DependencyIds.apiControllerv1,
 )
 const urlCheckController = container.get<UrlCheckController>(
   DependencyIds.urlCheckController,
@@ -19,7 +20,11 @@ router.post(
   '/urls',
   urlCheckController.singleUrlCheck,
   validator.body(urlSchema),
-  userController.createUrl,
+  apiController.createUrl,
 )
+
+router.use((_, res) => {
+  res.status(404).send(jsonMessage('Resource not found.'))
+})
 
 export = router
