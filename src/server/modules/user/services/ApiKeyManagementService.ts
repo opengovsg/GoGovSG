@@ -27,7 +27,7 @@ class ApiKeyManagementService implements ApiKeyManagementServiceInterface {
     const apiKey = ApiKeyManagementService.generateApiKey()
     const apiKeyHash = await this.getApiKeyHash(apiKey)
     await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
-    return apiKeyHash
+    return apiKey
   }
 
   getApiKeyHash: (apiKey: string) => Promise<string> = async (
