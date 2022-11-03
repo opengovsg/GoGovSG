@@ -79,6 +79,7 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           contactEmail: null,
           clicks: 0,
           source: StorableUrlSource.Console,
+          tagStrings: '',
         },
       ],
       count: 0,

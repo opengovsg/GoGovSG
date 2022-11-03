@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
 import fileUpload from 'express-fileupload'
+import dogstatsd, { MALICIOUS_ACTIVITY_FILE } from '../../util/dogstatsd'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { FileTypeFilterService, VirusScanService } from './interfaces'
@@ -73,6 +74,7 @@ export class FileCheckController {
               user?.email || user?.id
             } tried to upload ${file.name}`,
           )
+          dogstatsd.increment(MALICIOUS_ACTIVITY_FILE, 1, 1)
           res.badRequest(jsonMessage('File is likely to be malicious.'))
           return
         }

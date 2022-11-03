@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Grid,
   Hidden,
@@ -14,11 +14,16 @@ import linkIcon from '@assets/components/user/user-link-table/link-icon.svg'
 import fileIcon from '@assets/components/user/user-link-table/file-icon.svg'
 import clickCountIcon from '@assets/components/user/user-link-table/click-count-icon.svg'
 
+import TableTag from './TableTag'
+import userActions from '../../../../actions'
+import { UrlTableConfig } from '../../../../reducers/types'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import { DrawerActions } from '../../../Drawer/ControlPanel/util/reducers'
 import { useDrawerDispatch } from '../../../Drawer'
 import { numberUnitFormatter } from '../../../../../app/util/format'
 import CopyButton from '../../../../widgets/CopyButton'
+import { GoGovReduxState } from '../../../../../app/reducers/types'
+import { TAG_SEPARATOR } from '../../../../../../shared/constants'
 
 type StyleProps = {
   appMargins: number
@@ -46,6 +51,18 @@ const useStyles = makeStyles((theme) => {
         textAlign: 'end',
         paddingTop: '0px',
         paddingRight: theme.spacing(1.5),
+        paddingLeft: (props: StyleProps) => props.appMargins,
+      },
+      [theme.breakpoints.down('sm')]: {
+        display: 'none',
+      },
+    },
+    leftCellWithTags: {
+      [theme.breakpoints.up('md')]: {
+        textAlign: 'end',
+        paddingTop: '0px',
+        paddingRight: theme.spacing(1.5),
+        paddingBottom: '61px',
         paddingLeft: (props: StyleProps) => props.appMargins,
       },
       [theme.breakpoints.down('sm')]: {
@@ -176,15 +193,31 @@ const useStyles = makeStyles((theme) => {
 })
 
 export default function EnhancedTableBody() {
-  const urls: any[] = useSelector((state: any) => state.user.urls)
+  const urls = useSelector((state: GoGovReduxState) => state.user.urls)
+  const tableConfig = useSelector(
+    (state: GoGovReduxState) => state.user.tableConfig,
+  )
   const lastCreatedLink = useSelector(
     (state: any) => state.user.lastCreatedLink,
   )
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const dispatch = useDrawerDispatch()
+  const dispatch = useDispatch()
+  const drawerDispatch = useDrawerDispatch()
   const openControlPanel = (shortlink: string) =>
-    dispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
+    drawerDispatch({ type: DrawerActions.openControlPanel, payload: shortlink })
+
+  const setSearchByTag = (tag: string) => {
+    const newSearchInput =
+      tableConfig.isTag && tableConfig.searchInput
+        ? `${tableConfig.searchInput}${TAG_SEPARATOR}${tag}` // append tag to existing tags in search input
+        : tag
+    const newConfig: Partial<UrlTableConfig> = {
+      isTag: true,
+      searchInput: newSearchInput,
+    }
+    dispatch(userActions.setUrlTableConfig(newConfig))
+  }
 
   if (urls.length > 0) {
     // If user has existing links, show the user's list of stored links.
@@ -198,7 +231,13 @@ export default function EnhancedTableBody() {
             }`}
             onClick={() => openControlPanel(row.shortUrl)}
           >
-            <TableCell className={classes.leftCell}>
+            <TableCell
+              className={
+                row.tags.length > 0
+                  ? classes.leftCellWithTags
+                  : classes.leftCell
+              }
+            >
               <img
                 className={classes.icon}
                 src={row.isFile ? fileIcon : linkIcon}
@@ -221,6 +260,19 @@ export default function EnhancedTableBody() {
                     </Typography>
                   </Grid>
                 </Hidden>
+                {row.tags.length > 0 && (
+                  <Hidden smDown>
+                    <Grid item className={classes.longUrlGrid}>
+                      {row.tags.map((tag: string) => (
+                        <TableTag
+                          key={tag}
+                          tag={tag}
+                          onClick={() => setSearchByTag(tag)}
+                        />
+                      ))}
+                    </Grid>
+                  </Hidden>
+                )}
               </Grid>
             </TableCell>
             <Hidden smDown>

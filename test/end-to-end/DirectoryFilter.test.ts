@@ -9,6 +9,8 @@ import {
   directoryPageButton,
   directoryTextFieldEmail,
   directoryTextFieldKeyword,
+  directoryUrlTableRowEmail,
+  directoryUrlTableRowUrlText,
   emailToggle,
   fileButton,
   fileButtonStyle,
@@ -24,7 +26,6 @@ import {
   toggle,
   uncheckedButtonBackground,
   urlTable,
-  urlTableRowText,
   userApplyButton,
 } from './util/helpers'
 import { linkCreationProcedure } from './util/LinkCreationProcedure'
@@ -91,7 +92,7 @@ test('Directory Page test search by keyword and email', async (t) => {
   // search by keyword
   await t
     .typeText(directoryTextFieldKeyword, `${generatedUrlFile}`)
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlFile}`)
     // change in url
     .expect(getLocation())
@@ -106,7 +107,7 @@ test('Directory Page test search by keyword and email', async (t) => {
     .eql('')
     // find email results
     .typeText(directoryTextFieldEmail, testEmail)
-    .expect(urlTable.child(0).child(2).child('p').innerText)
+    .expect(directoryUrlTableRowEmail(0).innerText)
     .eql(testEmail)
     // change in url (email in url)
     .expect(getLocation())
@@ -138,13 +139,13 @@ test('Directory Page test recency sort order', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlFile}`)
     // second row
-    .expect(urlTableRowText(1))
+    .expect(directoryUrlTableRowUrlText(1))
     .eql(`/${generatedUrlInactive}`)
     // third row
-    .expect(urlTableRowText(2))
+    .expect(directoryUrlTableRowUrlText(2))
     .eql(`/${generatedUrlActive}`)
 })
 
@@ -169,10 +170,10 @@ test('Directory Page test popularity sort order', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlMostPopular}`)
     // second row
-    .expect(urlTableRowText(1))
+    .expect(directoryUrlTableRowUrlText(1))
     .eql(`/${generatedUrlSecondMostPopular}`)
 })
 
@@ -197,10 +198,10 @@ test('Directory Page filter by active', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlFile}`)
     // second row
-    .expect(urlTableRowText(1))
+    .expect(directoryUrlTableRowUrlText(1))
     .eql(`/${generatedUrlActive}`)
 })
 
@@ -222,7 +223,7 @@ test('Directory Page filter by inactive', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlInactive}`)
 })
 
@@ -245,7 +246,7 @@ test('Directory Page filter by file', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlFile}`)
 })
 
@@ -270,10 +271,10 @@ test('Directory Page filter by url', async (t) => {
     // search by search key
     .typeText(directoryTextFieldKeyword, searchKey)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlInactive}`)
     // second row
-    .expect(urlTableRowText(1))
+    .expect(directoryUrlTableRowUrlText(1))
     .eql(`/${generatedUrlActive}`)
 })
 
@@ -323,13 +324,13 @@ test('Directory Page test reset filter', async (t) => {
 test('Directory Page test url row interactions', async (t) => {
   const { generatedUrlActive } = t.fixtureCtx.createdLinks
 
-  const emailField = urlTable.child(0).child(2).child('p')
+  const emailField = directoryUrlTableRowEmail(0)
   await t
     .click(directoryPageButton)
     // search by url
     .typeText(directoryTextFieldKeyword, generatedUrlActive)
     // first row
-    .expect(urlTableRowText(0))
+    .expect(directoryUrlTableRowUrlText(0))
     .eql(`/${generatedUrlActive}`)
     // test hover over email
     .expect(emailField.getStyleProperty('text-decoration'))

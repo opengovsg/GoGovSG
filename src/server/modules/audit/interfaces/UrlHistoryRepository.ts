@@ -7,6 +7,7 @@ export interface UrlHistoryRecord {
   description: string
   isFile: boolean
   createdAt: string
+  tagStrings: string
 }
 
 export interface UrlHistoryRepository {

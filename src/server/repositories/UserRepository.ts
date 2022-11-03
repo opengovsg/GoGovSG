@@ -1,17 +1,20 @@
 import { inject, injectable } from 'inversify'
-import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
-import { User, UserType } from '../models/user'
+import { Op } from 'sequelize'
 import {
   StorableUrl,
   StorableUser,
   UrlsPaginated,
   UserUrlsQueryConditions,
 } from './types'
+import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
+import { User, UserType } from '../models/user'
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
-import { UrlType } from '../models/url'
-import dogstatsd from '../util/dogstatsd'
+import { UrlClicks } from '../models/statistics/clicks'
+import { Url, UrlType } from '../models/url'
+import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
+import { escapeWildcard } from '../util/sequelize'
 
 /**
  * A user repository that handles access to the data store of Users.
@@ -52,7 +55,7 @@ export class UserRepository implements UserRepositoryInterface {
   ) => {
     return User.findOrCreate({ where: { email } }).then(([user, created]) => {
       if (created) {
-        dogstatsd.increment('user.new', 1, 1)
+        dogstatsd.increment(USER_NEW, 1, 1)
       }
       return user
     })
@@ -96,38 +99,65 @@ export class UserRepository implements UserRepositoryInterface {
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated> = async (conditions) => {
     const notFoundMessage = 'Urls not found'
-    const userCountAndArray = await User.scope([
+    const whereConditions = UserRepository.buildQueryConditions(conditions)
+    const urlsAndCount = await Url.scope([
       'defaultScope',
-      {
-        method: ['urlsWithQueryConditions', conditions],
-      },
+      'getClicks',
     ]).findAndCountAll({
-      subQuery: false, // set limit and offset at end of main query instead of subquery
+      where: whereConditions,
+      limit: conditions.limit,
+      offset: conditions.offset,
+      order: [
+        [
+          { model: UrlClicks, as: 'UrlClicks' },
+          conditions.orderBy,
+          conditions.sortDirection,
+        ],
+      ],
     })
-
-    if (!userCountAndArray) {
+    if (!urlsAndCount) {
       throw new NotFoundError(notFoundMessage)
     }
-
-    const { rows } = userCountAndArray
-    let { count } = userCountAndArray
-    const [userUrls] = rows
-
-    if (!userUrls) {
-      throw new NotFoundError(notFoundMessage)
-    }
-
-    const urls = userUrls.Urls.map((urlType) =>
-      this.urlMapper.persistenceToDto(urlType),
-    )
-
-    // count will always be >= 1 due to left outer join on user and url tables
-    // to handle edge case where count === 1 but user does not have any urls
-    if (urls.length === 0) {
-      count = 0
-    }
-
+    const { rows, count } = urlsAndCount
+    const urls = rows.map((urlType) => this.urlMapper.persistenceToDto(urlType))
     return { urls, count }
+  }
+
+  private static buildQueryConditions(conditions: UserUrlsQueryConditions) {
+    const searchTextCondition = {
+      [Op.or]: [
+        {
+          shortUrl: {
+            [Op.substring]: conditions.searchText,
+          },
+        },
+        {
+          longUrl: {
+            [Op.substring]: conditions.searchText,
+          },
+        },
+      ],
+    }
+    let whereConditions: any = { userId: conditions.userId }
+    if (conditions.searchText.length > 0) {
+      whereConditions = { ...whereConditions, ...searchTextCondition }
+    }
+
+    if (conditions.tags && conditions.tags.length > 0) {
+      const searchTagConditions = {
+        [Op.or]: conditions.tags.map((tag) => {
+          return { tagStrings: { [Op.iLike]: `%${escapeWildcard(tag)}%` } }
+        }),
+      }
+      whereConditions = { ...whereConditions, ...searchTagConditions }
+    }
+    if (conditions.state) {
+      whereConditions.state = conditions.state
+    }
+    if (conditions.isFile !== undefined) {
+      whereConditions.isFile = conditions.isFile
+    }
+    return whereConditions
   }
 }
 

@@ -12,6 +12,7 @@ export const downloadUrls = async (urlCount: number, tableConfig: any) => {
     'Short URL',
     'Original URL',
     'Status',
+    'Tags',
     'Visits',
     'Created At',
     'Last Modified\n',
@@ -40,12 +41,21 @@ export const downloadUrls = async (urlCount: number, tableConfig: any) => {
       if (isOk) {
         const { urls } = json
         urls.forEach((url) => {
-          const { shortUrl, longUrl, state, clicks, createdAt, updatedAt } = url
+          const {
+            shortUrl,
+            longUrl,
+            state,
+            tagStrings,
+            clicks,
+            createdAt,
+            updatedAt,
+          } = url
           //  eslint-disable-next-line prefer-template
           urlsArr.push([
             shortUrl,
             longUrl,
             state,
+            tagStrings,
             clicks,
             createdAt,
             `${updatedAt}\n`,

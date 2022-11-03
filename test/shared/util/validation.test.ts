@@ -149,3 +149,60 @@ describe('test isPrintableAscii', () => {
     expect(validation.isPrintableAscii('aAbBcC')).toBeTruthy()
   })
 })
+
+describe('Test valid tag check', () => {
+  test('check passes with empty string if blanks are allowed', () => {
+    expect(validation.isValidTag('', true)).toBe(true)
+  })
+
+  test('check passes with alphanumeric characters and hyphens and underscores', () => {
+    expect(validation.isValidTag('test123')).toBe(true)
+    expect(validation.isValidTag('foo_bar')).toBe(true)
+    expect(validation.isValidTag('TEST-TAG')).toBe(true)
+    expect(validation.isValidTag('aYs8-SNDw01_x')).toBe(true)
+  })
+
+  test('check fails with invalid characters', () => {
+    expect(validation.isValidTag('tag;1')).toBe(false)
+    expect(validation.isValidTag('foo,bar')).toBe(false)
+    expect(validation.isValidTag('A:B')).toBe(false)
+    expect(validation.isValidTag('one two')).toBe(false)
+    expect(validation.isValidTag('morning早上')).toBe(false)
+  })
+
+  test('check fails with length exceeding 25 characters', () => {
+    expect(validation.isValidTag('abcdefghijklmnopqrstuvwxyz')).toBe(false)
+  })
+
+  test('check fails with non-trimmed string', () => {
+    expect(validation.isValidTag(' test  ')).toBe(false)
+  })
+
+  test('check fails with empty string', () => {
+    expect(validation.isValidTag('')).toBe(false)
+  })
+})
+
+describe('Test valid tags check', () => {
+  test('check passes with at most 3 unique and valid tags', () => {
+    expect(validation.isValidTags(['tag', '2tag', 'OnE-2_ThrEe'])).toBe(true)
+    expect(validation.isValidTags(['tag', 'TAG'])).toBe(true)
+    expect(validation.isValidTags([])).toBe(true)
+  })
+
+  test('check fails with duplicate tags', () => {
+    expect(validation.isValidTags(['TesT', 'TesT'])).toBe(false)
+    expect(validation.isValidTags(['foo', 'bar', 'foo'])).toBe(false)
+  })
+
+  test('check fails with any invalid tag', () => {
+    expect(validation.isValidTags(['valid', 'valid-2', 'invalid,tag'])).toBe(
+      false,
+    )
+    expect(validation.isValidTags([' test '])).toBe(false)
+  })
+
+  test('check fails with more than 3 tags', () => {
+    expect(validation.isValidTags(['one', 'two', 'three', 'four'])).toBe(false)
+  })
+})

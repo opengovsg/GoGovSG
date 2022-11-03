@@ -15,8 +15,9 @@ export type StorableUrl = Pick<
   | 'description'
   | 'contactEmail'
   | 'source'
+  | 'tagStrings'
 > &
-  Pick<UrlClicksType, 'clicks'>
+  Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
 
 /**
  * A type that represents a file that can be stored in the data store.
@@ -44,6 +45,13 @@ export type UserUrlsQueryConditions = {
   userId: number
   state: string | undefined
   isFile: boolean | undefined
+  tags: string[]
+}
+
+export type UserTagsQueryConditions = {
+  searchText: string
+  limit: number
+  userId: number
 }
 
 export type UrlPublic = Pick<

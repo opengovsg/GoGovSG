@@ -7,7 +7,11 @@ import {
   UrlsPaginated,
   UserUrlsQueryConditions,
 } from '../../../repositories/types'
-import dogstatsd from '../../../util/dogstatsd'
+import dogstatsd, {
+  SHORTLINK_CREATE,
+  SHORTLINK_CREATE_TAG_IS_FILE,
+  SHORTLINK_CREATE_TAG_SOURCE,
+} from '../../../util/dogstatsd'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
@@ -17,6 +21,7 @@ import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepo
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 import { DependencyIds } from '../../../constants'
+import { BULK, CONSOLE } from '../../../models/types'
 import * as interfaces from '../interfaces'
 
 @injectable()
@@ -28,7 +33,8 @@ export class UrlManagementService implements interfaces.UrlManagementService {
   constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
-    @inject(DependencyIds.urlRepository) urlRepository: UrlRepositoryInterface,
+    @inject(DependencyIds.urlRepository)
+    urlRepository: UrlRepositoryInterface,
   ) {
     this.userRepository = userRepository
     this.urlRepository = urlRepository
@@ -39,9 +45,9 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     shortUrl: string,
     longUrl?: string,
     file?: GoUploadedFile,
-  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file) => {
+    tags?: string[],
+  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file, tags) => {
     const user = await this.userRepository.findById(userId)
-
     if (!user) {
       throw new NotFoundError('User not found')
     }
@@ -67,10 +73,14 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         userId: user.id,
         longUrl,
         shortUrl,
+        tags,
       },
       storableFile,
     )
-    dogstatsd.increment('shortlink.create', 1, 1, [`isfile:${!!file}`])
+    dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
+      `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${CONSOLE}`, // TODO: distinguish between console and API sources eventually
+    ])
 
     return result
   }
@@ -80,7 +90,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     shortUrl: string,
     options: UpdateUrlOptions,
   ) => Promise<StorableUrl> = async (userId, shortUrl, options) => {
-    const { state, longUrl, file, description, contactEmail } = options
+    const { state, longUrl, file, description, contactEmail, tags } = options
 
     const url = await this.userRepository.findOneUrlForUser(userId, shortUrl)
 
@@ -98,7 +108,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
     return this.urlRepository.update(
       url,
-      { longUrl, state, description, contactEmail },
+      { longUrl, state, description, contactEmail, tags },
       storableFile,
     )
   }
@@ -131,11 +141,9 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     }
 
     // Success
-    const result = await this.urlRepository.update(url, {
+    return this.urlRepository.update(url, {
       userId: newUserId,
     })
-
-    return result
   }
 
   getUrlsWithConditions: (
@@ -144,16 +152,21 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     return this.userRepository.findUrlsForUser(conditions)
   }
 
-  bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void> =
-    async (userId, urlMappings) => {
-      await this.urlRepository.bulkCreate({
-        userId,
-        urlMappings,
-      })
-      dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
-        `isbulk:true`,
-      ]) // TODO: extract metric and tag names
-    }
+  bulkCreate: (
+    userId: number,
+    urlMappings: BulkUrlMapping[],
+    tags?: string[],
+  ) => Promise<void> = async (userId, urlMappings, tags) => {
+    await this.urlRepository.bulkCreate({
+      userId,
+      urlMappings,
+      tags,
+    })
+    dogstatsd.increment(SHORTLINK_CREATE, urlMappings.length, 1, [
+      `${SHORTLINK_CREATE_TAG_IS_FILE}:false`,
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${BULK}`,
+    ])
+  }
 }
 
 export default UrlManagementService
