@@ -36,6 +36,14 @@ export class UserRepository implements UserRepositoryInterface {
     this.urlMapper = urlMapper
   }
 
+  public findUserByApiKey: (
+    apiKeyHash: string,
+  ) => Promise<StorableUser | null> = async (apiKeyHash: string) => {
+    return this.userMapper.persistenceToDto(
+      await User.findOne({ where: { apiKeyHash } }),
+    )
+  }
+
   public findById: (userId: number) => Promise<StorableUser | null> = async (
     userId,
   ) => {
@@ -159,6 +167,19 @@ export class UserRepository implements UserRepositoryInterface {
     }
     return whereConditions
   }
+
+  public saveApiKeyHash: (userId: number, apiKeyHash: string) => Promise<void> =
+    async (userId, apiKeyHash) => {
+      const user = await User.findOne({
+        where: { id: userId },
+      })
+      if (!user) {
+        throw new NotFoundError('User not found')
+      }
+      await user.update({
+        apiKeyHash,
+      })
+    }
 }
 
 export default UserRepository

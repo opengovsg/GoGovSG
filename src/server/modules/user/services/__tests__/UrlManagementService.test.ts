@@ -13,6 +13,8 @@ describe('UrlManagementService', () => {
     findUserByUrl: jest.fn(),
     findUrlsForUser: jest.fn(),
     findOrCreateWithEmail: jest.fn(),
+    findUserByApiKey: jest.fn(),
+    saveApiKeyHash: jest.fn(),
   }
 
   const urlRepository = {

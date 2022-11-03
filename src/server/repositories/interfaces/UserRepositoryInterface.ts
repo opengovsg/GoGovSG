@@ -58,4 +58,17 @@ export interface UserRepositoryInterface {
    * @returns Promise that resolves to an object containing the urls and total count.
    */
   findUrlsForUser(conditions: UserUrlsQueryConditions): Promise<UrlsPaginated>
+
+  /**
+   * Save ApiKey for user.
+   * @param userId
+   * @param apiKeyHash
+   */
+  saveApiKeyHash(userId: number, apiKeyHash: string): Promise<void>
+
+  /**
+   * Find User By API Key.
+   * @param apiKeyHash
+   */
+  findUserByApiKey(apiKeyHash: string): Promise<StorableUser | null>
 }

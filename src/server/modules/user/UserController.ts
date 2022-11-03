@@ -20,6 +20,7 @@ import {
   userUrlsQueryConditions,
 } from '../../api/user/validators'
 import TagManagementServiceInterface from './interfaces/TagManagementService'
+import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
 
 type AnnouncementResponse = {
   message?: string
@@ -33,11 +34,13 @@ type AnnouncementResponse = {
 export class UserController {
   private urlManagementService: UrlManagementService
 
-  private userMessage: string
+  private readonly userMessage: string
 
-  private userAnnouncement: AnnouncementResponse
+  private readonly userAnnouncement: AnnouncementResponse
 
   private tagManagementService: TagManagementServiceInterface
+
+  private apiKeyAuthService: ApiKeyAuthServiceInterface
 
   public constructor(
     @inject(DependencyIds.urlManagementService)
@@ -48,11 +51,14 @@ export class UserController {
     userAnnouncement: AnnouncementResponse,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,
+    @inject(DependencyIds.apiKeyAuthService)
+    apiKeyAuthService: ApiKeyAuthServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
     this.tagManagementService = tagManagementService
+    this.apiKeyAuthService = apiKeyAuthService
   }
 
   public createUrl: (
@@ -268,6 +274,21 @@ export class UserController {
         return
       }
       res.serverError(jsonMessage('Error retrieving Tags for user'))
+      return
+    }
+  }
+
+  public createAPIKey: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    try {
+      const { userId } = req.body
+      const apiKey = await this.apiKeyAuthService.upsertApiKey(userId)
+      res.ok(jsonMessage(apiKey))
+      return
+    } catch (error) {
+      res.serverError(jsonMessage('Error creating APIKey for user'))
       return
     }
   }

@@ -45,6 +45,12 @@ const expectedUrl = {
   tagStrings: undefined,
 }
 
+const baseUser = {
+  id: 2,
+  email: 'user@agency.gov.sg',
+  update: jest.fn(),
+}
+
 describe('UserRepository', () => {
   describe('findById', () => {
     const findByPk = jest.spyOn(userModelMock, 'findByPk')
@@ -293,6 +299,46 @@ describe('UserRepository', () => {
           { tagStrings: { [Symbol('iLike')]: '%tag%' } },
           { tagStrings: { [Symbol('iLike')]: '%tag\\_foo\\_bar%' } },
         ],
+      })
+    })
+  })
+
+  describe('saveApiKeyHash', () => {
+    const apiKeyHash = 'apiKeyHash'
+    const findOne = jest.spyOn(userModelMock, 'findOne')
+    const update = jest.spyOn(baseUser, 'update')
+    beforeEach(() => {
+      findOne.mockReset()
+      update.mockReset()
+    })
+    it("user's apiKeyHash is updated correctly", async () => {
+      findOne.mockResolvedValue(baseUser)
+      await userRepo.saveApiKeyHash(baseUser.id, apiKeyHash)
+      expect(findOne).toBeCalledTimes(1)
+      expect(update).toBeCalledTimes(1)
+      expect(update).toHaveBeenCalledWith({ apiKeyHash })
+    })
+    it('user not found, error is thrown', async () => {
+      findOne.mockResolvedValue(null)
+      await expect(
+        userRepo.saveApiKeyHash(baseUser.id, apiKeyHash),
+      ).rejects.toBeInstanceOf(NotFoundError)
+      expect(findOne).toBeCalledTimes(1)
+      expect(update).toBeCalledTimes(0)
+    })
+  })
+
+  describe('findUserByApiKey', async () => {
+    const apiKeyHash = 'apiKeyHash'
+    const findOne = jest.spyOn(userModelMock, 'findOne')
+    beforeEach(() => {
+      findOne.mockReset()
+    })
+    it('call find one with correct param', async () => {
+      await userRepo.findUserByApiKey(apiKeyHash)
+      expect(findOne).toHaveBeenCalledTimes(1)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { apiKeyHash },
       })
     })
   })

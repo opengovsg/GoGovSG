@@ -22,6 +22,10 @@ const tagManagementService = {
   getTagsWithConditions: jest.fn(),
 }
 
+const apiKeyAuthService = {
+  upsertApiKey: jest.fn(),
+}
+
 const userMessage = 'The quick brown fox jumps over a lazy dog'
 const userAnnouncement = {
   title: 'title',
@@ -36,6 +40,7 @@ describe('UserController', () => {
     userMessage,
     userAnnouncement,
     tagManagementService,
+    apiKeyAuthService,
   )
 
   describe('createUrl', () => {
@@ -579,6 +584,31 @@ describe('UserController', () => {
       expect(res.serverError).toHaveBeenCalledWith({
         message: expect.any(String),
       })
+    })
+  })
+
+  describe('createAPIKey', () => {
+    beforeEach(() => {
+      apiKeyAuthService.upsertApiKey.mockReset()
+    })
+    it('apiKeyService.createAPIKey is called exactly one time', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      await controller.createAPIKey(req, res)
+      expect(apiKeyAuthService.upsertApiKey).toHaveBeenCalledTimes(1)
+      expect(res.ok).toHaveBeenCalledTimes(1)
+    })
+    it('error is handled properly', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      apiKeyAuthService.upsertApiKey = jest
+        .fn()
+        .mockRejectedValue(new Error('Server Error'))
+      res.serverError = jest.fn()
+      await controller.createAPIKey(req, res)
+      expect(apiKeyAuthService.upsertApiKey).toHaveBeenCalledTimes(1)
+      expect(res.serverError).toHaveBeenCalledTimes(1)
     })
   })
 

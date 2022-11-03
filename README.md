@@ -171,18 +171,19 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |DD_SERVICE|No|Datadog service name to be used for the application|
 |DD_ENV|No|Datadog application environment, e.g. `staging`, `production`|
 
-|Environment Variable|Required|Description/Value|
-|:---:|:---:|:---|
-|EB_ENV_(EDU_/HEALTH_)PRODUCTION, EB_ENV_(EDU_/HEALTH_)STAGING|Yes|Elastic Beanstalk environment name|
-|EB_APP_PRODUCTION, EB_APP_STAGING|Yes|Elastic Beanstalk application name|
-|EB_BUCKET_PRODUCTION, EB_BUCKET_STAGING|Yes|S3 bucket used to store the application bundle|
-|PRODUCTION_BRANCH, STAGING_BRANCH|Yes|Name of Git branches for triggerring deployments to production/staging respectively|
-|ECR_URL|Yes|AWS ECR Docker container registry URI to push built images to|
-|ECR_REPO|Yes|Name of repository in AWS ECR containing images|
-|SENTRY_ORG|No|Sentry.io organisation name|
-|SENTRY_PROJECT_PRODUCTION, SENTRY_PROJECT_STAGING|No|Sentry.io project name|
-|SENTRY_URL|No|Sentry.io URL e.g. `https://sentry.io/`|
-|SENTRY_DNS_PRODUCTION,SENTRY_DNS_STAGING|No|Sentry.io endpoint to post client-side errors to|
+|                     Environment Variable                      | Required | Description/Value                                                                   |
+|:-------------------------------------------------------------:|:--------:|:------------------------------------------------------------------------------------|
+| EB_ENV_(EDU_/HEALTH_)PRODUCTION, EB_ENV_(EDU_/HEALTH_)STAGING |   Yes    | Elastic Beanstalk environment name                                                  |
+|               EB_APP_PRODUCTION, EB_APP_STAGING               |   Yes    | Elastic Beanstalk application name                                                  |
+|            EB_BUCKET_PRODUCTION, EB_BUCKET_STAGING            |   Yes    | S3 bucket used to store the application bundle                                      |
+|               PRODUCTION_BRANCH, STAGING_BRANCH               |   Yes    | Name of Git branches for triggerring deployments to production/staging respectively |
+|                            ECR_URL                            |   Yes    | AWS ECR Docker container registry URI to push built images to                       |
+|                           ECR_REPO                            |   Yes    | Name of repository in AWS ECR containing images                                     |
+|                          SENTRY_ORG                           |    No    | Sentry.io organisation name                                                         |
+|       SENTRY_PROJECT_PRODUCTION, SENTRY_PROJECT_STAGING       |    No    | Sentry.io project name                                                              |
+|                          SENTRY_URL                           |    No    | Sentry.io URL e.g. `https://sentry.io/`                                             |
+|           SENTRY_DNS_PRODUCTION,SENTRY_DNS_STAGING            |    No    | Sentry.io endpoint to post client-side errors to                                    |
+|                         API_KEY_SALT                          |   Yes    | Salt used for APIKey hashing, guide to salt generation [here](#salt-generation)     |
 
 ## Operations
 
@@ -312,3 +313,11 @@ It can be used as a browser extension (for [Chrome](https://chrome.google.com/we
 ### Infrastructure
 
 Diagrams for our infrastructure setup can be found [here](https://lucid.app/lucidchart/81dee53d-5fdc-4c79-a3ca-018287531ab3/view?page=0_0#).
+
+## Mics
+
+### Salt generation
+
+```javascript
+let salt = bcrypt.genSaltSync(10)
+```

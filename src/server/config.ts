@@ -35,6 +35,7 @@ const requiredVars: string[] = [
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
   'AWS_S3_BUCKET', // For file.go.gov.sg uploads
+  'API_KEY_SALT', // To generate APIKey
 ]
 
 // AWS Simple Email Service
@@ -245,3 +246,8 @@ export const bulkUploadMaxNum: number =
   Number(process.env.BULK_UPLOAD_MAX_NUM) || 1000
 export const bulkUploadRandomStrLength: number =
   Number(process.env.BULK_UPLOAD_RANDOM_STR_LENGTH) || 8
+
+export const apiKeyVersion: string = process.env.API_KEY_VERSION || 'v1'
+export const apiEnv: string =
+  process.env.NODE_ENV === 'production' ? 'live' : 'test'
+export const apiKeySalt = process.env.API_KEY_SALT as string
