@@ -128,8 +128,11 @@ After these have been set up, set the environment variables according to the tab
 |CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
 |CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|
 |SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|
+|SAFE_BROWSING_LOG_ONLY|No|Boolean, whether to log only, or throw error if unsafe link is found by Google SafeBrowsing. Defaults to false|
 |ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `gov`, `edu`, `health`|
 |COOKIE_MAX_AGE|Yes|Session duration of cookie|
+|BULK_UPLOAD_MAX_NUM|No|Maximum number of links that can be bulk uploaded at once. Defaults to 1000|
+|BULK_UPLOAD_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in bulk upload. Defaults to 8|
 |REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 
 #### Serverless functions for link migration

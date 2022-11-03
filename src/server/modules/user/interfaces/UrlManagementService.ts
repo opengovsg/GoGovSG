@@ -1,4 +1,5 @@
 import {
+  BulkUrlMapping,
   StorableUrl,
   UrlsPaginated,
   UserUrlsQueryConditions,
@@ -6,6 +7,7 @@ import {
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 
 export interface UrlManagementService {
+  bulkCreate: (userId: number, urlMappings: BulkUrlMapping[]) => Promise<void>
   createUrl: (
     userId: number,
     shortUrl: string,

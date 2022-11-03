@@ -50,6 +50,8 @@ services:
       - POSTMAN_API_KEY=
       - POSTMAN_API_URL=
       - ACTIVATE_POSTMAN_FALLBACK=
+      - BULK_UPLOAD_MAX_NUM=1000
+      - BULK_UPLOAD_RANDOM_STR_LENGTH=8
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src

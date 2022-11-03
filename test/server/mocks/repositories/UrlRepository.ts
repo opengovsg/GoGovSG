@@ -3,12 +3,16 @@
 import { injectable } from 'inversify'
 import { UrlRepositoryInterface } from '../../../../src/server/repositories/interfaces/UrlRepositoryInterface'
 import {
+  BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlDirectoryPaginated,
   UrlsPaginated,
 } from '../../../../src/server/repositories/types'
-import { StorableUrlState } from '../../../../src/server/repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../../src/server/repositories/enums'
 import { SearchResultsSortOrder } from '../../../../src/shared/search'
 import { DirectoryQueryConditions } from '../../../../src/server/modules/directory'
 
@@ -74,10 +78,18 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           description: '',
           contactEmail: null,
           clicks: 0,
+          source: StorableUrlSource.Console,
         },
       ],
       count: 0,
     })
+  }
+
+  bulkCreate: (properties: {
+    userId: number
+    urlMappings: BulkUrlMapping[]
+  }) => Promise<void> = () => {
+    return Promise.resolve()
   }
 }
 

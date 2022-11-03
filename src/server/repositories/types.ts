@@ -14,6 +14,7 @@ export type StorableUrl = Pick<
   | 'updatedAt'
   | 'description'
   | 'contactEmail'
+  | 'source'
 > &
   Pick<UrlClicksType, 'clicks'>
 
@@ -31,6 +32,8 @@ export type StorableUser = {
   urls?: Array<StorableUrl>
   id: number
 }
+
+export type BulkUrlMapping = Pick<StorableUrl, 'shortUrl' | 'longUrl'>
 
 export type UserUrlsQueryConditions = {
   limit: number
