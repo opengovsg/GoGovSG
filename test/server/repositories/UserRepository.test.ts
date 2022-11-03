@@ -342,4 +342,8 @@ describe('UserRepository', () => {
       })
     })
   })
+
+  describe('createApiKey', () => {
+    // const apiKey =
+  })
 })
