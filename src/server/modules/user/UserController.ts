@@ -19,6 +19,10 @@ import {
   userTagsQueryConditions,
   userUrlsQueryConditions,
 } from '../../api/user/validators'
+import dogstatsd, {
+  SEARCH_USER_URL,
+  SEARCH_USER_URL_TAG_IS_TAG,
+} from '../../util/dogstatsd'
 import TagManagementServiceInterface from './interfaces/TagManagementService'
 import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
 
@@ -203,6 +207,9 @@ export class UserController {
     try {
       const { urls, count } =
         await this.urlManagementService.getUrlsWithConditions(queryConditions)
+      dogstatsd.increment(SEARCH_USER_URL, 1, 1, [
+        `${SEARCH_USER_URL_TAG_IS_TAG}:${queryConditions.tags.length > 0}`,
+      ])
       res.ok({ urls, count })
       return
     } catch (error) {
