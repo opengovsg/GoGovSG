@@ -1,13 +1,18 @@
 import React, { FunctionComponent } from 'react'
 
 import {
-  Button,
-  TextField,
   Typography,
   createStyles,
   makeStyles,
+  useMediaQuery,
+  useTheme,
 } from '@material-ui/core'
 import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
+import PrefixableTextField from '../../../user/widgets/PrefixableTextField'
+import TrailingButton from '../../../user/components/Drawer/ControlPanel/widgets/TrailingButton'
+import ConfigOption, {
+  TrailingPosition,
+} from '../../../user/widgets/ConfigOption'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -20,8 +25,15 @@ const useStyles = makeStyles((theme) =>
         marginTop: theme.spacing(6),
       },
     },
+    configOptionWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'left',
+      maxWidth: '775px',
+    },
     apiKeyInfoText: {
       textAlign: 'left',
+      marginBottom: theme.spacing(1),
     },
     createApiKeyButton: {
       marginTop: '41px',
@@ -33,14 +45,8 @@ const useStyles = makeStyles((theme) =>
         backgroundColor: theme.palette.primary.dark,
       },
     },
-    plusIcon: {
-      width: '15px',
-    },
-    emptyStateGraphic: {
-      marginTop: '63px',
-      marginBottom: '76px',
-      position: 'relative',
-      zIndex: -1,
+    retryIcon: {
+      width: '17px',
     },
   }),
 )
@@ -50,35 +56,47 @@ const useStyles = makeStyles((theme) =>
  */
 const ApiKeyGraphic: FunctionComponent = () => {
   const classes = useStyles()
+  const theme = useTheme()
+  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   return (
     <div className={classes.root}>
       <Typography variant="body1" className={classes.apiKeyInfoText}>
         After generating your API key, please make a copy of it immediately as
         it will only be shown once. Upon leaving or refreshing this page, the
         key will be hidden.
-        <br />
-        Your API Key
       </Typography>
-      <TextField
-        disabled
-        variant="outlined"
-        type="text"
-        value="******************"
-      />
-      <Button
-        className={classes.createApiKeyButton}
-        // key={}
-        onClick={() => {
-          alert('clicked')
-        }}
-      >
-        Generate API Key&nbsp;
-        <img
-          className={classes.plusIcon}
-          src={retryIcon}
-          alt="generate api key"
+      <div className={classes.configOptionWrapper}>
+        <ConfigOption
+          title="Your API Key"
+          leading={
+            <PrefixableTextField
+              value="******************"
+              onChange={() => {}}
+              placeholder="Email of link recipient"
+              helperText={' '}
+              disabled
+            />
+          }
+          trailing={
+            <TrailingButton
+              onClick={() => {
+                alert('clicked')
+              }}
+              variant="contained"
+              fullWidth={isMobileView}
+            >
+              Regenerate &nbsp;
+              <img
+                className={classes.retryIcon}
+                src={retryIcon}
+                alt="generate api key"
+              />
+            </TrailingButton>
+          }
+          wrapTrailing={isMobileView}
+          trailingPosition={TrailingPosition.end}
         />
-      </Button>
+      </div>
     </div>
   )
 }

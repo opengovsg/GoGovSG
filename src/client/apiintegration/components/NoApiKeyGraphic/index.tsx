@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     plusIcon: {
-      width: '15px',
+      width: '17px',
     },
     emptyStateGraphic: {
       marginTop: '63px',
