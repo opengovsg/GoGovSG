@@ -20,6 +20,9 @@ import {
   generateUrlImage,
   longUrl,
   longUrlTextField,
+  noResultsFoundText,
+  searchBarLinkButton,
+  searchBarLinksInput,
   searchBarTagButton,
   searchBarTagsInput,
   shortUrlTextField,
@@ -160,6 +163,19 @@ test('User page test on filter search by link', async (t) => {
     .click(clickAway)
     .expect(filterSortPanel.getStyleProperty('height'))
     .eql('0px')
+
+  // Searching for a non-existent link should show that no results are found
+  await t
+    .typeText(searchBarLinksInput, 'this-link-does-not-exist')
+    .wait(1000)
+    // Should display no results found
+    .expect(noResultsFoundText.exists)
+    .ok()
+    // Links input and dropdown should still exist
+    .expect(searchBarLinkButton.exists)
+    .ok()
+    .expect(searchBarLinksInput.exists)
+    .ok()
 })
 
 test('User page test on filter search by tags', async (t) => {
@@ -208,7 +224,7 @@ test('User page test on filter search by tags', async (t) => {
   // Click on tag 1 from url 1
   await t
     .click(linkTableRow1.find('span').withExactText(tagText1))
-    .wait(3000)
+    .wait(2000)
     // Link table should show urls 2 and 1 on top
     .expect(urlTableRowUrlText(0))
     .eql(`/${generatedUrl2}`)
@@ -224,7 +240,7 @@ test('User page test on filter search by tags', async (t) => {
   // Click on tag 2 from url 2
   await t
     .click(linkTableRow2.find('span').withExactText(tagText2))
-    .wait(3000)
+    .wait(2000)
     // Link table should show urls 3, 2, and 1 on top
     .expect(urlTableRowUrlText(0))
     .eql(`/${generatedUrl3}`)
@@ -242,7 +258,7 @@ test('User page test on filter search by tags', async (t) => {
   // Add semicolon and non-existent tag to search input
   await t
     .typeText(searchBarTagsInput, `${TAG_SEPARATOR}zzzzzzzzzzzzzzzzzzzz`)
-    .wait(3000)
+    .wait(2000)
     // Link table should still show urls 3, 2, and 1 on top (because of OR condition between search tags)
     .expect(urlTableRowUrlText(0))
     .eql(`/${generatedUrl3}`)
@@ -255,7 +271,7 @@ test('User page test on filter search by tags', async (t) => {
   await t
     .click(searchBarTagsInput)
     .pressKey('ctrl+a delete')
-    .wait(3000)
+    .wait(2000)
     // Link table should show urls 3, 2, and 1 on top
     .expect(urlTableRowUrlText(0))
     .eql(`/${generatedUrl3}`)
@@ -272,4 +288,19 @@ test('User page test on filter search by tags', async (t) => {
     .eql(`/${generatedUrl2}`)
     .expect(urlTableRowUrlText(1))
     .eql(`/${generatedUrl1}`)
+
+  // Change search input to a single non-existent tag
+  await t
+    .click(searchBarTagsInput)
+    .pressKey('ctrl+a delete')
+    .typeText(searchBarTagsInput, 'this-tag-does-not-exist')
+    .wait(2000)
+    // Should display no results found
+    .expect(noResultsFoundText.exists)
+    .ok()
+    // Tag input and dropdown should still exist
+    .expect(searchBarTagButton.exists)
+    .ok()
+    .expect(searchBarTagsInput.exists)
+    .ok()
 })
