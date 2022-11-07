@@ -6,6 +6,7 @@ import MemoTablePagination from './MemoTablePagination'
 import userActions from '../../../actions'
 import { GoGovReduxState } from '../../../../app/reducers/types'
 import { UrlTableConfig } from '../../../reducers/types'
+import StatusBar from '../StatusBar'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -31,6 +32,7 @@ const UrlTable = () => {
 
   return (
     <div className={classes.urlTable}>
+      <StatusBar />
       <Table aria-label="table with urls">
         <EnhancedTableBody />
       </Table>
