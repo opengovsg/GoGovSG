@@ -54,6 +54,9 @@ async function handler(event) {
     await snsService.sendSNSMessage(true, filePath, '')
     return { Status: `Send success message to SNS for ${filePath}` }
   } catch (error) {
+    // cleanup
+    await fsUtils.fsRmdirRecursiveSync(`/tmp/${filePath}`)
+
     await snsService.sendSNSMessage(false, filePath, error)
     throw Error(`Failed to generate files, Error: ${error} `)
   }
