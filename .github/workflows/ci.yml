@@ -23,54 +23,54 @@ env:
   SENTRY_DNS_PRODUCTION: https://a76d61749b824d8fa8ad84eee7ecc882@o372043.ingest.sentry.io/5193500
   SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
 jobs:
-  # ci:
-  #   name: CI
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Use Node.js
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: '14.x'
-  #     - name: Cache Node.js modules
-  #       uses: actions/cache@v2
-  #       with:
-  #         # npm cache files are stored in `~/.npm` on Linux/macOS
-  #         path: ~/.npm
-  #         key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.OS }}-node-
-  #           ${{ runner.OS }}-
-  #     - run: npm ci
-  #     - run: npm run lint
-  #     - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
-  #     - run: npm run build
-  #       env:
-  #         ASSET_VARIANT: gov
-  # test:
-  #   name: Test
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Use Node.js
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: '14.x'
-  #     - name: Cache Node.js modules
-  #       uses: actions/cache@v2
-  #       with:
-  #         # npm cache files are stored in `~/.npm` on Linux/macOS
-  #         path: ~/.npm
-  #         key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.OS }}-node-
-  #           ${{ runner.OS }}-
-  #     - run: npm ci
-  #     - run: npm run test
-  #     - name: Coveralls
-  #       uses: coverallsapp/github-action@master
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  ci:
+    name: CI
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - run: npm run lint
+      - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
+      - run: npm run build
+        env:
+          ASSET_VARIANT: gov
+  test:
+    name: Test
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - run: npm run test
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
   testcafe:
     name: End To End Tests
     runs-on: ubuntu-18.04
@@ -113,302 +113,302 @@ jobs:
             print('::set-output name=proceed::true')
           else:
             print('::set-output name=proceed::false')
-  # sentry:
-  #   name: Upload sourcemap to Sentry
-  #   runs-on: ubuntu-18.04
-  #   needs: [gatekeep]
-  #   if: needs.gatekeep.outputs.proceed == 'true'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Use Node.js
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: '14.x'
-  #     - name: Cache Node.js modules
-  #       uses: actions/cache@v2
-  #       with:
-  #         # npm cache files are stored in `~/.npm` on Linux/macOS
-  #         path: ~/.npm
-  #         key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-  #         restore-keys: |
-  #           ${{ runner.OS }}-node-
-  #           ${{ runner.OS }}-
-  #     - run: npm ci
-  #     - name: Select Sentry variables
-  #       shell: python
-  #       run: |
-  #         import os
-  #         branch = os.environ['GITHUB_REF']
-  #         staging = os.environ['STAGING_BRANCH']
-  #         production = os.environ['PRODUCTION_BRANCH']
-  #         sentry_project_staging = os.environ['SENTRY_PROJECT_STAGING']
-  #         sentry_dns_staging = os.environ['SENTRY_DNS_STAGING']
-  #         sentry_project_production = os.environ['SENTRY_PROJECT_PRODUCTION']
-  #         sentry_dns_production = os.environ['SENTRY_DNS_PRODUCTION']
-  #         github_env = os.environ['GITHUB_ENV']
-  #         file = open(github_env, 'a')
-  #         if branch == staging:
-  #           file.write('SENTRY_PROJECT={}\n'.format(sentry_project_staging))
-  #           file.write('SENTRY_DNS={}\n'.format(sentry_dns_staging))
-  #         elif branch == production:
-  #           file.write('SENTRY_PROJECT={}\n'.format(sentry_project_production))
-  #           file.write('SENTRY_DNS={}\n'.format(sentry_dns_production))
-  #         file.close()
-  #     - name: Upload to Sentry
-  #       run: npm run build
-  #       env:
-  #         ASSET_VARIANT: gov
-  #         SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  # build-gogov:
-  #   name: Build and push for gogov
-  #   runs-on: ubuntu-18.04
-  #   needs: [gatekeep]
-  #   if: needs.gatekeep.outputs.proceed == 'true'
-  #   outputs:
-  #     branch: ${{ steps.extract_branch.outputs.branch }}
-  #     tag: ${{steps.extract_tag.outputs.tag}}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Extract branch name
-  #       shell: bash
-  #       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-  #       id: extract_branch
-  #     - name: Extract ECR tag
-  #       shell: bash
-  #       run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA})"
-  #       id: extract_tag
-  #       env:
-  #         BRANCH: ${{ steps.extract_branch.outputs.branch }}
-  #         SHA: ${{ github.sha }}
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ap-southeast-1
-  #     - name: Login to Amazon ECR
-  #       id: login_ecr
-  #       uses: aws-actions/amazon-ecr-login@v1
-  #     - run: |
-  #         if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-  #           echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-  #         elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-  #           echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-  #         fi
-  #     - name: Build, tag, and push image to Amazon ECR
-  #       env:
-  #         REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
-  #         TAG: ${{ steps.extract_tag.outputs.tag }}
-  #       run: |
-  #         docker build --tag my-image --build-arg __ASSET_VARIANT=gov --build-arg __DD_SERVICE=go-gov --build-arg __DD_ENV=${SERVERLESS_STAGE} .
-  #         docker tag my-image ${REPO}:${TAG}
-  #         docker push ${REPO}:${TAG}
-  # deploy-gogov:
-  #   name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
-  #   runs-on: ubuntu-18.04
-  #   needs: [ci, test, gatekeep, build-gogov]
-  #   if: needs.gatekeep.outputs.proceed == 'true'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Use Node.js 14.x
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: '14.x'
-  #     - run: |
-  #         echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
-  #         if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-  #           echo BRANCH_ENV=staging >> $GITHUB_ENV;
-  #         elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-  #           echo BRANCH_ENV=production >> $GITHUB_ENV;
-  #         fi
-  #     - name: Package Dockerrun.aws.json
-  #       run: |
-  #         sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
-  #         sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-  #         sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
-  #         zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
-  #       env:
-  #         REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
-  #         TAG: ${{ needs.build-gogov.outputs.tag }}
-  #         DD_API_KEY: ${{ secrets.DD_API_KEY }}
-  #         DD_ENV: ${{ env.BRANCH_ENV }}
-  #         DD_SERVICE: go-gov
-  #     - name: Get timestamp
-  #       shell: bash
-  #       run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
-  #       id: get_timestamp
-  #     - name: Get Elastic Beanstalk label
-  #       shell: bash
-  #       run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
-  #       id: get_label
-  #       env:
-  #         TAG: ${{ needs.build-gogov.outputs.tag }}
-  #         TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-  #     - name: Select Elastic Beanstalk variables
-  #       shell: python
-  #       run: |
-  #         import os
-  #         branch = os.environ['GITHUB_REF']
-  #         staging = os.environ['STAGING_BRANCH']
-  #         production = os.environ['PRODUCTION_BRANCH']
-  #         eb_app_staging = os.environ['EB_APP_STAGING']
-  #         eb_env_staging = os.environ['EB_ENV_STAGING']
-  #         eb_app_production = os.environ['EB_APP_PRODUCTION']
-  #         eb_env_production = os.environ['EB_ENV_PRODUCTION']
-  #         if branch == staging:
-  #           print('::set-output name=eb_app::' + eb_app_staging)
-  #           print('::set-output name=eb_env::' + eb_env_staging)
-  #         elif branch == production:
-  #           print('::set-output name=eb_app::' + eb_app_production)
-  #           print('::set-output name=eb_env::' + eb_env_production)
-  #       id: select_eb_vars
-  #     - name: Deploy to EB
-  #       uses: opengovsg/beanstalk-deploy@v11
-  #       with:
-  #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
-  #         environment_name: ${{ steps.select_eb_vars.outputs.eb_env }}
-  #         version_label: ${{ steps.get_label.outputs.label }}
-  #         region: ap-southeast-1
-  #         deployment_package: deploy.zip
-  #         wait_for_deployment: false
-  #         wait_for_environment_recovery: false
-  #     - name: serverless deploy
-  #       uses: opengovsg/serverless-github-action@v3.0.0
-  #       with:
-  #         args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
-  #         entrypoint: /bin/bash
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-  # build-edu:
-  #   name: Build and push for edu
-  #   runs-on: ubuntu-18.04
-  #   needs: [gatekeep]
-  #   if: needs.gatekeep.outputs.proceed == 'true'
-  #   outputs:
-  #     branch: ${{ steps.extract_branch.outputs.branch }}
-  #     tag: ${{steps.extract_tag.outputs.tag}}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Extract branch name
-  #       shell: bash
-  #       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-  #       id: extract_branch
-  #     - name: Extract ECR tag
-  #       shell: bash
-  #       run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA}-edu)"
-  #       id: extract_tag
-  #       env:
-  #         BRANCH: ${{ steps.extract_branch.outputs.branch }}
-  #         SHA: ${{ github.sha }}
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ap-southeast-1
-  #     - name: Login to Amazon ECR
-  #       id: login_ecr
-  #       uses: aws-actions/amazon-ecr-login@v1
-  #     - run: |
-  #         if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-  #           echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
-  #         elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-  #           echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
-  #         fi
-  #     - name: Build, tag, and push image to Amazon ECR
-  #       env:
-  #         REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
-  #         TAG: ${{ steps.extract_tag.outputs.tag }}
-  #       run: |
-  #         docker build --tag my-image --build-arg __ASSET_VARIANT=edu --build-arg __DD_SERVICE=go-edu --build-arg __DD_ENV=${SERVERLESS_STAGE} .
-  #         docker tag my-image ${REPO}:${TAG}
-  #         docker push ${REPO}:${TAG}
-  # deploy-edu:
-  #   name: Deploy to Elastic Beanstalk and AWS Lambda for edu
-  #   runs-on: ubuntu-18.04
-  #   needs: [ci, test, gatekeep, build-edu]
-  #   if: needs.gatekeep.outputs.proceed == 'true'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Use Node.js 14.x
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: '14.x'
-  #     - run: |
-  #         echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
-  #         if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
-  #           echo BRANCH_ENV=staging >> $GITHUB_ENV;
-  #         elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
-  #           echo BRANCH_ENV=production >> $GITHUB_ENV;
-  #         fi
-  #     - name: Package Dockerrun.aws.json
-  #       run: |
-  #         sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
-  #         sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-  #         sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
-  #         zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
-  #       env:
-  #         REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
-  #         TAG: ${{ needs.build-edu.outputs.tag }}
-  #         DD_API_KEY: ${{ secrets.DD_API_KEY }}
-  #         DD_ENV: ${{ env.BRANCH_ENV }}
-  #         DD_SERVICE: go-edu
-  #     - name: Get timestamp
-  #       shell: bash
-  #       run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
-  #       id: get_timestamp
-  #     - name: Get Elastic Beanstalk label
-  #       shell: bash
-  #       run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
-  #       id: get_label
-  #       env:
-  #         TAG: ${{ needs.build-edu.outputs.tag }}
-  #         TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-  #     - name: Select Elastic Beanstalk variables
-  #       shell: python
-  #       run: |
-  #         import os
-  #         branch = os.environ['GITHUB_REF']
-  #         staging = os.environ['STAGING_BRANCH']
-  #         production = os.environ['PRODUCTION_BRANCH']
-  #         eb_app_staging = os.environ['EB_APP_STAGING']
-  #         eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
-  #         eb_app_production = os.environ['EB_APP_PRODUCTION']
-  #         eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
-  #         if branch == staging:
-  #           print('::set-output name=eb_app::' + eb_app_staging)
-  #           print('::set-output name=eb_env_edu::' + eb_env_edu_staging)
-  #         elif branch == production:
-  #           print('::set-output name=eb_app::' + eb_app_production)
-  #           print('::set-output name=eb_env_edu::' + eb_env_edu_production)
-  #       id: select_eb_vars
-  #     - name: Deploy to EB edu
-  #       uses: opengovsg/beanstalk-deploy@v11
-  #       if: steps.select_eb_vars.outputs.eb_env_edu
-  #       with:
-  #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
-  #         environment_name: ${{ steps.select_eb_vars.outputs.eb_env_edu }}
-  #         version_label: ${{ steps.get_label.outputs.label }}
-  #         region: ap-southeast-1
-  #         deployment_package: deploy.zip
-  #         use_existing_version_if_available: true
-  #         wait_for_deployment: false
-  #         wait_for_environment_recovery: false
-  #     - name: serverless deploy
-  #       uses: opengovsg/serverless-github-action@v3.0.0
-  #       with:
-  #         args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
-  #         entrypoint: /bin/bash
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
+  sentry:
+    name: Upload sourcemap to Sentry
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci
+      - name: Select Sentry variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          sentry_project_staging = os.environ['SENTRY_PROJECT_STAGING']
+          sentry_dns_staging = os.environ['SENTRY_DNS_STAGING']
+          sentry_project_production = os.environ['SENTRY_PROJECT_PRODUCTION']
+          sentry_dns_production = os.environ['SENTRY_DNS_PRODUCTION']
+          github_env = os.environ['GITHUB_ENV']
+          file = open(github_env, 'a')
+          if branch == staging:
+            file.write('SENTRY_PROJECT={}\n'.format(sentry_project_staging))
+            file.write('SENTRY_DNS={}\n'.format(sentry_dns_staging))
+          elif branch == production:
+            file.write('SENTRY_PROJECT={}\n'.format(sentry_project_production))
+            file.write('SENTRY_DNS={}\n'.format(sentry_dns_production))
+          file.close()
+      - name: Upload to Sentry
+        run: npm run build
+        env:
+          ASSET_VARIANT: gov
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+  build-gogov:
+    name: Build and push for gogov
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA})"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+      - name: Login to Amazon ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - run: |
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
+          TAG: ${{ steps.extract_tag.outputs.tag }}
+        run: |
+          docker build --tag my-image --build-arg __ASSET_VARIANT=gov --build-arg __DD_SERVICE=go-gov --build-arg __DD_ENV=${SERVERLESS_STAGE} .
+          docker tag my-image ${REPO}:${TAG}
+          docker push ${REPO}:${TAG}
+  deploy-gogov:
+    name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
+    runs-on: ubuntu-18.04
+    needs: [ci, test, gatekeep, build-gogov]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo BRANCH_ENV=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo BRANCH_ENV=production >> $GITHUB_ENV;
+          fi
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build-gogov.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
+          DD_SERVICE: go-gov
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
+        id: get_label
+        env:
+          TAG: ${{ needs.build-gogov.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_staging = os.environ['EB_ENV_STAGING']
+          eb_app_production = os.environ['EB_APP_PRODUCTION']
+          eb_env_production = os.environ['EB_ENV_PRODUCTION']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env::' + eb_env_staging)
+          elif branch == production:
+            print('::set-output name=eb_app::' + eb_app_production)
+            print('::set-output name=eb_env::' + eb_env_production)
+        id: select_eb_vars
+      - name: Deploy to EB
+        uses: opengovsg/beanstalk-deploy@v11
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          wait_for_deployment: false
+          wait_for_environment_recovery: false
+      - name: serverless deploy
+        uses: opengovsg/serverless-github-action@v3.0.0
+        with:
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
+          entrypoint: /bin/bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
+  build-edu:
+    name: Build and push for edu
+    runs-on: ubuntu-18.04
+    needs: [gatekeep]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+      tag: ${{steps.extract_tag.outputs.tag}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA}-edu)"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+      - name: Login to Amazon ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - run: |
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
+          fi
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
+          TAG: ${{ steps.extract_tag.outputs.tag }}
+        run: |
+          docker build --tag my-image --build-arg __ASSET_VARIANT=edu --build-arg __DD_SERVICE=go-edu --build-arg __DD_ENV=${SERVERLESS_STAGE} .
+          docker tag my-image ${REPO}:${TAG}
+          docker push ${REPO}:${TAG}
+  deploy-edu:
+    name: Deploy to Elastic Beanstalk and AWS Lambda for edu
+    runs-on: ubuntu-18.04
+    needs: [ci, test, gatekeep, build-edu]
+    if: needs.gatekeep.outputs.proceed == 'true'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
+          if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
+            echo BRANCH_ENV=staging >> $GITHUB_ENV;
+          elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
+            echo BRANCH_ENV=production >> $GITHUB_ENV;
+          fi
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build-edu.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
+          DD_SERVICE: go-edu
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
+        id: get_label
+        env:
+          TAG: ${{ needs.build-edu.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_edu_staging = os.environ['EB_ENV_EDU_STAGING']
+          eb_app_production = os.environ['EB_APP_PRODUCTION']
+          eb_env_edu_production = os.environ['EB_ENV_EDU_PRODUCTION']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env_edu::' + eb_env_edu_staging)
+          elif branch == production:
+            print('::set-output name=eb_app::' + eb_app_production)
+            print('::set-output name=eb_env_edu::' + eb_env_edu_production)
+        id: select_eb_vars
+      - name: Deploy to EB edu
+        uses: opengovsg/beanstalk-deploy@v11
+        if: steps.select_eb_vars.outputs.eb_env_edu
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env_edu }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          use_existing_version_if_available: true
+          wait_for_deployment: false
+          wait_for_environment_recovery: false
+      - name: serverless deploy
+        uses: opengovsg/serverless-github-action@v3.0.0
+        with:
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
+          entrypoint: /bin/bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
   build-health:
     name: Build and push for health
     runs-on: ubuntu-18.04
@@ -418,45 +418,45 @@ jobs:
       branch: ${{ steps.extract_branch.outputs.branch }}
       tag: ${{steps.extract_tag.outputs.tag}}
     steps:
-      # - uses: actions/checkout@v2
-      # - name: Extract branch name
-      #   shell: bash
-      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      #   id: extract_branch
-      # - name: Extract ECR tag
-      #   shell: bash
-      #   run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA}-health)"
-      #   id: extract_tag
-      #   env:
-      #     BRANCH: ${{ steps.extract_branch.outputs.branch }}
-      #     SHA: ${{ github.sha }}
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: ap-southeast-1
-      # - name: Login to Amazon ECR
-      #   id: login_ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
+      - uses: actions/checkout@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Extract ECR tag
+        shell: bash
+        run: echo "##[set-output name=tag;]$(echo ghactions-${BRANCH}-${SHA}-health)"
+        id: extract_tag
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+      - name: Login to Amazon ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v1
       - run: |
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
             echo SERVERLESS_STAGE=staging >> $GITHUB_ENV;
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
             echo SERVERLESS_STAGE=production >> $GITHUB_ENV;
           fi
-      # - name: Build, tag, and push image to Amazon ECR
-      #   env:
-      #     REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
-      #     TAG: ${{ steps.extract_tag.outputs.tag }}
-      #   run: |
-      #     docker build --tag my-image --build-arg __ASSET_VARIANT=health  --build-arg __DD_SERVICE=go-health --build-arg __DD_ENV=${SERVERLESS_STAGE} .
-      #     docker tag my-image ${REPO}:${TAG}
-      #     docker push ${REPO}:${TAG}
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
+          TAG: ${{ steps.extract_tag.outputs.tag }}
+        run: |
+          docker build --tag my-image --build-arg __ASSET_VARIANT=health  --build-arg __DD_SERVICE=go-health --build-arg __DD_ENV=${SERVERLESS_STAGE} .
+          docker tag my-image ${REPO}:${TAG}
+          docker push ${REPO}:${TAG}
   deploy-health:
     name: Deploy to Elastic Beanstalk and AWS Lambda for health
     runs-on: ubuntu-18.04
-    needs: [build-health]
+    needs: [ci, test, gatekeep, build-health]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
@@ -471,61 +471,61 @@ jobs:
           elif [[ $GITHUB_REF == $PRODUCTION_BRANCH ]]; then
             echo BRANCH_ENV=production >> $GITHUB_ENV;
           fi
-      # - name: Package Dockerrun.aws.json
-      #   run: |
-      #     sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
-      #     sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
-      #     sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
-      #     zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
-      #   env:
-      #     REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
-      #     TAG: ${{ needs.build-health.outputs.tag }}
-      #     DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      #     DD_ENV: ${{ env.BRANCH_ENV }}
-      #     DD_SERVICE: go-health
-      # - name: Get timestamp
-      #   shell: bash
-      #   run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
-      #   id: get_timestamp
-      # - name: Get Elastic Beanstalk label
-      #   shell: bash
-      #   run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
-      #   id: get_label
-      #   env:
-      #     TAG: ${{ needs.build-health.outputs.tag }}
-      #     TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
-      # - name: Select Elastic Beanstalk variables
-      #   shell: python
-      #   run: |
-      #     import os
-      #     branch = os.environ['GITHUB_REF']
-      #     staging = os.environ['STAGING_BRANCH']
-      #     production = os.environ['PRODUCTION_BRANCH']
-      #     eb_app_staging = os.environ['EB_APP_STAGING']
-      #     eb_env_health_staging = os.environ['EB_ENV_HEALTH_STAGING']
-      #     eb_app_production = os.environ['EB_APP_PRODUCTION']
-      #     eb_env_health_production = os.environ['EB_ENV_HEALTH_PRODUCTION']
-      #     if branch == staging:
-      #       print('::set-output name=eb_app::' + eb_app_staging)
-      #       print('::set-output name=eb_env_health::' + eb_env_health_staging)
-      #     elif branch == production: 
-      #        print('::set-output name=eb_app::' + eb_app_production)
-      #        print('::set-output name=eb_env_health::' + eb_env_health_production)
-      #   id: select_eb_vars
-      # - name: Deploy to EB health
-      #   uses: opengovsg/beanstalk-deploy@v11
-      #   if: steps.select_eb_vars.outputs.eb_env_health
-      #   with:
-      #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
-      #     environment_name: ${{ steps.select_eb_vars.outputs.eb_env_health }}
-      #     version_label: ${{ steps.get_label.outputs.label }}
-      #     region: ap-southeast-1
-      #     deployment_package: deploy.zip
-      #     use_existing_version_if_available: true
-      #     wait_for_deployment: false
-      #     wait_for_environment_recovery: false
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
+        env:
+          REPO: ${{env.ECR_URL}}/${{env.ECR_REPO}}
+          TAG: ${{ needs.build-health.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
+          DD_SERVICE: go-health
+      - name: Get timestamp
+        shell: bash
+        run: echo "##[set-output name=timestamp;]$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')"
+        id: get_timestamp
+      - name: Get Elastic Beanstalk label
+        shell: bash
+        run: echo "##[set-output name=label;]$(echo ${TAG}-${TIMESTAMP})"
+        id: get_label
+        env:
+          TAG: ${{ needs.build-health.outputs.tag }}
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+      - name: Select Elastic Beanstalk variables
+        shell: python
+        run: |
+          import os
+          branch = os.environ['GITHUB_REF']
+          staging = os.environ['STAGING_BRANCH']
+          production = os.environ['PRODUCTION_BRANCH']
+          eb_app_staging = os.environ['EB_APP_STAGING']
+          eb_env_health_staging = os.environ['EB_ENV_HEALTH_STAGING']
+          eb_app_production = os.environ['EB_APP_PRODUCTION']
+          eb_env_health_production = os.environ['EB_ENV_HEALTH_PRODUCTION']
+          if branch == staging:
+            print('::set-output name=eb_app::' + eb_app_staging)
+            print('::set-output name=eb_env_health::' + eb_env_health_staging)
+          elif branch == production: 
+             print('::set-output name=eb_app::' + eb_app_production)
+             print('::set-output name=eb_env_health::' + eb_env_health_production)
+        id: select_eb_vars
+      - name: Deploy to EB health
+        uses: opengovsg/beanstalk-deploy@v11
+        if: steps.select_eb_vars.outputs.eb_env_health
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ steps.select_eb_vars.outputs.eb_app }}
+          environment_name: ${{ steps.select_eb_vars.outputs.eb_env_health }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          use_existing_version_if_available: true
+          wait_for_deployment: false
+          wait_for_environment_recovery: false
       - name: serverless deploy
         uses: opengovsg/serverless-github-action@v3.0.0
         with:
