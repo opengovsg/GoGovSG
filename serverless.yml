@@ -48,7 +48,9 @@ functions:
           - 'package.json'
   bulk-qrcode-generation:
     handler: src/server/serverless/bulk-qrcode-generation/index.handler
-    memorySize: 512
+    memorySize: 2048 # 2048 MB
+    ephemeralStorageSize: 512 # 512 MB
+    timeout: 120 # 120 seconds
     description: Bulk generates QR codes in svg and png from shortUrl-longUrl mappings
     package:
       patterns:
