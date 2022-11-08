@@ -9,6 +9,7 @@ import {
   MAX_FILE_UPLOAD_SIZE,
 } from '../../../shared/constants'
 import {
+  hasApiKeySchema,
   ownershipTransferSchema,
   tagRetrievalSchema,
   urlBulkSchema,
@@ -160,6 +161,12 @@ router.get(
 )
 
 router.post('/apiKey', userController.createAPIKey)
+
+router.get(
+  '/hasApiKey',
+  validator.body(hasApiKeySchema),
+  userController.hasAPIKey,
+)
 
 router.get('/message', userController.getUserMessage)
 

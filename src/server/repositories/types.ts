@@ -32,7 +32,6 @@ export type StorableUser = {
   email: string
   urls?: Array<StorableUrl>
   id: number
-  hasApiKey: boolean
 }
 
 export type BulkUrlMapping = Pick<StorableUrl, 'shortUrl' | 'longUrl'>

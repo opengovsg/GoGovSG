@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect } from 'react'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import { GAEvent, GAPageView } from '../app/util/ga'
@@ -8,6 +8,7 @@ import useMinifiedActions from '../user/components/CreateUrlModal/helpers/minifi
 import { ApplyAppMargins } from '../app/components/AppMargins'
 import NoApiKeyGraphic from './components/NoApiKeyGraphic'
 import ApiKeyGraphic from './components/ApiKeyGraphic'
+import apiActions from './actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -30,13 +31,15 @@ const useStyles = makeStyles((theme) =>
  * Show the API Integration page.
  */
 const ApiIntegrationPage = () => {
+  const dispatch = useDispatch()
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
   const isMinified = useMinifiedActions()
-  const hasApiKey = useSelector(
-    (state: GoGovReduxState) => state.login.user.hasApiKey,
-  )
+  const hasApiKey = useSelector((state: GoGovReduxState) => state.api.hasApiKey)
+  useEffect(() => {
+    dispatch(apiActions.hasApiKey())
+  }, [dispatch])
   const classes = useStyles()
   useEffect(() => {
     if (isLoggedIn) {

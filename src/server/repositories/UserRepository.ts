@@ -178,6 +178,16 @@ export class UserRepository implements UserRepositoryInterface {
         apiKeyHash,
       })
     }
+
+  public hasApiKey: (userId: number) => Promise<boolean> = async (userId) => {
+    const user = await User.findOne({
+      where: { id: userId },
+    })
+    if (!user) {
+      throw new NotFoundError('User not found')
+    }
+    return !!user.apiKeyHash
+  }
 }
 
 export default UserRepository

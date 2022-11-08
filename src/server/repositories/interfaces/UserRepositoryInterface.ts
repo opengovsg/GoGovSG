@@ -71,4 +71,10 @@ export interface UserRepositoryInterface {
    * @param apiKeyHash
    */
   findUserByApiKey(apiKeyHash: string): Promise<StorableUser | null>
+
+  /**
+   * Get user has API Key.
+   * @param userId
+   */
+  hasApiKey(userId: number): Promise<boolean>
 }

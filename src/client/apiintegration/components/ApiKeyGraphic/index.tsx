@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react'
-
 import {
   Typography,
   createStyles,
@@ -8,11 +7,13 @@ import {
   useTheme,
 } from '@material-ui/core'
 import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
+import { useDispatch } from 'react-redux'
 import PrefixableTextField from '../../../user/widgets/PrefixableTextField'
 import TrailingButton from '../../../user/components/Drawer/ControlPanel/widgets/TrailingButton'
 import ConfigOption, {
   TrailingPosition,
 } from '../../../user/widgets/ConfigOption'
+import apiActions from '../../actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -58,6 +59,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
   const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const dispatch = useDispatch()
   return (
     <div className={classes.root}>
       <Typography variant="body1" className={classes.apiKeyInfoText}>
@@ -80,7 +82,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
           trailing={
             <TrailingButton
               onClick={() => {
-                alert('clicked')
+                dispatch(apiActions.generateApiKey())
               }}
               variant="contained"
               fullWidth={isMobileView}
@@ -89,7 +91,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
               <img
                 className={classes.retryIcon}
                 src={retryIcon}
-                alt="generate api key"
+                alt="Regenerate"
               />
             </TrailingButton>
           }

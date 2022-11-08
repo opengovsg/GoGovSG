@@ -278,6 +278,21 @@ export class UserController {
     }
   }
 
+  public hasAPIKey: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId } = req.body
+    try {
+      const hasApiKey = await this.apiKeyAuthService.hasApiKey(userId)
+      res.ok(jsonMessage(hasApiKey.toString()))
+      return
+    } catch (error) {
+      res.serverError(jsonMessage('error getting hasApiKey'))
+      return
+    }
+  }
+
   public createAPIKey: (
     req: Express.Request,
     res: Express.Response,

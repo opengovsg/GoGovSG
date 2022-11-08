@@ -3,6 +3,7 @@ import { LoginState } from '../../login/reducers/types'
 import { UserState } from '../../user/reducers/types'
 import { RootState } from '../components/pages/RootPage/reducers/types'
 import { DirectoryState } from '../../directory/reducers/types'
+import { HasApiKeyState } from '../../apiintegration/reducers/types'
 
 export type GoGovReduxState = {
   user: UserState
@@ -10,4 +11,5 @@ export type GoGovReduxState = {
   root: RootState
   login: LoginState
   directory: DirectoryState
+  api: HasApiKeyState
 }

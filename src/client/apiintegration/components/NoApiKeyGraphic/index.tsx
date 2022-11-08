@@ -2,6 +2,8 @@ import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 import React, { FunctionComponent } from 'react'
 import noApiKeyGraphic from '@assets/components/apiintegration/empty-api-key-graphic/empty-api-key-graphic.svg'
 import plusIcon from '@assets/components/app/base-layout/plus-icon.svg'
+import { useDispatch } from 'react-redux'
+import apiActions from '../../actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -43,6 +45,7 @@ const useStyles = makeStyles((theme) =>
  */
 const NoApiKeyGraphic: FunctionComponent = () => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   return (
     <div className={classes.root}>
       <Typography variant="body1" className={classes.emptyStateBodyText}>
@@ -52,9 +55,8 @@ const NoApiKeyGraphic: FunctionComponent = () => {
       </Typography>
       <Button
         className={classes.createApiKeyButton}
-        // key={}
         onClick={() => {
-          alert('clicked')
+          dispatch(apiActions.generateApiKey())
         }}
       >
         Generate API Key&nbsp;
