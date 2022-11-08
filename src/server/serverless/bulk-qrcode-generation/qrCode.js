@@ -59,10 +59,9 @@ function makeQrCode(url) {
 
 // Build QR code string with GoGovSg/ForSg/ForEduSg logo.
 async function makeGoQrCode(shortUrl, format) {
+  const url = `https://${domain}/${shortUrl}`
   // Splits lines by 36 characters each.
-  const lines = `https://${domain}/${shortUrl}`
-    .split(/(.{36})/)
-    .filter((O) => O)
+  const lines = url.split(/(.{36})/).filter((O) => O)
 
   // Calculate image height using the length of the url.
   // Rounded of to next integer as required by sharp.
@@ -75,7 +74,7 @@ async function makeGoQrCode(shortUrl, format) {
       MARGIN_VERTICAL,
   )
 
-  const qrString = await makeQrCode(shortUrl)
+  const qrString = await makeQrCode(url)
   const dom = cheerio.load('')
 
   // Read the logo as a string.
