@@ -1,17 +1,17 @@
 const { S3 } = require('aws-sdk')
 const stream = require('stream')
+const archiver = require('archiver')
 
 const s3 = new S3()
-const bulkQrCodeBucket = process.env.BULK_QR_CODE_GENERATION
-
-if (!bulkQrCodeBucket)
-  throw Error('Environment variable for BulkQrCodeBucket is missing')
+const { BULK_GENERATION_BUCKET } = process.env
+if (!BULK_GENERATION_BUCKET)
+  throw Error('Environment variable for BULK_GENERATION_BUCKET is missing')
 
 async function uploadToS3(fileBuffer, fileType, fileKey) {
   try {
     const params = {
       ContentType: fileType,
-      Bucket: bulkQrCodeBucket,
+      Bucket: BULK_GENERATION_BUCKET,
       Body: fileBuffer,
       Key: fileKey,
     }
@@ -23,27 +23,61 @@ async function uploadToS3(fileBuffer, fileType, fileKey) {
   }
 }
 
-// https://gist.github.com/amiantos/16bacc9ed742c91151fcf1a41012445e
-
-const streamTo = (key) => {
-  const passthrough = new stream.PassThrough()
-  s3.upload(
-    {
-      Bucket: bulkQrCodeBucket,
+// https://stackoverflow.com/questions/37336050/pipe-a-stream-to-s3-upload
+const streamToS3 = (key) => {
+  const writeStream = new stream.PassThrough()
+  const s3Promise = s3
+    .upload({
+      Bucket: BULK_GENERATION_BUCKET,
       Key: key,
-      Body: passthrough,
+      Body: writeStream,
       ContentType: 'application/zip',
       ServerSideEncryption: 'AES256',
-    },
-    (err) => {
-      if (err) throw err
-      console.log('Zip uploaded')
-    },
-  ).on('httpUploadProgress', (progress) => {
-    console.log(progress)
+    })
+    .on('httpUploadProgress', (progress) => {
+      console.log(progress)
+    })
+    .promise()
+  return {
+    writeStream,
+    s3Promise,
+  }
+}
+
+// Zip streams from system directory path to S3 path
+async function archiverZipStreamToS3(systemPath, s3Path) {
+  return new Promise((resolve, reject) => {
+    const { writeStream, s3Promise } = streamToS3(s3Path)
+
+    const archive = archiver('zip', {
+      zlib: { level: 9 }, // Sets the compression level.
+    })
+
+    // upload to s3 is completed
+    s3Promise
+      .then(() => {
+        console.log(`completed streaming from ${systemPath} to ${s3Path}`)
+        resolve()
+      })
+      .catch((err) => {
+        // upload error
+        reject(err)
+      })
+
+    archive.on('error', (err) => {
+      // stream error
+      reject(err)
+    })
+
+    // where archiver stream writes to
+    archive.pipe(writeStream)
+
+    // where to archive from
+    archive.directory(systemPath)
+    archive.finalize()
   })
-  return passthrough
 }
 
 module.exports.uploadToS3 = uploadToS3
-module.exports.streamTo = streamTo
+module.exports.streamToS3 = streamToS3
+module.exports.archiverZipStreamToS3 = archiverZipStreamToS3

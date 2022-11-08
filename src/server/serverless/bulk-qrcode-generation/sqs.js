@@ -1,9 +1,9 @@
 const { SQS } = require('aws-sdk')
 
 const sqsClient = new SQS({ apiVersion: '2012-11-05' })
-const sqsEndQueueUrl = process.env.SQS_END_QUEUE_URL
-if (!sqsEndQueueUrl)
-  throw Error('Environment variable for sqsEndQueueUrl is missing')
+const { SQS_END_QUEUE_URL } = process.env
+if (!SQS_END_QUEUE_URL)
+  throw Error('Environment variable for SQS_END_QUEUE_URL is missing')
 
 async function sendSQSMessage(isSuccess, filePath, errorMessage) {
   const bodyParams = {
@@ -13,7 +13,7 @@ async function sendSQSMessage(isSuccess, filePath, errorMessage) {
   }
   const messageParams = {
     MessageBody: JSON.stringify(bodyParams),
-    QueueUrl: sqsEndQueueUrl,
+    QueueUrl: SQS_END_QUEUE_URL,
   }
   await sqsClient.sendMessage(messageParams, (err, data) => {
     if (err) {
