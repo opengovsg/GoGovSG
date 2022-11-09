@@ -3,7 +3,7 @@ import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
 import { createRequestWithUser } from '../../../../../../test/server/api/util'
 import { AlreadyExistsError, NotFoundError } from '../../../../util/error'
-import { ApiController } from '../ApiController'
+import { ApiV1Controller } from '../ApiV1Controller'
 
 const urlManagementService = {
   createUrl: jest.fn(),
@@ -13,12 +13,12 @@ const urlManagementService = {
   bulkCreate: jest.fn(),
 }
 
-const controller = new ApiController(urlManagementService)
+const controller = new ApiV1Controller(urlManagementService)
 
 /**
- * Unit tests for API controller v1.
+ * Unit tests for API v1 controller.
  */
-describe('ApiController v1', () => {
+describe('ApiV1Controller', () => {
   describe('createUrl', () => {
     it('creates link and sanitizes link for API', async () => {
       const userId = 1

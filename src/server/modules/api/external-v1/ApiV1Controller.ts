@@ -15,7 +15,7 @@ import { StorableUrl } from '../../../repositories/types'
 import { ApiUrl, UrlCreationRequest } from '.'
 
 @injectable()
-export class ApiController {
+export class ApiV1Controller {
   private urlManagementService: UrlManagementService
 
   public constructor(
@@ -71,4 +71,4 @@ export class ApiController {
   }
 }
 
-export default ApiController
+export default ApiV1Controller

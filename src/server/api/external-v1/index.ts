@@ -3,12 +3,12 @@ import { createValidator } from 'express-joi-validation'
 import { container } from '../../util/inversify'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
-import { ApiController } from '../../modules/api/external-v1'
+import { ApiV1Controller } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
 import urlSchema from './validators'
 
-const apiController = container.get<ApiController>(
-  DependencyIds.apiControllerv1,
+const apiV1Controller = container.get<ApiV1Controller>(
+  DependencyIds.apiV1Controller,
 )
 const urlCheckController = container.get<UrlCheckController>(
   DependencyIds.urlCheckController,
@@ -20,7 +20,7 @@ router.post(
   '/urls',
   urlCheckController.singleUrlCheck,
   validator.body(urlSchema),
-  apiController.createUrl,
+  apiV1Controller.createUrl,
 )
 
 router.use((_, res) => {
