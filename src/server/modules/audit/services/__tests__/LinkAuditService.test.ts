@@ -18,6 +18,7 @@ const service = new LinkAuditService(
     findUserByUrl: NO_OP,
     saveApiKeyHash: NO_OP,
     findUserByApiKey: NO_OP,
+    hasApiKey: NO_OP,
   },
   { findByShortUrl, getCountByShortUrl },
 )

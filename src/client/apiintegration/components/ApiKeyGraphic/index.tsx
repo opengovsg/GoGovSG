@@ -74,7 +74,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
             <>
               Your API Key{' '}
               <Tooltip
-                title="API Key can be used to programmatically create, update short links."
+                title="All the links you create using this API key will be linked to this account and can be found on the dashboard."
                 imageAltText="API Key help"
               />
             </>
