@@ -1,6 +1,7 @@
 export const DependencyIds = {
   urlRepository: Symbol.for('urlRepository'),
   urlMapper: Symbol.for('urlMapper'),
+  urlV1Mapper: Symbol.for('urlV1Mapper'),
   userMapper: Symbol.for('userMapper'),
   otpMapper: Symbol.for('otpMapper'),
   tagMapper: Symbol.for('tagMapper'),

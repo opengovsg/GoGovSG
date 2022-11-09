@@ -25,6 +25,7 @@ import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { TagRepository } from './repositories/TagRepository'
 import { UrlMapper } from './mappers/UrlMapper'
+import { UrlV1Mapper } from './mappers/UrlV1Mapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
 import { TagMapper } from './mappers/TagMapper'
@@ -98,6 +99,7 @@ export default () => {
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
+  bindIfUnbound(DependencyIds.urlV1Mapper, UrlV1Mapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.tagMapper, TagMapper)

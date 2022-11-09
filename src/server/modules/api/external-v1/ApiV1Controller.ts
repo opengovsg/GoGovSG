@@ -10,19 +10,24 @@ import { AlreadyExistsError, NotFoundError } from '../../../util/error'
 import { UrlManagementService } from '../../user/interfaces'
 import { MessageType } from '../../../../shared/util/messages'
 import { StorableUrlSource } from '../../../repositories/enums'
-import { StorableUrl } from '../../../repositories/types'
 
-import { UrlCreationRequest, UrlV1DTO } from '.'
+import { UrlCreationRequest } from '.'
+import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
 
 @injectable()
 export class ApiV1Controller {
   private urlManagementService: UrlManagementService
 
+  private urlV1Mapper: UrlV1Mapper
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
+    @inject(DependencyIds.urlV1Mapper)
+    urlV1Mapper: UrlV1Mapper,
   ) {
     this.urlManagementService = urlManagementService
+    this.urlV1Mapper = urlV1Mapper
   }
 
   public createUrl: (
@@ -38,7 +43,7 @@ export class ApiV1Controller {
         StorableUrlSource.Api,
         longUrl,
       )
-      const apiUrl = this.sanitizeUrlForApi(url)
+      const apiUrl = this.urlV1Mapper.persistenceToDto(url)
       res.ok(apiUrl)
       return
     } catch (error) {
@@ -56,17 +61,6 @@ export class ApiV1Controller {
       logger.error(`Error creating short URL:\t${error}`)
       res.badRequest(jsonMessage('Server error.'))
       return
-    }
-  }
-
-  private sanitizeUrlForApi: (url: StorableUrl) => UrlV1DTO = (url) => {
-    return {
-      shortUrl: url.shortUrl,
-      longUrl: url.longUrl,
-      state: url.state,
-      clicks: url.clicks,
-      createdAt: url.createdAt,
-      updatedAt: url.updatedAt,
     }
   }
 }

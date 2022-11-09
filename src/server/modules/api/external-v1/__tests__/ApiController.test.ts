@@ -2,6 +2,7 @@ import moment from 'moment'
 import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
 import { createRequestWithUser } from '../../../../../../test/server/api/util'
+import { UrlV1Mapper } from '../../../../mappers/UrlV1Mapper'
 import { AlreadyExistsError, NotFoundError } from '../../../../util/error'
 import { ApiV1Controller } from '../ApiV1Controller'
 
@@ -13,7 +14,9 @@ const urlManagementService = {
   bulkCreate: jest.fn(),
 }
 
-const controller = new ApiV1Controller(urlManagementService)
+const urlV1Mapper = new UrlV1Mapper()
+
+const controller = new ApiV1Controller(urlManagementService, urlV1Mapper)
 
 /**
  * Unit tests for API v1 controller.
