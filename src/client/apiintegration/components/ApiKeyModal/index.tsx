@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
   Dialog,
+  IconButton,
   TextField,
   Typography,
   createStyles,
@@ -12,20 +13,49 @@ import {
 import { GoGovReduxState } from '../../../app/reducers/types'
 import { GAEvent, GAPageView } from '../../../app/util/ga'
 import apiActions from '../../actions'
+import useFullScreenDialog from '../../../user/helpers/fullScreenDialog'
+import CopyIcon from '../../widgets/CopyIcon'
+import rootActions from '../../../app/components/pages/RootPage/actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    root: {},
     headerText: {
-      alignSelf: 'flex',
-      marginTop: theme.spacing(6),
-      marginBottom: theme.spacing(2),
+      marginTop: theme.spacing(3),
+    },
+    modalWrapper: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      flexDirection: 'column',
+      marginLeft: theme.spacing(3),
+      marginRight: theme.spacing(3),
+    },
+    copyApiKeyButton: {
+      alignSelf: 'center',
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(3),
+      minWidth: theme.spacing(35),
+      color: 'white',
+      background: theme.palette.primary.main,
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark,
+      },
+    },
+    apiKeyTextField: {
+      marginTop: theme.spacing(2),
+      width: '100%',
+    },
+    copyButton: {
+      padding: theme.spacing(0.75),
+      [theme.breakpoints.up('md')]: {
+        padding: theme.spacing(1.5),
+      },
     },
   }),
 )
 
 const ApiKeyModal: FunctionComponent = () => {
-  const classes = useStyles()
+  const isFullScreenDialog = useFullScreenDialog()
+  const classes = useStyles({ isFullScreenDialog })
   const { apiKeyModal, apiKey } = useSelector(
     (state: GoGovReduxState) => state.api,
   )
@@ -51,22 +81,57 @@ const ApiKeyModal: FunctionComponent = () => {
       onClose={closeApiKeyModal}
       open={apiKeyModal}
     >
-      <Typography className={classes.headerText} variant="h3" color="primary">
-        Save your API Key
-      </Typography>
-      <Typography className={classes.headerText} variant="h6" color="primary">
-        Please make a copy of your API key as it will be shown only once
-      </Typography>
-      <TextField value={apiKey} disabled />
-      <Button
-        onClick={() => {
-          dispatch(apiActions.closeApiKeyModal())
-        }}
-        variant="contained"
-        fullWidth={false}
-      >
-        Yes, I have copied
-      </Button>
+      <div className={classes.modalWrapper}>
+        <Typography className={classes.headerText} variant="h3" color="primary">
+          Save your API Key
+        </Typography>
+        <Typography className={classes.headerText} color="primary">
+          Please make a copy of your API key as it will be shown only once
+        </Typography>
+        <TextField
+          className={classes.apiKeyTextField}
+          value={apiKey}
+          disabled
+          variant="outlined"
+          InputProps={{
+            endAdornment: (
+              <IconButton
+                className={classes.copyButton}
+                onClick={() => {
+                  navigator.clipboard
+                    .writeText(apiKey)
+                    .then(() =>
+                      dispatch(
+                        rootActions.setSuccessMessage(
+                          'Api Key has been copied to clipboard.',
+                        ),
+                      ),
+                    )
+                    .catch(() =>
+                      dispatch(
+                        rootActions.setErrorMessage(
+                          'Error copying Api Key to clipboard.',
+                        ),
+                      ),
+                    )
+                }}
+              >
+                <CopyIcon size={24} color="#BBBBBB" />
+              </IconButton>
+            ),
+          }}
+        />
+        <Button
+          className={classes.copyApiKeyButton}
+          onClick={() => {
+            dispatch(apiActions.closeApiKeyModal())
+          }}
+          variant="contained"
+          fullWidth={false}
+        >
+          Yes, I have copied
+        </Button>
+      </div>
     </Dialog>
   )
 }
