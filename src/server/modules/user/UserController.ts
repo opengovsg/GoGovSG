@@ -92,7 +92,7 @@ export class UserController {
         return
       }
       if (error instanceof AlreadyExistsError) {
-        const newErrorMessage = `${error.message} Click here to find out more` // TODO: shift message to frontend
+        const newErrorMessage = `${error.message} Click here to find out more`
         res.badRequest(jsonMessage(newErrorMessage, MessageType.ShortUrlError))
         return
       }
