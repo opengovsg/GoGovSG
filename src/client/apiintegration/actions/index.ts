@@ -12,6 +12,12 @@ import {
 import { get, postFormData } from '../../app/util/requests'
 import rootActions from '../../app/components/pages/RootPage/actions'
 import {
+  CLOSE_API_KEY_MODAL,
+  CloseApiKeyModalAction,
+  GENERATE_API_KEY_SUCCESSFULLY,
+  GenerateApiKeySuccessfullyAction,
+  OPEN_API_KEY_MODAL,
+  OpenApiKeyModalAction,
   USER_HAS_API_KEY,
   USER_HAS_NO_API_KEY,
   UserHasApiKeyAction,
@@ -20,12 +26,25 @@ import {
 
 const userHasApiKey: () => UserHasApiKeyAction = () => ({
   type: USER_HAS_API_KEY,
-  payload: true,
 })
 
 const userHasNoApiKey: () => UserHasNoApiKeyAction = () => ({
   type: USER_HAS_NO_API_KEY,
-  payload: false,
+})
+
+const generateApiKeySuccessfully: (
+  apiKey: string,
+) => GenerateApiKeySuccessfullyAction = (apiKey: string) => ({
+  type: GENERATE_API_KEY_SUCCESSFULLY,
+  payload: { apiKey },
+})
+
+const openApiKeyModal: () => OpenApiKeyModalAction = () => ({
+  type: OPEN_API_KEY_MODAL,
+})
+
+const closeApiKeyModal: () => CloseApiKeyModalAction = () => ({
+  type: CLOSE_API_KEY_MODAL,
 })
 
 async function handleError(
@@ -54,18 +73,23 @@ const generateApiKey =
     dispatch: ThunkDispatch<
       GoGovReduxState,
       void,
-      SetErrorMessageAction | SetSuccessMessageAction | UserHasApiKeyAction
+      | SetErrorMessageAction
+      | SetSuccessMessageAction
+      | UserHasApiKeyAction
+      | GenerateApiKeySuccessfullyAction
+      | OpenApiKeyModalAction
     >,
   ) => {
     const response = await postFormData('/api/user/apiKey', new FormData())
     if (!response.ok) {
       await handleError(dispatch, response)
     } else {
-      const successMessage = 'Your Api Key has been created'
-      dispatch<SetSuccessMessageAction>(
-        rootActions.setSuccessMessage(successMessage),
+      const { message } = await response.json()
+      dispatch<GenerateApiKeySuccessfullyAction>(
+        generateApiKeySuccessfully(message),
       )
       dispatch<UserHasApiKeyAction>(userHasApiKey())
+      dispatch<OpenApiKeyModalAction>(openApiKeyModal())
     }
   }
 
@@ -103,4 +127,6 @@ const hasApiKey =
 export default {
   generateApiKey,
   hasApiKey,
+  closeApiKeyModal,
+  openApiKeyModal,
 }

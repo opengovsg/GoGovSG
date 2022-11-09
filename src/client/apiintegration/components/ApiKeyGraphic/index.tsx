@@ -14,6 +14,7 @@ import ConfigOption, {
   TrailingPosition,
 } from '../../../user/widgets/ConfigOption'
 import apiActions from '../../actions'
+import Tooltip from '../../../user/widgets/Tooltip'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -69,7 +70,15 @@ const ApiKeyGraphic: FunctionComponent = () => {
       </Typography>
       <div className={classes.configOptionWrapper}>
         <ConfigOption
-          title="Your API Key"
+          title={
+            <>
+              Your API Key{' '}
+              <Tooltip
+                title="API Key can be used to programmatically create, update short links."
+                imageAltText="API Key help"
+              />
+            </>
+          }
           leading={
             <PrefixableTextField
               value="******************"

@@ -9,6 +9,7 @@ import { ApplyAppMargins } from '../app/components/AppMargins'
 import NoApiKeyGraphic from './components/NoApiKeyGraphic'
 import ApiKeyGraphic from './components/ApiKeyGraphic'
 import apiActions from './actions'
+import ApiKeyModal from './components/ApiKeyModal'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -59,6 +60,7 @@ const ApiIntegrationPage = () => {
             API Integration
           </Typography>
           {hasApiKey ? <ApiKeyGraphic /> : <NoApiKeyGraphic />}
+          <ApiKeyModal />
         </ApplyAppMargins>
       </BaseLayout>
     )
