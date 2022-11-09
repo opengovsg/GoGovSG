@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { UploadedFile } from 'express-fileupload'
-import { JobItemStatusEnum } from '../../repositories/enums'
+import _ from 'lodash'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
@@ -59,13 +59,16 @@ export class BulkController {
     next()
   }
 
-  public bulkCreate: (req: Request, res: Response) => Promise<void> = async (
-    req,
-    res,
-  ) => {
+  public bulkCreate: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
     const { userId, longUrls, tags } = req.body
     // generate url mappings
     const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
+    // put urpMappings on the req body so that it can be used by other controllers
+    req.body.urlMappings = urlMappings
     // bulk create
     try {
       await this.urlManagementService.bulkCreate(userId, urlMappings, tags)
@@ -76,32 +79,43 @@ export class BulkController {
     }
 
     dogstatsd.increment('bulk.hash.success', 1, 1)
-
-    console.log('creating job')
-
-    const job = await this.jobManagementService.createJob(userId)
-
-    console.log('job created')
-
-    for (let i = 0; i < urlMappings.length; i += QR_CODE_BATCH_SIZE) {
-      const urlMapping = urlMappings.slice(i, i + QR_CODE_BATCH_SIZE)
-      const sqsBody = { filePath: `${job.uuid}/${1}`, mappings: urlMapping }
-      // eslint-disable-next-line no-await-in-loop
-      await this.jobManagementService.createJobItem({
-        status: JobItemStatusEnum.InProgress,
-        message: '',
-        params: <JSON>(<unknown>sqsBody),
-        jobId: job.id,
-      })
-
-      // validate jobItem -> what happens if jobItem wasn't created?
-
-      // eslint-disable-next-line no-await-in-loop
-      await this.sqsService.sendMessage(sqsBody.filePath, sqsBody.mappings)
-    }
-
-    res.ok(jsonMessage(`${urlMappings.length} links created`))
+    // res.ok(jsonMessage(`${urlMappings.length} links created`))
+    next()
   }
+
+  public bulkCreateQrCodes: (req: Request, res: Response) => Promise<void> =
+    async (req, res) => {
+      const { userId, urlMappings } = req.body
+      const urlMappingBatches = _.chunk(urlMappings, QR_CODE_BATCH_SIZE)
+
+      try {
+        const job = await this.jobManagementService.createJob(userId)
+
+        await Promise.all(
+          urlMappingBatches.map(async (urlMappingBatch, idx) => {
+            const messageParams = {
+              filePath: `${job.uuid}/${idx}`,
+              mappings: urlMappingBatch,
+            }
+            await this.jobManagementService.createJobItem({
+              params: <JSON>(<unknown>messageParams),
+              jobId: job.id,
+            })
+            await this.sqsService.sendMessage(messageParams)
+            return
+          }),
+        )
+
+        dogstatsd.increment('bulk.qr.success', 1, 1)
+        res.ok(
+          jsonMessage(`${urlMappings.length} links created, job id ${job.id}`),
+        )
+      } catch (err) {
+        console.log(err)
+        dogstatsd.increment('bulk.qr.failure', 1, 1)
+        res.badRequest(jsonMessage('Something went wrong, please try again.'))
+      }
+    }
 }
 
 export default BulkController

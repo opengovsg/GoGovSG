@@ -117,6 +117,7 @@ router.post(
   bulkController.validateAndParseCsv,
   urlCheckController.bulkUrlCheck,
   bulkController.bulkCreate,
+  bulkController.bulkCreateQrCodes,
 )
 
 router.patch(
