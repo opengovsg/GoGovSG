@@ -48,11 +48,7 @@ const closeApiKeyModal: () => CloseApiKeyModalAction = () => ({
 })
 
 async function handleError(
-  dispatch: Dispatch<
-    | SetUploadFileErrorAction
-    | SetCreateShortLinkErrorAction
-    | SetErrorMessageAction
-  >,
+  dispatch: Dispatch<SetErrorMessageAction>,
   response: Response,
 ) {
   const responseType = response.headers.get('content-type')
