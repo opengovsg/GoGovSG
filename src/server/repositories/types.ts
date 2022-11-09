@@ -43,8 +43,8 @@ export type UserUrlsQueryConditions = {
   sortDirection: string
   searchText: string
   userId: number
-  state: string | undefined
-  isFile: boolean | undefined
+  state?: string
+  isFile?: boolean
   tags?: string[]
 }
 

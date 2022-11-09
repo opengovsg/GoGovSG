@@ -5,7 +5,11 @@ import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { ApiV1Controller } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
-import { urlRetrievalSchema, urlSchema } from './validators'
+import {
+  urlRetrievalSchema,
+  urlSchema,
+  userUrlsQueryConditions,
+} from './validators'
 
 const apiV1Controller = container.get<ApiV1Controller>(
   DependencyIds.apiV1Controller,
@@ -19,6 +23,7 @@ const router = Express.Router()
 router.get(
   '/url',
   validator.body(urlRetrievalSchema),
+  validator.query(userUrlsQueryConditions),
   apiV1Controller.getUrlsWithConditions,
 )
 

@@ -13,7 +13,6 @@ import { StorableUrlSource } from '../../../repositories/enums'
 
 import { UrlCreationRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
-import { userUrlsQueryConditions } from '../../../api/external-v1/validators'
 
 @injectable()
 export class ApiV1Controller {
@@ -70,11 +69,6 @@ export class ApiV1Controller {
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
     const queryConditions = ApiV1Controller.extractUrlQueryConditions(req)
-    const validationResult = userUrlsQueryConditions.validate(queryConditions)
-    if (validationResult.error) {
-      res.badRequest(jsonMessage(validationResult.error.message))
-      return
-    }
     // Find user and paginated urls
     try {
       const { urls, count } =
@@ -94,30 +88,24 @@ export class ApiV1Controller {
 
   private static extractUrlQueryConditions(req: Express.Request) {
     const { userId } = req.body
-    let { limit = 1000, searchText = '' } = req.query
-    limit = Math.min(1000, Number(limit))
-    searchText = searchText.toString().toLowerCase()
     const {
+      limit = 1000,
       offset = 0,
-      orderBy = 'updatedAt',
+      searchText = '',
+      orderBy = 'createdAt',
       sortDirection = 'desc',
       isFile,
       state,
     } = req.query
     const queryConditions = {
       userId,
-      limit,
+      limit: Number(limit),
       offset: Number(offset),
       orderBy: orderBy.toString(),
       sortDirection: sortDirection.toString(),
-      searchText,
+      searchText: searchText.toString(),
       state: state?.toString(),
-      isFile: undefined as boolean | undefined,
-    }
-    if (isFile === 'true') {
-      queryConditions.isFile = true
-    } else if (isFile === 'false') {
-      queryConditions.isFile = false
+      isFile: isFile as boolean | undefined,
     }
     return queryConditions
   }

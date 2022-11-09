@@ -153,7 +153,7 @@ describe('ApiV1Controller', () => {
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith({
         limit: 1000,
         offset: 0,
-        orderBy: 'updatedAt',
+        orderBy: 'createdAt',
         sortDirection: 'desc',
         searchText: '',
         userId: 1,
@@ -168,7 +168,7 @@ describe('ApiV1Controller', () => {
       const offset = 1
       const orderBy = 'clicks'
       const sortDirection = 'asc'
-      const searchText = 'TEXT'
+      const searchText = 'text'
       const state = 'ACTIVE'
 
       const source = 'API'
@@ -256,7 +256,7 @@ describe('ApiV1Controller', () => {
         offset,
         orderBy,
         sortDirection,
-        searchText: searchText.toLowerCase(),
+        searchText,
         userId,
         state,
         isFile: undefined,
@@ -266,7 +266,7 @@ describe('ApiV1Controller', () => {
     it('processes query with isFile=true', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
-        query: { isFile: 'true' },
+        query: { isFile: true },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
@@ -283,7 +283,7 @@ describe('ApiV1Controller', () => {
     it('processes query with isFile=false', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
-        query: { isFile: 'false' },
+        query: { isFile: false },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
