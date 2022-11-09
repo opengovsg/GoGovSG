@@ -5,10 +5,6 @@ import {
   SetErrorMessageAction,
   SetSuccessMessageAction,
 } from '../../app/components/pages/RootPage/actions/types'
-import {
-  SetCreateShortLinkErrorAction,
-  SetUploadFileErrorAction,
-} from '../../user/actions/types'
 import { get, postFormData } from '../../app/util/requests'
 import rootActions from '../../app/components/pages/RootPage/actions'
 import {
