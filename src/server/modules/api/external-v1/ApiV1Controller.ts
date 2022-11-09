@@ -13,6 +13,7 @@ import { StorableUrlSource } from '../../../repositories/enums'
 
 import { UrlCreationRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
+import { userUrlsQueryConditions } from '../../../api/external-v1/validators'
 
 @injectable()
 export class ApiV1Controller {
@@ -62,6 +63,63 @@ export class ApiV1Controller {
       res.badRequest(jsonMessage('Server error.'))
       return
     }
+  }
+
+  public getUrlsWithConditions: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const queryConditions = ApiV1Controller.extractUrlQueryConditions(req)
+    const validationResult = userUrlsQueryConditions.validate(queryConditions)
+    if (validationResult.error) {
+      res.badRequest(jsonMessage(validationResult.error.message))
+      return
+    }
+    // Find user and paginated urls
+    try {
+      const { urls, count } =
+        await this.urlManagementService.getUrlsWithConditions(queryConditions)
+      const apiUrls = urls.map((url) => this.urlV1Mapper.persistenceToDto(url))
+      res.ok({ urls: apiUrls, count })
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.notFound(jsonMessage(error.message))
+        return
+      }
+      res.serverError(jsonMessage('Error retrieving URLs for user'))
+      return
+    }
+  }
+
+  private static extractUrlQueryConditions(req: Express.Request) {
+    const { userId } = req.body
+    let { limit = 1000, searchText = '' } = req.query
+    limit = Math.min(1000, Number(limit))
+    searchText = searchText.toString().toLowerCase()
+    const {
+      offset = 0,
+      orderBy = 'updatedAt',
+      sortDirection = 'desc',
+      isFile,
+      state,
+    } = req.query
+    const queryConditions = {
+      userId,
+      limit,
+      offset: Number(offset),
+      orderBy: orderBy.toString(),
+      sortDirection: sortDirection.toString(),
+      searchText,
+      state: state?.toString(),
+      isFile: undefined as boolean | undefined,
+    }
+    if (isFile === 'true') {
+      queryConditions.isFile = true
+    } else if (isFile === 'false') {
+      queryConditions.isFile = false
+    }
+    return queryConditions
   }
 }
 

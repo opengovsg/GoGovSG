@@ -2,7 +2,22 @@ import * as Joi from '@hapi/joi'
 import blacklist from '../../resources/blacklist'
 import { isHttps, isValidShortUrl } from '../../../shared/util/validation'
 
-const urlSchema = Joi.object({
+export const urlRetrievalSchema = Joi.object({
+  userId: Joi.number().required(),
+})
+
+export const userUrlsQueryConditions = Joi.object({
+  userId: Joi.number().required(),
+  limit: Joi.number().required(),
+  offset: Joi.number().optional(),
+  orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
+  sortDirection: Joi.string().valid('desc', 'asc').optional(),
+  searchText: Joi.string().allow('').optional(),
+  state: Joi.string().allow('').optional(),
+  isFile: Joi.boolean().optional(),
+})
+
+export const urlSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string()
     .custom((url: string, helpers) => {
@@ -26,5 +41,3 @@ const urlSchema = Joi.object({
     })
     .required(),
 })
-
-export default urlSchema
