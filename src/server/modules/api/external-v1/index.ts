@@ -18,7 +18,7 @@ type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 export type UrlCreationRequest = ShortUrlOperationProperty &
   OptionalLongUrlProperty
 
-export type ApiUrl = Pick<
+export type UrlV1DTO = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'state' | 'clicks' | 'createdAt' | 'updatedAt'
 >

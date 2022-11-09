@@ -12,7 +12,7 @@ import { MessageType } from '../../../../shared/util/messages'
 import { StorableUrlSource } from '../../../repositories/enums'
 import { StorableUrl } from '../../../repositories/types'
 
-import { ApiUrl, UrlCreationRequest } from '.'
+import { UrlCreationRequest, UrlV1DTO } from '.'
 
 @injectable()
 export class ApiV1Controller {
@@ -59,7 +59,7 @@ export class ApiV1Controller {
     }
   }
 
-  private sanitizeUrlForApi: (url: StorableUrl) => ApiUrl = (url) => {
+  private sanitizeUrlForApi: (url: StorableUrl) => UrlV1DTO = (url) => {
     return {
       shortUrl: url.shortUrl,
       longUrl: url.longUrl,
