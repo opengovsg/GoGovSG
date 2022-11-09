@@ -8,7 +8,7 @@ import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
-import JobManagementServiceInterface from '../job/interfaces/JobManagementService'
+import { JobManagementService } from '../job/interfaces'
 
 const QR_CODE_BATCH_SIZE = 5
 
@@ -20,7 +20,7 @@ export class BulkController {
 
   private sqsService: SQSServiceInterface
 
-  private jobManagementService: JobManagementServiceInterface
+  private jobManagementService: JobManagementService
 
   public constructor(
     @inject(DependencyIds.bulkService)
@@ -28,7 +28,7 @@ export class BulkController {
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
     @inject(DependencyIds.jobManagementService)
-    jobManagementService: JobManagementServiceInterface,
+    jobManagementService: JobManagementService,
     @inject(DependencyIds.sqsService)
     sqsService: SQSServiceInterface,
   ) {
