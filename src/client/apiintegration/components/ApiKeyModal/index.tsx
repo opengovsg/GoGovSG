@@ -103,14 +103,14 @@ const ApiKeyModal: FunctionComponent = () => {
                     .then(() =>
                       dispatch(
                         rootActions.setSuccessMessage(
-                          'Api Key has been copied to clipboard.',
+                          'API Key has been copied to clipboard.',
                         ),
                       ),
                     )
                     .catch(() =>
                       dispatch(
                         rootActions.setErrorMessage(
-                          'Error copying Api Key to clipboard.',
+                          'Error copying API Key to clipboard.',
                         ),
                       ),
                     )

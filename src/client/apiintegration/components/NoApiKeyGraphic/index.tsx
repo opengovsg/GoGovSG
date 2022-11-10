@@ -51,7 +51,11 @@ const NoApiKeyGraphic: FunctionComponent = () => {
       <Typography variant="body1" className={classes.emptyStateBodyText}>
         GoGovSG API enables you to programmatically generate your short links.
         <br />
-        Refer to our API Documentation for more information.
+        Refer to our{' '}
+        <a href="https://go.gov.sg/go-api">
+          <u>API Documentation</u>
+        </a>{' '}
+        for more information.
       </Typography>
       <Button
         className={classes.createApiKeyButton}

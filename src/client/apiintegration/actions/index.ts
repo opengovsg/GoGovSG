@@ -80,7 +80,6 @@ const generateApiKey =
       dispatch<GenerateApiKeySuccessfullyAction>(
         generateApiKeySuccessfully(message),
       )
-      dispatch<UserHasApiKeyAction>(userHasApiKey())
       dispatch<OpenApiKeyModalAction>(openApiKeyModal())
     }
   }

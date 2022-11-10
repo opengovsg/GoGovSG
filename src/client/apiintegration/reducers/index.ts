@@ -41,6 +41,7 @@ const api = (state = initialState, action: ApiKeyActionType) => {
     case GENERATE_API_KEY_SUCCESSFULLY:
       nextState = {
         apiKey: action.payload.apiKey,
+        hasApiKey: true,
       }
       break
     default:

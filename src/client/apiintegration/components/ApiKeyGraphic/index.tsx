@@ -67,6 +67,12 @@ const ApiKeyGraphic: FunctionComponent = () => {
         After generating your API key, please make a copy of it immediately as
         it will only be shown once. Upon leaving or refreshing this page, the
         key will be hidden.
+        <br />
+        Refer to our{' '}
+        <a href="https://go.gov.sg/go-api">
+          <u>API Documentation</u>
+        </a>{' '}
+        for more information.
       </Typography>
       <div className={classes.configOptionWrapper}>
         <ConfigOption
