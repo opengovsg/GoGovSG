@@ -11,7 +11,7 @@ const urlSchema = Joi.object({
       }
       return url
     })
-    .required(),
+    .optional(),
   longUrl: Joi.string()
     .custom((url: string, helpers) => {
       if (!isHttps(url)) {

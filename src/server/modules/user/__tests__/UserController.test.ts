@@ -87,8 +87,8 @@ describe('UserController', () => {
       expect(res.ok).toHaveBeenCalledWith(result)
       expect(urlManagementService.createUrl).toHaveBeenCalledWith(
         userId,
-        shortUrl,
         source,
+        shortUrl,
         longUrl,
         undefined,
         tags,

@@ -65,8 +65,8 @@ describe('ApiV1Controller', () => {
       await controller.createUrl(req, res)
       expect(urlManagementService.createUrl).toHaveBeenCalledWith(
         userId,
-        shortUrl,
         source,
+        shortUrl,
         longUrl,
       )
       expect(res.ok).toHaveBeenCalledWith({

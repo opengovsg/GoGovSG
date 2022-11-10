@@ -78,8 +78,8 @@ export class UserController {
     try {
       const result = await this.urlManagementService.createUrl(
         userId,
-        shortUrl,
         StorableUrlSource.Console,
+        shortUrl,
         longUrl,
         file,
         tags,

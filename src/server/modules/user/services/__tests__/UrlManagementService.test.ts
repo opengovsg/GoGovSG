@@ -34,7 +34,8 @@ describe('UrlManagementService', () => {
     const userId = 2
     const longUrl = 'https://www.agency.gov.sg'
     const shortUrl = 'abcdef'
-    const source = StorableUrlSource.Console
+    const sourceConsole = StorableUrlSource.Console
+    const sourceApi = StorableUrlSource.Api
 
     beforeEach(() => {
       userRepository.findById.mockReset()
@@ -46,7 +47,7 @@ describe('UrlManagementService', () => {
     it('throws NotFoundError on no user', async () => {
       userRepository.findById.mockResolvedValue(null)
       await expect(
-        service.createUrl(userId, shortUrl, source, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).not.toHaveBeenCalled()
@@ -61,7 +62,7 @@ describe('UrlManagementService', () => {
         email: userId,
       })
       await expect(
-        service.createUrl(userId, shortUrl, source, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(AlreadyExistsError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
@@ -73,12 +74,12 @@ describe('UrlManagementService', () => {
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
-        service.createUrl(userId, shortUrl, source, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl, source },
+        { userId, longUrl, shortUrl, source: sourceConsole },
         undefined,
       )
     })
@@ -93,17 +94,47 @@ describe('UrlManagementService', () => {
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
-        service.createUrl(userId, shortUrl, source, longUrl, file),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl, file),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl, source },
+        { userId, longUrl, shortUrl, source: sourceConsole },
         {
           data: file.data,
           mimetype: file.mimetype,
           key: `${shortUrl}.json`,
         },
+      )
+    })
+
+    it('processes new API-created url with no shortUrl', async () => {
+      jest.resetModules()
+      jest.mock('../../../../config', () => ({
+        apiLinkRandomStrLength: 4,
+      }))
+      // eslint-disable-next-line global-require
+      const { UrlManagementService } = require('..')
+      const service = new UrlManagementService(userRepository, urlRepository)
+
+      userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
+      urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
+      await expect(
+        service.createUrl(userId, sourceApi, undefined, longUrl),
+      ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
+      expect(userRepository.findById).toHaveBeenCalledWith(userId)
+      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(
+        expect.stringMatching(/^.{4}$/),
+      )
+      expect(urlRepository.create).toHaveBeenCalledWith(
+        {
+          userId,
+          longUrl,
+          shortUrl: expect.stringMatching(/^.{4}$/),
+          source: sourceApi,
+        },
+        undefined,
       )
     })
   })
