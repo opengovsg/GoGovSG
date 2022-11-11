@@ -11,6 +11,7 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  sqsTimeout,
   userAnnouncement,
   userMessage,
 } from './config'
@@ -189,19 +190,23 @@ export default () => {
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
 
-    container
-      .bind(DependencyIds.sqsClient)
-      .toConstantValue(
-        new AWS.SQS({ apiVersion: '2012-11-05', region: 'ap-southeast-1' }),
-      )
+    container.bind(DependencyIds.sqsClient).toConstantValue(
+      new AWS.SQS({
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
+      }),
+    )
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
-    container
-      .bind(DependencyIds.sqsClient)
-      .toConstantValue(
-        new AWS.SQS({ apiVersion: '2012-11-05', region: 'ap-southeast-1' }),
-      )
+    container.bind(DependencyIds.sqsClient).toConstantValue(
+      new AWS.SQS({
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
+      }),
+    )
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)

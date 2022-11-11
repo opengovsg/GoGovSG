@@ -52,6 +52,9 @@ services:
       - ACTIVATE_POSTMAN_FALLBACK=
       - BULK_UPLOAD_MAX_NUM=1000
       - BULK_UPLOAD_RANDOM_STR_LENGTH=8
+      - AWS_SQS_BULK_QRCODE_GENERATE_START_URL=
+      - AWS_SQS_VPC_ENDPOINT=
+      - AWS_SQS_TIMEOUT=10000
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
