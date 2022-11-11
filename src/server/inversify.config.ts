@@ -192,6 +192,7 @@ export default () => {
 
     container.bind(DependencyIds.sqsClient).toConstantValue(
       new AWS.SQS({
+        region: 'ap-southeast-1',
         httpOptions: {
           timeout: sqsTimeout,
         },
@@ -202,6 +203,7 @@ export default () => {
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
     container.bind(DependencyIds.sqsClient).toConstantValue(
       new AWS.SQS({
+        region: 'ap-southeast-1',
         httpOptions: {
           timeout: sqsTimeout,
         },
