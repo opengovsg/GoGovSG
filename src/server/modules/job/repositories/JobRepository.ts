@@ -5,7 +5,7 @@ import * as interfaces from '../interfaces'
 @injectable()
 export class JobRepository implements interfaces.JobRepository {
   findById: (id: number) => Promise<JobType | null> = async (id) => {
-    return Job.scope(['defaultScope']).findOne({ where: { id } })
+    return Job.findByPk(id)
   }
 
   create: (userId: Number) => Promise<JobType> = async (userId) => {
