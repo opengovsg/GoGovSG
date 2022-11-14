@@ -133,11 +133,27 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
   const headers = [
     {
+      text: 'Dashboard',
+      link: i18next.t('general.links.dashboard'),
+      public: false,
+      icon: directoryIcon,
+      mobileOrder: 1,
+      internalLink: true,
+    },
+    {
       text: 'Directory',
       link: i18next.t('general.links.directory'),
       public: false,
       icon: directoryIcon,
-      mobileOrder: 1,
+      mobileOrder: 2,
+      internalLink: true,
+    },
+    {
+      text: 'API Integration',
+      link: i18next.t('general.links.apiintegration'),
+      public: false,
+      icon: helpIcon,
+      mobileOrder: 3,
       internalLink: true,
     },
     {
@@ -151,22 +167,14 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       link: i18next.t('general.links.faq'),
       public: false,
       icon: helpIcon,
-      mobileOrder: 2,
-    },
-    {
-      text: 'API Integration',
-      link: i18next.t('general.links.apiintegration'),
-      public: false,
-      icon: helpIcon,
-      mobileOrder: 3,
-      internalLink: true,
+      mobileOrder: 4,
     },
     {
       text: 'Help us improve',
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
-      mobileOrder: 4,
+      mobileOrder: 5,
     },
   ]
 

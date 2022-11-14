@@ -28,6 +28,9 @@ export const mobileDirectoryPageButton = Selector('img')
   .withAttribute('alt', 'Directory')
   .parent()
   .parent()
+export const apiIntegrationPageButton = Selector('span')
+  .withText('API Integration')
+  .parent()
 export const signOutButton = Selector('strong').withText('Sign out').parent()
 
 // Login Page
@@ -208,6 +211,29 @@ export const linkHistoryOriginalLinkH6 =
   Selector('h6').withText('Original Link')
 export const linkHistoryLinkOwnerH6 = Selector('h6').withText('Link Owner')
 export const linkHistoryTagsH6 = Selector('h6').withText('Tags')
+
+// API Integration
+export const generateApiKeyButton = Selector('img')
+  .withAttribute('alt', 'generate api key')
+  .parent()
+  .parent()
+export const regenerateApiKeyButton = Selector('img')
+  .withAttribute('alt', 'Regenerate')
+  .parent()
+  .parent()
+export const iHaveCopiedButton = Selector('span')
+  .withText('Yes, I have copied')
+  .parent()
+export const copyButton = Selector('span')
+  .withText('Yes, I have copied')
+  .parent()
+  .parent()
+  .child('div')
+  .nth(0)
+  .child('div')
+  .nth(0)
+  .child('button')
+  .nth(0)
 
 // Helper Functions
 export function generateRandomString(length: number): string {
