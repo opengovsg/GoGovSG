@@ -242,6 +242,10 @@ initDb()
 
     const port = 8080
     app.listen(port, () => logger.info(`Listening on port ${port}!`))
+
+    process.on('unhandledRejection', (error) => {
+      logger.error(`Unhandled rejection:\t${error}`)
+    })
   })
   .catch((error: any) => {
     logger.error(`Initialisation error:\t${error}`)
