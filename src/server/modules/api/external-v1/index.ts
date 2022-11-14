@@ -15,7 +15,15 @@ type ShortUrlProperty = {
 
 type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 
+type OptionalStateProperty = {
+  state?: 'ACTIVE' | 'INACTIVE'
+}
+
 export type UrlCreationRequest = ShortUrlOperationProperty &
+  OptionalLongUrlProperty
+
+export type UrlEditRequest = ShortUrlOperationProperty &
+  OptionalStateProperty &
   OptionalLongUrlProperty
 
 export type UrlV1DTO = Pick<
