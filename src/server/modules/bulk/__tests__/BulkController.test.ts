@@ -16,24 +16,7 @@ const mockUrlManagementService = {
   bulkCreate: jest.fn(),
 }
 
-const jobManagementService = {
-  createJob: jest.fn(),
-  findJobById: jest.fn(),
-  createJobItem: jest.fn(),
-  updateJobItem: jest.fn(),
-  findJobItemsByJobId: jest.fn(),
-  getJobStatus: jest.fn(),
-}
-const sqsService = {
-  sendMessage: jest.fn(),
-}
-
-const controller = new BulkController(
-  mockBulkService,
-  mockUrlManagementService,
-  jobManagementService,
-  sqsService,
-)
+const controller = new BulkController(mockBulkService, mockUrlManagementService)
 
 describe('BulkController unit test', () => {
   describe('validateAndParseCsv tests', () => {
@@ -123,9 +106,6 @@ describe('BulkController unit test', () => {
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockResolvedValue({})
-      jobManagementService.createJob.mockResolvedValue({})
-      jobManagementService.createJobItem.mockResolvedValue({})
-      sqsService.sendMessage.mockResolvedValue({})
 
       await controller.bulkCreate(req, res, next)
 
@@ -193,10 +173,6 @@ describe('BulkController unit test', () => {
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockResolvedValue({})
-
-      jobManagementService.createJob.mockResolvedValue({})
-      jobManagementService.createJobItem.mockResolvedValue({})
-      sqsService.sendMessage.mockResolvedValue({})
 
       await controller.bulkCreate(req, res, next)
 

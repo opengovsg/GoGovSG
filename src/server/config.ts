@@ -248,3 +248,5 @@ export const bulkUploadMaxNum: number =
   Number(process.env.BULK_UPLOAD_MAX_NUM) || 1000
 export const bulkUploadRandomStrLength: number =
   Number(process.env.BULK_UPLOAD_RANDOM_STR_LENGTH) || 8
+export const qrCodeJobBatchSize: number =
+  Number(process.env.QR_CODE_GENERATION_BATCH_SIZE) || 5
