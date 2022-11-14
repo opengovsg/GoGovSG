@@ -152,11 +152,17 @@ describe('JobManagementService tests', () => {
     })
 
     it('should throw error if job has no job items', async () => {
+      const mockUserId = 1
+      const mockJob = {
+        uuid: 'abc',
+        userId: mockUserId,
+        id: 2,
+      }
+      mockJobRepository.findById.mockResolvedValue(mockJob)
       mockJobItemRepository.findJobItemsByJobId.mockResolvedValue([])
       await expect(service.getJobStatus(2)).rejects.toThrow(
         new Error('Job does not have any job items'),
       )
-      expect(mockJobItemRepository.findJobItemsByJobId).not.toBeCalled()
     })
 
     it('should return JobStatus.Failed if any job item fails', async () => {
