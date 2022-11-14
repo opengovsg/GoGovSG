@@ -79,6 +79,7 @@ import JobManagementService from './modules/job/services/JobManagementService'
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
 import { SQSService } from './services/sqs'
+import { JobController } from './modules/job'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -110,6 +111,7 @@ export default () => {
   bindIfUnbound(DependencyIds.tagRepository, TagRepository)
   bindIfUnbound(DependencyIds.jobRepository, JobRepository)
   bindIfUnbound(DependencyIds.jobItemRepository, JobItemRepository)
+  bindIfUnbound(DependencyIds.jobController, JobController)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
   bindIfUnbound(DependencyIds.gaController, GaController)

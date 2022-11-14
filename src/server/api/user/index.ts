@@ -19,6 +19,7 @@ import {
 import { UserController } from '../../modules/user'
 import { BulkController } from '../../modules/bulk'
 import { FileCheckController, UrlCheckController } from '../../modules/threat'
+import { JobController } from '../../modules/job'
 
 const router = Express.Router()
 
@@ -37,6 +38,8 @@ const urlCheckController = container.get<UrlCheckController>(
 const bulkController = container.get<BulkController>(
   DependencyIds.bulkController,
 )
+
+const jobController = container.get<JobController>(DependencyIds.jobController)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
@@ -117,7 +120,7 @@ router.post(
   bulkController.validateAndParseCsv,
   urlCheckController.bulkUrlCheck,
   bulkController.bulkCreate,
-  bulkController.bulkCreateQrCodes,
+  jobController.createAndStartJob,
 )
 
 router.patch(
