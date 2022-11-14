@@ -34,7 +34,7 @@ export interface JobItemType extends IdType, Sequelize.Model {
   readonly status: JobItemStatusEnum
   readonly message: string
   readonly params: JSON
-  readonly jobId: Number
+  readonly jobId: number
   readonly createdAt: string
   readonly updatedAt: string
 }

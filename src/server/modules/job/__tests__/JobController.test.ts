@@ -4,10 +4,8 @@ import _ from 'lodash'
 
 const jobManagementService = {
   createJob: jest.fn(),
-  findJobById: jest.fn(),
   createJobItem: jest.fn(),
   updateJobItem: jest.fn(),
-  findJobItemsByJobId: jest.fn(),
   getJobStatus: jest.fn(),
 }
 const sqsService = {
