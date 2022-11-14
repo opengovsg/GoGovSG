@@ -1,7 +1,7 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
 import { DependencyIds, ERROR_404_PATH } from '../constants'
-import { displayHostname } from '../config'
+import { displayHostname, ffExternalApi } from '../config'
 import assetVariant from '../../shared/util/asset-variant'
 import { container } from '../util/inversify'
 import ApiKeyAuthService from '../modules/user/services/ApiKeyAuthService'
@@ -92,7 +92,10 @@ router.use('/link-audit', userGuard, require('./link-audit'))
 router.use('/directory', userGuard, require('./directory'))
 
 /* Register APIKey protected endpoints */
-router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
+if (ffExternalApi) {
+  // eslint-disable-next-line global-require
+  router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
+}
 
 router.use((_, res) => {
   res.status(404).render(ERROR_404_PATH, {

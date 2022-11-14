@@ -135,6 +135,7 @@ After these have been set up, set the environment variables according to the tab
 |BULK_UPLOAD_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in bulk upload. Defaults to 8|
 |API_LINK_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in API created links. Defaults to 8|
 |REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
+|FF_EXTERNAL_API|No|Boolean, feature flag for enabling the external API. Defaults to false|
 
 #### Serverless functions for link migration
 

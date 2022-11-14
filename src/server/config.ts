@@ -253,3 +253,4 @@ export const apiEnv: string =
 export const apiKeySalt = process.env.API_KEY_SALT as string
 export const apiLinkRandomStrLength: number =
   Number(process.env.API_LINK_RANDOM_STR_LENGTH) || 8
+export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
