@@ -13,6 +13,7 @@ export const DependencyIds = {
   tagRepository: Symbol.for('tagRepository'),
   jobRepository: Symbol.for('jobRepository'),
   jobItemRepository: Symbol.for('jobItemRepository'),
+  jobController: Symbol.for('jobController'),
   otpRepository: Symbol.for('otpRepository'),
   mailer: Symbol.for('mailer'),
   cryptography: Symbol.for('cryptography'),
