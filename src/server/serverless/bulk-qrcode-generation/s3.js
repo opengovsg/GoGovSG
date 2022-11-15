@@ -73,7 +73,9 @@ async function archiverZipStreamToS3(systemPath, s3Path) {
     archive.pipe(writeStream)
 
     // where to archive from
-    archive.directory(systemPath)
+    // false appends files from systemPath into the root of archive
+    // see https://github.com/archiverjs/node-archiver
+    archive.directory(systemPath, false)
     archive.finalize()
   })
 }
