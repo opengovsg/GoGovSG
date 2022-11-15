@@ -103,6 +103,9 @@ export const tag3 = Selector('p').withExactText(tagText3).parent()
 export const tagCloseButton1 = tag1.child('button')
 export const tagCloseButton2 = tag2.child('button')
 export const tagCloseButton3 = tag3.child('button')
+export const noResultsFoundText = Selector('p').withExactText(
+  'No results found, try expanding your search terms.',
+)
 
 // User Page - filter search
 export const userFilterSortPanelButton = Selector(
