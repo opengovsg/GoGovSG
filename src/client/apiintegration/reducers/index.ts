@@ -1,4 +1,4 @@
-import { HasApiKeyState } from './types'
+import { ApiState } from './types'
 import {
   ApiKeyActionType,
   CLOSE_API_KEY_MODAL,
@@ -8,7 +8,7 @@ import {
   USER_HAS_NO_API_KEY,
 } from '../actions/types'
 
-const initialState: HasApiKeyState = {
+const initialState: ApiState = {
   hasApiKey: false,
   apiKeyModal: false,
   apiKey: '',
