@@ -1,21 +1,17 @@
-import { JobItemStatusEnum, JobTypeEnum } from '../../../repositories/enums'
-import { StorableJob, StorableJobItem } from '../../../repositories/types'
+import { JobItemType, JobType } from '../../../models/job'
+import { JobItemStatusEnum } from '../../../repositories/enums'
 
-interface JobManagementServiceInterface {
-  createJob(userId: number): Promise<StorableJob>
-  findJobById(id: number): Promise<StorableJob | null>
+export interface JobManagementService {
+  createJob(userId: number): Promise<JobType>
+  findJobById(id: number): Promise<JobType | null>
   createJobItem: (properties: {
-    status: JobItemStatusEnum
-    message: string
-    type: JobTypeEnum
     params: JSON
     jobId: number
-  }) => Promise<StorableJobItem>
+  }) => Promise<JobItemType>
   updateJobItem(
-    jobItem: StorableJobItem,
-    changes: Partial<StorableJobItem>,
-  ): Promise<StorableJobItem>
-  findJobItemsByJobId(jobId: number): Promise<StorableJobItem[]>
+    jobItem: JobItemType,
+    changes: Partial<JobItemType>,
+  ): Promise<JobItemType>
+  findJobItemsByJobId(jobId: number): Promise<JobItemType[]>
   getJobStatus(jobId: number): Promise<JobItemStatusEnum>
 }
-export default JobManagementServiceInterface

@@ -1,5 +1,4 @@
 import { UrlType } from '../models/url'
-import { JobItemType, JobType } from '../models/job'
 import { UrlClicksType } from '../models/statistics/clicks'
 
 /**
@@ -97,9 +96,3 @@ export type StorableOtp = {
 export type HasCacheDuration = {
   cacheDuration: string
 }
-
-export type StorableJob = Pick<JobType, 'uuid' | 'id'>
-export type StorableJobItem = Pick<
-  JobItemType,
-  'id' | 'status' | 'message' | 'type' | 'params' | 'jobId'
->

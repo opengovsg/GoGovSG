@@ -13,12 +13,7 @@ export enum StorableUrlSource {
 }
 
 export enum JobItemStatusEnum {
-  Ready = 'READY',
   InProgress = 'IN_PROGRESS',
   Success = 'SUCCESS',
   Failed = 'FAILED',
-}
-
-export enum JobTypeEnum {
-  QRCodeGeneration = 'QR_CODE_GENERATION',
 }

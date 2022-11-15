@@ -1,25 +1,24 @@
 import { inject, injectable } from 'inversify'
 import { NotFoundError } from '../../../util/error'
-import { JobItemRepositoryInterface } from '../../../repositories/interfaces/JobItemRepositoryInterface'
-import { JobRepositoryInterface } from '../../../repositories/interfaces/JobRepositoryInterface'
+import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
-import JobManagementServiceInterface from '../interfaces/JobManagementService'
-import { StorableJob, StorableJobItem } from '../../../repositories/types'
-import { JobItemStatusEnum, JobTypeEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
+import { JobItemType, JobType } from '../../../models/job'
 
 @injectable()
-class JobManagementService implements JobManagementServiceInterface {
-  private jobRepository: JobRepositoryInterface
+class JobManagementService implements interfaces.JobManagementService {
+  private jobRepository: interfaces.JobRepository
 
-  private jobItemRepository: JobItemRepositoryInterface
+  private jobItemRepository: interfaces.JobItemRepository
 
   private userRepository: UserRepositoryInterface
 
   constructor(
-    @inject(DependencyIds.jobRepository) jobRepository: JobRepositoryInterface,
+    @inject(DependencyIds.jobRepository)
+    jobRepository: interfaces.JobRepository,
     @inject(DependencyIds.jobItemRepository)
-    jobItemRepository: JobItemRepositoryInterface,
+    jobItemRepository: interfaces.JobItemRepository,
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
   ) {
@@ -28,7 +27,7 @@ class JobManagementService implements JobManagementServiceInterface {
     this.userRepository = userRepository
   }
 
-  createJob: (userId: number) => Promise<StorableJob> = async (userId) => {
+  createJob: (userId: number) => Promise<JobType> = async (userId) => {
     const user = await this.userRepository.findById(userId)
     if (!user) {
       throw new NotFoundError('User not found')
@@ -38,31 +37,31 @@ class JobManagementService implements JobManagementServiceInterface {
     return job
   }
 
-  findJobById: (id: number) => Promise<StorableJob | null> = async (id) => {
+  findJobById: (id: number) => Promise<JobType | null> = async (id) => {
     const job = await this.jobRepository.findById(id)
     return job
   }
 
   createJobItem: (properties: {
-    status: JobItemStatusEnum
-    message: string
-    type: JobTypeEnum
     params: JSON
     jobId: number
-  }) => Promise<StorableJobItem> = async (properties) => {
-    const jobItem = await this.jobItemRepository.create(properties)
-    return jobItem
+  }) => Promise<JobItemType> = async ({ params, jobId }) => {
+    return this.jobItemRepository.create({
+      status: JobItemStatusEnum.InProgress,
+      message: '',
+      params,
+      jobId,
+    })
   }
 
   updateJobItem: (
-    jobItem: StorableJobItem,
-    changes: Partial<StorableJobItem>,
-  ) => Promise<StorableJobItem> = async (jobItem, changes) => {
-    const updatedItem = await this.jobItemRepository.update(jobItem, changes)
-    return updatedItem
+    jobItem: JobItemType,
+    changes: Partial<JobItemType>,
+  ) => Promise<JobItemType> = async (jobItem, changes) => {
+    return this.jobItemRepository.update(jobItem, changes)
   }
 
-  findJobItemsByJobId: (jobId: number) => Promise<StorableJobItem[]> = async (
+  findJobItemsByJobId: (jobId: number) => Promise<JobItemType[]> = async (
     jobId,
   ) => {
     const job = await this.jobRepository.findById(jobId)
