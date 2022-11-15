@@ -9,9 +9,12 @@ import { AlreadyExistsError, NotFoundError } from '../../../util/error'
 
 import { UrlManagementService } from '../../user/interfaces'
 import { MessageType } from '../../../../shared/util/messages'
-import { StorableUrlSource } from '../../../repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../repositories/enums'
 
-import { UrlCreationRequest } from '.'
+import { UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
 
 @injectable()
@@ -60,6 +63,37 @@ export class ApiV1Controller {
       }
       logger.error(`Error creating short URL:\t${error}`)
       res.badRequest(jsonMessage('Server error.'))
+      return
+    }
+  }
+
+  public updateUrl: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId, longUrl, shortUrl, state }: UrlEditRequest = req.body
+
+    let urlState
+    if (state) {
+      urlState =
+        state === 'ACTIVE' ? StorableUrlState.Active : StorableUrlState.Inactive
+    }
+
+    try {
+      const url = await this.urlManagementService.updateUrl(userId, shortUrl, {
+        longUrl,
+        state: urlState,
+      })
+      const apiUrl = this.urlV1Mapper.persistenceToDto(url)
+      res.ok(apiUrl)
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.forbidden(jsonMessage(error.message))
+        return
+      }
+      logger.error(`Error editing URL:\t${error}`)
+      res.badRequest(jsonMessage(`Unable to edit short link "${shortUrl}"`))
       return
     }
   }
