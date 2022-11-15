@@ -81,5 +81,4 @@ async function archiverZipStreamToS3(systemPath, s3Path) {
 }
 
 module.exports.uploadToS3 = uploadToS3
-module.exports.streamToS3 = streamToS3
 module.exports.archiverZipStreamToS3 = archiverZipStreamToS3
