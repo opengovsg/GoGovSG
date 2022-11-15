@@ -39,8 +39,8 @@ export class ApiV1Controller {
     try {
       const url = await this.urlManagementService.createUrl(
         userId,
-        shortUrl,
         StorableUrlSource.Api,
+        shortUrl,
         longUrl,
       )
       const apiUrl = this.urlV1Mapper.persistenceToDto(url)

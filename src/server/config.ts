@@ -251,3 +251,5 @@ export const apiKeyVersion: string = process.env.API_KEY_VERSION || 'v1'
 export const apiEnv: string =
   process.env.NODE_ENV === 'production' ? 'live' : 'test'
 export const apiKeySalt = process.env.API_KEY_SALT as string
+export const apiLinkRandomStrLength: number =
+  Number(process.env.API_LINK_RANDOM_STR_LENGTH) || 8

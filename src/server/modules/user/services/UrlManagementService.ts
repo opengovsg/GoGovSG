@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify'
+import { apiLinkRandomStrLength } from '../../../config'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import {
   BulkUrlMapping,
@@ -20,10 +21,13 @@ import {
 import { StorableUrlSource } from '../../../repositories/enums'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
+import generateShortUrl from '../../../util/url'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 import { DependencyIds } from '../../../constants'
 import { BULK } from '../../../models/types'
 import * as interfaces from '../interfaces'
+
+const API_LINK_RANDOM_STR_LENGTH = apiLinkRandomStrLength
 
 @injectable()
 export class UrlManagementService implements interfaces.UrlManagementService {
@@ -43,15 +47,15 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
   createUrl: (
     userId: number,
-    shortUrl: string,
     source: StorableUrlSource.Console | StorableUrlSource.Api,
+    shortUrl?: string,
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
   ) => Promise<StorableUrl> = async (
     userId,
-    shortUrl,
     source,
+    originalShortUrl,
     longUrl,
     file,
     tags,
@@ -59,6 +63,16 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     const user = await this.userRepository.findById(userId)
     if (!user) {
       throw new NotFoundError('User not found.')
+    }
+
+    let shortUrl = originalShortUrl
+    if (shortUrl === undefined) {
+      if (source !== StorableUrlSource.Api) {
+        throw new Error(
+          'Short link can only be undefined for API created links.',
+        )
+      }
+      shortUrl = await generateShortUrl(API_LINK_RANDOM_STR_LENGTH)
     }
 
     const owner = await this.userRepository.findUserByUrl(shortUrl)
