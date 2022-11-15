@@ -24,8 +24,10 @@ const FileExtension = {
 }
 
 const { ASSET_VARIANT } = process.env
+const { DOMAIN } = process.env
 if (!ASSET_VARIANT)
   throw Error('Environment variable for ASSET_VARIANT is missing')
+if (!DOMAIN) throw Error('Environment variable for DOMAIN is missing!')
 
 const ASSET_VARIANTS = ['gov', 'edu', 'health']
 if (!ASSET_VARIANTS.includes(ASSET_VARIANT))
@@ -38,12 +40,6 @@ const darkColorMap = {
   health: '#472F40',
 }
 const dark = darkColorMap[ASSET_VARIANT]
-const domainMap = {
-  gov: 'go.gov.sg',
-  edu: 'for.edu.sg',
-  health: 'for.sg',
-}
-const domain = domainMap[ASSET_VARIANT]
 
 // Build base QR code string without logo.
 function makeQrCode(url) {
@@ -58,7 +54,7 @@ function makeQrCode(url) {
 }
 
 // Build QR code string with GoGovSg/ForSg/ForEduSg logo.
-async function makeGoQrCode(shortUrl, format) {
+async function makeGoQrCode(shortUrl, format, domain = DOMAIN) {
   const url = `https://${domain}/${shortUrl}`
   // Splits lines by 36 characters each.
   const lines = url.split(/(.{36})/).filter((O) => O)
