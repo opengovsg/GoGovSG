@@ -1,10 +1,7 @@
 import { ThunkDispatch } from 'redux-thunk'
 import { Dispatch } from 'redux'
 import { GoGovReduxState } from '../../app/reducers/types'
-import {
-  SetErrorMessageAction,
-  SetSuccessMessageAction,
-} from '../../app/components/pages/RootPage/actions/types'
+import { SetErrorMessageAction } from '../../app/components/pages/RootPage/actions/types'
 import { get, postFormData } from '../../app/util/requests'
 import rootActions from '../../app/components/pages/RootPage/actions'
 import {
@@ -65,11 +62,7 @@ const generateApiKey =
     dispatch: ThunkDispatch<
       GoGovReduxState,
       void,
-      | SetErrorMessageAction
-      | SetSuccessMessageAction
-      | UserHasApiKeyAction
-      | GenerateApiKeySuccessfullyAction
-      | OpenApiKeyModalAction
+      GenerateApiKeySuccessfullyAction | OpenApiKeyModalAction
     >,
   ) => {
     const response = await postFormData('/api/user/apiKey', new FormData())
@@ -88,10 +81,7 @@ const hasApiKey =
   () =>
   (
     dispatch: Dispatch<
-      | SetErrorMessageAction
-      | SetSuccessMessageAction
-      | UserHasApiKeyAction
-      | UserHasNoApiKeyAction
+      SetErrorMessageAction | UserHasApiKeyAction | UserHasNoApiKeyAction
     >,
   ) => {
     get('/api/user/hasApiKey').then((response) => {
