@@ -11,7 +11,7 @@ import {
   NotFoundError,
 } from '../../util/error'
 import { MessageType } from '../../../shared/util/messages'
-import { StorableUrlState } from '../../repositories/enums'
+import { StorableUrlSource, StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
 import { UrlManagementService } from './interfaces/UrlManagementService'
@@ -78,6 +78,7 @@ export class UserController {
     try {
       const result = await this.urlManagementService.createUrl(
         userId,
+        StorableUrlSource.Console,
         shortUrl,
         longUrl,
         file,
@@ -91,14 +92,15 @@ export class UserController {
         return
       }
       if (error instanceof AlreadyExistsError) {
-        res.badRequest(jsonMessage(error.message, MessageType.ShortUrlError))
+        const newErrorMessage = `${error.message} Click here to find out more`
+        res.badRequest(jsonMessage(newErrorMessage, MessageType.ShortUrlError))
         return
       }
       if (error instanceof Sequelize.ValidationError) {
         res.badRequest(jsonMessage(error.message))
       }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Server Error.'))
+      res.badRequest(jsonMessage('Server error.'))
       return
     }
   }

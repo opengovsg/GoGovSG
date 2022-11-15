@@ -25,6 +25,7 @@ import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { TagRepository } from './repositories/TagRepository'
 import { UrlMapper } from './mappers/UrlMapper'
+import { UrlV1Mapper } from './mappers/UrlV1Mapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
 import { TagMapper } from './mappers/TagMapper'
@@ -55,6 +56,7 @@ import {
   LinkStatisticsService,
 } from './modules/analytics/services'
 import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
+import { ApiV1Controller } from './modules/api/external-v1'
 import { LinkAuditController } from './modules/audit'
 import { LinkAuditService } from './modules/audit/services'
 import { UrlHistoryRepository } from './modules/audit/repositories'
@@ -97,6 +99,7 @@ export default () => {
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
+  bindIfUnbound(DependencyIds.urlV1Mapper, UrlV1Mapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.tagMapper, TagMapper)
@@ -127,6 +130,7 @@ export default () => {
   bindIfUnbound(DependencyIds.directorySearchService, DirectorySearchService)
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
+  bindIfUnbound(DependencyIds.apiV1Controller, ApiV1Controller)
 
   container
     .bind(DependencyIds.allowedFileExtensions)

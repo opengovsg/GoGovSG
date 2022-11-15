@@ -84,7 +84,7 @@ describe('UrlRepository', () => {
     updatedAt: new Date(),
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
-    source: 'CONSOLE',
+    source: StorableUrlSource.Console,
     tags: [],
   }
   const baseUrl = {
@@ -143,6 +143,7 @@ describe('UrlRepository', () => {
     const userId = 2
     const shortUrl = 'abcdef'
     const longUrl = 'https://www.agency.gov.sg'
+    const source = StorableUrlSource.Console
 
     beforeEach(() => {
       create.mockReset()
@@ -157,7 +158,7 @@ describe('UrlRepository', () => {
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(baseTemplate)
       await expect(
-        repository.create({ userId, shortUrl, longUrl }),
+        repository.create({ userId, shortUrl, longUrl, source }),
       ).resolves.toStrictEqual(baseStorableUrl)
       expect(create).toHaveBeenCalledWith(
         {
@@ -180,7 +181,13 @@ describe('UrlRepository', () => {
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(baseUrlWithTags)
       await expect(
-        repository.create({ userId, shortUrl, longUrl, tags: baseTags }),
+        repository.create({
+          userId,
+          shortUrl,
+          longUrl,
+          source,
+          tags: baseTags,
+        }),
       ).resolves.toStrictEqual(baseStorableUrlWithTags)
       expect(create).toHaveBeenCalledWith(
         {
@@ -219,7 +226,10 @@ describe('UrlRepository', () => {
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(url)
       await expect(
-        repository.create({ userId: baseUserId, shortUrl: baseShortUrl }, file),
+        repository.create(
+          { userId: baseUserId, shortUrl: baseShortUrl, source },
+          file,
+        ),
       ).resolves.toStrictEqual(storableUrl)
       expect(create).toHaveBeenCalledWith(
         {
@@ -265,7 +275,12 @@ describe('UrlRepository', () => {
       create.mockResolvedValue(url)
       await expect(
         repository.create(
-          { userId: baseUserId, shortUrl: baseShortUrl, tags: baseTags },
+          {
+            userId: baseUserId,
+            shortUrl: baseShortUrl,
+            source,
+            tags: baseTags,
+          },
           file,
         ),
       ).resolves.toStrictEqual(storableUrlWithTags)
