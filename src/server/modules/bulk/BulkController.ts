@@ -1,16 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { UploadedFile } from 'express-fileupload'
-import { JobItemStatusEnum } from '../../repositories/enums'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
-import { SQSServiceInterface } from '../../services/sqs'
-import JobManagementServiceInterface from '../job/interfaces/JobManagementService'
-
-const QR_CODE_BATCH_SIZE = 5
 
 @injectable()
 export class BulkController {
@@ -18,24 +13,14 @@ export class BulkController {
 
   private bulkService: BulkService
 
-  private sqsService: SQSServiceInterface
-
-  private jobManagementService: JobManagementServiceInterface
-
   public constructor(
     @inject(DependencyIds.bulkService)
     bulkService: BulkService,
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
-    @inject(DependencyIds.jobManagementService)
-    jobManagementService: JobManagementServiceInterface,
-    @inject(DependencyIds.sqsService)
-    sqsService: SQSServiceInterface,
   ) {
     this.bulkService = bulkService
     this.urlManagementService = urlManagementService
-    this.sqsService = sqsService
-    this.jobManagementService = jobManagementService
   }
 
   public validateAndParseCsv: (
@@ -59,13 +44,15 @@ export class BulkController {
     next()
   }
 
-  public bulkCreate: (req: Request, res: Response) => Promise<void> = async (
-    req,
-    res,
-  ) => {
+  public bulkCreate: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
     const { userId, longUrls, tags } = req.body
     // generate url mappings
     const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
+
     // bulk create
     try {
       await this.urlManagementService.bulkCreate(userId, urlMappings, tags)
@@ -75,32 +62,12 @@ export class BulkController {
       return
     }
 
+    // put jobParamsList on the req body so that it can be used by JobController
+    req.body.jobParamsList = urlMappings
+
     dogstatsd.increment('bulk.hash.success', 1, 1)
-
-    console.log('creating job')
-
-    const job = await this.jobManagementService.createJob(userId)
-
-    console.log('job created')
-
-    for (let i = 0; i < urlMappings.length; i += QR_CODE_BATCH_SIZE) {
-      const urlMapping = urlMappings.slice(i, i + QR_CODE_BATCH_SIZE)
-      const sqsBody = { filePath: `${job.uuid}/${1}`, mappings: urlMapping }
-      // eslint-disable-next-line no-await-in-loop
-      await this.jobManagementService.createJobItem({
-        status: JobItemStatusEnum.InProgress,
-        message: '',
-        params: <JSON>(<unknown>sqsBody),
-        jobId: job.id,
-      })
-
-      // validate jobItem -> what happens if jobItem wasn't created?
-
-      // eslint-disable-next-line no-await-in-loop
-      await this.sqsService.sendMessage(sqsBody.filePath, sqsBody.mappings)
-    }
-
     res.ok(jsonMessage(`${urlMappings.length} links created`))
+    next()
   }
 }
 
