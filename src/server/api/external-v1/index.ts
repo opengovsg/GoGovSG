@@ -21,7 +21,7 @@ const validator = createValidator({ passError: true })
 const router = Express.Router()
 
 router.get(
-  '/url',
+  '/urls',
   validator.body(urlRetrievalSchema),
   validator.query(userUrlsQueryConditions),
   apiV1Controller.getUrlsWithConditions,

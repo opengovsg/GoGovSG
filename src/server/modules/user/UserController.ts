@@ -80,7 +80,6 @@ export class UserController {
         userId,
         StorableUrlSource.Console,
         shortUrl,
-        StorableUrlSource.Console,
         longUrl,
         file,
         tags,

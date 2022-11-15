@@ -89,7 +89,6 @@ describe('UserController', () => {
         userId,
         source,
         shortUrl,
-        source,
         longUrl,
         undefined,
         tags,
