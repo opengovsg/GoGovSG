@@ -310,4 +310,116 @@ describe('ApiV1Controller', () => {
       })
     })
   })
+
+  describe('updateUrl', () => {
+    const userId = 2
+    const shortUrl = 'abcdef'
+    const longUrl = 'https://www.agency.gov.sg'
+
+    it('processes link updates with no state', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          longUrl,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = { shortUrl }
+      urlManagementService.updateUrl.mockResolvedValue(result)
+
+      await controller.updateUrl(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        {
+          longUrl,
+          state: undefined,
+        },
+      )
+    })
+
+    it('processes link updates with active state', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          longUrl,
+          state: 'ACTIVE',
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = { shortUrl }
+      urlManagementService.updateUrl.mockResolvedValue(result)
+
+      await controller.updateUrl(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        {
+          longUrl,
+          state: 'ACTIVE',
+        },
+      )
+    })
+
+    it('processes link updates with inactive state', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          longUrl,
+          state: 'INACTIVE',
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = { shortUrl }
+      urlManagementService.updateUrl.mockResolvedValue(result)
+
+      await controller.updateUrl(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        {
+          longUrl,
+          state: 'INACTIVE',
+        },
+      )
+    })
+
+    it('reports bad request on Error', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      urlManagementService.updateUrl.mockRejectedValue(new Error())
+
+      await controller.updateUrl(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
+    })
+
+    it('reports forbidden request on NotFoundError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.forbidden = jest.fn()
+
+      urlManagementService.updateUrl.mockRejectedValue(new NotFoundError(''))
+
+      await controller.updateUrl(req, res)
+      expect(res.forbidden).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
+    })
+  })
 })

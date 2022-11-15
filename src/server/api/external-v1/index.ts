@@ -6,6 +6,7 @@ import { DependencyIds } from '../../constants'
 import { ApiV1Controller } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
 import {
+  urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
   userUrlsQueryConditions,
@@ -20,6 +21,22 @@ const urlCheckController = container.get<UrlCheckController>(
 const validator = createValidator({ passError: true })
 const router = Express.Router()
 
+/**
+ * Place short URL into the request body so that it can be
+ * validated together with the other fields by Joi.
+ */
+function preprocessShortUrl(
+  req: Express.Request,
+  _: Express.Response,
+  next: Express.NextFunction,
+) {
+  const { shortUrl } = req.params
+  if (shortUrl) {
+    req.body.shortUrl = shortUrl
+  }
+  next()
+}
+
 router.get(
   '/urls',
   validator.body(urlRetrievalSchema),
@@ -32,6 +49,17 @@ router.post(
   urlCheckController.singleUrlCheck,
   validator.body(urlSchema),
   apiV1Controller.createUrl,
+)
+
+/**
+ * Endpoint for user to edit a URL. File editing is not allowed.
+ */
+router.patch(
+  '/urls/:shortUrl',
+  preprocessShortUrl,
+  urlCheckController.singleUrlCheck,
+  validator.body(urlEditSchema),
+  apiV1Controller.updateUrl,
 )
 
 router.use((_, res) => {
