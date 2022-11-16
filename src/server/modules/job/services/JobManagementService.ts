@@ -37,11 +37,6 @@ class JobManagementService implements interfaces.JobManagementService {
     return job
   }
 
-  findJobById: (id: number) => Promise<JobType | null> = async (id) => {
-    const job = await this.jobRepository.findById(id)
-    return job
-  }
-
   createJobItem: (properties: {
     params: JSON
     jobId: number
@@ -62,23 +57,20 @@ class JobManagementService implements interfaces.JobManagementService {
   }
 
   updateJobItem: (
-    jobItem: JobItemType,
-    changes: Partial<JobItemType>,
-  ) => Promise<JobItemType> = async (jobItem, changes) => {
-    return this.jobItemRepository.update(jobItem, changes)
-  }
-
-  findJobItemsByJobId: (jobId: number) => Promise<JobItemType[]> = async (
-    jobId,
-  ) => {
-    const job = await this.jobRepository.findById(jobId)
-    if (!job) {
-      throw new NotFoundError('Job not found')
+    jobItemId: string,
+    status: interfaces.JobItemCallbackStatus,
+  ) => Promise<JobItemType> = async (jobItemId, status) => {
+    const currJobItem = await this.jobItemRepository.findByJobItemId(jobItemId)
+    if (!currJobItem) {
+      throw new NotFoundError('Job item not found')
     }
+    const { isSuccess, errorMessage } = status
+    const changes = {
+      status: isSuccess ? JobItemStatusEnum.Success : JobItemStatusEnum.Failed,
+      message: errorMessage || '',
+    } as Partial<JobItemType>
 
-    const jobItems = await this.jobItemRepository.findJobItemsByJobId(jobId)
-
-    return jobItems
+    return this.jobItemRepository.update(currJobItem, changes)
   }
 
   // 'success' when all related job items are also successful
@@ -87,8 +79,12 @@ class JobManagementService implements interfaces.JobManagementService {
   getJobStatus: (jobId: number) => Promise<JobItemStatusEnum> = async (
     jobId,
   ) => {
-    const jobItems = await this.findJobItemsByJobId(jobId)
+    const job = await this.jobRepository.findById(jobId)
+    if (!job) {
+      throw new NotFoundError('Job not found')
+    }
 
+    const jobItems = await this.jobItemRepository.findJobItemsByJobId(jobId)
     if (jobItems.length === 0) {
       throw new Error('Job does not have any job items')
     }

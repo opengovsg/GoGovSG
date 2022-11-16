@@ -6,6 +6,15 @@ import { NotFoundError } from '../../../util/error'
 
 @injectable()
 export class JobItemRepository implements interfaces.JobItemRepository {
+  findByJobItemId: (jobItemId: string) => Promise<JobItemType | null> = async (
+    jobItemId,
+  ) => {
+    const jobItem = await JobItem.scope(['defaultScope']).findOne({
+      where: { jobItemId },
+    })
+    return jobItem
+  }
+
   findJobItemsByJobId: (jobId: number) => Promise<JobItemType[]> = async (
     jobId,
   ) => {
