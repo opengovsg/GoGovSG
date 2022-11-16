@@ -251,3 +251,4 @@ export const bulkUploadRandomStrLength: number =
   Number(process.env.BULK_UPLOAD_RANDOM_STR_LENGTH) || 8
 export const qrCodeJobBatchSize: number =
   Number(process.env.BULK_QR_CODE_BATCH_SIZE) || 100
+export const lambdaHashSecret: string = process.env.LAMBDA_HASH_SECRET as string

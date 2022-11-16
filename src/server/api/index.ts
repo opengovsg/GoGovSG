@@ -1,7 +1,7 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
 import { ERROR_404_PATH } from '../constants'
-import { displayHostname } from '../config'
+import { displayHostname, lambdaHashSecret } from '../config'
 import assetVariant from '../../shared/util/asset-variant'
 
 const router = Express.Router()
@@ -44,7 +44,11 @@ const lambdaCallbackGuard = (
     return
   }
   const [headerKey, key] = authToken.trim().split(' ')
-  if (headerKey.toLowerCase() !== 'bearer' || !key || key !== 'password') {
+  if (
+    headerKey.toLowerCase() !== 'bearer' ||
+    !key ||
+    key !== lambdaHashSecret
+  ) {
     res.unauthorized()
     return
   }
