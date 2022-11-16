@@ -35,7 +35,7 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
     return this.userRepository.findUserByApiKey(apiKeyHash)
   }
 
-  hasApiKey: (userId: any) => Promise<boolean> = async (userId: number) => {
+  hasApiKey: (userId: number) => Promise<boolean> = async (userId: number) => {
     return this.userRepository.hasApiKey(userId)
   }
 
