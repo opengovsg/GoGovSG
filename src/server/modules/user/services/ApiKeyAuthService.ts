@@ -35,6 +35,10 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
     return this.userRepository.findUserByApiKey(apiKeyHash)
   }
 
+  hasApiKey: (userId: number) => Promise<boolean> = async (userId: number) => {
+    return this.userRepository.hasApiKey(userId)
+  }
+
   static async getApiKeyHash(apiKey: string): Promise<string> {
     const [name, version, key] = apiKey.split(API_KEY_SEPARATOR)
     const hash = await bcrypt.hash(key, apiKeySalt)

@@ -18,13 +18,16 @@
     "links": {
       "contribute": "https://go.gov.sg/go-opensource",
       "directory": "/directory",
+      "apiintegration": "/apiintegration",
+      "dashboard": "/user",
       "faq": "https://guide.go.gov.sg",
       "privacy": "https://guide.go.gov.sg/privacy",
       "terms": "https://guide.go.gov.sg/termsofuse",
       "contact": "https://form.gov.sg/5c5295edb3d80b0017ac7c81",
       "builtBy": "https://open.gov.sg",
       "linkedin": "https://sg.linkedin.com/company/open-government-products",
-      "facebook": "https://www.facebook.com/opengovsg"
+      "facebook": "https://www.facebook.com/opengovsg",
+      "apiDoc": "https://guide.go.gov.sg/guide/api-doc"
     },
     "builtBy": "Built by Open Government Products"
   },

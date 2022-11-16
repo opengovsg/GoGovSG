@@ -78,6 +78,11 @@ export class MockUserRepository implements UserRepositoryInterface {
     this.apiKeyHash = apiKeyHash
     return Promise.resolve({ id: 1, email: 'test@open.gov.sg' })
   }
+
+  hasApiKey(userId: number): Promise<boolean> {
+    this.userId = userId
+    return Promise.resolve(true)
+  }
 }
 
 export default MockUserRepository

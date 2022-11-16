@@ -58,16 +58,14 @@ export class UserRepository implements UserRepositoryInterface {
     )
   }
 
-  public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
-    email,
-  ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, created]) => {
+  public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
+    async (email) => {
+      const [user, created] = await User.findOrCreate({ where: { email } })
       if (created) {
         dogstatsd.increment(USER_NEW, 1, 1)
       }
-      return user
-    })
-  }
+      return this.userMapper.persistenceToDto(user)
+    }
 
   public findOneUrlForUser: (
     userId: number,
@@ -181,6 +179,16 @@ export class UserRepository implements UserRepositoryInterface {
         apiKeyHash,
       })
     }
+
+  public hasApiKey: (userId: number) => Promise<boolean> = async (userId) => {
+    const user = await User.findOne({
+      where: { id: userId },
+    })
+    if (!user) {
+      throw new NotFoundError('User not found')
+    }
+    return !!user.apiKeyHash
+  }
 }
 
 export default UserRepository

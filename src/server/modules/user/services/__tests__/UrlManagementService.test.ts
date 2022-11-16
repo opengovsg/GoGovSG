@@ -16,6 +16,7 @@ describe('UrlManagementService', () => {
     findOrCreateWithEmail: jest.fn(),
     findUserByApiKey: jest.fn(),
     saveApiKeyHash: jest.fn(),
+    hasApiKey: jest.fn(),
   }
 
   const urlRepository = {

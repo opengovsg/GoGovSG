@@ -21,6 +21,10 @@ export const tagRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
 
+export const hasApiKeySchema = Joi.object({
+  userId: Joi.number().required(),
+})
+
 const tagSchema = Joi.array()
   .max(MAX_NUM_TAGS_PER_LINK)
   .optional()

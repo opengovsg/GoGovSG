@@ -15,6 +15,7 @@ import NotFoundPage from '../NotFoundPage'
 import DirectoryPage from '../../../../directory'
 import MessageSnackbar from '../../MessageSnackbar'
 import ScrollToTop from './ScrollToTop'
+import ApiIntegrationPage from '../../../../apiintegration'
 
 // Add extra favicons to webpack bundle
 import '@assets/favicon/android-chrome-192x192.png'
@@ -24,6 +25,7 @@ import '@assets/favicon/favicon-16x16.png'
 import '@assets/favicon/favicon-32x32.png'
 
 import {
+  API_INTEGRATION_PAGE,
   DIRECTORY_PAGE,
   HOME_PAGE,
   LOGIN_PAGE,
@@ -48,6 +50,10 @@ const Root: FunctionComponent<RootProps> = ({ store, history }: RootProps) => (
             <PrivateRoute path={USER_PAGE} component={UserPage} />
             <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
             <PrivateRoute path={DIRECTORY_PAGE} component={DirectoryPage} />
+            <PrivateRoute
+              path={API_INTEGRATION_PAGE}
+              component={ApiIntegrationPage}
+            />
             <Route component={NotFoundPage} />
           </Switch>
         </ScrollToTop>

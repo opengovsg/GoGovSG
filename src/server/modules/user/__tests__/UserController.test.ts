@@ -27,6 +27,7 @@ const tagManagementService = {
 
 const apiKeyAuthService = {
   upsertApiKey: jest.fn(),
+  hasApiKey: jest.fn(),
 }
 
 const userMessage = 'The quick brown fox jumps over a lazy dog'
@@ -628,6 +629,31 @@ describe('UserController', () => {
       res.serverError = jest.fn()
       await controller.createAPIKey(req, res)
       expect(apiKeyAuthService.upsertApiKey).toHaveBeenCalledTimes(1)
+      expect(res.serverError).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('hasAPIKey', () => {
+    beforeEach(() => {
+      apiKeyAuthService.hasApiKey.mockReset()
+    })
+    it('apiKeyAuthService.hasAPIKey is called exactly one time', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      apiKeyAuthService.hasApiKey.mockResolvedValue(true)
+      res.ok = jest.fn()
+      await controller.hasAPIKey(req, res)
+      expect(apiKeyAuthService.hasApiKey).toHaveBeenCalledTimes(1)
+      expect(res.ok).toHaveBeenCalledTimes(1)
+    })
+    it('Error is handled properly', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      apiKeyAuthService.hasApiKey.mockRejectedValue(new Error('Server Error'))
+      res.serverError = jest.fn()
+      res.ok = jest.fn()
+      await controller.hasAPIKey(req, res)
+      expect(apiKeyAuthService.hasApiKey).toHaveBeenCalledTimes(1)
       expect(res.serverError).toHaveBeenCalledTimes(1)
     })
   })

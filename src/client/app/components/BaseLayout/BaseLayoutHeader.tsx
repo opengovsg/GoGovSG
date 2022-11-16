@@ -22,6 +22,8 @@ import directoryIcon from '@assets/components/app/base-layout/directory-icon.svg
 import feedbackIcon from '@assets/components/app/base-layout/feedback-icon.svg'
 import githubIcon from '@assets/components/app/base-layout/github-icon.svg'
 import signinIcon from '@assets/components/app/base-layout/signin-icon.svg'
+import apiIcon from '@assets/components/app/base-layout/api-icon.svg'
+import homeIcon from '@assets/components/app/base-layout/home-icon.svg'
 import Section from '../Section'
 import loginActions from '../../../login/actions'
 import { GoGovReduxState } from '../../reducers/types'
@@ -133,11 +135,27 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
   const headers = [
     {
+      text: 'Dashboard',
+      link: i18next.t('general.links.dashboard'),
+      public: false,
+      icon: homeIcon,
+      mobileOrder: 1,
+      internalLink: true,
+    },
+    {
       text: 'Directory',
       link: i18next.t('general.links.directory'),
       public: false,
       icon: directoryIcon,
-      mobileOrder: 1,
+      mobileOrder: 2,
+      internalLink: true,
+    },
+    {
+      text: 'API Integration',
+      link: i18next.t('general.links.apiintegration'),
+      public: false,
+      icon: apiIcon,
+      mobileOrder: 3,
       internalLink: true,
     },
     {
@@ -151,14 +169,14 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       link: i18next.t('general.links.faq'),
       public: false,
       icon: helpIcon,
-      mobileOrder: 2,
+      mobileOrder: 4,
     },
     {
       text: 'Help us improve',
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
-      mobileOrder: 3,
+      mobileOrder: 5,
     },
   ]
 

@@ -49,8 +49,15 @@ const baseUser = {
   id: 2,
   email: 'user@agency.gov.sg',
   update: jest.fn(),
+  apiKeyHash: 'apiKeyHash',
 }
 
+const baseUserNoKeyHash = {
+  id: 2,
+  email: 'user@agency.gov.sg',
+  update: jest.fn(),
+  apiKeyHash: null,
+}
 describe('UserRepository', () => {
   describe('findById', () => {
     const findByPk = jest.spyOn(userModelMock, 'findByPk')
@@ -147,9 +154,8 @@ describe('UserRepository', () => {
       const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
       const user = userModelMock.findOne()
       findOrCreate.mockResolvedValue([user, null])
-      await expect(
-        userRepo.findOrCreateWithEmail('user@agency.gov.sg'),
-      ).resolves.toBe(user)
+      await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
+      expect(findOrCreate).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -325,6 +331,30 @@ describe('UserRepository', () => {
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(findOne).toBeCalledTimes(1)
       expect(update).toBeCalledTimes(0)
+    })
+  })
+
+  describe('hasApiKey', () => {
+    const findOne = jest.spyOn(userModelMock, 'findOne')
+    beforeEach(() => {
+      findOne.mockReset()
+    })
+    it('hasApiKey is returned correctly', async () => {
+      findOne.mockResolvedValue(baseUser)
+      const hasApiKey = await userRepo.hasApiKey(baseUser.id)
+      expect(hasApiKey).toEqual(!!baseUser.apiKeyHash)
+    })
+    it('hasApiKey false is returned correctly', async () => {
+      findOne.mockResolvedValue(baseUserNoKeyHash)
+      const hasApiKey = await userRepo.hasApiKey(baseUserNoKeyHash.id)
+      expect(hasApiKey).toEqual(false)
+    })
+    it('user not found, error is thrown', async () => {
+      findOne.mockResolvedValue(null)
+      await expect(userRepo.hasApiKey(baseUser.id)).rejects.toBeInstanceOf(
+        NotFoundError,
+      )
+      expect(findOne).toBeCalledTimes(1)
     })
   })
 

@@ -31,6 +31,7 @@ const service = new LinkStatisticsService(
     findUserByUrl: NO_OP,
     saveApiKeyHash: NO_OP,
     findUserByApiKey: NO_OP,
+    hasApiKey: NO_OP,
   },
   { updateLinkStatistics, findByShortUrl },
 )

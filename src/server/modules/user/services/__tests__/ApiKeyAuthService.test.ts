@@ -9,6 +9,7 @@ const userRepository = {
   findOrCreateWithEmail: jest.fn(),
   saveApiKeyHash: jest.fn(),
   findUserByApiKey: jest.fn(),
+  hasApiKey: jest.fn(),
 }
 const apiAuthService = new ApiKeyAuthService(userRepository)
 jest.spyOn(ApiKeyAuthService, 'getApiKeyHash').mockResolvedValue('')
@@ -33,5 +34,10 @@ describe('ApiKeyAuthService', () => {
     expect(userRepository.findUserByApiKey).toHaveBeenCalledWith(
       expect.any(String),
     )
+  })
+  it('hasApiKey should call userRepository.hasApiKey', async () => {
+    await apiAuthService.hasApiKey(baseUserId)
+    expect(userRepository.hasApiKey).toHaveBeenCalledTimes(1)
+    expect(userRepository.hasApiKey).toHaveBeenCalledWith(baseUserId)
   })
 })
