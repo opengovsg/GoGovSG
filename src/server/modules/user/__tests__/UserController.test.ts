@@ -11,7 +11,11 @@ import {
 } from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
-import { AlreadyExistsError, NotFoundError } from '../../../util/error'
+import {
+  AlreadyExistsError,
+  InvalidUrlUpdateError,
+  NotFoundError,
+} from '../../../util/error'
 
 const urlManagementService = {
   createUrl: jest.fn(),
@@ -268,6 +272,21 @@ describe('UserController', () => {
           description,
         },
       )
+    })
+
+    it('reports bad request on InvalidUrlUpdateError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      urlManagementService.updateUrl.mockRejectedValue(
+        new InvalidUrlUpdateError(''),
+      )
+
+      await controller.updateUrl(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
     })
 
     it('reports bad request on Error', async () => {

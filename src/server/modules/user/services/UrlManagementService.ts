@@ -16,6 +16,7 @@ import dogstatsd, {
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
+  InvalidUrlUpdateError,
   NotFoundError,
 } from '../../../util/error'
 import { StorableUrlSource } from '../../../repositories/enums'
@@ -118,6 +119,10 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
     if (!url) {
       throw new NotFoundError(`Short link "${shortUrl}" not found for user.`)
+    } else if (url.isFile && options.longUrl) {
+      throw new InvalidUrlUpdateError(`Cannot update longUrl for file.`)
+    } else if (!url.isFile && options.file) {
+      throw new InvalidUrlUpdateError(`Cannot update file for link.`)
     }
 
     const storableFile: StorableFile | undefined = file
