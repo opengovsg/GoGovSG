@@ -22,7 +22,7 @@
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
     "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
     "test:e2e-headless": "testcafe chrome:headless ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
-    "test:integration": "jest --config=./test/integration/jest.config.js --runInBand ./test/integration",
+    "test:integration": "jest --config=./test/integration/jest.config.js ./test/integration",
     "cz": "git-cz",
     "prepare": "husky install"
   },

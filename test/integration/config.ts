@@ -1,4 +1,4 @@
-export const EMAIL = 'integration@open.gov.sg'
+export const EMAIL_RANDOM_STRING_LENGTH = 10
 
 export const DB_URI = 'postgres://postgres:postgres@localhost:5432/postgres'
 

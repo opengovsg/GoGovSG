@@ -3,9 +3,10 @@ import { customAlphabet } from 'nanoid/async'
 import {
   API_LOGIN_OTP,
   API_LOGIN_VERIFY,
-  EMAIL,
+  EMAIL_RANDOM_STRING_LENGTH,
   LOCAL_EMAIL_URL,
 } from '../config'
+import { createDbUser, deleteDbUser } from './db'
 import { get, postJson } from './requests'
 
 export const DATETIME_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
@@ -15,9 +16,23 @@ export const generateRandomString = (length: number) => {
   return customAlphabet(ALPHABET, length)()
 }
 
-export const getAuthCookie: () => Promise<string> = async () => {
+export const createIntegrationTestUser: () => Promise<string> = async () => {
+  const randomString = await generateRandomString(EMAIL_RANDOM_STRING_LENGTH)
+  const integrationTestEmail = `integration-${randomString}@open.gov.sg`
+  await createDbUser(integrationTestEmail)
+  return integrationTestEmail
+}
+
+export const deleteIntegrationTestUser: (email: string) => Promise<void> =
+  async (email) => {
+    await deleteDbUser(email)
+  }
+
+export const getAuthCookie: (email: string) => Promise<string> = async (
+  email,
+) => {
   const otpRes = await postJson(API_LOGIN_OTP, {
-    email: EMAIL,
+    email,
   })
   if (!otpRes.ok) throw new Error('Failed to generate OTP')
   const emailRes = await get(LOCAL_EMAIL_URL)
@@ -26,7 +41,7 @@ export const getAuthCookie: () => Promise<string> = async () => {
   const emailBody = emailJson[emailJson.length - 1].html
   const emailOTP = JSON.stringify(emailBody).match(/\d{6}/)![0]
   const verifyRes = await postJson(API_LOGIN_VERIFY, {
-    email: EMAIL,
+    email,
     otp: emailOTP,
   })
   if (!verifyRes.ok) throw new Error('Failed to verify OTP')
