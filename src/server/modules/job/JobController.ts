@@ -5,7 +5,7 @@ import { DependencyIds } from '../../constants'
 import dogstatsd from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
-import { qrCodeJobBatchSize } from '../../config'
+import { logger, qrCodeJobBatchSize } from '../../config'
 
 @injectable()
 export class JobController {
@@ -49,6 +49,7 @@ export class JobController {
       )
       dogstatsd.increment('job.start.success', 1, 1)
     } catch (e) {
+      logger.error(`error creating and starting job: ${e}`)
       dogstatsd.increment('job.start.failure', 1, 1)
     }
   }
