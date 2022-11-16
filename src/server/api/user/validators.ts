@@ -41,7 +41,7 @@ export const userUrlsQueryConditions = Joi.object({
   orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
   sortDirection: Joi.string().valid('desc', 'asc').optional(),
   searchText: Joi.string().allow('').optional(),
-  state: Joi.string().allow('').optional(),
+  state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
   isFile: Joi.boolean().optional(),
   tags: tagSchema.max(5),
 })
