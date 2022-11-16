@@ -54,6 +54,7 @@ services:
       - BULK_UPLOAD_RANDOM_STR_LENGTH=8
       - API_LINK_RANDOM_STR_LENGTH=8
       - API_KEY_SALT=$$2b$$10$$9rBKuE4Gb5ravnvP4xjoPu
+      - FF_EXTERNAL_API=true
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
