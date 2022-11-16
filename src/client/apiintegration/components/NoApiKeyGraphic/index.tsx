@@ -1,5 +1,6 @@
 import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 import React, { FunctionComponent } from 'react'
+import i18next from 'i18next'
 import noApiKeyGraphic from '@assets/components/apiintegration/empty-api-key-graphic/empty-api-key-graphic.svg'
 import plusIcon from '@assets/components/app/base-layout/plus-icon.svg'
 import { useDispatch } from 'react-redux'
@@ -36,7 +37,6 @@ const useStyles = makeStyles((theme) =>
       marginTop: '63px',
       marginBottom: '76px',
       position: 'relative',
-      zIndex: -1,
     },
   }),
 )
@@ -52,7 +52,7 @@ const NoApiKeyGraphic: FunctionComponent = () => {
         GoGovSG API enables you to programmatically generate your short links.
         <br />
         Refer to our{' '}
-        <a href="https://go.gov.sg/go-api">
+        <a href={i18next.t('general.links.apiDoc')}>
           <u>API Documentation</u>
         </a>{' '}
         for more information.

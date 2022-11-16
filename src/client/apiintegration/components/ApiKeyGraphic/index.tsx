@@ -6,6 +6,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
+import i18next from 'i18next'
 import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
 import { useDispatch } from 'react-redux'
 import PrefixableTextField from '../../../user/widgets/PrefixableTextField'
@@ -22,7 +23,6 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       marginTop: theme.spacing(3),
-      alignItems: 'left',
       [theme.breakpoints.up('md')]: {
         marginTop: theme.spacing(6),
       },
@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) =>
     configOptionWrapper: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'left',
       maxWidth: '775px',
     },
     apiKeyInfoText: {
@@ -69,7 +68,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
         key will be hidden.
         <br />
         Refer to our{' '}
-        <a href="https://go.gov.sg/go-api">
+        <a href={i18next.t('general.links.apiDoc')}>
           <u>API Documentation</u>
         </a>{' '}
         for more information.
@@ -89,7 +88,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
             <PrefixableTextField
               value="******************"
               onChange={() => {}}
-              placeholder="Email of link recipient"
+              placeholder=""
               helperText={' '}
               disabled
             />

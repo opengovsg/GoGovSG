@@ -288,7 +288,8 @@ export class UserController {
       res.ok(jsonMessage(hasApiKey.toString()))
       return
     } catch (error) {
-      res.serverError(jsonMessage('error getting hasApiKey'))
+      logger.error(`Error getting hasApiKey: ${error}`)
+      res.serverError(jsonMessage('Error getting hasApiKey'))
       return
     }
   }
@@ -303,6 +304,7 @@ export class UserController {
       res.ok(jsonMessage(apiKey))
       return
     } catch (error) {
+      logger.error(`Error creating APIKey: ${error}`)
       res.serverError(jsonMessage('Error creating APIKey for user'))
       return
     }

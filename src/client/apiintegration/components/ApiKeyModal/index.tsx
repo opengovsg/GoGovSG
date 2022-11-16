@@ -33,7 +33,8 @@ const useStyles = makeStyles((theme) =>
       alignSelf: 'center',
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(3),
-      minWidth: theme.spacing(35),
+      paddingLeft: theme.spacing(10),
+      paddingRight: theme.spacing(10),
       color: 'white',
       background: theme.palette.primary.main,
       '&:hover': {
@@ -43,6 +44,9 @@ const useStyles = makeStyles((theme) =>
     apiKeyTextField: {
       marginTop: theme.spacing(2),
       width: '100%',
+    },
+    apiKeyTextInput: {
+      paddingRight: theme.spacing(0.5),
     },
     copyButton: {
       padding: theme.spacing(0.75),
@@ -86,7 +90,7 @@ const ApiKeyModal: FunctionComponent = () => {
           Save your API Key
         </Typography>
         <Typography className={classes.headerText} color="primary">
-          Please make a copy of your API key as it will be shown only once
+          Please make a copy of your API key as it will be shown only once.
         </Typography>
         <TextField
           className={classes.apiKeyTextField}
@@ -94,6 +98,7 @@ const ApiKeyModal: FunctionComponent = () => {
           disabled
           variant="outlined"
           InputProps={{
+            className: classes.apiKeyTextInput,
             endAdornment: (
               <IconButton
                 className={classes.copyButton}
