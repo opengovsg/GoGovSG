@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
 import { DependencyIds } from '../../constants'
@@ -6,6 +6,7 @@ import dogstatsd from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
 import { logger, qrCodeJobBatchSize } from '../../config'
+import jsonMessage from '../../util/json'
 
 @injectable()
 export class JobController {
@@ -49,10 +50,27 @@ export class JobController {
         }),
       )
       dogstatsd.increment('job.start.success', 1, 1)
-    } catch (e) {
-      logger.error(`error creating and starting job: ${e}`)
+    } catch (error) {
+      logger.error(`error creating and starting job: ${error}`)
       dogstatsd.increment('job.start.failure', 1, 1)
     }
+  }
+
+  public updateJob: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res,
+  ) => {
+    const { jobItemId, status } = req.body
+    try {
+      await this.jobManagementService.updateJobItem(jobItemId, status)
+      res.ok(jsonMessage('successfully updated'))
+      dogstatsd.increment('job.update.success', 1, 1)
+    } catch (error) {
+      dogstatsd.increment('job.update.failure', 1, 1)
+      logger.error(`error updating job ${jobItemId}: ${error}`)
+      res.status(404).send(jsonMessage(error.message))
+    }
+    return
   }
 }
 

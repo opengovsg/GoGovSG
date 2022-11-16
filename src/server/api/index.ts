@@ -31,6 +31,27 @@ function userGuard(
 }
 
 /**
+ * To protect lambda callback route. Temporary.
+ * */
+const lambdaCallbackGuard = (
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) => {
+  const authToken = req.headers.authorization
+  if (!authToken) {
+    res.unauthorized()
+    return
+  }
+  const [headerKey, key] = authToken.trim().split(' ')
+  if (headerKey.toLowerCase() !== 'bearer' || !key || key !== 'password') {
+    res.unauthorized()
+    return
+  }
+  next()
+}
+
+/**
  *  Preprocess request parameters.
  * */
 function preprocess(
@@ -51,6 +72,8 @@ router.use('/qrcode', userGuard, require('./qrcode'))
 router.use('/link-stats', userGuard, require('./link-statistics'))
 router.use('/link-audit', userGuard, require('./link-audit'))
 router.use('/directory', userGuard, require('./directory'))
+
+router.use('/callback', lambdaCallbackGuard, require('./callback'))
 
 router.use((_, res) => {
   res.status(404).render(ERROR_404_PATH, {
