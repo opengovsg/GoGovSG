@@ -5,6 +5,7 @@ import { DependencyIds } from '../../constants'
 import dogstatsd from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
+import { qrCodeJobBatchSize } from '../../config'
 
 @injectable()
 export class JobController {
@@ -23,9 +24,12 @@ export class JobController {
   }
 
   public createAndStartJob: (req: Request) => Promise<void> = async (req) => {
-    const jobBatchSize = 5 // temp
     const { userId, jobParamsList } = req.body
-    const jobBatches = _.chunk(jobParamsList, jobBatchSize)
+    if (!jobParamsList || jobParamsList.length === 0) {
+      return
+    }
+
+    const jobBatches = _.chunk(jobParamsList, qrCodeJobBatchSize)
     try {
       const job = await this.jobManagementService.createJob(userId)
 

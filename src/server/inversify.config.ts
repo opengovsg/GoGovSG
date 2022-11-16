@@ -11,6 +11,7 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  sqsRegion,
   sqsTimeout,
   userAnnouncement,
   userMessage,
@@ -194,7 +195,7 @@ export default () => {
 
     container.bind(DependencyIds.sqsClient).toConstantValue(
       new AWS.SQS({
-        region: 'ap-southeast-1',
+        region: sqsRegion,
         httpOptions: {
           timeout: sqsTimeout,
         },
@@ -205,7 +206,7 @@ export default () => {
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
     container.bind(DependencyIds.sqsClient).toConstantValue(
       new AWS.SQS({
-        region: 'ap-southeast-1',
+        region: sqsRegion,
         httpOptions: {
           timeout: sqsTimeout,
         },
