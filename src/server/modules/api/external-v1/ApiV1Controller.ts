@@ -67,6 +67,52 @@ export class ApiV1Controller {
     }
   }
 
+  public getUrlsWithConditions: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const queryConditions = ApiV1Controller.extractUrlQueryConditions(req)
+    // Find user and paginated urls
+    try {
+      const { urls, count } =
+        await this.urlManagementService.getUrlsWithConditions(queryConditions)
+      const apiUrls = urls.map((url) => this.urlV1Mapper.persistenceToDto(url))
+      res.ok({ urls: apiUrls, count })
+      return
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.notFound(jsonMessage(error.message))
+        return
+      }
+      res.serverError(jsonMessage('Error retrieving URLs for user'))
+      return
+    }
+  }
+
+  private static extractUrlQueryConditions(req: Express.Request) {
+    const { userId } = req.body
+    const {
+      limit = 1000,
+      offset = 0,
+      searchText = '',
+      orderBy = 'createdAt',
+      sortDirection = 'desc',
+      isFile,
+      state,
+    } = req.query
+    const queryConditions = {
+      userId,
+      limit: Number(limit),
+      offset: Number(offset),
+      orderBy: orderBy.toString(),
+      sortDirection: sortDirection.toString(),
+      searchText: searchText.toString(),
+      state: state?.toString(),
+      isFile: isFile as boolean | undefined,
+    }
+    return queryConditions
+  }
+
   public updateUrl: (
     req: Express.Request,
     res: Express.Response,

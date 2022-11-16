@@ -5,7 +5,12 @@ import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { ApiV1Controller } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
-import { urlEditSchema, urlSchema } from './validators'
+import {
+  urlEditSchema,
+  urlRetrievalSchema,
+  urlSchema,
+  userUrlsQueryConditions,
+} from './validators'
 
 const apiV1Controller = container.get<ApiV1Controller>(
   DependencyIds.apiV1Controller,
@@ -31,6 +36,13 @@ function preprocessShortUrl(
   }
   next()
 }
+
+router.get(
+  '/urls',
+  validator.body(urlRetrievalSchema),
+  validator.query(userUrlsQueryConditions),
+  apiV1Controller.getUrlsWithConditions,
+)
 
 router.post(
   '/urls',
