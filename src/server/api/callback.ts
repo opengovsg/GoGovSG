@@ -15,7 +15,7 @@ const jobItemCallbackSchema = Joi.object({
   status: Joi.object()
     .keys({
       isSuccess: Joi.boolean().required(),
-      errorMessage: Joi.string(),
+      errorMessage: Joi.string().allow(null, ''),
     })
     .required(),
 })
