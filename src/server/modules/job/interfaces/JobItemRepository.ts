@@ -8,6 +8,7 @@ export interface JobItemRepository {
     message?: string
     params: JSON
     jobId: number
+    jobItemId: string
   }): Promise<JobItemType>
   update(
     jobItem: JobItemType,

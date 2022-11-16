@@ -42,6 +42,7 @@ export class JobController {
           await this.jobManagementService.createJobItem({
             params: <JSON>(<unknown>messageParams),
             jobId: job.id,
+            jobItemId: `${job.uuid}/${idx}`,
           })
           await this.sqsService.sendMessage(messageParams)
           return

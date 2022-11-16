@@ -45,12 +45,19 @@ class JobManagementService implements interfaces.JobManagementService {
   createJobItem: (properties: {
     params: JSON
     jobId: number
-  }) => Promise<JobItemType> = async ({ params, jobId }) => {
+    jobItemId: string
+  }) => Promise<JobItemType> = async ({ params, jobId, jobItemId }) => {
+    const job = await this.jobRepository.findById(jobId)
+    if (!job) {
+      throw new NotFoundError('Job not found')
+    }
+
     return this.jobItemRepository.create({
       status: JobItemStatusEnum.InProgress,
       message: '',
       params,
       jobId,
+      jobItemId,
     })
   }
 

@@ -21,6 +21,7 @@ export class JobItemRepository implements interfaces.JobItemRepository {
     message?: string
     params: JSON
     jobId: number
+    jobItemId: string
   }) => Promise<JobItemType> = async (properties) => {
     // jobId is validated through service layer
     const jobItem = await JobItem.create(properties)

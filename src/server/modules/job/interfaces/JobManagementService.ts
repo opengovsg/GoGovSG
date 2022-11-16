@@ -7,6 +7,7 @@ export interface JobManagementService {
   createJobItem: (properties: {
     params: JSON
     jobId: number
+    jobItemId: string
   }) => Promise<JobItemType>
   updateJobItem(
     jobItem: JobItemType,

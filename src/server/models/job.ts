@@ -35,6 +35,7 @@ export interface JobItemType extends IdType, Sequelize.Model {
   readonly message: string
   readonly params: JSON
   readonly jobId: number
+  readonly jobItemId: string
   readonly createdAt: string
   readonly updatedAt: string
 }
@@ -59,10 +60,13 @@ export const JobItem = <JobItemStatic>sequelize.define(
     message: {
       type: Sequelize.STRING,
       defaultValue: '',
-      allowNull: false,
     },
     params: {
       type: Sequelize.JSON,
+      allowNull: false,
+    },
+    jobItemId: {
+      type: Sequelize.STRING,
       allowNull: false,
     },
   },
