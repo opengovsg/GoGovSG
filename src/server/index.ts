@@ -48,6 +48,7 @@ import { Mailer } from './services/email'
 import parseDomain from './util/domain'
 import { RedirectController } from './modules/redirect'
 import assetVariant from '../shared/util/asset-variant'
+import dogstatsd, { ERROR_UNHANLDED_REJECTION } from './util/dogstatsd'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -244,6 +245,7 @@ initDb()
     app.listen(port, () => logger.info(`Listening on port ${port}!`))
 
     process.on('unhandledRejection', (error) => {
+      dogstatsd.increment(ERROR_UNHANLDED_REJECTION, 1, 1)
       logger.error(`Unhandled rejection:\t${error}`)
     })
   })
