@@ -130,7 +130,7 @@ After these have been set up, set the environment variables according to the tab
 |SAFE_BROWSING_KEY|No|API key for access to Google Safe Browsing.|
 |SAFE_BROWSING_LOG_ONLY|No|Boolean, whether to log only, or throw error if unsafe link is found by Google SafeBrowsing. Defaults to false|
 |ASSET_VARIANT|Yes|Asset variant specifying environment for deployment, one of `gov`, `edu`, `health`|
-|COOKIE_MAX_AGE|Yes|Session duration of cookie|
+|COOKIE_MAX_AGE|No|Session duration of cookie in milliseconds. Defaults to 86400000 (1 day)|
 |BULK_UPLOAD_MAX_NUM|No|Maximum number of links that can be bulk uploaded at once. Defaults to 1000|
 |BULK_UPLOAD_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in bulk upload. Defaults to 8|
 |API_LINK_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in API created links. Defaults to 8|

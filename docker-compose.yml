@@ -30,6 +30,7 @@ services:
       - GA_TRACKING_ID=UA-139330318-1
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
+      - COOKIE_MAX_AGE=86400000
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
       - USER_MESSAGE=User message test
       - ANNOUNCEMENT_MESSAGE=Search by email to find link owners, or by keyword to discover other links! \n PRO TIP! Search your email domain to find out all the links made by your agency.
