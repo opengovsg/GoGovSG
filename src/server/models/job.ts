@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 import { IdType } from '../../types/server/models'
-import { JobItemStatusEnum } from '../repositories/enums'
+import { JobItemStatusEnum, JobStatusEnum } from '../repositories/enums'
 import { sequelize } from '../util/sequelize'
 
 export interface JobType extends IdType, Sequelize.Model {
@@ -8,6 +8,7 @@ export interface JobType extends IdType, Sequelize.Model {
   readonly userId: Number
   readonly createdAt: string
   readonly updatedAt: string
+  readonly status: JobStatusEnum
 }
 
 type JobStatic = typeof Sequelize.Model & {
@@ -21,6 +22,16 @@ export const Job = <JobStatic>sequelize.define(
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       unique: true,
+    },
+    status: {
+      type: Sequelize.ENUM,
+      values: [
+        JobStatusEnum.InProgress,
+        JobStatusEnum.Success,
+        JobStatusEnum.Failed,
+      ],
+      defaultValue: JobItemStatusEnum.InProgress,
+      allowNull: false,
     },
   },
   {

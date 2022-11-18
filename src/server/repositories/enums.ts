@@ -17,3 +17,9 @@ export enum JobItemStatusEnum {
   Success = 'SUCCESS',
   Failed = 'FAILED',
 }
+
+export enum JobStatusEnum {
+  InProgress = 'IN_PROGRESS',
+  Success = 'SUCCESS',
+  Failed = 'FAILED',
+}
