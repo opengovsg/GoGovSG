@@ -22,6 +22,11 @@ const jobItemCallbackSchema = Joi.object({
 /**
  * Update job status based on callback.
  */
-router.post('/', validator.body(jobItemCallbackSchema), jobController.updateJob)
+router.post(
+  '/',
+  validator.body(jobItemCallbackSchema),
+  jobController.updateJobItem,
+  jobController.updateJob,
+)
 
 module.exports = router

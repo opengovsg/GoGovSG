@@ -56,19 +56,38 @@ export class JobController {
     }
   }
 
-  public updateJob: (req: Request, res: Response) => Promise<void> = async (
+  public updateJobItem: (req: Request, res: Response) => Promise<void> = async (
     req,
     res,
   ) => {
     const { jobItemId, status } = req.body
     try {
-      await this.jobManagementService.updateJobItem(jobItemId, status)
+      const jobItem = await this.jobManagementService.updateJobItemStatus(
+        jobItemId,
+        status,
+      )
+      // add jobItem to req.body so that downstream controllers can access it
+      req.body.jobItem = jobItem
       res.ok(jsonMessage('successfully updated'))
+      dogstatsd.increment('jobItem.update.success', 1, 1)
+    } catch (error) {
+      dogstatsd.increment('jobItem.update.failure', 1, 1)
+      logger.error(`error updating job ${jobItemId}: ${error}`)
+      res.status(404).send(jsonMessage(error.message))
+    }
+    return
+  }
+
+  public updateJob: (req: Request) => Promise<void> = async (req) => {
+    const {
+      jobItem: { jobId },
+    } = req.body
+    try {
+      await this.jobManagementService.updateJobStatus(jobId)
       dogstatsd.increment('job.update.success', 1, 1)
     } catch (error) {
       dogstatsd.increment('job.update.failure', 1, 1)
-      logger.error(`error updating job ${jobItemId}: ${error}`)
-      res.status(404).send(jsonMessage(error.message))
+      logger.error(`error updating job ${jobId}: ${error}`)
     }
     return
   }

@@ -1,6 +1,7 @@
 import { injectable } from 'inversify'
 import { Job, JobType } from '../../../models/job'
 import * as interfaces from '../interfaces'
+import { NotFoundError } from '../../../util/error'
 
 @injectable()
 export class JobRepository implements interfaces.JobRepository {
@@ -13,6 +14,20 @@ export class JobRepository implements interfaces.JobRepository {
     if (!job) throw new Error('Newly-created job is null')
     return job
   }
+
+  update: (job: JobType, changes: Partial<JobType>) => Promise<JobType> =
+    async (job, changes) => {
+      const { id } = job
+      const dbJob = await Job.scope(['defaultScope']).findOne({
+        where: { id },
+      })
+      if (!dbJob) {
+        throw new NotFoundError(`job is not found in database`)
+      }
+      const updatedJob = await dbJob.update({ ...changes })
+      if (!updatedJob) throw new Error('Newly-updated job is null')
+      return updatedJob
+    }
 }
 
 export default JobRepository

@@ -1,5 +1,5 @@
 import { JobItemType, JobType } from '../../../models/job'
-import { JobItemStatusEnum } from '../../../repositories/enums'
+import { JobStatusEnum } from '../../../repositories/enums'
 
 export interface JobItemCallbackStatus {
   isSuccess: boolean
@@ -13,9 +13,10 @@ export interface JobManagementService {
     jobId: number
     jobItemId: string
   }) => Promise<JobItemType>
-  updateJobItem(
+  updateJobItemStatus(
     jobItemId: string,
     status: JobItemCallbackStatus,
   ): Promise<JobItemType>
-  getJobStatus(jobId: number): Promise<JobItemStatusEnum>
+  computeJobStatus(jobItems: JobItemType[]): JobStatusEnum
+  updateJobStatus(jobId: number): Promise<JobType>
 }

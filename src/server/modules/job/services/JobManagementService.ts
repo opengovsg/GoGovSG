@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { NotFoundError } from '../../../util/error'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
-import { JobItemStatusEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
 
@@ -56,7 +56,7 @@ class JobManagementService implements interfaces.JobManagementService {
     })
   }
 
-  updateJobItem: (
+  updateJobItemStatus: (
     jobItemId: string,
     status: interfaces.JobItemCallbackStatus,
   ) => Promise<JobItemType> = async (jobItemId, status) => {
@@ -73,12 +73,24 @@ class JobManagementService implements interfaces.JobManagementService {
     return this.jobItemRepository.update(currJobItem, changes)
   }
 
-  // 'success' when all related job items are also successful
-  // 'failed' if at least one of them job item failed
-  // 'in progress' if at least one of the job item is in progress (while the rest are either in progress or successful)
-  getJobStatus: (jobId: number) => Promise<JobItemStatusEnum> = async (
-    jobId,
-  ) => {
+  // 'Failed' if any job item fail
+  // 'Success' if all job items succeed
+  // 'InProgress' if no failure and any job item is still in progress
+  computeJobStatus: (jobItems: JobItemType[]) => JobStatusEnum = (jobItems) => {
+    let jobStatus = JobStatusEnum.Success
+    for (let i = 0; i < jobItems.length; i += 1) {
+      const { status } = jobItems[i]
+      if (status === JobItemStatusEnum.Failed) {
+        jobStatus = JobStatusEnum.Failed
+        break
+      } else if (status === JobItemStatusEnum.InProgress) {
+        jobStatus = JobStatusEnum.InProgress
+      }
+    }
+    return jobStatus
+  }
+
+  updateJobStatus: (jobId: number) => Promise<JobType> = async (jobId) => {
     const job = await this.jobRepository.findById(jobId)
     if (!job) {
       throw new NotFoundError('Job not found')
@@ -89,22 +101,8 @@ class JobManagementService implements interfaces.JobManagementService {
       throw new Error('Job does not have any job items')
     }
 
-    let isInProgress = false
-
-    for (let i = 0; i < jobItems.length; i += 1) {
-      const { status } = jobItems[i]
-      if (status === JobItemStatusEnum.Failed) {
-        return JobItemStatusEnum.Failed
-      }
-      if (status === JobItemStatusEnum.InProgress) {
-        isInProgress = true
-      }
-    }
-
-    if (isInProgress) {
-      return JobItemStatusEnum.InProgress
-    }
-    return JobItemStatusEnum.Success
+    const currJobStatus = this.computeJobStatus(jobItems)
+    return this.jobRepository.update(job, { status: currJobStatus })
   }
 }
 
