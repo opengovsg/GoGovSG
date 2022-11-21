@@ -1,4 +1,7 @@
-import { JobItemStatusEnum } from '../../../../repositories/enums'
+import {
+  JobItemStatusEnum,
+  JobStatusEnum,
+} from '../../../../repositories/enums'
 import { NotFoundError } from '../../../../util/error'
 import JobManagementService from '../JobManagementService'
 import { JobItemCallbackStatus } from '../../interfaces'
@@ -7,7 +10,7 @@ import { JobItemType } from '../../../../models/job'
 const mockJobRepository = {
   findById: jest.fn(),
   create: jest.fn(),
-  findLatestJobForUser: jest.fn(),
+  update: jest.fn(),
 }
 
 const mockJobItemRepository = {
@@ -51,6 +54,8 @@ describe('JobManagementService tests', () => {
       const mockJob = {
         uuid: 'abc',
         userId: mockUserId,
+        id: 2,
+        status: JobStatusEnum.InProgress,
       }
       mockUserRepository.findById.mockResolvedValue(mockUser)
       mockJobRepository.create.mockResolvedValue(mockJob)
@@ -79,6 +84,8 @@ describe('JobManagementService tests', () => {
       const mockJob = {
         uuid: 'abc',
         userId: mockUserId,
+        id: 1,
+        status: JobStatusEnum.InProgress,
       }
       const mockJobItemParams = {
         params: <JSON>(<unknown>{ testParams: 'hello world' }),
@@ -100,21 +107,21 @@ describe('JobManagementService tests', () => {
     })
   })
 
-  describe('updateJobItem', () => {
+  describe('updateJobItemStatus', () => {
     beforeEach(() => {
       jest.clearAllMocks()
     })
 
     it('should throw error if job item does not exist', async () => {
       const jobItemId = 'abc/0'
-      const updateJobItem = {
+      const updateJobItemStatus = {
         isSuccess: false,
         errorMessage: 'Unable to complete job',
       } as JobItemCallbackStatus
       mockJobItemRepository.findByJobItemId.mockResolvedValue(null)
 
       await expect(
-        service.updateJobItem(jobItemId, updateJobItem),
+        service.updateJobItemStatus(jobItemId, updateJobItemStatus),
       ).rejects.toThrow(new NotFoundError('Job item not found'))
 
       expect(mockJobItemRepository.findByJobItemId).toBeCalledWith(jobItemId)
@@ -148,7 +155,7 @@ describe('JobManagementService tests', () => {
       mockJobItemRepository.update.mockResolvedValue(updatedJobItem)
 
       await expect(
-        service.updateJobItem(jobItemId, updateStatus),
+        service.updateJobItemStatus(jobItemId, updateStatus),
       ).resolves.toEqual(updatedJobItem)
       expect(mockJobItemRepository.findByJobItemId).toBeCalledWith(jobItemId)
       expect(mockJobItemRepository.update).toBeCalledWith(
@@ -183,7 +190,7 @@ describe('JobManagementService tests', () => {
       mockJobItemRepository.update.mockResolvedValue(updatedJobItem)
 
       await expect(
-        service.updateJobItem(jobItemId, updateStatus),
+        service.updateJobItemStatus(jobItemId, updateStatus),
       ).resolves.toEqual(updatedJobItem)
       expect(mockJobItemRepository.findByJobItemId).toBeCalledWith(jobItemId)
       expect(mockJobItemRepository.update).toBeCalledWith(
@@ -193,35 +200,8 @@ describe('JobManagementService tests', () => {
     })
   })
 
-  describe('getJobStatus', () => {
-    it('should throw error if job does not exist', async () => {
-      mockJobRepository.findById.mockResolvedValue(null)
-      await expect(service.getJobStatus(2)).rejects.toThrow(
-        new NotFoundError('Job not found'),
-      )
-      expect(mockJobItemRepository.findJobItemsByJobId).not.toBeCalled()
-    })
-
-    it('should throw error if job has no job items', async () => {
-      const mockUserId = 1
-      const mockJob = {
-        uuid: 'abc',
-        userId: mockUserId,
-        id: 2,
-      }
-      mockJobRepository.findById.mockResolvedValue(mockJob)
-      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue([])
-      await expect(service.getJobStatus(2)).rejects.toThrow(
-        new Error('Job does not have any job items'),
-      )
-    })
-
+  describe('computeJobStatus', () => {
     it('should return JobStatus.Failed if any job item fails', async () => {
-      const mockUserId = 1
-      const mockJob = {
-        uuid: 'abc',
-        userId: mockUserId,
-      }
       const mockJobItems = [
         {
           status: JobItemStatusEnum.Success,
@@ -248,20 +228,13 @@ describe('JobManagementService tests', () => {
           id: 2,
         },
       ] as JobItemType[]
-      mockJobRepository.findById.mockResolvedValue(mockJob)
-      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
 
-      expect(await service.getJobStatus(1)).toStrictEqual(
+      expect(service.computeJobStatus(mockJobItems)).toStrictEqual(
         JobItemStatusEnum.Failed,
       )
     })
 
     it('should return JobStatus.InProgress if no job item has failed and at least one job item is still in progress', async () => {
-      const mockUserId = 1
-      const mockJob = {
-        uuid: 'abc',
-        userId: mockUserId,
-      }
       const mockJobItems = [
         {
           status: JobItemStatusEnum.InProgress,
@@ -288,20 +261,13 @@ describe('JobManagementService tests', () => {
           id: 2,
         },
       ] as JobItemType[]
-      mockJobRepository.findById.mockResolvedValue(mockJob)
-      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
 
-      expect(await service.getJobStatus(1)).toStrictEqual(
+      expect(service.computeJobStatus(mockJobItems)).toStrictEqual(
         JobItemStatusEnum.InProgress,
       )
     })
 
     it('should return JobStatus.Success only if all job items are successful', async () => {
-      const mockUserId = 1
-      const mockJob = {
-        uuid: 'abc',
-        userId: mockUserId,
-      }
       const mockJobItems = [
         {
           status: JobItemStatusEnum.Success,
@@ -328,12 +294,78 @@ describe('JobManagementService tests', () => {
           id: 2,
         },
       ] as JobItemType[]
-      mockJobRepository.findById.mockResolvedValue(mockJob)
-      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
 
-      expect(await service.getJobStatus(1)).toStrictEqual(
+      expect(service.computeJobStatus(mockJobItems)).toStrictEqual(
         JobItemStatusEnum.Success,
       )
+    })
+  })
+
+  describe('updateJobStatus', () => {
+    it('should throw error if job does not exist', async () => {
+      mockJobRepository.findById.mockResolvedValue(null)
+      const spy = jest.spyOn(service, 'computeJobStatus')
+      await expect(service.updateJobStatus(2)).rejects.toThrow(
+        new NotFoundError('Job not found'),
+      )
+      expect(mockJobItemRepository.findJobItemsByJobId).not.toBeCalled()
+      expect(spy).not.toBeCalled()
+    })
+
+    it('should throw error if job has no job items', async () => {
+      const mockUserId = 1
+      const mockJob = {
+        uuid: 'abc',
+        userId: mockUserId,
+        id: 2,
+        status: JobStatusEnum.InProgress,
+      }
+      mockJobRepository.findById.mockResolvedValue(mockJob)
+      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue([])
+      const spy = jest.spyOn(service, 'computeJobStatus')
+      await expect(service.updateJobStatus(2)).rejects.toThrow(
+        new Error('Job does not have any job items'),
+      )
+      expect(spy).not.toBeCalled()
+    })
+
+    it('should call computeJobStatus and update job status if job status has changed', async () => {
+      const mockUserId = 1
+      const mockJob = {
+        uuid: 'abc',
+        userId: mockUserId,
+        id: 2,
+        status: JobStatusEnum.InProgress,
+      }
+      const mockJobItems = [
+        {
+          status: JobItemStatusEnum.Success,
+          message: '',
+          params: <JSON>(<unknown>{ testParams: 'hello' }),
+          jobId: 2,
+          jobItemId: 'abc/0',
+          id: 0,
+        },
+      ] as JobItemType[]
+      const updatedMockJob = {
+        uuid: 'abc',
+        userId: mockUserId,
+        id: 2,
+        status: JobStatusEnum.Success,
+      }
+      mockJobRepository.findById.mockResolvedValue(mockJob)
+      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
+      mockJobRepository.update.mockResolvedValue(updatedMockJob)
+      const spy = jest.spyOn(service, 'computeJobStatus')
+
+      await expect(service.updateJobStatus(2)).resolves.toStrictEqual(
+        updatedMockJob,
+      )
+
+      expect(spy).toBeCalledTimes(1)
+      expect(mockJobRepository.update).toBeCalledWith(mockJob, {
+        status: JobStatusEnum.Success,
+      })
     })
   })
 })
