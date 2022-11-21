@@ -1,6 +1,8 @@
 /* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
 import _ from 'lodash'
+import express from 'express'
+
 import { JobItemStatusEnum } from '../../../repositories/enums'
 import { NotFoundError } from '../../../util/error'
 
@@ -210,6 +212,7 @@ describe('JobController unit test', () => {
         body: { jobItemId: 1, status: { isSuccess: true, errorMessage: ' ' } },
       })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
       res.badRequest = badRequest
       res.ok = ok
 
@@ -226,7 +229,7 @@ describe('JobController unit test', () => {
         mockUpdatedJobItem,
       )
 
-      await controller.updateJobItem(req, res)
+      await controller.updateJobItem(req, res, next)
 
       expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
       expect(req.body.jobItem).toStrictEqual(mockUpdatedJobItem)
@@ -243,6 +246,7 @@ describe('JobController unit test', () => {
         body: { jobItemId: 24, status: { isSuccess: true, errorMessage: ' ' } },
       })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
       res.badRequest = badRequest
       res.ok = ok
       const responseSpy = jest.spyOn(res, 'status')
@@ -251,7 +255,7 @@ describe('JobController unit test', () => {
         new NotFoundError('Job item not found'),
       )
 
-      await controller.updateJobItem(req, res)
+      await controller.updateJobItem(req, res, next)
 
       expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
       expect(req.body).not.toHaveProperty('jobItem')

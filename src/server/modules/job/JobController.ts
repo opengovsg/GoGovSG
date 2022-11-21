@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
 import { DependencyIds } from '../../constants'
@@ -56,10 +56,11 @@ export class JobController {
     }
   }
 
-  public updateJobItem: (req: Request, res: Response) => Promise<void> = async (
-    req,
-    res,
-  ) => {
+  public updateJobItem: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
     const { jobItemId, status } = req.body
     try {
       const jobItem = await this.jobManagementService.updateJobItemStatus(
@@ -68,14 +69,15 @@ export class JobController {
       )
       // add jobItem to req.body so that downstream controllers can access it
       req.body.jobItem = jobItem
-      res.ok(jsonMessage('successfully updated'))
       dogstatsd.increment('jobItem.update.success', 1, 1)
+      res.ok(jsonMessage('successfully updated'))
     } catch (error) {
       dogstatsd.increment('jobItem.update.failure', 1, 1)
       logger.error(`error updating job ${jobItemId}: ${error}`)
       res.status(404).send(jsonMessage(error.message))
+      return
     }
-    return
+    next()
   }
 
   public updateJob: (req: Request) => Promise<void> = async (req) => {
