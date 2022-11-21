@@ -1,13 +1,17 @@
 /* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
 import _ from 'lodash'
+import { JobItemStatusEnum } from '../../../repositories/enums'
+import { NotFoundError } from '../../../util/error'
 
 const jobManagementService = {
   createJob: jest.fn(),
   createJobItem: jest.fn(),
-  updateJobItem: jest.fn(),
-  getJobStatus: jest.fn(),
+  updateJobItemStatus: jest.fn(),
+  computeJobStatus: jest.fn(),
+  updateJobStatus: jest.fn(),
 }
+
 const sqsService = {
   sendMessage: jest.fn(),
 }
@@ -54,6 +58,9 @@ describe('JobController unit test', () => {
       jest.resetModules()
       jest.mock('../../../config', () => ({
         qrCodeJobBatchSize: 5,
+        logger: {
+          error: jest.fn(),
+        },
       }))
 
       const { JobController } = require('..')
@@ -96,6 +103,9 @@ describe('JobController unit test', () => {
       jest.resetModules()
       jest.mock('../../../config', () => ({
         qrCodeJobBatchSize,
+        logger: {
+          error: jest.fn(),
+        },
       }))
 
       const { JobController } = require('..')
@@ -179,6 +189,74 @@ describe('JobController unit test', () => {
       expect(jobManagementService.createJob).not.toHaveBeenCalled()
       expect(jobManagementService.createJobItem).not.toHaveBeenCalled()
       expect(sqsService.sendMessage).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('updateJobItem', () => {
+    const badRequest = jest.fn()
+    const ok = jest.fn()
+
+    beforeEach(() => {
+      badRequest.mockClear()
+      ok.mockClear()
+    })
+
+    it('updateJobItem adds jobItem to req body if update is successful', async () => {
+      const { JobController } = require('..')
+
+      const controller = new JobController(jobManagementService, sqsService)
+
+      const req = httpMocks.createRequest({
+        body: { jobItemId: 1, status: { isSuccess: true, errorMessage: ' ' } },
+      })
+      const res = httpMocks.createResponse() as any
+      res.badRequest = badRequest
+      res.ok = ok
+
+      const mockUpdatedJobItem = {
+        status: JobItemStatusEnum.Success,
+        message: '',
+        params: <JSON>(<unknown>{ testParams: 'hello' }),
+        jobId: 2,
+        jobItemId: 'abc/0',
+        id: 0,
+      }
+
+      jobManagementService.updateJobItemStatus.mockReturnValue(
+        mockUpdatedJobItem,
+      )
+
+      await controller.updateJobItem(req, res)
+
+      expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
+      expect(req.body.jobItem).toStrictEqual(mockUpdatedJobItem)
+      expect(res.ok).toHaveBeenCalled()
+      expect(res.badRequest).not.toHaveBeenCalled()
+    })
+
+    it('updateJobItem does not add jobItem to req body if update is not successful', async () => {
+      const { JobController } = require('..')
+
+      const controller = new JobController(jobManagementService, sqsService)
+
+      const req = httpMocks.createRequest({
+        body: { jobItemId: 24, status: { isSuccess: true, errorMessage: ' ' } },
+      })
+      const res = httpMocks.createResponse() as any
+      res.badRequest = badRequest
+      res.ok = ok
+      const responseSpy = jest.spyOn(res, 'status')
+
+      jobManagementService.updateJobItemStatus.mockRejectedValue(
+        new NotFoundError('Job item not found'),
+      )
+
+      await controller.updateJobItem(req, res)
+
+      expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
+      expect(req.body).not.toHaveProperty('jobItem')
+      expect(res.ok).not.toHaveBeenCalled()
+      expect(responseSpy).toBeCalledWith(404)
     })
   })
 })
