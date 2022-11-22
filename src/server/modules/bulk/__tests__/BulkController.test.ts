@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
 import express from 'express'
 
@@ -77,7 +78,92 @@ describe('BulkController unit test', () => {
     })
   })
 
-  describe('bulkCreate tests', () => {
+  describe('bulkCreate config tests', () => {
+    const ok = jest.fn()
+
+    beforeEach(() => {
+      ok.mockClear()
+    })
+
+    it('bulkCreate with shouldGenerateQRCodes true should call next', async () => {
+      jest.resetModules()
+      jest.mock('../../../config', () => ({
+        shouldGenerateQRCodes: true,
+      }))
+
+      const { BulkController } = require('..')
+
+      const controller = new BulkController(
+        mockBulkService,
+        mockUrlManagementService,
+      )
+
+      const userId = 1
+      const longUrl = 'https://google.com'
+      const urlMappings = [
+        {
+          shortUrl: 'n2io3n12',
+          longUrl,
+        },
+      ]
+
+      const req = httpMocks.createRequest({
+        body: { userId, longUrls: [longUrl] },
+      })
+      const res = httpMocks.createResponse() as any
+      res.ok = ok
+      const next = jest.fn() as unknown as express.NextFunction
+
+      mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
+      mockUrlManagementService.bulkCreate.mockResolvedValue({})
+
+      await controller.bulkCreate(req, res, next)
+      expect(req.body).toHaveProperty('jobParamsList')
+      expect(next).toHaveBeenCalled()
+      expect(res.ok).not.toHaveBeenCalled()
+    })
+
+    it('bulkCreate with shouldGenerateQRCodes false should call res.ok', async () => {
+      jest.resetModules()
+      jest.mock('../../../config', () => ({
+        shouldGenerateQRCodes: false,
+      }))
+
+      const { BulkController } = require('..')
+
+      const controller = new BulkController(
+        mockBulkService,
+        mockUrlManagementService,
+      )
+
+      const userId = 1
+      const longUrl = 'https://google.com'
+      const urlMappings = [
+        {
+          shortUrl: 'n2io3n12',
+          longUrl,
+        },
+      ]
+
+      const req = httpMocks.createRequest({
+        body: { userId, longUrls: [longUrl] },
+      })
+      const res = httpMocks.createResponse() as any
+      res.ok = ok
+      const next = jest.fn() as unknown as express.NextFunction
+
+      mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
+      mockUrlManagementService.bulkCreate.mockResolvedValue({})
+
+      await controller.bulkCreate(req, res, next)
+
+      expect(next).not.toHaveBeenCalled()
+      expect(req.body).not.toHaveProperty('jobParamsList')
+      expect(res.ok).toHaveBeenCalled()
+    })
+  })
+
+  describe('bulkCreate main tests', () => {
     const badRequest = jest.fn()
     const ok = jest.fn()
 
@@ -116,8 +202,6 @@ describe('BulkController unit test', () => {
         undefined,
       )
       expect(res.badRequest).not.toHaveBeenCalled()
-      expect(res.ok).toHaveBeenCalled()
-      expect(next).toHaveBeenCalled()
     })
 
     it('bulkCreate without tags responds with error if urls are not created', async () => {
@@ -148,8 +232,6 @@ describe('BulkController unit test', () => {
         undefined,
       )
       expect(res.badRequest).toHaveBeenCalled()
-      expect(res.ok).not.toHaveBeenCalled()
-      expect(next).not.toHaveBeenCalled()
     })
 
     it('bulkCreate with tags should return success if urls are created', async () => {
@@ -183,8 +265,6 @@ describe('BulkController unit test', () => {
         tags,
       )
       expect(res.badRequest).not.toHaveBeenCalled()
-      expect(res.ok).toHaveBeenCalled()
-      expect(next).toHaveBeenCalled()
     })
 
     it('bulkCreate with tags responds with error if urls are not created', async () => {
@@ -216,8 +296,6 @@ describe('BulkController unit test', () => {
         tags,
       )
       expect(res.badRequest).toHaveBeenCalled()
-      expect(res.ok).not.toHaveBeenCalled()
-      expect(next).not.toHaveBeenCalled()
     })
   })
 })
