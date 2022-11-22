@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
@@ -57,16 +57,12 @@ const useStyles = makeStyles((theme) =>
 const StatusBar = () => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
+  const [showStatusBar, setShowStatusBar] = useState<boolean>(true)
 
-  const header = useSelector(
-    (state: GoGovReduxState) => state.user.statusBarMessage.header,
+  const statusBarMessage = useSelector(
+    (state: GoGovReduxState) => state.user.statusBarMessage,
   )
-  const body = useSelector(
-    (state: GoGovReduxState) => state.user.statusBarMessage.body,
-  )
-  const variant = useSelector(
-    (state: GoGovReduxState) => state.user.statusBarMessage.variant,
-  )
+  const { header, body, callbacks, variant } = statusBarMessage
 
   const hasStatusBarAlert = !!(header || body)
   const dispatch = useDispatch()
@@ -92,18 +88,45 @@ const StatusBar = () => {
 
   const dispatchCloseStatusBar = () => {
     dispatch(userActions.closeStatusBar())
+    // store last acknowledged message
+    localStorage.setItem('statusBarMessage', JSON.stringify(statusBarMessage))
   }
+
+  const getLatestJob = () => dispatch(userActions.getLatestJob())
+
+  useEffect(() => {
+    getLatestJob()
+  }, [])
+
+  useEffect(() => {
+    if (header && body) {
+      const localStatusBarMessage = localStorage.getItem('statusBarMessage')
+      const statusBarMessageString = JSON.stringify(statusBarMessage)
+      if (localStatusBarMessage === statusBarMessageString) {
+        // if current message is same as last acknowledged message, hide
+        setShowStatusBar(false)
+      } else {
+        // current message has not been acknowledged before
+        setShowStatusBar(true)
+      }
+    }
+  }, [header, body])
 
   return (
     <>
-      {hasStatusBarAlert && (
+      {showStatusBar && hasStatusBarAlert && (
         <Alert
           icon={icon}
           className={`${colorClass} ${classes.content}`}
           action={
             <>
-              {variant === StatusBarVariant.Success && <DownloadBulkButton />}
-              <CloseButton onClick={dispatchCloseStatusBar} />
+              {variant === StatusBarVariant.Success &&
+                callbacks.length >= 0 && (
+                  <DownloadBulkButton bulkCsvIds={callbacks} />
+                )}
+              {variant !== StatusBarVariant.Info && (
+                <CloseButton onClick={dispatchCloseStatusBar} />
+              )}
             </>
           }
         >
