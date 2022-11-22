@@ -87,8 +87,12 @@ describe('BulkController unit test', () => {
 
     it('bulkCreate with shouldGenerateQRCodes true should call next', async () => {
       jest.resetModules()
+      const logger = {
+        info: jest.fn(),
+      }
       jest.mock('../../../config', () => ({
         shouldGenerateQRCodes: true,
+        logger,
       }))
 
       const { BulkController } = require('..')
@@ -121,12 +125,17 @@ describe('BulkController unit test', () => {
       expect(req.body).toHaveProperty('jobParamsList')
       expect(next).toHaveBeenCalled()
       expect(res.ok).not.toHaveBeenCalled()
+      expect(logger.info).toHaveBeenCalled()
     })
 
     it('bulkCreate with shouldGenerateQRCodes false should call res.ok', async () => {
       jest.resetModules()
+      const logger = {
+        info: jest.fn(),
+      }
       jest.mock('../../../config', () => ({
         shouldGenerateQRCodes: false,
+        logger,
       }))
 
       const { BulkController } = require('..')
