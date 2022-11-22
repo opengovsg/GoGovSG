@@ -5,7 +5,11 @@ import { DependencyIds } from '../../../constants'
 import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
-import { jobPollAttempts, jobPollInterval } from '../../../config'
+import {
+  jobPollAttempts,
+  jobPollInterval,
+  qrCodeBucketUrl,
+} from '../../../config'
 
 @injectable()
 class JobManagementService implements interfaces.JobManagementService {
@@ -120,7 +124,9 @@ class JobManagementService implements interfaces.JobManagementService {
 
       return {
         job,
-        jobItemIds: jobItems.map((jobItem) => jobItem.jobItemId),
+        jobItemIds: jobItems.map(
+          (jobItem) => `${qrCodeBucketUrl}/${jobItem.jobItemId}`,
+        ),
       }
     }
 
