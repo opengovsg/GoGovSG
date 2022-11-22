@@ -10,6 +10,7 @@ import {
 } from '../../../shared/constants'
 import {
   ownershipTransferSchema,
+  pollJobInformationSchema,
   tagRetrievalSchema,
   urlBulkSchema,
   urlEditSchema,
@@ -162,6 +163,14 @@ router.get(
   validator.body(tagRetrievalSchema),
   userController.getTagsWithConditions,
 )
+
+router.post(
+  '/job/status',
+  validator.body(pollJobInformationSchema),
+  jobController.pollJobStatusUpdate,
+)
+
+router.get('/job/latest', jobController.getLatestJob)
 
 router.get('/message', userController.getUserMessage)
 
