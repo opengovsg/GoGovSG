@@ -7,6 +7,7 @@ import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
 import { logger, qrCodeJobBatchSize } from '../../config'
 import jsonMessage from '../../util/json'
+import { NotFoundError } from '../../util/error'
 
 @injectable()
 export class JobController {
@@ -98,6 +99,42 @@ export class JobController {
     }
     return
   }
+
+  public getLatestJob: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res,
+  ) => {
+    const { userId } = req.body
+    try {
+      const jobInformation =
+        await this.jobManagementService.getLatestJobForUser(userId)
+      res.ok(jobInformation)
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.ok(jsonMessage('User has no jobs'))
+        return
+      }
+      res.badRequest(jsonMessage('Please try again'))
+    }
+    return
+  }
+
+  public pollJobStatusUpdate: (req: Request, res: Response) => Promise<void> =
+    async (req, res) => {
+      const { userId, jobId } = req.body
+      try {
+        const jobInformation =
+          await this.jobManagementService.pollJobStatusUpdate(userId, jobId)
+        res.ok(jobInformation)
+      } catch (error) {
+        if (error instanceof NotFoundError) {
+          res.notFound(jsonMessage(error.message))
+          return
+        }
+        res.status(408).send(jsonMessage('Request timed out, please try again'))
+      }
+      return
+    }
 }
 
 export default JobController

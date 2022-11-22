@@ -142,3 +142,8 @@ export const ownershipTransferSchema = Joi.object({
   shortUrl: Joi.string().required(),
   newUserEmail: Joi.string().required(),
 })
+
+export const pollJobInformationSchema = Joi.object({
+  userId: Joi.number().required(),
+  jobId: Joi.number().required(),
+})
