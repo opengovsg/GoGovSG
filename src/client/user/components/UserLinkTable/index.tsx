@@ -5,6 +5,7 @@ import ToolBar from './ToolBar'
 import UrlTable from './UrlTable'
 import EmptyState from '../EmptyState'
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
+import StatusBar from './StatusBar'
 
 export default function UserLinkTable() {
   const initialised = useSelector((state: any) => {
@@ -19,6 +20,7 @@ export default function UserLinkTable() {
       <ApplyAppMargins>
         <ToolBar />
       </ApplyAppMargins>
+      <StatusBar />
       {!initialised && <div />}
       {initialised &&
         (urlCount > 0 ? <UrlTable /> : <EmptyState urlsFiltered />)}
