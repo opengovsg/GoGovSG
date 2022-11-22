@@ -139,6 +139,8 @@ After these have been set up, set the environment variables according to the tab
 |SQS_BULK_QRCODE_GENERATE_START_URL|Yes|The SQS queue for starting QR code bulk generation Lambda|
 |SQS_TIMEOUT|No|Duration of time in ms for sending to SQS queue before timeout. Defaults to 10000ms (10s)|
 |SQS_REGION|Yes|AWS Region of SQS queue for starting QR code bulk generation Lambda|
+|JOB_POLL_ATTEMPTS|No|Number of attempts for long polling of job status before timeout of 408 is returned. Defaults to 12|
+|JOB_POLL_INTERVAL|No|Interval of time between attempts for long polling of job status in ms. Defaults to 5000ms (5s)|
 
 
 #### Serverless functions for link migration

@@ -5,6 +5,7 @@ import { DependencyIds } from '../../../constants'
 import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
+import { jobPollAttempts, jobPollInterval } from '../../../config'
 
 @injectable()
 class JobManagementService implements interfaces.JobManagementService {
@@ -103,6 +104,62 @@ class JobManagementService implements interfaces.JobManagementService {
 
     const currJobStatus = this.computeJobStatus(jobItems)
     return this.jobRepository.update(job, { status: currJobStatus })
+  }
+
+  getJobInformation: (jobId: number) => Promise<interfaces.JobInformation> =
+    async (jobId) => {
+      const job = await this.jobRepository.findById(jobId)
+      if (!job) {
+        throw new NotFoundError('Job not found')
+      }
+
+      const jobItems = await this.jobItemRepository.findJobItemsByJobId(jobId)
+      if (jobItems.length === 0) {
+        throw new Error('Job does not have any job items')
+      }
+
+      return {
+        job,
+        jobItemIds: jobItems.map((jobItem) => jobItem.jobItemId),
+      }
+    }
+
+  getLatestJobForUser: (userId: number) => Promise<interfaces.JobInformation> =
+    async (userId) => {
+      const job = await this.jobRepository.findLatestJobForUser(userId)
+      if (!job) {
+        throw new NotFoundError('No jobs found')
+      }
+      const jobInformation = await this.getJobInformation(job.id)
+      return jobInformation
+    }
+
+  pollJobStatusUpdate: (
+    userId: number,
+    jobId: number,
+  ) => Promise<interfaces.JobInformation> = async (userId, jobId) => {
+    const job = await this.jobRepository.findJobForUser(userId, jobId)
+    if (!job) {
+      throw new NotFoundError('Job not found')
+    }
+
+    let attempts = 0
+    // eslint-disable-next-line consistent-return
+    const executePoll = async (resolve: any, reject: any) => {
+      if (attempts === jobPollAttempts) {
+        return reject(new Error('Exceeded max attempts'))
+      }
+      const { job, jobItemIds } = await this.getJobInformation(jobId)
+      // if job status has changed, return updated job status
+      if (job.status !== JobStatusEnum.InProgress) {
+        return resolve({ job, jobItemIds })
+      }
+      // continue polling
+      setTimeout(executePoll, jobPollInterval, resolve, reject)
+
+      attempts += 1
+    }
+    return new Promise(executePoll)
   }
 }
 
