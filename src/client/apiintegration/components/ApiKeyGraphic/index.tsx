@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: 'column',
       marginTop: theme.spacing(3),
       [theme.breakpoints.up('md')]: {
-        marginTop: theme.spacing(6),
+        marginTop: theme.spacing(4),
       },
     },
     configOptionWrapper: {
