@@ -4,13 +4,15 @@ import {
 } from '../../../../repositories/enums'
 import { NotFoundError } from '../../../../util/error'
 import JobManagementService from '../JobManagementService'
-import { JobItemCallbackStatus } from '../../interfaces'
-import { JobItemType } from '../../../../models/job'
+import { JobInformation, JobItemCallbackStatus } from '../../interfaces'
+import { JobItemType, JobType } from '../../../../models/job'
 
 const mockJobRepository = {
   findById: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
+  findLatestJobForUser: jest.fn(),
+  findJobForUser: jest.fn(),
 }
 
 const mockJobItemRepository = {
@@ -302,9 +304,17 @@ describe('JobManagementService tests', () => {
   })
 
   describe('updateJobStatus', () => {
+    const spy = jest.spyOn(service, 'computeJobStatus')
+
+    beforeAll(() => {
+      mockJobItemRepository.findByJobItemId.mockClear()
+      mockJobRepository.findById.mockClear()
+      spy.mockClear()
+    })
+
     it('should throw error if job does not exist', async () => {
       mockJobRepository.findById.mockResolvedValue(null)
-      const spy = jest.spyOn(service, 'computeJobStatus')
+
       await expect(service.updateJobStatus(2)).rejects.toThrow(
         new NotFoundError('Job not found'),
       )
@@ -322,7 +332,7 @@ describe('JobManagementService tests', () => {
       }
       mockJobRepository.findById.mockResolvedValue(mockJob)
       mockJobItemRepository.findJobItemsByJobId.mockResolvedValue([])
-      const spy = jest.spyOn(service, 'computeJobStatus')
+
       await expect(service.updateJobStatus(2)).rejects.toThrow(
         new Error('Job does not have any job items'),
       )
@@ -356,7 +366,6 @@ describe('JobManagementService tests', () => {
       mockJobRepository.findById.mockResolvedValue(mockJob)
       mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
       mockJobRepository.update.mockResolvedValue(updatedMockJob)
-      const spy = jest.spyOn(service, 'computeJobStatus')
 
       await expect(service.updateJobStatus(2)).resolves.toStrictEqual(
         updatedMockJob,
@@ -368,4 +377,131 @@ describe('JobManagementService tests', () => {
       })
     })
   })
+
+  describe('getJobInformation', () => {
+    beforeEach(() => {
+      mockJobItemRepository.findJobItemsByJobId.mockClear()
+      mockJobRepository.findById.mockClear()
+    })
+
+    it('should throw error if job does not exist', async () => {
+      mockJobRepository.findById.mockResolvedValue(null)
+      await expect(service.getJobInformation(2)).rejects.toThrow(
+        new NotFoundError('Job not found'),
+      )
+      expect(mockJobItemRepository.findJobItemsByJobId).not.toBeCalled()
+    })
+
+    it('should throw error if job has no job items', async () => {
+      const mockUserId = 1
+      const mockJob = {
+        uuid: 'abc',
+        userId: mockUserId,
+        id: 2,
+      }
+      mockJobRepository.findById.mockResolvedValue(mockJob)
+      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue([])
+      await expect(service.getJobInformation(2)).rejects.toThrow(
+        new Error('Job does not have any job items'),
+      )
+    })
+
+    it('should return job, jobStatus and jobItemIds if successfully retrieved', async () => {
+      const mockUserId = 1
+      const mockJob = {
+        uuid: 'abc',
+        userId: mockUserId,
+        id: 2,
+        status: JobStatusEnum.Success,
+      }
+      const mockJobItems = [
+        {
+          status: JobItemStatusEnum.Success,
+          message: '',
+          params: <JSON>(<unknown>{ testParams: 'hello' }),
+          jobId: 2,
+          jobItemId: 'abc/0',
+          id: 1,
+        },
+      ]
+      const spy = jest.spyOn(service, 'computeJobStatus')
+      mockJobRepository.findById.mockResolvedValue(mockJob)
+      mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
+      await expect(service.getJobInformation(2)).resolves.toStrictEqual({
+        job: mockJob,
+        jobItemIds: ['abc/0'],
+      })
+      expect(spy).toHaveBeenCalled()
+    })
+  })
+
+  describe('getLatestJobForUser', () => {
+    const spy = jest.spyOn(service, 'getJobInformation')
+
+    beforeEach(() => {
+      spy.mockClear()
+    })
+
+    it('should throw error if user has no jobs', async () => {
+      mockJobRepository.findLatestJobForUser.mockResolvedValue(null)
+
+      await expect(service.getLatestJobForUser(2)).rejects.toThrow(
+        new NotFoundError('No jobs found'),
+      )
+      expect(spy).not.toBeCalled()
+    })
+
+    it('should retrieve job information and return successfully', async () => {
+      const mockJob = {
+        uuid: 'abc',
+        userId: 2,
+        id: 4,
+        status: JobStatusEnum.Success,
+      } as unknown as JobType
+      const mockJobInformation = {
+        job: mockJob,
+        jobItemIds: ['abc/0'],
+      } as JobInformation
+      mockJobRepository.findLatestJobForUser.mockResolvedValue(mockJob)
+      spy.mockImplementation(() => Promise.resolve(mockJobInformation))
+
+      await expect(service.getLatestJobForUser(2)).resolves.toStrictEqual(
+        mockJobInformation,
+      )
+      expect(spy).toBeCalledWith(4)
+    })
+  })
+
+  describe('pollJobStatusUpdate', () => {
+    it('should throw error if user has no jobs', async () => {
+      mockJobRepository.findLatestJobForUser.mockResolvedValue(null)
+
+      await expect(service.getLatestJobForUser(2)).rejects.toThrow(
+        new NotFoundError('No jobs found'),
+      )
+    })
+
+    it('should retrieve job information and return successfully', async () => {
+      const mockJob = {
+        uuid: 'abc',
+        userId: 2,
+        id: 4,
+        status: JobStatusEnum.Success,
+      } as unknown as JobType
+      const mockJobInformation = {
+        job: mockJob,
+        jobItemIds: ['abc/0'],
+      } as JobInformation
+      mockJobRepository.findLatestJobForUser.mockResolvedValue(mockJob)
+      const spy = jest
+        .spyOn(service, 'getJobInformation')
+        .mockImplementation(() => Promise.resolve(mockJobInformation))
+      await expect(service.getLatestJobForUser(2)).resolves.toStrictEqual(
+        mockJobInformation,
+      )
+      expect(spy).toBeCalledWith(4)
+    })
+  })
+
+  // pollJobStatusUpdate(userId: number, jobId: number): Promise<any>
 })
