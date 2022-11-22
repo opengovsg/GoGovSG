@@ -6,6 +6,11 @@ export interface JobItemCallbackStatus {
   errorMessage?: string
 }
 
+export interface JobInformation {
+  job: JobType
+  jobItemIds: string[]
+}
+
 export interface JobManagementService {
   createJob(userId: number): Promise<JobType>
   createJobItem: (properties: {
@@ -19,4 +24,7 @@ export interface JobManagementService {
   ): Promise<JobItemType>
   computeJobStatus(jobItems: JobItemType[]): JobStatusEnum
   updateJobStatus(jobId: number): Promise<JobType>
+  getJobInformation(jobId: number): Promise<JobInformation>
+  getLatestJobForUser(userId: number): Promise<JobInformation>
+  pollJobStatusUpdate(userId: number, jobId: number): Promise<JobInformation>
 }
