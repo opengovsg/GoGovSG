@@ -655,25 +655,6 @@ const urlCreated = (
   )
 }
 
-const bulkQRCodesStarted = (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    | CloseCreateUrlModalAction
-    | ResetUserStateAction
-    | SetStatusBarInfoMessageAction
-  >,
-  fileName: string,
-) => {
-  dispatch<void>(getUrlsForUser())
-  dispatch<ResetUserStateAction>(resetUserState())
-
-  const header = `QR code creation from ${fileName} file is in progress.`
-  const body = `We will notify you via email once it is completed.`
-
-  dispatch<SetStatusBarInfoMessageAction>(setStatusBarInfoMessage(header, body))
-}
-
 /**
  * API call to create URL
  * If user is not logged in, the createUrl call returns unauthorized,
@@ -959,8 +940,11 @@ const bulkCreateUrl =
       | ResetUserStateAction
       | SetInfoMessageAction
       | SetErrorMessageAction
+      | SetSuccessMessageAction
       | SetIsUploadingAction
       | SetFileUploadStateAction
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
     >,
     getState: GetReduxState,
   ) => {
@@ -1038,8 +1022,13 @@ const bulkCreateUrl =
     } else {
       Sentry.captureMessage('bulk creation success')
       GAEvent('modal page', 'bulk creation', 'successful')
-      await response.json()
-      bulkQRCodesStarted(dispatch, file.name)
+      dispatch<void>(getUrlsForUser())
+      dispatch<ResetUserStateAction>(resetUserState())
+
+      const { count, job } = await response.json()
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage(`${count} links have been created`),
+      )
       dispatch<SetFileUploadStateAction>(setFileUploadState(true))
     }
   }
