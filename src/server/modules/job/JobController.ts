@@ -47,7 +47,7 @@ export class JobController {
               jobId: job.id,
               jobItemId: `${job.uuid}/${idx}`,
             })
-            await this.sqsService.sendMessage(messageParams)
+            // await this.sqsService.sendMessage(messageParams)
             return
           }),
         )
