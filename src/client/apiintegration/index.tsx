@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme) =>
     apiIntegrationHeader: {
       flexGrow: 1,
       flexShrink: 0,
-      alignSelf: 'left',
       marginRight: 20,
+      marginTop: theme.spacing(4),
       whiteSpace: 'nowrap',
       [theme.breakpoints.down('sm')]: {
         order: 10,
