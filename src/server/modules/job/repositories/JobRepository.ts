@@ -28,6 +28,27 @@ export class JobRepository implements interfaces.JobRepository {
       if (!updatedJob) throw new Error('Newly-updated job is null')
       return updatedJob
     }
+
+  findLatestJobForUser: (userId: number) => Promise<JobType | null> = async (
+    userId,
+  ) => {
+    return Job.findOne({
+      where: {
+        userId,
+      },
+      order: [['createdAt', 'DESC']],
+    })
+  }
+
+  findJobForUser: (userId: number, jobId: number) => Promise<JobType | null> =
+    async (userId, jobId) => {
+      return Job.findOne({
+        where: {
+          userId,
+          id: jobId,
+        },
+      })
+    }
 }
 
 export default JobRepository
