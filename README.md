@@ -134,6 +134,7 @@ After these have been set up, set the environment variables according to the tab
 |BULK_UPLOAD_MAX_NUM|No|Maximum number of links that can be bulk uploaded at once. Defaults to 1000|
 |BULK_UPLOAD_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in bulk upload. Defaults to 8|
 |BULK_QR_CODE_BATCH_SIZE|No|Maximum number of links that can be bulk uploaded at once. Defaults to 100|
+|ACTIVATE_BULK_QR_CODE_GENERATION|No|Whether to start Lambda for bulk QR code generation or not. Defaults to false|
 |REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 |SQS_BULK_QRCODE_GENERATE_START_URL|Yes|The SQS queue for starting QR code bulk generation Lambda|
 |SQS_TIMEOUT|No|Duration of time in ms for sending to SQS queue before timeout. Defaults to 10000ms (10s)|

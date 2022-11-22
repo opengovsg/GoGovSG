@@ -82,12 +82,13 @@ describe('JobController unit test', () => {
       const req = httpMocks.createRequest({
         body: { userId, jobParamsList },
       })
+      const res = httpMocks.createResponse()
 
       jobManagementService.createJob.mockResolvedValue(mockJob)
       jobManagementService.createJobItem.mockResolvedValue({})
       sqsService.sendMessage.mockResolvedValue({})
 
-      await controller.createAndStartJob(req)
+      await controller.createAndStartJob(req, res)
 
       expect(jobManagementService.createJob).toHaveBeenCalledWith(userId)
       expect(jobManagementService.createJobItem).toHaveBeenCalledWith({
@@ -138,12 +139,13 @@ describe('JobController unit test', () => {
       const req = httpMocks.createRequest({
         body: { userId, jobParamsList },
       })
+      const res = httpMocks.createResponse()
 
       jobManagementService.createJob.mockResolvedValue(mockJob)
       jobManagementService.createJobItem.mockResolvedValue({})
       sqsService.sendMessage.mockResolvedValue({})
 
-      await controller.createAndStartJob(req)
+      await controller.createAndStartJob(req, res)
 
       expect(jobManagementService.createJob).toHaveBeenCalledWith(userId)
       expect(jobManagementService.createJobItem).toHaveBeenCalledTimes(

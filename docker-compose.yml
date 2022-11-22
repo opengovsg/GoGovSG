@@ -57,6 +57,7 @@ services:
       - SQS_REGION=
       - BULK_QR_CODE_BATCH_SIZE=100
       - LAMBDA_HASH_SECRET=
+      - SHOULD_BULK_GENERATE_QR_CODES=false
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src

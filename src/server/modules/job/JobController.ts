@@ -24,37 +24,42 @@ export class JobController {
     this.jobManagementService = jobManagementService
   }
 
-  public createAndStartJob: (req: Request) => Promise<void> = async (req) => {
-    const { userId, jobParamsList } = req.body
-    if (!jobParamsList || jobParamsList.length === 0) {
+  public createAndStartJob: (req: Request, res: Response) => Promise<void> =
+    async (req, res) => {
+      const { userId, jobParamsList } = req.body
+      if (!jobParamsList || jobParamsList.length === 0) {
+        return
+      }
+
+      const jobBatches = _.chunk(jobParamsList, qrCodeJobBatchSize)
+      try {
+        const job = await this.jobManagementService.createJob(userId)
+
+        await Promise.all(
+          jobBatches.map(async (jobBatch, idx) => {
+            const messageParams = {
+              jobItemId: `${job.uuid}/${idx}`,
+              mappings: jobBatch,
+            }
+            await this.jobManagementService.createJobItem({
+              params: <JSON>(<unknown>messageParams),
+              jobId: job.id,
+              jobItemId: `${job.uuid}/${idx}`,
+            })
+            await this.sqsService.sendMessage(messageParams)
+            return
+          }),
+        )
+        dogstatsd.increment('job.start.success', 1, 1)
+        res.ok({ count: jobParamsList.length, job })
+      } catch (error) {
+        logger.error(`error creating and starting job: ${error}`)
+        dogstatsd.increment('job.start.failure', 1, 1)
+        // created links but failed to create and start job
+        res.status(400).send({ count: jobParamsList.length })
+      }
       return
     }
-
-    const jobBatches = _.chunk(jobParamsList, qrCodeJobBatchSize)
-    try {
-      const job = await this.jobManagementService.createJob(userId)
-
-      await Promise.all(
-        jobBatches.map(async (jobBatch, idx) => {
-          const messageParams = {
-            jobItemId: `${job.uuid}/${idx}`,
-            mappings: jobBatch,
-          }
-          await this.jobManagementService.createJobItem({
-            params: <JSON>(<unknown>messageParams),
-            jobId: job.id,
-            jobItemId: `${job.uuid}/${idx}`,
-          })
-          await this.sqsService.sendMessage(messageParams)
-          return
-        }),
-      )
-      dogstatsd.increment('job.start.success', 1, 1)
-    } catch (error) {
-      logger.error(`error creating and starting job: ${error}`)
-      dogstatsd.increment('job.start.failure', 1, 1)
-    }
-  }
 
   public updateJobItem: (
     req: Request,
