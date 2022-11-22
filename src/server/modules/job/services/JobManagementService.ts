@@ -12,7 +12,7 @@ import {
 } from '../../../config'
 
 @injectable()
-class JobManagementService implements interfaces.JobManagementService {
+export class JobManagementService implements interfaces.JobManagementService {
   private jobRepository: interfaces.JobRepository
 
   private jobItemRepository: interfaces.JobItemRepository

@@ -1,9 +1,10 @@
+/* eslint-disable global-require */
 import {
   JobItemStatusEnum,
   JobStatusEnum,
 } from '../../../../repositories/enums'
 import { NotFoundError } from '../../../../util/error'
-import JobManagementService from '../JobManagementService'
+import { JobManagementService } from '..'
 import { JobInformation, JobItemCallbackStatus } from '../../interfaces'
 import { JobItemType, JobType } from '../../../../models/job'
 
@@ -406,7 +407,20 @@ describe('JobManagementService tests', () => {
       )
     })
 
-    it('should return job, jobStatus and jobItemIds if successfully retrieved', async () => {
+    it('should return job and jobItemIds if successfully retrieved', async () => {
+      jest.resetModules()
+      jest.mock('../../../../config', () => ({
+        qrCodeBucketUrl: 'https://bucket.com',
+      }))
+
+      const { JobManagementService } = require('..')
+
+      const service = new JobManagementService(
+        mockJobRepository,
+        mockJobItemRepository,
+        mockUserRepository,
+      )
+
       const mockUserId = 1
       const mockJob = {
         uuid: 'abc',
@@ -424,14 +438,12 @@ describe('JobManagementService tests', () => {
           id: 1,
         },
       ]
-      const spy = jest.spyOn(service, 'computeJobStatus')
       mockJobRepository.findById.mockResolvedValue(mockJob)
       mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
       await expect(service.getJobInformation(2)).resolves.toStrictEqual({
         job: mockJob,
-        jobItemIds: ['abc/0'],
+        jobItemIds: ['https://bucket.com/abc/0'],
       })
-      expect(spy).toHaveBeenCalled()
     })
   })
 
