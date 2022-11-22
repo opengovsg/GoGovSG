@@ -58,6 +58,8 @@ services:
       - BULK_QR_CODE_BATCH_SIZE=100
       - LAMBDA_HASH_SECRET=
       - SHOULD_BULK_GENERATE_QR_CODES=false
+      - JOB_POLL_ATTEMPTS=12
+      - JOB_POLL_INTERVAL=5000
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
