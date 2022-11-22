@@ -33,6 +33,7 @@ const initialState: UserState = {
   statusBarMessage: {
     header: '',
     body: '',
+    callbacks: [],
     variant: StatusBarVariant.Error,
   },
 }
@@ -239,6 +240,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
           header: '',
           body: '',
           variant: state.statusBarMessage.variant,
+          callbacks: [],
         },
       }
       break
@@ -247,6 +249,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
         statusBarMessage: {
           header: action.payload.header,
           body: action.payload.body,
+          callbacks: action.payload.callbacks,
           variant: StatusBarVariant.Success,
         },
       }
@@ -256,6 +259,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
         statusBarMessage: {
           header: action.payload.header,
           body: action.payload.body,
+          callbacks: action.payload.callbacks, // can be use for retry in the future
           variant: StatusBarVariant.Error,
         },
       }
@@ -266,6 +270,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
           header: action.payload.header,
           body: action.payload.body,
           variant: StatusBarVariant.Info,
+          callbacks: [],
         },
       }
       break

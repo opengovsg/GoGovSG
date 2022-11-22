@@ -248,9 +248,14 @@ const closeStatusBar: () => CloseStatusBarAction = () => ({
 const setStatusBarErrorMessage: (
   header: string,
   body: string,
-) => SetStatusBarErrorMessageAction = (header: string, body: string) => ({
+  callbacks: string[],
+) => SetStatusBarErrorMessageAction = (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => ({
   type: UserAction.SET_STATUS_BAR_ERROR_MESSAGE,
-  payload: { header, body },
+  payload: { header, body, callbacks },
 })
 
 const setStatusBarInfoMessage: (
@@ -264,9 +269,14 @@ const setStatusBarInfoMessage: (
 const setStatusBarSuccessMessage: (
   header: string,
   body: string,
-) => SetStatusBarSuccessMessageAction = (header: string, body: string) => ({
+  callbacks: string[],
+) => SetStatusBarSuccessMessageAction = (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => ({
   type: UserAction.SET_STATUS_BAR_SUCCESS_MESSAGE,
-  payload: { header, body },
+  payload: { header, body, callbacks },
 })
 
 // retrieve linkHistory based on query object
