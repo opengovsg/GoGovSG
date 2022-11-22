@@ -82,7 +82,6 @@ const ApiKeyModal: FunctionComponent = () => {
       fullScreen={false}
       fullWidth
       maxWidth="sm"
-      onClose={closeApiKeyModal}
       open={apiKeyModal}
     >
       <div className={classes.modalWrapper}>
@@ -128,9 +127,7 @@ const ApiKeyModal: FunctionComponent = () => {
         />
         <Button
           className={classes.copyApiKeyButton}
-          onClick={() => {
-            dispatch(apiActions.closeApiKeyModal())
-          }}
+          onClick={closeApiKeyModal}
           variant="contained"
           fullWidth={false}
         >
