@@ -925,6 +925,90 @@ const updateTags =
     })
   }
 
+const setQRCodeGenerationMessage =
+  (status: string, callbacks: string[]) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | SetStatusBarSuccessMessageAction
+      | SetStatusBarErrorMessageAction
+      | SetStatusBarInfoMessageAction
+    >,
+  ) => {
+    if (status === 'SUCCESS') {
+      const header = `QR codes successfully generated`
+      const body = `Please download your QR codes here or via email`
+      dispatch<SetStatusBarSuccessMessageAction>(
+        setStatusBarSuccessMessage(header, body, callbacks),
+      )
+    }
+    if (status === 'IN_PROGRESS') {
+      const header = `QR codes generation in progress`
+      const body = `Please wait to download your QR codes`
+      dispatch<SetStatusBarInfoMessageAction>(
+        setStatusBarInfoMessage(header, body),
+      )
+    }
+    if (status === 'FAILED') {
+      const header = `QR codes failed to generate`
+      const body = `Please try again`
+      dispatch<SetStatusBarErrorMessageAction>(
+        setStatusBarErrorMessage(header, body, callbacks),
+      )
+    }
+  }
+
+const getJobInformationForPendingJobId =
+  (jobId: number) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetStatusBarSuccessMessageAction | SetStatusBarErrorMessageAction
+    >,
+  ) => {
+    const response = await postJson(`/api/user/job/status`, { jobId })
+    const isOk = response.ok
+    if (!isOk) {
+      // retry
+      dispatch(getJobInformationForPendingJobId(jobId))
+    } else {
+      const resp = await response.json()
+      console.log(resp)
+      const { job, jobItemIds } = resp
+      const { status } = job
+      dispatch(setQRCodeGenerationMessage(status, jobItemIds))
+    }
+  }
+
+const getLatestJob =
+  () =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | SetStatusBarSuccessMessageAction
+      | SetStatusBarErrorMessageAction
+      | SetStatusBarInfoMessageAction
+    >,
+  ) => {
+    const response = await get(`/api/user/job/latest`)
+    const isOk = response.ok
+    const resp = await response.json()
+    if (!isOk) {
+      throw new Error(resp.message || 'Error fetching user jobs ')
+    }
+
+    const { job, jobItemIds } = resp
+    if (!job || !jobItemIds) return
+    const { status, id } = job
+    if (status === 'IN_PROGRESS') {
+      dispatch(getJobInformationForPendingJobId(id))
+    }
+    dispatch(setQRCodeGenerationMessage(status, jobItemIds))
+  }
+
 /**
  * API call to upload file for bulk creation.
  * @param file
@@ -1029,6 +1113,7 @@ const bulkCreateUrl =
       dispatch<SetSuccessMessageAction>(
         rootActions.setSuccessMessage(`${count} links have been created`),
       )
+      if (job) dispatch<void>(getLatestJob())
       dispatch<SetFileUploadStateAction>(setFileUploadState(true))
     }
   }
@@ -1072,4 +1157,5 @@ export default {
   setUrlUploadState,
   setTags,
   updateTags,
+  getLatestJob,
 }
