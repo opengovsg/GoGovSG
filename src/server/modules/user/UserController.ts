@@ -8,6 +8,7 @@ import { DependencyIds } from '../../constants'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
+  InvalidUrlUpdateError,
   NotFoundError,
 } from '../../util/error'
 import { MessageType } from '../../../shared/util/messages'
@@ -157,6 +158,10 @@ export class UserController {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.forbidden(jsonMessage(error.message))
+        return
+      }
+      if (error instanceof InvalidUrlUpdateError) {
+        res.badRequest(jsonMessage(error.message))
         return
       }
       logger.error(`Error editing URL:\t${error}`)

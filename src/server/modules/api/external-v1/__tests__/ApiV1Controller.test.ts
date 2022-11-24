@@ -3,7 +3,11 @@ import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
 import { createRequestWithUser } from '../../../../../../test/server/api/util'
 import { UrlV1Mapper } from '../../../../mappers/UrlV1Mapper'
-import { AlreadyExistsError, NotFoundError } from '../../../../util/error'
+import {
+  AlreadyExistsError,
+  InvalidUrlUpdateError,
+  NotFoundError,
+} from '../../../../util/error'
 import { ApiV1Controller } from '../ApiV1Controller'
 
 const urlManagementService = {
@@ -402,6 +406,21 @@ describe('ApiV1Controller', () => {
       res.badRequest = jest.fn()
 
       urlManagementService.updateUrl.mockRejectedValue(new Error())
+
+      await controller.updateUrl(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
+    })
+
+    it('reports bad request on InvalidUrlUpdateError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      urlManagementService.updateUrl.mockRejectedValue(
+        new InvalidUrlUpdateError(''),
+      )
 
       await controller.updateUrl(req, res)
       expect(res.badRequest).toHaveBeenCalledWith({

@@ -142,12 +142,18 @@ describe('UrlManagementService', () => {
 
   describe('updateUrl', () => {
     const userId = 2
-    const url = { shortUrl: 'abcdef' }
+    const linkUrl = { shortUrl: 'abcdef', isFile: false }
+    const fileUrl = { shortUrl: 'abcdef', isFile: true }
     const options = {
       longUrl: 'https://www.agency.gov.sg',
       state: undefined,
       description: 'An agency',
       contactEmail: 'contact-us@agency.gov.sg',
+    }
+    const file = {
+      data: Buffer.from(''),
+      name: 'file.json',
+      mimetype: 'application/json',
     }
 
     beforeEach(() => {
@@ -158,54 +164,82 @@ describe('UrlManagementService', () => {
     it('throws NotFoundError on no url', async () => {
       userRepository.findOneUrlForUser.mockResolvedValue(null)
       await expect(
-        service.updateUrl(userId, url.shortUrl, options),
+        service.updateUrl(userId, linkUrl.shortUrl, options),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        linkUrl.shortUrl,
+      )
+      expect(urlRepository.update).not.toHaveBeenCalled()
+    })
+
+    it('throws Error when updating file with longUrl', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      await expect(
+        service.updateUrl(userId, fileUrl.shortUrl, {
+          longUrl: 'https://example.com',
+        }),
+      ).rejects.toBeInstanceOf(Error)
+      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
+        userId,
+        fileUrl.shortUrl,
+      )
+      expect(urlRepository.update).not.toHaveBeenCalled()
+    })
+
+    it('throws Error when updating link with file', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      await expect(
+        service.updateUrl(userId, linkUrl.shortUrl, { file }),
+      ).rejects.toBeInstanceOf(Error)
+      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
+        userId,
+        linkUrl.shortUrl,
       )
       expect(urlRepository.update).not.toHaveBeenCalled()
     })
 
     it('updates a non-file url', async () => {
-      userRepository.findOneUrlForUser.mockResolvedValue(url)
-      urlRepository.update.mockResolvedValue(url)
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      urlRepository.update.mockResolvedValue(linkUrl)
       await expect(
-        service.updateUrl(userId, url.shortUrl, {
+        service.updateUrl(userId, linkUrl.shortUrl, {
           ...options,
           file: undefined,
         }),
-      ).resolves.toStrictEqual(url)
+      ).resolves.toStrictEqual(linkUrl)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        linkUrl.shortUrl,
       )
-      expect(urlRepository.update).toHaveBeenCalledWith(url, options, undefined)
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        linkUrl,
+        options,
+        undefined,
+      )
     })
 
     it('updates a file url', async () => {
-      const file = {
-        data: Buffer.from(''),
-        name: 'file.json',
-        mimetype: 'application/json',
-      }
-      userRepository.findOneUrlForUser.mockResolvedValue(url)
-      urlRepository.update.mockResolvedValue(url)
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      urlRepository.update.mockResolvedValue(fileUrl)
       await expect(
-        service.updateUrl(userId, url.shortUrl, {
-          ...options,
+        service.updateUrl(userId, fileUrl.shortUrl, {
           file,
         }),
-      ).resolves.toStrictEqual(url)
+      ).resolves.toStrictEqual(fileUrl)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        fileUrl.shortUrl,
       )
-      expect(urlRepository.update).toHaveBeenCalledWith(url, options, {
-        data: file.data,
-        key: `${url.shortUrl}.json`,
-        mimetype: file.mimetype,
-      })
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        fileUrl,
+        {},
+        {
+          data: file.data,
+          key: `${fileUrl.shortUrl}.json`,
+          mimetype: file.mimetype,
+        },
+      )
     })
   })
 

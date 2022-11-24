@@ -5,7 +5,11 @@ import Sequelize from 'sequelize'
 import { logger } from '../../../config'
 import { DependencyIds } from '../../../constants'
 import jsonMessage from '../../../util/json'
-import { AlreadyExistsError, NotFoundError } from '../../../util/error'
+import {
+  AlreadyExistsError,
+  InvalidUrlUpdateError,
+  NotFoundError,
+} from '../../../util/error'
 
 import { UrlManagementService } from '../../user/interfaces'
 import { MessageType } from '../../../../shared/util/messages'
@@ -136,6 +140,10 @@ export class ApiV1Controller {
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.forbidden(jsonMessage(error.message))
+        return
+      }
+      if (error instanceof InvalidUrlUpdateError) {
+        res.badRequest(jsonMessage(error.message))
         return
       }
       logger.error(`Error editing URL:\t${error}`)
