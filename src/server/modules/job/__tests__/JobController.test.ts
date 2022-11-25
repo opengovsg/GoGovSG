@@ -57,11 +57,13 @@ describe('JobController unit test', () => {
         longUrl,
       },
     ]
+    const serverError = jest.fn()
 
     beforeEach(() => {
       jobManagementService.createJob.mockReset()
       jobManagementService.createJobItem.mockReset()
       sqsService.sendMessage.mockReset()
+      serverError.mockClear()
     })
 
     it('createAndStartJob works with 1 batch', async () => {
@@ -90,7 +92,8 @@ describe('JobController unit test', () => {
       const req = httpMocks.createRequest({
         body: { userId, jobParamsList },
       })
-      const res = httpMocks.createResponse()
+      const res = httpMocks.createResponse() as any
+      res.serverError = serverError
 
       jobManagementService.createJob.mockResolvedValue(mockJob)
       jobManagementService.createJobItem.mockResolvedValue({})
@@ -147,7 +150,8 @@ describe('JobController unit test', () => {
       const req = httpMocks.createRequest({
         body: { userId, jobParamsList },
       })
-      const res = httpMocks.createResponse()
+      const res = httpMocks.createResponse() as any
+      res.serverError = serverError
 
       jobManagementService.createJob.mockResolvedValue(mockJob)
       jobManagementService.createJobItem.mockResolvedValue({})
@@ -176,7 +180,9 @@ describe('JobController unit test', () => {
         body: { userId, jobParamsList: [] },
       })
 
-      await controller.createAndStartJob(req)
+      const res = httpMocks.createResponse() as any
+      res.serverError = serverError
+      await controller.createAndStartJob(req, res)
 
       expect(jobManagementService.createJob).not.toHaveBeenCalled()
       expect(jobManagementService.createJobItem).not.toHaveBeenCalled()
@@ -188,7 +194,9 @@ describe('JobController unit test', () => {
         body: { userId },
       })
 
-      await controller.createAndStartJob(req)
+      const res = httpMocks.createResponse() as any
+      res.serverError = serverError
+      await controller.createAndStartJob(req, res)
 
       expect(jobManagementService.createJob).not.toHaveBeenCalled()
       expect(jobManagementService.createJobItem).not.toHaveBeenCalled()
@@ -291,11 +299,11 @@ describe('JobController unit test', () => {
 
     describe('getLatestJob', () => {
       const ok = jest.fn()
-      const badRequest = jest.fn()
+      const serverError = jest.fn()
 
       beforeEach(() => {
         ok.mockClear()
-        badRequest.mockClear()
+        serverError.mockClear()
       })
 
       it('should succeed and respond with jobInformation if jobManagementService.getLatestJob returns information', async () => {
@@ -305,7 +313,7 @@ describe('JobController unit test', () => {
         })
         const res = httpMocks.createResponse() as any
         res.ok = ok
-        res.badRequest = badRequest
+        res.serverError = serverError
 
         const mockJobInformation = {
           job: {
@@ -323,7 +331,7 @@ describe('JobController unit test', () => {
         await controller.getLatestJob(req, res)
         expect(jobManagementService.getLatestJobForUser).toBeCalledWith(userId)
         expect(res.ok).toBeCalledWith(mockJobInformation)
-        expect(res.badRequest).not.toBeCalled()
+        expect(res.serverError).not.toBeCalled()
       })
 
       it('should respond with res.ok if jobManagementService.getLatestJob is unable to find a job for user', async () => {
@@ -333,7 +341,7 @@ describe('JobController unit test', () => {
         })
         const res = httpMocks.createResponse() as any
         res.ok = ok
-        res.badRequest = badRequest
+        res.serverError = serverError
 
         jobManagementService.getLatestJobForUser.mockRejectedValue(
           new NotFoundError('No jobs found'),
@@ -342,7 +350,7 @@ describe('JobController unit test', () => {
         await controller.getLatestJob(req, res)
         expect(jobManagementService.getLatestJobForUser).toBeCalledWith(userId)
         expect(res.ok).toBeCalled()
-        expect(res.badRequest).not.toBeCalled()
+        expect(res.serverError).not.toBeCalled()
       })
 
       it('should respond with badRequest if jobManagementService.getLatestJob fails', async () => {
@@ -353,14 +361,14 @@ describe('JobController unit test', () => {
         })
         const res = httpMocks.createResponse() as any
         res.ok = ok
-        res.badRequest = badRequest
+        res.serverError = serverError
 
         jobManagementService.getLatestJobForUser.mockRejectedValue(new Error())
 
         await controller.getLatestJob(req, res)
         expect(jobManagementService.getLatestJobForUser).toBeCalledWith(userId)
         expect(res.ok).not.toBeCalled()
-        expect(res.badRequest).toBeCalled()
+        expect(res.serverError).toBeCalled()
       })
     })
 

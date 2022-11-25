@@ -57,7 +57,7 @@ export class JobController {
         logger.error(`error creating and starting job: ${error}`)
         dogstatsd.increment('job.start.failure', 1, 1)
         // created links but failed to create and start job
-        res.status(400).send({ count: jobParamsList.length })
+        res.serverError({ count: jobParamsList.length })
       }
       return
     }
@@ -112,7 +112,7 @@ export class JobController {
         res.ok(jsonMessage('User has no jobs'))
         return
       }
-      res.badRequest(jsonMessage('Please try again'))
+      res.serverError(jsonMessage(error.message))
     }
     return
   }
