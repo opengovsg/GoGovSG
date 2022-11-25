@@ -77,17 +77,13 @@ class JobManagementService implements interfaces.JobManagementService {
   // 'Success' if all job items succeed
   // 'InProgress' if no failure and any job item is still in progress
   computeJobStatus: (jobItems: JobItemType[]) => JobStatusEnum = (jobItems) => {
-    let jobStatus = JobStatusEnum.Success
-    for (let i = 0; i < jobItems.length; i += 1) {
-      const { status } = jobItems[i]
-      if (status === JobItemStatusEnum.Failed) {
-        jobStatus = JobStatusEnum.Failed
-        break
-      } else if (status === JobItemStatusEnum.InProgress) {
-        jobStatus = JobStatusEnum.InProgress
-      }
+    if (jobItems.some(jobItem => jobItem.status === JobItemStatusEnum.Failed)) {
+      return JobStatusEnum.Failed
+    } else if (jobItems.some(jobItem => jobItem.status === JobItemStatusEnum.InProgress)) {
+      return JobStatusEnum.InProgress
+    } else {
+      return JobStatusEnum.Success
     }
-    return jobStatus
   }
 
   updateJobStatus: (jobId: number) => Promise<JobType> = async (jobId) => {
