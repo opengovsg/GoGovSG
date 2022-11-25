@@ -204,7 +204,7 @@ describe('JobManagementService tests', () => {
   })
 
   describe('computeJobStatus', () => {
-    it('should return JobStatus.Failed if any job item fails', async () => {
+    it('should return JobStatusEnum.Failure if any job item fails', async () => {
       const mockJobItems = [
         {
           status: JobItemStatusEnum.Success,
@@ -514,6 +514,4 @@ describe('JobManagementService tests', () => {
       expect(spy).toBeCalledWith(4)
     })
   })
-
-  // pollJobStatusUpdate(userId: number, jobId: number): Promise<any>
 })
