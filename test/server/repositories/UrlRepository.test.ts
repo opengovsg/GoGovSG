@@ -7,6 +7,7 @@ import {
   mockTransaction,
   redisMockClient,
   sanitiseMock,
+  tagModelMock,
   urlClicksModelMock,
   urlModelMock,
 } from '../api/util'
@@ -21,32 +22,31 @@ import {
 } from '../../../src/server/repositories/enums'
 
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
+import TagRepositoryMock from '../mocks/repositories/TagRepository'
+import { TAG_SEPARATOR } from '../../../src/shared/constants'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
   sanitise: sanitiseMock,
 }))
-
+jest.mock('../../../src/server/models/tag', () => ({
+  Tag: tagModelMock,
+}))
 jest.mock('../../../src/server/models/statistics/clicks', () => ({
   UrlClicks: urlClicksModelMock,
 }))
-
 jest.mock('../../../src/server/models/statistics/daily', () => ({
   Clicks: clicksModelMock,
 }))
-
 jest.mock('../../../src/server/models/statistics/weekday', () => ({
   WeekdayClicks: heatMapModelMock,
 }))
-
 jest.mock('../../../src/server/models/statistics/devices', () => ({
   Devices: devicesModelMock,
 }))
-
 jest.mock('../../../src/server/redis', () => ({
   redirectClient: redisMockClient,
 }))
-
 jest.mock('../../../src/server/util/sequelize', () => ({
   transaction: mockTransaction,
   sequelize: { query: mockQuery, transaction: mockTransaction },
@@ -57,14 +57,21 @@ const s3Bucket = 'bucket'
 const fileURLPrefix = 'prefix'
 
 const fileBucket = new S3ServerSide(s3Client, s3Bucket, fileURLPrefix)
+const tagRepository = new TagRepositoryMock()
 
-const repository = new UrlRepository(fileBucket, new UrlMapper())
+const repository = new UrlRepository(fileBucket, new UrlMapper(), tagRepository)
 const cacheGetSpy = jest.spyOn(redisMockClient, 'get')
 
 describe('UrlRepository', () => {
   const baseUserId = 2
   const baseShortUrl = 'abcdef'
   const baseLongUrl = 'https://www.agency.gov.sg'
+  const baseTagObjects = [
+    { tagKey: 'tag1', tagString: 'Tag1' },
+    { tagKey: 'tag2', tagString: 'Tag2' },
+  ]
+  const baseTags = ['Tag1', 'Tag2']
+  const baseTagStrings = baseTags.join(TAG_SEPARATOR)
   const baseUrlClicks = {
     clicks: 2,
   }
@@ -78,18 +85,34 @@ describe('UrlRepository', () => {
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
     source: 'CONSOLE',
+    tags: [],
   }
   const baseUrl = {
     ...baseTemplate,
     UrlClicks: baseUrlClicks,
   }
+  const baseUrlWithTags = {
+    ...baseTemplate,
+    UrlClicks: baseUrlClicks,
+    tags: baseTagObjects,
+    tagStrings: baseTagStrings,
+    addTags: jest.fn(),
+  }
+
   const baseStorableUrl = {
     ...baseTemplate,
     ...baseUrlClicks,
+    tagStrings: undefined,
+  }
+  const baseStorableUrlWithTags = {
+    ...baseStorableUrl,
+    tags: baseTags,
+    tagStrings: baseTagStrings,
   }
   beforeEach(async () => {
     redisMockClient.flushall()
     cacheGetSpy.mockClear()
+    jest.clearAllMocks()
   })
 
   it('passes findByShortUrl through to Url.findOne', async () => {
@@ -111,6 +134,7 @@ describe('UrlRepository', () => {
     const create = jest.spyOn(urlModelMock, 'create')
     const scope = jest.spyOn(urlModelMock, 'scope')
     const putObject = jest.spyOn(s3Client, 'putObject')
+    const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     const findByPk = jest.fn()
 
     // @ts-ignore
@@ -125,9 +149,10 @@ describe('UrlRepository', () => {
       putObject.mockClear()
       findByPk.mockReset()
       scope.mockReset()
+      tagFindOrCreate.mockReset()
     })
 
-    it('creates the specified longUrl', async () => {
+    it('creates the specified longUrl without tag', async () => {
       findByPk.mockResolvedValueOnce(baseUrl)
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(baseTemplate)
@@ -141,14 +166,40 @@ describe('UrlRepository', () => {
           userId,
           isFile: false,
           source: StorableUrlSource.Console,
+          tagStrings: '',
+        },
+        expect.anything(),
+      )
+      expect(tagFindOrCreate).toHaveBeenCalledTimes(0)
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+      expect(putObject).not.toHaveBeenCalled()
+    })
+
+    it('creates the specified longUrl with tags', async () => {
+      findByPk.mockResolvedValueOnce(baseUrlWithTags)
+      scope.mockImplementationOnce(() => ({ findByPk }))
+      create.mockResolvedValue(baseUrlWithTags)
+      await expect(
+        repository.create({ userId, shortUrl, longUrl, tags: baseTags }),
+      ).resolves.toStrictEqual(baseStorableUrlWithTags)
+      expect(create).toHaveBeenCalledWith(
+        {
+          longUrl,
+          shortUrl,
+          userId,
+          tags: baseTags,
+          isFile: false,
+          tagStrings: baseTagStrings,
+          source: StorableUrlSource.Console,
         },
         expect.anything(),
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
       expect(putObject).not.toHaveBeenCalled()
+      expect(baseUrlWithTags.addTags).toHaveBeenCalledTimes(1)
     })
 
-    it('creates the specified public file', async () => {
+    it('creates the specified public file without tag', async () => {
       const file = {
         data: Buffer.from(''),
         key: 'key',
@@ -177,6 +228,7 @@ describe('UrlRepository', () => {
           userId,
           isFile: true,
           source: StorableUrlSource.Console,
+          tagStrings: '',
         },
         expect.anything(),
       )
@@ -190,6 +242,56 @@ describe('UrlRepository', () => {
         CacheControl: 'no-cache',
       })
     })
+
+    it('creates the specified public file with tags', async () => {
+      const file = {
+        data: Buffer.from(''),
+        key: 'key',
+        mimetype: 'text/csv',
+      }
+      const url = {
+        ...baseUrlWithTags,
+        isFile: true,
+        longUrl: fileBucket.buildFileLongUrl(file.key),
+        addTags: jest.fn(),
+      }
+      const storableUrlWithTags = {
+        ...baseStorableUrlWithTags,
+        isFile: true,
+        longUrl: fileBucket.buildFileLongUrl(file.key),
+      }
+      findByPk.mockResolvedValueOnce(url)
+      scope.mockImplementationOnce(() => ({ findByPk }))
+      create.mockResolvedValue(url)
+      await expect(
+        repository.create(
+          { userId: baseUserId, shortUrl: baseShortUrl, tags: baseTags },
+          file,
+        ),
+      ).resolves.toStrictEqual(storableUrlWithTags)
+      expect(create).toHaveBeenCalledWith(
+        {
+          longUrl: fileBucket.buildFileLongUrl(file.key),
+          shortUrl,
+          userId,
+          tags: baseTags,
+          isFile: true,
+          tagStrings: baseTagStrings,
+          source: StorableUrlSource.Console,
+        },
+        expect.anything(),
+      )
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+      expect(putObject).toHaveBeenCalledWith({
+        ContentType: file.mimetype,
+        Bucket: s3Bucket,
+        Body: file.data,
+        Key: file.key,
+        ACL: FileVisibility.Public,
+        CacheControl: 'no-cache',
+      })
+      expect(url.addTags).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('update', () => {
@@ -197,12 +299,13 @@ describe('UrlRepository', () => {
     const scope = jest.spyOn(urlModelMock, 'scope')
     const putObject = jest.spyOn(s3Client, 'putObject')
     const putObjectAcl = jest.spyOn(s3Client, 'putObjectAcl')
-
+    const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     beforeEach(() => {
       findOne.mockReset()
       scope.mockReset()
       putObject.mockClear()
       putObjectAcl.mockClear()
+      tagFindOrCreate.mockClear()
     })
 
     afterAll(() => {
@@ -231,8 +334,9 @@ describe('UrlRepository', () => {
     it('should update non-file links', async () => {
       const description = 'Changes made'
       const update = jest.fn()
-      scope.mockImplementationOnce(() => urlModelMock)
-      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update })
+      const setTags = jest.fn()
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update, setTags })
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { description }),
       ).resolves.toStrictEqual(expect.objectContaining({ isFile: false }))
@@ -245,18 +349,56 @@ describe('UrlRepository', () => {
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
+    it('should update tags on non-file links', async () => {
+      const description = 'Changes made'
+      const update = jest.fn()
+      const setTags = jest.fn()
+      const newTags = baseTags
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue({ ...baseUrl, isFile: false, update, setTags })
+      await expect(
+        repository.update(
+          { shortUrl: baseShortUrl },
+          { description, tags: newTags },
+        ),
+      ).resolves.toStrictEqual(expect.objectContaining({ isFile: false }))
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
+      expect(putObject).not.toHaveBeenCalled()
+      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
+      expect(tagRepository.upsertTags).toHaveBeenCalledWith(
+        baseTags,
+        expect.anything(),
+      )
+      expect(setTags).toHaveBeenCalledTimes(1)
+      expect(update).toHaveBeenCalledWith(
+        { description, tags: newTags, tagStrings: baseTagStrings },
+        expect.anything(),
+      )
+      expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
+    })
+
     it('should update non-state changes on file links', async () => {
       const description = 'Changes made'
       const update = jest.fn()
+      const setTags = jest.fn()
       const url: any = {
         ...baseUrl,
         isFile: true,
         update: update.mockImplementationOnce(({ description }) => {
           url.description = description
         }),
+        setTags,
       }
-      const expectedUrl = { ...baseStorableUrl, isFile: true, description }
-      scope.mockImplementationOnce(() => urlModelMock)
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        description,
+        tags: [],
+      }
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { description }),
@@ -269,9 +411,48 @@ describe('UrlRepository', () => {
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
     })
 
+    it('should update tags changes on file links', async () => {
+      const description = 'Changes made'
+      const newTags = baseTags
+      const update = jest.fn()
+      const setTags = jest.fn()
+      const url: any = {
+        ...baseUrl,
+        isFile: true,
+        update: update.mockImplementationOnce(({ description }) => {
+          url.description = description
+        }),
+        setTags,
+      }
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        description,
+      }
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue(url)
+      await expect(
+        repository.update(
+          { shortUrl: baseShortUrl },
+          { description, tags: newTags },
+        ),
+      ).resolves.toEqual(expectedUrl)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { shortUrl: baseShortUrl },
+      })
+      expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
+      expect(putObject).not.toHaveBeenCalled()
+      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(update).toHaveBeenCalledWith(
+        { description, tags: newTags, tagStrings: baseTagStrings },
+        expect.anything(),
+      )
+    })
+
     it('should update state change to Active on file links', async () => {
       const state = StorableUrlState.Active
       const update = jest.fn()
+      const setTags = jest.fn()
       const url = {
         ...baseUrl,
         isFile: true,
@@ -279,9 +460,10 @@ describe('UrlRepository', () => {
         update: update.mockImplementationOnce(({ state }) => {
           url.state = state
         }),
+        setTags,
       }
-      const expectedUrl = { ...baseStorableUrl, isFile: true }
-      scope.mockImplementationOnce(() => urlModelMock)
+      const expectedUrl = { ...baseStorableUrl, isFile: true, tags: [] }
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { state }),
@@ -302,6 +484,7 @@ describe('UrlRepository', () => {
     it('should update state change to Inactive on file links', async () => {
       const state = StorableUrlState.Inactive
       const update = jest.fn()
+      const setTags = jest.fn()
       const url = {
         ...baseUrl,
         isFile: true,
@@ -309,13 +492,15 @@ describe('UrlRepository', () => {
         update: update.mockImplementationOnce(({ state }) => {
           url.state = state
         }),
+        setTags,
       }
       const expectedUrl = {
         ...baseStorableUrl,
         isFile: true,
+        tags: [],
         state: StorableUrlState.Inactive,
       }
-      scope.mockImplementationOnce(() => urlModelMock)
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
       await expect(
         repository.update({ shortUrl: baseShortUrl }, { state }),
@@ -346,6 +531,7 @@ describe('UrlRepository', () => {
       }
 
       const update = jest.fn()
+      const setTags = jest.fn()
       const url = {
         ...baseUrl,
         isFile: true,
@@ -353,14 +539,16 @@ describe('UrlRepository', () => {
         update: update.mockImplementationOnce(({ longUrl }) => {
           url.longUrl = longUrl
         }),
+        setTags,
       }
       const expectedUrl = {
         ...baseStorableUrl,
         isFile: true,
+        tags: [],
         longUrl: newLongUrl,
       }
 
-      scope.mockImplementationOnce(() => urlModelMock)
+      scope.mockImplementation(() => urlModelMock)
       findOne.mockResolvedValue(url)
 
       await expect(

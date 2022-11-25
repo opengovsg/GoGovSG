@@ -1,5 +1,4 @@
 import { Selector } from 'testcafe'
-import { customAlphabet } from 'nanoid'
 import { fetch } from 'cross-fetch'
 import {
   dummyFilePath,
@@ -14,6 +13,7 @@ import {
   closeDrawerButton,
   createLinkButton,
   fileTab,
+  generateRandomString,
   generateUrlImage,
   longUrl,
   longUrlTextField,
@@ -21,10 +21,6 @@ import {
   shortUrlTextField,
   uploadFile,
 } from './helpers'
-
-const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
-const LENGTH = 6
-const generate = customAlphabet(ALPHABET, LENGTH)
 
 /**
  * Fetch link multiple times to increase usage of link.
@@ -61,7 +57,7 @@ const getUrlAndFetch = async (t, generatedUrl, numberOfFetches) => {
 
 const generateSearchKey = () => {
   // create key to searchBy
-  const searchKey = generate()
+  const searchKey = generateRandomString(6)
   const searchKeyWithDash = `-${searchKey}`
 
   return { searchKey, searchKeyWithDash }

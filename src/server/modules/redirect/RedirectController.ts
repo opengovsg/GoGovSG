@@ -1,7 +1,7 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
 import { displayHostname, gaTrackingId, logger } from '../../config'
-import dogstatsd from '../../util/dogstatsd'
+import dogstatsd, { SHORTLINK_CLICKS } from '../../util/dogstatsd'
 import { NotFoundError } from '../../util/error'
 import parseDomain from '../../util/domain'
 import { DependencyIds, ERROR_404_PATH } from '../../constants'
@@ -90,7 +90,7 @@ export class RedirectController {
 
       req.session!.visits = visitedUrls
 
-      dogstatsd.increment('shortlink.clicks', 1, 1)
+      dogstatsd.increment(SHORTLINK_CLICKS, 1, 1)
       if (redirectType === RedirectType.TransitionPage) {
         // Extract root domain from long url.
         const rootDomain: string = parseDomain(longUrl)

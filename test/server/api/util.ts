@@ -44,7 +44,26 @@ export function createRequestWithUser(user: any): Request {
     session: {
       user,
     },
-    body: {},
+    body: { userId: 1 },
+  })
+}
+
+/**
+ * Creates a mock request with the input session user.
+ * @param  {any} user
+ * @returns A mock Request with the input session user.
+ */
+export function createGetTagsRequestWithUser(user: any): Request {
+  return httpMocks.createRequest({
+    session: {
+      user,
+    },
+    query: {
+      searchText: 'tag',
+    },
+    body: {
+      userId: 1,
+    },
   })
 }
 
@@ -107,9 +126,15 @@ export const urlModelMock = sequelizeMock.define(
     instanceMethods: {
       findOne: () => {},
       increment: () => {},
+      findByPk: () => {},
     },
   },
 )
+
+export const tagModelMock = sequelizeMock.define('tag', {
+  tagString: 'Tag',
+  tagKey: 'tag',
+})
 
 export const urlClicksModelMock = sequelizeMock.define('url_clicks', {
   shortUrl: 'a',
@@ -191,6 +216,10 @@ export const mockQuery = jest.fn()
 export const mockDefine = jest.fn()
 
 mockQuery.mockImplementation((query: string) => {
+  // For rawDirectorySearch count queries
+  if (query.includes('count(*)')) {
+    return { count: 1 }
+  }
   // For rawDirectorySearch -> email
   if (query.includes('queryFile')) {
     return [
@@ -201,9 +230,6 @@ mockQuery.mockImplementation((query: string) => {
         isFile: false,
       },
     ]
-  }
-  if (query.includes('count(*)')) {
-    return [{ count: 10 }]
   }
   // For rawDirectorySearch -> plain text
   if (query.includes('JOIN')) {

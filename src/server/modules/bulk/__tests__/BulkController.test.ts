@@ -85,7 +85,7 @@ describe('BulkController unit test', () => {
       ok.mockClear()
     })
 
-    it('bulkCreate should return success if urls are created', async () => {
+    it('bulkCreate without tags should return success if urls are created', async () => {
       const userId = 1
       const longUrl = 'https://google.com'
       const urlMappings = [
@@ -111,12 +111,13 @@ describe('BulkController unit test', () => {
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
         userId,
         urlMappings,
+        undefined,
       )
       expect(res.badRequest).not.toHaveBeenCalled()
       expect(res.ok).toHaveBeenCalled()
     })
 
-    it('bulkCreate responds with error if urls are not created', async () => {
+    it('bulkCreate without tags responds with error if urls are not created', async () => {
       const userId = 1
       const longUrl = 'https://google.com'
       const urlMapping = {
@@ -140,6 +141,71 @@ describe('BulkController unit test', () => {
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
         userId,
         urlMappings,
+        undefined,
+      )
+      expect(res.badRequest).toHaveBeenCalled()
+      expect(res.ok).not.toHaveBeenCalled()
+    })
+
+    it('bulkCreate with tags should return success if urls are created', async () => {
+      const userId = 1
+      const longUrl = 'https://google.com'
+      const urlMappings = [
+        {
+          shortUrl: 'n2io3n12',
+          longUrl,
+        },
+      ]
+      const tags = ['a', 'b']
+
+      const req = httpMocks.createRequest({
+        body: { userId, longUrls: [longUrl], tags },
+      })
+      const res = httpMocks.createResponse() as any
+
+      res.badRequest = badRequest
+      res.ok = ok
+      mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
+      mockUrlManagementService.bulkCreate.mockResolvedValue({})
+
+      await controller.bulkCreate(req, res)
+
+      expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
+      expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
+        userId,
+        urlMappings,
+        tags,
+      )
+      expect(res.badRequest).not.toHaveBeenCalled()
+      expect(res.ok).toHaveBeenCalled()
+    })
+
+    it('bulkCreate with tags responds with error if urls are not created', async () => {
+      const userId = 1
+      const longUrl = 'https://google.com'
+      const urlMapping = {
+        shortUrl: 'n2io3n12',
+        longUrl,
+      }
+      const urlMappings = [urlMapping, urlMapping]
+      const longUrls = [longUrl, longUrl]
+      const tags = ['a', 'b']
+
+      const req = httpMocks.createRequest({ body: { userId, longUrls, tags } })
+      const res = httpMocks.createResponse() as any
+
+      res.badRequest = badRequest
+      res.ok = ok
+      mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
+      mockUrlManagementService.bulkCreate.mockRejectedValue({})
+
+      await controller.bulkCreate(req, res)
+
+      expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
+      expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
+        userId,
+        urlMappings,
+        tags,
       )
       expect(res.badRequest).toHaveBeenCalled()
       expect(res.ok).not.toHaveBeenCalled()

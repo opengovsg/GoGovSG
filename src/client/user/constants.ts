@@ -5,4 +5,7 @@ export const initialSortConfig = {
   sortDirection: SortDirection.Descending,
 }
 
-export default initialSortConfig
+export const TEXT_FIELD_HEIGHT = 44
+
+// Search timeout in ms
+export const SEARCH_TIMEOUT = 500

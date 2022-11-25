@@ -9,11 +9,15 @@ const initialState: UserState = {
   isUploading: false,
   shortUrl: '',
   longUrl: '',
+  tags: [],
   createUrlModal: false,
   tableConfig: {
+    isTag: false,
     numberOfRows: 10,
     pageNumber: 0,
     searchText: '',
+    searchInput: '',
+    tags: '',
     filter: {},
     ...initialSortConfig,
   },
@@ -142,6 +146,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       nextState = {
         shortUrl: '',
         longUrl: '',
+        tags: [],
       }
       break
     case UserAction.WIPE_USER_STATE:
@@ -217,6 +222,11 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       nextState = {
         linkHistory: action.payload.linkHistory,
         linkHistoryCount: action.payload.totalCount,
+      }
+      break
+    case UserAction.SET_TAGS:
+      nextState = {
+        tags: action.payload,
       }
       break
     default:

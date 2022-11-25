@@ -258,6 +258,7 @@ describe('UrlManagementService', () => {
       userId: 2,
       state: undefined,
       isFile: undefined,
+      tags: [],
     }
     const urls = { urls: [], count: 0 }
     userRepository.findUrlsForUser.mockResolvedValue(urls)
@@ -265,5 +266,24 @@ describe('UrlManagementService', () => {
       service.getUrlsWithConditions(conditions),
     ).resolves.toStrictEqual(urls)
     expect(userRepository.findUrlsForUser).toHaveBeenCalledWith(conditions)
+  })
+
+  describe('bulkCreate', () => {
+    it('passes through bulkCreate to UrlRepository', async () => {
+      const userId = 1
+      const urlMappings = [
+        {
+          shortUrl: 'hello',
+          longUrl: 'https://google.com',
+        },
+      ]
+      urlRepository.bulkCreate.mockResolvedValue({})
+      await service.bulkCreate(userId, urlMappings, undefined)
+      expect(urlRepository.bulkCreate).toHaveBeenCalledWith({
+        userId,
+        urlMappings,
+        undefined,
+      })
+    })
   })
 })

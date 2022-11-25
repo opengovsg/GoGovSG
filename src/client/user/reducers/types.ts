@@ -19,11 +19,14 @@ export enum SortDirection {
 }
 
 export type UrlTableConfig = {
+  isTag: boolean
   numberOfRows: number
   pageNumber: number
   sortDirection: SortDirection
   orderBy: string
   searchText: string
+  tags: string
+  searchInput: string // search bar input that has yet to be applied for search (for debouncing purposes)
   filter: UrlTableFilterConfig
 }
 
@@ -42,6 +45,8 @@ export type UrlType = {
   contactEmail: string
   editedContactEmail: string
   email: string
+  tags: string[]
+  tagStrings: string
 }
 
 export type LinkChangeType = 'create' | 'update'
@@ -52,6 +57,7 @@ export type LinkChangeKey =
   | 'state'
   | 'userEmail'
   | 'longUrl'
+  | 'tagStrings'
 
 export interface LinkChangeSet {
   type: LinkChangeType
@@ -85,4 +91,5 @@ export type UserState = {
   } | null
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
+  tags: string[]
 }

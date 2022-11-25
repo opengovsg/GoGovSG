@@ -3,10 +3,12 @@ export const DependencyIds = {
   urlMapper: Symbol.for('urlMapper'),
   userMapper: Symbol.for('userMapper'),
   otpMapper: Symbol.for('otpMapper'),
+  tagMapper: Symbol.for('tagMapper'),
   safeBrowsingMapper: Symbol.for('safeBrowsingMapper'),
   analyticsLoggerService: Symbol.for('analyticsLoggerService'),
   cookieReducer: Symbol.for('cookieReducer'),
   userRepository: Symbol.for('userRepository'),
+  tagRepository: Symbol.for('tagRepository'),
   otpRepository: Symbol.for('otpRepository'),
   mailer: Symbol.for('mailer'),
   cryptography: Symbol.for('cryptography'),
@@ -55,6 +57,7 @@ export const DependencyIds = {
   gaTrackingId: Symbol.for('gaTrackingId'),
   bulkController: Symbol.for('bulkController'),
   bulkService: Symbol.for('bulkService'),
+  tagManagementService: Symbol.for('tagManagementService'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'

@@ -75,6 +75,21 @@ describe('BulkService tests', () => {
     const { BulkService } = require('..')
     const service = new BulkService()
 
+    it('fails if file data string is empty', async () => {
+      const schema = service.parseCsv({})
+      expect(schema.isValid).toEqual(false)
+    })
+
+    it('fails if header does not match BULK_UPLOAD_HEADER', async () => {
+      const file = {
+        data: Buffer.from(`Hello, this is ${BULK_UPLOAD_HEADER}\n`),
+        name: 'file.csv',
+      } as UploadedFile
+
+      const schema = service.parseCsv(file)
+      expect(schema.isValid).toEqual(false)
+    })
+
     validUrlTests.forEach((validUrlTest) => {
       it(validUrlTest.testName, async () => {
         const file = {

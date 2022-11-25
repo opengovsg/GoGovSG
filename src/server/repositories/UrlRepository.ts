@@ -2,6 +2,7 @@
 
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
+import _ from 'lodash'
 import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
@@ -24,6 +25,8 @@ import { SearchResultsSortOrder } from '../../shared/search'
 import { urlSearchVector } from '../models/search'
 import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
+import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
+import { TAG_SEPARATOR } from '../../shared/constants'
 
 const { Public, Private } = FileVisibility
 
@@ -37,12 +40,16 @@ export class UrlRepository implements UrlRepositoryInterface {
 
   private urlMapper: Mapper<StorableUrl, UrlType>
 
+  private tagRepository: TagRepositoryInterface
+
   public constructor(
     @inject(DependencyIds.s3) fileBucket: S3Interface,
     @inject(DependencyIds.urlMapper) urlMapper: Mapper<StorableUrl, UrlType>,
+    @inject(DependencyIds.tagRepository) tagRepository: TagRepositoryInterface,
   ) {
     this.fileBucket = fileBucket
     this.urlMapper = urlMapper
+    this.tagRepository = tagRepository
   }
 
   public findByShortUrlWithTotalClicks: (
@@ -55,23 +62,36 @@ export class UrlRepository implements UrlRepositoryInterface {
   }
 
   public create: (
-    properties: { userId: number; shortUrl: string; longUrl?: string },
+    properties: {
+      userId: number
+      shortUrl: string
+      longUrl?: string
+      tags?: string[]
+    },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
     const newUrl = await sequelize.transaction(async (t) => {
-      await Url.create(
-        {
-          ...properties,
-          longUrl: file
-            ? this.fileBucket.buildFileLongUrl(file.key)
-            : properties.longUrl,
-          isFile: !!file,
-          source: StorableUrlSource.Console,
-        },
-        {
-          transaction: t,
-        },
-      )
+      const tagStrings = properties.tags
+        ? properties.tags.join(TAG_SEPARATOR)
+        : ''
+      const urlStaticDTO = {
+        ...properties,
+        longUrl: file
+          ? this.fileBucket.buildFileLongUrl(file.key)
+          : properties.longUrl,
+        isFile: !!file,
+        tagStrings,
+        source: StorableUrlSource.Console,
+      }
+      const url = await Url.create(urlStaticDTO, {
+        transaction: t,
+      })
+      if (properties.tags) {
+        const tags = await this.tagRepository.upsertTags(properties.tags, t)
+        // @ts-ignore, addTag is provided by Sequelize during run time
+        // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+        await url.addTags(tags, { transaction: t })
+      }
       if (file) {
         await this.fileBucket.uploadFileToS3(file.data, file.key, file.mimetype)
       }
@@ -95,6 +115,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (originalUrl, changes, file) => {
     const { shortUrl } = originalUrl
+    let updateParams: any = { ...changes }
     const url = await Url.scope(['defaultScope', 'getClicks']).findOne({
       where: { shortUrl },
     })
@@ -103,36 +124,54 @@ export class UrlRepository implements UrlRepositoryInterface {
         `url not found in database:\tshortUrl=${shortUrl}`,
       )
     }
-
-    const newUrl: UrlType = await sequelize.transaction(async (t) => {
+    const urlDto = this.urlMapper.persistenceToDto(url)
+    const newUrl = await sequelize.transaction(async (t) => {
+      if (
+        changes.tags &&
+        !_.isEqual(_.sortBy(urlDto.tags), _.sortBy(changes.tags))
+      ) {
+        const newTags = await this.tagRepository.upsertTags(changes.tags, t)
+        // @ts-ignore provided by Sequelize during runtime
+        await url.setTags(newTags, { transaction: t })
+        updateParams = {
+          ...updateParams,
+          tagStrings: updateParams.tags.join(TAG_SEPARATOR),
+        }
+      }
       if (!url.isFile) {
-        await url.update(changes, { transaction: t })
+        await url.update(updateParams, { transaction: t })
       } else {
         let currentKey = this.fileBucket.getKeyFromLongUrl(url.longUrl)
         if (file) {
           const newKey = file.key
           await url.update(
-            { ...changes, longUrl: this.fileBucket.buildFileLongUrl(newKey) },
+            {
+              ...updateParams,
+              longUrl: this.fileBucket.buildFileLongUrl(newKey),
+            },
             { transaction: t },
           )
           await this.fileBucket.setS3ObjectACL(currentKey, Private)
           await this.fileBucket.uploadFileToS3(file.data, newKey, file.mimetype)
           currentKey = newKey
         } else {
-          await url.update({ ...changes }, { transaction: t })
+          await url.update(updateParams, { transaction: t })
         }
-        if (changes.state) {
+        if (updateParams.state) {
           await this.fileBucket.setS3ObjectACL(
             currentKey,
-            changes.state === StorableUrlState.Active ? Public : Private,
+            updateParams.state === StorableUrlState.Active ? Public : Private,
           )
         }
       }
-      return url
+      // Do a fresh read which eagerly loads the associated tags field.
+      return Url.scope(['defaultScope', 'getClicks']).findOne({
+        where: { shortUrl },
+        transaction: t,
+      })
     })
-
+    if (!newUrl) throw new Error('Newly-updated url is null')
     this.invalidateCache(shortUrl)
-
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
@@ -226,14 +265,24 @@ export class UrlRepository implements UrlRepositoryInterface {
       AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
       AND "urls"."isFile" IN (:queryFile)
       AND "urls"."state" In (:queryState)
-      ORDER BY (${rankingAlgorithm}) DESC`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT :limit OFFSET :offset`
+    const countQuery = `
+      SELECT count(*)
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
+      AND "urls"."isFile" IN (:queryFile)
+      AND "urls"."state" In (:queryState)`
 
-    // Search only once to get both urls and count
-    const urlsModel = (await sequelize.query(rawQuery, {
+    const urls = (await sequelize.query(rawQuery, {
       replacements: {
         likeQuery,
         queryFile,
         queryState,
+        limit,
+        offset,
       },
       type: QueryTypes.SELECT,
       model: Url,
@@ -241,12 +290,20 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
       useMaster: true,
     })) as Array<UrlDirectory>
+    const countResult = (await sequelize.query(countQuery, {
+      replacements: {
+        likeQuery,
+        queryFile,
+        queryState,
+      },
+      type: QueryTypes.SELECT,
+      raw: true,
+      plain: true,
+      useMaster: true,
+    })) as { count: string }
 
-    const count = urlsModel.length
-    const ending = Math.min(count, offset + limit)
-    const slicedUrlsModel = urlsModel.slice(offset, ending)
-
-    return { count, urls: slicedUrlsModel }
+    const count = Number(countResult.count)
+    return { urls, count }
   }
 
   /**
@@ -274,6 +331,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const newQuery = extractShortUrl(query) || query
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
+
     const rawQuery = `
       SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
@@ -281,16 +339,25 @@ export class UrlRepository implements UrlRepositoryInterface {
       ON "urls"."shortUrl" = "url_clicks"."shortUrl"
       JOIN users
       ON "urls"."userId" = "users"."id"
-      JOIN plainto_tsquery('english', $newQuery) query
+      JOIN plainto_tsquery('english', :newQuery) query
       ON query @@ (${urlVector})
       ${queryFile}
       ${queryState}
-      ORDER BY (${rankingAlgorithm}) DESC`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT :limit OFFSET :offset`
+    const countQuery = `
+      SELECT count(*)
+      FROM urls AS "urls"
+      JOIN plainto_tsquery('english', :newQuery) query
+      ON query @@ (${urlVector})
+      ${queryFile}
+      ${queryState}`
 
-    // Search only once to get both urls and count
-    const urlsModel = (await sequelize.query(rawQuery, {
-      bind: {
+    const urls = (await sequelize.query(rawQuery, {
+      replacements: {
         newQuery,
+        limit,
+        offset,
       },
       raw: true,
       type: QueryTypes.SELECT,
@@ -298,12 +365,18 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
       useMaster: true,
     })) as Array<UrlDirectory>
+    const countResult = (await sequelize.query(countQuery, {
+      replacements: {
+        newQuery,
+      },
+      raw: true,
+      plain: true,
+      type: QueryTypes.SELECT,
+      useMaster: true,
+    })) as { count: string }
 
-    const count = urlsModel.length
-    const ending = Math.min(count, offset + limit)
-    const slicedUrlsModel = urlsModel.slice(offset, ending)
-
-    return { count, urls: slicedUrlsModel }
+    const count = Number(countResult.count)
+    return { urls, count }
   }
 
   /**
@@ -474,9 +547,11 @@ export class UrlRepository implements UrlRepositoryInterface {
   public bulkCreate: (properties: {
     userId: number
     urlMappings: BulkUrlMapping[]
+    tags?: string[]
   }) => Promise<void> = async (properties) => {
-    const { urlMappings, userId } = properties
+    const { urlMappings, userId, tags } = properties
     await sequelize.transaction(async (t) => {
+      const tagStrings = tags ? tags.join(TAG_SEPARATOR) : ''
       const bulkUrlObjects = urlMappings.map(({ shortUrl, longUrl }) => {
         return {
           shortUrl,
@@ -484,13 +559,24 @@ export class UrlRepository implements UrlRepositoryInterface {
           userId,
           isFile: false,
           source: StorableUrlSource.Bulk,
+          tagStrings,
         }
       })
       // sequelize model method
-      await Url.bulkCreate(bulkUrlObjects, {
+      const urls = await Url.bulkCreate(bulkUrlObjects, {
         transaction: t,
         individualHooks: false,
       })
+
+      if (tags) {
+        const createdTags = await this.tagRepository.upsertTags(tags, t)
+        await Promise.all(
+          // https://sequelize.org/docs/v6/core-concepts/assocs/#special-methodsmixins-added-to-instances
+          // We use addUrls instead of addTags to avoid looping over all urls
+          // @ts-ignore, addUrls is provided by Sequelize during run time
+          createdTags.map((tag) => tag.addUrls(urls, { transaction: t })),
+        )
+      }
     })
   }
 }

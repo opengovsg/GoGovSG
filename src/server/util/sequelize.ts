@@ -24,3 +24,7 @@ export function transaction<T>(
 ): Promise<T> {
   return sequelize.transaction(autoCallback)
 }
+
+export function escapeWildcard(str: string) {
+  return str.replace(/(_|%|\\)/g, '\\$1')
+}
