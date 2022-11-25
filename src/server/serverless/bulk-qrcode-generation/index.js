@@ -8,19 +8,23 @@ const { ImageFormat } = require('./qrCode')
 async function handler(event) {
   const { body } = event.Records[0]
   const bodyJSON = JSON.parse(body)
-  const { mappings, filePath } = bodyJSON
+  const { mappings, jobItemId } = bodyJSON
+
+  if (!mappings || !jobItemId || mappings.length === 0) {
+    throw Error(`Job params incomplete, ${bodyJSON}`)
+  }
 
   try {
     const csvBuffer = await csvService.createCsv(mappings)
     await s3Service.uploadToS3(
       csvBuffer,
       'text/csv',
-      `${filePath}/generated.csv`,
+      `${jobItemId}/generated.csv`,
     )
-    console.log(`uploaded csv to ${filePath}/generated.csv`)
+    console.log(`uploaded csv to ${jobItemId}/generated.csv`)
 
-    const svgTmpDirPath = `/tmp/${filePath}/svg`
-    const svgS3ZipPath = `${filePath}/generated_svg.zip`
+    const svgTmpDirPath = `/tmp/${jobItemId}/svg`
+    const svgS3ZipPath = `${jobItemId}/generated_svg.zip`
     await fsUtils.fsMkdirOverwriteSync(svgTmpDirPath)
 
     // generate QR code svg file and saves in svgTmpDirPath
@@ -33,8 +37,8 @@ async function handler(event) {
     await s3Service.archiverZipStreamToS3(svgTmpDirPath, svgS3ZipPath)
     console.log(`uploaded svg zip to ${svgS3ZipPath}`)
 
-    const pngTmpDirPath = `/tmp/${filePath}/png`
-    const pngS3ZipPath = `${filePath}/generated_png.zip`
+    const pngTmpDirPath = `/tmp/${jobItemId}/png`
+    const pngS3ZipPath = `${jobItemId}/generated_png.zip`
     await fsUtils.fsMkdirOverwriteSync(pngTmpDirPath)
 
     // generate QR code png file and saves in pngTmpDirPath
@@ -48,16 +52,16 @@ async function handler(event) {
     console.log(`uploaded png zip to ${pngS3ZipPath}`)
 
     // cleanup
-    await fsUtils.fsRmdirRecursiveSync(`/tmp/${filePath}`)
-    console.log(`cleaned up /tmp/${filePath}`)
+    await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
+    console.log(`cleaned up /tmp/${jobItemId}`)
 
-    await snsService.sendSNSMessage(true, filePath, '')
-    return { Status: `Send success message to SNS for ${filePath}` }
+    await snsService.sendSNSMessage(true, jobItemId, '')
+    return { Status: `Send success message to SNS for ${jobItemId}` }
   } catch (error) {
     // cleanup
-    await fsUtils.fsRmdirRecursiveSync(`/tmp/${filePath}`)
+    await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
 
-    await snsService.sendSNSMessage(false, filePath, error)
+    await snsService.sendSNSMessage(false, jobItemId, error)
     throw Error(`Failed to generate files, Error: ${error} `)
   }
 }

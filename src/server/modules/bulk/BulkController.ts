@@ -44,13 +44,15 @@ export class BulkController {
     next()
   }
 
-  public bulkCreate: (req: Request, res: Response) => Promise<void> = async (
-    req,
-    res,
-  ) => {
+  public bulkCreate: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
     const { userId, longUrls, tags } = req.body
     // generate url mappings
     const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
+
     // bulk create
     try {
       await this.urlManagementService.bulkCreate(userId, urlMappings, tags)
@@ -60,8 +62,12 @@ export class BulkController {
       return
     }
 
+    // put jobParamsList on the req body so that it can be used by JobController
+    req.body.jobParamsList = urlMappings
+
     dogstatsd.increment('bulk.hash.success', 1, 1)
     res.ok(jsonMessage(`${urlMappings.length} links created`))
+    next()
   }
 }
 

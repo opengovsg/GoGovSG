@@ -1,0 +1,58 @@
+import { Request } from 'express'
+import { inject, injectable } from 'inversify'
+import _ from 'lodash'
+import { DependencyIds } from '../../constants'
+import dogstatsd from '../../util/dogstatsd'
+import { SQSServiceInterface } from '../../services/sqs'
+import { JobManagementService } from './interfaces'
+import { logger, qrCodeJobBatchSize } from '../../config'
+
+@injectable()
+export class JobController {
+  private sqsService: SQSServiceInterface
+
+  private jobManagementService: JobManagementService
+
+  public constructor(
+    @inject(DependencyIds.jobManagementService)
+    jobManagementService: JobManagementService,
+    @inject(DependencyIds.sqsService)
+    sqsService: SQSServiceInterface,
+  ) {
+    this.sqsService = sqsService
+    this.jobManagementService = jobManagementService
+  }
+
+  public createAndStartJob: (req: Request) => Promise<void> = async (req) => {
+    const { userId, jobParamsList } = req.body
+    if (!jobParamsList || jobParamsList.length === 0) {
+      return
+    }
+
+    const jobBatches = _.chunk(jobParamsList, qrCodeJobBatchSize)
+    try {
+      const job = await this.jobManagementService.createJob(userId)
+
+      await Promise.all(
+        jobBatches.map(async (jobBatch, idx) => {
+          const messageParams = {
+            jobItemId: `${job.uuid}/${idx}`,
+            mappings: jobBatch,
+          }
+          await this.jobManagementService.createJobItem({
+            params: <JSON>(<unknown>messageParams),
+            jobId: job.id,
+          })
+          await this.sqsService.sendMessage(messageParams)
+          return
+        }),
+      )
+      dogstatsd.increment('job.start.success', 1, 1)
+    } catch (e) {
+      logger.error(`error creating and starting job: ${e}`)
+      dogstatsd.increment('job.start.failure', 1, 1)
+    }
+  }
+}
+
+export default JobController

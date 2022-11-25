@@ -15,6 +15,7 @@ const mockUrlManagementService = {
   getUrlsWithConditions: jest.fn(),
   bulkCreate: jest.fn(),
 }
+
 const controller = new BulkController(mockBulkService, mockUrlManagementService)
 
 describe('BulkController unit test', () => {
@@ -99,13 +100,14 @@ describe('BulkController unit test', () => {
         body: { userId, longUrls: [longUrl] },
       })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockResolvedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -115,6 +117,7 @@ describe('BulkController unit test', () => {
       )
       expect(res.badRequest).not.toHaveBeenCalled()
       expect(res.ok).toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
     })
 
     it('bulkCreate without tags responds with error if urls are not created', async () => {
@@ -129,13 +132,14 @@ describe('BulkController unit test', () => {
 
       const req = httpMocks.createRequest({ body: { userId, longUrls } })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockRejectedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -145,6 +149,7 @@ describe('BulkController unit test', () => {
       )
       expect(res.badRequest).toHaveBeenCalled()
       expect(res.ok).not.toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
     })
 
     it('bulkCreate with tags should return success if urls are created', async () => {
@@ -162,13 +167,14 @@ describe('BulkController unit test', () => {
         body: { userId, longUrls: [longUrl], tags },
       })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockResolvedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -178,6 +184,7 @@ describe('BulkController unit test', () => {
       )
       expect(res.badRequest).not.toHaveBeenCalled()
       expect(res.ok).toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
     })
 
     it('bulkCreate with tags responds with error if urls are not created', async () => {
@@ -193,13 +200,14 @@ describe('BulkController unit test', () => {
 
       const req = httpMocks.createRequest({ body: { userId, longUrls, tags } })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockRejectedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -209,6 +217,7 @@ describe('BulkController unit test', () => {
       )
       expect(res.badRequest).toHaveBeenCalled()
       expect(res.ok).not.toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
     })
   })
 })

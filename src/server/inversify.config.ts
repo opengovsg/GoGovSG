@@ -11,6 +11,8 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  sqsRegion,
+  sqsTimeout,
   userAnnouncement,
   userMessage,
 } from './config'
@@ -77,6 +79,8 @@ import TagManagementService from './modules/user/services/TagManagementService'
 import JobManagementService from './modules/job/services/JobManagementService'
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
+import { SQSService } from './services/sqs'
+import { JobController } from './modules/job'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -108,6 +112,7 @@ export default () => {
   bindIfUnbound(DependencyIds.tagRepository, TagRepository)
   bindIfUnbound(DependencyIds.jobRepository, JobRepository)
   bindIfUnbound(DependencyIds.jobItemRepository, JobItemRepository)
+  bindIfUnbound(DependencyIds.jobController, JobController)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
   bindIfUnbound(DependencyIds.gaController, GaController)
@@ -187,10 +192,28 @@ export default () => {
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
+
+    container.bind(DependencyIds.sqsClient).toConstantValue(
+      new AWS.SQS({
+        region: sqsRegion,
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
+      }),
+    )
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
+    container.bind(DependencyIds.sqsClient).toConstantValue(
+      new AWS.SQS({
+        region: sqsRegion,
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
+      }),
+    )
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
+  bindIfUnbound(DependencyIds.sqsService, SQSService)
 }
