@@ -232,7 +232,7 @@ describe('JobController unit test', () => {
       await controller.updateJobItem(req, res, next)
 
       expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
-      expect(req.body.jobItem).toStrictEqual(mockUpdatedJobItem)
+      expect(req.body.jobId).toStrictEqual(mockUpdatedJobItem.jobId)
       expect(res.ok).toHaveBeenCalled()
       expect(res.badRequest).not.toHaveBeenCalled()
     })
@@ -258,7 +258,7 @@ describe('JobController unit test', () => {
       await controller.updateJobItem(req, res, next)
 
       expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
-      expect(req.body).not.toHaveProperty('jobItem')
+      expect(req.body).not.toHaveProperty('jobId')
       expect(res.ok).not.toHaveBeenCalled()
       expect(responseSpy).toBeCalledWith(404)
     })

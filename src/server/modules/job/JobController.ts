@@ -67,8 +67,8 @@ export class JobController {
         jobItemId,
         status,
       )
-      // add jobItem to req.body so that downstream controllers can access it
-      req.body.jobItem = jobItem
+      // add jobId to req.body so that downstream controllers can access it
+      req.body.jobId = jobItem.jobId
       dogstatsd.increment('jobItem.update.success', 1, 1)
       res.ok(jsonMessage('successfully updated'))
     } catch (error) {
@@ -81,9 +81,7 @@ export class JobController {
   }
 
   public updateJob: (req: Request) => Promise<void> = async (req) => {
-    const {
-      jobItem: { jobId },
-    } = req.body
+    const { jobId } = req.body
     try {
       await this.jobManagementService.updateJobStatus(jobId)
       dogstatsd.increment('job.update.success', 1, 1)
