@@ -173,7 +173,7 @@ export const userAnnouncement = {
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
-export const sqsRegion = process.env.SQS_REGION as string
+export const sqsRegion = (process.env.SQS_REGION as string) || ''
 export const sqsBulkQRCodeStartUrl =
   (process.env.SQS_BULK_QRCODE_GENERATE_START_URL as string) || ''
 export const sqsTimeout = Number(process.env.SQS_TIMEOUT) || 10000
@@ -250,4 +250,4 @@ export const bulkUploadMaxNum: number =
 export const bulkUploadRandomStrLength: number =
   Number(process.env.BULK_UPLOAD_RANDOM_STR_LENGTH) || 8
 export const qrCodeJobBatchSize: number =
-  Number(process.env.BULK_QR_CODE_BATCH_SIZE) || 100
+  Number(process.env.BULK_QR_CODE_BATCH_SIZE) || 1000

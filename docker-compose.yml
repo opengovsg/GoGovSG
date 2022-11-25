@@ -55,7 +55,7 @@ services:
       - SQS_BULK_QRCODE_GENERATE_START_URL=
       - SQS_TIMEOUT=10000
       - SQS_REGION=
-      - BULK_QR_CODE_BATCH_SIZE=100
+      - BULK_QR_CODE_BATCH_SIZE=1000
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
