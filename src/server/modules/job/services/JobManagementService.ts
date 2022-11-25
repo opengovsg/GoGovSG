@@ -66,7 +66,7 @@ class JobManagementService implements interfaces.JobManagementService {
     }
     const { isSuccess, errorMessage } = status
     const changes = {
-      status: isSuccess ? JobItemStatusEnum.Success : JobItemStatusEnum.Failed,
+      status: isSuccess ? JobItemStatusEnum.Success : JobItemStatusEnum.Failure,
       message: errorMessage || '',
     } as Partial<JobItemType>
 
@@ -78,9 +78,9 @@ class JobManagementService implements interfaces.JobManagementService {
   // 'InProgress' if no failure and any job item is still in progress
   computeJobStatus: (jobItems: JobItemType[]) => JobStatusEnum = (jobItems) => {
     if (
-      jobItems.some((jobItem) => jobItem.status === JobItemStatusEnum.Failed)
+      jobItems.some((jobItem) => jobItem.status === JobItemStatusEnum.Failure)
     ) {
-      return JobStatusEnum.Failed
+      return JobStatusEnum.Failure
     }
     if (
       jobItems.some(

@@ -28,7 +28,7 @@ export const Job = <JobStatic>sequelize.define(
       values: [
         JobStatusEnum.InProgress,
         JobStatusEnum.Success,
-        JobStatusEnum.Failed,
+        JobStatusEnum.Failure,
       ],
       defaultValue: JobItemStatusEnum.InProgress,
       allowNull: false,
@@ -63,7 +63,7 @@ export const JobItem = <JobItemStatic>sequelize.define(
       values: [
         JobItemStatusEnum.InProgress,
         JobItemStatusEnum.Success,
-        JobItemStatusEnum.Failed,
+        JobItemStatusEnum.Failure,
       ],
       defaultValue: JobItemStatusEnum.InProgress,
       allowNull: false,

@@ -143,7 +143,7 @@ describe('JobManagementService tests', () => {
       } as JobItemCallbackStatus
 
       const updateChanges = {
-        status: JobItemStatusEnum.Failed,
+        status: JobItemStatusEnum.Failure,
         message: 'Unable to complete job',
       }
       const updatedJobItem = {
@@ -220,7 +220,7 @@ describe('JobManagementService tests', () => {
           id: 1,
         },
         {
-          status: JobItemStatusEnum.Failed,
+          status: JobItemStatusEnum.Failure,
           message: '',
           params: <JSON>(<unknown>{ testParams: 'hello' }),
           jobId: 1,
@@ -230,7 +230,7 @@ describe('JobManagementService tests', () => {
       ] as JobItemType[]
 
       expect(service.computeJobStatus(mockJobItems)).toStrictEqual(
-        JobItemStatusEnum.Failed,
+        JobItemStatusEnum.Failure,
       )
     })
 
