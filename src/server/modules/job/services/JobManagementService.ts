@@ -126,7 +126,7 @@ export class JobManagementService implements interfaces.JobManagementService {
 
       return {
         job,
-        jobItemIds: jobItems.map(
+        jobItemUrls: jobItems.map(
           (jobItem) => `${qrCodeBucketUrl}/${jobItem.jobItemId}`,
         ),
       }
@@ -157,10 +157,10 @@ export class JobManagementService implements interfaces.JobManagementService {
       if (attempts === jobPollAttempts) {
         return reject(new Error('Exceeded max attempts'))
       }
-      const { job, jobItemIds } = await this.getJobInformation(jobId)
+      const { job, jobItemUrls } = await this.getJobInformation(jobId)
       // if job status has changed, return updated job status
       if (job.status !== JobStatusEnum.InProgress) {
-        return resolve({ job, jobItemIds })
+        return resolve({ job, jobItemUrls })
       }
       // continue polling
       setTimeout(executePoll, jobPollInterval, resolve, reject)

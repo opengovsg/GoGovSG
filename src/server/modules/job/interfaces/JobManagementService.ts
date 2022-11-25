@@ -8,7 +8,7 @@ export interface JobItemCallbackStatus {
 
 export interface JobInformation {
   job: JobType
-  jobItemIds: string[]
+  jobItemUrls: string[]
 }
 
 export interface JobManagementService {

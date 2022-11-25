@@ -314,7 +314,7 @@ describe('JobController unit test', () => {
             status: JobStatusEnum.Success,
             userId: 2,
           },
-          jobItemIds: ['abc/0', 'abc/1'],
+          jobItemUrls: ['https://bucket.com/abc/0', 'https://bucket.com/abc/1'],
         } as unknown as JobInformation
         jobManagementService.getLatestJobForUser.mockResolvedValue(
           mockJobInformation,
@@ -394,7 +394,7 @@ describe('JobController unit test', () => {
             status: JobStatusEnum.Success,
             userId: 2,
           },
-          jobItemIds: ['abc/0', 'abc/1'],
+          jobItemUrls: ['https://bucket.com/abc/0', 'https://bucket.com/abc/1'],
         } as unknown as JobInformation
 
         jobManagementService.pollJobStatusUpdate.mockResolvedValue(
