@@ -73,7 +73,7 @@ class JobManagementService implements interfaces.JobManagementService {
     return this.jobItemRepository.update(currJobItem, changes)
   }
 
-  // 'Failed' if any job item fail
+  // 'Failed' if any job item fails
   // 'Success' if all job items succeed
   // 'InProgress' if no failure and any job item is still in progress
   computeJobStatus: (jobItems: JobItemType[]) => JobStatusEnum = (jobItems) => {
