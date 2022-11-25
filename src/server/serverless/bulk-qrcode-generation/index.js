@@ -54,6 +54,7 @@ async function handler(event) {
     // cleanup
     await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
     console.log(`cleaned up /tmp/${jobItemId}`)
+
   } catch (error) {
     // cleanup
     await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
