@@ -6,6 +6,7 @@ import express from 'express'
 import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
 import { NotFoundError } from '../../../util/error'
 import { JobInformation } from '../interfaces'
+import { UserType } from '../../../models/user'
 
 const jobManagementService = {
   createJob: jest.fn(),
@@ -366,6 +367,10 @@ describe('JobController unit test', () => {
     describe('pollJobStatusUpdate', () => {
       const ok = jest.fn()
       const notFound = jest.fn()
+      const userCredentials = {
+        id: 2,
+        email: 'hello@open.gov.sg',
+      } as UserType
 
       beforeEach(() => {
         ok.mockClear()
@@ -373,10 +378,10 @@ describe('JobController unit test', () => {
       })
 
       it('should respond with jobInformation if jobManagementService.pollJobStatusUpdate succeeds', async () => {
-        const userId = 2
         const jobId = 4
         const req = httpMocks.createRequest({
-          body: { userId, jobId },
+          query: { jobId },
+          session: { user: userCredentials },
         })
         const res = httpMocks.createResponse() as any
         res.ok = ok
@@ -398,7 +403,7 @@ describe('JobController unit test', () => {
 
         await controller.pollJobStatusUpdate(req, res)
         expect(jobManagementService.pollJobStatusUpdate).toBeCalledWith(
-          userId,
+          userCredentials.id,
           jobId,
         )
         expect(res.ok).toBeCalledWith(mockJobInformation)
@@ -406,10 +411,10 @@ describe('JobController unit test', () => {
       })
 
       it('should respond with notFound if jobManagementService.pollJobStatusUpdate is unable to find job', async () => {
-        const userId = 2
         const jobId = 4
         const req = httpMocks.createRequest({
-          body: { userId, jobId },
+          query: { jobId },
+          session: { user: userCredentials },
         })
         const res = httpMocks.createResponse() as any
         res.ok = ok
@@ -425,10 +430,10 @@ describe('JobController unit test', () => {
       })
 
       it('should throw 408 if jobManagementService.pollJobStatusUpdate exceeds long polling timeout', async () => {
-        const userId = 2
         const jobId = 4
         const req = httpMocks.createRequest({
-          body: { userId, jobId },
+          query: { jobId },
+          session: { user: userCredentials },
         })
         const res = httpMocks.createResponse() as any
         res.ok = ok
@@ -442,13 +447,15 @@ describe('JobController unit test', () => {
 
         await controller.pollJobStatusUpdate(req, res)
         expect(jobManagementService.pollJobStatusUpdate).toBeCalledWith(
-          userId,
+          userCredentials.id,
           jobId,
         )
         expect(res.status).toBeCalledWith(408)
         expect(res.ok).not.toBeCalled()
         expect(res.notFound).not.toBeCalled()
       })
+
+      // it('')
     })
   })
 })

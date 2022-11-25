@@ -119,10 +119,18 @@ export class JobController {
 
   public pollJobStatusUpdate: (req: Request, res: Response) => Promise<void> =
     async (req, res) => {
-      const { userId, jobId } = req.body
+      const { jobId } = req.query
+      const user = req.session?.user
+      if (!user) {
+        res.status(401).send(jsonMessage('User session does not exist'))
+        return
+      }
       try {
         const jobInformation =
-          await this.jobManagementService.pollJobStatusUpdate(userId, jobId)
+          await this.jobManagementService.pollJobStatusUpdate(
+            user.id,
+            parseInt(jobId as string, 10),
+          )
         res.ok(jobInformation)
       } catch (error) {
         if (error instanceof NotFoundError) {
