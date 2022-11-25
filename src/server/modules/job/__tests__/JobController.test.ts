@@ -260,7 +260,7 @@ describe('JobController unit test', () => {
   describe('updateJob', () => {
     it('should succeed if jobManagementService.updateJobStatus succeeds', async () => {
       const req = httpMocks.createRequest({
-        body: { jobItem: { jobId: 1 } },
+        body: { jobId: 1 },
       })
       const updatedJob = {
         id: 1,
@@ -277,7 +277,7 @@ describe('JobController unit test', () => {
 
     it('should fail and log error if jobManagementService.updateJobStatus fails', async () => {
       const req = httpMocks.createRequest({
-        body: { jobItem: { jobId: 1 } },
+        body: { jobId: 1 },
       })
       jobManagementService.updateJobStatus.mockRejectedValue(
         new NotFoundError('Job not found'),
