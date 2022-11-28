@@ -96,6 +96,7 @@ export class JobController {
     } catch (error) {
       dogstatsd.increment('job.update.failure', 1, 1)
       logger.error(`error updating job ${jobId}: ${error}`)
+      return
     }
 
     try {

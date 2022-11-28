@@ -101,6 +101,7 @@ describe('LoginController', () => {
 
     const mailOTP = jest.fn()
     const initMailer = jest.fn()
+    const sendMail = jest.fn()
 
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
@@ -109,7 +110,7 @@ describe('LoginController', () => {
     const urlMapper = new UrlMapper()
     const authService = new AuthService(
       { hash, compare },
-      { mailOTP, initMailer },
+      { mailOTP, initMailer, sendMail },
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       new UserRepository(new UserMapper(urlMapper), urlMapper),
     )
@@ -182,6 +183,7 @@ describe('LoginController', () => {
 
     const mailOTP = jest.fn()
     const initMailer = jest.fn()
+    const sendMail = jest.fn()
 
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
@@ -200,7 +202,7 @@ describe('LoginController', () => {
 
     const authService = new AuthService(
       { hash, compare },
-      { mailOTP, initMailer },
+      { mailOTP, initMailer, sendMail },
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       userRepository,
     )

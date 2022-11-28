@@ -32,10 +32,17 @@ const mockUserRepository = {
   findUrlsForUser: jest.fn(),
 }
 
+const mockMailer = {
+  initMailer: jest.fn(),
+  mailOTP: jest.fn(),
+  sendMail: jest.fn(),
+}
+
 const service = new JobManagementService(
   mockJobRepository,
   mockJobItemRepository,
   mockUserRepository,
+  mockMailer,
 )
 
 describe('JobManagementService tests', () => {

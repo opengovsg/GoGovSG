@@ -16,6 +16,7 @@ const jobManagementService = {
   updateJobStatus: jest.fn(),
   getLatestJobForUser: jest.fn(),
   pollJobStatusUpdate: jest.fn(),
+  sendJobCompletionEmail: jest.fn(),
 }
 
 const sqsService = {
@@ -267,7 +268,12 @@ describe('JobController unit test', () => {
   })
 
   describe('updateJob', () => {
-    it('should succeed if jobManagementService.updateJobStatus succeeds', async () => {
+    beforeEach(() => {
+      jobManagementService.updateJobStatus.mockClear()
+      jobManagementService.sendJobCompletionEmail.mockClear()
+    })
+
+    it('should call jobManagementService.sendJobCompletionEmail if job status changes', async () => {
       const req = httpMocks.createRequest({
         body: { jobId: 1 },
       })
@@ -278,10 +284,34 @@ describe('JobController unit test', () => {
         userId: 1,
       }
       jobManagementService.updateJobStatus.mockResolvedValue(updatedJob)
+      jobManagementService.sendJobCompletionEmail.mockResolvedValue(undefined)
 
       await controller.updateJob(req)
 
       expect(jobManagementService.updateJobStatus).toHaveBeenCalledWith(1)
+      expect(jobManagementService.sendJobCompletionEmail).toHaveBeenCalledWith(
+        1,
+      )
+    })
+
+    it('should not call jobManagementService.sendJobCompletionEmail if job status does not change', async () => {
+      const req = httpMocks.createRequest({
+        body: { jobId: 1 },
+      })
+      const updatedJob = {
+        id: 1,
+        uuid: 'abc',
+        status: JobStatusEnum.InProgress,
+        userId: 1,
+      }
+      jobManagementService.updateJobStatus.mockResolvedValue(updatedJob)
+
+      await controller.updateJob(req)
+
+      expect(jobManagementService.updateJobStatus).toHaveBeenCalledWith(1)
+      expect(
+        jobManagementService.sendJobCompletionEmail,
+      ).not.toHaveBeenCalledWith(1)
     })
 
     it('should fail and log error if jobManagementService.updateJobStatus fails', async () => {
@@ -295,6 +325,7 @@ describe('JobController unit test', () => {
       await controller.updateJob(req)
 
       expect(jobManagementService.updateJobStatus).toHaveBeenCalledWith(1)
+      expect(jobManagementService.sendJobCompletionEmail).not.toHaveBeenCalled()
     })
 
     describe('getLatestJob', () => {
