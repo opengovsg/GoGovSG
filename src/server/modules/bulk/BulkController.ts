@@ -7,6 +7,7 @@ import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
 import { logger, shouldGenerateQRCodes } from '../../config'
+import { MessageType } from '../../../shared/util/messages'
 
 @injectable()
 export class BulkController {
@@ -40,7 +41,7 @@ export class BulkController {
       req.body.longUrls = longUrls
       next()
     } catch (error) {
-      res.badRequest(jsonMessage(error.message))
+      res.badRequest(jsonMessage(error.message, MessageType.FileUploadError))
       return
     }
   }
