@@ -35,14 +35,14 @@ export class BulkController {
       return
     }
 
-    const schema = this.bulkService.parseCsv(file)
-    if (!schema.isValid) {
-      res.badRequest(jsonMessage(schema.errorMessage))
+    try {
+      const longUrls = await this.bulkService.parseCsv(file)
+      req.body.longUrls = longUrls
+      next()
+    } catch (error) {
+      res.badRequest(jsonMessage(error.message))
       return
     }
-    // put longUrls on the req body so that it can be used by other controllers
-    req.body.longUrls = schema.longUrls
-    next()
   }
 
   public bulkCreate: (

@@ -9,7 +9,7 @@ export type CSVSchema = {
 }
 
 export interface BulkService {
-  parseCsv(file: UploadedFile): CSVSchema
+  parseCsv(file: UploadedFile): Promise<string[]>
 
   generateUrlMappings(longUrls: string[]): Promise<BulkUrlMapping[]>
 }
