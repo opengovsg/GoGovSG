@@ -176,7 +176,6 @@ describe('JobController unit test', () => {
     })
 
     it('createAndStartJob does not start job if jobParamsList is empty', async () => {
-
       const req = httpMocks.createRequest({
         body: { userId, jobParamsList: [] },
       })
