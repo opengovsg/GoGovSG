@@ -2,12 +2,14 @@ import { inject, injectable } from 'inversify'
 import { NotFoundError } from '../../../util/error'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
+import { MailBody, Mailer } from '../../../services/email'
 import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
 import {
   jobPollAttempts,
   jobPollInterval,
+  logger,
   qrCodeBucketUrl,
 } from '../../../config'
 
@@ -19,6 +21,8 @@ export class JobManagementService implements interfaces.JobManagementService {
 
   private userRepository: UserRepositoryInterface
 
+  private mailer: Mailer
+
   constructor(
     @inject(DependencyIds.jobRepository)
     jobRepository: interfaces.JobRepository,
@@ -26,10 +30,13 @@ export class JobManagementService implements interfaces.JobManagementService {
     jobItemRepository: interfaces.JobItemRepository,
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
+    @inject(DependencyIds.mailer)
+    mailer: Mailer,
   ) {
     this.jobRepository = jobRepository
     this.jobItemRepository = jobItemRepository
     this.userRepository = userRepository
+    this.mailer = mailer
   }
 
   createJob: (userId: number) => Promise<JobType> = async (userId) => {
@@ -168,6 +175,55 @@ export class JobManagementService implements interfaces.JobManagementService {
       attempts += 1
     }
     return new Promise(executePoll)
+  }
+
+  sendJobCompletionEmail: (jobId: number) => Promise<void> = async (jobId) => {
+    const { job, jobItemUrls } = await this.getJobInformation(jobId)
+
+    const user = await this.userRepository.findById(job.userId)
+    if (!user) {
+      throw new NotFoundError(`user not found for jobId ${jobId}`)
+    }
+    let subject: string = ''
+    let body: string = ''
+    if (job.status === JobStatusEnum.Success) {
+      subject = 'QR code generation from your file is successful'
+      body = `QR code generation from your file was successful.
+
+        <p>Download your CSV: ${jobItemUrls.map(
+          (jobItemUrl) =>
+            `<a href="${jobItemUrl}/generated.csv" target="_blank">here </a>`,
+        )}</p> 
+        <p>Download your PNG: ${jobItemUrls.map(
+          (jobItemUrl) =>
+            `<a href="${jobItemUrl}/generated_png.zip" target="_blank">here </a>`,
+        )}</p>
+        <p>Download your SVG: ${jobItemUrls.map(
+          (jobItemUrl) =>
+            `<a href="${jobItemUrl}/generated_svg.zip" target="_blank">here </a>`,
+        )}</p>
+      `
+    }
+    if (job.status === JobStatusEnum.Failure) {
+      subject = 'QR code generation from your file failed'
+      body = `QR code generation from your file failed.
+        
+        <p>Please log in to try again.</p> 
+      `
+    }
+    try {
+      const mailBody: MailBody = {
+        to: user.email,
+        body,
+        subject,
+      }
+      await this.mailer.sendMail(mailBody)
+    } catch (error) {
+      logger.error(
+        `Error mailing job id ${jobId} completion email to ${user.email}: ${error}`,
+      )
+      throw new Error('Error mailing job completion email.')
+    }
   }
 }
 

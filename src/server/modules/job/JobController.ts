@@ -5,6 +5,7 @@ import { DependencyIds } from '../../constants'
 import dogstatsd from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
+import { JobStatusEnum } from '../../repositories/enums'
 import { logger, qrCodeJobBatchSize } from '../../config'
 import jsonMessage from '../../util/json'
 import { NotFoundError } from '../../util/error'
@@ -79,7 +80,7 @@ export class JobController {
       res.ok(jsonMessage('successfully updated'))
     } catch (error) {
       dogstatsd.increment('jobItem.update.failure', 1, 1)
-      logger.error(`error updating job ${jobItemId}: ${error}`)
+      logger.error(`error updating job item ${jobItemId}: ${error}`)
       res.status(404).send(jsonMessage(error.message))
       return
     }
@@ -89,11 +90,19 @@ export class JobController {
   public updateJob: (req: Request) => Promise<void> = async (req) => {
     const { jobId } = req.body
     try {
-      await this.jobManagementService.updateJobStatus(jobId)
+      const job = await this.jobManagementService.updateJobStatus(jobId)
       dogstatsd.increment('job.update.success', 1, 1)
+      if (job.status === JobStatusEnum.InProgress) return
     } catch (error) {
       dogstatsd.increment('job.update.failure', 1, 1)
       logger.error(`error updating job ${jobId}: ${error}`)
+    }
+
+    try {
+      await this.jobManagementService.sendJobCompletionEmail(jobId)
+      dogstatsd.increment('job.email.success', 1, 1)
+    } catch (error) {
+      dogstatsd.increment('job.email.failure', 1, 1)
     }
     return
   }

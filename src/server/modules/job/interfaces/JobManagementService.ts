@@ -27,4 +27,5 @@ export interface JobManagementService {
   getJobInformation(jobId: number): Promise<JobInformation>
   getLatestJobForUser(userId: number): Promise<JobInformation>
   pollJobStatusUpdate(userId: number, jobId: number): Promise<JobInformation>
+  sendJobCompletionEmail(jobId: number): Promise<void>
 }
