@@ -79,6 +79,7 @@ export const JobItem = <JobItemStatic>sequelize.define(
     jobItemId: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
     },
   },
   {
