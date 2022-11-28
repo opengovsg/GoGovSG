@@ -57,7 +57,7 @@ export class JobController {
         logger.error(`error creating and starting job: ${error}`)
         dogstatsd.increment('job.start.failure', 1, 1)
         // created links but failed to create and start job
-        res.status(400).send({ count: jobParamsList.length })
+        res.serverError({ count: jobParamsList.length })
       }
       return
     }
@@ -73,8 +73,8 @@ export class JobController {
         jobItemId,
         status,
       )
-      // add jobItem to req.body so that downstream controllers can access it
-      req.body.jobItem = jobItem
+      // add jobId to req.body so that downstream controllers can access it
+      req.body.jobId = jobItem.jobId
       dogstatsd.increment('jobItem.update.success', 1, 1)
       res.ok(jsonMessage('successfully updated'))
     } catch (error) {
@@ -87,9 +87,7 @@ export class JobController {
   }
 
   public updateJob: (req: Request) => Promise<void> = async (req) => {
-    const {
-      jobItem: { jobId },
-    } = req.body
+    const { jobId } = req.body
     try {
       await this.jobManagementService.updateJobStatus(jobId)
       dogstatsd.increment('job.update.success', 1, 1)
@@ -114,17 +112,25 @@ export class JobController {
         res.ok(jsonMessage('User has no jobs'))
         return
       }
-      res.badRequest(jsonMessage('Please try again'))
+      res.serverError(jsonMessage(error.message))
     }
     return
   }
 
   public pollJobStatusUpdate: (req: Request, res: Response) => Promise<void> =
     async (req, res) => {
-      const { userId, jobId } = req.body
+      const { jobId } = req.query
+      const user = req.session?.user
+      if (!user) {
+        res.status(401).send(jsonMessage('User session does not exist'))
+        return
+      }
       try {
         const jobInformation =
-          await this.jobManagementService.pollJobStatusUpdate(userId, jobId)
+          await this.jobManagementService.pollJobStatusUpdate(
+            user.id,
+            parseInt(jobId as string, 10),
+          )
         res.ok(jobInformation)
       } catch (error) {
         if (error instanceof NotFoundError) {

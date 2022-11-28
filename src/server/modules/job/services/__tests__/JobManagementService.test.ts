@@ -146,7 +146,7 @@ describe('JobManagementService tests', () => {
       } as JobItemCallbackStatus
 
       const updateChanges = {
-        status: JobItemStatusEnum.Failed,
+        status: JobItemStatusEnum.Failure,
         message: 'Unable to complete job',
       }
       const updatedJobItem = {
@@ -204,7 +204,7 @@ describe('JobManagementService tests', () => {
   })
 
   describe('computeJobStatus', () => {
-    it('should return JobStatus.Failed if any job item fails', async () => {
+    it('should return JobStatusEnum.Failure if any job item fails', async () => {
       const mockJobItems = [
         {
           status: JobItemStatusEnum.Success,
@@ -223,7 +223,7 @@ describe('JobManagementService tests', () => {
           id: 1,
         },
         {
-          status: JobItemStatusEnum.Failed,
+          status: JobItemStatusEnum.Failure,
           message: '',
           params: <JSON>(<unknown>{ testParams: 'hello' }),
           jobId: 1,
@@ -233,7 +233,7 @@ describe('JobManagementService tests', () => {
       ] as JobItemType[]
 
       expect(service.computeJobStatus(mockJobItems)).toStrictEqual(
-        JobItemStatusEnum.Failed,
+        JobStatusEnum.Failure,
       )
     })
 
@@ -407,7 +407,7 @@ describe('JobManagementService tests', () => {
       )
     })
 
-    it('should return job and jobItemIds if successfully retrieved', async () => {
+    it('should return job and jobItemUrls if successfully retrieved', async () => {
       jest.resetModules()
       jest.mock('../../../../config', () => ({
         qrCodeBucketUrl: 'https://bucket.com',
@@ -442,7 +442,7 @@ describe('JobManagementService tests', () => {
       mockJobItemRepository.findJobItemsByJobId.mockResolvedValue(mockJobItems)
       await expect(service.getJobInformation(2)).resolves.toStrictEqual({
         job: mockJob,
-        jobItemIds: ['https://bucket.com/abc/0'],
+        jobItemUrls: ['https://bucket.com/abc/0'],
       })
     })
   })
@@ -472,7 +472,7 @@ describe('JobManagementService tests', () => {
       } as unknown as JobType
       const mockJobInformation = {
         job: mockJob,
-        jobItemIds: ['abc/0'],
+        jobItemUrls: ['https://bucket.com/abc/0'],
       } as JobInformation
       mockJobRepository.findLatestJobForUser.mockResolvedValue(mockJob)
       spy.mockImplementation(() => Promise.resolve(mockJobInformation))
@@ -502,7 +502,7 @@ describe('JobManagementService tests', () => {
       } as unknown as JobType
       const mockJobInformation = {
         job: mockJob,
-        jobItemIds: ['abc/0'],
+        jobItemUrls: ['https://bucket.com/abc/0'],
       } as JobInformation
       mockJobRepository.findLatestJobForUser.mockResolvedValue(mockJob)
       const spy = jest
@@ -514,6 +514,4 @@ describe('JobManagementService tests', () => {
       expect(spy).toBeCalledWith(4)
     })
   })
-
-  // pollJobStatusUpdate(userId: number, jobId: number): Promise<any>
 })

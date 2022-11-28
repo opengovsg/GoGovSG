@@ -71,28 +71,30 @@ export class JobManagementService implements interfaces.JobManagementService {
     }
     const { isSuccess, errorMessage } = status
     const changes = {
-      status: isSuccess ? JobItemStatusEnum.Success : JobItemStatusEnum.Failed,
+      status: isSuccess ? JobItemStatusEnum.Success : JobItemStatusEnum.Failure,
       message: errorMessage || '',
     } as Partial<JobItemType>
 
     return this.jobItemRepository.update(currJobItem, changes)
   }
 
-  // 'Failed' if any job item fail
+  // 'Failure' if any job item fails
   // 'Success' if all job items succeed
   // 'InProgress' if no failure and any job item is still in progress
   computeJobStatus: (jobItems: JobItemType[]) => JobStatusEnum = (jobItems) => {
-    let jobStatus = JobStatusEnum.Success
-    for (let i = 0; i < jobItems.length; i += 1) {
-      const { status } = jobItems[i]
-      if (status === JobItemStatusEnum.Failed) {
-        jobStatus = JobStatusEnum.Failed
-        break
-      } else if (status === JobItemStatusEnum.InProgress) {
-        jobStatus = JobStatusEnum.InProgress
-      }
+    if (
+      jobItems.some((jobItem) => jobItem.status === JobItemStatusEnum.Failure)
+    ) {
+      return JobStatusEnum.Failure
     }
-    return jobStatus
+    if (
+      jobItems.some(
+        (jobItem) => jobItem.status === JobItemStatusEnum.InProgress,
+      )
+    ) {
+      return JobStatusEnum.InProgress
+    }
+    return JobStatusEnum.Success
   }
 
   updateJobStatus: (jobId: number) => Promise<JobType> = async (jobId) => {
@@ -124,7 +126,7 @@ export class JobManagementService implements interfaces.JobManagementService {
 
       return {
         job,
-        jobItemIds: jobItems.map(
+        jobItemUrls: jobItems.map(
           (jobItem) => `${qrCodeBucketUrl}/${jobItem.jobItemId}`,
         ),
       }
@@ -155,10 +157,10 @@ export class JobManagementService implements interfaces.JobManagementService {
       if (attempts === jobPollAttempts) {
         return reject(new Error('Exceeded max attempts'))
       }
-      const { job, jobItemIds } = await this.getJobInformation(jobId)
+      const { job, jobItemUrls } = await this.getJobInformation(jobId)
       // if job status has changed, return updated job status
       if (job.status !== JobStatusEnum.InProgress) {
-        return resolve({ job, jobItemIds })
+        return resolve({ job, jobItemUrls })
       }
       // continue polling
       setTimeout(executePoll, jobPollInterval, resolve, reject)

@@ -164,9 +164,9 @@ router.get(
   userController.getTagsWithConditions,
 )
 
-router.post(
+router.get(
   '/job/status',
-  validator.body(pollJobInformationSchema),
+  validator.query(pollJobInformationSchema),
   jobController.pollJobStatusUpdate,
 )
 
