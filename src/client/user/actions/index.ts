@@ -248,9 +248,14 @@ const closeStatusBar: () => CloseStatusBarAction = () => ({
 const setStatusBarErrorMessage: (
   header: string,
   body: string,
-) => SetStatusBarErrorMessageAction = (header: string, body: string) => ({
+  callbacks: string[],
+) => SetStatusBarErrorMessageAction = (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => ({
   type: UserAction.SET_STATUS_BAR_ERROR_MESSAGE,
-  payload: { header, body },
+  payload: { header, body, callbacks },
 })
 
 const setStatusBarInfoMessage: (
@@ -264,9 +269,14 @@ const setStatusBarInfoMessage: (
 const setStatusBarSuccessMessage: (
   header: string,
   body: string,
-) => SetStatusBarSuccessMessageAction = (header: string, body: string) => ({
+  callbacks: string[],
+) => SetStatusBarSuccessMessageAction = (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => ({
   type: UserAction.SET_STATUS_BAR_SUCCESS_MESSAGE,
-  payload: { header, body },
+  payload: { header, body, callbacks },
 })
 
 // retrieve linkHistory based on query object
@@ -645,25 +655,6 @@ const urlCreated = (
   )
 }
 
-const bulkQRCodesStarted = (
-  dispatch: ThunkDispatch<
-    GoGovReduxState,
-    void,
-    | CloseCreateUrlModalAction
-    | ResetUserStateAction
-    | SetStatusBarInfoMessageAction
-  >,
-  fileName: string,
-) => {
-  dispatch<void>(getUrlsForUser())
-  dispatch<ResetUserStateAction>(resetUserState())
-
-  const header = `QR code creation from ${fileName} file is in progress.`
-  const body = `We will notify you via email once it is completed.`
-
-  dispatch<SetStatusBarInfoMessageAction>(setStatusBarInfoMessage(header, body))
-}
-
 /**
  * API call to create URL
  * If user is not logged in, the createUrl call returns unauthorized,
@@ -934,6 +925,90 @@ const updateTags =
     })
   }
 
+const setQRCodeGenerationMessage =
+  (status: string, callbacks: string[]) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | SetStatusBarSuccessMessageAction
+      | SetStatusBarErrorMessageAction
+      | SetStatusBarInfoMessageAction
+    >,
+  ) => {
+    if (status === 'SUCCESS') {
+      const header = `QR codes successfully generated`
+      const body = `Please download your QR codes here or via email`
+      dispatch<SetStatusBarSuccessMessageAction>(
+        setStatusBarSuccessMessage(header, body, callbacks),
+      )
+    }
+    if (status === 'IN_PROGRESS') {
+      const header = `QR codes generation in progress`
+      const body = `Please wait to download your QR codes`
+      dispatch<SetStatusBarInfoMessageAction>(
+        setStatusBarInfoMessage(header, body),
+      )
+    }
+    if (status === 'FAILED') {
+      const header = `QR codes failed to generate`
+      const body = `Please try again`
+      dispatch<SetStatusBarErrorMessageAction>(
+        setStatusBarErrorMessage(header, body, callbacks),
+      )
+    }
+  }
+
+const getJobInformationForPendingJobId =
+  (jobId: number) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetStatusBarSuccessMessageAction | SetStatusBarErrorMessageAction
+    >,
+  ) => {
+    const query = querystring.stringify({ jobId })
+    const response = await get(`/api/user/job/status?${query}`)
+    const isOk = response.ok
+    if (!isOk) {
+      // retry
+      dispatch(getJobInformationForPendingJobId(jobId))
+    } else {
+      const resp = await response.json()
+      const { job, jobItemUrls } = resp
+      const { status } = job
+      dispatch(setQRCodeGenerationMessage(status, jobItemUrls))
+    }
+  }
+
+const getLatestJob =
+  () =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | SetStatusBarSuccessMessageAction
+      | SetStatusBarErrorMessageAction
+      | SetStatusBarInfoMessageAction
+    >,
+  ) => {
+    const response = await get(`/api/user/job/latest`)
+    const isOk = response.ok
+    const resp = await response.json()
+    if (!isOk) {
+      throw new Error(resp.message || 'Error fetching user jobs ')
+    }
+
+    const { job, jobItemUrls } = resp
+    if (!job || !jobItemUrls) return
+    const { status, id } = job
+    if (status === 'IN_PROGRESS') {
+      dispatch(getJobInformationForPendingJobId(id))
+    }
+    dispatch(setQRCodeGenerationMessage(status, jobItemUrls))
+  }
+
 /**
  * API call to upload file for bulk creation.
  * @param file
@@ -949,8 +1024,11 @@ const bulkCreateUrl =
       | ResetUserStateAction
       | SetInfoMessageAction
       | SetErrorMessageAction
+      | SetSuccessMessageAction
       | SetIsUploadingAction
       | SetFileUploadStateAction
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
     >,
     getState: GetReduxState,
   ) => {
@@ -1028,8 +1106,14 @@ const bulkCreateUrl =
     } else {
       Sentry.captureMessage('bulk creation success')
       GAEvent('modal page', 'bulk creation', 'successful')
-      await response.json()
-      bulkQRCodesStarted(dispatch, file.name)
+      dispatch<void>(getUrlsForUser())
+      dispatch<ResetUserStateAction>(resetUserState())
+
+      const { count, job } = await response.json()
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage(`${count} links have been created`),
+      )
+      if (job) dispatch<void>(getLatestJob())
       dispatch<SetFileUploadStateAction>(setFileUploadState(true))
     }
   }
@@ -1073,4 +1157,5 @@ export default {
   setUrlUploadState,
   setTags,
   updateTags,
+  getLatestJob,
 }

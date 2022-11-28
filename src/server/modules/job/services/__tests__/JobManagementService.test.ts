@@ -233,7 +233,7 @@ describe('JobManagementService tests', () => {
       ] as JobItemType[]
 
       expect(service.computeJobStatus(mockJobItems)).toStrictEqual(
-        JobItemStatusEnum.Failure,
+        JobStatusEnum.Failure,
       )
     })
 

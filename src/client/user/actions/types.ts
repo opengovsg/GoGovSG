@@ -191,6 +191,7 @@ export type SetStatusBarErrorMessageAction = ReduxPayloadAction<
   {
     header: string
     body: string
+    callbacks: string[]
   }
 >
 
@@ -207,6 +208,7 @@ export type SetStatusBarSuccessMessageAction = ReduxPayloadAction<
   {
     header: string
     body: string
+    callbacks: string[]
   }
 >
 

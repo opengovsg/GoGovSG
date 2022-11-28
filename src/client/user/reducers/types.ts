@@ -100,5 +100,6 @@ export type UserState = {
     header: string
     body: string
     variant: StatusBarVariant
+    callbacks: string[]
   }
 }

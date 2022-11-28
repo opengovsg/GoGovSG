@@ -248,7 +248,7 @@ test('The bulk based test.', async (t) => {
     .pressKey('enter')
     .click(createLinkButton.nth(2))
 
-  await t.wait(1000)
+  await t.wait(2000)
 
   await t
     // It should show an success snackbar when a new file link has been added
