@@ -6,6 +6,15 @@ import { NotFoundError } from '../../../util/error'
 
 @injectable()
 export class JobItemRepository implements interfaces.JobItemRepository {
+  findByJobItemId: (jobItemId: string) => Promise<JobItemType | null> = async (
+    jobItemId,
+  ) => {
+    const jobItem = await JobItem.scope(['defaultScope']).findOne({
+      where: { jobItemId },
+    })
+    return jobItem
+  }
+
   findJobItemsByJobId: (jobId: number) => Promise<JobItemType[]> = async (
     jobId,
   ) => {
@@ -21,6 +30,7 @@ export class JobItemRepository implements interfaces.JobItemRepository {
     message?: string
     params: JSON
     jobId: number
+    jobItemId: string
   }) => Promise<JobItemType> = async (properties) => {
     // jobId is validated through service layer
     const jobItem = await JobItem.create(properties)

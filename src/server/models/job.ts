@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 import { IdType } from '../../types/server/models'
-import { JobItemStatusEnum } from '../repositories/enums'
+import { JobItemStatusEnum, JobStatusEnum } from '../repositories/enums'
 import { sequelize } from '../util/sequelize'
 
 export interface JobType extends IdType, Sequelize.Model {
@@ -8,6 +8,7 @@ export interface JobType extends IdType, Sequelize.Model {
   readonly userId: Number
   readonly createdAt: string
   readonly updatedAt: string
+  readonly status: JobStatusEnum
 }
 
 type JobStatic = typeof Sequelize.Model & {
@@ -22,6 +23,16 @@ export const Job = <JobStatic>sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       unique: true,
     },
+    status: {
+      type: Sequelize.ENUM,
+      values: [
+        JobStatusEnum.InProgress,
+        JobStatusEnum.Success,
+        JobStatusEnum.Failure,
+      ],
+      defaultValue: JobItemStatusEnum.InProgress,
+      allowNull: false,
+    },
   },
   {
     defaultScope: {
@@ -35,6 +46,7 @@ export interface JobItemType extends IdType, Sequelize.Model {
   readonly message: string
   readonly params: JSON
   readonly jobId: number
+  readonly jobItemId: string
   readonly createdAt: string
   readonly updatedAt: string
 }
@@ -51,7 +63,7 @@ export const JobItem = <JobItemStatic>sequelize.define(
       values: [
         JobItemStatusEnum.InProgress,
         JobItemStatusEnum.Success,
-        JobItemStatusEnum.Failed,
+        JobItemStatusEnum.Failure,
       ],
       defaultValue: JobItemStatusEnum.InProgress,
       allowNull: false,
@@ -59,11 +71,15 @@ export const JobItem = <JobItemStatic>sequelize.define(
     message: {
       type: Sequelize.STRING,
       defaultValue: '',
-      allowNull: false,
     },
     params: {
       type: Sequelize.JSON,
       allowNull: false,
+    },
+    jobItemId: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true,
     },
   },
   {

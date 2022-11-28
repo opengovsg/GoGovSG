@@ -1,7 +1,7 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
 import { ERROR_404_PATH } from '../constants'
-import { displayHostname } from '../config'
+import { displayHostname, lambdaHashSecret } from '../config'
 import assetVariant from '../../shared/util/asset-variant'
 
 const router = Express.Router()
@@ -31,6 +31,31 @@ function userGuard(
 }
 
 /**
+ * To protect lambda callback route. Temporary.
+ * */
+const lambdaCallbackGuard = (
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) => {
+  const authToken = req.headers.authorization
+  if (!authToken) {
+    res.unauthorized()
+    return
+  }
+  const [headerKey, key] = authToken.trim().split(' ')
+  if (
+    headerKey.toLowerCase() !== 'bearer' ||
+    !key ||
+    key !== lambdaHashSecret
+  ) {
+    res.unauthorized()
+    return
+  }
+  next()
+}
+
+/**
  *  Preprocess request parameters.
  * */
 function preprocess(
@@ -51,6 +76,8 @@ router.use('/qrcode', userGuard, require('./qrcode'))
 router.use('/link-stats', userGuard, require('./link-statistics'))
 router.use('/link-audit', userGuard, require('./link-audit'))
 router.use('/directory', userGuard, require('./directory'))
+
+router.use('/callback', lambdaCallbackGuard, require('./callback'))
 
 router.use((_, res) => {
   res.status(404).render(ERROR_404_PATH, {

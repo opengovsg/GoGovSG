@@ -1,17 +1,22 @@
 import { JobItemType, JobType } from '../../../models/job'
-import { JobItemStatusEnum } from '../../../repositories/enums'
+import { JobStatusEnum } from '../../../repositories/enums'
+
+export interface JobItemCallbackStatus {
+  isSuccess: boolean
+  errorMessage?: string
+}
 
 export interface JobManagementService {
   createJob(userId: number): Promise<JobType>
-  findJobById(id: number): Promise<JobType | null>
   createJobItem: (properties: {
     params: JSON
     jobId: number
+    jobItemId: string
   }) => Promise<JobItemType>
-  updateJobItem(
-    jobItem: JobItemType,
-    changes: Partial<JobItemType>,
+  updateJobItemStatus(
+    jobItemId: string,
+    status: JobItemCallbackStatus,
   ): Promise<JobItemType>
-  findJobItemsByJobId(jobId: number): Promise<JobItemType[]>
-  getJobStatus(jobId: number): Promise<JobItemStatusEnum>
+  computeJobStatus(jobItems: JobItemType[]): JobStatusEnum
+  updateJobStatus(jobId: number): Promise<JobType>
 }

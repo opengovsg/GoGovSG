@@ -1,4 +1,4 @@
-import { Request } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
 import { DependencyIds } from '../../constants'
@@ -6,6 +6,7 @@ import dogstatsd from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
 import { logger, qrCodeJobBatchSize } from '../../config'
+import jsonMessage from '../../util/json'
 
 @injectable()
 export class JobController {
@@ -42,16 +43,53 @@ export class JobController {
           await this.jobManagementService.createJobItem({
             params: <JSON>(<unknown>messageParams),
             jobId: job.id,
+            jobItemId: `${job.uuid}/${idx}`,
           })
           await this.sqsService.sendMessage(messageParams)
           return
         }),
       )
       dogstatsd.increment('job.start.success', 1, 1)
-    } catch (e) {
-      logger.error(`error creating and starting job: ${e}`)
+    } catch (error) {
+      logger.error(`error creating and starting job: ${error}`)
       dogstatsd.increment('job.start.failure', 1, 1)
     }
+  }
+
+  public updateJobItem: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
+    const { jobItemId, status } = req.body
+    try {
+      const jobItem = await this.jobManagementService.updateJobItemStatus(
+        jobItemId,
+        status,
+      )
+      // add jobId to req.body so that downstream controllers can access it
+      req.body.jobId = jobItem.jobId
+      dogstatsd.increment('jobItem.update.success', 1, 1)
+      res.ok(jsonMessage('successfully updated'))
+    } catch (error) {
+      dogstatsd.increment('jobItem.update.failure', 1, 1)
+      logger.error(`error updating job ${jobItemId}: ${error}`)
+      res.status(404).send(jsonMessage(error.message))
+      return
+    }
+    next()
+  }
+
+  public updateJob: (req: Request) => Promise<void> = async (req) => {
+    const { jobId } = req.body
+    try {
+      await this.jobManagementService.updateJobStatus(jobId)
+      dogstatsd.increment('job.update.success', 1, 1)
+    } catch (error) {
+      dogstatsd.increment('job.update.failure', 1, 1)
+      logger.error(`error updating job ${jobId}: ${error}`)
+    }
+    return
   }
 }
 

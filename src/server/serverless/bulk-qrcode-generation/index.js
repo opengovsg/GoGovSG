@@ -1,7 +1,7 @@
 const qrCodeService = require('./qrCode')
 const csvService = require('./csv')
 const s3Service = require('./s3')
-const snsService = require('./sns')
+const httpService = require('./http')
 const fsUtils = require('./fsUtils')
 const { ImageFormat } = require('./qrCode')
 
@@ -54,16 +54,16 @@ async function handler(event) {
     // cleanup
     await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
     console.log(`cleaned up /tmp/${jobItemId}`)
-
-    await snsService.sendSNSMessage(true, jobItemId, '')
-    return { Status: `Send success message to SNS for ${jobItemId}` }
   } catch (error) {
     // cleanup
     await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
 
-    await snsService.sendSNSMessage(false, jobItemId, error)
-    throw Error(`Failed to generate files, Error: ${error} `)
+    await httpService.sendHttpMessage(false, jobItemId, error)
+    throw new Error(`Failed to generate files, Error: ${error} `)
   }
+
+  await httpService.sendHttpMessage(true, jobItemId, '')
+  return { Status: `Send success message for ${jobItemId}` }
 }
 
 module.exports.handler = handler
