@@ -27,7 +27,7 @@ export interface MailBody {
   to: string
   body: string
   subject: string
-  senderDomain: SenderDomain
+  senderDomain?: SenderDomain
 }
 
 let transporter: nodemailer.Transport
@@ -38,6 +38,7 @@ export interface Mailer {
    * Sends email to SES / MailDev to send out. Falls back to Postman.
    */
   mailOTP(email: string, otp: string, ip: string): Promise<void>
+  sendMail(mailBody: MailBody): Promise<void>
 }
 
 @injectable()
@@ -102,7 +103,11 @@ export class MailerNode implements Mailer {
     })
   }
 
-  sendMail(mailBody: MailBody): Promise<void> {
+  sendMail(mail: MailBody): Promise<void> {
+    const mailBody: MailBody = {
+      ...mail,
+      senderDomain: mail.senderDomain || domainVariant,
+    }
     if (activatePostmanFallback) {
       logger.info(`Sending Postman mail`)
       return this.sendPostmanMail(mailBody)
@@ -128,7 +133,6 @@ export class MailerNode implements Mailer {
       to: email,
       subject: `One-Time Password (OTP) for ${domainVariant}`,
       body: emailHTML,
-      senderDomain: domainVariant,
     }
 
     return this.sendMail(mailBody)
