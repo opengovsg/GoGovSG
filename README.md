@@ -134,10 +134,14 @@ After these have been set up, set the environment variables according to the tab
 |BULK_UPLOAD_MAX_NUM|No|Maximum number of links that can be bulk uploaded at once. Defaults to 1000|
 |BULK_UPLOAD_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in bulk upload. Defaults to 8|
 |BULK_QR_CODE_BATCH_SIZE|No|Maximum batch size of QR codes to generate in a single Lambda run. Defaults to 1000|
+|BULK_QR_CODE_BUCKET_URL|No|Link to download QR codes from|
+|ACTIVATE_BULK_QR_CODE_GENERATION|No|Whether to start Lambda for bulk QR code generation or not. Defaults to false|
 |REPLICA_URI|Yes|The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`|
 |SQS_BULK_QRCODE_GENERATE_START_URL|No|The SQS queue for starting QR code bulk generation Lambda|
 |SQS_TIMEOUT|No|Duration of time in ms for sending to SQS queue before timeout. Defaults to 10000ms (10s)|
 |SQS_REGION|No|AWS Region of SQS queue for starting QR code bulk generation Lambda|
+|JOB_POLL_ATTEMPTS|No|Number of attempts for long polling of job status before timeout of 408 is returned. Defaults to 12|
+|JOB_POLL_INTERVAL|No|Interval of time between attempts for long polling of job status in ms. Defaults to 5000ms (5s)|
 
 
 #### Serverless functions for link migration

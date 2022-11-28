@@ -7,6 +7,7 @@ import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
 import { logger, qrCodeJobBatchSize } from '../../config'
 import jsonMessage from '../../util/json'
+import { NotFoundError } from '../../util/error'
 
 @injectable()
 export class JobController {
@@ -24,37 +25,42 @@ export class JobController {
     this.jobManagementService = jobManagementService
   }
 
-  public createAndStartJob: (req: Request) => Promise<void> = async (req) => {
-    const { userId, jobParamsList } = req.body
-    if (!jobParamsList || jobParamsList.length === 0) {
+  public createAndStartJob: (req: Request, res: Response) => Promise<void> =
+    async (req, res) => {
+      const { userId, jobParamsList } = req.body
+      if (!jobParamsList || jobParamsList.length === 0) {
+        return
+      }
+
+      const jobBatches = _.chunk(jobParamsList, qrCodeJobBatchSize)
+      try {
+        const job = await this.jobManagementService.createJob(userId)
+
+        await Promise.all(
+          jobBatches.map(async (jobBatch, idx) => {
+            const messageParams = {
+              jobItemId: `${job.uuid}/${idx}`,
+              mappings: jobBatch,
+            }
+            await this.jobManagementService.createJobItem({
+              params: <JSON>(<unknown>messageParams),
+              jobId: job.id,
+              jobItemId: `${job.uuid}/${idx}`,
+            })
+            await this.sqsService.sendMessage(messageParams)
+            return
+          }),
+        )
+        dogstatsd.increment('job.start.success', 1, 1)
+        res.ok({ count: jobParamsList.length, job })
+      } catch (error) {
+        logger.error(`error creating and starting job: ${error}`)
+        dogstatsd.increment('job.start.failure', 1, 1)
+        // created links but failed to create and start job
+        res.serverError({ count: jobParamsList.length })
+      }
       return
     }
-
-    const jobBatches = _.chunk(jobParamsList, qrCodeJobBatchSize)
-    try {
-      const job = await this.jobManagementService.createJob(userId)
-
-      await Promise.all(
-        jobBatches.map(async (jobBatch, idx) => {
-          const messageParams = {
-            jobItemId: `${job.uuid}/${idx}`,
-            mappings: jobBatch,
-          }
-          await this.jobManagementService.createJobItem({
-            params: <JSON>(<unknown>messageParams),
-            jobId: job.id,
-            jobItemId: `${job.uuid}/${idx}`,
-          })
-          await this.sqsService.sendMessage(messageParams)
-          return
-        }),
-      )
-      dogstatsd.increment('job.start.success', 1, 1)
-    } catch (error) {
-      logger.error(`error creating and starting job: ${error}`)
-      dogstatsd.increment('job.start.failure', 1, 1)
-    }
-  }
 
   public updateJobItem: (
     req: Request,
@@ -91,6 +97,50 @@ export class JobController {
     }
     return
   }
+
+  public getLatestJob: (req: Request, res: Response) => Promise<void> = async (
+    req,
+    res,
+  ) => {
+    const { userId } = req.body
+    try {
+      const jobInformation =
+        await this.jobManagementService.getLatestJobForUser(userId)
+      res.ok(jobInformation)
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.ok(jsonMessage('User has no jobs'))
+        return
+      }
+      res.serverError(jsonMessage(error.message))
+    }
+    return
+  }
+
+  public pollJobStatusUpdate: (req: Request, res: Response) => Promise<void> =
+    async (req, res) => {
+      const { jobId } = req.query
+      const user = req.session?.user
+      if (!user) {
+        res.status(401).send(jsonMessage('User session does not exist'))
+        return
+      }
+      try {
+        const jobInformation =
+          await this.jobManagementService.pollJobStatusUpdate(
+            user.id,
+            parseInt(jobId as string, 10),
+          )
+        res.ok(jobInformation)
+      } catch (error) {
+        if (error instanceof NotFoundError) {
+          res.notFound(jsonMessage(error.message))
+          return
+        }
+        res.status(408).send(jsonMessage('Request timed out, please try again'))
+      }
+      return
+    }
 }
 
 export default JobController

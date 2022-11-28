@@ -6,6 +6,7 @@ import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
+import { logger, shouldGenerateQRCodes } from '../../config'
 
 @injectable()
 export class BulkController {
@@ -62,12 +63,18 @@ export class BulkController {
       return
     }
 
-    // put jobParamsList on the req body so that it can be used by JobController
-    req.body.jobParamsList = urlMappings
-
     dogstatsd.increment('bulk.hash.success', 1, 1)
-    res.ok(jsonMessage(`${urlMappings.length} links created`))
-    next()
+    if (shouldGenerateQRCodes) {
+      logger.info('shouldGenerateQRCodes true, triggering QR code generation')
+      // put jobParamsList on the req body so that it can be used by JobController
+      req.body.jobParamsList = urlMappings
+      next()
+    } else {
+      logger.info(
+        'shouldGenerateQRCodes false, not triggering QR code generation',
+      )
+      res.ok({ count: urlMappings.length })
+    }
   }
 }
 
