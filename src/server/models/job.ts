@@ -5,7 +5,7 @@ import { sequelize } from '../util/sequelize'
 
 export interface JobType extends IdType, Sequelize.Model {
   readonly uuid: string
-  readonly userId: Number
+  readonly userId: number
   readonly createdAt: string
   readonly updatedAt: string
   readonly status: JobStatusEnum
