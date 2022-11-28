@@ -33,14 +33,14 @@ export class BulkService implements interfaces.BulkService {
       Papa.parse(dataString, {
         skipEmptyLines: false,
         delimiter: ',',
-        complete() {
+        complete: () => {
           // check for empty file
           if (longUrls.length === 0) {
             reject(new Error('csv file is empty'))
           }
           resolve(longUrls)
         },
-        error: (error: Papa.ParseError) => {
+        error: (error: Error) => {
           reject(error)
         },
         step(step) {
