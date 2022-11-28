@@ -968,17 +968,17 @@ const getJobInformationForPendingJobId =
       SetStatusBarSuccessMessageAction | SetStatusBarErrorMessageAction
     >,
   ) => {
-    const response = await postJson(`/api/user/job/status`, { jobId })
+    const query = querystring.stringify({ jobId })
+    const response = await get(`/api/user/job/status?${query}`)
     const isOk = response.ok
     if (!isOk) {
       // retry
       dispatch(getJobInformationForPendingJobId(jobId))
     } else {
       const resp = await response.json()
-      console.log(resp)
-      const { job, jobItemIds } = resp
+      const { job, jobItemUrls } = resp
       const { status } = job
-      dispatch(setQRCodeGenerationMessage(status, jobItemIds))
+      dispatch(setQRCodeGenerationMessage(status, jobItemUrls))
     }
   }
 
@@ -1000,13 +1000,13 @@ const getLatestJob =
       throw new Error(resp.message || 'Error fetching user jobs ')
     }
 
-    const { job, jobItemIds } = resp
-    if (!job || !jobItemIds) return
+    const { job, jobItemUrls } = resp
+    if (!job || !jobItemUrls) return
     const { status, id } = job
     if (status === 'IN_PROGRESS') {
       dispatch(getJobInformationForPendingJobId(id))
     }
-    dispatch(setQRCodeGenerationMessage(status, jobItemIds))
+    dispatch(setQRCodeGenerationMessage(status, jobItemUrls))
   }
 
 /**
