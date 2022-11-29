@@ -68,6 +68,7 @@ import { GetReduxState } from '../../app/actions/types'
 import { GoGovReduxState } from '../../app/reducers/types'
 import { MessageType } from '../../../shared/util/messages'
 import { GAEvent } from '../../app/util/ga'
+import { JobStatusEnum } from '../../../shared/util/jobs'
 
 const setUrlUploadState: (payload: boolean) => SetUrlUploadStateAction = (
   payload,
@@ -936,21 +937,21 @@ const setQRCodeGenerationMessage =
       | SetStatusBarInfoMessageAction
     >,
   ) => {
-    if (status === 'SUCCESS') {
+    if (status === JobStatusEnum.Success) {
       const header = `QR codes successfully generated`
       const body = `Please download your QR codes here or via email`
       dispatch<SetStatusBarSuccessMessageAction>(
         setStatusBarSuccessMessage(header, body, callbacks),
       )
     }
-    if (status === 'IN_PROGRESS') {
+    if (status === JobStatusEnum.InProgress) {
       const header = `QR codes generation in progress`
       const body = `Please wait to download your QR codes`
       dispatch<SetStatusBarInfoMessageAction>(
         setStatusBarInfoMessage(header, body),
       )
     }
-    if (status === 'FAILED') {
+    if (status === JobStatusEnum.Failure) {
       const header = `QR codes failed to generate`
       const body = `Please try again`
       dispatch<SetStatusBarErrorMessageAction>(

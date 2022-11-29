@@ -50,7 +50,7 @@ describe('BulkController unit test', () => {
       const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
-      mockBulkService.parseCsv.mockReturnValue({ isValid: false })
+      mockBulkService.parseCsv.mockRejectedValue(new Error(''))
 
       await controller.validateAndParseCsv(req, res, next)
 
@@ -67,7 +67,7 @@ describe('BulkController unit test', () => {
       const longUrls = ['https://google.com']
 
       res.badRequest = badRequest
-      mockBulkService.parseCsv.mockReturnValue({ isValid: true, longUrls })
+      mockBulkService.parseCsv.mockReturnValue(longUrls)
 
       await controller.validateAndParseCsv(req, res, next)
 

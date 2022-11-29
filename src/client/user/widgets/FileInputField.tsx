@@ -139,6 +139,9 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
             }
             setUploadFileError('')
             setFile(chosenFile)
+            // Clear value so that file event is refired when even if same file is uploaded https://stackoverflow.com/a/60886920
+            // eslint-disable-next-line no-param-reassign
+            event.target.value = ''
           }}
           accept={acceptedTypes}
         />
