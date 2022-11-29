@@ -1,7 +1,7 @@
 import Express from 'express'
 import jsonMessage from '../util/json'
 import { DependencyIds, ERROR_404_PATH } from '../constants'
-import { displayHostname, ffExternalApi, lambdaHashSecret } from '../config'
+import { displayHostname, ffExternalApi } from '../config'
 import assetVariant from '../../shared/util/asset-variant'
 import { container } from '../util/inversify'
 import ApiKeyAuthService from '../modules/user/services/ApiKeyAuthService'
@@ -38,31 +38,6 @@ function userGuard(
 }
 
 /**
- * To protect lambda callback route. Temporary.
- * */
-const lambdaCallbackGuard = (
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction,
-) => {
-  const authToken = req.headers.authorization
-  if (!authToken) {
-    res.unauthorized()
-    return
-  }
-  const [headerKey, key] = authToken.trim().split(' ')
-  if (
-    headerKey.toLowerCase() !== 'bearer' ||
-    !key ||
-    key !== lambdaHashSecret
-  ) {
-    res.unauthorized()
-    return
-  }
-  next()
-}
-
-/**
  * To protect external-v1 APIs by APIKey.
  * */
 async function apiKeyAuthMiddleware(
@@ -95,6 +70,23 @@ async function apiKeyAuthMiddleware(
 }
 
 /**
+ * To add guard for admin-user only api routes.
+ * */
+async function apiKeyAdminAuthMiddleware(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
+  const { userId } = req.body
+  const isAdmin = await apiKeyAuthService.isAdmin(userId)
+  if (!isAdmin) {
+    res.unauthorized()
+    return
+  }
+  next()
+}
+
+/**
  *  Preprocess request parameters.
  * */
 function preprocess(
@@ -116,7 +108,12 @@ router.use('/link-stats', userGuard, require('./link-statistics'))
 router.use('/link-audit', userGuard, require('./link-audit'))
 router.use('/directory', userGuard, require('./directory'))
 
-router.use('/callback', lambdaCallbackGuard, require('./callback'))
+router.use(
+  '/callback',
+  apiKeyAuthMiddleware,
+  apiKeyAdminAuthMiddleware,
+  require('./callback'),
+)
 
 /* Register APIKey protected endpoints */
 if (ffExternalApi) {

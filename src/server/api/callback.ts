@@ -11,6 +11,7 @@ const validator = createValidator({ passError: true })
 const jobController = container.get<JobController>(DependencyIds.jobController)
 
 const jobItemCallbackSchema = Joi.object({
+  userId: Joi.number(),
   jobItemId: Joi.string().required(),
   status: Joi.object()
     .keys({
@@ -23,7 +24,7 @@ const jobItemCallbackSchema = Joi.object({
  * Update job status based on callback.
  */
 router.post(
-  '/',
+  '/qr',
   validator.body(jobItemCallbackSchema),
   jobController.updateJobItem,
   jobController.updateJob,
