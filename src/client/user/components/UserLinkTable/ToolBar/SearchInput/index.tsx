@@ -115,12 +115,12 @@ const SearchInput = () => {
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,
   )
-  const { isTag, searchText } = tableConfig
+  const { isTag, searchInput } = tableConfig
   const searchInputHeight = useSearchInputHeight()
   const classes = useStyles({ textFieldHeight, searchInputHeight })
 
-  const setSearchText = (searchText: string) => {
-    const newConfig: Partial<UrlTableConfig> = { searchText }
+  const setSearchInput = (searchInput: string) => {
+    const newConfig: Partial<UrlTableConfig> = { searchInput }
     dispatch(userActions.setUrlTableConfig(newConfig))
   }
 
@@ -130,7 +130,12 @@ const SearchInput = () => {
   }
 
   const applySearch = () => {
-    const newConfig: Partial<UrlTableConfig> = { pageNumber: 0 }
+    // Only assign either searchText or tags to searchInput after a timeout period
+    const newConfig: Partial<UrlTableConfig> = {
+      searchText: isTag ? '' : searchInput,
+      tags: isTag ? searchInput : '',
+      pageNumber: 0,
+    }
     dispatch(userActions.isFetchingUrls(true))
     dispatch(userActions.setUrlTableConfig(newConfig))
     dispatch(userActions.getUrlsForUser())
@@ -141,7 +146,7 @@ const SearchInput = () => {
       applySearch()
     }, SEARCH_TIMEOUT)
     return () => clearTimeout(timeoutId)
-  }, [searchText])
+  }, [searchInput])
 
   const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
   const [isSearchFilterOpen, setIsSearchFilterOpen] = useState(false)
@@ -173,15 +178,15 @@ const SearchInput = () => {
             autoFocus
             className={classes.searchTextField}
             variant="outlined"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onBlur={(e) => setSearchText(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onBlur={(e) => setSearchInput(e.target.value)}
             onKeyDown={(e) => {
               const target = e.target as HTMLTextAreaElement
               switch (e.key) {
                 case 'Escape':
                   target.value = ''
-                  setSearchText('')
+                  setSearchInput('')
                   break
                 case 'Enter':
                   break
@@ -233,7 +238,7 @@ const SearchInput = () => {
             selectedLabel={isTag ? 'Tag' : 'Link'}
             onClick={(label) => {
               setIsTag(label === 'Tag')
-              setSearchText('')
+              setSearchInput('')
             }}
             isFilterOpen={isSearchFilterOpen}
             isMobileView={isMobileView}

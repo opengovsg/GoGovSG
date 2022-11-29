@@ -35,6 +35,7 @@ const requiredVars: string[] = [
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
   'AWS_S3_BUCKET', // For file.go.gov.sg uploads
+  'API_KEY_SALT', // To generate APIKey
 ]
 
 // AWS Simple Email Service
@@ -259,3 +260,11 @@ export const jobPollInterval: number =
   Number(process.env.JOB_POLL_INTERVAL) || 5000 // in ms
 export const jobPollAttempts: number =
   Number(process.env.JOB_POLL_ATTEMPTS) || 12
+
+export const apiKeyVersion: string = process.env.API_KEY_VERSION || 'v1'
+export const apiEnv: string =
+  process.env.DD_ENV === 'production' ? 'live' : 'test'
+export const apiKeySalt = process.env.API_KEY_SALT as string
+export const apiLinkRandomStrLength: number =
+  Number(process.env.API_LINK_RANDOM_STR_LENGTH) || 8
+export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'

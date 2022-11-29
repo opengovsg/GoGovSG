@@ -20,6 +20,12 @@ import FormTag from './FormTag'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    fixedHelperText: {
+      position: 'absolute',
+      top: '100%',
+      left: 0,
+      width: 'auto',
+    },
     menuPopper: {
       zIndex: 1301, // To place popper above create link modal with default z-index of 1300
     },
@@ -60,6 +66,7 @@ type TagsAutocompleteProps = {
   tagInput: string
   setTagInput: (tagInput: string) => void
   disabled: boolean
+  fixHelperTextPosition: boolean
 }
 
 export default function TagsAutocomplete({
@@ -68,6 +75,7 @@ export default function TagsAutocomplete({
   tagInput,
   setTagInput,
   disabled,
+  fixHelperTextPosition,
 }: TagsAutocompleteProps) {
   const classes = useStyles()
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([])
@@ -76,6 +84,18 @@ export default function TagsAutocomplete({
   function resetTagSuggestions() {
     setTagAnchorEl(null)
     setTagSuggestions([])
+  }
+
+  function addTagInputToTags() {
+    if (isValidTag(tagInput) && !tags.includes(tagInput)) {
+      setTagInput('')
+      setTags([...tags, tagInput])
+    }
+  }
+
+  function onClickAway() {
+    resetTagSuggestions()
+    addTagInputToTags()
   }
 
   useEffect(() => {
@@ -101,7 +121,7 @@ export default function TagsAutocomplete({
   }, [tagInput])
 
   return (
-    <ClickAwayListener onClickAway={resetTagSuggestions}>
+    <ClickAwayListener onClickAway={onClickAway}>
       <div>
         <Autocomplete
           multiple
@@ -114,7 +134,11 @@ export default function TagsAutocomplete({
               <FormTag
                 key={tag}
                 tag={tag}
-                onClose={() => setTags(tags.filter((t) => t !== tag))}
+                onClose={() => {
+                  setTags(tags.filter((t) => t !== tag))
+                  setTagInput('')
+                  resetTagSuggestions()
+                }}
               />
             ))
           }
@@ -124,12 +148,18 @@ export default function TagsAutocomplete({
               error={!isValidTag(tagInput, true) || tags.includes(tagInput)}
               className={classes.tagsText}
               onKeyDown={(event) => {
-                if (event.key !== 'Enter') return
-                event.preventDefault() // prevent form from submitting
-                event.stopPropagation() // prevent freeSolo from clearing text input
-                if (isValidTag(tagInput) && !tags.includes(tagInput)) {
-                  setTagInput('')
-                  setTags([...tags, tagInput])
+                if (['Enter', ',', ' '].includes(event.key)) {
+                  // Use enter, comma, or space to create a new tag
+                  event.preventDefault() // prevent form from submitting when enter key is pressed
+                  event.stopPropagation() // prevent freeSolo from clearing text input
+                  addTagInputToTags()
+                } else if (
+                  event.key === 'Backspace' &&
+                  tagInput === '' &&
+                  tags.length > 0
+                ) {
+                  // Use backspace to remove existing tag
+                  setTags(tags.slice(0, -1))
                 }
               }}
               inputProps={params.inputProps}
@@ -156,6 +186,11 @@ export default function TagsAutocomplete({
                 }
                 return ''
               })()}
+              FormHelperTextProps={
+                fixHelperTextPosition
+                  ? { className: classes.fixedHelperText }
+                  : {}
+              }
             />
           )}
         />

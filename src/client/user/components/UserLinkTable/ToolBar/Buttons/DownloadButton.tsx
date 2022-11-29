@@ -22,11 +22,9 @@ const useStyles = makeStyles((theme) =>
 
 const DownloadButton = () => {
   const classes = useStyles()
-  const urlCount = useSelector((state: GoGovReduxState) => state.user.urlCount)
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,
   )
-
   return (
     // Only shown when actions are not minified.
     <>
@@ -35,7 +33,7 @@ const DownloadButton = () => {
           <Button
             variant="outlined"
             color="primary"
-            onClick={() => downloadUrls(urlCount, tableConfig)}
+            onClick={() => downloadUrls(tableConfig)}
             className={classes.downloadButton}
           >
             <Typography variant="body2">Download links</Typography>

@@ -1,4 +1,5 @@
 import { UrlManagementService } from '../UrlManagementService'
+import { StorableUrlSource } from '../../../../repositories/enums'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
@@ -13,6 +14,9 @@ describe('UrlManagementService', () => {
     findUserByUrl: jest.fn(),
     findUrlsForUser: jest.fn(),
     findOrCreateWithEmail: jest.fn(),
+    findUserByApiKey: jest.fn(),
+    saveApiKeyHash: jest.fn(),
+    hasApiKey: jest.fn(),
   }
 
   const urlRepository = {
@@ -31,6 +35,8 @@ describe('UrlManagementService', () => {
     const userId = 2
     const longUrl = 'https://www.agency.gov.sg'
     const shortUrl = 'abcdef'
+    const sourceConsole = StorableUrlSource.Console
+    const sourceApi = StorableUrlSource.Api
 
     beforeEach(() => {
       userRepository.findById.mockReset()
@@ -42,7 +48,7 @@ describe('UrlManagementService', () => {
     it('throws NotFoundError on no user', async () => {
       userRepository.findById.mockResolvedValue(null)
       await expect(
-        service.createUrl(userId, shortUrl, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).not.toHaveBeenCalled()
@@ -57,7 +63,7 @@ describe('UrlManagementService', () => {
         email: userId,
       })
       await expect(
-        service.createUrl(userId, shortUrl, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(AlreadyExistsError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
@@ -69,12 +75,12 @@ describe('UrlManagementService', () => {
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
-        service.createUrl(userId, shortUrl, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl },
+        { userId, longUrl, shortUrl, source: sourceConsole },
         undefined,
       )
     })
@@ -89,12 +95,12 @@ describe('UrlManagementService', () => {
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
-        service.createUrl(userId, shortUrl, longUrl, file),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl, file),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl },
+        { userId, longUrl, shortUrl, source: sourceConsole },
         {
           data: file.data,
           mimetype: file.mimetype,
@@ -102,16 +108,52 @@ describe('UrlManagementService', () => {
         },
       )
     })
+
+    it('processes new API-created url with no shortUrl', async () => {
+      jest.resetModules()
+      jest.mock('../../../../config', () => ({
+        apiLinkRandomStrLength: 4,
+      }))
+      // eslint-disable-next-line global-require
+      const { UrlManagementService } = require('..')
+      const service = new UrlManagementService(userRepository, urlRepository)
+
+      userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
+      urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
+      await expect(
+        service.createUrl(userId, sourceApi, undefined, longUrl),
+      ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
+      expect(userRepository.findById).toHaveBeenCalledWith(userId)
+      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(
+        expect.stringMatching(/^.{4}$/),
+      )
+      expect(urlRepository.create).toHaveBeenCalledWith(
+        {
+          userId,
+          longUrl,
+          shortUrl: expect.stringMatching(/^.{4}$/),
+          source: sourceApi,
+        },
+        undefined,
+      )
+    })
   })
 
   describe('updateUrl', () => {
     const userId = 2
-    const url = { shortUrl: 'abcdef' }
+    const linkUrl = { shortUrl: 'abcdef', isFile: false }
+    const fileUrl = { shortUrl: 'abcdef', isFile: true }
     const options = {
       longUrl: 'https://www.agency.gov.sg',
       state: undefined,
       description: 'An agency',
       contactEmail: 'contact-us@agency.gov.sg',
+    }
+    const file = {
+      data: Buffer.from(''),
+      name: 'file.json',
+      mimetype: 'application/json',
     }
 
     beforeEach(() => {
@@ -122,54 +164,82 @@ describe('UrlManagementService', () => {
     it('throws NotFoundError on no url', async () => {
       userRepository.findOneUrlForUser.mockResolvedValue(null)
       await expect(
-        service.updateUrl(userId, url.shortUrl, options),
+        service.updateUrl(userId, linkUrl.shortUrl, options),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        linkUrl.shortUrl,
+      )
+      expect(urlRepository.update).not.toHaveBeenCalled()
+    })
+
+    it('throws Error when updating file with longUrl', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      await expect(
+        service.updateUrl(userId, fileUrl.shortUrl, {
+          longUrl: 'https://example.com',
+        }),
+      ).rejects.toBeInstanceOf(Error)
+      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
+        userId,
+        fileUrl.shortUrl,
+      )
+      expect(urlRepository.update).not.toHaveBeenCalled()
+    })
+
+    it('throws Error when updating link with file', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      await expect(
+        service.updateUrl(userId, linkUrl.shortUrl, { file }),
+      ).rejects.toBeInstanceOf(Error)
+      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
+        userId,
+        linkUrl.shortUrl,
       )
       expect(urlRepository.update).not.toHaveBeenCalled()
     })
 
     it('updates a non-file url', async () => {
-      userRepository.findOneUrlForUser.mockResolvedValue(url)
-      urlRepository.update.mockResolvedValue(url)
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      urlRepository.update.mockResolvedValue(linkUrl)
       await expect(
-        service.updateUrl(userId, url.shortUrl, {
+        service.updateUrl(userId, linkUrl.shortUrl, {
           ...options,
           file: undefined,
         }),
-      ).resolves.toStrictEqual(url)
+      ).resolves.toStrictEqual(linkUrl)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        linkUrl.shortUrl,
       )
-      expect(urlRepository.update).toHaveBeenCalledWith(url, options, undefined)
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        linkUrl,
+        options,
+        undefined,
+      )
     })
 
     it('updates a file url', async () => {
-      const file = {
-        data: Buffer.from(''),
-        name: 'file.json',
-        mimetype: 'application/json',
-      }
-      userRepository.findOneUrlForUser.mockResolvedValue(url)
-      urlRepository.update.mockResolvedValue(url)
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      urlRepository.update.mockResolvedValue(fileUrl)
       await expect(
-        service.updateUrl(userId, url.shortUrl, {
-          ...options,
+        service.updateUrl(userId, fileUrl.shortUrl, {
           file,
         }),
-      ).resolves.toStrictEqual(url)
+      ).resolves.toStrictEqual(fileUrl)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        fileUrl.shortUrl,
       )
-      expect(urlRepository.update).toHaveBeenCalledWith(url, options, {
-        data: file.data,
-        key: `${url.shortUrl}.json`,
-        mimetype: file.mimetype,
-      })
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        fileUrl,
+        {},
+        {
+          data: file.data,
+          key: `${fileUrl.shortUrl}.json`,
+          mimetype: file.mimetype,
+        },
+      )
     })
   })
 

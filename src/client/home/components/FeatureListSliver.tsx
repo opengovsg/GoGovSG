@@ -15,7 +15,7 @@ import antiPhishingIcon from '@assets/components/home/feature-list-sliver/home-p
 import customisedIcon from '@assets/components/home/feature-list-sliver/home-page-customised-icon.svg'
 import analyticsIcon from '@assets/components/home/feature-list-sliver/home-page-analytics-icon.svg'
 import fileSharingIcon from '@assets/components/home/feature-list-sliver/home-page-file-sharing-icon.svg'
-import { hmtlSanitizer } from '../../app/util/format'
+import { htmlSanitizer } from '../../app/util/format'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -120,7 +120,7 @@ const FeatureListSliver = () => {
         display="inline"
         gutterBottom
         dangerouslySetInnerHTML={{
-          __html: hmtlSanitizer(i18next.t('homePage.targetUsersPhrase')),
+          __html: htmlSanitizer(i18next.t('homePage.targetUsersPhrase')),
         }}
       >
         {/* <text ></text> NOTE: dangerouslySetInnerHTML is used as copy includes <a href></a> tag */}

@@ -18,6 +18,7 @@ import {
   isValidLongUrl,
   isValidShortUrl,
   isValidTag,
+  isValidTags,
 } from '../../../../shared/util/validation'
 import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
 import ModalMargins from './ModalMargins'
@@ -96,7 +97,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   const submitDisabled = () => {
     const isInvalidTags =
-      tags.some((tag) => !isValidTag(tag)) ||
+      !isValidTags(tags) ||
       !isValidTag(tagInput, true) ||
       tags.includes(tagInput)
     switch (createType) {
@@ -400,6 +401,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
               tagInput={tagInput}
               setTagInput={setTagInput}
               disabled={isUploading || tags.length >= MAX_NUM_TAGS_PER_LINK}
+              fixHelperTextPosition={false}
             />
           </div>
           <Button

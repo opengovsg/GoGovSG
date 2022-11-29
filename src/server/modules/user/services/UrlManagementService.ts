@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify'
+import { apiLinkRandomStrLength } from '../../../config'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import {
   BulkUrlMapping,
@@ -10,17 +11,24 @@ import {
 import dogstatsd, {
   SHORTLINK_CREATE,
   SHORTLINK_CREATE_TAG_IS_FILE,
+  SHORTLINK_CREATE_TAG_SOURCE,
 } from '../../../util/dogstatsd'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
+  InvalidUrlUpdateError,
   NotFoundError,
 } from '../../../util/error'
+import { StorableUrlSource } from '../../../repositories/enums'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
+import generateShortUrl from '../../../util/url'
 import { GoUploadedFile, UpdateUrlOptions } from '..'
 import { DependencyIds } from '../../../constants'
+import { BULK } from '../../../models/types'
 import * as interfaces from '../interfaces'
+
+const API_LINK_RANDOM_STR_LENGTH = apiLinkRandomStrLength
 
 @injectable()
 export class UrlManagementService implements interfaces.UrlManagementService {
@@ -40,21 +48,37 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
   createUrl: (
     userId: number,
-    shortUrl: string,
+    source: StorableUrlSource.Console | StorableUrlSource.Api,
+    shortUrl?: string,
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
-  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file, tags) => {
+  ) => Promise<StorableUrl> = async (
+    userId,
+    source,
+    originalShortUrl,
+    longUrl,
+    file,
+    tags,
+  ) => {
     const user = await this.userRepository.findById(userId)
     if (!user) {
-      throw new NotFoundError('User not found')
+      throw new NotFoundError('User not found.')
+    }
+
+    let shortUrl = originalShortUrl
+    if (shortUrl === undefined) {
+      if (source !== StorableUrlSource.Api) {
+        throw new Error(
+          'Short link can only be undefined for API created links.',
+        )
+      }
+      shortUrl = await generateShortUrl(API_LINK_RANDOM_STR_LENGTH)
     }
 
     const owner = await this.userRepository.findUserByUrl(shortUrl)
     if (owner) {
-      throw new AlreadyExistsError(
-        `Short link "${shortUrl}" is used. Click here to find out more`,
-      )
+      throw new AlreadyExistsError(`Short link "${shortUrl}" is already used.`)
     }
 
     const storableFile: StorableFile | undefined = file
@@ -72,11 +96,13 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         longUrl,
         shortUrl,
         tags,
+        source,
       },
       storableFile,
     )
     dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
       `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${source}`,
     ])
 
     return result
@@ -93,6 +119,10 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
     if (!url) {
       throw new NotFoundError(`Short link "${shortUrl}" not found for user.`)
+    } else if (url.isFile && options.longUrl) {
+      throw new InvalidUrlUpdateError(`Cannot update longUrl for file.`)
+    } else if (!url.isFile && options.file) {
+      throw new InvalidUrlUpdateError(`Cannot update file for link.`)
     }
 
     const storableFile: StorableFile | undefined = file
@@ -159,9 +189,10 @@ export class UrlManagementService implements interfaces.UrlManagementService {
       urlMappings,
       tags,
     })
-    dogstatsd.increment('shortlink.create', urlMappings.length, 1, [
-      `isbulk:true`,
-    ]) // TODO: extract metric and tag names
+    dogstatsd.increment(SHORTLINK_CREATE, urlMappings.length, 1, [
+      `${SHORTLINK_CREATE_TAG_IS_FILE}:false`,
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${BULK}`,
+    ])
   }
 }
 

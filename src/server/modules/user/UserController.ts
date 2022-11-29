@@ -8,10 +8,11 @@ import { DependencyIds } from '../../constants'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
+  InvalidUrlUpdateError,
   NotFoundError,
 } from '../../util/error'
 import { MessageType } from '../../../shared/util/messages'
-import { StorableUrlState } from '../../repositories/enums'
+import { StorableUrlSource, StorableUrlState } from '../../repositories/enums'
 
 import { logger } from '../../config'
 import { UrlManagementService } from './interfaces/UrlManagementService'
@@ -19,7 +20,12 @@ import {
   userTagsQueryConditions,
   userUrlsQueryConditions,
 } from '../../api/user/validators'
+import dogstatsd, {
+  SEARCH_USER_URL,
+  SEARCH_USER_URL_TAG_IS_TAG,
+} from '../../util/dogstatsd'
 import TagManagementServiceInterface from './interfaces/TagManagementService'
+import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
 
 type AnnouncementResponse = {
   message?: string
@@ -33,11 +39,13 @@ type AnnouncementResponse = {
 export class UserController {
   private urlManagementService: UrlManagementService
 
-  private userMessage: string
+  private readonly userMessage: string
 
-  private userAnnouncement: AnnouncementResponse
+  private readonly userAnnouncement: AnnouncementResponse
 
   private tagManagementService: TagManagementServiceInterface
+
+  private apiKeyAuthService: ApiKeyAuthServiceInterface
 
   public constructor(
     @inject(DependencyIds.urlManagementService)
@@ -48,11 +56,14 @@ export class UserController {
     userAnnouncement: AnnouncementResponse,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,
+    @inject(DependencyIds.apiKeyAuthService)
+    apiKeyAuthService: ApiKeyAuthServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
     this.tagManagementService = tagManagementService
+    this.apiKeyAuthService = apiKeyAuthService
   }
 
   public createUrl: (
@@ -72,6 +83,7 @@ export class UserController {
     try {
       const result = await this.urlManagementService.createUrl(
         userId,
+        StorableUrlSource.Console,
         shortUrl,
         longUrl,
         file,
@@ -85,14 +97,15 @@ export class UserController {
         return
       }
       if (error instanceof AlreadyExistsError) {
-        res.badRequest(jsonMessage(error.message, MessageType.ShortUrlError))
+        const newErrorMessage = `${error.message} Click here to find out more`
+        res.badRequest(jsonMessage(newErrorMessage, MessageType.ShortUrlError))
         return
       }
       if (error instanceof Sequelize.ValidationError) {
         res.badRequest(jsonMessage(error.message))
       }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Server Error.'))
+      res.badRequest(jsonMessage('Server error.'))
       return
     }
   }
@@ -147,6 +160,10 @@ export class UserController {
         res.forbidden(jsonMessage(error.message))
         return
       }
+      if (error instanceof InvalidUrlUpdateError) {
+        res.badRequest(jsonMessage(error.message))
+        return
+      }
       logger.error(`Error editing URL:\t${error}`)
       res.badRequest(jsonMessage(`Unable to edit short link "${shortUrl}"`))
       return
@@ -197,6 +214,9 @@ export class UserController {
     try {
       const { urls, count } =
         await this.urlManagementService.getUrlsWithConditions(queryConditions)
+      dogstatsd.increment(SEARCH_USER_URL, 1, 1, [
+        `${SEARCH_USER_URL_TAG_IS_TAG}:${queryConditions.tags.length > 0}`,
+      ])
       res.ok({ urls, count })
       return
     } catch (error) {
@@ -268,6 +288,38 @@ export class UserController {
         return
       }
       res.serverError(jsonMessage('Error retrieving Tags for user'))
+      return
+    }
+  }
+
+  public hasAPIKey: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId } = req.body
+    try {
+      const hasApiKey = await this.apiKeyAuthService.hasApiKey(userId)
+      res.ok(jsonMessage(hasApiKey.toString()))
+      return
+    } catch (error) {
+      logger.error(`Error getting hasApiKey: ${error}`)
+      res.serverError(jsonMessage('Error getting hasApiKey'))
+      return
+    }
+  }
+
+  public createAPIKey: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    try {
+      const { userId } = req.body
+      const apiKey = await this.apiKeyAuthService.upsertApiKey(userId)
+      res.ok(jsonMessage(apiKey))
+      return
+    } catch (error) {
+      logger.error(`Error creating APIKey: ${error}`)
+      res.serverError(jsonMessage('Error creating APIKey for user'))
       return
     }
   }

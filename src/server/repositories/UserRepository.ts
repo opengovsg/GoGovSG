@@ -36,6 +36,14 @@ export class UserRepository implements UserRepositoryInterface {
     this.urlMapper = urlMapper
   }
 
+  public findUserByApiKey: (
+    apiKeyHash: string,
+  ) => Promise<StorableUser | null> = async (apiKeyHash: string) => {
+    return this.userMapper.persistenceToDto(
+      await User.findOne({ where: { apiKeyHash } }),
+    )
+  }
+
   public findById: (userId: number) => Promise<StorableUser | null> = async (
     userId,
   ) => {
@@ -50,16 +58,14 @@ export class UserRepository implements UserRepositoryInterface {
     )
   }
 
-  public findOrCreateWithEmail: (email: string) => Promise<StorableUser> = (
-    email,
-  ) => {
-    return User.findOrCreate({ where: { email } }).then(([user, created]) => {
+  public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
+    async (email) => {
+      const [user, created] = await User.findOrCreate({ where: { email } })
       if (created) {
         dogstatsd.increment(USER_NEW, 1, 1)
       }
-      return user
-    })
-  }
+      return this.userMapper.persistenceToDto(user)
+    }
 
   public findOneUrlForUser: (
     userId: number,
@@ -113,6 +119,7 @@ export class UserRepository implements UserRepositoryInterface {
           conditions.orderBy,
           conditions.sortDirection,
         ],
+        ['shortUrl', 'asc'],
       ],
     })
     if (!urlsAndCount) {
@@ -158,6 +165,29 @@ export class UserRepository implements UserRepositoryInterface {
       whereConditions.isFile = conditions.isFile
     }
     return whereConditions
+  }
+
+  public saveApiKeyHash: (userId: number, apiKeyHash: string) => Promise<void> =
+    async (userId, apiKeyHash) => {
+      const user = await User.findOne({
+        where: { id: userId },
+      })
+      if (!user) {
+        throw new NotFoundError('User not found')
+      }
+      await user.update({
+        apiKeyHash,
+      })
+    }
+
+  public hasApiKey: (userId: number) => Promise<boolean> = async (userId) => {
+    const user = await User.findOne({
+      where: { id: userId },
+    })
+    if (!user) {
+      throw new NotFoundError('User not found')
+    }
+    return !!user.apiKeyHash
   }
 }
 

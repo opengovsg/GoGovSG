@@ -17,7 +17,7 @@ import assetVariant from '../../shared/util/asset-variant'
 import { GoGovReduxState } from '../app/reducers/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
-import { hmtlSanitizer } from '../app/util/format'
+import { htmlSanitizer } from '../app/util/format'
 import { USER_PAGE, VariantType, loginFormVariants } from '../app/util/types'
 import { get } from '../app/util/requests'
 import LoginForm from './components/LoginForm'
@@ -240,7 +240,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                       className={classes.loginHeader}
                       variant="body1"
                       dangerouslySetInnerHTML={{
-                        __html: hmtlSanitizer(
+                        __html: htmlSanitizer(
                           i18next.t('login.whitelistPhrase'),
                         ),
                       }}

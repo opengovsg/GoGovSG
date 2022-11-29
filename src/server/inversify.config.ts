@@ -29,6 +29,7 @@ import { TagRepository } from './repositories/TagRepository'
 import { JobRepository } from './modules/job/repositories/JobRepository'
 import { JobItemRepository } from './modules/job/repositories/JobItemRepository'
 import { UrlMapper } from './mappers/UrlMapper'
+import { UrlV1Mapper } from './mappers/UrlV1Mapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
 import { TagMapper } from './mappers/TagMapper'
@@ -59,6 +60,7 @@ import {
   LinkStatisticsService,
 } from './modules/analytics/services'
 import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
+import { ApiV1Controller } from './modules/api/external-v1'
 import { LinkAuditController } from './modules/audit'
 import { LinkAuditService } from './modules/audit/services'
 import { UrlHistoryRepository } from './modules/audit/repositories'
@@ -77,6 +79,8 @@ import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
 import TagManagementService from './modules/user/services/TagManagementService'
 import { JobManagementService } from './modules/job/services'
+import ApiKeyAuthService from './modules/user/services/ApiKeyAuthService'
+
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
 import { SQSService } from './services/sqs'
@@ -102,6 +106,7 @@ export default () => {
 
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
+  bindIfUnbound(DependencyIds.urlV1Mapper, UrlV1Mapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.tagMapper, TagMapper)
@@ -129,12 +134,14 @@ export default () => {
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)
   bindIfUnbound(DependencyIds.jobManagementService, JobManagementService)
+  bindIfUnbound(DependencyIds.apiKeyAuthService, ApiKeyAuthService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
   bindIfUnbound(DependencyIds.qrCodeController, QrCodeController)
   bindIfUnbound(DependencyIds.directorySearchService, DirectorySearchService)
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
+  bindIfUnbound(DependencyIds.apiV1Controller, ApiV1Controller)
 
   container
     .bind(DependencyIds.allowedFileExtensions)

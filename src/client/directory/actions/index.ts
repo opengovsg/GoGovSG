@@ -67,7 +67,7 @@ const getDirectoryResults =
       order,
       limit,
       offset,
-      state,
+      ...(state && { state }),
       isFile,
       isEmail,
     }

@@ -69,6 +69,7 @@ import { GoGovReduxState } from '../../app/reducers/types'
 import { MessageType } from '../../../shared/util/messages'
 import { GAEvent } from '../../app/util/ga'
 import { JobStatusEnum } from '../../../shared/util/jobs'
+import queryObjFromTableConfig from '../../app/helpers/urlQueryHelper'
 
 const setUrlUploadState: (payload: boolean) => SetUrlUploadStateAction = (
   payload,
@@ -395,29 +396,7 @@ const getUrlsForUser =
   ) => {
     const state = getState()
     const { tableConfig } = state.user
-    const {
-      isTag,
-      numberOfRows,
-      pageNumber,
-      sortDirection,
-      orderBy,
-      searchText,
-      filter: { state: urlState, isFile },
-    } = tableConfig
-    const offset = pageNumber * numberOfRows
-
-    const baseQueryObj = {
-      limit: numberOfRows,
-      offset,
-      orderBy,
-      sortDirection,
-      state: urlState,
-      isFile,
-    }
-    // Search by either tags or link search text
-    const queryObj = isTag
-      ? { ...baseQueryObj, tags: searchText }
-      : { ...baseQueryObj, searchText }
+    const queryObj = queryObjFromTableConfig(tableConfig)
 
     dispatch<IsFetchingUrlsAction>(isFetchingUrls(true))
     try {

@@ -1,7 +1,7 @@
 import * as Joi from '@hapi/joi'
 import { ACTIVE, INACTIVE } from '../../models/types'
-import blacklist from '../../resources/blacklist'
 import {
+  isBlacklisted,
   isHttps,
   isPrintableAscii,
   isValidShortUrl,
@@ -18,6 +18,10 @@ export const urlRetrievalSchema = Joi.object({
 })
 
 export const tagRetrievalSchema = Joi.object({
+  userId: Joi.number().required(),
+})
+
+export const hasApiKeySchema = Joi.object({
   userId: Joi.number().required(),
 })
 
@@ -41,7 +45,7 @@ export const userUrlsQueryConditions = Joi.object({
   orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
   sortDirection: Joi.string().valid('desc', 'asc').optional(),
   searchText: Joi.string().allow('').optional(),
-  state: Joi.string().allow('').optional(),
+  state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
   isFile: Joi.boolean().optional(),
   tags: tagSchema.max(5),
 })
@@ -76,7 +80,7 @@ export const urlSchema = Joi.object({
     if (!isHttps(url)) {
       return helpers.message({ custom: 'Long url must start with https://' })
     }
-    if (blacklist.some((bl) => url.includes(bl))) {
+    if (isBlacklisted(url)) {
       return helpers.message({
         custom: 'Creation of URLs to link shortener sites prohibited.',
       })
@@ -104,7 +108,7 @@ export const urlEditSchema = Joi.object({
     if (!isHttps(url)) {
       return helpers.message({ custom: 'Long url must start with https://' })
     }
-    if (blacklist.some((bl) => url.includes(bl))) {
+    if (isBlacklisted(url)) {
       return helpers.message({
         custom: 'Creation of URLs to link shortener sites prohibited.',
       })

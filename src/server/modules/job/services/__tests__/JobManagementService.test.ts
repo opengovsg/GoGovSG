@@ -30,6 +30,9 @@ const mockUserRepository = {
   findOneUrlForUser: jest.fn(),
   findUserByUrl: jest.fn(),
   findUrlsForUser: jest.fn(),
+  saveApiKeyHash: jest.fn(),
+  findUserByApiKey: jest.fn(),
+  hasApiKey: jest.fn(),
 }
 
 const mockMailer = {

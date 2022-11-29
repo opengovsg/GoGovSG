@@ -27,8 +27,7 @@ async function handler(event) {
   } catch (err) {
     console.log(err)
     pgClient.end()
-
-    statusMsg = `User links migration failed. ${err}`
+    throw Error(`User links migration failed. ${err}`)
   }
 
   return { Status: statusMsg }
