@@ -145,7 +145,7 @@ export class MailerNode implements Mailer {
       return Promise.resolve()
     }
 
-    const subject = `[${domainVariant}] Your QR code generation successful`
+    const subject = `[${domainVariant}] Your QR code generation is successful`
     const body = `Your QR code generation from csv is successful.
 
         <p>Download your PNG: ${downloadLinks.map(
