@@ -11,15 +11,3 @@ export enum StorableUrlSource {
   Api = 'API',
   Console = 'CONSOLE',
 }
-
-export enum JobItemStatusEnum {
-  InProgress = 'IN_PROGRESS',
-  Success = 'SUCCESS',
-  Failure = 'FAILURE',
-}
-
-export enum JobStatusEnum {
-  InProgress = 'IN_PROGRESS',
-  Success = 'SUCCESS',
-  Failure = 'FAILURE',
-}

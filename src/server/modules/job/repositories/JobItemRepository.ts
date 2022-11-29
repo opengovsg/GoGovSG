@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import { JobItem, JobItemType } from '../../../models/job'
 import * as interfaces from '../interfaces'
-import { JobItemStatusEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum } from '../../../../shared/util/jobs'
 import { NotFoundError } from '../../../util/error'
 
 @injectable()

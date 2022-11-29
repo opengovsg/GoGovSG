@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize'
 import { IdType } from '../../types/server/models'
-import { JobItemStatusEnum, JobStatusEnum } from '../repositories/enums'
+import { JobItemStatusEnum, JobStatusEnum } from '../../shared/util/jobs'
 import { sequelize } from '../util/sequelize'
 
 export interface JobType extends IdType, Sequelize.Model {

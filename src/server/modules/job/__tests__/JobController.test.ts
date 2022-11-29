@@ -3,7 +3,7 @@ import httpMocks from 'node-mocks-http'
 import _ from 'lodash'
 import express from 'express'
 
-import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum, JobStatusEnum } from '../../../../shared/util/jobs'
 import { NotFoundError } from '../../../util/error'
 import { JobInformation } from '../interfaces'
 import { UserType } from '../../../models/user'

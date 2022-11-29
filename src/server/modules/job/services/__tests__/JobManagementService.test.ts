@@ -2,7 +2,7 @@
 import {
   JobItemStatusEnum,
   JobStatusEnum,
-} from '../../../../repositories/enums'
+} from '../../../../../shared/util/jobs'
 import { NotFoundError } from '../../../../util/error'
 import { JobManagementService } from '..'
 import { JobInformation, JobItemCallbackStatus } from '../../interfaces'

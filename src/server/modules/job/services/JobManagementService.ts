@@ -3,7 +3,7 @@ import { NotFoundError } from '../../../util/error'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
 import { MailBody, Mailer } from '../../../services/email'
-import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
+import { JobItemStatusEnum, JobStatusEnum } from '../../../../shared/util/jobs'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
 import {

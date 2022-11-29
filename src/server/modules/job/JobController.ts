@@ -14,7 +14,7 @@ import dogstatsd, {
 } from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
-import { JobStatusEnum } from '../../repositories/enums'
+import { JobStatusEnum } from '../../../shared/util/jobs'
 import { logger, qrCodeJobBatchSize } from '../../config'
 import jsonMessage from '../../util/json'
 import { NotFoundError } from '../../util/error'

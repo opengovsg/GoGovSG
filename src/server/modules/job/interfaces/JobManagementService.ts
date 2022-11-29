@@ -1,5 +1,5 @@
 import { JobItemType, JobType } from '../../../models/job'
-import { JobStatusEnum } from '../../../repositories/enums'
+import { JobStatusEnum } from '../../../../shared/util/jobs'
 
 export interface JobItemCallbackStatus {
   isSuccess: boolean
