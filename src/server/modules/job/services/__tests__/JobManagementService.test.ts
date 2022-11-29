@@ -2,7 +2,7 @@
 import {
   JobItemStatusEnum,
   JobStatusEnum,
-} from '../../../../repositories/enums'
+} from '../../../../../shared/util/jobs'
 import { NotFoundError } from '../../../../util/error'
 import { JobManagementService } from '..'
 import { JobInformation, JobItemCallbackStatus } from '../../interfaces'
@@ -32,10 +32,18 @@ const mockUserRepository = {
   findUrlsForUser: jest.fn(),
 }
 
+const mockMailer = {
+  initMailer: jest.fn(),
+  mailOTP: jest.fn(),
+  mailJobFailure: jest.fn(),
+  mailJobSuccess: jest.fn(),
+}
+
 const service = new JobManagementService(
   mockJobRepository,
   mockJobItemRepository,
   mockUserRepository,
+  mockMailer,
 )
 
 describe('JobManagementService tests', () => {

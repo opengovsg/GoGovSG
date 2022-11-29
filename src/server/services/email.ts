@@ -27,7 +27,7 @@ export interface MailBody {
   to: string
   body: string
   subject: string
-  senderDomain: SenderDomain
+  senderDomain?: SenderDomain
 }
 
 let transporter: nodemailer.Transport
@@ -38,6 +38,8 @@ export interface Mailer {
    * Sends email to SES / MailDev to send out. Falls back to Postman.
    */
   mailOTP(email: string, otp: string, ip: string): Promise<void>
+  mailJobSuccess(email: string, downloadLinks: string[]): Promise<void>
+  mailJobFailure(email: string): Promise<void>
 }
 
 @injectable()
@@ -102,7 +104,11 @@ export class MailerNode implements Mailer {
     })
   }
 
-  sendMail(mailBody: MailBody): Promise<void> {
+  sendMail(mail: MailBody): Promise<void> {
+    const mailBody: MailBody = {
+      ...mail,
+      senderDomain: mail.senderDomain || domainVariant,
+    }
     if (activatePostmanFallback) {
       logger.info(`Sending Postman mail`)
       return this.sendPostmanMail(mailBody)
@@ -128,9 +134,59 @@ export class MailerNode implements Mailer {
       to: email,
       subject: `One-Time Password (OTP) for ${domainVariant}`,
       body: emailHTML,
-      senderDomain: domainVariant,
     }
 
+    return this.sendMail(mailBody)
+  }
+
+  mailJobSuccess(email: string, downloadLinks: string[]): Promise<void> {
+    if (!email || !downloadLinks) {
+      logger.error('Email or download links not specified')
+      return Promise.resolve()
+    }
+
+    const subject = `QR code generation for ${domainVariant} is successful`
+    const body = `QR code generation from your file was successful.
+
+        <p>Download your CSV: ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/generated.csv" target="_blank">here </a>`,
+        )}</p> 
+        <p>Download your PNG: ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/generated_png.zip" target="_blank">here </a>`,
+        )}</p>
+        <p>Download your SVG: ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/generated_svg.zip" target="_blank">here </a>`,
+        )}</p>
+      `
+
+    const mailBody: MailBody = {
+      to: email,
+      body,
+      subject,
+    }
+    return this.sendMail(mailBody)
+  }
+
+  mailJobFailure(email: string): Promise<void> {
+    if (!email) {
+      logger.error('Email not specified')
+      return Promise.resolve()
+    }
+
+    const subject = `QR code generation for ${domainVariant} is successful`
+    const body = `QR code generation from your file failed.
+        
+        <p>Please <a href="https://${domainVariant}/#/login" target="_blank">login</a> to try again.</p> 
+      `
+
+    const mailBody: MailBody = {
+      to: email,
+      body,
+      subject,
+    }
     return this.sendMail(mailBody)
   }
 }

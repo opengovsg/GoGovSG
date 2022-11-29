@@ -1,5 +1,5 @@
 import { JobItemType, JobType } from '../../../models/job'
-import { JobStatusEnum } from '../../../repositories/enums'
+import { JobStatusEnum } from '../../../../shared/util/jobs'
 
 export interface JobItemCallbackStatus {
   isSuccess: boolean
@@ -27,4 +27,5 @@ export interface JobManagementService {
   getJobInformation(jobId: number): Promise<JobInformation>
   getLatestJobForUser(userId: number): Promise<JobInformation>
   pollJobStatusUpdate(userId: number, jobId: number): Promise<JobInformation>
+  sendJobCompletionEmail(jobId: number): Promise<void>
 }

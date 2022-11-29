@@ -2,9 +2,19 @@ import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
 import { DependencyIds } from '../../constants'
-import dogstatsd from '../../util/dogstatsd'
+import dogstatsd, {
+  JOB_EMAIL_FAILURE,
+  JOB_EMAIL_SUCCESS,
+  JOB_ITEM_UPDATE_FAILURE,
+  JOB_ITEM_UPDATE_SUCCESS,
+  JOB_START_FAILURE,
+  JOB_START_SUCCESS,
+  JOB_UPDATE_FAILURE,
+  JOB_UPDATE_SUCCESS,
+} from '../../util/dogstatsd'
 import { SQSServiceInterface } from '../../services/sqs'
 import { JobManagementService } from './interfaces'
+import { JobStatusEnum } from '../../../shared/util/jobs'
 import { logger, qrCodeJobBatchSize } from '../../config'
 import jsonMessage from '../../util/json'
 import { NotFoundError } from '../../util/error'
@@ -51,11 +61,11 @@ export class JobController {
             return
           }),
         )
-        dogstatsd.increment('job.start.success', 1, 1)
+        dogstatsd.increment(JOB_START_SUCCESS, 1, 1)
         res.ok({ count: jobParamsList.length, job })
       } catch (error) {
         logger.error(`error creating and starting job: ${error}`)
-        dogstatsd.increment('job.start.failure', 1, 1)
+        dogstatsd.increment(JOB_START_FAILURE, 1, 1)
         // created links but failed to create and start job
         res.serverError({ count: jobParamsList.length })
       }
@@ -75,11 +85,11 @@ export class JobController {
       )
       // add jobId to req.body so that downstream controllers can access it
       req.body.jobId = jobItem.jobId
-      dogstatsd.increment('jobItem.update.success', 1, 1)
+      dogstatsd.increment(JOB_ITEM_UPDATE_SUCCESS, 1, 1)
       res.ok(jsonMessage('successfully updated'))
     } catch (error) {
-      dogstatsd.increment('jobItem.update.failure', 1, 1)
-      logger.error(`error updating job ${jobItemId}: ${error}`)
+      dogstatsd.increment(JOB_ITEM_UPDATE_FAILURE, 1, 1)
+      logger.error(`error updating job item ${jobItemId}: ${error}`)
       res.status(404).send(jsonMessage(error.message))
       return
     }
@@ -89,11 +99,20 @@ export class JobController {
   public updateJob: (req: Request) => Promise<void> = async (req) => {
     const { jobId } = req.body
     try {
-      await this.jobManagementService.updateJobStatus(jobId)
-      dogstatsd.increment('job.update.success', 1, 1)
+      const job = await this.jobManagementService.updateJobStatus(jobId)
+      dogstatsd.increment(JOB_UPDATE_SUCCESS, 1, 1)
+      if (job.status === JobStatusEnum.InProgress) return
     } catch (error) {
-      dogstatsd.increment('job.update.failure', 1, 1)
+      dogstatsd.increment(JOB_UPDATE_FAILURE, 1, 1)
       logger.error(`error updating job ${jobId}: ${error}`)
+      return
+    }
+
+    try {
+      await this.jobManagementService.sendJobCompletionEmail(jobId)
+      dogstatsd.increment(JOB_EMAIL_SUCCESS, 1, 1)
+    } catch (error) {
+      dogstatsd.increment(JOB_EMAIL_FAILURE, 1, 1)
     }
     return
   }

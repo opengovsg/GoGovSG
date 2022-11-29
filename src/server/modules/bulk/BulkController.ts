@@ -7,6 +7,7 @@ import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd from '../../util/dogstatsd'
 import { logger, shouldGenerateQRCodes } from '../../config'
+import { MessageType } from '../../../shared/util/messages'
 
 @injectable()
 export class BulkController {
@@ -35,14 +36,14 @@ export class BulkController {
       return
     }
 
-    const schema = this.bulkService.parseCsv(file)
-    if (!schema.isValid) {
-      res.badRequest(jsonMessage(schema.errorMessage))
+    try {
+      const longUrls = await this.bulkService.parseCsv(file)
+      req.body.longUrls = longUrls
+      next()
+    } catch (error) {
+      res.badRequest(jsonMessage(error.message, MessageType.FileUploadError))
       return
     }
-    // put longUrls on the req body so that it can be used by other controllers
-    req.body.longUrls = schema.longUrls
-    next()
   }
 
   public bulkCreate: (

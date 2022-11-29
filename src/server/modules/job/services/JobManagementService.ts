@@ -2,12 +2,14 @@ import { inject, injectable } from 'inversify'
 import { NotFoundError } from '../../../util/error'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
-import { JobItemStatusEnum, JobStatusEnum } from '../../../repositories/enums'
+import { Mailer } from '../../../services/email'
+import { JobItemStatusEnum, JobStatusEnum } from '../../../../shared/util/jobs'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
 import {
   jobPollAttempts,
   jobPollInterval,
+  logger,
   qrCodeBucketUrl,
 } from '../../../config'
 
@@ -19,6 +21,8 @@ export class JobManagementService implements interfaces.JobManagementService {
 
   private userRepository: UserRepositoryInterface
 
+  private mailer: Mailer
+
   constructor(
     @inject(DependencyIds.jobRepository)
     jobRepository: interfaces.JobRepository,
@@ -26,10 +30,13 @@ export class JobManagementService implements interfaces.JobManagementService {
     jobItemRepository: interfaces.JobItemRepository,
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
+    @inject(DependencyIds.mailer)
+    mailer: Mailer,
   ) {
     this.jobRepository = jobRepository
     this.jobItemRepository = jobItemRepository
     this.userRepository = userRepository
+    this.mailer = mailer
   }
 
   createJob: (userId: number) => Promise<JobType> = async (userId) => {
@@ -168,6 +175,29 @@ export class JobManagementService implements interfaces.JobManagementService {
       attempts += 1
     }
     return new Promise(executePoll)
+  }
+
+  sendJobCompletionEmail: (jobId: number) => Promise<void> = async (jobId) => {
+    const { job, jobItemUrls } = await this.getJobInformation(jobId)
+
+    const user = await this.userRepository.findById(job.userId)
+    if (!user) {
+      throw new NotFoundError(`user not found for jobId ${jobId}`)
+    }
+
+    try {
+      if (job.status === JobStatusEnum.Success) {
+        await this.mailer.mailJobSuccess(user.email, jobItemUrls)
+      }
+      if (job.status === JobStatusEnum.Failure) {
+        await this.mailer.mailJobFailure(user.email)
+      }
+    } catch (error) {
+      logger.error(
+        `Error mailing job id ${jobId} completion email to ${user.email}: ${error}`,
+      )
+      throw new Error('Error mailing job completion email.')
+    }
   }
 }
 
