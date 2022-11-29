@@ -35,7 +35,8 @@ const mockUserRepository = {
 const mockMailer = {
   initMailer: jest.fn(),
   mailOTP: jest.fn(),
-  sendMail: jest.fn(),
+  mailJobFailure: jest.fn(),
+  mailJobSuccess: jest.fn(),
 }
 
 const service = new JobManagementService(

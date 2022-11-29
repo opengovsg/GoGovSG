@@ -1,11 +1,11 @@
 /* eslint-disable max-classes-per-file, class-methods-use-this */
 
 import { injectable } from 'inversify'
-import { MailBody, Mailer } from '../../../../src/server/services/email'
+import { Mailer } from '../../../../src/server/services/email'
 
 @injectable()
 export class MailerMock implements Mailer {
-  mailsSent: { email: string; otp: string }[] = []
+  mailsSent: any[] = []
 
   initMailer() {}
 
@@ -14,8 +14,13 @@ export class MailerMock implements Mailer {
     return Promise.resolve()
   }
 
-  sendMail = (mail: MailBody): Promise<void> => {
-    console.log(mail)
+  mailJobSuccess(email: string, downloadLinks: string[]): Promise<void> {
+    this.mailsSent.push({ email, downloadLinks })
+    return Promise.resolve()
+  }
+
+  mailJobFailure(email: string): Promise<void> {
+    this.mailsSent.push({ email })
     return Promise.resolve()
   }
 }
@@ -28,7 +33,11 @@ export class MailerMockDown implements Mailer {
     return Promise.reject(Error('Unable to send OTP'))
   }
 
-  sendMail(_: MailBody): Promise<void> {
+  mailJobSuccess(_: string, __: string[]): Promise<void> {
+    return Promise.reject()
+  }
+
+  mailJobFailure(_: string): Promise<void> {
     return Promise.reject()
   }
 }

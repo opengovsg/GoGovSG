@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { NotFoundError } from '../../../util/error'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
-import { MailBody, Mailer } from '../../../services/email'
+import { Mailer } from '../../../services/email'
 import { JobItemStatusEnum, JobStatusEnum } from '../../../../shared/util/jobs'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
@@ -184,40 +184,14 @@ export class JobManagementService implements interfaces.JobManagementService {
     if (!user) {
       throw new NotFoundError(`user not found for jobId ${jobId}`)
     }
-    let subject: string = ''
-    let body: string = ''
-    if (job.status === JobStatusEnum.Success) {
-      subject = 'QR code generation from your file is successful'
-      body = `QR code generation from your file was successful.
 
-        <p>Download your CSV: ${jobItemUrls.map(
-          (jobItemUrl) =>
-            `<a href="${jobItemUrl}/generated.csv" target="_blank">here </a>`,
-        )}</p> 
-        <p>Download your PNG: ${jobItemUrls.map(
-          (jobItemUrl) =>
-            `<a href="${jobItemUrl}/generated_png.zip" target="_blank">here </a>`,
-        )}</p>
-        <p>Download your SVG: ${jobItemUrls.map(
-          (jobItemUrl) =>
-            `<a href="${jobItemUrl}/generated_svg.zip" target="_blank">here </a>`,
-        )}</p>
-      `
-    }
-    if (job.status === JobStatusEnum.Failure) {
-      subject = 'QR code generation from your file failed'
-      body = `QR code generation from your file failed.
-        
-        <p>Please log in to try again.</p> 
-      `
-    }
     try {
-      const mailBody: MailBody = {
-        to: user.email,
-        body,
-        subject,
+      if (job.status === JobStatusEnum.Success) {
+        await this.mailer.mailJobSuccess(user.email, jobItemUrls)
       }
-      await this.mailer.sendMail(mailBody)
+      if (job.status === JobStatusEnum.Failure) {
+        await this.mailer.mailJobFailure(user.email)
+      }
     } catch (error) {
       logger.error(
         `Error mailing job id ${jobId} completion email to ${user.email}: ${error}`,
