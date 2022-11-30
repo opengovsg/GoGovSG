@@ -5,7 +5,7 @@ import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { API_KEY_SEPARATOR, DependencyIds } from '../../../constants'
 import { StorableUser } from '../../../repositories/types'
-import { apiEnv, apiKeySalt, apiKeyVersion } from '../../../config'
+import { apiAdmin, apiEnv, apiKeySalt, apiKeyVersion } from '../../../config'
 
 const BASE64_ENCODING = 'base64'
 @injectable()
@@ -33,6 +33,12 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   ) => {
     const apiKeyHash = await ApiKeyAuthService.getApiKeyHash(apiKey)
     return this.userRepository.findUserByApiKey(apiKeyHash)
+  }
+
+  isAdmin: (userId: number) => Promise<boolean> = async (userId: number) => {
+    const user = await this.userRepository.findById(userId)
+    if (!user) return false
+    return apiAdmin === user.email
   }
 
   hasApiKey: (userId: number) => Promise<boolean> = async (userId: number) => {

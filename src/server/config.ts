@@ -255,7 +255,6 @@ export const qrCodeJobBatchSize: number =
 export const qrCodeBucketUrl: string = process.env.BULK_QR_CODE_BUCKET_URL || ''
 export const shouldGenerateQRCodes: boolean =
   process.env.ACTIVATE_BULK_QR_CODE_GENERATION === 'true'
-export const lambdaHashSecret: string = process.env.LAMBDA_HASH_SECRET as string
 export const jobPollInterval: number =
   Number(process.env.JOB_POLL_INTERVAL) || 5000 // in ms
 export const jobPollAttempts: number =
@@ -268,3 +267,4 @@ export const apiKeySalt = process.env.API_KEY_SALT as string
 export const apiLinkRandomStrLength: number =
   Number(process.env.API_LINK_RANDOM_STR_LENGTH) || 8
 export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
+export const apiAdmin: string = process.env.ADMIN_API_EMAIL || ''

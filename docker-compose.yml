@@ -56,7 +56,6 @@ services:
       - SQS_TIMEOUT=10000
       - SQS_REGION=
       - BULK_QR_CODE_BATCH_SIZE=1000
-      - LAMBDA_HASH_SECRET=
       - ACTIVATE_BULK_QR_CODE_GENERATION=false
       - JOB_POLL_ATTEMPTS=12
       - JOB_POLL_INTERVAL=5000
@@ -64,6 +63,7 @@ services:
       - API_LINK_RANDOM_STR_LENGTH=8
       - API_KEY_SALT=$$2b$$10$$9rBKuE4Gb5ravnvP4xjoPu
       - FF_EXTERNAL_API=true
+      - ADMIN_API_EMAIL=
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
