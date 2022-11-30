@@ -18,6 +18,8 @@ const baseUserId = 1
 describe('ApiKeyAuthService', () => {
   beforeEach(() => {
     userRepository.saveApiKeyHash.mockReset()
+    userRepository.findUserByApiKey.mockReset()
+    userRepository.hasApiKey.mockReset()
   })
   it('createApiKey should call userRepository.saveApiKeyHash', async () => {
     await apiAuthService.upsertApiKey(baseUserId)

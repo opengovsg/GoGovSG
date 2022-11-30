@@ -2,6 +2,10 @@ import { inject, injectable } from 'inversify'
 import bcrypt from 'bcrypt'
 import _crypto from 'crypto'
 import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface'
+import dogstatsd, {
+  API_KEY_GENERATE,
+  API_KEY_GENERATE_TAG_IS_NEW,
+} from '../../../util/dogstatsd'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { API_KEY_SEPARATOR, DependencyIds } from '../../../constants'
 import { StorableUser } from '../../../repositories/types'
@@ -24,7 +28,11 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   ) => {
     const apiKey = ApiKeyAuthService.generateApiKey()
     const apiKeyHash = await ApiKeyAuthService.getApiKeyHash(apiKey)
+    const isNewApiKey = !(await this.userRepository.hasApiKey(userId))
     await this.userRepository.saveApiKeyHash(userId, apiKeyHash)
+    dogstatsd.increment(API_KEY_GENERATE, 1, 1, [
+      `${API_KEY_GENERATE_TAG_IS_NEW}:${isNewApiKey}`,
+    ])
     return apiKey
   }
 
