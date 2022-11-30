@@ -435,13 +435,11 @@ describe('UserController', () => {
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith({
         limit: 1000,
         offset: 0,
-        orderBy: 'updatedAt',
+        orderBy: 'createdAt',
         sortDirection: 'desc',
-        searchText: '',
         userId: 1,
         state: undefined,
         isFile: undefined,
-        tags: [],
       })
     })
 
@@ -481,7 +479,6 @@ describe('UserController', () => {
         userId,
         state,
         isFile: undefined,
-        tags: [],
       })
     })
 
@@ -532,7 +529,7 @@ describe('UserController', () => {
       await controller.getUrlsWithConditions(req, res)
       expect(res.ok).toHaveBeenCalledWith(result)
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
-        expect.objectContaining({ isFile: false, tags: [] }),
+        expect.objectContaining({ isFile: false }),
       )
     })
 
