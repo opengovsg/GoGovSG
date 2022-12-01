@@ -145,14 +145,14 @@ export class MailerNode implements Mailer {
       return Promise.resolve()
     }
 
-    const subject = `[${domainVariant}] Your QR code generation is successful`
-    const body = `Your QR code generation from csv is successful.
+    const subject = `[${domainVariant}] QR code generation for your links is successful`
+    const body = `Your links have been successfully generated from your csv file.
 
-        <p>Download your PNG: ${downloadLinks.map(
+        <p>Download QR codes for your links (PNG): ${downloadLinks.map(
           (downloadLink) =>
             `<a href="${downloadLink}/generated_png.zip" target="_blank">here </a>`,
         )}</p>
-        <p>Download your SVG: ${downloadLinks.map(
+        <p>Download QR codes for your links (SVG): ${downloadLinks.map(
           (downloadLink) =>
             `<a href="${downloadLink}/generated_svg.zip" target="_blank">here </a>`,
         )}</p>
@@ -172,9 +172,9 @@ export class MailerNode implements Mailer {
       return Promise.resolve()
     }
 
-    const subject = `[${domainVariant}] Your QR code generation failed`
-    const body = `Your bulk generation of your QR codes zip failed.
-        
+    const subject = `[${domainVariant}] QR code generation for your links has failed`
+    const body = `Bulk generation of QR codes from your csv file has failed.
+
         <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p> 
       `
 
