@@ -16,5 +16,27 @@ if [ "$KEY_ID" != "" -a "$KEY_ID" != "," -a "$KEY" != "" ]; then
     exit 1
 fi
 
+gitguardian_secrets_check() {
+  if !(command -v ggshield &> /dev/null); then
+    echo "Skipping GitGuardian check for secrets as ggshield is not installed."
+    return 0
+  fi
+
+  [ -e .env ] && export $(cat .env | xargs)
+  if [ -z "${GITGUARDIAN_API_KEY}" ]; then
+    echo "Skipping GitGuardian check for secrets as GitGuardian API key is not configured."
+    return 0
+  fi
+
+  ggshield secret scan pre-commit
+}
+
+# Check changed files for secrets using GitGuardian
+gitguardian_secrets_check
+exit_status=$?
+if [ $exit_status -ne 0 ]; then
+  exit $exit_status
+fi
+
 # Normal exit
 exit 0
