@@ -80,7 +80,7 @@ async function apiKeyAdminAuthMiddleware(
   const { userId } = req.body
   const isAdmin = await apiKeyAuthService.isAdmin(userId)
   if (!isAdmin) {
-    res.unauthorized()
+    res.unauthorized('User is unauthorized')
     return
   }
   next()
