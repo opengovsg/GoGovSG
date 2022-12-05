@@ -19,6 +19,7 @@ import {
   longUrlTextField,
   mobileCreateLinkButton,
   shortUrlTextField,
+  successUrlCreation,
   uploadFile,
 } from './helpers'
 
@@ -155,7 +156,11 @@ export const linkCreationProcedure = async (t) => {
     .click(fileTab)
     .setFilesToUpload(uploadFile, dummyRelativePath)
     .click(createLinkButton.nth(2))
-    .wait(4000)
+
+  await t
+    // It should show an success snackbar when a new url has been added
+    .expect(successUrlCreation.exists)
+    .ok()
 
   await deleteFile(dummyFilePath)
 
