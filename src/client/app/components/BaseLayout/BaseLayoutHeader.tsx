@@ -159,6 +159,18 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       internalLink: true,
     },
     {
+      text: 'Send us feedback',
+      link: i18next.t('general.links.feedback'),
+      public: true,
+      icon: feedbackIcon,
+    },
+    {
+      text: 'FAQ',
+      link: i18next.t('general.links.faq'),
+      public: true,
+      icon: helpIcon,
+    },
+    {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,

@@ -73,11 +73,16 @@ const useStyles = makeStyles((theme) =>
         minHeight: '200px',
       },
     },
-    learnMoreButton: {
-      height: '44px',
-      width: '150px',
+    ctaButton: {
+      height: '52px',
+      width: '25%',
       // Creates the half in colour-fill, half outside it effect.
-      marginTop: 'calc(-44px / 2)',
+      marginTop: 'calc(-52px / 2)',
+      backgroundColor: '#DC8B47',
+      color: '#FFF',
+      '&:hover': {
+        backgroundColor: '#ca7126',
+      },
     },
     signInTextContainer: {
       display: 'flex',
@@ -156,17 +161,11 @@ const LandingGraphicSliver = () => {
         <Hidden mdDown>
           <ApplyAppMargins>
             <Button
-              className={classes.learnMoreButton}
-              variant="outlined"
-              color="primary"
-              size="large"
-              onClick={() =>
-                document
-                  .getElementById('landing-description')
-                  ?.scrollIntoView({ behavior: 'smooth' })
-              }
+              className={classes.ctaButton}
+              variant="contained"
+              href="/#/login"
             >
-              Learn more
+              Shorten your links now
             </Button>
           </ApplyAppMargins>
         </Hidden>
