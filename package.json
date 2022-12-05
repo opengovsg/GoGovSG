@@ -20,7 +20,7 @@
     "dev": "docker-compose -f docker-compose.yml up --build",
     "test": "jest --collectCoverage",
     "test:ci": "jest --coverage && coveralls < coverage/lcov.info",
-    "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000",
+    "test:e2e": "testcafe chrome ./test/end-to-end --app \"npm run dev\" --app-init-delay 270000 --video artifacts/videos",
     "cz": "git-cz",
     "prepare": "husky install"
   },
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@datadog/browser-rum": "^4.15.0",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@hapi/joi": "^17.1.1",
     "@material-ui/core": "^4.11.4",
     "@material-ui/lab": "^4.0.0-alpha.61",
