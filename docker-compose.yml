@@ -82,7 +82,7 @@ services:
     ports:
       - '6379:6379'
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:1.2
     container_name: gogovsg-localstack
     ports:
       - '4566:4566'
