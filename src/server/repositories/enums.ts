@@ -11,5 +11,3 @@ export enum StorableUrlSource {
   Api = 'API',
   Console = 'CONSOLE',
 }
-
-export default { StorableUrlState, StorableUrlSource }
