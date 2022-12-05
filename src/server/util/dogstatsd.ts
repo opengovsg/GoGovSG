@@ -1,6 +1,8 @@
 import { StatsD } from 'hot-shots'
 import { DEV_ENV } from '../config'
 
+export const API_KEY_GENERATE = 'apikey.generate'
+export const API_KEY_GENERATE_TAG_IS_NEW = 'isnew'
 export const MALICIOUS_ACTIVITY_FILE = 'malicious_activity.file'
 export const MALICIOUS_ACTIVITY_LINK = 'malicious_activity.link'
 export const OTP_GENERATE_FAILURE = 'otp.generate.failure'
