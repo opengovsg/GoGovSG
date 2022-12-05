@@ -155,6 +155,7 @@ export const linkCreationProcedure = async (t) => {
     .click(fileTab)
     .setFilesToUpload(uploadFile, dummyRelativePath)
     .click(createLinkButton.nth(2))
+    .wait(4000)
 
   await deleteFile(dummyFilePath)
 
