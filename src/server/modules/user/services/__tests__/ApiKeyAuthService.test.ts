@@ -42,4 +42,9 @@ describe('ApiKeyAuthService', () => {
     expect(userRepository.hasApiKey).toHaveBeenCalledTimes(1)
     expect(userRepository.hasApiKey).toHaveBeenCalledWith(baseUserId)
   })
+  it('isAdmin should call userRepository.findById', async () => {
+    await apiAuthService.isAdmin(baseUserId)
+    expect(userRepository.findById).toHaveBeenCalledTimes(1)
+    expect(userRepository.findById).toHaveBeenCalledWith(baseUserId)
+  })
 })

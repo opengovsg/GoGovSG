@@ -11,6 +11,8 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  sqsRegion,
+  sqsTimeout,
   userAnnouncement,
   userMessage,
 } from './config'
@@ -24,6 +26,8 @@ import { S3ServerSide } from './services/aws'
 import { UrlRepository } from './repositories/UrlRepository'
 import { UserRepository } from './repositories/UserRepository'
 import { TagRepository } from './repositories/TagRepository'
+import { JobRepository } from './modules/job/repositories/JobRepository'
+import { JobItemRepository } from './modules/job/repositories/JobItemRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UrlV1Mapper } from './mappers/UrlV1Mapper'
 import { UserMapper } from './mappers/UserMapper'
@@ -74,10 +78,13 @@ import { FileCheckController, UrlCheckController } from './modules/threat'
 import { QrCodeService } from './modules/qr/services'
 import { QrCodeController } from './modules/qr'
 import TagManagementService from './modules/user/services/TagManagementService'
+import { JobManagementService } from './modules/job/services'
 import ApiKeyAuthService from './modules/user/services/ApiKeyAuthService'
 
 import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
+import { SQSService } from './services/sqs'
+import { JobController } from './modules/job'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -108,6 +115,9 @@ export default () => {
   bindIfUnbound(DependencyIds.otpRepository, OtpRepository)
   bindIfUnbound(DependencyIds.userRepository, UserRepository)
   bindIfUnbound(DependencyIds.tagRepository, TagRepository)
+  bindIfUnbound(DependencyIds.jobRepository, JobRepository)
+  bindIfUnbound(DependencyIds.jobItemRepository, JobItemRepository)
+  bindIfUnbound(DependencyIds.jobController, JobController)
   bindIfUnbound(DependencyIds.cryptography, CryptographyBcrypt)
   bindIfUnbound(DependencyIds.redirectController, RedirectController)
   bindIfUnbound(DependencyIds.gaController, GaController)
@@ -123,6 +133,7 @@ export default () => {
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)
+  bindIfUnbound(DependencyIds.jobManagementService, JobManagementService)
   bindIfUnbound(DependencyIds.apiKeyAuthService, ApiKeyAuthService)
   bindIfUnbound(DependencyIds.userController, UserController)
   bindIfUnbound(DependencyIds.qrCodeService, QrCodeService)
@@ -188,10 +199,28 @@ export default () => {
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
+
+    container.bind(DependencyIds.sqsClient).toConstantValue(
+      new AWS.SQS({
+        region: sqsRegion,
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
+      }),
+    )
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
+    container.bind(DependencyIds.sqsClient).toConstantValue(
+      new AWS.SQS({
+        region: sqsRegion,
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
+      }),
+    )
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
+  bindIfUnbound(DependencyIds.sqsService, SQSService)
 }

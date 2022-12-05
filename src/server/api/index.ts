@@ -70,6 +70,23 @@ async function apiKeyAuthMiddleware(
 }
 
 /**
+ * To add guard for admin-user only api routes.
+ * */
+async function apiKeyAdminAuthMiddleware(
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+) {
+  const { userId } = req.body
+  const isAdmin = await apiKeyAuthService.isAdmin(userId)
+  if (!isAdmin) {
+    res.unauthorized('User is unauthorized')
+    return
+  }
+  next()
+}
+
+/**
  *  Preprocess request parameters.
  * */
 function preprocess(
@@ -90,6 +107,13 @@ router.use('/qrcode', userGuard, require('./qrcode'))
 router.use('/link-stats', userGuard, require('./link-statistics'))
 router.use('/link-audit', userGuard, require('./link-audit'))
 router.use('/directory', userGuard, require('./directory'))
+
+router.use(
+  '/callback',
+  apiKeyAuthMiddleware,
+  apiKeyAdminAuthMiddleware,
+  require('./callback'),
+)
 
 /* Register APIKey protected endpoints */
 if (ffExternalApi) {
