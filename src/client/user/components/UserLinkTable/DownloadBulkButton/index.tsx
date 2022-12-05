@@ -3,21 +3,18 @@ import React from 'react'
 import * as Sentry from '@sentry/react'
 import { GAEvent } from '../../../../app/util/ga'
 import { DropdownButton, DropdownOption } from '../../../widgets/DropdownButton'
+import {
+  BULK_QR_DOWNLOAD_FORMATS,
+  BULK_QR_DOWNLOAD_MAPPINGS,
+} from '../../../../../shared/constants'
 
-type DownloadFormats = 'csv' | 'png' | 'svg'
-
-type DownloadPathMap = { [format in DownloadFormats]: string }
-
-const downloadPaths: DownloadPathMap = {
-  csv: 'generated.csv',
-  png: 'generated_png.zip',
-  svg: 'generated_svg.zip',
-}
-
-function downloadFileFromS3(format: DownloadFormats, bulkCsvIds: string[]) {
+function downloadFileFromS3(
+  format: BULK_QR_DOWNLOAD_FORMATS,
+  bulkCsvIds: string[],
+) {
   bulkCsvIds.forEach((bulkCsvId) => {
     try {
-      window.open(`${bulkCsvId}/${downloadPaths[format]}`)
+      window.open(`${bulkCsvId}/${BULK_QR_DOWNLOAD_MAPPINGS[format]}`)
       GAEvent(`qr code bulk download`, format, 'successful')
     } catch (e) {
       Sentry.captureMessage(`qr code bulk download for ${format} unsuccessful`)
@@ -31,22 +28,25 @@ const DownloadBulkButton = ({ bulkCsvIds }: { bulkCsvIds: string[] }) => {
     {
       name: 'Download all',
       onClick: () => {
-        downloadFileFromS3('csv', bulkCsvIds)
-        downloadFileFromS3('png', bulkCsvIds)
-        downloadFileFromS3('svg', bulkCsvIds)
+        downloadFileFromS3(BULK_QR_DOWNLOAD_FORMATS.CSV, bulkCsvIds)
+        downloadFileFromS3(BULK_QR_DOWNLOAD_FORMATS.PNG, bulkCsvIds)
+        downloadFileFromS3(BULK_QR_DOWNLOAD_FORMATS.SVG, bulkCsvIds)
       },
     },
     {
       name: 'Links (CSV File)',
-      onClick: () => downloadFileFromS3('csv', bulkCsvIds),
+      onClick: () =>
+        downloadFileFromS3(BULK_QR_DOWNLOAD_FORMATS.CSV, bulkCsvIds),
     },
     {
       name: 'QR Codes (PNG)',
-      onClick: () => downloadFileFromS3('png', bulkCsvIds),
+      onClick: () =>
+        downloadFileFromS3(BULK_QR_DOWNLOAD_FORMATS.PNG, bulkCsvIds),
     },
     {
       name: 'QR Codes (SVG)',
-      onClick: () => downloadFileFromS3('svg', bulkCsvIds),
+      onClick: () =>
+        downloadFileFromS3(BULK_QR_DOWNLOAD_FORMATS.SVG, bulkCsvIds),
     },
   ]
 

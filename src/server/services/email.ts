@@ -14,6 +14,10 @@ import {
   postmanApiUrl,
   transporterOptions,
 } from '../config'
+import {
+  BULK_QR_DOWNLOAD_FORMATS,
+  BULK_QR_DOWNLOAD_MAPPINGS,
+} from '../../shared/constants'
 
 const domainVariantMap = {
   gov: 'go.gov.sg',
@@ -150,11 +154,15 @@ export class MailerNode implements Mailer {
 
         <p>Download QR codes for your links (PNG): ${downloadLinks.map(
           (downloadLink) =>
-            `<a href="${downloadLink}/generated_png.zip" target="_blank">here </a>`,
+            `<a href="${downloadLink}/${
+              BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.PNG]
+            }" target="_blank">here </a>`,
         )}</p>
         <p>Download QR codes for your links (SVG): ${downloadLinks.map(
           (downloadLink) =>
-            `<a href="${downloadLink}/generated_svg.zip" target="_blank">here </a>`,
+            `<a href="${downloadLink}/${
+              BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.SVG]
+            }" target="_blank">here </a>`,
         )}</p>
       `
 
