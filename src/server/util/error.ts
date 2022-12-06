@@ -8,6 +8,14 @@ export class NotFoundError extends Error {
   }
 }
 
+export class InvalidUrlUpdateError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'InvalidUrlUpdateError'
+    Object.setPrototypeOf(this, InvalidUrlUpdateError.prototype)
+  }
+}
+
 export class InvalidOtpError extends Error {
   public retries: number
 

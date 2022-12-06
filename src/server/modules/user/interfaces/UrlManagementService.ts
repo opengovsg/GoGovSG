@@ -1,3 +1,4 @@
+import { StorableUrlSource } from '../../../repositories/enums'
 import {
   BulkUrlMapping,
   StorableUrl,
@@ -14,7 +15,8 @@ export interface UrlManagementService {
   ) => Promise<void>
   createUrl: (
     userId: number,
-    shortUrl: string,
+    source: StorableUrlSource.Console | StorableUrlSource.Api,
+    shortUrl?: string,
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],

@@ -65,6 +65,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     properties: {
       userId: number
       shortUrl: string
+      source: StorableUrlSource.Console | StorableUrlSource.Api
       longUrl?: string
       tags?: string[]
     },
@@ -81,7 +82,6 @@ export class UrlRepository implements UrlRepositoryInterface {
           : properties.longUrl,
         isFile: !!file,
         tagStrings,
-        source: StorableUrlSource.Console,
       }
       const url = await Url.create(urlStaticDTO, {
         transaction: t,
