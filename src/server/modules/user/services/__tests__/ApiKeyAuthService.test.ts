@@ -18,6 +18,8 @@ const baseUserId = 1
 describe('ApiKeyAuthService', () => {
   beforeEach(() => {
     userRepository.saveApiKeyHash.mockReset()
+    userRepository.findUserByApiKey.mockReset()
+    userRepository.hasApiKey.mockReset()
   })
   it('createApiKey should call userRepository.saveApiKeyHash', async () => {
     await apiAuthService.upsertApiKey(baseUserId)
@@ -39,5 +41,10 @@ describe('ApiKeyAuthService', () => {
     await apiAuthService.hasApiKey(baseUserId)
     expect(userRepository.hasApiKey).toHaveBeenCalledTimes(1)
     expect(userRepository.hasApiKey).toHaveBeenCalledWith(baseUserId)
+  })
+  it('isAdmin should call userRepository.findById', async () => {
+    await apiAuthService.isAdmin(baseUserId)
+    expect(userRepository.findById).toHaveBeenCalledTimes(1)
+    expect(userRepository.findById).toHaveBeenCalledWith(baseUserId)
   })
 })

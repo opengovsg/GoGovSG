@@ -30,6 +30,7 @@ services:
       - GA_TRACKING_ID=UA-139330318-1
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
+      - COOKIE_MAX_AGE=86400000
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
       - USER_MESSAGE=User message test
       - ANNOUNCEMENT_MESSAGE=Search by email to find link owners, or by keyword to discover other links! \n PRO TIP! Search your email domain to find out all the links made by your agency.
@@ -52,9 +53,18 @@ services:
       - ACTIVATE_POSTMAN_FALLBACK=
       - BULK_UPLOAD_MAX_NUM=1000
       - BULK_UPLOAD_RANDOM_STR_LENGTH=8
+      - SQS_BULK_QRCODE_GENERATE_START_URL=
+      - SQS_TIMEOUT=10000
+      - SQS_REGION=
+      - BULK_QR_CODE_BATCH_SIZE=1000
+      - ACTIVATE_BULK_QR_CODE_GENERATION=false
+      - JOB_POLL_ATTEMPTS=12
+      - JOB_POLL_INTERVAL=5000
+      - BULK_QR_CODE_BUCKET_URL=
       - API_LINK_RANDOM_STR_LENGTH=8
       - API_KEY_SALT=$$2b$$10$$9rBKuE4Gb5ravnvP4xjoPu
       - FF_EXTERNAL_API=true
+      - ADMIN_API_EMAIL=
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -73,7 +83,7 @@ services:
     ports:
       - '6379:6379'
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:1.2
     container_name: gogovsg-localstack
     ports:
       - '4566:4566'

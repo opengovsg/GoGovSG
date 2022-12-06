@@ -6,6 +6,27 @@ import useIsIE from '../components/BaseLayout/util/ie'
 import { GAEvent } from './ga'
 import { UrlTableConfig } from '../../user/reducers/types'
 import queryObjFromTableConfig from '../helpers/urlQueryHelper'
+import { BULK_UPLOAD_HEADER } from '../../../shared/constants'
+
+export const downloadCsv = (csvString: string, filename: string) => {
+  const blob = new Blob([csvString], {
+    type: 'text/csv;charset=utf-8',
+  })
+
+  if (useIsIE()) {
+    navigator.msSaveBlob(blob, filename)
+  } else {
+    saveAs(blob, filename)
+  }
+}
+
+export const downloadSampleBulkCsv = () => {
+  const headers = BULK_UPLOAD_HEADER
+  const body = ['https://www.link1.com', 'https://www.link2.com']
+  const content = [headers, ...body].join('\r\n')
+  downloadCsv(content, 'sample_bulk.csv')
+  GAEvent('modal page', 'downloaded bulk sample', 'successful')
+}
 
 export const downloadUrls = async (tableConfig: UrlTableConfig) => {
   const urlsArr = []
@@ -59,16 +80,7 @@ export const downloadUrls = async (tableConfig: UrlTableConfig) => {
     rootActions.setErrorMessage('Error downloading urls.')
     return null
   }
-
-  const blob = new Blob([urlsArr.join('')], {
-    type: 'text/csv;charset=utf-8',
-  })
-
-  if (useIsIE()) {
-    navigator.msSaveBlob(blob, 'urls.csv')
-  } else {
-    saveAs(blob, 'urls.csv')
-  }
+  downloadCsv(urlsArr.join(''), 'urls.csv')
 
   // Google Analytics: Download links button events
   GAEvent('user page', 'download links button', 'successful')
@@ -76,5 +88,6 @@ export const downloadUrls = async (tableConfig: UrlTableConfig) => {
 }
 
 export default {
+  downloadSampleBulkCsv,
   downloadUrls,
 }

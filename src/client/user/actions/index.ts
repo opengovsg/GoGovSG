@@ -5,8 +5,10 @@ import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import * as Sentry from '@sentry/react'
+import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   CloseCreateUrlModalAction,
+  CloseStatusBarAction,
   GetLinkHistoryForUserSuccessAction,
   GetUrlsForUserSuccessAction,
   IsFetchingUrlsAction,
@@ -22,6 +24,9 @@ import {
   SetLongUrlAction,
   SetRandomShortUrlAction,
   SetShortUrlAction,
+  SetStatusBarErrorMessageAction,
+  SetStatusBarInfoMessageAction,
+  SetStatusBarSuccessMessageAction,
   SetTagsAction,
   SetUploadFileErrorAction,
   SetUrlFilterAction,
@@ -38,6 +43,7 @@ import {
 import {
   RootActionType,
   SetErrorMessageAction,
+  SetInfoMessageAction,
   SetSuccessMessageAction,
 } from '../../app/components/pages/RootPage/actions/types'
 import {
@@ -62,6 +68,7 @@ import { GetReduxState } from '../../app/actions/types'
 import { GoGovReduxState } from '../../app/reducers/types'
 import { MessageType } from '../../../shared/util/messages'
 import { GAEvent } from '../../app/util/ga'
+import { JobStatusEnum } from '../../../shared/util/jobs'
 import queryObjFromTableConfig from '../../app/helpers/urlQueryHelper'
 
 const setUrlUploadState: (payload: boolean) => SetUrlUploadStateAction = (
@@ -235,6 +242,44 @@ async function handleError(
       break
   }
 }
+
+const closeStatusBar: () => CloseStatusBarAction = () => ({
+  type: UserAction.CLOSE_STATUS_BAR,
+})
+
+const setStatusBarErrorMessage: (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => SetStatusBarErrorMessageAction = (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => ({
+  type: UserAction.SET_STATUS_BAR_ERROR_MESSAGE,
+  payload: { header, body, callbacks },
+})
+
+const setStatusBarInfoMessage: (
+  header: string,
+  body: string,
+) => SetStatusBarInfoMessageAction = (header: string, body: string) => ({
+  type: UserAction.SET_STATUS_BAR_INFO_MESSAGE,
+  payload: { header, body },
+})
+
+const setStatusBarSuccessMessage: (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => SetStatusBarSuccessMessageAction = (
+  header: string,
+  body: string,
+  callbacks: string[],
+) => ({
+  type: UserAction.SET_STATUS_BAR_SUCCESS_MESSAGE,
+  payload: { header, body, callbacks },
+})
 
 // retrieve linkHistory based on query object
 const getLinkHistory: (queryObj: ParsedUrlQueryInput) => Promise<{
@@ -860,7 +905,204 @@ const updateTags =
     })
   }
 
+const setQRCodeGenerationMessage =
+  (status: string, callbacks: string[]) =>
+  (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | SetStatusBarSuccessMessageAction
+      | SetStatusBarErrorMessageAction
+      | SetStatusBarInfoMessageAction
+    >,
+  ) => {
+    if (status === JobStatusEnum.Success) {
+      const header = `QR codes successfully generated`
+      const body = `Please download your QR codes here or via email`
+      dispatch<SetStatusBarSuccessMessageAction>(
+        setStatusBarSuccessMessage(header, body, callbacks),
+      )
+    }
+    if (status === JobStatusEnum.InProgress) {
+      const header = `QR codes generation in progress`
+      const body = `Please wait to download your QR codes`
+      dispatch<SetStatusBarInfoMessageAction>(
+        setStatusBarInfoMessage(header, body),
+      )
+    }
+    if (status === JobStatusEnum.Failure) {
+      const header = `QR codes failed to generate`
+      const body = `Please try again`
+      dispatch<SetStatusBarErrorMessageAction>(
+        setStatusBarErrorMessage(header, body, callbacks),
+      )
+    }
+  }
+
+const getJobInformationForPendingJobId =
+  (jobId: number) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      SetStatusBarSuccessMessageAction | SetStatusBarErrorMessageAction
+    >,
+  ) => {
+    const query = querystring.stringify({ jobId })
+    const response = await get(`/api/user/job/status?${query}`)
+    const isOk = response.ok
+    if (!isOk) {
+      // retry
+      dispatch(getJobInformationForPendingJobId(jobId))
+    } else {
+      const resp = await response.json()
+      const { job, jobItemUrls } = resp
+      const { status } = job
+      dispatch(setQRCodeGenerationMessage(status, jobItemUrls))
+    }
+  }
+
+const getLatestJob =
+  () =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | SetStatusBarSuccessMessageAction
+      | SetStatusBarErrorMessageAction
+      | SetStatusBarInfoMessageAction
+    >,
+  ) => {
+    const response = await get(`/api/user/job/latest`)
+    const isOk = response.ok
+    const resp = await response.json()
+    if (!isOk) {
+      throw new Error(resp.message || 'Error fetching user jobs ')
+    }
+
+    const { job, jobItemUrls } = resp
+    if (!job || !jobItemUrls) return
+    const { status, id } = job
+    if (status === 'IN_PROGRESS') {
+      dispatch(getJobInformationForPendingJobId(id))
+    }
+    dispatch(setQRCodeGenerationMessage(status, jobItemUrls))
+  }
+
+/**
+ * API call to upload file for bulk creation.
+ * @param file
+ * @returns Promise<bool> Whether bulk creation succeeded.
+ */
+const bulkCreateUrl =
+  (file: File | null) =>
+  async (
+    dispatch: ThunkDispatch<
+      GoGovReduxState,
+      void,
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
+      | SetInfoMessageAction
+      | SetErrorMessageAction
+      | SetSuccessMessageAction
+      | SetIsUploadingAction
+      | SetFileUploadStateAction
+      | CloseCreateUrlModalAction
+      | ResetUserStateAction
+    >,
+    getState: GetReduxState,
+  ) => {
+    const {
+      user: { tags },
+    } = getState()
+
+    if (file === null) {
+      // Sentry analytics: bulk create link with file fail
+      Sentry.captureMessage('bulk create upload missing file')
+      GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('File is missing.'),
+      )
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      return
+    }
+    if (file) {
+      const fileName = file.name
+      if (!fileName.includes('.') || !fileName.split('.').pop()) {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('File is invalid.'),
+        )
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+        Sentry.captureMessage('bulk create upload invalid file')
+        GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+        return
+      }
+      if (fileName.split('.').pop() !== 'csv') {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('Only csv files are allowed.'),
+        )
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+        Sentry.captureMessage('bulk create upload invalid file')
+        GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+        return
+      }
+
+      if (file.size > MAX_CSV_UPLOAD_SIZE) {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('Bulk csv file exceeds the size limit'),
+        )
+        dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+        Sentry.captureMessage('bulk create upload invalid file')
+        GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+        return
+      }
+    }
+
+    if (!isValidTags(tags)) {
+      Sentry.captureMessage('bulk create upload invalid tags')
+      GAEvent('modal page', 'bulk create upload', 'unsuccessful')
+
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Tags are invalid.'),
+      )
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+      return
+    }
+
+    dispatch<SetIsUploadingAction>(setIsUploading(true))
+    const data = new FormData()
+    data.append('file', file, file.name)
+    data.append('tags', JSON.stringify(tags))
+
+    const response = await postFormData('/api/user/url/bulk', data)
+    dispatch<SetIsUploadingAction>(setIsUploading(false))
+    if (!response.ok) {
+      Sentry.captureMessage('bulk creation invalid')
+      GAEvent('modal page', 'bulk creation', 'unsuccessful')
+
+      await handleError(dispatch, response)
+      dispatch<SetFileUploadStateAction>(setFileUploadState(false))
+    } else {
+      Sentry.captureMessage('bulk creation success')
+      GAEvent('modal page', 'bulk creation', 'successful')
+      dispatch<void>(getUrlsForUser())
+      dispatch<ResetUserStateAction>(resetUserState())
+
+      const { count, job } = await response.json()
+      dispatch<SetSuccessMessageAction>(
+        rootActions.setSuccessMessage(`${count} links have been created`),
+      )
+      if (job) dispatch<void>(getLatestJob())
+      dispatch<SetFileUploadStateAction>(setFileUploadState(true))
+    }
+  }
+
 export default {
+  closeStatusBar,
+  setStatusBarErrorMessage,
+  setStatusBarInfoMessage,
+  setStatusBarSuccessMessage,
   getUrlsForUser,
   getLinkHistoryForUser,
   resetLinkHistory,
@@ -879,6 +1121,7 @@ export default {
   updateLongUrl,
   updateUrlCount,
   uploadFile,
+  bulkCreateUrl,
   setUrlTableConfig,
   getUrls,
   setUploadFileError,
@@ -894,4 +1137,5 @@ export default {
   setUrlUploadState,
   setTags,
   updateTags,
+  getLatestJob,
 }

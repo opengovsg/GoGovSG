@@ -76,8 +76,7 @@ describe('BulkService tests', () => {
     const service = new BulkService()
 
     it('fails if file data string is empty', async () => {
-      const schema = service.parseCsv({})
-      expect(schema.isValid).toEqual(false)
+      await expect(service.parseCsv({})).rejects.toThrowError()
     })
 
     it('fails if header does not match BULK_UPLOAD_HEADER', async () => {
@@ -86,8 +85,7 @@ describe('BulkService tests', () => {
         name: 'file.csv',
       } as UploadedFile
 
-      const schema = service.parseCsv(file)
-      expect(schema.isValid).toEqual(false)
+      await expect(service.parseCsv(file)).rejects.toThrowError()
     })
 
     validUrlTests.forEach((validUrlTest) => {
@@ -97,8 +95,7 @@ describe('BulkService tests', () => {
           name: 'file.csv',
         } as UploadedFile
 
-        const schema = service.parseCsv(file)
-        expect(schema.isValid).toEqual(true)
+        await expect(service.parseCsv(file)).resolves.not.toThrow()
       })
     })
     invalidUrlTests.forEach((invalidUrlTest) => {
@@ -108,8 +105,7 @@ describe('BulkService tests', () => {
           name: 'file.csv',
         } as UploadedFile
 
-        const schema = service.parseCsv(file)
-        expect(schema.isValid).toEqual(false)
+        await expect(service.parseCsv(file)).rejects.toThrowError()
       })
     })
   })
