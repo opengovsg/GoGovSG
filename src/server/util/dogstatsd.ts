@@ -3,7 +3,7 @@ import { DEV_ENV } from '../config'
 
 export const API_KEY_GENERATE = 'apikey.generate'
 export const API_KEY_GENERATE_TAG_IS_NEW = 'isnew'
-export const ERROR_UNHANLDED_REJECTION = 'error.unhandled_rejection'
+export const ERROR_UNHANDLED_REJECTION = 'error.unhandled_rejection'
 export const MALICIOUS_ACTIVITY_FILE = 'malicious_activity.file'
 export const MALICIOUS_ACTIVITY_LINK = 'malicious_activity.link'
 export const OTP_GENERATE_FAILURE = 'otp.generate.failure'
