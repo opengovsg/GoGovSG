@@ -33,7 +33,7 @@
     "builtBy": "Built by Open Government Products"
   },
   "homePage": {
-    "targetUsersPhrase": "(with an email from $t(general.emailDomain))",
+    "targetUsersPhrase": "(from <strong><a href='https://guide.for.edu.sg/#who-can-use-foredusg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #48426D;'>selected institutions</a></strong>)",
     "features": {
       "antiPhishing": {
         "description": "Shorten your links with a trustworthy $t(general.appTitle) domain, so your users know they are from an education officer."
@@ -57,7 +57,7 @@
     }
   },
   "login": {
-    "whitelistPhrase": "Only available for use by $t(general.officerType) with an email from <strong>$t(general.emailDomain)</strong>.",
+    "whitelistPhrase": "Only available for use by educational institutions listed <strong><a href='https://guide.for.edu.sg/#who-can-use-foredusg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #48426D;'>here</a></strong>.",
     "referrals": {
       "1": {
         "officerPhrase": "Public officers",
