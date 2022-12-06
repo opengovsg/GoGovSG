@@ -170,7 +170,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
       validate: {
         urlCheck(url: string) {
           if (!isValidUrl(url, DEV_ENV)) {
-            throw new Error('Invalid URLs are not allowed.')
+            throw new Error('Long URL format is invalid.')
           }
         },
 
@@ -182,7 +182,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
 
         noCircularRedirects(url: string) {
           if (isCircularRedirects(url, ogHostname)) {
-            throw new Error('Circular redirects to go.gov.sg are prohibited')
+            throw new Error('Circular redirects are not allowed.')
           }
         },
 
@@ -190,7 +190,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
         blacklistCheck(longUrl: string) {
           if (isBlacklisted(longUrl)) {
             throw new Error(
-              'Database creation of URLs to link shortener sites prohibited.',
+              'Creation of URLs to link shortener sites are not allowed.',
             )
           }
         },

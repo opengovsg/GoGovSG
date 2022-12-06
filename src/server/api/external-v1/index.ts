@@ -46,8 +46,8 @@ router.get(
 
 router.post(
   '/urls',
-  urlCheckController.singleUrlCheck,
   validator.body(urlSchema),
+  urlCheckController.singleUrlCheck,
   apiV1Controller.createUrl,
 )
 
@@ -57,8 +57,8 @@ router.post(
 router.patch(
   '/urls/:shortUrl',
   preprocessShortUrl,
-  urlCheckController.singleUrlCheck,
   validator.body(urlEditSchema),
+  urlCheckController.singleUrlCheck,
   apiV1Controller.updateUrl,
 )
 
