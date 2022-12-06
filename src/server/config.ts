@@ -111,12 +111,14 @@ transporterOpts = {
   maxConnections: 20,
 }
 
+const maxAge = Number(process.env.COOKIE_MAX_AGE) || 86400000 // milliseconds = 1 day
+
 if (DEV_ENV) {
   // Only configure things particular to development here
   logger.warn('Deploying in development mode.')
   cookieConfig = {
     secure: false, // do not set domain for localhost
-    maxAge: 1800000, // milliseconds = 30 min
+    maxAge,
   }
   proxy = false
   otpLimit = 10
@@ -126,10 +128,9 @@ if (DEV_ENV) {
 } else {
   logger.info('Deploying in production mode.')
 
-  const maxAge = Number(process.env.COOKIE_MAX_AGE)
   cookieConfig = {
     secure: true,
-    maxAge: Number.isNaN(maxAge) ? 1800000 : maxAge,
+    maxAge,
   }
   exitIfAnyMissing(sesVars)
 
