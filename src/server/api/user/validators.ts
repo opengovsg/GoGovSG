@@ -2,15 +2,18 @@ import * as Joi from '@hapi/joi'
 import { ACTIVE, INACTIVE } from '../../models/types'
 import {
   isBlacklisted,
+  isCircularRedirects,
   isHttps,
   isPrintableAscii,
   isValidShortUrl,
   isValidTag,
+  isValidUrl,
 } from '../../../shared/util/validation'
 import {
   LINK_DESCRIPTION_MAX_LENGTH,
   MAX_NUM_TAGS_PER_LINK,
 } from '../../../shared/constants'
+import { ogHostname } from '../../config'
 import { isValidGovEmail } from '../../util/email'
 
 export const urlRetrievalSchema = Joi.object({
@@ -71,18 +74,24 @@ export const urlSchema = Joi.object({
   shortUrl: Joi.string()
     .custom((url: string, helpers) => {
       if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Short url format is invalid.' })
+        return helpers.message({ custom: 'Short URL format is invalid.' })
       }
       return url
     })
     .required(),
   longUrl: Joi.string().custom((url: string, helpers) => {
     if (!isHttps(url)) {
-      return helpers.message({ custom: 'Long url must start with https://' })
+      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
+    }
+    if (!isValidUrl(url)) {
+      return helpers.message({ custom: 'Long URL format is invalid.' })
+    }
+    if (isCircularRedirects(url, ogHostname)) {
+      return helpers.message({ custom: 'Circular redirects are not allowed.' })
     }
     if (isBlacklisted(url)) {
       return helpers.message({
-        custom: 'Creation of URLs to link shortener sites prohibited.',
+        custom: 'Creation of URLs to link shortener sites are not allowed.',
       })
     }
     return url
@@ -106,11 +115,17 @@ export const urlEditSchema = Joi.object({
   shortUrl: Joi.string().required(),
   longUrl: Joi.string().custom((url: string, helpers) => {
     if (!isHttps(url)) {
-      return helpers.message({ custom: 'Long url must start with https://' })
+      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
+    }
+    if (!isValidUrl(url)) {
+      return helpers.message({ custom: 'Invalid URLs are not allowed.' })
+    }
+    if (isCircularRedirects(url, ogHostname)) {
+      return helpers.message({ custom: 'Circular redirects are not allowed.' })
     }
     if (isBlacklisted(url)) {
       return helpers.message({
-        custom: 'Creation of URLs to link shortener sites prohibited.',
+        custom: 'Creation of URLs to link shortener sites are not allowed.',
       })
     }
     return url
@@ -145,4 +160,8 @@ export const ownershipTransferSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
   newUserEmail: Joi.string().required(),
+})
+
+export const pollJobInformationSchema = Joi.object({
+  jobId: Joi.number().required(),
 })

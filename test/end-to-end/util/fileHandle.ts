@@ -1,6 +1,23 @@
 const fs = require('fs')
 
 /**
+ * Create bulk creation csv
+ * Overwrites file if exists, else create.
+ */
+export const createBulkCsv = (fileName: string, longUrls: string[]) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const headers = 'Original links to be shortened'
+      const content = [headers, ...longUrls].join('\r\n')
+      fs.writeFileSync(fileName, content)
+      resolve(true)
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
+/**
  * Overwrite file if exists, else create.
  */
 export const createEmptyFileOfSize = (fileName: string, size: number) => {

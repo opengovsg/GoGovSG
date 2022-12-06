@@ -14,6 +14,10 @@ import {
   postmanApiUrl,
   transporterOptions,
 } from '../config'
+import {
+  BULK_QR_DOWNLOAD_FORMATS,
+  BULK_QR_DOWNLOAD_MAPPINGS,
+} from '../../shared/constants'
 
 const domainVariantMap = {
   gov: 'go.gov.sg',
@@ -27,7 +31,7 @@ export interface MailBody {
   to: string
   body: string
   subject: string
-  senderDomain: SenderDomain
+  senderDomain?: SenderDomain
 }
 
 let transporter: nodemailer.Transport
@@ -38,6 +42,8 @@ export interface Mailer {
    * Sends email to SES / MailDev to send out. Falls back to Postman.
    */
   mailOTP(email: string, otp: string, ip: string): Promise<void>
+  mailJobSuccess(email: string, downloadLinks: string[]): Promise<void>
+  mailJobFailure(email: string): Promise<void>
 }
 
 @injectable()
@@ -102,7 +108,11 @@ export class MailerNode implements Mailer {
     })
   }
 
-  sendMail(mailBody: MailBody): Promise<void> {
+  sendMail(mail: MailBody): Promise<void> {
+    const mailBody: MailBody = {
+      ...mail,
+      senderDomain: mail.senderDomain || domainVariant,
+    }
     if (activatePostmanFallback) {
       logger.info(`Sending Postman mail`)
       return this.sendPostmanMail(mailBody)
@@ -128,9 +138,59 @@ export class MailerNode implements Mailer {
       to: email,
       subject: `One-Time Password (OTP) for ${domainVariant}`,
       body: emailHTML,
-      senderDomain: domainVariant,
     }
 
+    return this.sendMail(mailBody)
+  }
+
+  mailJobSuccess(email: string, downloadLinks: string[]): Promise<void> {
+    if (!email || !downloadLinks) {
+      logger.error('Email or download links not specified')
+      return Promise.resolve()
+    }
+
+    const subject = `[${domainVariant}] QR code generation for your links is successful`
+    const body = `Your links have been successfully generated from your csv file.
+
+        <p>Download QR codes for your links (PNG): ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/${
+              BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.PNG]
+            }" target="_blank">here </a>`,
+        )}</p>
+        <p>Download QR codes for your links (SVG): ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/${
+              BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.SVG]
+            }" target="_blank">here </a>`,
+        )}</p>
+      `
+
+    const mailBody: MailBody = {
+      to: email,
+      body,
+      subject,
+    }
+    return this.sendMail(mailBody)
+  }
+
+  mailJobFailure(email: string): Promise<void> {
+    if (!email) {
+      logger.error('Email not specified')
+      return Promise.resolve()
+    }
+
+    const subject = `[${domainVariant}] QR code generation for your links has failed`
+    const body = `Bulk generation of QR codes from your csv file has failed.
+
+        <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p> 
+      `
+
+    const mailBody: MailBody = {
+      to: email,
+      body,
+      subject,
+    }
     return this.sendMail(mailBody)
   }
 }

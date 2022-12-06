@@ -1,5 +1,5 @@
 import { UserAction, UserActionType } from '../actions/types'
-import { UserState } from './types'
+import { StatusBarVariant, UserState } from './types'
 import { initialSortConfig } from '../constants'
 
 const initialState: UserState = {
@@ -32,6 +32,12 @@ const initialState: UserState = {
   },
   linkHistory: [],
   linkHistoryCount: 0,
+  statusBarMessage: {
+    header: '',
+    body: '',
+    callbacks: [],
+    variant: StatusBarVariant.Error,
+  },
 }
 
 const user: (state: UserState, action: UserActionType) => UserState = (
@@ -227,6 +233,47 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_TAGS:
       nextState = {
         tags: action.payload,
+      }
+      break
+    case UserAction.CLOSE_STATUS_BAR:
+      nextState = {
+        ...state,
+        statusBarMessage: {
+          header: '',
+          body: '',
+          variant: state.statusBarMessage.variant,
+          callbacks: [],
+        },
+      }
+      break
+    case UserAction.SET_STATUS_BAR_SUCCESS_MESSAGE:
+      nextState = {
+        statusBarMessage: {
+          header: action.payload.header,
+          body: action.payload.body,
+          callbacks: action.payload.callbacks,
+          variant: StatusBarVariant.Success,
+        },
+      }
+      break
+    case UserAction.SET_STATUS_BAR_ERROR_MESSAGE:
+      nextState = {
+        statusBarMessage: {
+          header: action.payload.header,
+          body: action.payload.body,
+          callbacks: action.payload.callbacks, // can be use for retry in the future
+          variant: StatusBarVariant.Error,
+        },
+      }
+      break
+    case UserAction.SET_STATUS_BAR_INFO_MESSAGE:
+      nextState = {
+        statusBarMessage: {
+          header: action.payload.header,
+          body: action.payload.body,
+          variant: StatusBarVariant.Info,
+          callbacks: [],
+        },
       }
       break
     default:

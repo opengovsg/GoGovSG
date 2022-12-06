@@ -1,18 +1,11 @@
 import React, { useState } from 'react'
-import {
-  CircularProgress,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 import { FileInputField } from '../../../../widgets/FileInputField'
 import CollapsibleMessage from '../../../../../app/components/CollapsibleMessage'
 import {
   CollapsibleMessagePosition,
   CollapsibleMessageType,
 } from '../../../../../app/components/CollapsibleMessage/types'
-import TrailingButton from './TrailingButton'
 import ConfigOption, {
   TrailingPosition,
 } from '../../../../widgets/ConfigOption'
@@ -40,8 +33,6 @@ const useStyles = makeStyles((theme) =>
 
 export default function FileEditor() {
   const classes = useStyles()
-  const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const drawerStates = useDrawerState()
   const { shortLinkDispatch, shortLinkState, isUploading } = useShortLink(
     drawerStates.relevantShortLink!,
@@ -68,8 +59,9 @@ export default function FileEditor() {
             className={classes.fileInputField}
             uploadFileError={uploadFileError}
             textFieldHeight="44px"
-            inputId="replace-file-input"
-            text={originalLongUrl}
+            fileNameText={originalLongUrl}
+            buttonText="Replace file"
+            isUploading={isUploading}
             setFile={(newFile) => {
               shortLinkDispatch?.replaceFile(newFile, setUploadFileError)
             }}
@@ -84,25 +76,7 @@ export default function FileEditor() {
           </CollapsibleMessage>
         </>
       }
-      trailing={
-        <label htmlFor="replace-file-input">
-          <TrailingButton
-            onClick={() => {}}
-            disabled={isUploading}
-            variant={isMobileView ? 'contained' : 'outlined'}
-            fullWidth={isMobileView}
-            component="span"
-          >
-            {isUploading ? (
-              <CircularProgress color="primary" size={20} />
-            ) : (
-              'Replace file'
-            )}
-          </TrailingButton>
-        </label>
-      }
-      wrapTrailing={isMobileView}
-      trailingPosition={TrailingPosition.end}
+      trailingPosition={TrailingPosition.none}
     />
   )
 }
