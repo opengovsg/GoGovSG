@@ -97,11 +97,11 @@ router.post(
   '/url',
   fileUploadMiddleware,
   preprocessFormData,
+  validator.body(urlSchema),
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
-  validator.body(urlSchema),
   userController.createUrl,
 )
 
@@ -142,11 +142,11 @@ router.patch(
   '/url',
   fileUploadMiddleware,
   preprocessFormData,
+  validator.body(urlEditSchema),
   fileCheckController.singleFileCheck,
   fileCheckController.fileExtensionCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
-  validator.body(urlEditSchema),
   userController.updateUrl,
 )
 

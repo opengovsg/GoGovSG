@@ -55,10 +55,10 @@ export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
 export const blacklistValidationError = Selector('div').withText(
-  'ValidationError: Creation of URLs to link shortener sites prohibited.',
+  'ValidationError: Creation of URLs to link shortener sites are not allowed.',
 )
 export const circularRedirectValidationError = Selector('div').withText(
-  'Validation error: Circular redirects to go.gov.sg are prohibited',
+  'ValidationError: Circular redirects are not allowed.',
 )
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
