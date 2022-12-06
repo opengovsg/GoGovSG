@@ -165,7 +165,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       icon: feedbackIcon,
     },
     {
-      text: 'FAQ',
+      text: 'Guide',
       link: i18next.t('general.links.faq'),
       public: true,
       icon: helpIcon,
@@ -177,14 +177,14 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       icon: githubIcon,
     },
     {
-      text: 'FAQ',
+      text: 'Guide',
       link: i18next.t('general.links.faq'),
       public: false,
       icon: helpIcon,
       mobileOrder: 4,
     },
     {
-      text: 'Help us improve',
+      text: 'Send us feedback',
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
