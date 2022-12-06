@@ -1,6 +1,6 @@
 {
   "name": "GoGovSG",
-  "version": "1.72.0",
+  "version": "1.73.0",
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
   "scripts": {
