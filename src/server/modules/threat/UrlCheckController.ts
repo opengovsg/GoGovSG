@@ -45,7 +45,7 @@ export class UrlCheckController {
           return
         }
       } catch (error) {
-        logger.error(error)
+        logger.error(error.message)
         res.serverError(jsonMessage(error.message))
         return
       }
@@ -78,7 +78,7 @@ export class UrlCheckController {
           return
         }
       } catch (error) {
-        logger.error(error)
+        logger.error(error.message)
         res.serverError(jsonMessage(error.message))
         return
       }

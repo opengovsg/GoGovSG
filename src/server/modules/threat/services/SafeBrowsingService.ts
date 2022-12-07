@@ -71,51 +71,45 @@ export class SafeBrowsingService implements UrlThreatScanService {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request),
     })
+    const body = await response.json()
     if (!response.ok) {
       const error = new Error(
-        `Safe Browsing failure:\tError: ${response.statusText}\thttpResponse: ${response}\t body:${response.body}`,
+        `Safe Browsing failure:\tError: ${response.statusText}\t message: ${body.error.message}`,
       )
       if (safeBrowsingLogOnly) {
-        logger.error(error)
+        logger.error(error.message)
       } else {
         throw error
       }
-    } else {
-      const result = await response.json()
-      if (result?.matches) {
-        const prefix = safeBrowsingLogOnly
-          ? 'Considered threat by Safe Browsing but ignoring'
-          : 'Malicious link content'
+    } else if (body?.matches) {
+      const prefix = safeBrowsingLogOnly
+        ? 'Considered threat by Safe Browsing but ignoring'
+        : 'Malicious link content'
 
-        /**
-         * Result.matches is a list of threat matches for all matched urls, example:
-         * [{ "threatType": "SOCIAL_ENGINEERING", "threat": { "url": "https://testsafebrowsing.appspot.com/s/phishing.html" } }]
-         * we use _.groupBy to group threat matches by url so that the serialized form
-         * matches what is currently written into our repository for single url lookups.
-         */
-        const matchesByUrl = _.groupBy(result.matches, (obj) => obj.threat.url)
-        Object.entries(matchesByUrl).forEach(
-          ([url, threatMatch]: [string, any]) => {
+      /**
+       * Result.matches is a list of threat matches for all matched urls, example:
+       * [{ "threatType": "SOCIAL_ENGINEERING", "threat": { "url": "https://testsafebrowsing.appspot.com/s/phishing.html" } }]
+       * we use _.groupBy to group threat matches by url so that the serialized form
+       * matches what is currently written into our repository for single url lookups.
+       */
+      const matchesByUrl = _.groupBy(body.matches, (obj) => obj.threat.url)
+      Object.entries(matchesByUrl).forEach(
+        ([url, threatMatch]: [string, any]) => {
+          logger.warn(
+            `${prefix}: ${url} yields ${JSON.stringify(threatMatch, null, 2)}`,
+          )
+          try {
+            // writing to the safeBrowsingRepository should be non-blocking
+            this.safeBrowsingRepository.set(url, threatMatch)
+          } catch (e) {
+            // writes are wrapped in a try-catch block to prevent errors from bubbling up
             logger.warn(
-              `${prefix}: ${url} yields ${JSON.stringify(
-                threatMatch,
-                null,
-                2,
-              )}`,
+              `failed to set ${url} in safeBrowsingRepository, skipping`,
             )
-            try {
-              // writing to the safeBrowsingRepository should be non-blocking
-              this.safeBrowsingRepository.set(url, threatMatch)
-            } catch (e) {
-              // writes are wrapped in a try-catch block to prevent errors from bubbling up
-              logger.warn(
-                `failed to set ${url} in safeBrowsingRepository, skipping`,
-              )
-            }
-          },
-        )
-        matches = result.matches
-      }
+          }
+        },
+      )
+      matches = body.matches
     }
     return matches
   }
