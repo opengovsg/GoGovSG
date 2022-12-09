@@ -497,32 +497,140 @@ describe('JobManagementService tests', () => {
 
   describe('pollJobStatusUpdate', () => {
     it('should throw error if user has no jobs', async () => {
-      mockJobRepository.findLatestJobForUser.mockResolvedValue(null)
+      mockJobRepository.findJobForUser.mockResolvedValue(null)
 
-      await expect(service.getLatestJobForUser(2)).rejects.toThrow(
-        new NotFoundError('No jobs found'),
+      await expect(service.pollJobStatusUpdate(2, 5)).rejects.toThrow(
+        new NotFoundError('Job not found'),
       )
     })
 
-    it('should retrieve job information and return successfully', async () => {
-      const mockJob = {
-        uuid: 'abc',
-        userId: 2,
-        id: 4,
-        status: JobStatusEnum.Success,
-      } as unknown as JobType
-      const mockJobInformation = {
-        job: mockJob,
-        jobItemUrls: ['https://bucket.com/abc/0'],
-      } as JobInformation
-      mockJobRepository.findLatestJobForUser.mockResolvedValue(mockJob)
-      const spy = jest
-        .spyOn(service, 'getJobInformation')
-        .mockImplementation(() => Promise.resolve(mockJobInformation))
-      await expect(service.getLatestJobForUser(2)).resolves.toStrictEqual(
-        mockJobInformation,
+    it('should throw an error if the max attempts are exceeded', async () => {
+      jest.resetModules()
+      jest.mock('../../../../config', () => ({
+        jobPollAttempts: 2,
+        jobPollInterval: 1,
+      }))
+      const { JobManagementService } = require('..')
+      const service = new JobManagementService(
+        mockJobRepository,
+        mockJobItemRepository,
+        mockUserRepository,
+        mockMailer,
       )
-      expect(spy).toBeCalledWith(4)
+
+      mockJobRepository.findJobForUser.mockReturnValueOnce({})
+      const getJobInformationSpy = jest
+        .spyOn(service, 'getJobInformation')
+        .mockImplementation(() => ({
+          job: { status: JobStatusEnum.InProgress },
+          jobItemUrls: ['a', 'b'],
+        }))
+
+      await expect(service.pollJobStatusUpdate(1, 1)).rejects.toThrowError(
+        'Exceeded max attempts',
+      )
+      expect(getJobInformationSpy).toHaveBeenCalledTimes(2)
+    })
+
+    it('should resolve with the updated job information if the job status has changed', async () => {
+      jest.resetModules()
+      jest.mock('../../../../config', () => ({
+        jobPollAttempts: 2,
+        jobPollInterval: 1,
+      }))
+      const { JobManagementService } = require('..')
+      const service = new JobManagementService(
+        mockJobRepository,
+        mockJobItemRepository,
+        mockUserRepository,
+        mockMailer,
+      )
+
+      mockJobRepository.findJobForUser.mockReturnValueOnce({})
+      const getJobInformationSpy = jest
+        .spyOn(service, 'getJobInformation')
+        .mockImplementation(() => ({
+          job: { status: JobStatusEnum.Success },
+          jobItemUrls: ['a', 'b'],
+        }))
+
+      await expect(service.pollJobStatusUpdate(1, 1)).resolves.toEqual({
+        job: { status: JobStatusEnum.Success },
+        jobItemUrls: ['a', 'b'],
+      })
+      expect(getJobInformationSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('sendJobCompletionEmail', () => {
+    it('should throw a NotFoundError if the user is not found', async () => {
+      jest.spyOn(service, 'getJobInformation').mockImplementation(
+        async () =>
+          ({
+            job: { status: JobStatusEnum.Success },
+            jobItemUrls: ['a', 'b'],
+          } as JobInformation),
+      )
+      mockUserRepository.findById.mockReturnValueOnce(null)
+
+      await expect(service.sendJobCompletionEmail(1)).rejects.toThrowError(
+        `user not found for jobId 1`,
+      )
+    })
+
+    it('should throw an error if there is an error mailing the job completion email', async () => {
+      jest.spyOn(service, 'getJobInformation').mockImplementation(
+        async () =>
+          ({
+            job: { status: JobStatusEnum.Success },
+            jobItemUrls: ['a', 'b'],
+          } as JobInformation),
+      )
+      mockUserRepository.findById.mockReturnValueOnce({
+        email: 'test@email.com',
+      })
+      mockMailer.mailJobSuccess.mockImplementationOnce(() => {
+        throw new Error('Test error')
+      })
+
+      await expect(service.sendJobCompletionEmail(1)).rejects.toThrowError(
+        'Error mailing job completion email',
+      )
+    })
+
+    it('should mail the job success email if the job status is Success', async () => {
+      jest.spyOn(service, 'getJobInformation').mockImplementation(
+        async () =>
+          ({
+            job: { status: JobStatusEnum.Success },
+            jobItemUrls: ['a', 'b'],
+          } as JobInformation),
+      )
+      mockUserRepository.findById.mockReturnValueOnce({
+        email: 'test@email.com',
+      })
+
+      await expect(service.sendJobCompletionEmail(1)).resolves.toBeUndefined()
+      expect(mockMailer.mailJobSuccess).toHaveBeenCalledWith('test@email.com', [
+        'a',
+        'b',
+      ])
+    })
+
+    it('should mail the job failure email if the job status is Failure', async () => {
+      jest.spyOn(service, 'getJobInformation').mockImplementation(
+        async () =>
+          ({
+            job: { status: JobStatusEnum.Failure },
+            jobItemUrls: ['a', 'b'],
+          } as JobInformation),
+      )
+      mockUserRepository.findById.mockReturnValueOnce({
+        email: 'test@email.com',
+      })
+
+      await expect(service.sendJobCompletionEmail(1)).resolves.toBeUndefined()
+      expect(mockMailer.mailJobFailure).toHaveBeenCalledWith('test@email.com')
     })
   })
 })
