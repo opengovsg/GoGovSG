@@ -18,6 +18,10 @@ export const SHORTLINK_CREATE_TAG_IS_FILE = 'isfile'
 export const SHORTLINK_CREATE_TAG_SOURCE = 'source'
 export const USER_NEW = 'user.new'
 
+export const BULK_CREATE_SUCCESS = 'bulk.hash.success'
+export const BULK_CREATE_FAILURE = 'bulk.hash.failure'
+export const BULK_CREATE_COUNT = 'bulk.urls.count'
+
 export const JOB_START_SUCCESS = 'job.start.success'
 export const JOB_START_FAILURE = 'job.start.failure'
 export const JOB_ITEM_UPDATE_SUCCESS = 'jobItem.update.success'
