@@ -18,6 +18,18 @@ export const SHORTLINK_CREATE_TAG_IS_FILE = 'isfile'
 export const SHORTLINK_CREATE_TAG_SOURCE = 'source'
 export const USER_NEW = 'user.new'
 
+export const BULK_VALIDATION_ERROR = 'bulk.validation.error'
+export const BULK_VALIDATION_ERROR_TAGS = {
+  hasUrls: 'errorType:emptyCsv',
+  validHeader: 'errorType: invalidHeader',
+  acceptableLinkCount: 'errorType:exceededLinkCount',
+  onlyOneColumn: 'errorType:moreThanOneColumn',
+  isNotEmpty: 'errorType:emptyRow',
+  isValidUrl: 'errorType:invalidUrl',
+  isNotBlacklisted: 'errorType:blacklistedUrl',
+  isNotCircularRedirect: 'errorType:circularRedirect',
+  noParsingError: 'errorType:parsingError',
+}
 export const BULK_CREATE_SUCCESS = 'bulk.hash.success'
 export const BULK_CREATE_FAILURE = 'bulk.hash.failure'
 export const BULK_CREATE_COUNT = 'bulk.urls.count'
