@@ -33,7 +33,7 @@ describe('JobRepository', () => {
   })
 
   describe('findById', () => {
-    it('findById calls Job.findById and returns if it exists', async () => {
+    it('findById calls Job.findByPk and returns if it exists', async () => {
       findByPk.mockImplementationOnce(() => ({ id: 1 }))
       await expect(repository.findById(1)).resolves.toEqual({ id: 1 })
       expect(findByPk).toBeCalledWith(1)
