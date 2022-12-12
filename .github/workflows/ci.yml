@@ -25,7 +25,7 @@ env:
 jobs:
   ci:
     name: CI
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -49,7 +49,7 @@ jobs:
           ASSET_VARIANT: gov
   test:
     name: Test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -73,7 +73,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   testcafe:
     name: End To End Tests
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -99,7 +99,7 @@ jobs:
     name: Determine if Build & Deploy is needed
     outputs:
       proceed: ${{ steps.determine_proceed.outputs.proceed }}
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     if: github.event_name == 'push'
     steps:
       - shell: python
@@ -115,7 +115,7 @@ jobs:
             print('::set-output name=proceed::false')
   sentry:
     name: Upload sourcemap to Sentry
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
@@ -161,7 +161,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   build-gogov:
     name: Build and push for gogov
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
@@ -205,7 +205,7 @@ jobs:
           docker push ${REPO}:${TAG}
   deploy-gogov:
     name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ci, test, gatekeep, build-gogov]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
@@ -285,7 +285,7 @@ jobs:
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
   build-edu:
     name: Build and push for edu
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
@@ -329,7 +329,7 @@ jobs:
           docker push ${REPO}:${TAG}
   deploy-edu:
     name: Deploy to Elastic Beanstalk and AWS Lambda for edu
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ci, test, gatekeep, build-edu]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
@@ -411,7 +411,7 @@ jobs:
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
   build-health:
     name: Build and push for health
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
@@ -455,7 +455,7 @@ jobs:
           docker push ${REPO}:${TAG}
   deploy-health:
     name: Deploy to Elastic Beanstalk and AWS Lambda for health
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [ci, test, gatekeep, build-health]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
