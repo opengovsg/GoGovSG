@@ -216,13 +216,13 @@ describe('Mailer tests', () => {
           (downloadLink) =>
             `<a href="${downloadLink}/${
               BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.PNG]
-            }" target="_blank">here </a>`,
+            }?x-source=email" target="_blank">here </a>`,
         )}</p>
         <p>Download QR codes for your links (SVG): ${downloadLinks.map(
           (downloadLink) =>
             `<a href="${downloadLink}/${
               BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.SVG]
-            }" target="_blank">here </a>`,
+            }?x-source=email" target="_blank">here </a>`,
         )}</p>
       `
 
