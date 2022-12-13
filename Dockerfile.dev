@@ -1,4 +1,4 @@
-FROM --platform=amd64 node:14-alpine3.16
+FROM --platform=amd64 node:16-alpine3.16
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -19,6 +19,6 @@ RUN fc-cache -f
 # Install libraries
 COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY . ./
