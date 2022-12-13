@@ -1,4 +1,4 @@
-import * as Joi from '@hapi/joi'
+import * as Joi from 'joi'
 import { logger } from '../../config'
 import { isValidGovEmail } from '../../util/email'
 

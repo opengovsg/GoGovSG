@@ -1,6 +1,6 @@
 import Express from 'express'
 import { createValidator } from 'express-joi-validation'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { container } from '../util/inversify'
 import { DependencyIds } from '../constants'
 import { ACTIVE, INACTIVE } from '../models/types'
