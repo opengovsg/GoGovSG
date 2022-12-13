@@ -18,89 +18,91 @@ const BULK_UPLOAD_MAX_NUM = bulkUploadMaxNum
 
 @injectable()
 export class BulkService implements interfaces.BulkService {
-  parseCsv: (file: UploadedFile) => interfaces.CSVSchema = (file) => {
+  parseCsv: (file: UploadedFile) => Promise<string[]> = async (file) => {
     const dataString = file.data?.toString()
 
-    const schema = {
-      rows: 0,
-      isValid: true,
-      longUrls: [],
-      errorMessage: '',
-    } as interfaces.CSVSchema
+    const longUrls: string[] = []
 
     if (!dataString) {
-      schema.isValid = false
-      return schema
+      throw new Error('csv file is empty')
     }
 
-    Papa.parse(dataString, {
-      skipEmptyLines: false,
-      delimiter: ',',
-      step(step, parser) {
-        const rowData = step.data as string[]
-        const stringData = rowData[0]
-        let validRow = true
-        if (schema.rows === 0) {
-          // if header is invalid
-          if (stringData !== BULK_UPLOAD_HEADER) {
-            schema.isValid = false
-            parser.abort()
-            return
-          }
-        } else {
-          const acceptableLinkCount = schema.rows <= BULK_UPLOAD_MAX_NUM // rows include header
-          const onlyOneColumn = rowData.length === 1
-          const isNotBlacklisted = !validators.isBlacklisted(stringData)
-          const isNotEmpty = stringData.length > 0
-          const isValidUrl = validators.isValidUrl(stringData)
-          const isNotCircularRedirect = !validators.isCircularRedirects(
-            stringData,
-            ogHostname,
-          )
-          const noParsingError = step.errors.length === 0
-          validRow =
-            isNotCircularRedirect &&
-            acceptableLinkCount &&
-            onlyOneColumn &&
-            isNotBlacklisted &&
-            isNotEmpty &&
-            isValidUrl &&
-            noParsingError
+    let counter = 0
 
-          if (!validRow) {
-            const updatedRow = schema.rows + 1
-            switch (validRow) {
-              case acceptableLinkCount:
-                schema.errorMessage = `File exceeded ${BULK_UPLOAD_MAX_NUM} original URLs to shorten`
-                break
-              case onlyOneColumn:
-                schema.errorMessage = `Row ${updatedRow}: ${rowData} contains more than one column of data`
-                break
-              case isValidUrl:
-                schema.errorMessage = `Row ${updatedRow}: ${stringData} is not valid`
-                break
-              case isNotBlacklisted:
-                schema.errorMessage = `Row ${updatedRow}: ${stringData} is blacklisted`
-                break
-              case isNotEmpty:
-                schema.errorMessage = `Row ${updatedRow} is empty`
-                break
-              case isNotCircularRedirect:
-                schema.errorMessage = `Row ${updatedRow}: ${stringData} redirects back to ${ogHostname}`
-                break
-              default:
-                schema.errorMessage = 'Parsing error'
-            }
-            schema.isValid = false
-            parser.abort()
-            return
+    return new Promise((resolve, reject) => {
+      Papa.parse(dataString, {
+        skipEmptyLines: false,
+        delimiter: ',',
+        complete: () => {
+          // check for empty file
+          if (longUrls.length === 0) {
+            reject(new Error('csv file is empty'))
           }
-          schema.longUrls.push(stringData)
-        }
-        schema.rows += 1
-      },
+          resolve(longUrls)
+        },
+        error: (error: Error) => {
+          reject(error)
+        },
+        step(step) {
+          const rowData = step.data as string[]
+          const stringData = rowData[0]
+
+          if (counter === 0) {
+            if (stringData !== BULK_UPLOAD_HEADER) {
+              throw new Error(
+                `Row ${counter + 1}: bulk upload header is invalid`,
+              )
+            }
+          } else {
+            const acceptableLinkCount = counter <= BULK_UPLOAD_MAX_NUM // rows include header
+            const onlyOneColumn = rowData.length === 1
+            const isNotBlacklisted = !validators.isBlacklisted(stringData)
+            const isNotEmpty = stringData.length > 0
+            const isValidUrl = validators.isValidUrl(stringData)
+            const isNotCircularRedirect = !validators.isCircularRedirects(
+              stringData,
+              ogHostname,
+            )
+            const noParsingError = step.errors.length === 0
+
+            switch (true) {
+              case !acceptableLinkCount:
+                throw new Error(
+                  `File exceeded ${BULK_UPLOAD_MAX_NUM} original URLs to shorten`,
+                )
+              case !onlyOneColumn:
+                throw new Error(
+                  `Row ${
+                    counter + 1
+                  }: ${rowData} contains more than one column of data`,
+                )
+              case !isNotEmpty:
+                throw new Error(`Row ${counter + 1} is empty`)
+              case !isValidUrl:
+                throw new Error(
+                  `Row ${counter + 1}: ${stringData} is not valid`,
+                )
+              case !isNotBlacklisted:
+                throw new Error(
+                  `Row ${counter + 1}: ${stringData} is blacklisted`,
+                )
+              case !isNotCircularRedirect:
+                throw new Error(
+                  `Row ${
+                    counter + 1
+                  }: ${stringData} redirects back to ${ogHostname}`,
+                )
+              case !noParsingError:
+                throw new Error('Parsing error')
+              default:
+              // no error, do nothing
+            }
+            longUrls.push(stringData)
+          }
+          counter += 1
+        },
+      })
     })
-    return schema
   }
 
   generateUrlMappings: (longUrls: string[]) => Promise<BulkUrlMapping[]> =

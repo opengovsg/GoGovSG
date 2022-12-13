@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
 import express from 'express'
 
@@ -15,6 +16,7 @@ const mockUrlManagementService = {
   getUrlsWithConditions: jest.fn(),
   bulkCreate: jest.fn(),
 }
+
 const controller = new BulkController(mockBulkService, mockUrlManagementService)
 
 describe('BulkController unit test', () => {
@@ -48,7 +50,7 @@ describe('BulkController unit test', () => {
       const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
-      mockBulkService.parseCsv.mockReturnValue({ isValid: false })
+      mockBulkService.parseCsv.mockRejectedValue(new Error(''))
 
       await controller.validateAndParseCsv(req, res, next)
 
@@ -65,7 +67,7 @@ describe('BulkController unit test', () => {
       const longUrls = ['https://google.com']
 
       res.badRequest = badRequest
-      mockBulkService.parseCsv.mockReturnValue({ isValid: true, longUrls })
+      mockBulkService.parseCsv.mockReturnValue(longUrls)
 
       await controller.validateAndParseCsv(req, res, next)
 
@@ -76,7 +78,101 @@ describe('BulkController unit test', () => {
     })
   })
 
-  describe('bulkCreate tests', () => {
+  describe('bulkCreate config tests', () => {
+    const ok = jest.fn()
+
+    beforeEach(() => {
+      ok.mockClear()
+    })
+
+    it('bulkCreate with shouldGenerateQRCodes true should call next', async () => {
+      jest.resetModules()
+      const logger = {
+        info: jest.fn(),
+      }
+      jest.mock('../../../config', () => ({
+        shouldGenerateQRCodes: true,
+        logger,
+      }))
+
+      const { BulkController } = require('..')
+
+      const controller = new BulkController(
+        mockBulkService,
+        mockUrlManagementService,
+      )
+
+      const userId = 1
+      const longUrl = 'https://google.com'
+      const urlMappings = [
+        {
+          shortUrl: 'n2io3n12',
+          longUrl,
+        },
+      ]
+
+      const req = httpMocks.createRequest({
+        body: { userId, longUrls: [longUrl] },
+      })
+      const res = httpMocks.createResponse() as any
+      res.ok = ok
+      const next = jest.fn() as unknown as express.NextFunction
+
+      mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
+      mockUrlManagementService.bulkCreate.mockResolvedValue({})
+
+      await controller.bulkCreate(req, res, next)
+      expect(req.body).toHaveProperty('jobParamsList')
+      expect(next).toHaveBeenCalled()
+      expect(res.ok).not.toHaveBeenCalled()
+      expect(logger.info).toHaveBeenCalled()
+    })
+
+    it('bulkCreate with shouldGenerateQRCodes false should call res.ok', async () => {
+      jest.resetModules()
+      const logger = {
+        info: jest.fn(),
+      }
+      jest.mock('../../../config', () => ({
+        shouldGenerateQRCodes: false,
+        logger,
+      }))
+
+      const { BulkController } = require('..')
+
+      const controller = new BulkController(
+        mockBulkService,
+        mockUrlManagementService,
+      )
+
+      const userId = 1
+      const longUrl = 'https://google.com'
+      const urlMappings = [
+        {
+          shortUrl: 'n2io3n12',
+          longUrl,
+        },
+      ]
+
+      const req = httpMocks.createRequest({
+        body: { userId, longUrls: [longUrl] },
+      })
+      const res = httpMocks.createResponse() as any
+      res.ok = ok
+      const next = jest.fn() as unknown as express.NextFunction
+
+      mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
+      mockUrlManagementService.bulkCreate.mockResolvedValue({})
+
+      await controller.bulkCreate(req, res, next)
+
+      expect(next).not.toHaveBeenCalled()
+      expect(req.body).not.toHaveProperty('jobParamsList')
+      expect(res.ok).toHaveBeenCalled()
+    })
+  })
+
+  describe('bulkCreate main tests', () => {
     const badRequest = jest.fn()
     const ok = jest.fn()
 
@@ -99,13 +195,14 @@ describe('BulkController unit test', () => {
         body: { userId, longUrls: [longUrl] },
       })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockResolvedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -114,7 +211,6 @@ describe('BulkController unit test', () => {
         undefined,
       )
       expect(res.badRequest).not.toHaveBeenCalled()
-      expect(res.ok).toHaveBeenCalled()
     })
 
     it('bulkCreate without tags responds with error if urls are not created', async () => {
@@ -129,13 +225,14 @@ describe('BulkController unit test', () => {
 
       const req = httpMocks.createRequest({ body: { userId, longUrls } })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockRejectedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -144,7 +241,6 @@ describe('BulkController unit test', () => {
         undefined,
       )
       expect(res.badRequest).toHaveBeenCalled()
-      expect(res.ok).not.toHaveBeenCalled()
     })
 
     it('bulkCreate with tags should return success if urls are created', async () => {
@@ -162,13 +258,14 @@ describe('BulkController unit test', () => {
         body: { userId, longUrls: [longUrl], tags },
       })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockResolvedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -177,7 +274,6 @@ describe('BulkController unit test', () => {
         tags,
       )
       expect(res.badRequest).not.toHaveBeenCalled()
-      expect(res.ok).toHaveBeenCalled()
     })
 
     it('bulkCreate with tags responds with error if urls are not created', async () => {
@@ -193,13 +289,14 @@ describe('BulkController unit test', () => {
 
       const req = httpMocks.createRequest({ body: { userId, longUrls, tags } })
       const res = httpMocks.createResponse() as any
+      const next = jest.fn() as unknown as express.NextFunction
 
       res.badRequest = badRequest
       res.ok = ok
       mockBulkService.generateUrlMappings.mockResolvedValue(urlMappings)
       mockUrlManagementService.bulkCreate.mockRejectedValue({})
 
-      await controller.bulkCreate(req, res)
+      await controller.bulkCreate(req, res, next)
 
       expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
@@ -208,7 +305,6 @@ describe('BulkController unit test', () => {
         tags,
       )
       expect(res.badRequest).toHaveBeenCalled()
-      expect(res.ok).not.toHaveBeenCalled()
     })
   })
 })

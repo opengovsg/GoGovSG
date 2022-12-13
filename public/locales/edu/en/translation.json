@@ -20,10 +20,11 @@
       "directory": "/directory",
       "apiintegration": "/apiintegration",
       "dashboard": "/user",
+      "feedback": "https://for.edu.sg/foredusg-support",
       "faq": "https://guide.for.edu.sg",
       "privacy": "https://guide.for.edu.sg/privacy",
       "terms": "https://guide.for.edu.sg/termsofuse",
-      "contact": "https://go.gov.sg/foredusg-contact",
+      "contact": "https://for.edu.sg/foredusg-user-support",
       "builtBy": "https://open.gov.sg",
       "linkedin": "https://sg.linkedin.com/company/open-government-products",
       "facebook": "https://www.facebook.com/opengovsg",
@@ -32,7 +33,7 @@
     "builtBy": "Built by Open Government Products"
   },
   "homePage": {
-    "targetUsersPhrase": "(with an email from $t(general.emailDomain))",
+    "targetUsersPhrase": "(from <strong><a href='https://guide.for.edu.sg/#who-can-use-foredusg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #48426D;'>selected institutions</a></strong>)",
     "features": {
       "antiPhishing": {
         "description": "Shorten your links with a trustworthy $t(general.appTitle) domain, so your users know they are from an education officer."
@@ -56,7 +57,7 @@
     }
   },
   "login": {
-    "whitelistPhrase": "Only available for use by $t(general.officerType) with an email from <strong>$t(general.emailDomain)</strong>.",
+    "whitelistPhrase": "Only available for use by educational institutions listed <strong><a href='https://guide.for.edu.sg/#who-can-use-foredusg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #48426D;'>here</a></strong>.",
     "referrals": {
       "1": {
         "officerPhrase": "Public officers",
