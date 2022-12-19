@@ -1,0 +1,19 @@
+FROM localstack/localstack:1.2
+
+# Installs IBMPlexSans-Regular.ttf for QRCodeService.
+# RUN wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/TTF/IBMPlexSans-Regular.ttf
+# RUN fc-cache -f
+
+# Install libraries
+COPY package.json package-lock.json ./
+
+RUN npm ci --legacy-peer-deps
+
+# sharp installation on localstack
+RUN npm uninstall sharp --legacy-peer-deps
+RUN npm install --arch=x64 --platform=linux sharp --legacy-peer-deps
+
+# serverless installation
+RUN npm install -g serverless --legacy-peer-deps
+RUN npm install --save-dev serverless-localstack --legacy-peer-deps
+COPY . ./

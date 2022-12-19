@@ -6,12 +6,12 @@ if (!EB_CALLBACK_ENDPOINT)
 if (!EB_CALLBACK_SECRET)
   throw Error('Environment variable for EB_CALLBACK_SECRET is missing')
 
-async function sendHttpMessage(isSuccess, jobItemId, errorMessage) {
+async function sendHttpMessage(isSuccess, jobItemId, errorString) {
   const params = {
     jobItemId,
     status: {
       isSuccess,
-      errorMessage,
+      errorMessage: errorString,
     },
   }
 

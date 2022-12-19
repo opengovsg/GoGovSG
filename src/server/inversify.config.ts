@@ -5,12 +5,14 @@ import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
 import {
   DEV_ENV,
   accessEndpoint,
-  bucketEndpoint,
   cloudmersiveKey,
   gaTrackingId,
   linksToRotate,
+  localstackEndpoint,
   ogUrl,
   s3Bucket,
+  sqsQueueName,
+  sqsQueueUrl,
   sqsRegion,
   sqsTimeout,
   userAnnouncement,
@@ -192,22 +194,26 @@ export default () => {
         accessKeyId: 'foobar',
         secretAccessKey: 'foobar',
       },
-      endpoint: bucketEndpoint,
+      endpoint: localstackEndpoint,
       s3ForcePathStyle: true,
     })
     container
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
-
-    container.bind(DependencyIds.sqsClient).toConstantValue(
-      new AWS.SQS({
-        region: sqsRegion,
-        httpOptions: {
-          timeout: sqsTimeout,
-        },
-      }),
-    )
+    const sqsClient = new AWS.SQS({
+      region: sqsRegion,
+      httpOptions: {
+        timeout: sqsTimeout,
+      },
+      endpoint: localstackEndpoint,
+      accessKeyId: 'foobar',
+      secretAccessKey: 'foobar',
+    })
+    container.bind(DependencyIds.sqsClient).toConstantValue(sqsClient)
+    container
+      .bind(DependencyIds.sqsQueueUrl)
+      .toConstantValue(`${localstackEndpoint}/000000000000/${sqsQueueName}`)
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
@@ -219,6 +225,9 @@ export default () => {
         },
       }),
     )
+    container
+      .bind(DependencyIds.sqsQueueUrl)
+      .toConstantValue(`${sqsQueueUrl}/${sqsQueueName}`)
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
