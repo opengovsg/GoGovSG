@@ -6,7 +6,6 @@ import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
 import dogstatsd, {
-  BULK_CREATE_COUNT,
   BULK_CREATE_FAILURE,
   BULK_CREATE_SUCCESS,
 } from '../../util/dogstatsd'
@@ -67,7 +66,6 @@ export class BulkController {
       res.badRequest(jsonMessage('Something went wrong, please try again.'))
       return
     }
-    dogstatsd.increment(BULK_CREATE_COUNT, urlMappings.length)
     dogstatsd.increment(BULK_CREATE_SUCCESS, 1, 1)
     if (shouldGenerateQRCodes) {
       logger.info('shouldGenerateQRCodes true, triggering QR code generation')

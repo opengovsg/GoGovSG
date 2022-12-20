@@ -32,7 +32,6 @@ export const BULK_VALIDATION_ERROR_TAGS = {
 }
 export const BULK_CREATE_SUCCESS = 'bulk.hash.success'
 export const BULK_CREATE_FAILURE = 'bulk.hash.failure'
-export const BULK_CREATE_COUNT = 'bulk.urls.count'
 
 export const JOB_START_SUCCESS = 'job.start.success'
 export const JOB_START_FAILURE = 'job.start.failure'
