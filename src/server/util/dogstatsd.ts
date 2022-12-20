@@ -20,15 +20,15 @@ export const USER_NEW = 'user.new'
 
 export const BULK_VALIDATION_ERROR = 'bulk.validation.error'
 export const BULK_VALIDATION_ERROR_TAGS = {
-  hasUrls: 'errorType:emptyCsv',
-  validHeader: 'errorType: invalidHeader',
-  acceptableLinkCount: 'errorType:exceededLinkCount',
-  onlyOneColumn: 'errorType:moreThanOneColumn',
-  isNotEmpty: 'errorType:emptyRow',
-  isValidUrl: 'errorType:invalidUrl',
-  isNotBlacklisted: 'errorType:blacklistedUrl',
-  isNotCircularRedirect: 'errorType:circularRedirect',
-  noParsingError: 'errorType:parsingError',
+  hasUrls: 'error_type:has_urls',
+  validHeader: 'error_type:valid_header',
+  acceptableLinkCount: 'error_type:acceptable_link_count',
+  onlyOneColumn: 'error_type:only_one_column',
+  isNotEmpty: 'error_type:is_not_empty',
+  isValidUrl: 'error_type:is_valid_url',
+  isNotBlacklisted: 'error_type:is_not_blacklisted',
+  isNotCircularRedirect: 'error_type:is_not_circular_redirect',
+  noParsingError: 'error_type:no_parsing_error',
 }
 export const BULK_CREATE_SUCCESS = 'bulk.hash.success'
 export const BULK_CREATE_FAILURE = 'bulk.hash.failure'
