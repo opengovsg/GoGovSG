@@ -18,6 +18,21 @@ export const SHORTLINK_CREATE_TAG_IS_FILE = 'isfile'
 export const SHORTLINK_CREATE_TAG_SOURCE = 'source'
 export const USER_NEW = 'user.new'
 
+export const BULK_VALIDATION_ERROR = 'bulk.validation.error'
+export const BULK_VALIDATION_ERROR_TAGS = {
+  hasUrls: 'error_type:has_urls',
+  validHeader: 'error_type:valid_header',
+  acceptableLinkCount: 'error_type:acceptable_link_count',
+  onlyOneColumn: 'error_type:only_one_column',
+  isNotEmpty: 'error_type:is_not_empty',
+  isValidUrl: 'error_type:is_valid_url',
+  isNotBlacklisted: 'error_type:is_not_blacklisted',
+  isNotCircularRedirect: 'error_type:is_not_circular_redirect',
+  noParsingError: 'error_type:no_parsing_error',
+}
+export const BULK_CREATE_SUCCESS = 'bulk.hash.success'
+export const BULK_CREATE_FAILURE = 'bulk.hash.failure'
+
 export const JOB_START_SUCCESS = 'job.start.success'
 export const JOB_START_FAILURE = 'job.start.failure'
 export const JOB_ITEM_UPDATE_SUCCESS = 'jobItem.update.success'
