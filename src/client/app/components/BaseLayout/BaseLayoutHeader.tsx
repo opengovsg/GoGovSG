@@ -133,112 +133,6 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   const theme = useTheme()
   const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
   const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
-  const headers = [
-    {
-      text: 'Dashboard',
-      link: i18next.t('general.links.dashboard'),
-      public: false,
-      icon: homeIcon,
-      mobileOrder: 1,
-      internalLink: true,
-    },
-    {
-      text: 'Directory',
-      link: i18next.t('general.links.directory'),
-      public: false,
-      icon: directoryIcon,
-      mobileOrder: 2,
-      internalLink: true,
-    },
-    {
-      text: 'API Integration',
-      link: i18next.t('general.links.apiintegration'),
-      public: false,
-      icon: apiIcon,
-      mobileOrder: 3,
-      internalLink: true,
-    },
-    {
-      text: 'Send us feedback',
-      link: i18next.t('general.links.feedback'),
-      public: true,
-      icon: feedbackIcon,
-    },
-    {
-      text: 'Guide',
-      link: i18next.t('general.links.faq'),
-      public: true,
-      icon: helpIcon,
-    },
-    {
-      text: 'Contribute',
-      link: i18next.t('general.links.contribute'),
-      public: true,
-      icon: githubIcon,
-    },
-    {
-      text: 'Guide',
-      link: i18next.t('general.links.faq'),
-      public: false,
-      icon: helpIcon,
-      mobileOrder: 4,
-    },
-    {
-      text: 'Send us feedback',
-      link: i18next.t('general.links.contact'),
-      public: false,
-      icon: feedbackIcon,
-      mobileOrder: 5,
-    },
-  ]
-
-  const appBarBtn = isLoggedIn ? (
-    <Button
-      onClick={logout}
-      size="large"
-      color={isLightItems ? 'primary' : 'secondary'}
-      variant="text"
-      className={classes.appBarSignOutBtn}
-    >
-      <Hidden xsDown>
-        <strong>Sign out&nbsp;</strong>
-      </Hidden>
-      {isLightItems ? (
-        <img
-          className={classes.logoutIcon}
-          src={logoutWhiteIcon}
-          alt="Sign out"
-        />
-      ) : (
-        <img className={classes.logoutIcon} src={logoutIcon} alt="Sign out" />
-      )}
-    </Button>
-  ) : (
-    <>
-      <Hidden smDown>
-        <Button
-          href="/#/login"
-          size="large"
-          variant="contained"
-          color={isLightItems ? 'default' : 'primary'}
-          className={classes.appBarSignInBtn}
-        >
-          Sign in
-        </Button>
-      </Hidden>
-      <Hidden mdUp>
-        <Button href="/#/login" size="large" className={classes.headerButton}>
-          Sign in
-          <img
-            src={signinIcon}
-            alt="Sign in icon"
-            className={classes.signInIcon}
-            aria-hidden
-          />
-        </Button>
-      </Hidden>
-    </>
-  )
 
   const getGoLogo = () => {
     if (isLightItems && isMobileVariant) {
@@ -251,6 +145,154 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       return GoLogoMini
     }
     return GoLogo
+  }
+
+  let appBarBtn
+  let headers
+  let headerOutput
+
+  if (isLoggedIn) {
+    appBarBtn = (
+      <Button
+        onClick={logout}
+        size="large"
+        color={isLightItems ? 'primary' : 'secondary'}
+        variant="text"
+        className={classes.appBarSignOutBtn}
+      >
+        <Hidden xsDown>
+          <strong>Sign out&nbsp;</strong>
+        </Hidden>
+        {isLightItems ? (
+          <img
+            className={classes.logoutIcon}
+            src={logoutWhiteIcon}
+            alt="Sign out"
+          />
+        ) : (
+          <img className={classes.logoutIcon} src={logoutIcon} alt="Sign out" />
+        )}
+      </Button>
+    )
+
+    headers = [
+      {
+        text: 'Dashboard',
+        link: i18next.t('general.links.dashboard'),
+        icon: homeIcon,
+        mobileOrder: 1,
+        internalLink: true,
+      },
+      {
+        text: 'Directory',
+        link: i18next.t('general.links.directory'),
+        icon: directoryIcon,
+        mobileOrder: 2,
+        internalLink: true,
+      },
+      {
+        text: 'API Integration',
+        link: i18next.t('general.links.apiintegration'),
+        icon: apiIcon,
+        mobileOrder: 3,
+        internalLink: true,
+      },
+      {
+        text: 'Guide',
+        link: i18next.t('general.links.faq'),
+        icon: helpIcon,
+        mobileOrder: 4,
+        internalLink: false,
+      },
+      {
+        text: 'Send us feedback',
+        link: i18next.t('general.links.contact'),
+        icon: feedbackIcon,
+        mobileOrder: 5,
+        internalLink: false,
+      },
+    ]
+
+    headerOutput = headers.map((header) => (
+      <Button
+        href={header.internalLink ? `/#${header.link}` : header.link}
+        target={header.internalLink ? '' : '_blank'}
+        color="primary"
+        size="large"
+        variant="text"
+        key={header.text}
+        className={classes.headerButton}
+        style={isMobileVariant ? { order: header.mobileOrder } : {}}
+      >
+        {isMobileVariant && header.icon && (
+          <img src={header.icon} alt={header.text} />
+        )}
+        {!isMobileVariant && header.text}
+      </Button>
+    ))
+  } else {
+    appBarBtn = (
+      <>
+        <Hidden smDown>
+          <Button
+            href="/#/login"
+            size="large"
+            variant="contained"
+            color={isLightItems ? 'default' : 'primary'}
+            className={classes.appBarSignInBtn}
+          >
+            Sign in
+          </Button>
+        </Hidden>
+        <Hidden mdUp>
+          <Button href="/#/login" size="large" className={classes.headerButton}>
+            Sign in
+            <img
+              src={signinIcon}
+              alt="Sign in icon"
+              className={classes.signInIcon}
+              aria-hidden
+            />
+          </Button>
+        </Hidden>
+      </>
+    )
+
+    headers = [
+      {
+        text: 'Send us feedback',
+        link: i18next.t('general.links.feedback'),
+        icon: feedbackIcon,
+      },
+      {
+        text: 'Guide',
+        link: i18next.t('general.links.faq'),
+        icon: helpIcon,
+      },
+      {
+        text: 'Contribute',
+        link: i18next.t('general.links.contribute'),
+        icon: githubIcon,
+      },
+    ]
+
+    headerOutput = headers.map((header) => (
+      <Button
+        href={header.link}
+        target="_blank"
+        color="primary"
+        size="large"
+        variant="text"
+        key={header.text}
+        className={classes.headerButton}
+        style={{}}
+      >
+        {isMobileVariant && header.icon && (
+          <img src={header.icon} alt={header.text} />
+        )}
+        {!isMobileVariant && header.text}
+      </Button>
+    ))
   }
 
   return (
@@ -270,33 +312,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
             />
           </a>
           <span className={classes.rowSpace} />
-          {!hideNavButtons &&
-            headers.map(
-              (header) =>
-                (header.public ? !isLoggedIn : isLoggedIn) && (
-                  <Button
-                    href={
-                      header.internalLink ? `/#${header.link}` : header.link
-                    }
-                    target={header.internalLink ? '' : '_blank'}
-                    color="primary"
-                    size="large"
-                    variant="text"
-                    key={header.text}
-                    className={classes.headerButton}
-                    style={
-                      isMobileVariant && header.mobileOrder
-                        ? { order: header.mobileOrder }
-                        : {}
-                    }
-                  >
-                    {isMobileVariant && header.icon && (
-                      <img src={header.icon} alt={header.text} />
-                    )}
-                    {!isMobileVariant && header.text}
-                  </Button>
-                ),
-            )}
+          {!hideNavButtons && headerOutput}
           {!hideNavButtons && appBarBtn}
         </Toolbar>
       </AppBar>
