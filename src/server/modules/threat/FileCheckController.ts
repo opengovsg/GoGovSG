@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
 import fileUpload from 'express-fileupload'
-import dogstatsd, { MALICIOUS_ACTIVITY_FILE } from '../../util/dogstatsd'
+import dogstatsd, {
+  MALICIOUS_ACTIVITY_FILE,
+  SCAN_FAILED_FILE,
+} from '../../util/dogstatsd'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { FileTypeFilterService, VirusScanService } from './interfaces'
@@ -79,6 +82,7 @@ export class FileCheckController {
           return
         }
       } catch (error) {
+        dogstatsd.increment(SCAN_FAILED_FILE, 1, 1)
         logger.error('Unable to scan file: ', error)
         res.badRequest(
           jsonMessage('Your file could not be scanned by antivirus software.'),
