@@ -17,13 +17,20 @@ import dogstatsd, {
   OTP_VERIFY_FAILURE,
   OTP_VERIFY_SUCCESS,
 } from '../../util/dogstatsd'
+import { GovLoginService } from '../govlogin/interfaces'
 
 @injectable()
 export class LoginController {
   private authService: AuthService
 
-  constructor(@inject(DependencyIds.authService) authService: AuthService) {
+  private govLoginService: GovLoginService
+
+  constructor(
+    @inject(DependencyIds.authService) authService: AuthService,
+    @inject(DependencyIds.govLoginService) govLoginService: GovLoginService,
+  ) {
     this.authService = authService
+    this.govLoginService = govLoginService
   }
 
   public getLoginMessage: (
@@ -40,6 +47,18 @@ export class LoginController {
   ) => void = (_, res) => {
     res.send(validEmailDomainGlobExpression)
     return
+  }
+
+  public redirectToGovLogin: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => void = async (_req, res) => {
+    try {
+      const redirectUrl = this.govLoginService.createRedirectUrl()
+      return res.redirect(redirectUrl)
+    } catch (error) {
+      return res.serverError(jsonMessage(error.message))
+    }
   }
 
   public generateOtp: (

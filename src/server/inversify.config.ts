@@ -85,6 +85,7 @@ import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
 import { SQSService } from './services/sqs'
 import { JobController } from './modules/job'
+import { GovLoginService } from './modules/govlogin/services'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -130,6 +131,7 @@ export default () => {
   bindIfUnbound(DependencyIds.sentryController, SentryController)
   bindIfUnbound(DependencyIds.loginController, LoginController)
   bindIfUnbound(DependencyIds.authService, AuthService)
+  bindIfUnbound(DependencyIds.govLoginService, GovLoginService)
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)

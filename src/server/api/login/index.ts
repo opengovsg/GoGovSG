@@ -46,6 +46,12 @@ router.post(
   loginController.generateOtp,
 )
 
+router.post(
+  '/redirect',
+  apiOtpGeneratorLimiter,
+  loginController.redirectToGovLogin,
+)
+
 /**
  * Verify an OTP submission.
  */

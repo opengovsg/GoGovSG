@@ -271,7 +271,7 @@ export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
 export const apiAdmin: string = process.env.ADMIN_API_EMAIL || ''
 
 export const govLogin = {
-  clientId: process.env.GOVLOGIN_CLIENT_ID,
-  clientSecret: process.env.GOVLOGIN_CLIENT_SECRET,
-  redirectUri: process.env.GOVLOGIN_REDIRECT_URI,
+  clientId: process.env.GOVLOGIN_CLIENT_ID ?? '',
+  clientSecret: process.env.GOVLOGIN_CLIENT_SECRET ?? '',
+  redirectUri: process.env.GOVLOGIN_REDIRECT_URI ?? '',
 }
