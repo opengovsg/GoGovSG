@@ -65,6 +65,9 @@ services:
       - API_KEY_SALT=$$2b$$10$$9rBKuE4Gb5ravnvP4xjoPu
       - FF_EXTERNAL_API=true
       - ADMIN_API_EMAIL=
+      - GOVLOGIN_CLIENT_ID=
+      - GOVLOGIN_CLIENT_SECRET=
+      - GOVLOGIN_REDIRECT_URI=
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
