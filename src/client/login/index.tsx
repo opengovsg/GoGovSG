@@ -1,7 +1,5 @@
-import React, { FunctionComponent, useEffect, useState } from 'react'
-import classNames from 'classnames'
-import i18next from 'i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
+import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import {
   Hidden,
   LinearProgress,
@@ -10,20 +8,22 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
+import classNames from 'classnames'
+import i18next from 'i18next'
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Redirect } from 'react-router-dom'
-import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
-import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import assetVariant from '../../shared/util/asset-variant'
-import { GoGovReduxState } from '../app/reducers/types'
-import loginActions from './actions'
-import rootActions from '../app/components/pages/RootPage/actions'
-import { htmlSanitizer } from '../app/util/format'
-import { USER_PAGE, VariantType, loginFormVariants } from '../app/util/types'
-import { get } from '../app/util/requests'
-import LoginForm from './components/LoginForm'
-import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
+import rootActions from '../app/components/pages/RootPage/actions'
+import Section from '../app/components/Section'
+import { GoGovReduxState } from '../app/reducers/types'
+import { htmlSanitizer } from '../app/util/format'
 import { GAEvent, GAPageView } from '../app/util/ga'
+import { get } from '../app/util/requests'
+import { USER_PAGE, VariantType, loginFormVariants } from '../app/util/types'
+import loginActions from './actions'
+import LoginForm from './components/LoginForm'
 import TextButton from './widgets/TextButton'
 
 type LoginPageProps = {
@@ -179,8 +179,20 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
             GAPageView('OTP LOGIN PAGE')
             GAEvent('login page', 'otp', 'successful')
           },
+          onGovLogin: () => {
+            dispatch(
+              loginActions.redirectToGovLogin((result) => {
+                if (result) {
+                  GAPageView('OTP LOGIN PAGE')
+                  GAEvent('login page', 'sso', 'successful')
+                  window.location.href = result
+                }
+              }),
+            )
+          },
           placeholder: `e.g. ${i18next.t('login.placeholders.email')}`,
           buttonMessage: 'Sign in',
+          govLoginButtonMessage: 'Sign in with GovLogin',
           textError: emailError,
           textErrorMessage: () =>
             emailError()

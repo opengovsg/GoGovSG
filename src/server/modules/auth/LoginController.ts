@@ -49,13 +49,13 @@ export class LoginController {
     return
   }
 
-  public redirectToGovLogin: (
+  public getGovLoginRedirectUrl: (
     req: Express.Request,
     res: Express.Response,
   ) => void = async (_req, res) => {
     try {
       const redirectUrl = this.govLoginService.createRedirectUrl()
-      return res.redirect(redirectUrl)
+      return res.json({ redirectUrl })
     } catch (error) {
       return res.serverError(jsonMessage(error.message))
     }

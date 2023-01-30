@@ -204,6 +204,54 @@ const getOTPEmail =
       })
   }
 
+const redirectToGovLogin =
+  (callback: (redirectUrlResult: string | null) => void) =>
+  (
+    dispatch: Dispatch<
+      | GetOtpEmailErrorAction
+      | CloseSnackbarAction
+      | ResendOtpDisabledAction
+      | GetOtpEmailSuccessAction
+      | GetOtpEmailPendingAction
+      | ResendOtpPendingAction
+      | VerifyOtpErrorAction
+      | SetErrorMessageAction
+    >,
+  ) => {
+    dispatch<CloseSnackbarAction>(rootActions.closeSnackbar())
+
+    dispatch<GetOtpEmailPendingAction>(isGetOTPPending())
+
+    return postJson('/api/login/redirect', {})
+      .then((response) => {
+        if (response.ok) {
+          // Retrieved redirect url from server and redirecting to it
+          return response
+            .json()
+            .then(({ redirectUrl }) => callback(redirectUrl))
+        }
+        if (response.status === 401) {
+          // Unauthorized
+          dispatch<SetErrorMessageAction>(
+            rootActions.setErrorMessage(response.statusText),
+          )
+          return callback(null)
+        }
+
+        return response.json().then((json) => {
+          const { message } = json
+          dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
+          return callback(null)
+        })
+      })
+      .catch(() => {
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('Network connectivity failed.'),
+        )
+        return callback(null)
+      })
+  }
+
 // Checks if there is an existing session.
 const isLoggedIn =
   () => (dispatch: Dispatch<IsLoggedInSuccessAction | IsLoggedOutAction>) =>
@@ -284,6 +332,7 @@ const logout =
 export default {
   getEmailValidationGlobExpression,
   getOTPEmail,
+  redirectToGovLogin,
   verifyOTP,
   isLoggedIn,
   logout,

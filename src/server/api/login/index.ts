@@ -49,7 +49,7 @@ router.post(
 router.post(
   '/redirect',
   apiOtpGeneratorLimiter,
-  loginController.redirectToGovLogin,
+  loginController.getGovLoginRedirectUrl,
 )
 
 /**

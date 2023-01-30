@@ -1,18 +1,26 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
 
-import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  TextField,
+  createStyles,
+  makeStyles,
+} from '@material-ui/core'
 import { VariantType, loginFormVariants } from '../../app/util/types'
 
 type LoginFormProps = {
   id: string
   placeholder: string
   buttonMessage: string
+  govLoginButtonMessage?: string
   variant: VariantType
   autoComplete: string
   onChange: (email: string) => void
   textError: () => boolean
   textErrorMessage: () => string
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+  onGovLogin?: () => void
   value: string
 }
 
@@ -30,6 +38,10 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(1),
     },
+    buttonGroup: {
+      display: 'flex',
+      gap: '0.5rem',
+    },
     signInButton: {
       width: '140px',
       minWidth: '120px',
@@ -43,6 +55,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
   id,
   placeholder,
   buttonMessage,
+  govLoginButtonMessage,
+  onGovLogin,
   variant,
   autoComplete,
   onChange,
@@ -78,16 +92,31 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
         value={value}
       />
       <section className={classes.buttonRow}>
-        <Button
-          className={classes.signInButton}
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={!variantMap.submitEnabled || !!textError()}
-          size="large"
-        >
-          {buttonMessage}
-        </Button>
+        <Box className={classes.buttonGroup}>
+          <Button
+            className={classes.signInButton}
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!variantMap.submitEnabled || !!textError()}
+            size="large"
+          >
+            {buttonMessage}
+          </Button>
+          {govLoginButtonMessage && (
+            <Button
+              className={classes.signInButton}
+              type="button"
+              variant="contained"
+              color="secondary"
+              disabled={!variantMap.submitEnabled || !!textError()}
+              size="large"
+              onClick={onGovLogin}
+            >
+              {govLoginButtonMessage}
+            </Button>
+          )}
+        </Box>
         {children}
       </section>
     </form>
