@@ -17,4 +17,11 @@ export interface AuthService {
    * @returns Promise that resolves to the user if the otp is valid.
    */
   verifyOtp(email: string, otp: string): Promise<StorableUser>
+
+  /**
+   * Process SSO success by logging in user to the application.
+   * @sideeffect Performs an upsert user DB action.
+   * @param email Email returned from SSO.
+   */
+  processSsoSuccess(email: string): Promise<StorableUser>
 }

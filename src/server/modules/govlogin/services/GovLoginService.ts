@@ -20,11 +20,7 @@ export class GovLoginService implements interfaces.GovLoginService {
   createRedirectUrl(): string {
     const result = this.client.authorizationUrl('', 'openid', null)
     if (typeof result.url === 'string') {
-      const url = new URL(result.url)
-      // Extract search params as the host is incorrect for now.
-      const params = new URLSearchParams(url.search)
-      // TODO: Fix in govlogin-client
-      return `http://localhost:8081/oidc/auth?${params.toString()}`
+      return result.url
     }
     logger.error(`GovLogin authorization URL is not a string`)
     throw new Error('GovLogin authorization URL is not a string')

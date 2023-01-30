@@ -125,6 +125,16 @@ export class AuthService implements interfaces.AuthService {
         throw new Error('Error creating user.')
       }
     }
+
+  public processSsoSuccess = async (email: string): Promise<StorableUser> => {
+    try {
+      const dbUser = await this.userRepository.findOrCreateWithEmail(email)
+      return dbUser
+    } catch (error) {
+      logger.error(`Error creating user:\t ${email}, ${error}`)
+      throw new Error('Error creating user.')
+    }
+  }
 }
 
 export default AuthService

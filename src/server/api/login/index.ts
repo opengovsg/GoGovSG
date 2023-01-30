@@ -52,6 +52,8 @@ router.post(
   loginController.getGovLoginRedirectUrl,
 )
 
+router.get('/redirect/callback', loginController.handleGovLoginRedirectCallback)
+
 /**
  * Verify an OTP submission.
  */

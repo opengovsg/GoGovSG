@@ -1,4 +1,4 @@
-import Express from 'express'
+import Express, { RequestHandler } from 'express'
 import { inject, injectable } from 'inversify'
 import {
   logger,
@@ -16,6 +16,8 @@ import dogstatsd, {
   OTP_GENERATE_SUCCESS,
   OTP_VERIFY_FAILURE,
   OTP_VERIFY_SUCCESS,
+  SSO_LOGIN_FAILURE,
+  SSO_LOGIN_SUCCESS,
 } from '../../util/dogstatsd'
 import { GovLoginService } from '../govlogin/interfaces'
 
@@ -49,15 +51,48 @@ export class LoginController {
     return
   }
 
-  public getGovLoginRedirectUrl: (
-    req: Express.Request,
-    res: Express.Response,
-  ) => void = async (_req, res) => {
+  public getGovLoginRedirectUrl: RequestHandler = async (_req, res) => {
     try {
       const redirectUrl = this.govLoginService.createRedirectUrl()
       return res.json({ redirectUrl })
     } catch (error) {
       return res.serverError(jsonMessage(error.message))
+    }
+  }
+
+  public handleGovLoginRedirectCallback: RequestHandler<
+    unknown,
+    unknown,
+    unknown,
+    { code?: string; iss?: string }
+  > = async (req, res) => {
+    let clientTarget = '/!#/login'
+
+    if (!req.query.code) {
+      clientTarget += '?error=missingCode'
+      logger.warn('Missing code in GovLogin redirect callback')
+      return res.redirect(clientTarget)
+    }
+    try {
+      // sub is the unique identifier for the user
+      // if it exists, user is successfully logged in on GovLogin
+      const { sub: email } = await this.govLoginService.retrieveAccessToken(
+        req.query.code,
+      )
+      // Log the user in to our app too.
+      // TODO: Reject user if user fails our own login checks
+      const user = await this.authService.processSsoSuccess(email)
+      req.session!.user = user
+
+      dogstatsd.increment(SSO_LOGIN_SUCCESS, 1, 1)
+      logger.info(`SSO login success for user:\t${user.email}`)
+      return res.redirect(clientTarget)
+    } catch (error) {
+      clientTarget += '?error=loginFailed'
+      dogstatsd.increment(SSO_LOGIN_FAILURE, 1, 1)
+      logger.error(`SSO login failure: ${error}`)
+
+      return res.redirect(clientTarget)
     }
   }
 
