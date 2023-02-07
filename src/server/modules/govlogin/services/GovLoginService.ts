@@ -13,7 +13,7 @@ export class GovLoginService implements interfaces.GovLoginService {
       clientId: govLogin.clientId,
       clientSecret: govLogin.clientSecret,
       redirectUri: govLogin.redirectUri,
-      hostname: 'https://gov-login-stg.beta.gov.sg/',
+      hostname: 'https://gov-login-stg.beta.gov.sg',
     })
   }
 

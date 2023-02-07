@@ -1,6 +1,7 @@
 import Express, { RequestHandler } from 'express'
 import { inject, injectable } from 'inversify'
 import {
+  DEV_ENV,
   logger,
   loginMessage,
   validEmailDomainGlobExpression,
@@ -66,10 +67,9 @@ export class LoginController {
     unknown,
     { code?: string; iss?: string }
   > = async (req, res) => {
-    let clientTarget = '/!#/login'
-
+    let clientTarget = DEV_ENV ? 'http://localhost:3000/' : '/'
     if (!req.query.code) {
-      clientTarget += '?error=missingCode'
+      clientTarget += '!#/login?error=missingCode'
       logger.warn('Missing code in GovLogin redirect callback')
       return res.redirect(clientTarget)
     }
@@ -88,7 +88,7 @@ export class LoginController {
       logger.info(`SSO login success for user:\t${user.email}`)
       return res.redirect(clientTarget)
     } catch (error) {
-      clientTarget += '?error=loginFailed'
+      clientTarget += '!#/login?error=loginFailed'
       dogstatsd.increment(SSO_LOGIN_FAILURE, 1, 1)
       logger.error(`SSO login failure: ${error}`)
 
