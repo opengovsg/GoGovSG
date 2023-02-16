@@ -17,6 +17,7 @@ test('Invalid Email that does not end with .gov.sg and should not allow submissi
   await t
     .click(loginButton)
     .typeText('#email', `${incorrectEmail}`)
+    .click(signInButton)
     // It should respond with invalid email when email does not end with .gov.sg
     .expect(emailHelperText.innerText)
     .eql("This doesn't look like a valid gov.sg email.")
