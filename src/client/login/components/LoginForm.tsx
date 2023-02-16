@@ -10,8 +10,9 @@ type LoginFormProps = {
   variant: VariantType
   autoComplete: string
   onChange: (email: string) => void
-  textError: () => boolean
-  textErrorMessage: () => string
+  onBlur?: () => void
+  isError: boolean
+  textErrorMessage: string
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   value: string
 }
@@ -46,7 +47,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
   variant,
   autoComplete,
   onChange,
-  textError,
+  onBlur,
+  isError,
   textErrorMessage,
   onSubmit,
   children,
@@ -63,6 +65,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
         variant="outlined"
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
+        onBlur={onBlur}
         InputProps={{
           classes: {
             input: classes.loginInputText,
@@ -73,8 +76,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
         id={id}
         name={id}
         disabled={!variantMap.inputEnabled}
-        error={textError()}
-        helperText={textErrorMessage()}
+        error={isError}
+        helperText={isError ? textErrorMessage : ''}
         value={value}
       />
       <section className={classes.buttonRow}>
@@ -83,7 +86,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
           type="submit"
           variant="contained"
           color="primary"
-          disabled={!variantMap.submitEnabled || !!textError()}
+          disabled={!variantMap.submitEnabled || isError}
           size="large"
         >
           {buttonMessage}

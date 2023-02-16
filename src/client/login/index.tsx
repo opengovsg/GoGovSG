@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from 'react'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
@@ -131,6 +136,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
   const [email, setEmail] = useState('')
+  const [isEmailError, setIsEmailError] = useState(false)
+  const [shouldValidateOnChange, setShouldValidateOnChange] = useState(false)
   const [otp, setOtp] = useState('')
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant,
@@ -165,10 +172,24 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     return
   }, [getEmailValidator])
 
+  const onEmailBlur = useCallback(() => {
+    setIsEmailError(!emailValidator(email))
+    setShouldValidateOnChange(true)
+  }, [email, emailValidator])
+
+  const onEmailChange = useCallback(
+    (emailInput: string) => {
+      if (shouldValidateOnChange) {
+        setIsEmailError(!emailValidator(emailInput))
+      }
+      setEmail(emailInput.toLowerCase())
+    },
+    [shouldValidateOnChange, emailValidator],
+  )
+
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
-    const emailError = () => !!email && !emailValidator(email)
 
     const formAttr = isEmailView
       ? {
@@ -181,14 +202,12 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
           },
           placeholder: `e.g. ${i18next.t('login.placeholders.email')}`,
           buttonMessage: 'Sign in',
-          textError: emailError,
-          textErrorMessage: () =>
-            emailError()
-              ? `This doesn't look like a valid ${i18next.t(
-                  'general.emailDomain',
-                )} email.`
-              : '',
-          onChange: (email: string) => setEmail(email.toLowerCase()),
+          isError: isEmailError,
+          textErrorMessage: `This doesn't look like a valid ${i18next.t(
+            'general.emailDomain',
+          )} email.`,
+          onChange: onEmailChange,
+          onBlur: onEmailBlur,
           variant,
           autoComplete: 'on',
           value: email,
@@ -202,8 +221,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
           titleMessage: 'One time password',
           placeholder: 'e.g. 123456',
           buttonMessage: 'Submit',
-          textError: () => false,
-          textErrorMessage: () => '',
+          isError: false,
+          textErrorMessage: '',
           onChange: (otp: string) => setOtp(otp),
           variant,
           autoComplete: 'off',
