@@ -17,6 +17,7 @@ import {
   drawer,
   fileTab,
   filterSortPanel,
+  generateRandomString,
   generateUrlImage,
   longUrl,
   longUrlTextField,
@@ -28,6 +29,7 @@ import {
   shortUrlTextField,
   tagsAutocompleteInput,
   uploadFile,
+  urlTableRow,
   urlTableRowUrlText,
   userActiveButton,
   userApplyButton,
@@ -302,5 +304,23 @@ test('User page test on filter search by tags', async (t) => {
     .expect(searchBarTagButton.exists)
     .ok()
     .expect(searchBarTagsInput.exists)
+    .ok()
+})
+
+test('User page shows ellipsis on long link', async (t) => {
+  await t.click(createLinkButton.nth(0))
+  const longUrl = generateRandomString(60)
+  await t.typeText(shortUrlTextField, longUrl)
+  await t.typeText(longUrlTextField, `${shortUrl}`)
+  await firstLinkHandle(t)
+  // wait for it to appear on the table
+  await t.wait(1000)
+  const tableRow = urlTableRow(0)
+  const overflow = await tableRow.getStyleProperty('text-overflow')
+  const hasEllipsis = overflow === 'ellipsis'
+
+  await t
+    // eslint-disable-next-line
+  .expect(hasEllipsis)
     .ok()
 })

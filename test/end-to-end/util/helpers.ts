@@ -70,7 +70,9 @@ export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
   urlTable.child(index).child(1).child('div').child(0).child('h6').innerText
-
+export const urlTableRow = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(1).child('div').child(0).child('h6')
 export const searchBarLinksInput = Selector('input[placeholder="Search links"]')
 export const searchBarTagsInput = Selector('input[placeholder="Search tags"]')
 export const searchBarLinkButton = Selector('span').withExactText('Link')
