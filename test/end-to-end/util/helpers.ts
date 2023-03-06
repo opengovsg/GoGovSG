@@ -54,6 +54,7 @@ export const bulkTab = Selector('p').withText('From a .csv')
 export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
+
 export const blacklistValidationError = Selector('div').withText(
   'ValidationError: Creation of URLs to link shortener sites are not allowed.',
 )
@@ -63,9 +64,13 @@ export const circularRedirectValidationError = Selector('div').withText(
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
+export const maliciousFileCreation = Selector('div').withText(
+  'File is likely to be malicious.',
+)
 export const successBulkCreation = Selector('div').withText(
   'links have been created',
 )
+
 export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call

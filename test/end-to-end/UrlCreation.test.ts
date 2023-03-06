@@ -4,6 +4,8 @@ import {
   dummyBulkCsv,
   dummyBulkCsvRelativePath,
   dummyFilePath,
+  dummyMaliciousFilePath,
+  dummyMaliciousRelativePath,
   dummyRelativePath,
   invalidShortUrl,
   largeFileSize,
@@ -28,6 +30,7 @@ import {
   getLinkCount,
   largeFileError,
   longUrlTextField,
+  maliciousFileCreation,
   resultTable,
   searchBarLinkButton,
   searchBarLinksInput,
@@ -49,6 +52,7 @@ import firstLinkHandle from './util/FirstLinkHandle'
 import {
   createBulkCsv,
   createEmptyFileOfSize,
+  createMaliciousFile,
   deleteFile,
 } from './util/fileHandle'
 
@@ -280,4 +284,33 @@ test('The bulk based test.', async (t) => {
 
   // Delete invalid file (non-csv)
   await deleteFile(dummyFilePath)
+})
+
+test('The malicious file test.', async (t) => {
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+
+  // const generatedfileUrl = await shortUrlTextField.value
+
+  // Generate Malicious file
+  await createMaliciousFile()
+
+  await t
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyMaliciousRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+  await t
+    // It should show an error snackbar when malicious file uploaded
+    .expect(maliciousFileCreation.exists)
+    .ok()
+
+  // TODO: Check that row is not created
+  // await t
+  // .expect(fileRow.exists)
+  // .notOk()
+
+  // Delete malicious file
+  await deleteFile(dummyMaliciousFilePath)
 })
