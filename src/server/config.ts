@@ -38,7 +38,7 @@ const requiredVars: string[] = [
   'API_KEY_SALT', // To generate APIKey
 ]
 
-export const port: string = process.env.PORT
+export const port: string = process.env.PORT as string
 
 // AWS Simple Email Service
 const sesVars: string[] = ['SES_HOST', 'SES_USER', 'SES_PASS', 'SES_PORT']
