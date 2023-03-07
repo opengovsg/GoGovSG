@@ -25,6 +25,7 @@ import {
   cspReportUri,
   displayHostname,
   logger,
+  port,
   s3Bucket,
   sentryDns,
   sessionSettings,
@@ -240,7 +241,7 @@ initDb()
     }
     app.use(errorHandler)
 
-    const port = 8080
+    // const port = 8080
     app.listen(port, () => logger.info(`Listening on port ${port}!`))
   })
   .catch((error: any) => {
