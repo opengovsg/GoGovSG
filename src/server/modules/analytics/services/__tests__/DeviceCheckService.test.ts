@@ -17,6 +17,14 @@ describe('DeviceCheckService tests', () => {
       ).toStrictEqual('others')
     })
 
+    test('should correctly identify google page renderer bots', () => {
+      expect(
+        service.getDeviceType(
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36 Google-PageRenderer Google (+https://developers.google.com/+/web/snippet/)',
+        ),
+      ).toStrictEqual('others')
+    })
+
     test('empty user agent are classified as others', () => {
       expect(service.getDeviceType('')).toStrictEqual('others')
     })
