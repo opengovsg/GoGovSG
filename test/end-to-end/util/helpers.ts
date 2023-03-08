@@ -135,6 +135,9 @@ export const filterSortPanel = Selector('.MuiCollapse-root').nth(1)
 export const userApplyButton = Selector('span').withText('Apply')
 export const userResetButton = Selector('span').withText('Reset')
 export const dateOfCreationButton = Selector('p').withText('Date of creation')
+export const mostNumberOfVisitsButton = Selector('p').withText(
+  'Most number of visits',
+)
 export const userActiveButton = Selector('p')
   .withText('Active')
   .parent()

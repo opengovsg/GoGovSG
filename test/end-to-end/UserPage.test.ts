@@ -1,4 +1,6 @@
 import { Selector } from 'testcafe'
+import { parse } from 'csv-parse'
+import { createReadStream } from 'fs'
 import {
   dummyFilePath,
   dummyRelativePath,
@@ -14,6 +16,7 @@ import {
   clickAway,
   createLinkButton,
   dateOfCreationButton,
+  downloadLinkButton,
   drawer,
   fileTab,
   filterSortPanel,
@@ -29,6 +32,7 @@ import {
   shortUrlTextField,
   tagsAutocompleteInput,
   uploadFile,
+  urlTable,
   urlTableRow,
   urlTableRowUrlText,
   userActiveButton,
@@ -321,6 +325,198 @@ test('User page shows ellipsis on long link', async (t) => {
 
   await t
     // eslint-disable-next-line
-  .expect(hasEllipsis)
+    .expect(hasEllipsis)
     .ok()
 })
+
+test('Download csv should match links on page', async (t) => {
+  type Record = {
+    'Short Url': string
+    'Original URL': string
+    Status: string
+    Tags: string
+    Visits: string
+    'Created At': string
+  }
+
+  // TODO: Figure out how to do download of csv on GH actions/local and parse it elegantly
+
+  await t.click(downloadLinkButton)
+  await t.wait(5000)
+  const directoryPath = `${process.env.HOME}/Downloads/urls.csv`
+  console.log(directoryPath)
+
+  const products: string[] = []
+  ;(() => {
+    const readStream = createReadStream(directoryPath, 'utf8')
+
+    readStream.pipe(parse()).on('data', (chunk) => {
+      products.push(chunk)
+    })
+
+    readStream.on('error', (err) => {
+      console.log('Error found')
+    })
+
+    readStream.on('end', () => {
+      console.log('Finished reading using csv parse')
+    })
+  })()
+
+  const linkTable = urlTable
+  // Get the number of rows in the table
+  const rowCount = await linkTable.find('tr').count
+  const allRecords: Record[] = []
+
+  // Loop through each row
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const row = linkTable.find('tr').nth(rowIndex)
+    const record = {
+      'Short Url': '',
+      'Original URL': '',
+      Status: 'ACTIVE',
+      Tags: '',
+      Visits: '',
+      'Created At': '',
+    }
+
+    // Get the number of columns in the row
+    /* eslint-disable no-await-in-loop */
+    const colCount = await row.find('td').count
+
+    // Loop through each column
+    for (let colIndex = 1; colIndex < colCount; colIndex += 1) {
+      // For short URL, Original URL and tags
+      if (colIndex === 1) {
+        /* eslint-disable no-await-in-loop */
+        const divs = await row.find('td').nth(colIndex).find('div').count
+        for (let divCount = 1; divCount < divs; divCount += 1) {
+          if (divCount === 1) {
+            /* eslint-disable no-await-in-loop */
+            record['Short Url'] = await row
+              .find('td')
+              .nth(colIndex)
+              .find('div')
+              .nth(divCount).textContent
+          }
+          if (divCount === 2) {
+            /* eslint-disable no-await-in-loop */
+            record['Original URL'] = await row
+              .find('td')
+              .nth(colIndex)
+              .find('div')
+              .nth(divCount).textContent
+          }
+          if (divCount === 3) {
+            /* eslint-disable no-await-in-loop */
+            const numTags = await row
+              .find('td')
+              .nth(colIndex)
+              .find('div')
+              .nth(divCount)
+              .find('button').count
+            for (let tagsCount = 0; tagsCount < numTags - 1; tagsCount += 1) {
+              /* eslint-disable no-await-in-loop */
+              record.Tags += `${await row
+                .find('td')
+                .nth(colIndex)
+                .find('div')
+                .nth(divCount)
+                .find('button')
+                .nth(tagsCount).textContent};`
+            }
+            /* eslint-disable no-await-in-loop */
+            record.Tags += await row
+              .find('td')
+              .nth(colIndex)
+              .find('div')
+              .nth(divCount)
+              .find('button')
+              .nth(numTags - 1).textContent
+          }
+        }
+      }
+      /* eslint-disable no-await-in-loop */
+      const cellText = await row.find('td').nth(colIndex).textContent
+
+      // isActive
+      if (colIndex === 3) {
+        record.Status = cellText === '• active' ? 'ACTIVE' : 'INACTIVE'
+      }
+
+      // Created Time
+      if (colIndex === 4) {
+        record['Created At'] = cellText
+      }
+
+      // Number of Visits
+      if (colIndex === 5) {
+        record.Visits = cellText
+      }
+    }
+    allRecords.push(record)
+  }
+
+  let isMatching = true
+  for (let index = 0; index < allRecords.length; index += 1) {
+    const linkRecord = allRecords[index]
+    const csvRecord = products[index + 1]
+
+    if (linkRecord['Short Url'] !== `/${csvRecord[0]}`) {
+      console.log('here1')
+      isMatching = false
+    }
+    if (linkRecord['Original URL'] !== csvRecord[1]) {
+      console.log('here2')
+      isMatching = false
+    }
+    if (linkRecord.Status !== csvRecord[2]) {
+      console.log('here3')
+      isMatching = false
+    }
+    if (linkRecord.Tags !== csvRecord[3]) {
+      console.log('here4')
+      isMatching = false
+    }
+    if (linkRecord.Visits !== csvRecord[4]) {
+      console.log('here5')
+      isMatching = false
+    }
+  }
+
+  await t.expect(isMatching).ok()
+})
+
+// test('Directory sort by number of visitors.', async (t) => {
+//   //TODO: Generate Traffic on links
+//   await t
+//     .click(userFilterSortPanelButton)
+//     .click(mostNumberOfVisitsButton)
+//     .click(userApplyButton)
+
+//   const linkTable = urlTable
+//   // Get the number of rows in the table
+//   const rowCount = await linkTable.find('tr').count
+//   await fetchLink('http://localhost:3000/qp01hl-vw7ftw', 6)
+//   let isSorted = true
+//   // Loop through each row
+//   let resultArray: Promise<string>[] = []
+//   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+//     const row = linkTable.find('tr').nth(rowIndex)
+//     resultArray.push(row.find('td').nth(5).textContent)
+//   }
+//   console.log(resultArray)
+//   const numberArray: number[] = []
+//   await Promise.all(resultArray).then((values) => {
+//     numberArray.push(+values)
+//   })
+//   console.log(numberArray)
+//   const sortedNumberArray = [...numberArray].sort()
+//   console.log(numberArray)
+//   console.log(sortedNumberArray)
+//   isSorted = sortedNumberArray.every(function (element, index) {
+//     return element === numberArray[index]
+//   })
+
+//   await t.expect(isSorted).ok()
+// })
