@@ -24,6 +24,7 @@ import {
   generateUrlImage,
   longUrl,
   longUrlTextField,
+  mostNumberOfVisitsButton,
   noResultsFoundText,
   searchBarLinkButton,
   searchBarLinksInput,
@@ -487,36 +488,33 @@ test('Download csv should match links on page', async (t) => {
   await t.expect(isMatching).ok()
 })
 
-// test('Directory sort by number of visitors.', async (t) => {
-//   //TODO: Generate Traffic on links
-//   await t
-//     .click(userFilterSortPanelButton)
-//     .click(mostNumberOfVisitsButton)
-//     .click(userApplyButton)
+test('Directory sort by number of visitors.', async (t) => {
+  await t
+    .click(userFilterSortPanelButton)
+    .click(mostNumberOfVisitsButton)
+    .click(userApplyButton)
 
-//   const linkTable = urlTable
-//   // Get the number of rows in the table
-//   const rowCount = await linkTable.find('tr').count
-//   await fetchLink('http://localhost:3000/qp01hl-vw7ftw', 6)
-//   let isSorted = true
-//   // Loop through each row
-//   let resultArray: Promise<string>[] = []
-//   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-//     const row = linkTable.find('tr').nth(rowIndex)
-//     resultArray.push(row.find('td').nth(5).textContent)
-//   }
-//   console.log(resultArray)
-//   const numberArray: number[] = []
-//   await Promise.all(resultArray).then((values) => {
-//     numberArray.push(+values)
-//   })
-//   console.log(numberArray)
-//   const sortedNumberArray = [...numberArray].sort()
-//   console.log(numberArray)
-//   console.log(sortedNumberArray)
-//   isSorted = sortedNumberArray.every(function (element, index) {
-//     return element === numberArray[index]
-//   })
+  const linkTable = urlTable
+  // Get the number of rows in the table
+  const rowCount = await linkTable.find('tr').count
+  let isSorted = true
+  // Loop through each row
+  const resultArray: Promise<string>[] = []
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const row = linkTable.find('tr').nth(rowIndex)
+    resultArray.push(row.find('td').nth(5).textContent)
+  }
 
-//   await t.expect(isSorted).ok()
-// })
+  const numberArray: number[] = []
+  await Promise.all(resultArray).then((values) => {
+    numberArray.push(+values)
+  })
+
+  const sortedNumberArray = [...numberArray].sort()
+
+  isSorted = sortedNumberArray.every(function (element, index) {
+    return element === numberArray[index]
+  })
+
+  await t.expect(isSorted).ok()
+})
