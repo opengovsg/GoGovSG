@@ -512,7 +512,7 @@ test('Directory sort by number of visitors.', async (t) => {
 
   const sortedNumberArray = [...numberArray].sort()
 
-  isSorted = sortedNumberArray.every(function (element, index) {
+  isSorted = sortedNumberArray.every((element, index) => {
     return element === numberArray[index]
   })
 
