@@ -213,7 +213,11 @@ test('The URL searching test.', async (t) => {
     .wait(1000)
     // Searching on the user page search bar shows links that are relevant to the search term.
     // eslint-disable-next-line
-    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
+    .expect(
+      // eslint-disable-next-line
+      resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6')
+        .innerText,
+    )
     .eql(`/${generatedUrlActive}-search`)
 
   await t
@@ -230,7 +234,11 @@ test('The URL searching test.', async (t) => {
     .wait(3000)
     // Searching by tags on the user page search bar shows links that are relevant to the search term.
     // eslint-disable-next-line
-    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
+    .expect(
+      // eslint-disable-next-line
+      resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6')
+        .innerText,
+    )
     .eql(`/${generatedUrlActive}-search`)
 })
 
@@ -305,12 +313,9 @@ test('The malicious file test.', async (t) => {
     // It should show an error snackbar when malicious file uploaded
     .expect(maliciousFileCreation.exists)
     .ok()
-
+  await deleteFile(dummyMaliciousFilePath)
   // TODO: Check that row is not created
   // await t
   // .expect(fileRow.exists)
   // .notOk()
-
-  // Delete malicious file
-  await deleteFile(dummyMaliciousFilePath)
 })
