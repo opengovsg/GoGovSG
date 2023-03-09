@@ -9,7 +9,6 @@ import {
   useTheme,
 } from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
-import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 import { humanFileSize } from '../../../shared/util/bytes-formatter'
 
 type FileInputFieldStyleProps = {
