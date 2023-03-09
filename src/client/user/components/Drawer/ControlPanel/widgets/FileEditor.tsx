@@ -70,6 +70,7 @@ export default function FileEditor() {
               shortLinkDispatch?.replaceFile(newFile, setUploadFileError)
             }}
             setUploadFileError={setUploadFileError}
+            maxSize={MAX_FILE_UPLOAD_SIZE}
           />
           <CollapsibleMessage
             type={CollapsibleMessageType.Error}

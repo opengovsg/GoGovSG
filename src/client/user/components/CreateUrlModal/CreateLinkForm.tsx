@@ -132,6 +132,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   useEffect(() => {
     setFile(null) // reset file state if toggling between createType
+    setUploadFileError('')
     switch (createType) {
       case CreateType.LINK:
         GAEvent('modal page', 'click url tab')
@@ -250,6 +251,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 buttonText="Browse"
                 fileSizeText={file ? formatBytes(file.size) : ''}
                 isUploading={isUploading}
+                maxSize={MAX_FILE_UPLOAD_SIZE}
               />
               <CollapsibleMessage
                 visible={!!uploadFileError}
@@ -374,6 +376,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 fileSizeText={file ? formatBytes(file.size) : ''}
                 isUploading={isUploading}
                 acceptedTypes=".csv"
+                maxSize={MAX_CSV_UPLOAD_SIZE}
               />
               <CollapsibleMessage
                 visible={!!uploadFileError}

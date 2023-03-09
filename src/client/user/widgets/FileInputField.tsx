@@ -28,6 +28,7 @@ type FileInputFieldProps = {
   isUploading: boolean
   className?: string
   acceptedTypes?: string
+  maxSize: number
 }
 
 const useStyles = makeStyles((theme) =>
@@ -105,6 +106,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   isUploading = false,
   className,
   acceptedTypes = '',
+  maxSize,
 }: FileInputFieldProps) => {
   const theme = useTheme()
   const classes = useStyles({ textFieldHeight, uploadFileError })
@@ -131,11 +133,11 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
             if (!chosenFile) {
               return
             }
-            if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
+            if (chosenFile.size > maxSize) {
               setFile(null)
               setUploadFileError(
                 `File too large, please upload a file smaller than ${humanFileSize(
-                  MAX_FILE_UPLOAD_SIZE,
+                  maxSize,
                 )}`,
               )
               return
