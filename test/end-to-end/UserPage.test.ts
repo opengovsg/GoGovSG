@@ -34,8 +34,11 @@ import {
   tagsAutocompleteInput,
   uploadFile,
   urlTable,
+  urlTableOriginalUrlText,
   urlTableRow,
+  urlTableRowShortUrlText,
   urlTableRowUrlText,
+  urlTableTagsTextContent,
   userActiveButton,
   userApplyButton,
   userFileButton,
@@ -331,28 +334,16 @@ test('User page shows ellipsis on long link', async (t) => {
 })
 
 test('Download csv should match links on page', async (t) => {
-  type Record = {
-    'Short Url': string
-    'Original URL': string
-    Status: string
-    Tags: string
-    Visits: string
-    'Created At': string
-  }
-
-  // TODO: Figure out how to do download of csv on GH actions/local and parse it elegantly
-
   await t.click(downloadLinkButton)
   await t.wait(5000)
   const directoryPath = `${process.env.HOME}/Downloads/urls.csv`
-  console.log(directoryPath)
 
-  const products: string[] = []
+  const csvRows: string[] = []
   ;(() => {
     const readStream = createReadStream(directoryPath, 'utf8')
 
     readStream.pipe(parse()).on('data', (chunk) => {
-      products.push(chunk)
+      csvRows.push(chunk)
     })
 
     readStream.on('error', (err) => {
@@ -367,9 +358,20 @@ test('Download csv should match links on page', async (t) => {
   const linkTable = urlTable
   // Get the number of rows in the table
   const rowCount = await linkTable.find('tr').count
-  const allRecords: Record[] = []
+  const linktTableRecords: Record[] = []
 
-  // Loop through each row
+  type Record = {
+    'Short Url': string
+    'Original URL': string
+    Status: string
+    Tags: string
+    Visits: string
+    'Created At': string
+  }
+
+  /// /////
+
+  /* eslint-disable no-await-in-loop */
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
     const row = linkTable.find('tr').nth(rowIndex)
     const record = {
@@ -382,62 +384,25 @@ test('Download csv should match links on page', async (t) => {
     }
 
     // Get the number of columns in the row
-    /* eslint-disable no-await-in-loop */
     const colCount = await row.find('td').count
 
     // Loop through each column
     for (let colIndex = 1; colIndex < colCount; colIndex += 1) {
       // For short URL, Original URL and tags
       if (colIndex === 1) {
-        /* eslint-disable no-await-in-loop */
         const divs = await row.find('td').nth(colIndex).find('div').count
         for (let divCount = 1; divCount < divs; divCount += 1) {
           if (divCount === 1) {
-            /* eslint-disable no-await-in-loop */
-            record['Short Url'] = await row
-              .find('td')
-              .nth(colIndex)
-              .find('div')
-              .nth(divCount).textContent
+            record['Short Url'] = await urlTableRowShortUrlText(row)
           }
           if (divCount === 2) {
-            /* eslint-disable no-await-in-loop */
-            record['Original URL'] = await row
-              .find('td')
-              .nth(colIndex)
-              .find('div')
-              .nth(divCount).textContent
+            record['Original URL'] = await urlTableOriginalUrlText(row)
           }
           if (divCount === 3) {
-            /* eslint-disable no-await-in-loop */
-            const numTags = await row
-              .find('td')
-              .nth(colIndex)
-              .find('div')
-              .nth(divCount)
-              .find('button').count
-            for (let tagsCount = 0; tagsCount < numTags - 1; tagsCount += 1) {
-              /* eslint-disable no-await-in-loop */
-              record.Tags += `${await row
-                .find('td')
-                .nth(colIndex)
-                .find('div')
-                .nth(divCount)
-                .find('button')
-                .nth(tagsCount).textContent};`
-            }
-            /* eslint-disable no-await-in-loop */
-            record.Tags += await row
-              .find('td')
-              .nth(colIndex)
-              .find('div')
-              .nth(divCount)
-              .find('button')
-              .nth(numTags - 1).textContent
+            record.Tags += await urlTableTagsTextContent(row)
           }
         }
       }
-      /* eslint-disable no-await-in-loop */
       const cellText = await row.find('td').nth(colIndex).textContent
 
       // isActive
@@ -455,32 +420,27 @@ test('Download csv should match links on page', async (t) => {
         record.Visits = cellText
       }
     }
-    allRecords.push(record)
+    linktTableRecords.push(record)
   }
 
   let isMatching = true
-  for (let index = 0; index < allRecords.length; index += 1) {
-    const linkRecord = allRecords[index]
-    const csvRecord = products[index + 1]
+  for (let index = 0; index < linktTableRecords.length; index += 1) {
+    const linkRecord = linktTableRecords[index]
+    const csvRecord = csvRows[index + 1]
 
     if (linkRecord['Short Url'] !== `/${csvRecord[0]}`) {
-      console.log('here1')
       isMatching = false
     }
     if (linkRecord['Original URL'] !== csvRecord[1]) {
-      console.log('here2')
       isMatching = false
     }
     if (linkRecord.Status !== csvRecord[2]) {
-      console.log('here3')
       isMatching = false
     }
     if (linkRecord.Tags !== csvRecord[3]) {
-      console.log('here4')
       isMatching = false
     }
     if (linkRecord.Visits !== csvRecord[4]) {
-      console.log('here5')
       isMatching = false
     }
   }
@@ -499,19 +459,19 @@ test('Directory sort by number of visitors.', async (t) => {
   const rowCount = await linkTable.find('tr').count
   let isSorted = true
   // Loop through each row
-  const resultArray: Promise<string>[] = []
+  const resultArray: string[] = []
+
+  /* eslint-disable no-await-in-loop */
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
     const row = linkTable.find('tr').nth(rowIndex)
-    resultArray.push(row.find('td').nth(5).textContent)
+    resultArray.push(await row.find('td').nth(5).textContent)
   }
 
-  const numberArray: number[] = []
-  await Promise.all(resultArray).then((values) => {
-    numberArray.push(+values)
+  const numberArray: number[] = resultArray.map((value) => {
+    return +value
   })
 
-  const sortedNumberArray = [...numberArray].sort()
-
+  const sortedNumberArray = [...numberArray].sort((n1, n2) => n2 - n1)
   isSorted = sortedNumberArray.every((element, index) => {
     return element === numberArray[index]
   })
