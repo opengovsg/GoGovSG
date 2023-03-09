@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core'
 import FileIconLarge from './FileIconLarge'
 import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
+import { humanFileSize } from '../../../shared/util/bytes-formatter'
 
 type FileInputFieldStyleProps = {
   uploadFileError: string | null
@@ -133,7 +134,9 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
             if (chosenFile.size > MAX_FILE_UPLOAD_SIZE) {
               setFile(null)
               setUploadFileError(
-                'File too large, please upload a file smaller than 10mb',
+                `File too large, please upload a file smaller than ${humanFileSize(
+                  MAX_FILE_UPLOAD_SIZE,
+                )}`,
               )
               return
             }

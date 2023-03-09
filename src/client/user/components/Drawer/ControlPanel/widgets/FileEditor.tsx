@@ -13,6 +13,8 @@ import Tooltip from '../../../../widgets/Tooltip'
 import useShortLink from '../util/shortlink'
 import { useDrawerState } from '../../index'
 import { removeHttpsProtocol } from '../../../../../app/util/url'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../../../../shared/constants'
+import { humanFileSize } from '../../../../../../shared/util/bytes-formatter'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -44,7 +46,9 @@ export default function FileEditor() {
     <div className={classes.originalFileLabel}>
       Original file{' '}
       <Tooltip
-        title="Original file will be replaced after you select file. Maximum file size is 10mb."
+        title={`Original file will be replaced after you select file. Maximum file size is ${humanFileSize(
+          MAX_FILE_UPLOAD_SIZE,
+        )}.`}
         imageAltText="Replace file help"
       />
     </div>

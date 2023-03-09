@@ -20,7 +20,12 @@ import {
   isValidTag,
   isValidTags,
 } from '../../../../shared/util/validation'
-import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
+import {
+  MAX_CSV_UPLOAD_SIZE,
+  MAX_FILE_UPLOAD_SIZE,
+  MAX_NUM_TAGS_PER_LINK,
+} from '../../../../shared/constants'
+import { humanFileSize } from '../../../../shared/util/bytes-formatter'
 import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../../widgets/LinkIcon'
@@ -232,7 +237,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 </Typography>
                 <div className={classes.maxSizeTextWrapper}>
                   <Typography variant="caption" className={classes.maxSizeText}>
-                    Maximum size 10mb
+                    Maximum size {humanFileSize(MAX_FILE_UPLOAD_SIZE)}
                   </Typography>
                 </div>
               </div>
@@ -355,7 +360,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 </Typography>
                 <div className={classes.maxSizeTextWrapper}>
                   <Typography variant="caption" className={classes.maxSizeText}>
-                    Maximum size 10mb
+                    Maximum size {humanFileSize(MAX_CSV_UPLOAD_SIZE)}
                   </Typography>
                 </div>
               </div>
