@@ -103,7 +103,7 @@ export const closeButtonSnackBar = Selector(
 export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
 export const clickAway = Selector('h3')
 export const largeFileError = Selector('div').withText(
-  'File too large, please upload a file smaller than 10mb',
+  'File too large, please upload a file smaller than 20.0 MB',
 )
 export const csvOnlyError = Selector('div').withText(
   'Only csv files are allowed',

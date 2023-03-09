@@ -179,11 +179,11 @@ test('The file based shortlink test.', async (t) => {
     // It should clear tags input after the previous link was successfully created
     .expect(tag1.exists)
     .notOk()
-    // It should show an error below the file input when a file larger than 10MB is chosen
+    // It should show an error below the file input when a file larger than 20MB is chosen
     .expect(largeFileError.exists)
     .ok()
 
-  // It should disable the submit button when a file larger than 10MB is chosen
+  // It should disable the submit button when a file larger than 20MB is chosen
   await t.expect(fileSubmitButton.hasAttribute('disabled')).ok()
 
   // Delete 11mb file
