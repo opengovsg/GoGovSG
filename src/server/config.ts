@@ -224,7 +224,10 @@ export const cspReportUri = process.env.CSP_REPORT_URI
 
 export const safeBrowsingLogOnly = process.env.SAFE_BROWSING_LOG_ONLY === 'true'
 
-export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
+export const cloudmersiveKey: string | undefined = process.env
+  .CLOUDMERSIVE_KEY_CI
+  ? process.env.CLOUDMERSIVE_KEY_CI
+  : process.env.CLOUDMERSIVE_KEY
 export const safeBrowsingKey: string | undefined = process.env.SAFE_BROWSING_KEY
 
 // LocalStack variables.
