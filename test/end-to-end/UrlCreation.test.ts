@@ -213,11 +213,7 @@ test('The URL searching test.', async (t) => {
     .wait(1000)
     // Searching on the user page search bar shows links that are relevant to the search term.
     // eslint-disable-next-line
-    .expect(
-      // eslint-disable-next-line
-      resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6')
-        .innerText,
-    )
+    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText,)
     .eql(`/${generatedUrlActive}-search`)
 
   await t
@@ -234,11 +230,7 @@ test('The URL searching test.', async (t) => {
     .wait(3000)
     // Searching by tags on the user page search bar shows links that are relevant to the search term.
     // eslint-disable-next-line
-    .expect(
-      // eslint-disable-next-line
-      resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6')
-        .innerText,
-    )
+    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
     .eql(`/${generatedUrlActive}-search`)
 })
 
@@ -297,7 +289,7 @@ test('The bulk based test.', async (t) => {
 test('The malicious file test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
-  // const generatedfileUrl = await shortUrlTextField.value
+  const generatedfileUrl = await shortUrlTextField.value
 
   // Generate Malicious file
   await createMaliciousFile()
@@ -314,8 +306,8 @@ test('The malicious file test.', async (t) => {
     .expect(maliciousFileCreation.exists)
     .ok()
   await deleteFile(dummyMaliciousFilePath)
-  // TODO: Check that row is not created
-  // await t
-  // .expect(fileRow.exists)
-  // .notOk()
+  // Check that row is not created
+  const linkRow = Selector(`h6[title="${generatedfileUrl}"]`)
+
+  await t.expect(linkRow.exists).notOk()
 })

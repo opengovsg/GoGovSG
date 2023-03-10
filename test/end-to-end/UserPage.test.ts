@@ -361,26 +361,24 @@ test('Download csv should match links on page', async (t) => {
   const linktTableRecords: Record[] = []
 
   type Record = {
-    'Short Url': string
-    'Original URL': string
-    Status: string
-    Tags: string
-    Visits: string
-    'Created At': string
+    shortUrl: string
+    originalUrl: string
+    status: string
+    tags: string
+    visits: string
+    createdAt: string
   }
-
-  /// /////
 
   /* eslint-disable no-await-in-loop */
   for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
     const row = linkTable.find('tr').nth(rowIndex)
     const record = {
-      'Short Url': '',
-      'Original URL': '',
-      Status: 'ACTIVE',
-      Tags: '',
-      Visits: '',
-      'Created At': '',
+      shortUrl: '',
+      originalUrl: '',
+      status: 'ACTIVE',
+      tags: '',
+      visits: '',
+      createdAt: '',
     }
 
     // Get the number of columns in the row
@@ -393,13 +391,13 @@ test('Download csv should match links on page', async (t) => {
         const divs = await row.find('td').nth(colIndex).find('div').count
         for (let divCount = 1; divCount < divs; divCount += 1) {
           if (divCount === 1) {
-            record['Short Url'] = await urlTableRowShortUrlText(row)
+            record.shortUrl = await urlTableRowShortUrlText(row)
           }
           if (divCount === 2) {
-            record['Original URL'] = await urlTableOriginalUrlText(row)
+            record.originalUrl = await urlTableOriginalUrlText(row)
           }
           if (divCount === 3) {
-            record.Tags += await urlTableTagsTextContent(row)
+            record.tags += await urlTableTagsTextContent(row)
           }
         }
       }
@@ -407,17 +405,17 @@ test('Download csv should match links on page', async (t) => {
 
       // isActive
       if (colIndex === 3) {
-        record.Status = cellText === '• active' ? 'ACTIVE' : 'INACTIVE'
+        record.status = cellText === '• active' ? 'ACTIVE' : 'INACTIVE'
       }
 
       // Created Time
       if (colIndex === 4) {
-        record['Created At'] = cellText
+        record.createdAt = cellText
       }
 
       // Number of Visits
       if (colIndex === 5) {
-        record.Visits = cellText
+        record.visits = cellText
       }
     }
     linktTableRecords.push(record)
@@ -428,19 +426,19 @@ test('Download csv should match links on page', async (t) => {
     const linkRecord = linktTableRecords[index]
     const csvRecord = csvRows[index + 1]
 
-    if (linkRecord['Short Url'] !== `/${csvRecord[0]}`) {
+    if (linkRecord.shortUrl !== `/${csvRecord[0]}`) {
       isMatching = false
     }
-    if (linkRecord['Original URL'] !== csvRecord[1]) {
+    if (linkRecord.originalUrl !== csvRecord[1]) {
       isMatching = false
     }
-    if (linkRecord.Status !== csvRecord[2]) {
+    if (linkRecord.status !== csvRecord[2]) {
       isMatching = false
     }
-    if (linkRecord.Tags !== csvRecord[3]) {
+    if (linkRecord.tags !== csvRecord[3]) {
       isMatching = false
     }
-    if (linkRecord.Visits !== csvRecord[4]) {
+    if (linkRecord.visits !== csvRecord[4]) {
       isMatching = false
     }
   }
