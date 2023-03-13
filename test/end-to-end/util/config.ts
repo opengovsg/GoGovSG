@@ -17,4 +17,4 @@ export const dummyRelativePath = './anotherDummy.txt'
 export const dummyBulkCsv = './test/end-to-end/bulkCsv.csv'
 export const dummyBulkCsvRelativePath = './bulkCsv.csv'
 export const smallFileSize = 1024 * 1024 * 1
-export const largeFileSize = 1024 * 1024 * 11
+export const largeFileSize = 1024 * 1024 * 21

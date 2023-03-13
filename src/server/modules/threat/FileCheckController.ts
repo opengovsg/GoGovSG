@@ -85,7 +85,9 @@ export class FileCheckController {
         dogstatsd.increment(SCAN_FAILED_FILE, 1, 1)
         logger.error('Unable to scan file: ', error)
         res.badRequest(
-          jsonMessage('Your file could not be scanned by antivirus software.'),
+          jsonMessage(
+            'Your file could not be scanned at this moment, please try again. If the error persists, please contact us.',
+          ),
         )
         return
       }
