@@ -1,11 +1,15 @@
 import { Selector } from 'testcafe'
+import * as fs from 'fs'
 import {
+  apiLocation,
   circularRedirectUrl,
   dummyBulkCsv,
   dummyBulkCsvRelativePath,
+  dummyChangedFilePath,
   dummyFilePath,
   dummyMaliciousFilePath,
   dummyMaliciousRelativePath,
+  dummyRelativeChangedFilePath,
   dummyRelativePath,
   invalidShortUrl,
   largeFileSize,
@@ -20,6 +24,7 @@ import {
   blacklistValidationError,
   bulkTab,
   circularRedirectValidationError,
+  closeDrawerButton,
   createLinkButton,
   createUrlModal,
   csvOnlyError,
@@ -310,4 +315,41 @@ test('The malicious file test.', async (t) => {
   const linkRow = Selector(`h6[title="${generatedfileUrl}"]`)
 
   await t.expect(linkRow.exists).notOk()
+})
+
+test('The update file test', async (t) => {
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+
+  const generatedfileUrl = await shortUrlTextField.value
+  const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const directoryPath = `${process.env.HOME}/Downloads/${generatedfileUrl}.pdf`
+  // Generate 1mb file
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
+  await t
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+
+  await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
+  await t
+    .click(fileRow)
+    .setFilesToUpload(uploadFile, dummyRelativeChangedFilePath)
+    .click(closeDrawerButton)
+
+  await t.navigateTo(`${apiLocation}/${generatedfileUrl}`)
+  await t.wait(7000)
+
+  await t.expect(fs.existsSync(directoryPath)).ok()
+
+  await deleteFile(dummyFilePath)
+  await deleteFile(dummyChangedFilePath)
+
+  // Delete downloaded file
+  fs.unlink(directoryPath, (err) => {
+    if (err) throw err
+  })
 })
