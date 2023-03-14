@@ -349,7 +349,5 @@ test('The update file test', async (t) => {
   await deleteFile(dummyChangedFilePath)
 
   // Delete downloaded file
-  fs.unlink(directoryPath, (err) => {
-    if (err) throw err
-  })
+  fs.unlink(directoryPath, () => {})
 })
