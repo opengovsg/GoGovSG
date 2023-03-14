@@ -53,7 +53,8 @@ services:
       - ACTIVATE_POSTMAN_FALLBACK=
       - BULK_UPLOAD_MAX_NUM=1000
       - BULK_UPLOAD_RANDOM_STR_LENGTH=8
-      - SQS_BULK_QRCODE_GENERATE_START_URL=
+      - SQS_BULK_QRCODE_QUEUE_ENDPOINT=
+      - SQS_BULK_QRCODE_QUEUE_NAME=local-queue
       - SQS_TIMEOUT=10000
       - SQS_REGION=
       - BULK_QR_CODE_BATCH_SIZE=1000
@@ -64,7 +65,7 @@ services:
       - API_LINK_RANDOM_STR_LENGTH=8
       - API_KEY_SALT=$$2b$$10$$9rBKuE4Gb5ravnvP4xjoPu
       - FF_EXTERNAL_API=true
-      - ADMIN_API_EMAIL=
+      - ADMIN_API_EMAIL=abc@open.gov.sg
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -83,19 +84,25 @@ services:
     ports:
       - '6379:6379'
   localstack:
-    image: localstack/localstack:1.2
+    build:
+      context: .
+      dockerfile: Dockerfile.localstack
     container_name: gogovsg-localstack
     ports:
       - '4566:4566'
       - '8055:8080' # View deployed resources @ http://localhost:8055/#!/infra.
     environment:
-      - SERVICES=s3 # AWS services to emulate.
+      - SERVICES=s3,lambda,sqs # AWS services to emulate.
       - DEBUG=1 # Display relevant logs.
       - DATA_DIR=/tmp/localstack/data # Directory Localstack saves data internally.
       - HOSTNAME_EXTERNAL=localstack
       - AWS_BUCKET_NAME=local-bucket
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - AWS_SQS_NAME=local-queue
+      - SERVERLESS_SERVICE=gogovsg
+      - AWS_LAMBDA_NAME=bulk-qrcode-generation
     volumes:
       - ./init-localstack.sh:/docker-entrypoint-initaws.d/init-localstack.sh # Initialise the bucket.
       - './.localstack:/tmp/localstack'

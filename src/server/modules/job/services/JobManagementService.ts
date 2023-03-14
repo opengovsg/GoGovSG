@@ -6,12 +6,7 @@ import { Mailer } from '../../../services/email'
 import { JobItemStatusEnum, JobStatusEnum } from '../../../../shared/util/jobs'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import { JobItemType, JobType } from '../../../models/job'
-import {
-  jobPollAttempts,
-  jobPollInterval,
-  logger,
-  qrCodeBucketUrl,
-} from '../../../config'
+import { jobPollAttempts, jobPollInterval, logger } from '../../../config'
 
 @injectable()
 export class JobManagementService implements interfaces.JobManagementService {
@@ -23,6 +18,8 @@ export class JobManagementService implements interfaces.JobManagementService {
 
   private mailer: Mailer
 
+  private qrCodeBucketUrl: string
+
   constructor(
     @inject(DependencyIds.jobRepository)
     jobRepository: interfaces.JobRepository,
@@ -32,11 +29,14 @@ export class JobManagementService implements interfaces.JobManagementService {
     userRepository: UserRepositoryInterface,
     @inject(DependencyIds.mailer)
     mailer: Mailer,
+    @inject(DependencyIds.qrCodeBucketUrl)
+    qrCodeBucketUrl: string,
   ) {
     this.jobRepository = jobRepository
     this.jobItemRepository = jobItemRepository
     this.userRepository = userRepository
     this.mailer = mailer
+    this.qrCodeBucketUrl = qrCodeBucketUrl
   }
 
   createJob: (userId: number) => Promise<JobType> = async (userId) => {
@@ -134,7 +134,7 @@ export class JobManagementService implements interfaces.JobManagementService {
       return {
         job,
         jobItemUrls: jobItems.map(
-          (jobItem) => `${qrCodeBucketUrl}/${jobItem.jobItemId}`,
+          (jobItem) => `${this.qrCodeBucketUrl}/${jobItem.jobItemId}`,
         ),
       }
     }

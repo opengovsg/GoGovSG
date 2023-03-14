@@ -42,11 +42,14 @@ const mockMailer = {
   mailJobSuccess: jest.fn(),
 }
 
+const qrCodeBucketUrl = 'https://bucket.com'
+
 const service = new JobManagementService(
   mockJobRepository,
   mockJobItemRepository,
   mockUserRepository,
   mockMailer,
+  qrCodeBucketUrl,
 )
 
 describe('JobManagementService tests', () => {
@@ -419,19 +422,6 @@ describe('JobManagementService tests', () => {
     })
 
     it('should return job and jobItemUrls if successfully retrieved', async () => {
-      jest.resetModules()
-      jest.mock('../../../../config', () => ({
-        qrCodeBucketUrl: 'https://bucket.com',
-      }))
-
-      const { JobManagementService } = require('..')
-
-      const service = new JobManagementService(
-        mockJobRepository,
-        mockJobItemRepository,
-        mockUserRepository,
-      )
-
       const mockUserId = 1
       const mockJob = {
         uuid: 'abc',
@@ -516,6 +506,7 @@ describe('JobManagementService tests', () => {
         mockJobItemRepository,
         mockUserRepository,
         mockMailer,
+        qrCodeBucketUrl,
       )
 
       mockJobRepository.findJobForUser.mockReturnValueOnce({})
@@ -544,6 +535,7 @@ describe('JobManagementService tests', () => {
         mockJobItemRepository,
         mockUserRepository,
         mockMailer,
+        qrCodeBucketUrl,
       )
 
       mockJobRepository.findJobForUser.mockReturnValueOnce({})

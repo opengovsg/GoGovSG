@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { SQS } from 'aws-sdk'
 import { DependencyIds } from '../constants'
-import { logger, sqsBulkQRCodeStartUrl } from '../config'
+import { logger } from '../config'
 
 export interface SQSServiceInterface {
   sendMessage(message: any): Promise<void>
@@ -11,8 +11,14 @@ export interface SQSServiceInterface {
 export class SQSService implements SQSServiceInterface {
   private sqsClient: SQS
 
-  constructor(@inject(DependencyIds.sqsClient) sqsClient: SQS) {
+  private sqsQueueUrl: string
+
+  constructor(
+    @inject(DependencyIds.sqsClient) sqsClient: SQS,
+    @inject(DependencyIds.sqsQueueUrl) sqsQueueUrl: string,
+  ) {
     this.sqsClient = sqsClient
+    this.sqsQueueUrl = sqsQueueUrl
   }
 
   sendMessage: (message: any) => Promise<void> = async (message) => {
@@ -21,7 +27,7 @@ export class SQSService implements SQSServiceInterface {
       const resp = await this.sqsClient
         .sendMessage({
           MessageBody: JSON.stringify(message),
-          QueueUrl: sqsBulkQRCodeStartUrl,
+          QueueUrl: this.sqsQueueUrl,
         })
         .promise()
       logger.info(`SQS sendMessage success, messageId: ${resp.MessageId}`)

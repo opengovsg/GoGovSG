@@ -5,12 +5,15 @@ import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
 import {
   DEV_ENV,
   accessEndpoint,
-  bucketEndpoint,
   cloudmersiveKey,
   gaTrackingId,
   linksToRotate,
+  localstackEndpoint,
   ogUrl,
+  qrCodeBucketUrl,
   s3Bucket,
+  sqsQueueEndpoint,
+  sqsQueueName,
   sqsRegion,
   sqsTimeout,
   userAnnouncement,
@@ -192,22 +195,30 @@ export default () => {
         accessKeyId: 'foobar',
         secretAccessKey: 'foobar',
       },
-      endpoint: bucketEndpoint,
+      endpoint: localstackEndpoint,
       s3ForcePathStyle: true,
     })
     container
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
-
-    container.bind(DependencyIds.sqsClient).toConstantValue(
-      new AWS.SQS({
-        region: sqsRegion,
-        httpOptions: {
-          timeout: sqsTimeout,
-        },
-      }),
-    )
+    const sqsClient = new AWS.SQS({
+      region: 'ap-southeast-1',
+      httpOptions: {
+        timeout: sqsTimeout,
+      },
+      endpoint: localstackEndpoint,
+      accessKeyId: 'foobar',
+      secretAccessKey: 'foobar',
+    })
+    container.bind(DependencyIds.sqsClient).toConstantValue(sqsClient)
+    // Localstack sqs endpoint always binds to the same url http://localstack:4566/000000000000/<queue-name>
+    container
+      .bind(DependencyIds.sqsQueueUrl)
+      .toConstantValue(`${localstackEndpoint}/000000000000/${sqsQueueName}`)
+    container
+      .bind(DependencyIds.qrCodeBucketUrl)
+      .toConstantValue(`${accessEndpoint}/${s3Bucket}`)
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
@@ -219,6 +230,12 @@ export default () => {
         },
       }),
     )
+    container
+      .bind(DependencyIds.sqsQueueUrl)
+      .toConstantValue(`${sqsQueueEndpoint}/${sqsQueueName}`)
+    container
+      .bind(DependencyIds.qrCodeBucketUrl)
+      .toConstantValue(qrCodeBucketUrl)
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)
