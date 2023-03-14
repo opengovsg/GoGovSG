@@ -112,7 +112,7 @@
     "ua-parser-js": "^0.7.28",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
-    "webpack": "^5.43.0",
+    "webpack": "^5.76.0",
     "winston": "^3.8.1"
   },
   "devDependencies": {
