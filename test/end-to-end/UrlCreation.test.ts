@@ -1,5 +1,6 @@
-import { Selector } from 'testcafe'
+import { ClientFunction, Selector } from 'testcafe'
 import * as fs from 'fs'
+import { fetch } from 'cross-fetch'
 import {
   apiLocation,
   circularRedirectUrl,
@@ -60,6 +61,7 @@ import {
   createMaliciousFile,
   deleteFile,
 } from './util/fileHandle'
+import { linkCreationProcedure } from './util/LinkCreationProcedure'
 
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
@@ -350,4 +352,19 @@ test('The update file test', async (t) => {
 
   // Delete downloaded file
   fs.unlink(directoryPath, () => {})
+})
+
+test('Test active and inactive link redirects', async (t) => {
+  const { generatedUrlActive, generatedUrlInactive } =
+    await linkCreationProcedure(t)
+
+  // Check inactive link
+  const inactiveResult = await fetch(`${apiLocation}/${generatedUrlInactive}`)
+  await t.expect(inactiveResult.status === 404).ok()
+
+  // Check active link redirect
+  await t.navigateTo(`${apiLocation}/${generatedUrlActive}`)
+  await t.wait(7000)
+  const getCurrentUrl = ClientFunction(() => window.location)
+  await t.expect((await getCurrentUrl()).host === 'www.google.com').ok()
 })
