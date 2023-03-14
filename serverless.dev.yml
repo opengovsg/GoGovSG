@@ -32,6 +32,7 @@ functions:
       ASSET_VARIANT: gov
       DOMAIN: localhost:3000
       EB_CALLBACK_ENDPOINT: http://app:8080/api/callback/qr
+      # TODO: change to hardcoded api key by injecting admin user 
       EB_CALLBACK_SECRET: ${env:ADMIN_API_KEY} # .env file
       BULK_GENERATION_BUCKET: local-bucket
       LOCALSTACK_ENDPOINT: http://localstack:4566
