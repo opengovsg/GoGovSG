@@ -90,7 +90,7 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
-      - run:  echo CLOUDMERSIVE_KEY_CI=${{secrets.CLOUDMERSIVE_KEY}} >> .env
+      - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
       - run: npm run test:e2e-headless
   gatekeep:
     name: Determine if Build & Deploy is needed

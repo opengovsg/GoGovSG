@@ -14,8 +14,6 @@ services:
       - '3000:3000' # Webpack dev server
       - '8080:8080' # Express
       - '9229:9229' # Debugging for Node.js
-    env_file:
-      - .env
     environment:
       - NODE_ENV=development
       - PORT=8080
@@ -46,7 +44,8 @@ services:
       - AWS_SECRET_ACCESS_KEY=foobar
       - CSP_ONLY_REPORT_VIOLATIONS=true
       - SAFE_BROWSING_KEY=
-      - CLOUDMERSIVE_KEY=
+      # https://stackoverflow.com/a/74069689 Removed the assignment operator so that .env file variables are used
+      - CLOUDMERSIVE_KEY
       - ASSET_VARIANT=gov
       - SES_HOST=maildev
       - SES_PORT=25
