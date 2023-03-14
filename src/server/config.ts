@@ -232,7 +232,7 @@ export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
 export const safeBrowsingKey: string | undefined = process.env.SAFE_BROWSING_KEY
 
 // LocalStack variables.
-export const bucketEndpoint =
+export const localstackEndpoint =
   process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
 export const accessEndpoint =
   process.env.ACCESS_ENDPOINT || 'http://localhost:4566'

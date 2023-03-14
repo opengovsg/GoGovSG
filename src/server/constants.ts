@@ -23,6 +23,7 @@ export const DependencyIds = {
   s3Client: Symbol.for('s3Client'),
   sqsClient: Symbol.for('sqsClient'),
   sqsQueueUrl: Symbol.for('sqsQueueUrl'),
+  qrCodeBucketUrl: Symbol.for('qrCodeBucketUrl'),
   sqsService: Symbol.for('sqsService'),
   fileURLPrefix: Symbol.for('fileURLPrefix'),
   redirectService: Symbol.for('redirectService'),
