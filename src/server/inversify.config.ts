@@ -11,6 +11,8 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  sqsQueueEndpoint,
+  sqsQueueName,
   sqsRegion,
   sqsTimeout,
   userAnnouncement,
@@ -199,15 +201,20 @@ export default () => {
       .bind(DependencyIds.fileURLPrefix)
       .toConstantValue(`${accessEndpoint}/`)
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
-
-    container.bind(DependencyIds.sqsClient).toConstantValue(
-      new AWS.SQS({
-        region: sqsRegion,
-        httpOptions: {
-          timeout: sqsTimeout,
-        },
-      }),
-    )
+    const sqsClient = new AWS.SQS({
+      region: 'ap-southeast-1',
+      httpOptions: {
+        timeout: sqsTimeout,
+      },
+      endpoint: localstackEndpoint,
+      accessKeyId: 'foobar',
+      secretAccessKey: 'foobar',
+    })
+    container.bind(DependencyIds.sqsClient).toConstantValue(sqsClient)
+    // Localstack sqs endpoint always binds to the same url http://localstack:4566/000000000000/<queue-name>
+    container
+      .bind(DependencyIds.sqsQueueUrl)
+      .toConstantValue(`${localstackEndpoint}/000000000000/${sqsQueueName}`)
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
     container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
@@ -219,6 +226,9 @@ export default () => {
         },
       }),
     )
+    container
+      .bind(DependencyIds.sqsQueueUrl)
+      .toConstantValue(`${sqsQueueEndpoint}/${sqsQueueName}`)
   }
 
   bindIfUnbound(DependencyIds.s3, S3ServerSide)

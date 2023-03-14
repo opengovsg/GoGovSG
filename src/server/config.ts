@@ -176,6 +176,10 @@ export const userAnnouncement = {
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 export const sqsRegion = (process.env.SQS_REGION as string) || ''
+export const sqsQueueEndpoint =
+  (process.env.SQS_BULK_QRCODE_QUEUE_ENDPOINT as string) || ''
+export const sqsQueueName =
+  (process.env.SQS_BULK_QRCODE_QUEUE_NAME as string) || ''
 export const sqsBulkQRCodeStartUrl =
   (process.env.SQS_BULK_QRCODE_GENERATE_START_URL as string) || ''
 export const sqsTimeout = Number(process.env.SQS_TIMEOUT) || 10000
