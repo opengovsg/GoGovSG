@@ -91,6 +91,28 @@ jobs:
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
       - run: npm run test:e2e-headless
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci --legacy-peer-deps
+      - run: npm run dev &
+      - run: sleep 270
+      - run: npm run test:integration
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
@@ -202,7 +224,7 @@ jobs:
   deploy-gogov:
     name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
     runs-on: ubuntu-22.04
-    needs: [ci, test, gatekeep, build-gogov]
+    needs: [ci, test, integration, gatekeep, build-gogov]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
@@ -326,7 +348,7 @@ jobs:
   deploy-edu:
     name: Deploy to Elastic Beanstalk and AWS Lambda for edu
     runs-on: ubuntu-22.04
-    needs: [ci, test, gatekeep, build-edu]
+    needs: [ci, test, integration, gatekeep, build-edu]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
@@ -452,7 +474,7 @@ jobs:
   deploy-health:
     name: Deploy to Elastic Beanstalk and AWS Lambda for health
     runs-on: ubuntu-22.04
-    needs: [ci, test, gatekeep, build-health]
+    needs: [ci, test, integration, gatekeep, build-health]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
