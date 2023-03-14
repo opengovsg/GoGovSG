@@ -83,19 +83,25 @@ services:
     ports:
       - '6379:6379'
   localstack:
-    image: localstack/localstack:1.2
+    build:
+      context: .
+      dockerfile: Dockerfile.localstack
     container_name: gogovsg-localstack
     ports:
       - '4566:4566'
       - '8055:8080' # View deployed resources @ http://localhost:8055/#!/infra.
     environment:
-      - SERVICES=s3 # AWS services to emulate.
+      - SERVICES=s3,lambda,sqs # AWS services to emulate.
       - DEBUG=1 # Display relevant logs.
       - DATA_DIR=/tmp/localstack/data # Directory Localstack saves data internally.
       - HOSTNAME_EXTERNAL=localstack
       - AWS_BUCKET_NAME=local-bucket
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - AWS_SQS_NAME=local-queue
+      - SERVERLESS_SERVICE=gogovsg
+      - AWS_LAMBDA_NAME=bulk-qrcode-generation
     volumes:
       - ./init-localstack.sh:/docker-entrypoint-initaws.d/init-localstack.sh # Initialise the bucket.
       - './.localstack:/tmp/localstack'

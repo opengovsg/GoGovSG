@@ -2,8 +2,19 @@ const { S3 } = require('aws-sdk')
 const stream = require('stream')
 const archiver = require('archiver')
 
-const s3 = new S3()
-const { BULK_GENERATION_BUCKET } = process.env
+const { BULK_GENERATION_BUCKET, DEV_ENV, LOCALSTACK_ENDPOINT } = process.env
+
+const s3 = DEV_ENV
+  ? new S3({
+      credentials: {
+        accessKeyId: 'foobar',
+        secretAccessKey: 'foobar',
+      },
+      endpoint: LOCALSTACK_ENDPOINT,
+      s3ForcePathStyle: true,
+    })
+  : new S3()
+
 if (!BULK_GENERATION_BUCKET)
   throw Error('Environment variable for BULK_GENERATION_BUCKET is missing')
 

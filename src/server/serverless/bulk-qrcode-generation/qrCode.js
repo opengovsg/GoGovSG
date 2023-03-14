@@ -23,11 +23,12 @@ const FileExtension = {
   JPEG: 'jpeg',
 }
 
-const { ASSET_VARIANT } = process.env
-const { DOMAIN } = process.env
+const { ASSET_VARIANT, DOMAIN, DEV_ENV } = process.env
+
 if (!ASSET_VARIANT)
   throw Error('Environment variable for ASSET_VARIANT is missing')
 if (!DOMAIN) throw Error('Environment variable for DOMAIN is missing!')
+const urlPrefix = DEV_ENV ? `http://` : 'https://'
 
 const ASSET_VARIANTS = ['gov', 'edu', 'health']
 if (!ASSET_VARIANTS.includes(ASSET_VARIANT))
@@ -55,7 +56,7 @@ function makeQrCode(url) {
 
 // Build QR code string with GoGovSg/ForSg/ForEduSg logo.
 async function makeGoQrCode(shortUrl, format, domain = DOMAIN) {
-  const url = `https://${domain}/${shortUrl}`
+  const url = `${urlPrefix}${domain}/${shortUrl}`
   // Splits lines by 36 characters each.
   const lines = url.split(/(.{36})/).filter((O) => O)
 
