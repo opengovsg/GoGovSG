@@ -50,6 +50,7 @@ import {
   tag3,
   tagCloseButton1,
   tagsAutocompleteInput,
+  unavailableShortLink,
   uploadFile,
   urlTable,
 } from './util/helpers'
@@ -361,6 +362,8 @@ test('Test active and inactive link redirects', async (t) => {
   // Check inactive link
   const inactiveResult = await fetch(`${apiLocation}/${generatedUrlInactive}`)
   await t.expect(inactiveResult.status === 404).ok()
+  await t.navigateTo(`${apiLocation}/${generatedUrlInactive}`)
+  await t.expect(unavailableShortLink.exists).ok()
 
   // Check active link redirect
   await t.navigateTo(`${apiLocation}/${generatedUrlActive}`)

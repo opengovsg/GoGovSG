@@ -71,6 +71,11 @@ export const successBulkCreation = Selector('div').withText(
   'links have been created',
 )
 
+// Unavailable Short Link Page
+export const unavailableShortLink = Selector('h3').withText(
+  'This short link is not available.',
+)
+
 export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
