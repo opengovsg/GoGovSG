@@ -146,7 +146,7 @@ describe('Url integration tests', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
-      message: 'ValidationError: Long url must start with https://',
+      message: 'ValidationError: Only HTTPS URLs are allowed.',
     })
   })
 
@@ -159,7 +159,7 @@ describe('Url integration tests', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
-      message: 'ValidationError: Short url format is invalid.',
+      message: 'ValidationError: Short URL format is invalid.',
     })
   })
 
@@ -254,7 +254,7 @@ describe('Url integration tests', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
-      message: 'ValidationError: Long url must start with https://',
+      message: 'ValidationError: Only HTTPS URLs are allowed.',
     })
   })
 
