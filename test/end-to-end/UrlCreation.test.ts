@@ -1,11 +1,16 @@
-import { Selector } from 'testcafe'
+import { ClientFunction, Selector } from 'testcafe'
+import * as fs from 'fs'
+import { fetch } from 'cross-fetch'
 import {
+  apiLocation,
   circularRedirectUrl,
   dummyBulkCsv,
   dummyBulkCsvRelativePath,
+  dummyChangedFilePath,
   dummyFilePath,
   dummyMaliciousFilePath,
   dummyMaliciousRelativePath,
+  dummyRelativeChangedFilePath,
   dummyRelativePath,
   invalidShortUrl,
   largeFileSize,
@@ -20,6 +25,7 @@ import {
   blacklistValidationError,
   bulkTab,
   circularRedirectValidationError,
+  closeDrawerButton,
   createLinkButton,
   createUrlModal,
   csvOnlyError,
@@ -44,6 +50,7 @@ import {
   tag3,
   tagCloseButton1,
   tagsAutocompleteInput,
+  unavailableShortLink,
   uploadFile,
   urlTable,
 } from './util/helpers'
@@ -55,6 +62,7 @@ import {
   createMaliciousFile,
   deleteFile,
 } from './util/fileHandle'
+import { linkCreationProcedure } from './util/LinkCreationProcedure'
 
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
@@ -310,4 +318,56 @@ test('The malicious file test.', async (t) => {
   const linkRow = Selector(`h6[title="${generatedfileUrl}"]`)
 
   await t.expect(linkRow.exists).notOk()
+})
+
+test('The update file test', async (t) => {
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+
+  const generatedfileUrl = await shortUrlTextField.value
+  const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const directoryPath = `${process.env.HOME}/Downloads/${generatedfileUrl}.pdf`
+  // Generate 1mb file
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
+  await t
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+
+  await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
+  await t
+    .click(fileRow)
+    .setFilesToUpload(uploadFile, dummyRelativeChangedFilePath)
+    .click(closeDrawerButton)
+
+  await t.navigateTo(`${apiLocation}/${generatedfileUrl}`)
+  await t.wait(7000)
+
+  await t.expect(fs.existsSync(directoryPath)).ok()
+
+  await deleteFile(dummyFilePath)
+  await deleteFile(dummyChangedFilePath)
+
+  // Delete downloaded file
+  fs.unlink(directoryPath, () => {})
+})
+
+test('Test active and inactive link redirects', async (t) => {
+  const { generatedUrlActive, generatedUrlInactive } =
+    await linkCreationProcedure(t)
+
+  // Check inactive link
+  const inactiveResult = await fetch(`${apiLocation}/${generatedUrlInactive}`)
+  await t.expect(inactiveResult.status === 404).ok()
+  await t.navigateTo(`${apiLocation}/${generatedUrlInactive}`)
+  await t.expect(unavailableShortLink.exists).ok()
+
+  // Check active link redirect
+  await t.navigateTo(`${apiLocation}/${generatedUrlActive}`)
+  await t.wait(7000)
+  const getCurrentUrl = ClientFunction(() => window.location)
+  await t.expect((await getCurrentUrl()).host === 'www.google.com').ok()
 })
