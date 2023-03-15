@@ -48,39 +48,6 @@ const useStyles = makeStyles(() =>
 type SearchPageProps = {}
 
 /**
- * Search query default parameters.
- */
-const defaultParams: GoSearchParams = {
-  query: '',
-  sortOrder: defaultSortOption,
-  rowsPerPage: 10,
-  currentPage: 0,
-  state: '',
-  isFile: '',
-  isEmail: 'false',
-}
-
-/**
- * Redirect back to directory page with parameters that are different from default parameters.
- */
-const redirectWithParams = (newParams: GoSearchParams, history: History) => {
-  const queryObject: any = { query: newParams.query }
-  Object.entries(newParams).map(([key, value], _) => {
-    if (value && value !== (defaultParams as any)[key]) {
-      queryObject[key] = value
-    }
-    return
-  })
-  const newPath = {
-    pathname: DIRECTORY_PAGE,
-    search: `${querystring.stringify(queryObject)}`,
-  }
-  history.push(newPath)
-}
-
-const updateQueryDebounced = debounce(redirectWithParams, 500)
-
-/**
  * @component Directory page root component.
  */
 const SearchPage: FunctionComponent<SearchPageProps> = () => {
@@ -90,13 +57,27 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const history = useHistory()
   const location = useLocation()
   const [pendingQuery, setPendingQuery] = useState('')
-  const [queryFile, setQueryFile] = useState<string>(defaultParams.isFile)
-  const [querystate, setQueryState] = useState<string>(defaultParams.state)
-  const [queryEmail, setQueryEmail] = useState<string>(defaultParams.isEmail)
+  const [disablePagination, setDisablePagination] = useState<boolean>(false)
+
+  /**
+   * Search query default parameters.
+   */
+  const defaultParams: GoSearchParams = {
+    query: new URLSearchParams(location.search).get('query') || '',
+    sortOrder: defaultSortOption,
+    rowsPerPage: 10,
+    currentPage: 0,
+    state: '',
+    isFile: '',
+    isEmail: 'false',
+  }
+
   const [queryOrder, setQueryOrder] = useState<SearchResultsSortOrder>(
     defaultParams.sortOrder,
   )
-  const [disablePagination, setDisablePagination] = useState<boolean>(false)
+  const [queryFile, setQueryFile] = useState<string>(defaultParams.isFile)
+  const [querystate, setQueryState] = useState<string>(defaultParams.state)
+  const [queryEmail, setQueryEmail] = useState<string>(defaultParams.isEmail)
 
   /**
    * Search parameters that includes the latest changes and retain default values for the others.
@@ -112,6 +93,28 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const rowsPerPage = Number(params.rowsPerPage)
   const currentPage = Number(params.currentPage)
   const rankOffset = rowsPerPage * currentPage
+  console.log(location)
+
+  /**
+   * Redirect back to directory page with parameters that are different from default parameters.
+   */
+  const redirectWithParams = (newParams: GoSearchParams, history: History) => {
+    const queryObject: any = { query: newParams.query }
+    Object.entries(newParams).map(([key, value], _) => {
+      if (value && value !== (defaultParams as any)[key]) {
+        queryObject[key] = value
+      }
+      return
+    })
+    const newPath = {
+      pathname: DIRECTORY_PAGE,
+      search: `${querystring.stringify(queryObject)}`,
+    }
+    history.push(newPath)
+  }
+
+  const updateQueryDebounced = debounce(redirectWithParams, 500)
+
   /** Dispatch action to get new results. */
   const getResults = () =>
     dispatch(
@@ -196,6 +199,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
       )
     }
   }
+
   // Google Analytics
   useEffect(() => {
     GAEvent('directory page', 'main')
