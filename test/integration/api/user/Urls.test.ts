@@ -4,7 +4,7 @@ import {
   IMAGE_FILE_PATH,
   LOCAL_BUCKET_URL,
   SMALL_TEXT_FILE_PATH,
-} from './config'
+} from '../../config'
 import {
   DATETIME_REGEX,
   createIntegrationTestUser,
@@ -12,14 +12,14 @@ import {
   generateRandomString,
   getAuthCookie,
   readFile,
-} from './util/helpers'
+} from '../../util/helpers'
 import {
   get,
   patch,
   patchFormData,
   postFormData,
   postJson,
-} from './util/requests'
+} from '../../util/requests'
 
 async function createLinkUrl(
   shortUrl: string,
@@ -48,7 +48,7 @@ describe('Url integration tests', () => {
   const longUrl = 'https://example.com'
 
   beforeEach(async () => {
-    email = await createIntegrationTestUser()
+    ;({ email } = await createIntegrationTestUser())
     authCookie = await getAuthCookie(email)
   })
 

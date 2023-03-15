@@ -6,15 +6,18 @@ const sequelize = new Sequelize.Sequelize(DB_URI, {
   timezone: '+08:00',
 })
 
-export const createDbUser = async (email: string): Promise<void> => {
+export const createDbUser = async (
+  email: string,
+  apiKeyHash: string,
+): Promise<void> => {
   try {
-    // Create integration test user with given email
+    // Create integration test user with given email and apiKeyHash
     await sequelize.query(
       `
-      INSERT INTO users ("email", "createdAt", "updatedAt") SELECT :email, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+      INSERT INTO users ("email", "createdAt", "updatedAt", "apiKeyHash") SELECT :email, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :apiKeyHash
       WHERE NOT EXISTS (SELECT * FROM users WHERE "email"=:email);
     `,
-      { replacements: { email } },
+      { replacements: { email, apiKeyHash } },
     )
   } catch (e) {
     throw new Error(

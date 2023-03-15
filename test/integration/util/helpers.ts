@@ -1,6 +1,9 @@
+import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import fs from 'fs'
 import { customAlphabet } from 'nanoid/async'
 import {
+  API_KEY_SALT,
   API_LOGIN_OTP,
   API_LOGIN_VERIFY,
   EMAIL_RANDOM_STRING_LENGTH,
@@ -16,11 +19,22 @@ export const generateRandomString = (length: number) => {
   return customAlphabet(ALPHABET, length)()
 }
 
-export const createIntegrationTestUser: () => Promise<string> = async () => {
-  const randomString = await generateRandomString(EMAIL_RANDOM_STRING_LENGTH)
-  const integrationTestEmail = `integration-${randomString}@open.gov.sg`
-  await createDbUser(integrationTestEmail)
-  return integrationTestEmail
+export const createIntegrationTestUser: () => Promise<{
+  email: string
+  apiKey: string
+}> = async () => {
+  const randomEmailString = await generateRandomString(
+    EMAIL_RANDOM_STRING_LENGTH,
+  )
+  const integrationTestEmail = `integration-${randomEmailString}@open.gov.sg`
+
+  const randomApiString = crypto.randomBytes(32).toString('base64')
+  const hash = await bcrypt.hash(randomApiString, API_KEY_SALT)
+  const apiKey = `test_v1_${randomApiString}`
+  const apiKeyHash = `test_v1_${hash.replace(API_KEY_SALT, '')}`
+
+  await createDbUser(integrationTestEmail, apiKeyHash)
+  return { email: integrationTestEmail, apiKey }
 }
 
 export const deleteIntegrationTestUser: (email: string) => Promise<void> =
