@@ -168,6 +168,7 @@
     "concurrently": "^6.2.0",
     "copyfiles": "^2.4.1",
     "coveralls": "^3.1.1",
+    "csv-parse": "^5.3.6",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.30.0",
     "eslint-config-airbnb": "^18.2.1",

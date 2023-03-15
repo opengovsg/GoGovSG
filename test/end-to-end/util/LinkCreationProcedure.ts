@@ -31,13 +31,15 @@ const fetchLink = async (url, numberOfFetches) => {
     return res.ok
   }
 
-  Promise.all(new Array(numberOfFetches).fill(get(url))).then(
-    (values: boolean[]) => {
-      console.log(
-        `Url: ${url} was fetched ${values.filter(Boolean).length} times`,
-      )
-    },
-  )
+  const fetchArray: Promise<boolean>[] = []
+  for (let index = 0; index < numberOfFetches; index += 1) {
+    fetchArray.push(get(url))
+  }
+  Promise.all(fetchArray).then((values: boolean[]) => {
+    console.log(
+      `Url: ${url} was fetched ${values.filter(Boolean).length} times`,
+    )
+  })
 }
 
 const getUrlAndFetch = async (t, generatedUrl, numberOfFetches) => {

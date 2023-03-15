@@ -90,6 +90,7 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
+      - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
       - run: npm run test:e2e-headless
   integration:
     name: Integration Tests
