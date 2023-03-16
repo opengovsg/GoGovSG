@@ -58,7 +58,7 @@ async function handler(event) {
     // cleanup
     await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
 
-    await httpService.sendHttpMessage(false, jobItemId, error)
+    await httpService.sendHttpMessage(false, jobItemId, error.message)
     throw new Error(`Failed to generate files, Error: ${error} `)
   }
 
