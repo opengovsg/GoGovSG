@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { LinkAuditService } from './interfaces'
 import { DependencyIds } from '../../constants'
+import { NotFoundError } from '../../util/error'
 import jsonMessage from '../../util/json'
 
 @injectable()
@@ -40,10 +41,11 @@ export class LinkAuditController {
       res.status(200).json(linkStats)
       return
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).send(jsonMessage(error.message))
+      if (error instanceof NotFoundError) {
+        res.status(404).send(jsonMessage(error.message))
+        return
       }
-      res.status(404).send(jsonMessage(error.message))
+      res.status(400).send(jsonMessage(error.message))
       return
     }
   }

@@ -1,4 +1,6 @@
 import { Selector } from 'testcafe'
+import { parse } from 'csv-parse'
+import { createReadStream } from 'fs'
 import {
   dummyFilePath,
   dummyRelativePath,
@@ -14,12 +16,15 @@ import {
   clickAway,
   createLinkButton,
   dateOfCreationButton,
+  downloadLinkButton,
   drawer,
   fileTab,
   filterSortPanel,
+  generateRandomString,
   generateUrlImage,
   longUrl,
   longUrlTextField,
+  mostNumberOfVisitsButton,
   noResultsFoundText,
   searchBarLinkButton,
   searchBarLinksInput,
@@ -28,7 +33,12 @@ import {
   shortUrlTextField,
   tagsAutocompleteInput,
   uploadFile,
+  urlTable,
+  urlTableOriginalUrlText,
+  urlTableRow,
+  urlTableRowShortUrlText,
   urlTableRowUrlText,
+  urlTableTagsTextContent,
   userActiveButton,
   userApplyButton,
   userFileButton,
@@ -303,4 +313,166 @@ test('User page test on filter search by tags', async (t) => {
     .ok()
     .expect(searchBarTagsInput.exists)
     .ok()
+})
+
+test('User page shows ellipsis on long link', async (t) => {
+  await t.click(createLinkButton.nth(0))
+  const longUrl = generateRandomString(60)
+  await t.typeText(shortUrlTextField, longUrl)
+  await t.typeText(longUrlTextField, `${shortUrl}`)
+  await firstLinkHandle(t)
+  // wait for it to appear on the table
+  await t.wait(1000)
+  const tableRow = urlTableRow(0)
+  const overflow = await tableRow.getStyleProperty('text-overflow')
+  const hasEllipsis = overflow === 'ellipsis'
+
+  await t
+    // eslint-disable-next-line
+    .expect(hasEllipsis)
+    .ok()
+})
+
+test('Download csv should match links on page', async (t) => {
+  await t.click(downloadLinkButton)
+  await t.wait(5000)
+  const directoryPath = `${process.env.HOME}/Downloads/urls.csv`
+
+  const csvRows: string[] = []
+  ;(() => {
+    const readStream = createReadStream(directoryPath, 'utf8')
+
+    readStream.pipe(parse()).on('data', (chunk) => {
+      csvRows.push(chunk)
+    })
+
+    readStream.on('error', (err) => {
+      console.log('Error found')
+    })
+
+    readStream.on('end', () => {
+      console.log('Finished reading using csv parse')
+    })
+  })()
+
+  const linkTable = urlTable
+  // Get the number of rows in the table
+  const rowCount = await linkTable.find('tr').count
+  const linktTableRecords: Record[] = []
+
+  type Record = {
+    shortUrl: string
+    originalUrl: string
+    status: string
+    tags: string
+    visits: string
+    createdAt: string
+  }
+
+  /* eslint-disable no-await-in-loop */
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const row = linkTable.find('tr').nth(rowIndex)
+    const record = {
+      shortUrl: '',
+      originalUrl: '',
+      status: 'ACTIVE',
+      tags: '',
+      visits: '',
+      createdAt: '',
+    }
+
+    // Get the number of columns in the row
+    const colCount = await row.find('td').count
+
+    // Loop through each column
+    for (let colIndex = 1; colIndex < colCount; colIndex += 1) {
+      // For short URL, Original URL and tags
+      if (colIndex === 1) {
+        const divs = await row.find('td').nth(colIndex).find('div').count
+        for (let divCount = 1; divCount < divs; divCount += 1) {
+          if (divCount === 1) {
+            record.shortUrl = await urlTableRowShortUrlText(row)
+          }
+          if (divCount === 2) {
+            record.originalUrl = await urlTableOriginalUrlText(row)
+          }
+          if (divCount === 3) {
+            record.tags += await urlTableTagsTextContent(row)
+          }
+        }
+      }
+      const cellText = await row.find('td').nth(colIndex).textContent
+
+      // isActive
+      if (colIndex === 3) {
+        record.status = cellText === '• active' ? 'ACTIVE' : 'INACTIVE'
+      }
+
+      // Created Time
+      if (colIndex === 4) {
+        record.createdAt = cellText
+      }
+
+      // Number of Visits
+      if (colIndex === 5) {
+        record.visits = cellText
+      }
+    }
+    linktTableRecords.push(record)
+  }
+
+  let isMatching = true
+  for (let index = 0; index < linktTableRecords.length; index += 1) {
+    const linkRecord = linktTableRecords[index]
+    const csvRecord = csvRows[index + 1]
+
+    if (linkRecord.shortUrl !== `/${csvRecord[0]}`) {
+      isMatching = false
+    }
+    if (linkRecord.originalUrl !== csvRecord[1]) {
+      isMatching = false
+    }
+    if (linkRecord.status !== csvRecord[2]) {
+      isMatching = false
+    }
+    if (linkRecord.tags !== csvRecord[3]) {
+      isMatching = false
+    }
+    if (linkRecord.visits !== csvRecord[4]) {
+      isMatching = false
+    }
+  }
+
+  await t.expect(isMatching).ok()
+})
+
+test('Directory sort by number of visitors.', async (t) => {
+  await t
+    .click(userFilterSortPanelButton)
+    .click(mostNumberOfVisitsButton)
+    .click(userApplyButton)
+
+  const linkTable = urlTable
+  // Get the number of rows in the table
+  const rowCount = await linkTable.find('tr').count
+  let isSorted = true
+  // Loop through each row
+  const resultArray: string[] = []
+
+  /* eslint-disable no-await-in-loop */
+  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    const row = linkTable.find('tr').nth(rowIndex)
+    resultArray.push(await row.find('td').nth(5).textContent)
+  }
+
+  const numberArray: number[] = resultArray.map((value) => {
+    return +value
+  })
+
+  const sortedNumberArray = [...numberArray].sort((n1, n2) => n2 - n1)
+  isSorted = sortedNumberArray.every((element, index) => {
+    return element === numberArray[index]
+  })
+
+  await t.expect(isSorted).ok()
 })

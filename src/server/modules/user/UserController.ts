@@ -26,6 +26,7 @@ import dogstatsd, {
 } from '../../util/dogstatsd'
 import TagManagementServiceInterface from './interfaces/TagManagementService'
 import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
+import { UserUrlsQueryConditions } from '../../repositories/types'
 
 type AnnouncementResponse = {
   message?: string
@@ -103,6 +104,7 @@ export class UserController {
       }
       if (error instanceof Sequelize.ValidationError) {
         res.badRequest(jsonMessage(error.message))
+        return
       }
       logger.error(`Error creating short URL:\t${error}`)
       res.badRequest(jsonMessage('Server error.'))
@@ -215,7 +217,7 @@ export class UserController {
       const { urls, count } =
         await this.urlManagementService.getUrlsWithConditions(queryConditions)
       dogstatsd.increment(SEARCH_USER_URL, 1, 1, [
-        `${SEARCH_USER_URL_TAG_IS_TAG}:${queryConditions.tags.length > 0}`,
+        `${SEARCH_USER_URL_TAG_IS_TAG}:${!!queryConditions.tags}`,
       ])
       res.ok({ urls, count })
       return
@@ -229,14 +231,15 @@ export class UserController {
     }
   }
 
-  private static extractUrlQueryConditions(req: Express.Request) {
+  private static extractUrlQueryConditions(
+    req: Express.Request,
+  ): UserUrlsQueryConditions {
     const { userId } = req.body
-    let { limit = 1000, searchText = '' } = req.query
-    limit = Math.min(1000, Number(limit))
-    searchText = searchText.toString().toLowerCase()
     const {
+      limit = 1000,
       offset = 0,
-      orderBy = 'updatedAt',
+      searchText = '',
+      orderBy = 'createdAt',
       sortDirection = 'desc',
       isFile,
       state,
@@ -244,15 +247,15 @@ export class UserController {
     } = req.query
     const tagList = tags ? tags.toString().toLowerCase().split(';') : []
     const queryConditions = {
-      limit,
+      userId,
+      limit: Number(limit),
       offset: Number(offset),
       orderBy: orderBy.toString(),
       sortDirection: sortDirection.toString(),
-      searchText,
-      userId,
       state: state?.toString(),
       isFile: undefined as boolean | undefined,
-      tags: tagList,
+      ...(searchText && { searchText: searchText.toString().toLowerCase() }),
+      ...(tags && { tags: tagList }),
     }
     if (isFile === 'true') {
       queryConditions.isFile = true

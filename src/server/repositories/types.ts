@@ -37,14 +37,14 @@ export type StorableUser = {
 export type BulkUrlMapping = Pick<StorableUrl, 'shortUrl' | 'longUrl'>
 
 export type UserUrlsQueryConditions = {
+  userId: number
   limit: number
   offset: number
   orderBy: string
   sortDirection: string
-  searchText: string
-  userId: number
   state?: string
   isFile?: boolean
+  searchText?: string
   tags?: string[]
 }
 

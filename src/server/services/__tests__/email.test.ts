@@ -1,4 +1,9 @@
 import { MailBody } from '../email'
+import {
+  BULK_QR_DOWNLOAD_FORMATS,
+  BULK_QR_DOWNLOAD_MAPPINGS,
+} from '../../../shared/constants'
+
 /* eslint-disable global-require */
 
 /**
@@ -123,15 +128,28 @@ describe('Mailer tests', () => {
   })
 
   describe('mailOTP', () => {
+    const ogUrl = 'gogo.sg'
+    const otpExpiry = 300
+    const domainVariant = 'go.gov.sg'
+
+    jest.mock('../../config', () => ({
+      ogUrl,
+      otpExpiry,
+      logger: console,
+    }))
     const { MailerNode } = require('../email')
     const service = new MailerNode()
+    const sendMailSpy = jest.spyOn(service, 'sendMail').mockImplementation()
+
+    beforeEach(() => {
+      sendMailSpy.mockClear()
+    })
 
     it('should not send mail if otp is undefined', async () => {
       const testEmail = 'test@email.com'
       const testOtp = undefined
       const testIp = '1.1.1.1'
 
-      const sendMailSpy = jest.spyOn(service, 'sendMail')
       await service.mailOTP(testEmail, testOtp, testIp)
       expect(sendMailSpy).not.toHaveBeenCalled()
     })
@@ -141,9 +159,111 @@ describe('Mailer tests', () => {
       const testOtp = '111111'
       const testIp = '1.1.1.1'
 
-      const sendMailSpy = jest.spyOn(service, 'sendMail')
       await service.mailOTP(testEmail, testOtp, testIp)
       expect(sendMailSpy).not.toHaveBeenCalled()
+    })
+
+    it('should send an email with the OTP and IP address', async () => {
+      const testEmail = 'user@example.com'
+      const testOtp = '111111'
+      const testIp = '1.1.1.1'
+
+      const expectedBody = `Your OTP is <b>111111</b>. It will expire in ${Math.floor(
+        otpExpiry / 60,
+      )} minutes.
+    Please use this to login to your account.
+    <p>If your OTP does not work, please request for a new one at ${ogUrl} on the internet.</p>
+    <p>This login attempt was made from the IP: 1.1.1.1. If you did not attempt to log in, you may choose to ignore this email or investigate this IP address further.</p>`
+
+      await service.mailOTP(testEmail, testOtp, testIp)
+      expect(sendMailSpy).toHaveBeenCalledWith({
+        to: 'user@example.com',
+        subject: `One-Time Password (OTP) for ${domainVariant}`,
+        body: expectedBody,
+      })
+    })
+  })
+
+  describe('mailJobSuccess', () => {
+    const { MailerNode } = require('../email')
+    const service = new MailerNode()
+    const sendMailSpy = jest.spyOn(service, 'sendMail').mockImplementation()
+    const domainVariant = 'go.gov.sg'
+
+    beforeEach(() => {
+      sendMailSpy.mockClear()
+    })
+
+    it('should not send mail if email is undefined', async () => {
+      // Email not specified
+      await service.mailJobSuccess(null, ['downloadLink1', 'downloadLink2'])
+      expect(sendMailSpy).not.toBeCalled()
+    })
+
+    it('should not send mail if download links is undefined', async () => {
+      // Download links not specified
+      await service.mailJobSuccess('test@email.com', null)
+      expect(sendMailSpy).not.toBeCalled()
+    })
+
+    it('should call sendMail with the correct email body if email and downloadLinks are specified', async () => {
+      const downloadLinks = ['downloadLink1', 'downloadLink2']
+
+      const expectedSubject = `[${domainVariant}] QR code generation for your links is successful`
+      const expectedBody = `Your links have been successfully generated from your csv file.
+
+        <p>Download QR codes for your links (PNG): ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/${
+              BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.PNG]
+            }?x-source=email" target="_blank">here </a>`,
+        )}</p>
+        <p>Download QR codes for your links (SVG): ${downloadLinks.map(
+          (downloadLink) =>
+            `<a href="${downloadLink}/${
+              BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.SVG]
+            }?x-source=email" target="_blank">here </a>`,
+        )}</p>
+      `
+
+      await service.mailJobSuccess('test@email.com', downloadLinks)
+      expect(sendMailSpy).toHaveBeenCalledWith({
+        to: 'test@email.com',
+        body: expectedBody,
+        subject: expectedSubject,
+      })
+    })
+  })
+
+  describe('mailJobFailure', () => {
+    const { MailerNode } = require('../email')
+    const service = new MailerNode()
+    const sendMailSpy = jest.spyOn(service, 'sendMail').mockImplementation()
+    const domainVariant = 'go.gov.sg'
+
+    beforeEach(() => {
+      sendMailSpy.mockClear()
+    })
+
+    it('should not send mail if email is undefined', async () => {
+      // Email not specified
+      await service.mailJobFailure(null)
+      expect(sendMailSpy).not.toBeCalled()
+    })
+
+    it('should call sendMail with the correct email body if email is specified', async () => {
+      const expectedSubject = `[${domainVariant}] QR code generation for your links has failed`
+      const expectedBody = `Bulk generation of QR codes from your csv file has failed.
+
+        <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p> 
+      `
+
+      await service.mailJobFailure('test@email.com')
+      expect(sendMailSpy).toHaveBeenCalledWith({
+        to: 'test@email.com',
+        body: expectedBody,
+        subject: expectedSubject,
+      })
     })
   })
 })

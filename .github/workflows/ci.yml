@@ -25,13 +25,13 @@ env:
 jobs:
   ci:
     name: CI
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -41,7 +41,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npm run lint
       - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
       - run: npm run build
@@ -49,13 +49,13 @@ jobs:
           ASSET_VARIANT: gov
   test:
     name: Test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -65,7 +65,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npm run test
       - name: Coveralls
         uses: coverallsapp/github-action@master
@@ -73,13 +73,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   testcafe:
     name: End To End Tests
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -89,17 +89,36 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci
-      - name: Install TestCafe from 'npm' and Run Tests
-        uses: DevExpress/testcafe-action@6114d4290399f0e36ac0be3ca56b6713dc2fab3d # pin@v0.0.3
+      - run: npm ci --legacy-peer-deps
+      - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
+      - run: npm run test:e2e-headless
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
         with:
-          version: "1.18.6"
-          args: 'chrome:headless ./test/end-to-end --app "npm run dev" --app-init-delay 270000'
+          node-version: '16.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci --legacy-peer-deps
+      - run: npm run dev &
+      - run: sleep 270
+      - run: npm run test:integration
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
       proceed: ${{ steps.determine_proceed.outputs.proceed }}
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     if: github.event_name == 'push'
     steps:
       - shell: python
@@ -115,7 +134,7 @@ jobs:
             print('::set-output name=proceed::false')
   sentry:
     name: Upload sourcemap to Sentry
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
@@ -123,7 +142,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - name: Cache Node.js modules
         uses: actions/cache@v2
         with:
@@ -133,7 +152,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - name: Select Sentry variables
         shell: python
         run: |
@@ -161,7 +180,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
   build-gogov:
     name: Build and push for gogov
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
@@ -205,15 +224,15 @@ jobs:
           docker push ${REPO}:${TAG}
   deploy-gogov:
     name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
-    runs-on: ubuntu-18.04
-    needs: [ci, test, gatekeep, build-gogov]
+    runs-on: ubuntu-22.04
+    needs: [ci, test, integration, gatekeep, build-gogov]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - run: |
           echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -285,7 +304,7 @@ jobs:
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
   build-edu:
     name: Build and push for edu
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
@@ -329,15 +348,15 @@ jobs:
           docker push ${REPO}:${TAG}
   deploy-edu:
     name: Deploy to Elastic Beanstalk and AWS Lambda for edu
-    runs-on: ubuntu-18.04
-    needs: [ci, test, gatekeep, build-edu]
+    runs-on: ubuntu-22.04
+    needs: [ci, test, integration, gatekeep, build-edu]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - run: |
           echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -411,7 +430,7 @@ jobs:
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
   build-health:
     name: Build and push for health
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: [gatekeep]
     if: needs.gatekeep.outputs.proceed == 'true'
     outputs:
@@ -455,15 +474,15 @@ jobs:
           docker push ${REPO}:${TAG}
   deploy-health:
     name: Deploy to Elastic Beanstalk and AWS Lambda for health
-    runs-on: ubuntu-18.04
-    needs: [ci, test, gatekeep, build-health]
+    runs-on: ubuntu-22.04
+    needs: [ci, test, integration, gatekeep, build-health]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 14.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '16.x'
       - run: |
           echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then

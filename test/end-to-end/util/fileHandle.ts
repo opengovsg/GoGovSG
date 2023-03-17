@@ -1,3 +1,5 @@
+import { dummyMaliciousFilePath } from './config'
+
 const fs = require('fs')
 
 /**
@@ -34,6 +36,24 @@ export const createEmptyFileOfSize = (fileName: string, size: number) => {
       resolve(true)
     } catch (error) {
       reject(error)
+    }
+  })
+}
+
+export const createMaliciousFile = async () => {
+  // false positive malicious content
+  const eicarContent =
+    'X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*'
+
+  return new Promise((resolve, reject) => {
+    try {
+      const newFile = fs.openSync(dummyMaliciousFilePath, 'w')
+      fs.writeSync(newFile, eicarContent)
+      fs.closeSync(newFile)
+      resolve(true)
+    } catch (err) {
+      console.error(err)
+      reject(err)
     }
   })
 }

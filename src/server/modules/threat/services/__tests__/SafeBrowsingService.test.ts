@@ -79,13 +79,12 @@ describe('SafeBrowsingService', () => {
 
     it('only returns false when response is not ok', async () => {
       const json = jest.fn()
-      json.mockResolvedValue(null)
+      json.mockResolvedValue({ error: { message: '' } })
       mockFetch.mockResolvedValue({ ok: false, json })
 
       await expect(service.isThreat(url)).resolves.toBeFalsy()
       expect(get).toHaveBeenCalledWith(url)
       expect(set).not.toHaveBeenCalled()
-      expect(json).not.toHaveBeenCalled()
       expect(mockFetch).toHaveBeenCalled()
     })
 
@@ -160,7 +159,6 @@ describe('SafeBrowsingService', () => {
       await expect(service.isThreat(url)).rejects.toBeDefined()
       expect(get).toHaveBeenCalledWith(url)
       expect(set).not.toHaveBeenCalled()
-      expect(json).not.toHaveBeenCalled()
       expect(mockFetch).toHaveBeenCalled()
     })
 
@@ -245,7 +243,7 @@ describe('SafeBrowsingService', () => {
 
     it('returns false when any response is not ok', async () => {
       const json = jest.fn()
-      json.mockResolvedValue(null)
+      json.mockResolvedValue({ error: { message: '' } })
       mockFetch
         .mockResolvedValueOnce({ ok: true, json })
         .mockResolvedValueOnce({ ok: false, json })
@@ -322,7 +320,6 @@ describe('SafeBrowsingService', () => {
         .mockResolvedValueOnce({ ok: false, json })
 
       await expect(service.isThreatBulk(urls, batchSize)).rejects.toBeDefined()
-      expect(json).toHaveBeenCalledTimes(1)
       expect(mockFetch).toHaveBeenCalledTimes(numBatches)
       expect(spy).toHaveBeenCalledTimes(numBatches)
     })

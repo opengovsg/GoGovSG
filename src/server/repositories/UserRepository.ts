@@ -131,22 +131,22 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   private static buildQueryConditions(conditions: UserUrlsQueryConditions) {
-    const searchTextCondition = {
-      [Op.or]: [
-        {
-          shortUrl: {
-            [Op.substring]: conditions.searchText,
-          },
-        },
-        {
-          longUrl: {
-            [Op.substring]: conditions.searchText,
-          },
-        },
-      ],
-    }
     let whereConditions: any = { userId: conditions.userId }
-    if (conditions.searchText.length > 0) {
+    if (conditions.searchText && conditions.searchText.length > 0) {
+      const searchTextCondition = {
+        [Op.or]: [
+          {
+            shortUrl: {
+              [Op.substring]: conditions.searchText,
+            },
+          },
+          {
+            longUrl: {
+              [Op.substring]: conditions.searchText,
+            },
+          },
+        ],
+      }
       whereConditions = { ...whereConditions, ...searchTextCondition }
     }
 

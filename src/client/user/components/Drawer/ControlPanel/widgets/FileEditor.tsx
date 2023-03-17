@@ -13,6 +13,8 @@ import Tooltip from '../../../../widgets/Tooltip'
 import useShortLink from '../util/shortlink'
 import { useDrawerState } from '../../index'
 import { removeHttpsProtocol } from '../../../../../app/util/url'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../../../../shared/constants'
+import { formatBytes } from '../../../../../app/util/format'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -44,7 +46,9 @@ export default function FileEditor() {
     <div className={classes.originalFileLabel}>
       Original file{' '}
       <Tooltip
-        title="Original file will be replaced after you select file. Maximum file size is 10mb."
+        title={`Original file will be replaced after you select file. Maximum file size is ${formatBytes(
+          MAX_FILE_UPLOAD_SIZE,
+        )}.`}
         imageAltText="Replace file help"
       />
     </div>
@@ -66,6 +70,7 @@ export default function FileEditor() {
               shortLinkDispatch?.replaceFile(newFile, setUploadFileError)
             }}
             setUploadFileError={setUploadFileError}
+            maxSize={MAX_FILE_UPLOAD_SIZE}
           />
           <CollapsibleMessage
             type={CollapsibleMessageType.Error}

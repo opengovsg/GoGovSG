@@ -121,7 +121,7 @@ if (DEV_ENV) {
     maxAge,
   }
   proxy = false
-  otpLimit = 10
+  otpLimit = 0 // disable OTP rate limit on development to allow faster logins for integration tests
 
   // Configure maildev specific options
   transporterOpts.ignoreTLS = true
