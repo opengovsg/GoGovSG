@@ -645,7 +645,7 @@ describe('UrlRepository', () => {
       })
       expect(mockQuery).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ useMaster: true }),
+        expect.objectContaining({ useMaster: false }),
       )
     })
 
@@ -674,7 +674,7 @@ describe('UrlRepository', () => {
       })
       expect(mockQuery).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ useMaster: true }),
+        expect.objectContaining({ useMaster: false }),
       )
     })
   })
