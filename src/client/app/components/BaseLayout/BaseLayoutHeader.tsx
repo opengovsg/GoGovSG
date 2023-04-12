@@ -103,6 +103,7 @@ const useStyles = makeStyles((theme) =>
         paddingRight: 0,
         minWidth: theme.spacing(6),
       },
+      order: 10,
     },
     logoutIcon: {
       width: '24px',
@@ -180,25 +181,21 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       link: i18next.t('general.links.feedback'),
       public: true,
       icon: feedbackIcon,
+      mobileOrder: 3,
     },
     {
       text: 'Guide',
       link: i18next.t('general.links.faq'),
       public: true,
       icon: helpIcon,
+      mobileOrder: 4,
     },
     {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
       icon: githubIcon,
-    },
-    {
-      text: 'Verify Messages',
-      link: i18next.t('general.links.verifyMessages'),
-      public: true,
-      icon: checkwhoIcon,
-      displayNotEnabledForVariant: ['edu', 'health'],
+      mobileOrder: 5,
     },
     {
       text: 'Guide',
@@ -213,6 +210,14 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       public: false,
       icon: feedbackIcon,
       mobileOrder: 5,
+    },
+    {
+      text: 'Verify Messages',
+      link: i18next.t('general.links.verifyMessages'),
+      public: true,
+      icon: githubIcon,
+      mobileOrder: 6,
+      displayNotEnabledForVariant: ['edu', 'health'],
     },
   ]
 
