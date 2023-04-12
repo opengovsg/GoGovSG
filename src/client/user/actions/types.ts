@@ -67,6 +67,7 @@ export type SetUserAnnouncementAction = ReduxPayloadAction<
     subtitle: string | undefined
     url: string | undefined
     image: string | undefined
+    buttonText: string | undefined
   }
 >
 
