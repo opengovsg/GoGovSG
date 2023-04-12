@@ -18,6 +18,7 @@ import GoLogoMiniLight from '@assets/go-logo-graphics/go-main-logo-mini-light.sv
 import helpIcon from '@assets/shared/help-icon.svg'
 import logoutIcon from '@assets/components/app/base-layout/logout-icon.svg'
 import logoutWhiteIcon from '@assets/components/app/base-layout/logout-white-icon.svg'
+import checkwhoIcon from '@assets/components/app/base-layout/checkwho-icon.svg'
 import directoryIcon from '@assets/components/app/base-layout/directory-icon.svg'
 import feedbackIcon from '@assets/components/app/base-layout/feedback-icon.svg'
 import githubIcon from '@assets/components/app/base-layout/github-icon.svg'
@@ -196,8 +197,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       text: 'Verify Messages',
       link: i18next.t('general.links.verifyMessages'),
       public: true,
-      icon: githubIcon,
-      mobileOrder: 6,
+      icon: checkwhoIcon,
       displayNotEnabledForVariant: ['edu', 'health'],
     },
     {
@@ -316,7 +316,12 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
                     }
                   >
                     {isMobileVariant && header.icon && (
-                      <img src={header.icon} alt={header.text} />
+                      <img
+                        src={header.icon}
+                        alt={header.text}
+                        height={24}
+                        width={24}
+                      />
                     )}
                     {!isMobileVariant && header.text}
                   </Button>
