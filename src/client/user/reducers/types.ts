@@ -94,6 +94,7 @@ export type UserState = {
     subtitle: string | undefined
     url: string | undefined
     image: string | undefined
+    buttonText: string | undefined
   } | null
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
