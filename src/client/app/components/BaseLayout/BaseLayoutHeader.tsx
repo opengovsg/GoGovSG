@@ -27,6 +27,7 @@ import homeIcon from '@assets/components/app/base-layout/home-icon.svg'
 import Section from '../Section'
 import loginActions from '../../../login/actions'
 import { GoGovReduxState } from '../../reducers/types'
+import assetVariant from '../../../../shared/util/asset-variant'
 
 type StyleProps = {
   isLoggedIn: boolean
@@ -118,6 +119,21 @@ type BaseLayoutHeaderProps = {
   toStick: boolean
 }
 
+type HeaderButtonProps = {
+  text: string
+  link: string
+  public: boolean
+  icon: string
+  mobileOrder?: number
+  internalLink?: boolean
+  displayNotEnabledForVariant?: string[]
+}
+
+function isEnabledForAssetVariant(header: HeaderButtonProps) {
+  if (header.displayNotEnabledForVariant === undefined) return true
+  return !header.displayNotEnabledForVariant.includes(assetVariant)
+}
+
 const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   backgroundType,
   hideNavButtons = false,
@@ -175,6 +191,14 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       link: i18next.t('general.links.contribute'),
       public: true,
       icon: githubIcon,
+    },
+    {
+      text: 'Verify Messages',
+      link: i18next.t('general.links.verifyMessages'),
+      public: true,
+      icon: githubIcon,
+      mobileOrder: 6,
+      displayNotEnabledForVariant: ['edu', 'health'],
     },
     {
       text: 'Guide',
@@ -273,6 +297,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
           {!hideNavButtons &&
             headers.map(
               (header) =>
+                isEnabledForAssetVariant(header) &&
                 (header.public ? !isLoggedIn : isLoggedIn) && (
                   <Button
                     href={
