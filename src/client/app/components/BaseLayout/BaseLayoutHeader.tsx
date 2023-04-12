@@ -215,7 +215,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       text: 'Verify Messages',
       link: i18next.t('general.links.verifyMessages'),
       public: true,
-      icon: githubIcon,
+      icon: checkwhoIcon,
       mobileOrder: 6,
       displayNotEnabledForVariant: ['edu', 'health'],
     },
