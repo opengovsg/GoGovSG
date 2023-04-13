@@ -38,8 +38,8 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
     },
     announcementImage: {
-      width: '600px',
-      height: '30vh',
+      maxWidth: '600px',
+      maxHeight: '30vh',
       marginLeft: 'auto',
       marginRight: 'auto',
       paddingLeft: '80px',
@@ -62,9 +62,9 @@ const useStyles = makeStyles((theme) =>
     justifyCenterImage: {
       display: 'flex',
       justifyContent: 'center',
-      width: '600px',
+      maxWidth: '600px',
       [theme.breakpoints.down('sm')]: {
-        width: '100%',
+        maxWidth: '100%',
       },
     },
     message: {
