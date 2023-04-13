@@ -171,6 +171,7 @@ export const userAnnouncement = {
   subtitle: process.env.ANNOUNCEMENT_SUBTITLE,
   url: process.env.ANNOUNCEMENT_URL,
   image: process.env.ANNOUNCEMENT_IMAGE,
+  buttonText: process.env.ANNOUNCEMENT_BUTTON_TEXT,
 }
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
