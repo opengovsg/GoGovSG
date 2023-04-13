@@ -321,7 +321,10 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                   visible={!!createShortLinkError}
                   type={CollapsibleMessageType.Error}
                 >
-                  <a className={classes.shortLinkError} href="/#/directory">
+                  <a
+                    className={classes.shortLinkError}
+                    href={`/#/directory?query=${shortUrl}`}
+                  >
                     {createShortLinkError}
                   </a>
                 </CollapsibleMessage>

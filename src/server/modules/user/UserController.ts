@@ -98,7 +98,7 @@ export class UserController {
         return
       }
       if (error instanceof AlreadyExistsError) {
-        const newErrorMessage = `${error.message} Click here to find out more`
+        const newErrorMessage = `${error.message} Click here to find out who is the link owner & request for ownership.`
         res.badRequest(jsonMessage(newErrorMessage, MessageType.ShortUrlError))
         return
       }
