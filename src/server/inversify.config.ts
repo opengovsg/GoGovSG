@@ -30,6 +30,7 @@ import { JobRepository } from './modules/job/repositories/JobRepository'
 import { JobItemRepository } from './modules/job/repositories/JobItemRepository'
 import { UrlMapper } from './mappers/UrlMapper'
 import { UrlV1Mapper } from './mappers/UrlV1Mapper'
+import { UrlV2Mapper } from './mappers/UrlV2Mapper'
 import { UserMapper } from './mappers/UserMapper'
 import { OtpMapper } from './mappers/OtpMapper'
 import { TagMapper } from './mappers/TagMapper'
@@ -61,6 +62,7 @@ import {
 } from './modules/analytics/services'
 import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
 import { ApiV1Controller } from './modules/api/external-v1'
+import { ApiV2Controller } from './modules/api/external-v2'
 import { LinkAuditController } from './modules/audit'
 import { LinkAuditService } from './modules/audit/services'
 import { UrlHistoryRepository } from './modules/audit/repositories'
@@ -107,6 +109,7 @@ export default () => {
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.urlV1Mapper, UrlV1Mapper)
+  bindIfUnbound(DependencyIds.urlV2Mapper, UrlV2Mapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.tagMapper, TagMapper)
@@ -142,6 +145,7 @@ export default () => {
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
   bindIfUnbound(DependencyIds.apiV1Controller, ApiV1Controller)
+  bindIfUnbound(DependencyIds.apiV2Controller, ApiV2Controller)
 
   container
     .bind(DependencyIds.allowedFileExtensions)

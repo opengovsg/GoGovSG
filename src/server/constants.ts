@@ -2,6 +2,7 @@ export const DependencyIds = {
   urlRepository: Symbol.for('urlRepository'),
   urlMapper: Symbol.for('urlMapper'),
   urlV1Mapper: Symbol.for('urlV1Mapper'),
+  urlV2Mapper: Symbol.for('urlV2Mapper'),
   userMapper: Symbol.for('userMapper'),
   otpMapper: Symbol.for('otpMapper'),
   tagMapper: Symbol.for('tagMapper'),
@@ -69,6 +70,7 @@ export const DependencyIds = {
   bulkService: Symbol.for('bulkService'),
   apiKeyAuthService: Symbol.for('apiKeyAuthService'),
   apiV1Controller: Symbol.for('apiV1Controller'),
+  apiV2Controller: Symbol.for('apiV2Controller'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'

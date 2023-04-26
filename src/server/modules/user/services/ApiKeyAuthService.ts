@@ -46,7 +46,7 @@ class ApiKeyAuthService implements ApiKeyAuthServiceInterface {
   isAdmin: (userId: number) => Promise<boolean> = async (userId: number) => {
     const user = await this.userRepository.findById(userId)
     if (!user) return false
-    return apiAdmin === user.email
+    return apiAdmin.split(',').includes(user.email)
   }
 
   hasApiKey: (userId: number) => Promise<boolean> = async (userId: number) => {

@@ -77,13 +77,33 @@ async function apiKeyAdminAuthMiddleware(
   res: Express.Response,
   next: Express.NextFunction,
 ) {
-  const { userId } = req.body
-  const isAdmin = await apiKeyAuthService.isAdmin(userId)
-  if (!isAdmin) {
-    res.unauthorized('User is unauthorized')
+  const authorizationHeader = req.headers.authorization
+  if (!authorizationHeader) {
+    res.unauthorized(jsonMessage('Authorization header is missing'))
     return
   }
-  next()
+
+  const [bearerString, apiKey] = authorizationHeader.split(BEARER_SEPARATOR)
+  if (bearerString !== BEARER_STRING) {
+    res.unauthorized(jsonMessage('Invalid authorization header format'))
+    return
+  }
+  try {
+    const user = await apiKeyAuthService.getUserByApiKey(apiKey)
+    if (!user) {
+      res.unauthorized(jsonMessage('Invalid API Key'))
+      return
+    }
+    if (!(await apiKeyAuthService.isAdmin(user.id))) {
+      res.unauthorized(jsonMessage('User is unauthorized'))
+      return
+    }
+    req.body.userId = user.id
+    next()
+  } catch {
+    res.unauthorized(jsonMessage('Invalid API Key'))
+    return
+  }
 }
 
 /**
@@ -119,6 +139,13 @@ router.use(
 if (ffExternalApi) {
   // eslint-disable-next-line global-require
   router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
+  router.use(
+    '/v2',
+    apiKeyAdminAuthMiddleware,
+    preprocess,
+    // eslint-disable-next-line global-require
+    require('./external-v2'),
+  )
 }
 
 router.use((_, res) => {
