@@ -145,7 +145,7 @@ After these have been set up, set the environment variables according to the tab
 |JOB_POLL_INTERVAL|No|Interval of time between attempts for long polling of job status in ms. Defaults to 5000ms (5s)|
 |API_LINK_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in API created links. Defaults to 8|
 |FF_EXTERNAL_API|No|Boolean, feature flag for enabling the external API. Defaults to false|
-|ADMIN_API_EMAIL|No|Email with admin API access. Defaults to none.|
+|ADMIN_API_EMAILS|No|Emails with admin API access, separated by commas. Defaults to none.|
 
 #### Serverless functions for link migration
 
