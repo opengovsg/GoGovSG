@@ -7,7 +7,7 @@ import {
   UserUrlsQueryConditions,
 } from './types'
 import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
-import { User, UserType } from '../models/user'
+import { ExternalUser, User, UserType } from '../models/user'
 import { Mapper } from '../mappers/Mapper'
 import { DependencyIds } from '../constants'
 import { UrlClicks } from '../models/statistics/clicks'
@@ -58,14 +58,18 @@ export class UserRepository implements UserRepositoryInterface {
     )
   }
 
-  public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
-    async (email) => {
-      const [user, created] = await User.findOrCreate({ where: { email } })
-      if (created) {
-        dogstatsd.increment(USER_NEW, 1, 1)
-      }
-      return this.userMapper.persistenceToDto(user)
+  public findOrCreateWithEmail: (
+    email: string,
+    isGovEmail: boolean,
+  ) => Promise<StorableUser> = async (email, isGovEmail) => {
+    const [user, created] = isGovEmail
+      ? await User.findOrCreate({ where: { email } })
+      : await ExternalUser.findOrCreate({ where: { email } })
+    if (created) {
+      dogstatsd.increment(USER_NEW, 1, 1)
     }
+    return this.userMapper.persistenceToDto(user)
+  }
 
   public findOneUrlForUser: (
     userId: number,

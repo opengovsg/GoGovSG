@@ -113,7 +113,10 @@ export class AuthService implements interfaces.AuthService {
       }
 
       try {
-        const dbUser = await this.userRepository.findOrCreateWithEmail(email)
+        const dbUser = await this.userRepository.findOrCreateWithEmail(
+          email,
+          true,
+        )
 
         this.otpRepository.deleteOtpByEmail(email).catch((error) => {
           logger.error(`OTP could not be expired:\t${error}`)

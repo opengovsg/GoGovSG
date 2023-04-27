@@ -74,3 +74,61 @@ export const User = <UserTypeStatic>sequelize.define(
     },
   },
 )
+
+export const ExternalUser = <UserTypeStatic>sequelize.define(
+  'user',
+  {
+    email: {
+      type: Sequelize.TEXT,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: true,
+        isLowercase: true,
+      },
+      set(this: Settable, email: string) {
+        // must save email as lowercase
+        this.setDataValue('email', email.trim().toLowerCase())
+      },
+    },
+    apiKeyHash: {
+      type: Sequelize.TEXT,
+      unique: true,
+      allowNull: true,
+    },
+  },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ['apiKeyHash'],
+      },
+    ],
+    defaultScope: {
+      useMaster: true,
+    },
+    scopes: {
+      /**
+       * Fetches a corresponding shortUrl that belongs to the user.
+       * @param {string} shortUrl
+       */
+      includeShortUrl(shortUrl: string) {
+        return {
+          include: [
+            {
+              model: Url.scope(['defaultScope', 'getClicks']),
+              as: 'Urls',
+              where: { shortUrl },
+            },
+          ],
+        }
+      },
+      /**
+       * Use the replica database for read queries.
+       */
+      useReplica: {
+        useMaster: undefined,
+      },
+    },
+  },
+)

@@ -44,7 +44,7 @@ export class ApiV2Controller {
 
     if (email) {
       try {
-        await this.userRepository.findOrCreateWithEmail(email)
+        await this.userRepository.findOrCreateWithEmail(email, false)
       } catch (error) {
         logger.error(`Error creating user:\t ${email}, ${error}`)
         res.badRequest(jsonMessage('Error creating new user.'))

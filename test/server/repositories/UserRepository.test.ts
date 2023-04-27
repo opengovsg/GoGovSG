@@ -154,7 +154,7 @@ describe('UserRepository', () => {
       const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
       const user = userModelMock.findOne()
       findOrCreate.mockResolvedValue([user, null])
-      await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
+      await userRepo.findOrCreateWithEmail('user@agency.gov.sg', true)
       expect(findOrCreate).toHaveBeenCalledTimes(1)
     })
   })
