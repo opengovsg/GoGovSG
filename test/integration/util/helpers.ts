@@ -45,8 +45,8 @@ export const createIntegrationTestAdminUser: () => Promise<{
 
   const randomApiString = crypto.randomBytes(32).toString('base64')
   const hash = await bcrypt.hash(randomApiString, API_KEY_SALT)
-  const apiKey = `test_v1_${randomApiString}`
-  const apiKeyHash = `test_v1_${hash.replace(API_KEY_SALT, '')}`
+  const apiKey = `test_v2_${randomApiString}`
+  const apiKeyHash = `test_v2_${hash.replace(API_KEY_SALT, '')}`
 
   await createDbUser(testAdminEmail, apiKeyHash)
   return { email: testAdminEmail, apiKey }
