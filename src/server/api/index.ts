@@ -1,4 +1,5 @@
 import Express from 'express'
+import { MessageType } from '../../shared/util/messages'
 import jsonMessage from '../util/json'
 import { DependencyIds, ERROR_404_PATH } from '../constants'
 import { displayHostname, ffExternalApi } from '../config'
@@ -95,7 +96,12 @@ async function apiKeyAdminAuthMiddleware(
       return
     }
     if (!(await apiKeyAuthService.isAdmin(user.id))) {
-      res.unauthorized(jsonMessage('User is unauthorized'))
+      res.unauthorized(
+        jsonMessage(
+          `Email ${user.email} is not white listed`,
+          MessageType.ShortUrlError,
+        ),
+      )
       return
     }
     req.body.userId = user.id

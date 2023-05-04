@@ -1,3 +1,4 @@
+import { MessageType } from '../../../../src/shared/util/messages'
 import { API_EXTERNAL_V2_URLS } from '../../config'
 import {
   DATETIME_REGEX,
@@ -79,7 +80,8 @@ describe('Url integration tests', () => {
     const json = await res.json()
     expect(json).toBeTruthy()
     expect(json).toEqual({
-      message: 'User is unauthorized',
+      message: `Email ${testUser.email} is not white listed`,
+      type: MessageType.ShortUrlError,
     })
     await deleteIntegrationTestUser(testUser.email)
   })
