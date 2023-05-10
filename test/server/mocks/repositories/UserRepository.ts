@@ -34,12 +34,8 @@ export class MockUserRepository implements UserRepositoryInterface {
     return Promise.resolve(null)
   }
 
-  findOrCreateWithEmail(
-    email: string,
-    isGovEmail: boolean,
-  ): Promise<StorableUser> {
+  findOrCreateWithEmail(email: string): Promise<StorableUser> {
     this.email = email
-    this.isGovEmail = isGovEmail
     return Promise.resolve({
       email: 'test@hello.gov.sg',
       urls: [],

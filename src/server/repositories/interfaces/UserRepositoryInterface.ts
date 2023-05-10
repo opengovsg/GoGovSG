@@ -28,13 +28,9 @@ export interface UserRepositoryInterface {
    * If there isn't one, then a new user is created with the input email
    * and is returned.
    * @param  {string} email The email of the user to find.
-   * @param  {boolean} isGovEmail To validate the email domain or not.
    * @returns Promise that resolves to the user.
    */
-  findOrCreateWithEmail(
-    email: string,
-    isGovEmail: boolean,
-  ): Promise<StorableUser>
+  findOrCreateWithEmail(email: string): Promise<StorableUser>
 
   /**
    * Find one url that matches input short link and belongs to the user
