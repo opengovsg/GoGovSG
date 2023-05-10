@@ -108,7 +108,6 @@ export default () => {
   bindIfUnbound(DependencyIds.urlRepository, UrlRepository)
   bindIfUnbound(DependencyIds.urlMapper, UrlMapper)
   bindIfUnbound(DependencyIds.urlV1Mapper, UrlV1Mapper)
-  bindIfUnbound(DependencyIds.urlV2Mapper, UrlV2Mapper)
   bindIfUnbound(DependencyIds.userMapper, UserMapper)
   bindIfUnbound(DependencyIds.otpMapper, OtpMapper)
   bindIfUnbound(DependencyIds.tagMapper, TagMapper)
