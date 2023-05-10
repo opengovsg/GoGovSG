@@ -51,18 +51,20 @@ export class AdminApiV1Controller {
         longUrl,
       )
 
-      if (email !== targetUser?.email) {
-        await this.urlManagementService.changeOwnership(
+      if (userId !== targetUser.id) {
+        const url = await this.urlManagementService.changeOwnership(
           userId,
           newUrl.shortUrl,
-          email,
+          targetUser.email,
         )
+        const apiUrl = this.urlV1Mapper.persistenceToDto(url)
+        res.ok(apiUrl)
+        return
       }
       const apiUrl = this.urlV1Mapper.persistenceToDto(newUrl)
       res.ok(apiUrl)
       return
     } catch (error) {
-      console.log(error)
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
         return

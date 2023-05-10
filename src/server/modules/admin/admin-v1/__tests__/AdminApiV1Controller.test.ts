@@ -65,7 +65,6 @@ describe('AdminApiV1Controller', () => {
 
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
-
       const result = {
         shortUrl,
         longUrl,
@@ -80,6 +79,12 @@ describe('AdminApiV1Controller', () => {
         updatedAt,
       }
       urlManagementService.createUrl.mockResolvedValue(result)
+      userRepository.findOrCreateWithEmail.mockResolvedValue({
+        id: 2,
+        email,
+        urls: undefined,
+      })
+      urlManagementService.changeOwnership.mockResolvedValue(result)
 
       await controller.createUrl(req, res)
       expect(userRepository.findOrCreateWithEmail).toHaveBeenCalledWith(email)
@@ -88,6 +93,11 @@ describe('AdminApiV1Controller', () => {
         source,
         shortUrl,
         longUrl,
+      )
+      expect(urlManagementService.changeOwnership).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        email,
       )
       expect(res.ok).toHaveBeenCalledWith({
         shortUrl,
