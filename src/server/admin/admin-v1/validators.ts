@@ -39,7 +39,7 @@ export const urlSchema = Joi.object({
       return url
     })
     .required(),
-  email: Joi.string().optional(),
+  email: Joi.string().email().required(),
 })
 
 export default urlSchema

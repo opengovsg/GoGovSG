@@ -1,4 +1,5 @@
 import Express from 'express'
+import { MessageType } from '../../shared/util/messages'
 import jsonMessage from '../util/json'
 import { DependencyIds, ERROR_404_PATH } from '../constants'
 import { displayHostname, ffExternalApi } from '../config'
@@ -13,34 +14,10 @@ const apiKeyAuthService = container.get<ApiKeyAuthService>(
 )
 const router = Express.Router()
 
-/*  Public routes that do not need to be protected */
-router.use('/logout', require('./logout'))
-router.use('/login', require('./login'))
-router.use('/stats', require('./statistics'))
-router.use('/sentry', require('./sentry'))
-router.use('/links', require('./links'))
-router.use('/ga', require('./ga'))
-
 /**
- * To protect private user routes.
+ * To add guard for admin-user only api routes.
  * */
-function userGuard(
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction,
-) {
-  if (!req.session || !req.session.user || !req.session.user.id) {
-    res.unauthorized(jsonMessage('Unauthorized'))
-    return
-  }
-  req.body.userId = req.session.user.id
-  next()
-}
-
-/**
- * To protect external-v1 APIs by APIKey.
- * */
-async function apiKeyAuthMiddleware(
+async function apiKeyAdminAuthMiddleware(
   req: Express.Request,
   res: Express.Response,
   next: Express.NextFunction,
@@ -50,6 +27,7 @@ async function apiKeyAuthMiddleware(
     res.unauthorized(jsonMessage('Authorization header is missing'))
     return
   }
+
   const [bearerString, apiKey] = authorizationHeader.split(BEARER_SEPARATOR)
   if (bearerString !== BEARER_STRING) {
     res.unauthorized(jsonMessage('Invalid authorization header format'))
@@ -61,29 +39,21 @@ async function apiKeyAuthMiddleware(
       res.unauthorized(jsonMessage('Invalid API Key'))
       return
     }
+    if (!(await apiKeyAuthService.isAdmin(user.id))) {
+      res.unauthorized(
+        jsonMessage(
+          `Email ${user.email} is not white listed`,
+          MessageType.ShortUrlError,
+        ),
+      )
+      return
+    }
     req.body.userId = user.id
     next()
   } catch {
     res.unauthorized(jsonMessage('Invalid API Key'))
     return
   }
-}
-
-/**
- * To add guard for admin-user only api routes.
- * */
-async function apiKeyAdminAuthMiddleware(
-  req: Express.Request,
-  res: Express.Response,
-  next: Express.NextFunction,
-) {
-  const { userId } = req.body
-  const isAdmin = await apiKeyAuthService.isAdmin(userId)
-  if (!isAdmin) {
-    res.unauthorized('User is unauthorized')
-    return
-  }
-  next()
 }
 
 /**
@@ -101,24 +71,15 @@ function preprocess(
   next()
 }
 
-/* Register protected endpoints */
-router.use('/user', userGuard, preprocess, require('./user'))
-router.use('/qrcode', userGuard, require('./qrcode'))
-router.use('/link-stats', userGuard, require('./link-statistics'))
-router.use('/link-audit', userGuard, require('./link-audit'))
-router.use('/directory', userGuard, require('./directory'))
-
-router.use(
-  '/callback',
-  apiKeyAuthMiddleware,
-  apiKeyAdminAuthMiddleware,
-  require('./callback'),
-)
-
 /* Register APIKey protected endpoints */
 if (ffExternalApi) {
-  // eslint-disable-next-line global-require
-  router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
+  router.use(
+    '/v1',
+    apiKeyAdminAuthMiddleware,
+    preprocess,
+    // eslint-disable-next-line global-require
+    require('./admin-v1'),
+  )
 }
 
 router.use((_, res) => {

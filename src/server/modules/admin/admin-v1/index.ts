@@ -1,9 +1,9 @@
 import { StorableUrl } from '../../../repositories/types'
 
-export { ApiV2Controller } from './ApiV2Controller'
+export { AdminApiV1Controller } from './AdminApiV1Controller'
 
-type OptionalLongUrlProperty = {
-  longUrl?: string
+type LongUrlProperty = {
+  longUrl: string
 }
 type UserIdProperty = {
   userId: number
@@ -13,17 +13,17 @@ type ShortUrlProperty = {
   shortUrl: string
 }
 
-type OptionalEmailProperty = {
-  email?: string
+type EmailProperty = {
+  email: string
 }
 
 type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 
 export type UrlCreationRequest = ShortUrlOperationProperty &
-  OptionalLongUrlProperty &
-  OptionalEmailProperty
+  LongUrlProperty &
+  EmailProperty
 
-export type UrlV2DTO = Pick<
+export type UrlV1DTO = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'state' | 'clicks' | 'createdAt' | 'updatedAt'
 >

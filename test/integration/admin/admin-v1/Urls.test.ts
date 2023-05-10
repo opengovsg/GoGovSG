@@ -1,5 +1,5 @@
 import { MessageType } from '../../../../src/shared/util/messages'
-import { API_EXTERNAL_V2_URLS } from '../../config'
+import { ADMIN_API_V1_URLS } from '../../config'
 import {
   DATETIME_REGEX,
   createIntegrationTestAdminUser,
@@ -17,7 +17,7 @@ async function createLinkUrl(
   },
   apiKey: string,
 ) {
-  const res = await postJson(API_EXTERNAL_V2_URLS, link, undefined, apiKey)
+  const res = await postJson(ADMIN_API_V1_URLS, link, undefined, apiKey)
   return res
 }
 
@@ -28,19 +28,19 @@ describe('Url integration tests', () => {
   let email: string
   let apiKey: string
   const longUrl = 'https://example.com'
-  const targetEmail = 'integration-test-user@domain.com'
+  const validEmail = 'integration-test-user@test.gov.sg'
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     ;({ email, apiKey } = await createIntegrationTestAdminUser())
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await deleteIntegrationTestUser(email)
   })
 
   it('should not be able to create urls without API key header', async () => {
     const res = await postJson(
-      API_EXTERNAL_V2_URLS,
+      ADMIN_API_V1_URLS,
       { longUrl },
       undefined,
       undefined,
@@ -55,7 +55,7 @@ describe('Url integration tests', () => {
 
   it('should not be able to create urls with invalid API key', async () => {
     const res = await postJson(
-      API_EXTERNAL_V2_URLS,
+      ADMIN_API_V1_URLS,
       { longUrl },
       undefined,
       'this-is-an-invalid-api-key',
@@ -71,7 +71,7 @@ describe('Url integration tests', () => {
   it('should not be able to create urls with unauthorized API key', async () => {
     const testUser = await createIntegrationTestUser()
     const res = await postJson(
-      API_EXTERNAL_V2_URLS,
+      ADMIN_API_V1_URLS,
       { longUrl },
       undefined,
       testUser.apiKey,
@@ -86,10 +86,10 @@ describe('Url integration tests', () => {
     await deleteIntegrationTestUser(testUser.email)
   })
 
-  it('should be able to create link url with longUrl, shortUrl, and targetEmail', async () => {
+  it('should be able to create link url with longUrl, shortUrl, and validEmail', async () => {
     const shortUrl = await generateRandomString(8)
     const res = await createLinkUrl(
-      { shortUrl, longUrl, email: targetEmail },
+      { shortUrl, longUrl, email: validEmail },
       apiKey,
     )
     expect(res.status).toBe(200)
@@ -102,26 +102,36 @@ describe('Url integration tests', () => {
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
     })
-    await deleteIntegrationTestUser(targetEmail)
   })
 
-  it('should be able to create link url with longUrl and shortUrl, without targetEmail', async () => {
+  it('should not be able to create link url with longUrl and shortUrl, without validEmail', async () => {
     const shortUrl = await generateRandomString(8)
     const res = await createLinkUrl({ shortUrl, longUrl }, apiKey)
-    expect(res.status).toBe(200)
-    const body = await res.json()
-    expect(body).toEqual({
-      shortUrl,
-      longUrl,
-      clicks: 0,
-      state: 'ACTIVE',
-      createdAt: expect.stringMatching(DATETIME_REGEX),
-      updatedAt: expect.stringMatching(DATETIME_REGEX),
+    expect(res.status).toBe(400)
+    const json = await res.json()
+    expect(json).toBeTruthy()
+    expect(json).toEqual({
+      message: 'ValidationError: "email" is required',
     })
   })
 
-  it('should be able to create link url with longUrl and targetEmail, without shortUrl', async () => {
-    const res = await createLinkUrl({ longUrl, email: targetEmail }, apiKey)
+  it('should not be able to create link url with longUrl and shortUrl, with invalid email', async () => {
+    const shortUrl = await generateRandomString(8)
+    const invalidEmail = 'integration-test-user@nongov.sg'
+    const res = await createLinkUrl(
+      { shortUrl, longUrl, email: invalidEmail },
+      apiKey,
+    )
+    expect(res.status).toBe(400)
+    const json = await res.json()
+    expect(json).toBeTruthy()
+    expect(json).toEqual({
+      message: 'Validation error: Email domain is not white-listed.',
+    })
+  })
+
+  it('should be able to create link url with longUrl and validEmail, without shortUrl', async () => {
+    const res = await createLinkUrl({ longUrl, email: validEmail }, apiKey)
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toEqual({
@@ -134,17 +144,13 @@ describe('Url integration tests', () => {
     })
   })
 
-  it('should be able to create link url with longUrl, without shortUrl and targetEmail', async () => {
+  it('should not be able to create link url with longUrl, without shortUrl and validEmail', async () => {
     const res = await createLinkUrl({ longUrl }, apiKey)
-    expect(res.status).toBe(200)
-    const body = await res.json()
-    expect(body).toEqual({
-      shortUrl: expect.stringMatching(/^[a-z0-9]{8}$/),
-      longUrl,
-      clicks: 0,
-      state: 'ACTIVE',
-      createdAt: expect.stringMatching(DATETIME_REGEX),
-      updatedAt: expect.stringMatching(DATETIME_REGEX),
+    expect(res.status).toBe(400)
+    const json = await res.json()
+    expect(json).toBeTruthy()
+    expect(json).toEqual({
+      message: 'ValidationError: "email" is required',
     })
   })
 
@@ -156,7 +162,7 @@ describe('Url integration tests', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
-      message: 'Error creating new user.',
+      message: 'ValidationError: "email" must be a valid email',
     })
   })
 
@@ -165,13 +171,16 @@ describe('Url integration tests', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
-      message: 'ValidationError: "longUrl" is required',
+      message: 'ValidationError: "longUrl" is required. "email" is required',
     })
   })
 
   it('should not be able to create link url with invalid longUrl', async () => {
     const invalidLongUrl = 'this-is-an-invalid-url'
-    const res = await createLinkUrl({ longUrl: invalidLongUrl }, apiKey)
+    const res = await createLinkUrl(
+      { longUrl: invalidLongUrl, email: validEmail },
+      apiKey,
+    )
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
@@ -182,7 +191,7 @@ describe('Url integration tests', () => {
   it('should not be able to create link url with invalid shortUrl', async () => {
     const invalidShortUrl = 'foo%bar'
     const res = await createLinkUrl(
-      { shortUrl: invalidShortUrl, longUrl },
+      { shortUrl: invalidShortUrl, longUrl, email: validEmail },
       apiKey,
     )
     expect(res.status).toBe(400)
@@ -190,5 +199,11 @@ describe('Url integration tests', () => {
     expect(body).toEqual({
       message: 'ValidationError: Short URL format is invalid.',
     })
+  })
+
+  it('should be able to create link url with longUrl, shortUrl, and same email as admin', async () => {
+    const shortUrl = await generateRandomString(8)
+    const res = await createLinkUrl({ shortUrl, longUrl, email }, apiKey)
+    expect(res.status).toBe(200)
   })
 })

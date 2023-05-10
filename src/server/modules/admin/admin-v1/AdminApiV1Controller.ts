@@ -12,28 +12,28 @@ import { MessageType } from '../../../../shared/util/messages'
 import { StorableUrlSource } from '../../../repositories/enums'
 
 import { UrlCreationRequest } from '.'
-import { UrlV2Mapper } from '../../../mappers/UrlV2Mapper'
+import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 
 @injectable()
-export class ApiV2Controller {
+export class AdminApiV1Controller {
   private userRepository: UserRepositoryInterface
 
   private urlManagementService: UrlManagementService
 
-  private urlV2Mapper: UrlV2Mapper
+  private urlV1Mapper: UrlV1Mapper
 
   public constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
-    @inject(DependencyIds.urlV2Mapper)
-    urlV2Mapper: UrlV2Mapper,
+    @inject(DependencyIds.urlV1Mapper)
+    urlV1Mapper: UrlV1Mapper,
   ) {
     this.userRepository = userRepository
     this.urlManagementService = urlManagementService
-    this.urlV2Mapper = urlV2Mapper
+    this.urlV1Mapper = urlV1Mapper
   }
 
   public createUrl: (
@@ -42,34 +42,27 @@ export class ApiV2Controller {
   ) => Promise<void> = async (req, res) => {
     const { userId, shortUrl, longUrl, email }: UrlCreationRequest = req.body
 
-    if (email) {
-      try {
-        await this.userRepository.findOrCreateWithEmail(email, false)
-      } catch (error) {
-        logger.error(`Error creating user:\t ${email}, ${error}`)
-        res.badRequest(jsonMessage('Error creating new user.'))
-        return
-      }
-    }
-
     try {
+      const targetUser = await this.userRepository.findOrCreateWithEmail(email)
       const newUrl = await this.urlManagementService.createUrl(
         userId,
         StorableUrlSource.Api,
         shortUrl,
         longUrl,
       )
-      if (email) {
+
+      if (email !== targetUser?.email) {
         await this.urlManagementService.changeOwnership(
           userId,
           newUrl.shortUrl,
           email,
         )
       }
-      const apiUrl = this.urlV2Mapper.persistenceToDto(newUrl)
+      const apiUrl = this.urlV1Mapper.persistenceToDto(newUrl)
       res.ok(apiUrl)
       return
     } catch (error) {
+      console.log(error)
       if (error instanceof NotFoundError) {
         res.notFound(jsonMessage(error.message))
         return
@@ -80,6 +73,7 @@ export class ApiV2Controller {
       }
       if (error instanceof Sequelize.ValidationError) {
         res.badRequest(jsonMessage(error.message))
+        return
       }
       logger.error(`Error creating short URL:\t${error}`)
       res.badRequest(jsonMessage('Server error.'))
@@ -88,4 +82,4 @@ export class ApiV2Controller {
   }
 }
 
-export default ApiV2Controller
+export default AdminApiV1Controller

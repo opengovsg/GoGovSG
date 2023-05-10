@@ -2,9 +2,9 @@ import moment from 'moment'
 import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
 import { createRequestWithUser } from '../../../../../../test/server/api/util'
-import { UrlV2Mapper } from '../../../../mappers/UrlV2Mapper'
+import { UrlV1Mapper } from '../../../../mappers/UrlV1Mapper'
 import { AlreadyExistsError, NotFoundError } from '../../../../util/error'
-import { ApiV2Controller } from '../ApiV2Controller'
+import { AdminApiV1Controller } from '../AdminApiV1Controller'
 
 const urlManagementService = {
   createUrl: jest.fn(),
@@ -26,18 +26,18 @@ const userRepository = {
   hasApiKey: jest.fn(),
 }
 
-const urlV2Mapper = new UrlV2Mapper()
+const urlV1Mapper = new UrlV1Mapper()
 
-const controller = new ApiV2Controller(
+const controller = new AdminApiV1Controller(
   userRepository,
   urlManagementService,
-  urlV2Mapper,
+  urlV1Mapper,
 )
 
 /**
- * Unit tests for API v2 controller.
+ * Unit tests for Admin API v1 controller.
  */
-describe('ApiV2Controller', () => {
+describe('AdminApiV1Controller', () => {
   describe('createUrl', () => {
     it('creates link and sanitizes link for API', async () => {
       const userId = 1
@@ -82,10 +82,7 @@ describe('ApiV2Controller', () => {
       urlManagementService.createUrl.mockResolvedValue(result)
 
       await controller.createUrl(req, res)
-      expect(userRepository.findOrCreateWithEmail).toHaveBeenCalledWith(
-        email,
-        false,
-      )
+      expect(userRepository.findOrCreateWithEmail).toHaveBeenCalledWith(email)
       expect(urlManagementService.createUrl).toHaveBeenCalledWith(
         userId,
         source,
@@ -120,6 +117,7 @@ describe('ApiV2Controller', () => {
       const res: any = httpMocks.createResponse()
       res.notFound = jest.fn()
 
+      userRepository.findOrCreateWithEmail.mockResolvedValue({})
       urlManagementService.createUrl.mockRejectedValue(new NotFoundError(''))
 
       await controller.createUrl(req, res)
@@ -133,6 +131,7 @@ describe('ApiV2Controller', () => {
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
 
+      userRepository.findOrCreateWithEmail.mockResolvedValue({})
       urlManagementService.createUrl.mockRejectedValue(
         new AlreadyExistsError(''),
       )
@@ -149,6 +148,7 @@ describe('ApiV2Controller', () => {
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
 
+      userRepository.findOrCreateWithEmail.mockResolvedValue({})
       urlManagementService.createUrl.mockRejectedValue(
         new ValidationError('', []),
       )
@@ -164,6 +164,7 @@ describe('ApiV2Controller', () => {
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
 
+      userRepository.findOrCreateWithEmail.mockResolvedValue({})
       urlManagementService.createUrl.mockRejectedValue(new Error())
 
       await controller.createUrl(req, res)

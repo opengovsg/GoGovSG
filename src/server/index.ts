@@ -17,6 +17,7 @@ bindInversifyDependencies()
 
 // Routes
 import api from './api'
+import adminApi from './admin'
 
 // Logger configuration
 import {
@@ -193,6 +194,7 @@ initDb()
 
     // API configuration
     app.use('/api', ...apiSpecificMiddleware, api) // Attach all API endpoints
+    app.use('/admin/api', ...apiSpecificMiddleware, adminApi) // Attach admin API endpoints
     app.get(
       '/assets/transition-page/js/redirect.js',
       redirectController.gtagForTransitionPage,
