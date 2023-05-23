@@ -28,7 +28,7 @@ export const User = <UserTypeStatic>sequelize.define(
         isLowercase: true,
         is: {
           args: emailValidator.makeRe(),
-          msg: 'Email domain is not white-listed.',
+          msg: 'Email domain is not whitelisted.',
         },
       },
       set(this: Settable, email: string) {

@@ -16,8 +16,6 @@ export class MockUserRepository implements UserRepositoryInterface {
 
   email?: string
 
-  isGovEmail?: boolean
-
   shortUrl?: string
 
   conditions?: UserUrlsQueryConditions

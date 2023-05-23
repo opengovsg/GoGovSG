@@ -39,7 +39,71 @@ const controller = new AdminApiV1Controller(
  */
 describe('AdminApiV1Controller', () => {
   describe('createUrl', () => {
-    it('creates link and sanitizes link for API', async () => {
+    it('create, sanitize and transfer link to target email for admin API', async () => {
+      const userId = 1
+      const shortUrl = 'abcdef'
+      const longUrl = 'https://www.agency.sg'
+      const state = 'ACTIVE'
+      const source = 'API'
+      const clicks = 0
+      const contactEmail = 'person@open.gov.sg'
+      const description = 'test description'
+      const tags: string[] = []
+      const tagStrings = ''
+      const createdAt = moment().toISOString()
+      const updatedAt = moment().toISOString()
+      const email = 'person@domain.sg'
+
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          longUrl,
+          email,
+        },
+      })
+
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      const result = {
+        shortUrl,
+        longUrl,
+        state,
+        source,
+        clicks,
+        contactEmail,
+        description,
+        tags,
+        tagStrings,
+        createdAt,
+        updatedAt,
+      }
+      urlManagementService.createUrl.mockResolvedValue(result)
+      userRepository.findOrCreateWithEmail.mockResolvedValue({
+        id: userId,
+        email,
+        urls: undefined,
+      })
+
+      await controller.createUrl(req, res)
+      expect(userRepository.findOrCreateWithEmail).toHaveBeenCalledWith(email)
+      expect(urlManagementService.createUrl).toHaveBeenCalledWith(
+        userId,
+        source,
+        shortUrl,
+        longUrl,
+      )
+      expect(res.ok).toHaveBeenCalledWith({
+        shortUrl,
+        longUrl,
+        state,
+        clicks,
+        createdAt,
+        updatedAt,
+      })
+    })
+
+    it('create and sanitize link with same owner and target email for admin API', async () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.sg'

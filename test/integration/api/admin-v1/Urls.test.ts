@@ -1,5 +1,4 @@
-import { MessageType } from '../../../../src/shared/util/messages'
-import { ADMIN_API_V1_URLS } from '../../config'
+import { API_ADMIN_V1_URLS } from '../../config'
 import {
   DATETIME_REGEX,
   createIntegrationTestAdminUser,
@@ -17,14 +16,14 @@ async function createLinkUrl(
   },
   apiKey: string,
 ) {
-  const res = await postJson(ADMIN_API_V1_URLS, link, undefined, apiKey)
+  const res = await postJson(API_ADMIN_V1_URLS, link, undefined, apiKey)
   return res
 }
 
 /**
- * Integration tests for URLs.
+ * Integration tests for Admin API v1.
  */
-describe('Url integration tests', () => {
+describe('Admin API v1 Integration Tests', () => {
   let email: string
   let apiKey: string
   const longUrl = 'https://example.com'
@@ -40,7 +39,7 @@ describe('Url integration tests', () => {
 
   it('should not be able to create urls without API key header', async () => {
     const res = await postJson(
-      ADMIN_API_V1_URLS,
+      API_ADMIN_V1_URLS,
       { longUrl },
       undefined,
       undefined,
@@ -55,7 +54,7 @@ describe('Url integration tests', () => {
 
   it('should not be able to create urls with invalid API key', async () => {
     const res = await postJson(
-      ADMIN_API_V1_URLS,
+      API_ADMIN_V1_URLS,
       { longUrl },
       undefined,
       'this-is-an-invalid-api-key',
@@ -71,7 +70,7 @@ describe('Url integration tests', () => {
   it('should not be able to create urls with unauthorized API key', async () => {
     const testUser = await createIntegrationTestUser()
     const res = await postJson(
-      ADMIN_API_V1_URLS,
+      API_ADMIN_V1_URLS,
       { longUrl },
       undefined,
       testUser.apiKey,
@@ -80,8 +79,7 @@ describe('Url integration tests', () => {
     const json = await res.json()
     expect(json).toBeTruthy()
     expect(json).toEqual({
-      message: `Email ${testUser.email} is not white listed`,
-      type: MessageType.ShortUrlError,
+      message: `User is unauthorized`,
     })
     await deleteIntegrationTestUser(testUser.email)
   })
@@ -126,7 +124,7 @@ describe('Url integration tests', () => {
     const json = await res.json()
     expect(json).toBeTruthy()
     expect(json).toEqual({
-      message: 'Validation error: Email domain is not white-listed.',
+      message: 'Validation error: Email domain is not whitelisted.',
     })
   })
 
