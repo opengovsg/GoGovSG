@@ -25,6 +25,7 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'tiff',
   'txt',
   'xlsx',
+  'zip',
 ]
 
 @injectable()
@@ -38,15 +39,22 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     this.allowedFileExtensions = allowedFileExtensions
   }
 
+  getExtension: (file: {
+    name: string
+    data: Buffer
+  }) => Promise<string | undefined> = async ({ name, data }) => {
+    const fileType = await FileType.fromBuffer(data)
+    return fileType?.ext || name.split('.').pop()
+  }
+
   hasAllowedType: (
     file: {
       name: string
       data: Buffer
     },
     allowedExtensions?: string[],
-  ) => Promise<boolean> = async ({ name, data }, allowedExtensions) => {
-    const fileType = await FileType.fromBuffer(data)
-    const extension = fileType?.ext || name.split('.').pop()
+  ) => Promise<boolean> = async (file, allowedExtensions) => {
+    const extension = await this.getExtension(file)
     if (!extension) return false
 
     if (allowedExtensions && allowedExtensions.length > 0) {

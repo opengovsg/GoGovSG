@@ -20,14 +20,26 @@ export class CloudmersiveScanService implements VirusScanService {
     this.api = api
   }
 
-  private scanFilePromise: (file: Buffer) => Promise<boolean> = (file) =>
+  private scanFilePromise: (
+    file: Buffer,
+  ) => Promise<{ hasVirus: boolean; isPasswordProtected: boolean }> = (file) =>
     new Promise((res, rej) => {
-      this.api.scanFile(file, (err, data) => {
+      const options = {
+        allowExecutables: false, // default value
+        allowInvalidFiles: false, // default value
+        allowScripts: false, // default value
+        restrictFileTypes: '', // default value, disabled
+      }
+      this.api.scanFileAdvanced(file, options, (err, data) => {
         if (err) {
           logger.error(`Error when scanning file via Cloudmersive: ${err}`)
           return rej(err)
         }
-        return res(!data.CleanResult)
+        return res({
+          // @types/cloudmersive-virus-api-client is outdated so `data` doesn't have the `ContainsPasswordProtectedFile` property
+          isPasswordProtected: (data as any).ContainsPasswordProtectedFile,
+          hasVirus: data.FoundViruses !== null,
+        })
       })
     })
 
@@ -43,16 +55,20 @@ export class CloudmersiveScanService implements VirusScanService {
       })
     })
 
-  public hasVirus: (file: { data: Buffer; name: string }) => Promise<boolean> =
-    async (file) => {
-      if (!this.cloudmersiveKey) {
-        logger.warn(
-          `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
-        )
-        return false
-      }
-      return this.scanFilePromise(file.data)
+  public scanFile: (file: {
+    data: Buffer
+    name: string
+  }) => Promise<{ hasVirus: boolean; isPasswordProtected: boolean }> = async (
+    file,
+  ) => {
+    if (!this.cloudmersiveKey) {
+      logger.warn(
+        `No Cloudmersive API key provided. Not scanning file: ${file.name}`,
+      )
+      return { hasVirus: false, isPasswordProtected: false }
     }
+    return this.scanFilePromise(file.data)
+  }
 
   // Note: This function is no longer used as we now use Google Safe Browsing
   // to scan URLs instead. We can consider removing this functionality.

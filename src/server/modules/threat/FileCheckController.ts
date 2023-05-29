@@ -67,11 +67,22 @@ export class FileCheckController {
     next: NextFunction,
   ) => Promise<void> = async (req, res, next) => {
     const file = req.files?.file as fileUpload.UploadedFile | undefined
+    const user = req.session?.user
     if (file) {
       try {
-        const hasVirus = await this.virusScanService.hasVirus(file)
+        const { hasVirus, isPasswordProtected } =
+          await this.virusScanService.scanFile(file)
+        if (isPasswordProtected) {
+          // Do not support password-protected files as they cannot be scanned for viruses
+          logger.info(
+            `User ${
+              user?.email || user?.id
+            } tried to upload a password-protected file ${file.name}`,
+          )
+          res.badRequest(jsonMessage('Cannot upload password-protected files.'))
+          return
+        }
         if (hasVirus) {
-          const user = req.session?.user
           logger.warn(
             `Malicious file attempt: User ${
               user?.email || user?.id
