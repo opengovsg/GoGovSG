@@ -13,10 +13,6 @@ type ShortUrlProperty = {
   shortUrl: string
 }
 
-type OptionalEmailProperty = {
-  email?: string
-}
-
 type ShortUrlOperationProperty = UserIdProperty & ShortUrlProperty
 
 type OptionalStateProperty = {
@@ -24,8 +20,7 @@ type OptionalStateProperty = {
 }
 
 export type UrlCreationRequest = ShortUrlOperationProperty &
-  OptionalLongUrlProperty &
-  OptionalEmailProperty
+  OptionalLongUrlProperty
 
 export type UrlEditRequest = ShortUrlOperationProperty &
   OptionalStateProperty &
