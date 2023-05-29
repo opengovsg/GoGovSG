@@ -61,6 +61,7 @@ import {
 } from './modules/analytics/services'
 import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
 import { ApiV1Controller } from './modules/api/external-v1'
+import { AdminApiV1Controller } from './modules/api/admin-v1'
 import { LinkAuditController } from './modules/audit'
 import { LinkAuditService } from './modules/audit/services'
 import { UrlHistoryRepository } from './modules/audit/repositories'
@@ -142,6 +143,7 @@ export default () => {
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
   bindIfUnbound(DependencyIds.apiV1Controller, ApiV1Controller)
+  bindIfUnbound(DependencyIds.adminApiV1Controller, AdminApiV1Controller)
 
   container
     .bind(DependencyIds.allowedFileExtensions)

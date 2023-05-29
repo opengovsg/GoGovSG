@@ -65,9 +65,10 @@ export class ApiV1Controller {
       }
       if (error instanceof Sequelize.ValidationError) {
         res.badRequest(jsonMessage(error.message))
+        return
       }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Server error.'))
+      res.serverError(jsonMessage('Server error.'))
       return
     }
   }

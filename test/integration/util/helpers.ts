@@ -37,6 +37,21 @@ export const createIntegrationTestUser: () => Promise<{
   return { email: integrationTestEmail, apiKey }
 }
 
+export const createIntegrationTestAdminUser: () => Promise<{
+  email: string
+  apiKey: string
+}> = async () => {
+  const testAdminEmail = 'integration-test-admin@open.gov.sg'
+
+  const randomApiString = crypto.randomBytes(32).toString('base64')
+  const hash = await bcrypt.hash(randomApiString, API_KEY_SALT)
+  const apiKey = `test_v1_${randomApiString}`
+  const apiKeyHash = `test_v1_${hash.replace(API_KEY_SALT, '')}`
+
+  await createDbUser(testAdminEmail, apiKeyHash)
+  return { email: testAdminEmail, apiKey }
+}
+
 export const deleteIntegrationTestUser: (email: string) => Promise<void> =
   async (email) => {
     await deleteDbUser(email)

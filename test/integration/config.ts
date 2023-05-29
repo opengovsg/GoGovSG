@@ -8,6 +8,7 @@ export const IMAGE_FILE_PATH = './test/integration/assets/go-logo.png'
 
 export const API_USER_URL = 'http://localhost:8080/api/user/url'
 export const API_EXTERNAL_V1_URLS = 'http://localhost:8080/api/v1/urls'
+export const API_ADMIN_V1_URLS = 'http://localhost:8080/api/v1/admin/urls'
 export const API_LOGIN_OTP = 'http://localhost:8080/api/login/otp'
 export const API_LOGIN_VERIFY = 'http://localhost:8080/api/login/verify'
 
