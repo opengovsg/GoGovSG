@@ -124,7 +124,8 @@ describe('Admin API v1 Integration Tests', () => {
     const json = await res.json()
     expect(json).toBeTruthy()
     expect(json).toEqual({
-      message: 'Validation error: Email domain is not whitelisted.',
+      message:
+        'ValidationError: Invalid email provided. Email domain is not whitelisted.',
     })
   })
 
@@ -160,7 +161,8 @@ describe('Admin API v1 Integration Tests', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
-      message: 'ValidationError: "email" must be a valid email',
+      message:
+        'ValidationError: Invalid email provided. Email domain is not whitelisted.',
     })
   })
 

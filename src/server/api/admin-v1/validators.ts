@@ -1,4 +1,5 @@
 import * as Joi from '@hapi/joi'
+import { isValidGovEmail } from '../../util/email'
 import {
   isBlacklisted,
   isCircularRedirects,
@@ -39,7 +40,16 @@ export const urlSchema = Joi.object({
       return url
     })
     .required(),
-  email: Joi.string().email().required(),
+  email: Joi.string()
+    .custom((email: string, helpers) => {
+      if (!isValidGovEmail(email)) {
+        return helpers.message({
+          custom: 'Invalid email provided. Email domain is not whitelisted.',
+        })
+      }
+      return email
+    })
+    .required(),
 })
 
 export default urlSchema
