@@ -39,7 +39,7 @@ const controller = new AdminApiV1Controller(
  */
 describe('AdminApiV1Controller', () => {
   describe('createUrl', () => {
-    it('create, sanitize and transfer link to target email for admin API', async () => {
+    it('create and sanitize link with same owner and target email for admin API', async () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.sg'
@@ -103,7 +103,7 @@ describe('AdminApiV1Controller', () => {
       })
     })
 
-    it('create and sanitize link with same owner and target email for admin API', async () => {
+    it('create, sanitize and transfer link to target email for admin API', async () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.sg'
@@ -173,15 +173,15 @@ describe('AdminApiV1Controller', () => {
       })
     })
 
-    it('reports bad request with user creation', async () => {
+    it('reports server error with user creation', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
-      res.badRequest = jest.fn()
+      res.serverError = jest.fn()
 
       userRepository.findOrCreateWithEmail.mockRejectedValue(new Error())
 
       await controller.createUrl(req, res)
-      expect(res.badRequest).toHaveBeenCalledWith({
+      expect(res.serverError).toHaveBeenCalledWith({
         message: expect.any(String),
       })
     })
@@ -233,16 +233,16 @@ describe('AdminApiV1Controller', () => {
       })
     })
 
-    it('reports bad request on generic Error', async () => {
+    it('reports server error on generic Error', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
-      res.badRequest = jest.fn()
+      res.serverError = jest.fn()
 
       userRepository.findOrCreateWithEmail.mockResolvedValue({})
       urlManagementService.createUrl.mockRejectedValue(new Error())
 
       await controller.createUrl(req, res)
-      expect(res.badRequest).toHaveBeenCalledWith({
+      expect(res.serverError).toHaveBeenCalledWith({
         message: expect.any(String),
       })
     })

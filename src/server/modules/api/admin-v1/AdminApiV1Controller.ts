@@ -78,7 +78,7 @@ export class AdminApiV1Controller {
         return
       }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Server error.'))
+      res.serverError(jsonMessage('Server error.'))
       return
     }
   }
