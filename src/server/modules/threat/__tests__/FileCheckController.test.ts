@@ -18,16 +18,20 @@ export function createRequestWithFile(file: any): Request {
 
 describe('FileCheckController test', () => {
   const file = { data: Buffer.from('data'), name: 'file.csv' }
+  const getExtension = jest.fn()
   const hasAllowedType = jest.fn()
 
-  const hasVirus = jest.fn()
+  const scanFile = jest.fn()
 
-  const controller = new FileCheckController({ hasAllowedType }, { hasVirus })
+  const controller = new FileCheckController(
+    { getExtension, hasAllowedType },
+    { scanFile },
+  )
   const badRequest = jest.fn()
 
   beforeEach(() => {
     hasAllowedType.mockClear()
-    hasVirus.mockClear()
+    scanFile.mockClear()
     badRequest.mockClear()
   })
 
@@ -42,7 +46,7 @@ describe('FileCheckController test', () => {
     await controller.fileVirusCheck(req, res, afterFileVirusCheck)
 
     expect(hasAllowedType).not.toHaveBeenCalled()
-    expect(hasVirus).not.toHaveBeenCalled()
+    expect(scanFile).not.toHaveBeenCalled()
     expect(afterSingleFileCheck).toHaveBeenCalled()
     expect(afterFileExtensionCheck).toHaveBeenCalled()
     expect(afterFileVirusCheck).toHaveBeenCalled()
@@ -83,12 +87,12 @@ describe('FileCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const afterFileVirusCheck = jest.fn()
 
-    hasVirus.mockRejectedValue(false)
+    scanFile.mockRejectedValue(new Error())
     res.badRequest = badRequest
 
     await controller.fileVirusCheck(req, res, afterFileVirusCheck)
 
-    expect(hasVirus).toHaveBeenCalled()
+    expect(scanFile).toHaveBeenCalled()
     expect(res.badRequest).toHaveBeenCalled()
     expect(afterFileVirusCheck).not.toHaveBeenCalled()
   })
@@ -98,12 +102,12 @@ describe('FileCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const afterFileVirusCheck = jest.fn()
 
-    hasVirus.mockResolvedValue(true)
+    scanFile.mockResolvedValue({ hasVirus: true, isPasswordProtected: false })
     res.badRequest = badRequest
 
     await controller.fileVirusCheck(req, res, afterFileVirusCheck)
 
-    expect(hasVirus).toHaveBeenCalled()
+    expect(scanFile).toHaveBeenCalled()
     expect(res.badRequest).toHaveBeenCalled()
     expect(afterFileVirusCheck).not.toHaveBeenCalled()
   })
@@ -117,7 +121,7 @@ describe('FileCheckController test', () => {
     const afterFileVirusCheck = jest.fn()
 
     hasAllowedType.mockResolvedValue(true)
-    hasVirus.mockResolvedValue(false)
+    scanFile.mockResolvedValue(false)
 
     res.badRequest = badRequest
     res.serverError = badRequest
@@ -129,7 +133,7 @@ describe('FileCheckController test', () => {
     await controller.fileVirusCheck(req, res, afterFileVirusCheck)
 
     expect(hasAllowedType).toHaveBeenCalled()
-    expect(hasVirus).toHaveBeenCalled()
+    expect(scanFile).toHaveBeenCalled()
 
     expect(res.badRequest).not.toHaveBeenCalled()
     expect(res.serverError).not.toHaveBeenCalled()
