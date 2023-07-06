@@ -1,4 +1,4 @@
-FROM node:16-alpine3.16
+FROM node:16-alpine3.18
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -20,10 +20,10 @@ EXPOSE 8080
 # For dev webpack server only, proxies to localhost:8080
 EXPOSE 3000
 
-RUN apk update && apk add ttf-freefont && rm -rf /var/cache/apk/*
+RUN apk update && apk add font-freefont && rm -rf /var/cache/apk/*
 
-# Installs IBMPlexSans-Regular.ttf for QRCodeService.
-RUN wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/ttf/IBMPlexSans-Regular.ttf?raw=true -O /usr/share/fonts/TTF/IBMPlexSans-Regular.ttf
+# Installs IBMPlexSans-Regular.otf for QRCodeService.
+RUN wget https://github.com/IBM/plex/blob/master/IBM-Plex-Sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf
 RUN fc-cache -f
 
 # Install libraries
