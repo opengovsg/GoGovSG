@@ -203,6 +203,9 @@
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"
   },
+  "overrides": {
+    "@sentry/cli": "^1.75.2"
+  },
   "lint-staged": {
     "**/*.(js|jsx)": [
       "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --fix"
