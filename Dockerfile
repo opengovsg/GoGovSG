@@ -1,4 +1,4 @@
-FROM node:14-alpine3.16
+FROM node:16-alpine3.16
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -29,7 +29,7 @@ RUN fc-cache -f
 # Install libraries
 COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY . ./
 
@@ -37,7 +37,7 @@ RUN { \
   echo "Building..."; \
   npm run build; \
   echo "Removing devDependencies for production..."; \
-  npm prune --production; \
+  npm prune --production --legacy-peer-deps; \
 }
 
 # Builds and starts Node server for production

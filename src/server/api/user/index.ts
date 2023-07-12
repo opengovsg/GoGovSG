@@ -45,7 +45,7 @@ const jobController = container.get<JobController>(DependencyIds.jobController)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_FILE_UPLOAD_SIZE, // 10MB
+    fileSize: MAX_FILE_UPLOAD_SIZE, // 20MB
     files: 1,
   },
 })

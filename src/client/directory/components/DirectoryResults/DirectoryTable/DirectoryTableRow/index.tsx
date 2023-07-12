@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import copy from 'copy-to-clipboard'
 import {
   Hidden,
+  Link,
   TableCell,
   TableRow,
   Typography,
@@ -12,6 +13,7 @@ import {
   useTheme,
 } from '@material-ui/core'
 import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
+import i18next from 'i18next'
 import { UrlTypePublic } from '../../../../reducers/types'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import { SetSuccessMessageAction } from '../../../../../app/components/pages/RootPage/actions/types'
@@ -46,7 +48,6 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         width: '40%',
         paddingTop: theme.spacing(7.5),
-        paddingRight: () => '10%',
         marginLeft: () => 0,
       },
     },
@@ -87,6 +88,9 @@ const useStyles = makeStyles((theme) =>
         textDecoration: 'underline',
       },
     },
+    requestOwnershipText: {
+      color: 'inherit',
+    },
     domainTextInactive: {
       color: '#BBBBBB',
       [theme.breakpoints.up('md')]: {
@@ -104,10 +108,6 @@ const useStyles = makeStyles((theme) =>
         width: 'calc(100% - 32px)',
       },
     },
-    urlInformationCell: {
-      width: '100%',
-      marginRight: 0,
-    },
     contactEmailCell: {
       display: 'inline-flex',
       margin: 0,
@@ -123,7 +123,22 @@ const useStyles = makeStyles((theme) =>
         flexDirection: 'column',
       },
     },
-    IconCell: {
+    requestOwnershipCell: {
+      display: 'inline-flex',
+      margin: 0,
+      width: '100%',
+      border: 'none',
+      paddingLeft: (props: DirectoryTableRowStyleProps) => props.appMargins,
+      paddingBottom: theme.spacing(4),
+      [theme.breakpoints.up('md')]: {
+        paddingTop: theme.spacing(7.5),
+        paddingBottom: theme.spacing(0.5),
+        paddingLeft: () => 0,
+        width: 'fit-content',
+        flexDirection: 'column',
+      },
+    },
+    linkIconCell: {
       display: 'inline-flex',
       verticalAlign: 'middle',
       [theme.breakpoints.up('md')]: {
@@ -131,13 +146,12 @@ const useStyles = makeStyles((theme) =>
         marginLeft: (props: DirectoryTableRowStyleProps) => props.appMargins,
       },
     },
-    mailIconCell: {
+    personIconCell: {
+      display: 'inline-flex',
+      verticalAlign: 'middle',
       [theme.breakpoints.up('md')]: {
-        paddingTop: theme.spacing(5.0),
-        paddingLeft: 0,
-        paddingRight: theme.spacing(1),
-        marginLeft: 0,
-        marginRight: 0,
+        paddingRight: theme.spacing(1.5),
+        marginLeft: theme.spacing(4),
       },
     },
     personIcon: {
@@ -154,7 +168,7 @@ const useStyles = makeStyles((theme) =>
     stateCell: {
       [theme.breakpoints.up('md')]: {
         paddingTop: theme.spacing(7.5),
-        minWidth: '100px',
+        minWidth: '75px',
       },
       [theme.breakpoints.down('sm')]: {
         display: 'inline-flex',
@@ -219,6 +233,20 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
     }
   }
 
+  const onClickRequestOwnership = (
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+  ) => {
+    GAEvent(
+      'directory result',
+      `${query}`,
+      'request ownership',
+      parseInt(`${index}`, 10),
+    )
+    if (!isMobileView) {
+      e.stopPropagation()
+    }
+  }
+
   return (
     <TableRow
       className={classes.tableRow}
@@ -227,7 +255,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
     >
       <TableCell className={classes.shortLinkCell} key="shortUrlCell">
         <Typography variant="body2" className={classes.shortLinkText}>
-          <div className={classes.IconCell}>
+          <div className={classes.linkIconCell}>
             {url?.isFile ? (
               <DirectoryFileIcon
                 color={
@@ -284,7 +312,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
           className={classes.emailText}
           onClick={(e) => onClickEmail(e)}
         >
-          <div className={classes.IconCell}>
+          <div className={classes.personIconCell}>
             <img
               className={classes.personIcon}
               src={personIcon}
@@ -294,6 +322,24 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
           {String(url.email)}
         </Typography>
       </TableCell>
+
+      <Hidden smDown>
+        <TableCell
+          className={classes.requestOwnershipCell}
+          key="requestOwnershipCell"
+        >
+          <Link
+            variant="body2"
+            className={classes.requestOwnershipText}
+            onClick={(e) => onClickRequestOwnership(e)}
+            href={i18next.t('general.links.contact')}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Request ownership
+          </Link>
+        </TableCell>
+      </Hidden>
     </TableRow>
   )
 }

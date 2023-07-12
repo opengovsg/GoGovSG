@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import dogstatsd, { MALICIOUS_ACTIVITY_LINK } from '../../util/dogstatsd'
+import dogstatsd, {
+  MALICIOUS_ACTIVITY_LINK,
+  SCAN_FAILED_LINK,
+} from '../../util/dogstatsd'
 import jsonMessage from '../../util/json'
 import { UrlCreationRequest } from '../user'
 import { UrlThreatScanService } from './interfaces'
@@ -45,7 +48,8 @@ export class UrlCheckController {
           return
         }
       } catch (error) {
-        logger.error(error)
+        dogstatsd.increment(SCAN_FAILED_LINK, 1, 1)
+        logger.error(error.message)
         res.serverError(jsonMessage(error.message))
         return
       }
@@ -78,7 +82,7 @@ export class UrlCheckController {
           return
         }
       } catch (error) {
-        logger.error(error)
+        logger.error(error.message)
         res.serverError(jsonMessage(error.message))
         return
       }

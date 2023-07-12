@@ -14,7 +14,9 @@ function downloadFileFromS3(
 ) {
   bulkCsvIds.forEach((bulkCsvId) => {
     try {
-      window.open(`${bulkCsvId}/${BULK_QR_DOWNLOAD_MAPPINGS[format]}`)
+      window.open(
+        `${bulkCsvId}/${BULK_QR_DOWNLOAD_MAPPINGS[format]}?x-source=console`,
+      )
       GAEvent(`qr code bulk download`, format, 'successful')
     } catch (e) {
       Sentry.captureMessage(`qr code bulk download for ${format} unsuccessful`)

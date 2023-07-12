@@ -43,15 +43,16 @@ const tagSchema = Joi.array()
 
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
-  limit: Joi.number().required(),
-  offset: Joi.number().optional(),
-  orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
+  // eslint-disable-next-line newline-per-chained-call
+  limit: Joi.number().integer().min(0).max(1000).required(),
+  offset: Joi.number().integer().min(0).optional(),
+  orderBy: Joi.string().valid('createdAt', 'clicks').optional(),
   sortDirection: Joi.string().valid('desc', 'asc').optional(),
-  searchText: Joi.string().allow('').optional(),
+  searchText: Joi.string().lowercase().allow('').optional(),
   state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
   isFile: Joi.boolean().optional(),
   tags: tagSchema.max(5),
-})
+}).oxor('searchText', 'tags')
 
 export const userTagsQueryConditions = Joi.object({
   userId: Joi.number().required(),

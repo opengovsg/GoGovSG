@@ -48,7 +48,7 @@ With GoGovSg, citizens are safe in the knowledge that the links are **official**
 
 ## Getting Started
 
-Make sure you have node version `14`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
+Make sure you have node version `16`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
 
 > *For Mac computers with Apple silicon, you will need Rosetta to be installed in order for `docker-compose@v1` to work. You can do so using the following command: `softwareupdate --install-rosetta`.
 
@@ -62,7 +62,7 @@ git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 cd gogovsg
 
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 ```
 
 ### Running Locally
