@@ -11,7 +11,10 @@ interface SgidServiceOption {
 export const SGID_LOGIN_OAUTH_STATE = 'login'
 
 class SgidService {
-  private sgidClient: SgidClient
+  // SGID client will be null for other domains like edu, health
+  // so we will need to handle cases for those as well, so that
+  // they continue to work in prod without sgid client being initialised
+  private sgidClient: SgidClient | null
 
   constructor({
     clientId,
@@ -20,19 +23,26 @@ class SgidService {
     redirectUri,
     hostname,
   }: SgidServiceOption) {
-    this.sgidClient = new SgidClient({
-      clientId,
-      clientSecret,
-      privateKey,
-      redirectUri,
-      hostname,
-    })
+    try {
+      this.sgidClient = new SgidClient({
+        clientId,
+        clientSecret,
+        privateKey,
+        redirectUri,
+        hostname,
+      })
+    } catch (e) {
+      this.sgidClient = null
+    }
   }
 
   /**
    * Fetches the url via sgid SDK.
    */
   authorizationUrl(): { url: string; codeVerifier: string; nonce?: string } {
+    if (!this.sgidClient) {
+      throw new Error('SGID client not initialised')
+    }
     try {
       const { codeChallenge, codeVerifier } = generatePkcePair()
       const { url, nonce } = this.sgidClient.authorizationUrl({
@@ -50,7 +60,8 @@ class SgidService {
    * Fetches the token via sgid SDK.
    */
   async callback(code: string, nonce: string, codeVerifier: string) {
-    if (!code) throw Error(`code cannot be empty`)
+    if (!code || !this.sgidClient)
+      throw Error(`code cannot be empty or sgid client not initialised`)
     try {
       const { sub, accessToken } = await this.sgidClient.callback({
         code,
@@ -67,7 +78,8 @@ class SgidService {
    * Fetches the user info via sgid SDK.
    */
   async userinfo(accessToken: string, sub: string) {
-    if (!accessToken) throw Error(`accessToken cannot be empty`)
+    if (!accessToken || !this.sgidClient)
+      throw Error(`accessToken cannot be empty`)
     try {
       return await this.sgidClient.userinfo({ accessToken, sub })
     } catch (e) {
