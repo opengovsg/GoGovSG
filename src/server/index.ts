@@ -7,6 +7,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import session from 'express-session'
 import cookieSession from 'cookie-session'
+import cookieParser from 'cookie-parser'
 import connectRedis from 'connect-redis'
 import jsonMessage from './util/json'
 import bindInversifyDependencies from './inversify.config'
@@ -94,6 +95,7 @@ if (sentryDns) {
 }
 
 const app = express()
+app.use(cookieParser())
 app.use(
   helmet({
     contentSecurityPolicy: {

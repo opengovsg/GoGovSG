@@ -1,5 +1,6 @@
 export const HOME_PAGE = '/'
 export const LOGIN_PAGE = '/login'
+export const SGID_LOGIN_PAGE = '/ogp-login'
 export const USER_PAGE = '/user'
 export const SEARCH_PAGE = '/search'
 export const NOT_FOUND_PAGE = '/404/:shortUrl'
