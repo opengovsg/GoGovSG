@@ -3,7 +3,9 @@ import { inject, injectable } from 'inversify'
 import { SGID_LOGIN_OAUTH_STATE, SgidAuthService } from '../../services/sgid'
 import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../constants'
+import { validEmailDomainGlobExpression } from '../../config'
 
+export const OFFICER_EMAIL_SCOPE = 'ogpofficerinfo.work_email'
 const SGID_STATE_COOKIE_NAME = 'gogovsg_sgid_state'
 const SgidStateCookieConfig: CookieOptions = {
   httpOnly: true,
@@ -54,14 +56,29 @@ export class SgidLoginController {
       )
 
       const { data } = await this.sgidService.userinfo(accessToken, sub)
+      const officerEmail = data[OFFICER_EMAIL_SCOPE]
+
+      if (
+        !officerEmail ||
+        !officerEmail.length ||
+        !officerEmail.match(
+          new RegExp(validEmailDomainGlobExpression.substring(1)),
+        )
+      ) {
+        // redirect back to sgid login page, if authentication fails,
+        // or officer email is not valid
+        res.redirect(`/#/ogp-login?statusCode=403&officerEmail=${officerEmail}`)
+        return
+      }
 
       const dbUser = await this.userRepository.findOrCreateWithEmail(
-        data['ogpofficerinfo.work_email'],
+        data[OFFICER_EMAIL_SCOPE],
       )
 
       req.session!.user = dbUser
 
       res.redirect(`/#/user`)
+      return
     } catch (error) {
       console.error(error)
       res.status(500).render('error', { error })

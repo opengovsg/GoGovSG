@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import i18next from 'i18next'
 import {
   Button,
@@ -11,12 +11,16 @@ import {
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import { useDispatch } from 'react-redux'
+import rootActions from '../app/components/pages/RootPage/actions'
+
 import assetVariant from '../../shared/util/asset-variant'
 import sgidLoginActions from './actions'
 
 import { htmlSanitizer } from '../app/util/format'
 import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
+
+const URL_PREFIX_LENGTH = 11
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -38,6 +42,11 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('lg')]: {
         alignItems: 'center',
       },
+    },
+    signInButton: {
+      width: '250px',
+      minWidth: '120px',
+      marginRight: theme.spacing(2),
     },
     loginWrapper: {
       display: 'block',
@@ -101,6 +110,28 @@ const useStyles = makeStyles((theme) =>
 const SgidLoginPage = (): JSX.Element => {
   const dispatch = useDispatch()
   const classes = useStyles()
+  const queryParams = new URLSearchParams(
+    new URL(window.location.href).hash.substring(URL_PREFIX_LENGTH),
+  )
+
+  const setLoginStatusCode = (message: string) =>
+    dispatch(rootActions.setInfoMessage(message))
+
+  useEffect(() => {
+    const officerEmail = queryParams.get('officerEmail')
+    const statusCode = queryParams.get('statusCode')
+    if (officerEmail) {
+      setLoginStatusCode(
+        `${officerEmail} doesn't look like a valid ${i18next.t(
+          'general.emailDomain',
+        )} email.`,
+      )
+    } else if (statusCode) {
+      setLoginStatusCode(
+        `Unable to fetch a valid work email for authentication.`,
+      )
+    }
+  }, [])
 
   return (
     <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
@@ -155,6 +186,11 @@ const SgidLoginPage = (): JSX.Element => {
                     to shorten links.
                   </Typography>
                   <Button
+                    className={classes.signInButton}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
                     onClick={() =>
                       dispatch(sgidLoginActions.getAuthRedirectionUrl())
                     }
