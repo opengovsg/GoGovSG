@@ -93,6 +93,6 @@ export const SgidAuthService = new SgidService({
   clientId: process.env.CLIENT_ID as string,
   clientSecret: process.env.CLIENT_SECRET as string,
   privateKey: process.env.PRIVATE_KEY as string,
-  redirectUri: 'http://localhost:3000/api/sgidLogin/authenticate',
+  redirectUri: `${process.env.OG_URL}/api/sgidLogin/authenticate`,
   hostname: process.env.SGID_API_HOSTNAME as string,
 })
