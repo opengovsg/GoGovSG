@@ -28,11 +28,11 @@ services:
       - REDIS_SAFE_BROWSING_URI=redis://redis:6379/4
       - SESSION_SECRET=thiscouldbeanything
       - GA_TRACKING_ID=UA-139330318-1
-      - PRIVATE_KEY=
+      - SGID_PRIVATE_KEY=
 
       - SGID_API_HOSTNAME=https://api.id.gov.sg
-      - CLIENT_ID=
-      - CLIENT_SECRET=
+      - SGID_CLIENT_ID=
+      - SGID_CLIENT_SECRET=
 
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
