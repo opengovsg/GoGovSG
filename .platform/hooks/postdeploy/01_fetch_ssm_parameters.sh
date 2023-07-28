@@ -1,8 +1,6 @@
 #!/bin/bash
 
-ENVIRONMENT = $(/opt/elasticbeanstalk/bin/get-config environment -k SSM_PREFIX)
-ENV_TYPE="${ENVIRONMENT:-STAGING}"
-
+ENV_TYPE=$(/opt/elasticbeanstalk/bin/get-config environment -k SSM_PREFIX)
 ENV_VARS=("SGID_CLIENT_ID" "SGID_CLIENT_SECRET" "SGID_PRIVATE_KEY") # Add any additional env vars to this array
 
 echo "Set AWS region"
