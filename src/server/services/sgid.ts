@@ -23,7 +23,11 @@ class SgidService {
     redirectUri,
     hostname,
   }: SgidServiceOption) {
-    console.log('This is the client ID', clientId, redirectUri)
+    console.log(
+      'This is the client ID',
+      process.env.SGID_CLIENT_ID,
+      process.env.SGID_API_HOSTNAME,
+    )
     try {
       this.sgidClient = new SgidClient({
         clientId,
@@ -93,9 +97,9 @@ class SgidService {
 
 // Initialised the sgidService object with the different environments
 export const SgidAuthService = new SgidService({
-  clientId: process.env.SGID_CLIENT_ID as string,
-  clientSecret: process.env.SGID_CLIENT_SECRET as string,
-  privateKey: process.env.SGID_PRIVATE_KEY as string,
+  clientId: process.env.SGID_CLIENT_ID || '',
+  clientSecret: process.env.SGID_CLIENT_SECRET || '',
+  privateKey: process.env.SGID_PRIVATE_KEY || '',
   redirectUri: `${process.env.OG_URL}/api/sgidLogin/authenticate`,
-  hostname: process.env.SGID_API_HOSTNAME as string,
+  hostname: process.env.SGID_API_HOSTNAME || '',
 })
