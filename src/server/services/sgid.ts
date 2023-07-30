@@ -23,11 +23,6 @@ class SgidService {
     redirectUri,
     hostname,
   }: SgidServiceOption) {
-    console.log(
-      'This is the client ID',
-      process.env.SGID_CLIENT_ID,
-      process.env.SGID_API_HOSTNAME,
-    )
     try {
       this.sgidClient = new SgidClient({
         clientId,
@@ -59,7 +54,7 @@ class SgidService {
       })
       return { url, codeVerifier, nonce }
     } catch (e) {
-      throw new Error('Error retrieving url via sgid-client')
+      throw new Error(`Error retrieving url via sgid-client ${e.message}`)
     }
   }
 
@@ -68,7 +63,7 @@ class SgidService {
    */
   async callback(code: string, nonce: string, codeVerifier: string) {
     if (!code || !this.sgidClient)
-      throw Error(`code cannot be empty or sgid client not initialised`)
+      throw new Error(`code cannot be empty or sgid client not initialised`)
     try {
       const { sub, accessToken } = await this.sgidClient.callback({
         code,
@@ -86,7 +81,7 @@ class SgidService {
    */
   async userinfo(accessToken: string, sub: string) {
     if (!accessToken || !this.sgidClient)
-      throw Error(`accessToken cannot be empty`)
+      throw new Error(`accessToken cannot be empty`)
     try {
       return await this.sgidClient.userinfo({ accessToken, sub })
     } catch (e) {

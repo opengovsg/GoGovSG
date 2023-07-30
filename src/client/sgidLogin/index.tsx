@@ -191,9 +191,7 @@ const SgidLoginPage = (): JSX.Element => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    onClick={() =>
-                      dispatch(sgidLoginActions.getAuthRedirectionUrl())
-                    }
+                    onClick={() => dispatch(sgidLoginActions.getAuthUrl())}
                   >
                     Log in with Singpass app
                   </Button>

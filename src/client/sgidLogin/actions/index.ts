@@ -1,7 +1,7 @@
 import { get } from '../../app/util/requests'
 import { GetReduxState } from '../../app/actions/types'
 
-const getAuthRedirectionUrl = () => (_getState: GetReduxState) => {
+const getAuthUrl = () => (_getState: GetReduxState) => {
   get('/api/sgidLogin/authurl').then(async (response) => {
     if (response.ok) {
       const text = await response.text()
@@ -11,5 +11,5 @@ const getAuthRedirectionUrl = () => (_getState: GetReduxState) => {
 }
 
 export default {
-  getAuthRedirectionUrl,
+  getAuthUrl,
 }
