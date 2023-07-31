@@ -20,7 +20,7 @@ import { htmlSanitizer } from '../app/util/format'
 import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 
-const URL_PREFIX_LENGTH = 11
+const URL_PREFIX_LENGTH = '#/ogp-login'.length
 
 const useStyles = makeStyles((theme) =>
   createStyles({
