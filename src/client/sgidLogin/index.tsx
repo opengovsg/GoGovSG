@@ -14,11 +14,11 @@ import { useDispatch } from 'react-redux'
 import rootActions from '../app/components/pages/RootPage/actions'
 
 import assetVariant from '../../shared/util/asset-variant'
-import sgidLoginActions from './actions'
 
 import { htmlSanitizer } from '../app/util/format'
 import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
+import { get } from '../app/util/requests'
 
 const URL_PREFIX_LENGTH = '#/ogp-login'.length
 
@@ -72,9 +72,6 @@ const useStyles = makeStyles((theme) =>
       color: '#767676',
       marginBottom: theme.spacing(4),
     },
-    textInputGroup: {
-      marginBottom: theme.spacing(4),
-    },
     graphicColorFill: {
       backgroundColor: theme.palette.primary.dark,
       width: '50vw',
@@ -94,16 +91,6 @@ const useStyles = makeStyles((theme) =>
         marginBottom: '0',
       },
     },
-    secondaryButton: {
-      fontWeight: 400,
-      marginLeft: theme.spacing(2),
-    },
-    resendOTPBtn: {
-      marginRight: 'auto',
-      '&:disabled': {
-        opacity: 0.5,
-      },
-    },
   }),
 )
 
@@ -114,20 +101,20 @@ const SgidLoginPage = (): JSX.Element => {
     new URL(window.location.href).hash.substring(URL_PREFIX_LENGTH),
   )
 
-  const setLoginStatusCode = (message: string) =>
+  const setLoginStatusMessage = (message: string) =>
     dispatch(rootActions.setInfoMessage(message))
 
   useEffect(() => {
     const officerEmail = queryParams.get('officerEmail')
     const statusCode = queryParams.get('statusCode')
     if (officerEmail) {
-      setLoginStatusCode(
+      setLoginStatusMessage(
         `${officerEmail} doesn't look like a valid ${i18next.t(
           'general.emailDomain',
         )} email.`,
       )
     } else if (statusCode) {
-      setLoginStatusCode(
+      setLoginStatusMessage(
         `Unable to fetch a valid work email for authentication.`,
       )
     }
@@ -191,7 +178,14 @@ const SgidLoginPage = (): JSX.Element => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    onClick={() => dispatch(sgidLoginActions.getAuthUrl())}
+                    onClick={() => {
+                      get('/api/sgidLogin/authurl').then(async (response) => {
+                        if (response.ok) {
+                          const text = await response.text()
+                          window.open(text, '_self')
+                        }
+                      })
+                    }}
                   >
                     Log in with Singpass app
                   </Button>

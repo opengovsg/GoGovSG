@@ -1,4 +1,12 @@
 import SgidClient, { generatePkcePair } from '@opengovsg/sgid-client'
+import {
+  logger,
+  ogUrl,
+  sgidApiHostname,
+  sgidClientId,
+  sgidClientSecret,
+  sgidPrivateKey,
+} from '../config'
 
 interface SgidServiceOption {
   clientId: string
@@ -31,9 +39,9 @@ class SgidService {
         redirectUri,
         hostname,
       })
-      console.log('SGID client initialised successfully')
+      logger.info('SGID client initialised successfully')
     } catch (e) {
-      console.log('SGID client initialisation failed', e)
+      logger.error('SGID client initialisation failed', e)
       this.sgidClient = null
     }
   }
@@ -92,9 +100,9 @@ class SgidService {
 
 // Initialised the sgidService object with the different environments
 export const SgidAuthService = new SgidService({
-  clientId: process.env.SGID_CLIENT_ID || '',
-  clientSecret: process.env.SGID_CLIENT_SECRET || '',
-  privateKey: process.env.SGID_PRIVATE_KEY || '',
-  redirectUri: `${process.env.OG_URL}/api/sgidLogin/authenticate`,
-  hostname: process.env.SGID_API_HOSTNAME || '',
+  clientId: sgidClientId,
+  clientSecret: sgidClientSecret,
+  privateKey: sgidPrivateKey,
+  redirectUri: `${ogUrl}/api/sgidLogin/authenticate`,
+  hostname: sgidApiHostname,
 })

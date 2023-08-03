@@ -3,7 +3,8 @@ import { inject, injectable } from 'inversify'
 import { SGID_LOGIN_OAUTH_STATE, SgidAuthService } from '../../services/sgid'
 import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../constants'
-import { validEmailDomainGlobExpression } from '../../config'
+import { logger } from '../../config'
+import { isValidGovEmail } from '../../util/email'
 
 export const OFFICER_EMAIL_SCOPE = 'ogpofficerinfo.work_email'
 const SGID_STATE_COOKIE_NAME = 'gogovsg_sgid_state'
@@ -29,15 +30,19 @@ export class SgidLoginController {
     req: Express.Request,
     res: Express.Response,
   ) => void = (_req, res) => {
-    const { url, codeVerifier, nonce } = this.sgidService.authorizationUrl()
+    try {
+      const { url, codeVerifier, nonce } = this.sgidService.authorizationUrl()
 
-    res.cookie(
-      SGID_STATE_COOKIE_NAME,
-      { codeVerifier, nonce },
-      SgidStateCookieConfig,
-    )
-    res.send(url)
-    return
+      res.cookie(
+        SGID_STATE_COOKIE_NAME,
+        { codeVerifier, nonce },
+        SgidStateCookieConfig,
+      )
+      res.send(url)
+      return
+    } catch (error) {
+      logger.error(error)
+    }
   }
 
   public handleLogin = async (req: Express.Request, res: Express.Response) => {
@@ -46,7 +51,8 @@ export class SgidLoginController {
       const sessionData = req.cookies[SGID_STATE_COOKIE_NAME]
 
       if (state !== SGID_LOGIN_OAUTH_STATE) {
-        throw new Error('Error logging in with SGID: state is incorrect')
+        res.redirect(`/#/ogp-login?statusCode=400`)
+        return
       }
 
       const { sub, accessToken } = await this.sgidService.callback(
@@ -61,9 +67,7 @@ export class SgidLoginController {
       if (
         !officerEmail ||
         !officerEmail.length ||
-        !officerEmail.match(
-          new RegExp(validEmailDomainGlobExpression.substring(1)),
-        )
+        !isValidGovEmail(officerEmail)
       ) {
         // redirect back to sgid login page, if authentication fails,
         // or officer email is not valid
@@ -80,7 +84,7 @@ export class SgidLoginController {
       res.redirect(`/#/user`)
       return
     } catch (error) {
-      console.error(error)
+      logger.error(error)
       res.status(500).render('error', { error })
     }
   }
