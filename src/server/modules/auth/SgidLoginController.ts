@@ -1,10 +1,10 @@
 import Express, { CookieOptions } from 'express'
 import { inject, injectable } from 'inversify'
 import { SGID_LOGIN_OAUTH_STATE, SgidAuthService } from '../../services/sgid'
-import { UserRepositoryInterface } from '../../repositories/interfaces/UserRepositoryInterface'
 import { DependencyIds } from '../../constants'
 import { logger } from '../../config'
 import { isValidGovEmail } from '../../util/email'
+import { AuthService } from './interfaces'
 
 export const OFFICER_EMAIL_SCOPE = 'ogpofficerinfo.work_email'
 const SGID_STATE_COOKIE_NAME = 'gogovsg_sgid_state'
@@ -16,14 +16,11 @@ const SgidStateCookieConfig: CookieOptions = {
 export class SgidLoginController {
   private sgidService
 
-  private userRepository: UserRepositoryInterface
+  private authService: AuthService
 
-  constructor(
-    @inject(DependencyIds.userRepository)
-    userRepository: UserRepositoryInterface,
-  ) {
+  constructor(@inject(DependencyIds.authService) authService: AuthService) {
     this.sgidService = SgidAuthService
-    this.userRepository = userRepository
+    this.authService = authService
   }
 
   public generateAuthUrl: (
@@ -74,8 +71,7 @@ export class SgidLoginController {
         res.redirect(`/#/ogp-login?statusCode=403&officerEmail=${officerEmail}`)
         return
       }
-
-      const dbUser = await this.userRepository.findOrCreateWithEmail(
+      const dbUser = await this.authService.genDBUserWithOfficerEmail(
         data[OFFICER_EMAIL_SCOPE],
       )
 
