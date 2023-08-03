@@ -39,7 +39,11 @@ describe('LoginController', () => {
     loggerErrorSpy.mockClear()
   })
   describe('getIsLoggedIn', () => {
-    const authService = { generateOtp: jest.fn(), verifyOtp: jest.fn() }
+    const authService = {
+      generateOtp: jest.fn(),
+      verifyOtp: jest.fn(),
+      genDBUserWithOfficerEmail: jest.fn(),
+    }
     const controller = new LoginController(authService)
 
     test('session contains user', () => {
@@ -64,7 +68,11 @@ describe('LoginController', () => {
   })
 
   describe('getLoginMessage', () => {
-    const authService = { generateOtp: jest.fn(), verifyOtp: jest.fn() }
+    const authService = {
+      generateOtp: jest.fn(),
+      verifyOtp: jest.fn(),
+      genDBUserWithOfficerEmail: jest.fn(),
+    }
     const controller = new LoginController(authService)
 
     test('returns login message', () => {
@@ -78,7 +86,11 @@ describe('LoginController', () => {
   })
 
   describe('getEmailDomains', () => {
-    const authService = { generateOtp: jest.fn(), verifyOtp: jest.fn() }
+    const authService = {
+      generateOtp: jest.fn(),
+      verifyOtp: jest.fn(),
+      genDBUserWithOfficerEmail: jest.fn(),
+    }
     const controller = new LoginController(authService)
 
     test('returns domains', () => {
