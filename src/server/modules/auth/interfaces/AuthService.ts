@@ -17,4 +17,13 @@ export interface AuthService {
    * @returns Promise that resolves to the user if the otp is valid.
    */
   verifyOtp(email: string, otp: string): Promise<StorableUser>
+
+  /**
+   * Generates the user with the officer email provided, if the
+   * user with the specified officer email does not exist then we
+   * create a new user for the input email.
+   * @param  {string} email Email of the user.
+   * @returns Promise that creates or find the existing user.
+   */
+  genDBUserWithOfficerEmail(email: string): Promise<StorableUser>
 }

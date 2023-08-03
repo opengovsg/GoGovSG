@@ -16,6 +16,7 @@ const router = Express.Router()
 /*  Public routes that do not need to be protected */
 router.use('/logout', require('./logout'))
 router.use('/login', require('./login'))
+router.use('/sgidLogin', require('./sgidLogin'))
 router.use('/stats', require('./statistics'))
 router.use('/sentry', require('./sentry'))
 router.use('/links', require('./links'))
