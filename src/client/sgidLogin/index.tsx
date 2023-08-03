@@ -113,10 +113,12 @@ const SgidLoginPage = (): JSX.Element => {
           'general.emailDomain',
         )} email.`,
       )
-    } else if (statusCode) {
+    } else if (statusCode === '403') {
       setLoginStatusMessage(
         `Unable to fetch a valid work email for authentication.`,
       )
+    } else if (statusCode === '400') {
+      setLoginStatusMessage(`Authentication failed. Please try again.`)
     }
   }, [])
 
@@ -183,6 +185,10 @@ const SgidLoginPage = (): JSX.Element => {
                         if (response.ok) {
                           const text = await response.text()
                           window.open(text, '_self')
+                        } else {
+                          setLoginStatusMessage(
+                            'Please try logging in using email.',
+                          )
                         }
                       })
                     }}

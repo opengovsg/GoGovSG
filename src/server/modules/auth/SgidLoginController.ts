@@ -5,6 +5,7 @@ import { DependencyIds } from '../../constants'
 import { logger } from '../../config'
 import { isValidGovEmail } from '../../util/email'
 import { AuthService } from './interfaces'
+import jsonMessage from '../../util/json'
 
 export const OFFICER_EMAIL_SCOPE = 'ogpofficerinfo.work_email'
 const SGID_STATE_COOKIE_NAME = 'gogovsg_sgid_state'
@@ -37,8 +38,13 @@ export class SgidLoginController {
       )
       res.send(url)
       return
-    } catch (error) {
-      logger.error(error)
+    } catch (err) {
+      logger.error(err)
+      res.status(400)
+      res.badRequest(
+        jsonMessage('SGID login not supported by edu and health domains.'),
+      )
+      return
     }
   }
 
