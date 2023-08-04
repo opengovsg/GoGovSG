@@ -121,9 +121,10 @@ After these have been set up, set the environment variables according to the tab
 |ANNOUNCEMENT_MESSAGE|No|The message in the announcement displayed as a modal to users on login|
 |ANNOUNCEMENT_TITLE|No|The title in the announcement displayed as a modal to users on login|
 |ANNOUNCEMENT_SUBTITLE|No|The subtitle in the announcement displayed as a modal to users on login|
-|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
 |ANNOUNCEMENT_URL|No|The hyperlink for the button in the announcement displayed as a modal to users on login|
 |ANNOUNCEMENT_IMAGE|No|The image in the announcement displayed as a modal to users on login|
+|ANNOUNCEMENT_BUTTON_TEXT|No|The text on the button in the announcement displayed as a modal to users on login|
+|ROTATED_LINKS|No|List of comma separated path of links to rotate on the landing page|
 |CSP_REPORT_URI|No|A URI to report CSP violations to.|
 |CSP_ONLY_REPORT_VIOLATIONS|No|Only report CSP violations, do not enforce.|
 |CLOUDMERSIVE_KEY|No|API key for access to Cloudmersive.|
