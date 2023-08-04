@@ -127,15 +127,15 @@ describe('ApiV1Controller', () => {
       })
     })
 
-    it('reports bad request on generic Error', async () => {
+    it('reports server error on generic Error', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
-      res.badRequest = jest.fn()
+      res.serverError = jest.fn()
 
       urlManagementService.createUrl.mockRejectedValue(new Error())
 
       await controller.createUrl(req, res)
-      expect(res.badRequest).toHaveBeenCalledWith({
+      expect(res.serverError).toHaveBeenCalledWith({
         message: expect.any(String),
       })
     })
