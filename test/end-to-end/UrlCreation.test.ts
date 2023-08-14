@@ -325,7 +325,7 @@ test('The update file test', async (t) => {
 
   const generatedfileUrl = await shortUrlTextField.value
   const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
-  const directoryPath = `${process.env.HOME}/Downloads/${generatedfileUrl}.pdf`
+  const directoryPath = `${process.env.HOME}/Downloads/${generatedfileUrl}.csv`
   // Generate 1mb file
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
