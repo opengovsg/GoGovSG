@@ -53,7 +53,7 @@ export class FileCheckController {
           await this.fileTypeFilterService.getExtensionAndMimeType(file)
         if (
           fileTypeData.extension === '' ||
-          !(await this.fileTypeFilterService.hasAllowedType(
+          !(await this.fileTypeFilterService.hasAllowedExtensionType(
             fileTypeData.extension,
             allowedExtensions,
           ))

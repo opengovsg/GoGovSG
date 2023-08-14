@@ -68,7 +68,7 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     }
   }
 
-  hasAllowedType: (
+  hasAllowedExtensionType: (
     extension: string,
     allowedExtensions?: string[],
   ) => Promise<boolean> = async (extension, allowedExtensions) => {
