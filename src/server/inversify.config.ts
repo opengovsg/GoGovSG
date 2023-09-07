@@ -72,7 +72,10 @@ import { UrlHistoryRepository } from './modules/audit/repositories'
 
 import { SafeBrowsingMapper } from './modules/threat/mappers'
 import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
-import { DEFAULT_ALLOWED_FILE_EXTENSIONS } from './modules/threat/services/FileTypeFilterService'
+import {
+  DEFAULT_ALLOWED_FILE_EXTENSIONS,
+  FILE_EXTENSION_MIME_TYPE_MAP,
+} from './modules/threat/services/FileTypeFilterService'
 import {
   CloudmersiveScanService,
   FileTypeFilterService,
@@ -153,6 +156,9 @@ export default () => {
   container
     .bind(DependencyIds.allowedFileExtensions)
     .toConstantValue(DEFAULT_ALLOWED_FILE_EXTENSIONS)
+  container
+    .bind(DependencyIds.fileExtensionsMimeTypeMap)
+    .toConstantValue(FILE_EXTENSION_MIME_TYPE_MAP)
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
 
   if (cloudmersiveKey) {

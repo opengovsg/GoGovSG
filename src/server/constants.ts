@@ -51,6 +51,7 @@ export const DependencyIds = {
   urlHistoryRepository: Symbol.for('urlHistoryRepository'),
   deviceCheckService: Symbol.for('deviceCheckService'),
   allowedFileExtensions: Symbol.for('allowedFileExtensions'),
+  fileExtensionsMimeTypeMap: Symbol.for('fileExtensionsMimeTypeMap'),
   fileTypeFilterService: Symbol.for('fileTypeFilterService'),
   cloudmersiveKey: Symbol.for('cloudmersiveKey'),
   cloudmersiveClient: Symbol.for('cloudmersiveClient'),

@@ -2,6 +2,7 @@ import FileType from 'file-type'
 import { inject, injectable } from 'inversify'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
+import { FileTypeData } from '../interfaces/FileTypeFilterService'
 
 export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'avi',
@@ -28,35 +29,49 @@ export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'zip',
 ]
 
+export const FILE_EXTENSION_MIME_TYPE_MAP = new Map<string, string>([
+  ['csv', 'text/csv'],
+  ['dwf', 'application/x-dwf'],
+  ['dxf', 'application/dxf'],
+])
+
 @injectable()
 export class FileTypeFilterService implements interfaces.FileTypeFilterService {
   allowedFileExtensions: string[]
 
+  fileExtensionsMimeTypeMap: Map<string, string>
+
   constructor(
     @inject(DependencyIds.allowedFileExtensions)
     allowedFileExtensions: string[],
+    @inject(DependencyIds.fileExtensionsMimeTypeMap)
+    fileExtensionsMimeTypeMap: Map<string, string>,
   ) {
     this.allowedFileExtensions = allowedFileExtensions
+    this.fileExtensionsMimeTypeMap = fileExtensionsMimeTypeMap
   }
 
-  getExtension: (file: {
+  getExtensionAndMimeType: (file: {
     name: string
     data: Buffer
-  }) => Promise<string | undefined> = async ({ name, data }) => {
+  }) => Promise<FileTypeData> = async ({ name, data }) => {
     const fileType = await FileType.fromBuffer(data)
-    return fileType?.ext || name.split('.').pop()
+    let ext: string | undefined = fileType?.ext
+    let mimeType: string | undefined = fileType?.mime
+    if (!ext || !mimeType) {
+      ext = name.split('.').pop()
+      mimeType = this.fileExtensionsMimeTypeMap.get(ext ?? '')
+    }
+    return {
+      extension: ext ?? '',
+      mimeType: mimeType ?? 'text/plain',
+    }
   }
 
-  hasAllowedType: (
-    file: {
-      name: string
-      data: Buffer
-    },
+  hasAllowedExtensionType: (
+    extension: string,
     allowedExtensions?: string[],
-  ) => Promise<boolean> = async (file, allowedExtensions) => {
-    const extension = await this.getExtension(file)
-    if (!extension) return false
-
+  ) => Promise<boolean> = async (extension, allowedExtensions) => {
     if (allowedExtensions && allowedExtensions.length > 0) {
       return allowedExtensions.includes(extension)
     }
