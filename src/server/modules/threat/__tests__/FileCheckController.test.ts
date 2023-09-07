@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import httpMocks from 'node-mocks-http'
 import { Request } from 'express'
+import fileUpload from 'express-fileupload'
 
 import { FileCheckController } from '..'
 
@@ -18,19 +19,20 @@ export function createRequestWithFile(file: any): Request {
 
 describe('FileCheckController test', () => {
   const file = { data: Buffer.from('data'), name: 'file.csv' }
-  const getExtension = jest.fn()
-  const hasAllowedType = jest.fn()
+  const getExtensionAndMimeType = jest.fn()
+  const hasAllowedExtensionType = jest.fn()
 
   const scanFile = jest.fn()
 
   const controller = new FileCheckController(
-    { getExtension, hasAllowedType },
+    { getExtensionAndMimeType, hasAllowedExtensionType },
     { scanFile },
   )
   const badRequest = jest.fn()
 
   beforeEach(() => {
-    hasAllowedType.mockClear()
+    hasAllowedExtensionType.mockClear()
+    getExtensionAndMimeType.mockClear()
     scanFile.mockClear()
     badRequest.mockClear()
   })
@@ -42,10 +44,15 @@ describe('FileCheckController test', () => {
     const afterFileExtensionCheck = jest.fn()
     const afterFileVirusCheck = jest.fn()
     await controller.singleFileCheck(req, res, afterSingleFileCheck)
-    await controller.fileExtensionCheck()(req, res, afterFileExtensionCheck)
+    await controller.fileExtensionAndMimeTypeCheck()(
+      req,
+      res,
+      afterFileExtensionCheck,
+    )
     await controller.fileVirusCheck(req, res, afterFileVirusCheck)
 
-    expect(hasAllowedType).not.toHaveBeenCalled()
+    expect(hasAllowedExtensionType).not.toHaveBeenCalled()
+    expect(getExtensionAndMimeType).not.toHaveBeenCalled()
     expect(scanFile).not.toHaveBeenCalled()
     expect(afterSingleFileCheck).toHaveBeenCalled()
     expect(afterFileExtensionCheck).toHaveBeenCalled()
@@ -72,12 +79,22 @@ describe('FileCheckController test', () => {
     const res = httpMocks.createResponse() as any
     const afterFileExtensionCheck = jest.fn()
 
-    hasAllowedType.mockResolvedValue(false)
+    getExtensionAndMimeType.mockResolvedValue({
+      extension: 'svg',
+      mimeType: 'text/plain',
+    })
+    hasAllowedExtensionType.mockResolvedValue(false)
+
     res.unsupportedMediaType = badRequest
 
-    await controller.fileExtensionCheck()(req, res, afterFileExtensionCheck)
+    await controller.fileExtensionAndMimeTypeCheck()(
+      req,
+      res,
+      afterFileExtensionCheck,
+    )
 
-    expect(hasAllowedType).toHaveBeenCalled()
+    expect(hasAllowedExtensionType).toHaveBeenCalled()
+    expect(getExtensionAndMimeType).toHaveBeenCalled()
     expect(res.unsupportedMediaType).toHaveBeenCalled()
     expect(afterFileExtensionCheck).not.toHaveBeenCalled()
   })
@@ -120,7 +137,12 @@ describe('FileCheckController test', () => {
     const afterFileExtensionCheck = jest.fn()
     const afterFileVirusCheck = jest.fn()
 
-    hasAllowedType.mockResolvedValue(true)
+    hasAllowedExtensionType.mockResolvedValue(true)
+    getExtensionAndMimeType.mockResolvedValue({
+      extension: 'csv',
+      mimeType: 'text/csv',
+    })
+
     scanFile.mockResolvedValue(false)
 
     res.badRequest = badRequest
@@ -129,11 +151,20 @@ describe('FileCheckController test', () => {
     res.unsupportedMediaType = badRequest
 
     await controller.singleFileCheck(req, res, afterSingleFileCheck)
-    await controller.fileExtensionCheck()(req, res, afterFileExtensionCheck)
+    await controller.fileExtensionAndMimeTypeCheck()(
+      req,
+      res,
+      afterFileExtensionCheck,
+    )
     await controller.fileVirusCheck(req, res, afterFileVirusCheck)
-
-    expect(hasAllowedType).toHaveBeenCalled()
+    expect(getExtensionAndMimeType).toHaveBeenCalled()
+    expect(hasAllowedExtensionType).toHaveBeenCalled()
     expect(scanFile).toHaveBeenCalled()
+    const fileUploaded = req.files?.file as fileUpload.UploadedFile | undefined
+    expect(fileUploaded).toBeDefined()
+    if (fileUploaded) {
+      expect(fileUploaded.mimetype).toEqual('text/csv')
+    }
 
     expect(res.badRequest).not.toHaveBeenCalled()
     expect(res.serverError).not.toHaveBeenCalled()
@@ -143,5 +174,37 @@ describe('FileCheckController test', () => {
     expect(afterSingleFileCheck).toHaveBeenCalled()
     expect(afterFileExtensionCheck).toHaveBeenCalled()
     expect(afterFileVirusCheck).toHaveBeenCalled()
+  })
+
+  it('unsupportedMediaType when file extension is empty', async () => {
+    const req = createRequestWithFile(file)
+    const res = httpMocks.createResponse() as any
+
+    const afterSingleFileCheck = jest.fn()
+    const afterFileExtensionCheck = jest.fn()
+
+    scanFile.mockResolvedValue(false)
+
+    res.badRequest = badRequest
+    res.serverError = badRequest
+    res.unprocessableEntity = badRequest
+    res.unsupportedMediaType = badRequest
+
+    getExtensionAndMimeType.mockResolvedValue({
+      extension: '',
+      mimeType: 'text/plain',
+    })
+
+    await controller.singleFileCheck(req, res, afterSingleFileCheck)
+    await controller.fileExtensionAndMimeTypeCheck()(
+      req,
+      res,
+      afterFileExtensionCheck,
+    )
+
+    expect(getExtensionAndMimeType).toHaveBeenCalled()
+    expect(hasAllowedExtensionType).not.toHaveBeenCalled()
+    expect(res.unsupportedMediaType).toHaveBeenCalled()
+    expect(afterFileExtensionCheck).not.toHaveBeenCalled()
   })
 })

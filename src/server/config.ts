@@ -272,3 +272,7 @@ export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
 export const apiAdmins: string[] = process.env.ADMIN_API_EMAILS
   ? process.env.ADMIN_API_EMAILS.split(',')
   : []
+export const sgidClientId = process.env.SGID_CLIENT_ID || ''
+export const sgidPrivateKey = process.env.SGID_PRIVATE_KEY || ''
+export const sgidClientSecret = process.env.SGID_CLIENT_SECRET || ''
+export const sgidApiHostname = process.env.SGID_API_HOSTNAME || ''
