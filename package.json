@@ -113,7 +113,7 @@
     "sanitize-html": "^2.7.1",
     "sequelize": "^6.29.3",
     "sharp": "^0.32.6",
-    "ua-parser-js": "^0.7.28",
+    "ua-parser-js": "^1.0.36",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
     "webpack": "^5.76.0",
