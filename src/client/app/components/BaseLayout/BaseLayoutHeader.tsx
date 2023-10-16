@@ -18,7 +18,6 @@ import GoLogoMiniLight from '@assets/go-logo-graphics/go-main-logo-mini-light.sv
 import helpIcon from '@assets/shared/help-icon.svg'
 import logoutIcon from '@assets/components/app/base-layout/logout-icon.svg'
 import logoutWhiteIcon from '@assets/components/app/base-layout/logout-white-icon.svg'
-import checkwhoIcon from '@assets/components/app/base-layout/checkwho-icon.svg'
 import directoryIcon from '@assets/components/app/base-layout/directory-icon.svg'
 import feedbackIcon from '@assets/components/app/base-layout/feedback-icon.svg'
 import githubIcon from '@assets/components/app/base-layout/github-icon.svg'
@@ -28,7 +27,6 @@ import homeIcon from '@assets/components/app/base-layout/home-icon.svg'
 import Section from '../Section'
 import loginActions from '../../../login/actions'
 import { GoGovReduxState } from '../../reducers/types'
-import assetVariant from '../../../../shared/util/asset-variant'
 
 type StyleProps = {
   isLoggedIn: boolean
@@ -121,21 +119,6 @@ type BaseLayoutHeaderProps = {
   toStick: boolean
 }
 
-type HeaderButtonProps = {
-  text: string
-  link: string
-  public: boolean
-  icon: string
-  mobileOrder?: number
-  internalLink?: boolean
-  displayNotEnabledForVariant?: string[]
-}
-
-function isEnabledForAssetVariant(header: HeaderButtonProps) {
-  if (header.displayNotEnabledForVariant === undefined) return true
-  return !header.displayNotEnabledForVariant.includes(assetVariant)
-}
-
 const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   backgroundType,
   hideNavButtons = false,
@@ -210,14 +193,6 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       public: false,
       icon: feedbackIcon,
       mobileOrder: 5,
-    },
-    {
-      text: 'Verify Messages',
-      link: i18next.t('general.links.verifyMessages'),
-      public: true,
-      icon: checkwhoIcon,
-      mobileOrder: 6,
-      displayNotEnabledForVariant: ['edu', 'health'],
     },
   ]
 
@@ -302,7 +277,6 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
           {!hideNavButtons &&
             headers.map(
               (header) =>
-                isEnabledForAssetVariant(header) &&
                 (header.public ? !isLoggedIn : isLoggedIn) && (
                   <Button
                     href={
