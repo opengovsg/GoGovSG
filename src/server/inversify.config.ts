@@ -49,7 +49,11 @@ import { RotatingLinksController } from './modules/display/RotatingLinksControll
 import { SentryController } from './modules/sentry/SentryController'
 
 import { AuthService, CryptographyBcrypt } from './modules/auth/services'
-import { LoginController, LogoutController } from './modules/auth'
+import {
+  LoginController,
+  LogoutController,
+  SgidLoginController,
+} from './modules/auth'
 import { UrlManagementService } from './modules/user/services'
 import { UserController } from './modules/user'
 import { DirectoryController } from './modules/directory'
@@ -68,7 +72,10 @@ import { UrlHistoryRepository } from './modules/audit/repositories'
 
 import { SafeBrowsingMapper } from './modules/threat/mappers'
 import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
-import { DEFAULT_ALLOWED_FILE_EXTENSIONS } from './modules/threat/services/FileTypeFilterService'
+import {
+  DEFAULT_ALLOWED_FILE_EXTENSIONS,
+  FILE_EXTENSION_MIME_TYPE_MAP,
+} from './modules/threat/services/FileTypeFilterService'
 import {
   CloudmersiveScanService,
   FileTypeFilterService,
@@ -130,6 +137,7 @@ export default () => {
   bindIfUnbound(DependencyIds.linksController, RotatingLinksController)
   bindIfUnbound(DependencyIds.sentryController, SentryController)
   bindIfUnbound(DependencyIds.loginController, LoginController)
+  bindIfUnbound(DependencyIds.sgidLoginController, SgidLoginController)
   bindIfUnbound(DependencyIds.authService, AuthService)
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
@@ -148,6 +156,9 @@ export default () => {
   container
     .bind(DependencyIds.allowedFileExtensions)
     .toConstantValue(DEFAULT_ALLOWED_FILE_EXTENSIONS)
+  container
+    .bind(DependencyIds.fileExtensionsMimeTypeMap)
+    .toConstantValue(FILE_EXTENSION_MIME_TYPE_MAP)
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
 
   if (cloudmersiveKey) {

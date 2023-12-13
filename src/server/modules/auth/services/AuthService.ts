@@ -125,6 +125,12 @@ export class AuthService implements interfaces.AuthService {
         throw new Error('Error creating user.')
       }
     }
+
+  public genDBUserWithOfficerEmail: (
+    officerEmail: string,
+  ) => Promise<StorableUser> = async (officerEmail) => {
+    return this.userRepository.findOrCreateWithEmail(officerEmail)
+  }
 }
 
 export default AuthService

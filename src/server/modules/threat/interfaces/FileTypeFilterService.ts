@@ -1,16 +1,18 @@
 export interface FileTypeFilterService {
-  getExtension: (file: {
+  getExtensionAndMimeType: (file: {
     name: string
     data: Buffer
-  }) => Promise<string | undefined>
+  }) => Promise<FileTypeData>
 
-  hasAllowedType: (
-    file: {
-      name: string
-      data: Buffer
-    },
+  hasAllowedExtensionType: (
+    extension: string,
     allowedExtensions?: string[],
   ) => Promise<boolean>
+}
+
+export interface FileTypeData {
+  extension: string
+  mimeType: string
 }
 
 export default FileTypeFilterService
