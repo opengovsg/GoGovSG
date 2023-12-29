@@ -44,7 +44,9 @@ export class BulkController {
       req.body.longUrls = longUrls
       next()
     } catch (error) {
-      res.badRequest(jsonMessage(error.message, MessageType.FileUploadError))
+      res.badRequest(
+        jsonMessage((error as Error).message, MessageType.FileUploadError),
+      )
       return
     }
   }

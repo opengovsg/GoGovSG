@@ -52,7 +52,7 @@ export class LoginController {
       await this.authService.generateOtp(email, getIp(req))
     } catch (error) {
       dogstatsd.increment(OTP_GENERATE_FAILURE, 1, 1)
-      res.serverError(jsonMessage(error.message))
+      res.serverError(jsonMessage((error as Error).message))
       return
     }
 
@@ -90,7 +90,7 @@ export class LoginController {
         logger.error(`Login email not found for user:\t${email}`)
         return
       }
-      res.serverError(jsonMessage(error.message))
+      res.serverError(jsonMessage((error as Error).message))
       return
     }
   }
