@@ -49,8 +49,8 @@ export class UrlCheckController {
         }
       } catch (error) {
         dogstatsd.increment(SCAN_FAILED_LINK, 1, 1)
-        logger.error(error.message)
-        res.serverError(jsonMessage(error.message))
+        logger.error(error)
+        res.serverError(jsonMessage((error as Error).message))
         return
       }
     }
@@ -82,8 +82,8 @@ export class UrlCheckController {
           return
         }
       } catch (error) {
-        logger.error(error.message)
-        res.serverError(jsonMessage(error.message))
+        logger.error(error)
+        res.serverError(jsonMessage((error as Error).message))
         return
       }
     }

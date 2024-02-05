@@ -21,7 +21,9 @@ export const createDbUser = async (
     )
   } catch (e) {
     throw new Error(
-      `Failed to create user with email ${email} for integration tests: ${e.message}`,
+      `Failed to create user with email ${email} for integration tests: ${
+        (e as Error).message
+      }`,
     )
   }
 }
@@ -49,7 +51,9 @@ export const deleteDbUser = async (email: string): Promise<void> => {
     )
   } catch (e) {
     throw new Error(
-      `Failed to delete user with email ${email} for integration tests: ${e.message}`,
+      `Failed to delete user with email ${email} for integration tests: ${
+        (e as Error).message
+      }`,
     )
   }
 }
