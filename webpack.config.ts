@@ -110,7 +110,7 @@ module.exports = () => {
         '!/(assets/**|bundle.js|favicon*)': 'http://localhost:8080',
       },
       historyApiFallback: true,
-      disableHostCheck: true,
+      allowedHosts: 'all',
     },
     devtool: 'source-map',
     plugins: [
