@@ -90,7 +90,7 @@ export class JobController {
     } catch (error) {
       dogstatsd.increment(JOB_ITEM_UPDATE_FAILURE, 1, 1)
       logger.error(`error updating job item ${jobItemId}: ${error}`)
-      res.status(404).send(jsonMessage(error.message))
+      res.status(404).send(jsonMessage((error as Error).message))
       return
     }
     next()
@@ -131,7 +131,7 @@ export class JobController {
         res.ok(jsonMessage('User has no jobs'))
         return
       }
-      res.serverError(jsonMessage(error.message))
+      res.serverError(jsonMessage((error as Error).message))
     }
     return
   }

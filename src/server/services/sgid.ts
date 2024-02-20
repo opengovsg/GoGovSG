@@ -62,7 +62,9 @@ class SgidService {
       })
       return { url, codeVerifier, nonce }
     } catch (e) {
-      throw new Error(`Error retrieving url via sgid-client ${e.message}`)
+      throw new Error(
+        `Error retrieving url via sgid-client: ${(e as Error).message}`,
+      )
     }
   }
 
