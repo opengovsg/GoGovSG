@@ -44,6 +44,12 @@ export interface UrlRepositoryInterface {
   ): Promise<StorableUrl>
 
   /**
+   * Returns true if shortUrl is available, otherwise false.
+   * @param {string} shortUrl The shortUrl.
+   */
+  isShortUrlAvailable: (shortUrl: string) => Promise<boolean>
+
+  /**
    * Looks up the longUrl given a shortUrl from the cache, falling back
    * to the database. The cache is re-populated if the database lookup is
    * performed successfully.
