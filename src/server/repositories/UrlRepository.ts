@@ -16,6 +16,7 @@ import {
   BulkUrlMapping,
   StorableFile,
   StorableUrl,
+  StorableUser,
   UrlDirectory,
   UrlDirectoryPaginated,
 } from './types'
@@ -27,6 +28,7 @@ import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 import { TAG_SEPARATOR } from '../../shared/constants'
+import { User } from '../models/user'
 
 const { Public, Private } = FileVisibility
 
@@ -276,17 +278,34 @@ export class UrlRepository implements UrlRepositoryInterface {
     const queryFile = this.getQueryFileEmail(isFile)
     const queryState = this.getQueryStateEmail(state)
 
-    // TODO: optimize the search query, possibly with reverse-email search
+    const userRawQuery = `
+      SELECT "users"."id", "users"."email"
+      FROM users as "users"
+      WHERE "users"."email" LIKE ANY (ARRAY[:likeQuery])`
+
+    const users = (await sequelize.query(userRawQuery, {
+      replacements: {
+        likeQuery,
+      },
+      type: QueryTypes.SELECT,
+      model: User,
+      raw: true,
+      mapToModel: true,
+      useMaster: undefined,
+    })) as Array<StorableUser>
+
+    const userIds = users.map((user) => user.id)
+    // const userMap = new Map(users.map((user): [number, string] => [user.id, user.email]))
+    console.log(userIds)
+    // console.log(...userMap)
     const rawQuery = `
-      SELECT "users"."email", "urls"."shortUrl", "urls"."state", "urls"."isFile", "urls"."longUrl"
+      SELECT "urls"."shortUrl", "urls"."state", "urls"."isFile", "urls"."longUrl"
       FROM urls AS "urls"
       JOIN url_clicks
       ON "urls"."shortUrl" = "url_clicks"."shortUrl"
-      JOIN users
-      ON "urls"."userId" = "users"."id"
-      AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
       AND "urls"."isFile" IN (:queryFile)
       AND "urls"."state" In (:queryState)
+      AND "urls"."userId" IN (:userIds)
       ORDER BY (${rankingAlgorithm}) DESC
       LIMIT :limit OFFSET :offset`
     const countQuery = `
@@ -300,9 +319,10 @@ export class UrlRepository implements UrlRepositoryInterface {
 
     const urls = (await sequelize.query(rawQuery, {
       replacements: {
-        likeQuery,
+        // likeQuery,
         queryFile,
         queryState,
+        userIds,
         limit,
         offset,
       },
@@ -310,8 +330,13 @@ export class UrlRepository implements UrlRepositoryInterface {
       model: Url,
       raw: true,
       mapToModel: true,
-      useMaster: true,
+      useMaster: undefined,
     })) as Array<UrlDirectory>
+
+    // urls.forEach(function(url) {
+    //   url.email = userMap.has(0) ? userMap.get(0) : ""
+    // })
+
     const countResult = (await sequelize.query(countQuery, {
       replacements: {
         likeQuery,
@@ -321,7 +346,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       type: QueryTypes.SELECT,
       raw: true,
       plain: true,
-      useMaster: true,
+      useMaster: undefined,
     })) as { count: string }
 
     const count = Number(countResult.count)
@@ -385,7 +410,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       type: QueryTypes.SELECT,
       model: Url,
       mapToModel: true,
-      useMaster: true,
+      useMaster: undefined,
     })) as Array<UrlDirectory>
     const countResult = (await sequelize.query(countQuery, {
       replacements: {
@@ -394,7 +419,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       raw: true,
       plain: true,
       type: QueryTypes.SELECT,
-      useMaster: true,
+      useMaster: undefined,
     })) as { count: string }
 
     const count = Number(countResult.count)
