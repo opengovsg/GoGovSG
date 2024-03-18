@@ -184,9 +184,10 @@ export class UrlRepository implements UrlRepositoryInterface {
   ) => {
     try {
       // Cache lookup
+      await this.getLongUrlFromCache(shortUrl)
       // if long url does not exist, throws error
-      const longUrl = await this.getLongUrlFromCache(shortUrl)
-      return !longUrl
+      // return false if no error since long url exists
+      return false
     } catch {
       // Cache failed, look in database
       const url = await Url.findOne({
