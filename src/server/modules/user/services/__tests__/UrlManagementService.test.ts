@@ -23,6 +23,7 @@ describe('UrlManagementService', () => {
     update: jest.fn(),
     create: jest.fn(),
     findByShortUrlWithTotalClicks: jest.fn(),
+    isShortUrlAvailable: jest.fn(),
     getLongUrl: jest.fn(),
     plainTextSearch: jest.fn(),
     rawDirectorySearch: jest.fn(),
@@ -40,7 +41,6 @@ describe('UrlManagementService', () => {
 
     beforeEach(() => {
       userRepository.findById.mockReset()
-      userRepository.findUserByUrl.mockReset()
       urlRepository.findByShortUrlWithTotalClicks.mockReset()
       urlRepository.create.mockReset()
     })
@@ -51,34 +51,33 @@ describe('UrlManagementService', () => {
         service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).not.toHaveBeenCalled()
+      expect(urlRepository.isShortUrlAvailable).not.toHaveBeenCalledWith(
+        shortUrl,
+      )
       expect(urlRepository.create).not.toHaveBeenCalled()
     })
 
     it('throws AlreadyExistsError on existing url', async () => {
       userRepository.findById.mockResolvedValue({ id: userId })
-      userRepository.findUserByUrl.mockResolvedValue({
-        shortUrl,
-        longUrl,
-        email: userId,
-      })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(false)
       await expect(
         service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(AlreadyExistsError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).not.toHaveBeenCalled()
     })
 
     it('processes new non-file url', async () => {
       userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(true)
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
         service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
         { userId, longUrl, shortUrl, source: sourceConsole },
         undefined,
@@ -92,13 +91,14 @@ describe('UrlManagementService', () => {
         mimetype: 'application/json',
       }
       userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(true)
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
         service.createUrl(userId, sourceConsole, shortUrl, longUrl, file),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
         { userId, longUrl, shortUrl, source: sourceConsole },
         {
@@ -119,13 +119,14 @@ describe('UrlManagementService', () => {
       const service = new UrlManagementService(userRepository, urlRepository)
 
       userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(true)
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
         service.createUrl(userId, sourceApi, undefined, longUrl),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(
         expect.stringMatching(/^.{4}$/),
       )
       expect(urlRepository.create).toHaveBeenCalledWith(
