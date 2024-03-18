@@ -43,19 +43,26 @@ export class FileCheckController {
     next()
   }
 
-  public fileExtensionCheck =
+  public fileExtensionAndMimeTypeCheck =
     (allowedExtensions?: string[]) =>
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const file = req.files?.file as fileUpload.UploadedFile | undefined
-      if (
-        file &&
-        !(await this.fileTypeFilterService.hasAllowedType(
-          file,
-          allowedExtensions,
-        ))
-      ) {
-        res.unsupportedMediaType(jsonMessage('File type disallowed.'))
-        return
+
+      if (file) {
+        const fileTypeData =
+          await this.fileTypeFilterService.getExtensionAndMimeType(file)
+        if (
+          fileTypeData.extension === '' ||
+          !(await this.fileTypeFilterService.hasAllowedExtensionType(
+            fileTypeData.extension,
+            allowedExtensions,
+          ))
+        ) {
+          res.unsupportedMediaType(jsonMessage('File type disallowed.'))
+          return
+        }
+
+        file.mimetype = fileTypeData.mimeType
       }
 
       next()

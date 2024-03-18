@@ -14,6 +14,7 @@ export const downloadCsv = (csvString: string, filename: string) => {
   })
 
   if (useIsIE()) {
+    // @ts-ignore: `msSaveBlob` used for old IE versions has been removed as of TypeScript 4.4
     navigator.msSaveBlob(blob, filename)
   } else {
     saveAs(blob, filename)

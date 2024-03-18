@@ -28,6 +28,7 @@ async function downloadClicks(shortUrl: string, onError: () => void) {
   })
 
   if (useIsIE()) {
+    // @ts-ignore: `msSaveBlob` used for old IE versions has been removed as of TypeScript 4.4
     navigator.msSaveBlob(blob, 'clicks.csv')
   } else {
     saveAs(blob, 'clicks.csv')
