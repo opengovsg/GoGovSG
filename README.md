@@ -80,6 +80,13 @@ Because redirects are served directly from the backend, shortlinks can be access
 but that is really being proxied to `localhost:8080/shortlink`. One-time passwords for all log-in attempts on localhost
 are obtained using [maildev](https://github.com/maildev/maildev) and accessed via `http://localhost:1080/`.
 
+### Setting up secrets detection (optional)
+
+For more safety, you may enable secrets detection on pre-commit using GitGuardian.
+
+To set it up, install `ggshield` locally following the [official installation guide](https://github.com/GitGuardian/ggshield#installation).
+Create a personal GitGuardian account, generate an access token key with scanning permissions, then set `GITGUARDIAN_API_KEY` to this key inside a `.env` file in the root folder.
+
 ### Setting up the infrastructure
 
 Much of this step will involve setting up key infrastructure components since we do not have docker-compose
