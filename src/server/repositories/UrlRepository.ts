@@ -175,6 +175,28 @@ export class UrlRepository implements UrlRepositoryInterface {
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
+  /**
+   * @param  {string} shortUrl Short url.
+   * @returns {Promise<boolean>} Returns true if shortUrl is available and false otherwise.
+   */
+  public isShortUrlAvailable: (shortUrl: string) => Promise<boolean> = async (
+    shortUrl,
+  ) => {
+    try {
+      // Cache lookup
+      await this.getLongUrlFromCache(shortUrl)
+      // if long url does not exist, throws error
+      // return false if no error since long url exists
+      return false
+    } catch {
+      // Cache failed, look in database
+      const url = await Url.findOne({
+        where: { shortUrl },
+      })
+      return !url
+    }
+  }
+
   public getLongUrl: (shortUrl: string) => Promise<string> = async (
     shortUrl,
   ) => {
