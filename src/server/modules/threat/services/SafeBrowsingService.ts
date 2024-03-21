@@ -12,6 +12,10 @@ const WEB_RISK_THREAT_TYPES = [
   'SOCIAL_ENGINEERING',
   'MALWARE',
   'UNWANTED_SOFTWARE',
+  // SOCIAL_ENGINEERING_EXTENDED_COVERAGE improves coverage of malicious urls
+  // but may have small amount (<10%) of potential false positives,
+  // see details https://cloud.google.com/web-risk/docs/extended-coverage
+  'SOCIAL_ENGINEERING_EXTENDED_COVERAGE',
 ]
 
 @injectable()
