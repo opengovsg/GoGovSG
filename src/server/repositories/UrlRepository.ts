@@ -484,7 +484,7 @@ export class UrlRepository implements UrlRepositoryInterface {
    */
   private getLongUrlFromDatabase: (shortUrl: string) => Promise<string> =
     async (shortUrl) => {
-      const url = await Url.findOne({
+      const url = await Url.scope('useReplica').findOne({
         where: { shortUrl, state: StorableUrlState.Active },
       })
       if (!url) {
