@@ -146,6 +146,7 @@ After these have been set up, set the environment variables according to the tab
 |API_LINK_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in API created links. Defaults to 8|
 |FF_EXTERNAL_API|No|Boolean, feature flag for enabling the external and admin API. Defaults to false|
 |ADMIN_API_EMAILS|No|Emails with admin API access, separated by commas without spaces. Defaults to none.|
+|FF_USE_REPLICA_FOR_REDIRECTS|No|Boolean, feature flag for using the replica database to look up redirects to long URLs. Defaults to false|
 
 #### Serverless functions for link migration
 
