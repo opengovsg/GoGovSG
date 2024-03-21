@@ -48,7 +48,7 @@ With GoGovSg, citizens are safe in the knowledge that the links are **official**
 
 ## Getting Started
 
-Make sure you have node version `16`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
+Make sure you have node version `18`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
 
 > *For Mac computers with Apple silicon, you will need Rosetta to be installed in order for `docker-compose@v1` to work. You can do so using the following command: `softwareupdate --install-rosetta`.
 
@@ -146,6 +146,7 @@ After these have been set up, set the environment variables according to the tab
 |API_LINK_RANDOM_STR_LENGTH|No|String length of randomly generated shortUrl in API created links. Defaults to 8|
 |FF_EXTERNAL_API|No|Boolean, feature flag for enabling the external and admin API. Defaults to false|
 |ADMIN_API_EMAILS|No|Emails with admin API access, separated by commas without spaces. Defaults to none.|
+|FF_USE_REPLICA_FOR_REDIRECTS|No|Boolean, feature flag for using the replica database to look up redirects to long URLs. Defaults to false|
 
 #### Serverless functions for link migration
 

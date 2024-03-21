@@ -194,6 +194,8 @@ export const databaseUri = process.env.DB_URI as string
 export const masterDatabaseCredentials = parseDbUri(databaseUri)
 export const replicaUri = process.env.REPLICA_URI as string
 export const replicaDatabaseCredentials = parseDbUri(replicaUri)
+export const ffUseReplicaForRedirects =
+  process.env.FF_USE_REPLICA_FOR_REDIRECTS === 'true'
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
 export const redisSessionUri = process.env.REDIS_SESSION_URI as string
 export const redisRedirectUri = process.env.REDIS_REDIRECT_URI as string
@@ -272,3 +274,7 @@ export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
 export const apiAdmins: string[] = process.env.ADMIN_API_EMAILS
   ? process.env.ADMIN_API_EMAILS.split(',')
   : []
+export const sgidClientId = process.env.SGID_CLIENT_ID || ''
+export const sgidPrivateKey = process.env.SGID_PRIVATE_KEY || ''
+export const sgidClientSecret = process.env.SGID_CLIENT_SECRET || ''
+export const sgidApiHostname = process.env.SGID_API_HOSTNAME || ''

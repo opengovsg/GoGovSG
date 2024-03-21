@@ -10,6 +10,7 @@ import { History } from 'history'
 import PrivateRoute from '../../PrivateRoute'
 import HomePage from '../../../../home'
 import LoginPage from '../../../../login'
+import SgidLoginPage from '../../../../sgidLogin'
 import UserPage from '../../../../user'
 import NotFoundPage from '../NotFoundPage'
 import DirectoryPage from '../../../../directory'
@@ -30,6 +31,7 @@ import {
   HOME_PAGE,
   LOGIN_PAGE,
   NOT_FOUND_PAGE,
+  SGID_LOGIN_PAGE,
   USER_PAGE,
 } from '../../../util/types'
 import theme from '../../../theme'
@@ -47,6 +49,7 @@ const Root: FunctionComponent<RootProps> = ({ store, history }: RootProps) => (
           <Switch>
             <Route exact path={HOME_PAGE} component={HomePage} />
             <Route path={LOGIN_PAGE} component={LoginPage} />
+            <Route path={SGID_LOGIN_PAGE} component={SgidLoginPage} />
             <PrivateRoute path={USER_PAGE} component={UserPage} />
             <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
             <PrivateRoute path={DIRECTORY_PAGE} component={DirectoryPage} />

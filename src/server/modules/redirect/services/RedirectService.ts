@@ -4,7 +4,7 @@ import { DependencyIds } from '../../../constants'
 import { NotFoundError } from '../../../util/error'
 import { RedirectResult, RedirectType } from '..'
 import { LinkStatisticsService } from '../../analytics/interfaces'
-import { ogUrl } from '../../../config'
+import { logger, ogUrl } from '../../../config'
 import { CookieArrayReducerService, CrawlerCheckService } from '.'
 
 @injectable()
@@ -54,8 +54,12 @@ export class RedirectService {
     const longUrl = await this.urlRepository.getLongUrl(shortUrl)
 
     // Update clicks and click statistics in database.
-    this.linkStatisticsService.updateLinkStatistics(shortUrl, userAgent)
-
+    try {
+      this.linkStatisticsService.updateLinkStatistics(shortUrl, userAgent)
+    } catch (e) {
+      // updates wrapped in a try-catch block to prevent errors from bubbling up
+      logger.warn('error updating link statistics')
+    }
     if (this.crawlerCheckService.isCrawler(userAgent)) {
       return {
         longUrl,

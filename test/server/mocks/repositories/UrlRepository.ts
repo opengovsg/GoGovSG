@@ -39,6 +39,10 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     throw new Error('Not implemented')
   }
 
+  isShortUrlAvailable: (shortUrl: string) => Promise<boolean> = () => {
+    throw new Error('Not implemented')
+  }
+
   getLongUrl: (shortUrl: string) => Promise<string> = () => {
     throw new Error('Not implemented')
   }

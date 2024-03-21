@@ -7,7 +7,7 @@ import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import { logger, redirectExpiry } from '../config'
+import { ffUseReplicaForRedirects, logger, redirectExpiry } from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -173,6 +173,28 @@ export class UrlRepository implements UrlRepositoryInterface {
     if (!newUrl) throw new Error('Newly-updated url is null')
     this.invalidateCache(shortUrl)
     return this.urlMapper.persistenceToDto(newUrl)
+  }
+
+  /**
+   * @param  {string} shortUrl Short url.
+   * @returns {Promise<boolean>} Returns true if shortUrl is available and false otherwise.
+   */
+  public isShortUrlAvailable: (shortUrl: string) => Promise<boolean> = async (
+    shortUrl,
+  ) => {
+    try {
+      // Cache lookup
+      await this.getLongUrlFromCache(shortUrl)
+      // if long url does not exist, throws error
+      // return false if no error since long url exists
+      return false
+    } catch {
+      // Cache failed, look in database
+      const url = await Url.findOne({
+        where: { shortUrl },
+      })
+      return !url
+    }
   }
 
   public getLongUrl: (shortUrl: string) => Promise<string> = async (
@@ -462,7 +484,10 @@ export class UrlRepository implements UrlRepositoryInterface {
    */
   private getLongUrlFromDatabase: (shortUrl: string) => Promise<string> =
     async (shortUrl) => {
-      const url = await Url.findOne({
+      const url = await (ffUseReplicaForRedirects
+        ? Url.scope('useReplica')
+        : Url
+      ).findOne({
         where: { shortUrl, state: StorableUrlState.Active },
       })
       if (!url) {
