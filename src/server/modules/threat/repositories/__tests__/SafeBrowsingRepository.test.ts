@@ -14,15 +14,14 @@ const { SafeBrowsingRepository } = require('..')
 
 const repository = new SafeBrowsingRepository(new SafeBrowsingMapper())
 
-const durationInSeconds = 1
+const durationInSeconds = 300
 const url = 'https://example.com'
-const matches = [
-  {
-    cacheDuration: `${durationInSeconds}s`,
-  },
-]
+const threat = {
+  threatTypes: ['MALWARE'],
+  expireTime: '2024-03-20T05:29:41.898456500Z',
+}
 
-describe('otp repository redis test', () => {
+describe('safe browsing repository redis test', () => {
   beforeEach(async () => {
     await new Promise<void>((resolve) => {
       redisMockClient.flushall(() => resolve())
@@ -32,8 +31,8 @@ describe('otp repository redis test', () => {
   })
 
   it('returns a value if present', async () => {
-    redisMockClient.set(url, JSON.stringify(matches))
-    await expect(repository.get(url)).resolves.toStrictEqual(matches)
+    redisMockClient.set(url, JSON.stringify(threat))
+    await expect(repository.get(url)).resolves.toStrictEqual(threat)
     expect(redisMockClient.get).toBeCalledWith(url, expect.any(Function))
   })
 
@@ -43,10 +42,10 @@ describe('otp repository redis test', () => {
   })
 
   it('sets a value if specified', async () => {
-    await repository.set(url, matches)
+    await repository.set(url, threat)
     expect(redisMockClient.set).toBeCalledWith(
       url,
-      JSON.stringify(matches),
+      JSON.stringify(threat),
       'EX',
       durationInSeconds,
       expect.any(Function),
