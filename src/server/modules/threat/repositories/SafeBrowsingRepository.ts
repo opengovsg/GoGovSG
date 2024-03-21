@@ -2,46 +2,43 @@
 
 import { inject, injectable } from 'inversify'
 import { safeBrowsingClient } from '../../../redis'
-import { HasCacheDuration } from '../../../repositories/types'
 import * as interfaces from '../interfaces'
 import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
 import { DependencyIds } from '../../../constants'
 import { NotFoundError } from '../../../util/error'
+import { WebRiskThreat } from '../../../repositories/types'
+
+// set default threat cache
+const DEFAULT_CACHE_DURATION_IN_S = 300
 
 @injectable()
 export class SafeBrowsingRepository
   implements interfaces.SafeBrowsingRepository
 {
-  private safeBrowsingMapper: TwoWayMapper<HasCacheDuration[], string>
+  private safeBrowsingMapper: TwoWayMapper<WebRiskThreat, string>
 
   public constructor(
     @inject(DependencyIds.safeBrowsingMapper)
-    safeBrowsingMapper: TwoWayMapper<HasCacheDuration[], string>,
+    safeBrowsingMapper: TwoWayMapper<WebRiskThreat, string>,
   ) {
     this.safeBrowsingMapper = safeBrowsingMapper
   }
 
-  public set: (url: string, matches: HasCacheDuration[]) => Promise<void> = (
+  public set: (url: string, threat: WebRiskThreat) => Promise<void> = (
     url,
-    matches,
+    threat,
   ) => {
     return new Promise((resolve, reject) => {
-      if (!matches.length || !matches[0]) {
+      if (!threat) {
         reject(
-          new NotFoundError(`No matches found for ${url}, should not persist`),
+          new NotFoundError(`No threat found for ${url}, should not persist`),
         )
       }
-      // Threat matches from Safe Browsing API specify a
-      // cache duration in seconds, with an 's' suffix
-      const [{ cacheDuration }] = matches
-      const expiryInSeconds = Number(
-        cacheDuration.substring(0, cacheDuration.length - 1),
-      )
       safeBrowsingClient.set(
         url,
-        this.safeBrowsingMapper.dtoToPersistence(matches),
+        this.safeBrowsingMapper.dtoToPersistence(threat),
         'EX',
-        expiryInSeconds,
+        DEFAULT_CACHE_DURATION_IN_S,
         (redisSetError) => {
           if (redisSetError) {
             reject(redisSetError)
@@ -54,7 +51,7 @@ export class SafeBrowsingRepository
     })
   }
 
-  public get: (url: string) => Promise<HasCacheDuration[] | null> = (url) => {
+  public get: (url: string) => Promise<WebRiskThreat | null> = (url) => {
     return new Promise((resolve, reject) => {
       safeBrowsingClient.get(url, (redisError, string) => {
         if (redisError) {

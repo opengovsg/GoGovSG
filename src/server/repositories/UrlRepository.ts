@@ -7,7 +7,7 @@ import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import { logger, redirectExpiry } from '../config'
+import { ffUseReplicaForRedirects, logger, redirectExpiry } from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
@@ -484,7 +484,10 @@ export class UrlRepository implements UrlRepositoryInterface {
    */
   private getLongUrlFromDatabase: (shortUrl: string) => Promise<string> =
     async (shortUrl) => {
-      const url = await Url.findOne({
+      const url = await (ffUseReplicaForRedirects
+        ? Url.scope('useReplica')
+        : Url
+      ).findOne({
         where: { shortUrl, state: StorableUrlState.Active },
       })
       if (!url) {
