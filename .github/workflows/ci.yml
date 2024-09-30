@@ -67,14 +67,14 @@ jobs:
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
       - name: Configure Datadog Test Visibility
-        uses: datadog/test-visibility-github-action@v1
+        uses: datadog/test-visibility-github-action@v2
         with:
           languages: js
           service: gogovsg
           api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }} --import ${{ env.DD_TRACE_ESM_IMPORT }}
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
@@ -100,14 +100,14 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
       - name: Configure Datadog Test Visibility
-        uses: datadog/test-visibility-github-action@v1
+        uses: datadog/test-visibility-github-action@v2
         with:
           languages: js
           service: gogovsg
           api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test:e2e-headless
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }} --import ${{ env.DD_TRACE_ESM_IMPORT }}
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   integration:
     name: Integration Tests
     runs-on: ubuntu-22.04
@@ -130,14 +130,14 @@ jobs:
       - run: npm run dev &
       - run: sleep 270
       - name: Configure Datadog Test Visibility
-        uses: datadog/test-visibility-github-action@v1
+        uses: datadog/test-visibility-github-action@v2
         with:
           languages: js
           service: gogovsg
           api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test:integration
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }} --import ${{ env.DD_TRACE_ESM_IMPORT }}
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
