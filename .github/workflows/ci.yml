@@ -74,7 +74,7 @@ jobs:
           api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+          NODE_OPTIONS: "--max-old-space-size=8192 -r ${{ env.DD_TRACE_PACKAGE }}"
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
