@@ -66,7 +66,7 @@
     "date-fns-tz": "^1.3.4",
     "dd-trace": "^2.30.1",
     "dotenv": "^16.3.1",
-    "ejs": "^3.1.7",
+    "ejs": "^3.1.10",
     "express": "^4.17.3",
     "express-fileupload": "^1.4.0",
     "express-joi-validation": "^4.0.3",
