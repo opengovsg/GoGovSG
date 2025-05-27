@@ -278,3 +278,7 @@ export const sgidClientId = process.env.SGID_CLIENT_ID || ''
 export const sgidPrivateKey = process.env.SGID_PRIVATE_KEY || ''
 export const sgidClientSecret = process.env.SGID_CLIENT_SECRET || ''
 export const sgidApiHostname = process.env.SGID_API_HOSTNAME || ''
+
+export const userCount = Number(process.env.USER_COUNT) || 12342134
+export const clickCount = Number(process.env.CLICK_COUNT) || 12342134
+export const linkCount = Number(process.env.LINK_COUNT) || 12342134

@@ -1,22 +1,16 @@
-import { inject, injectable } from 'inversify'
-import { DependencyIds } from '../../../constants'
-import { StatisticsRepository } from '../interfaces/StatisticsRepository'
+import { injectable } from 'inversify'
 import * as interfaces from '../interfaces'
 import { GlobalStatistics } from '..'
+import { clickCount, linkCount, userCount } from '../../../config'
 
 @injectable()
 export class StatisticsService implements interfaces.StatisticsService {
-  private statisticsRepository: StatisticsRepository
-
-  public constructor(
-    @inject(DependencyIds.statisticsRepository)
-    statisticsRepository: StatisticsRepository,
-  ) {
-    this.statisticsRepository = statisticsRepository
-  }
-
-  getGlobalStatistics: () => Promise<GlobalStatistics> = async () => {
-    return this.statisticsRepository.getGlobalStatistics()
+  getGlobalStatistics: () => GlobalStatistics = () => {
+    return {
+      userCount,
+      clickCount,
+      linkCount,
+    }
   }
 }
 
