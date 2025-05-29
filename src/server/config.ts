@@ -18,9 +18,6 @@ const SALT_ROUNDS: number = Number(process.env.SALT_ROUNDS) || 10
 const OTP_EXPIRY: number = Number(process.env.OTP_EXPIRY) || 5 * 60
 // in seconds, for URL cache expiry
 const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
-// in seconds, for statistics cache expiry
-const STATISTICS_EXPIRY: number =
-  Number(process.env.STATISTICS_EXPIRY) || 5 * 60
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
@@ -215,7 +212,6 @@ export const gaTrackingId: string | undefined = process.env.GA_TRACKING_ID
 export const saltRounds = SALT_ROUNDS
 export const otpExpiry = OTP_EXPIRY
 export const redirectExpiry = REDIRECT_EXPIRY
-export const statisticsExpiry = STATISTICS_EXPIRY
 export const sessionSettings: SessionSettings = {
   secret: process.env.SESSION_SECRET as string,
   name: 'gogovsg',
@@ -279,6 +275,6 @@ export const sgidPrivateKey = process.env.SGID_PRIVATE_KEY || ''
 export const sgidClientSecret = process.env.SGID_CLIENT_SECRET || ''
 export const sgidApiHostname = process.env.SGID_API_HOSTNAME || ''
 
-export const userCount = Number(process.env.USER_COUNT) || 12342134
-export const clickCount = Number(process.env.CLICK_COUNT) || 12342134
-export const linkCount = Number(process.env.LINK_COUNT) || 12342134
+export const userCount = Number(process.env.USER_COUNT) || 77288
+export const clickCount = Number(process.env.CLICK_COUNT) || 666820545
+export const linkCount = Number(process.env.LINK_COUNT) || 28151439
