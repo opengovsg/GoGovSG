@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -75,10 +75,6 @@ jobs:
       - run: npm run test
         env:
           NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
   testcafe:
     name: End To End Tests
     runs-on: ubuntu-22.04
@@ -89,7 +85,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -118,7 +114,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -168,7 +164,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
