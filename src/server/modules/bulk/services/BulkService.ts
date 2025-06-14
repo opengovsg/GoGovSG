@@ -35,7 +35,7 @@ export class BulkService implements interfaces.BulkService {
 
     return new Promise((resolve, reject) => {
       Papa.parse(dataString, {
-        skipEmptyLines: false,
+        skipEmptyLines: true,
         delimiter: ',',
         complete: () => {
           // check for empty file
@@ -75,60 +75,38 @@ export class BulkService implements interfaces.BulkService {
             )
             const noParsingError = step.errors.length === 0
 
-            switch (true) {
-              case !acceptableLinkCount:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.acceptableLinkCount}`,
-                ])
-                throw new Error(
-                  `File exceeded ${BULK_UPLOAD_MAX_NUM} original URLs to shorten`,
-                )
-              case !onlyOneColumn:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.onlyOneColumn}`,
-                ])
-                throw new Error(
-                  `Row ${
-                    counter + 1
-                  }: ${rowData} contains more than one column of data`,
-                )
-              case !isNotEmpty:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.isNotEmpty}`,
-                ])
-                throw new Error(`Row ${counter + 1} is empty`)
-              case !isValidUrl:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.isValidUrl}`,
-                ])
-                throw new Error(
-                  `Row ${counter + 1}: ${stringData} is not valid`,
-                )
-              case !isNotBlacklisted:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.isNotBlacklisted}`,
-                ])
-                throw new Error(
-                  `Row ${counter + 1}: ${stringData} is blacklisted`,
-                )
-              case !isNotCircularRedirect:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.isNotCircularRedirect}`,
-                ])
-                throw new Error(
-                  `Row ${
-                    counter + 1
-                  }: ${stringData} redirects back to ${ogHostname}`,
-                )
-              case !noParsingError:
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.noParsingError}`,
-                ])
-                throw new Error('Parsing error')
-              default:
-              // no error, do nothing
+            if (
+              acceptableLinkCount &&
+              onlyOneColumn &&
+              isNotBlacklisted &&
+              isNotEmpty &&
+              isValidUrl &&
+              isNotCircularRedirect &&
+              noParsingError
+            ) {
+              longUrls.push(stringData)
+            } else {
+              let errorMessage = `Row ${counter + 1}: `
+              if (!acceptableLinkCount) {
+                errorMessage += 'exceeds maximum number of links'
+              } else if (!onlyOneColumn) {
+                errorMessage += 'has more than one column'
+              } else if (!isNotBlacklisted) {
+                errorMessage += 'contains blacklisted link'
+              } else if (!isNotEmpty) {
+                errorMessage += 'is empty'
+              } else if (!isValidUrl) {
+                errorMessage += 'contains invalid url'
+              } else if (isNotCircularRedirect) {
+                errorMessage += 'contains circular redirect'
+              } else if (!noParsingError) {
+                errorMessage += 'has parsing error'
+              }
+              dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
+                `${BULK_VALIDATION_ERROR_TAGS.isValidUrl}`,
+              ])
+              throw new Error(errorMessage)
             }
-            longUrls.push(stringData)
           }
           counter += 1
         },
@@ -140,10 +118,8 @@ export class BulkService implements interfaces.BulkService {
     async (longUrls) => {
       return Promise.all(
         longUrls.map(async (longUrl) => {
-          return {
-            longUrl,
-            shortUrl: await generateShortUrl(BULK_UPLOAD_RANDOM_STR_LENGTH),
-          }
+          const shortUrl = await generateShortUrl(BULK_UPLOAD_RANDOM_STR_LENGTH)
+          return { shortUrl, longUrl }
         }),
       )
     }

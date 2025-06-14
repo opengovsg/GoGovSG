@@ -2,6 +2,8 @@
 import { UploadedFile } from 'express-fileupload'
 import { BULK_UPLOAD_HEADER } from '../../../../../shared/constants'
 import blackListedSites from '../../../../resources/blacklist'
+import { BulkService } from '../BulkService'
+import { ogHostname } from '../../../../config'
 
 /**
  * Unit tests for BulkService.
@@ -63,66 +65,108 @@ const validUrlTests: UrlTest[] = [
   },
 ]
 
-describe('BulkService tests', () => {
-  afterAll(jest.resetModules)
+describe('BulkService', () => {
+  let bulkService: BulkService
 
-  describe('parseCsv tests', () => {
-    jest.resetModules()
-    jest.mock('../../../../config', () => ({
-      bulkUploadMaxNum: BULK_UPLOAD_MAX_NUM,
-      ogHostname: OG_HOST_NAME,
-    }))
-    const { BulkService } = require('..')
-    const service = new BulkService()
+  beforeEach(() => {
+    bulkService = new BulkService()
+  })
 
-    it('fails if file data string is empty', async () => {
-      await expect(service.parseCsv({})).rejects.toThrowError()
-    })
-
-    it('fails if header does not match BULK_UPLOAD_HEADER', async () => {
+  describe('parseCsv', () => {
+    it('should parse valid CSV with empty rows', async () => {
+      const csvContent = `${BULK_UPLOAD_HEADER}\nhttps://www.data.gov.sg\n\nhttps://www.tech.gov.sg`
       const file = {
-        data: Buffer.from(`Hello, this is ${BULK_UPLOAD_HEADER}\n`),
-        name: 'file.csv',
+        data: Buffer.from(csvContent),
       } as UploadedFile
 
-      await expect(service.parseCsv(file)).rejects.toThrowError()
+      const result = await bulkService.parseCsv(file)
+      expect(result).toEqual([
+        'https://www.data.gov.sg',
+        'https://www.tech.gov.sg',
+      ])
     })
 
-    validUrlTests.forEach((validUrlTest) => {
-      it(validUrlTest.testName, async () => {
-        const file = {
-          data: Buffer.from(`${BULK_UPLOAD_HEADER}\n${validUrlTest.url}`),
-          name: 'file.csv',
-        } as UploadedFile
+    it('should reject empty file', async () => {
+      const file = {
+        data: Buffer.from(''),
+      } as UploadedFile
 
-        await expect(service.parseCsv(file)).resolves.not.toThrow()
-      })
+      await expect(bulkService.parseCsv(file)).rejects.toThrow(
+        'csv file is empty',
+      )
     })
-    invalidUrlTests.forEach((invalidUrlTest) => {
-      it(invalidUrlTest.testName, async () => {
-        const file = {
-          data: Buffer.from(`${BULK_UPLOAD_HEADER}\n${invalidUrlTest.url}`),
-          name: 'file.csv',
-        } as UploadedFile
 
-        await expect(service.parseCsv(file)).rejects.toThrowError()
-      })
+    it('should reject file with invalid header', async () => {
+      const csvContent = 'Invalid Header\nhttps://www.data.gov.sg'
+      const file = {
+        data: Buffer.from(csvContent),
+      } as UploadedFile
+
+      await expect(bulkService.parseCsv(file)).rejects.toThrow(
+        'Row 1: bulk upload header is invalid',
+      )
+    })
+
+    it('should reject file with invalid URL', async () => {
+      const csvContent = `${BULK_UPLOAD_HEADER}\ninvalid-url`
+      const file = {
+        data: Buffer.from(csvContent),
+      } as UploadedFile
+
+      await expect(bulkService.parseCsv(file)).rejects.toThrow(
+        'Row 2: contains invalid url',
+      )
+    })
+
+    it('should reject file with circular redirect', async () => {
+      const csvContent = `${BULK_UPLOAD_HEADER}\nhttps://${ogHostname}/redirect`
+      const file = {
+        data: Buffer.from(csvContent),
+      } as UploadedFile
+
+      await expect(bulkService.parseCsv(file)).rejects.toThrow(
+        'Row 2: contains circular redirect',
+      )
+    })
+
+    it('should reject file with multiple columns', async () => {
+      const csvContent = `${BULK_UPLOAD_HEADER}\nhttps://www.data.gov.sg,extra-column`
+      const file = {
+        data: Buffer.from(csvContent),
+      } as UploadedFile
+
+      await expect(bulkService.parseCsv(file)).rejects.toThrow(
+        'Row 2: has more than one column',
+      )
     })
   })
 
-  describe('generateUrlMappings tests', () => {
-    jest.resetModules()
-    jest.mock('../../../../config', () => ({
-      bulkUploadRandomStrLength: BULK_UPLOAD_RANDOM_STR_LENGTH,
-    }))
-    const { BulkService } = require('..')
-    const service = new BulkService()
+  describe('generateUrlMappings', () => {
+    it('should generate unique short URLs for each long URL', async () => {
+      const longUrls = [
+        'https://www.data.gov.sg',
+        'https://www.tech.gov.sg',
+        'https://www.open.gov.sg',
+      ]
 
-    it('generateUrlMappings should return shortUrls of specified length', async () => {
-      const [urlMapping] = await service.generateUrlMappings([
-        'https://google.com',
-      ])
-      expect(urlMapping.shortUrl).toHaveLength(BULK_UPLOAD_RANDOM_STR_LENGTH)
+      const result = await bulkService.generateUrlMappings(longUrls)
+
+      expect(result).toHaveLength(3)
+      result.forEach((mapping) => {
+        expect(mapping).toHaveProperty('shortUrl')
+        expect(mapping).toHaveProperty('longUrl')
+        expect(mapping.shortUrl).toMatch(/^[a-zA-Z0-9]+$/)
+      })
+
+      // Check that all short URLs are unique
+      const shortUrls = result.map((mapping) => mapping.shortUrl)
+      const uniqueShortUrls = new Set(shortUrls)
+      expect(uniqueShortUrls.size).toBe(shortUrls.length)
+    })
+
+    it('should handle empty array of URLs', async () => {
+      const result = await bulkService.generateUrlMappings([])
+      expect(result).toEqual([])
     })
   })
 })
