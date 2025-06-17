@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -66,11 +66,15 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
-      - run: npm run test
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
+      - name: Configure Datadog Test Visibility
+        uses: datadog/test-visibility-github-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          languages: js
+          service: gogovsg
+          api_key: ${{ secrets.DD_API_KEY }}
+      - run: npm run test
+        env:
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   testcafe:
     name: End To End Tests
     runs-on: ubuntu-22.04
@@ -81,7 +85,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -91,7 +95,15 @@ jobs:
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
+      - name: Configure Datadog Test Visibility
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: js
+          service: gogovsg
+          api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test:e2e-headless
+        env:
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   integration:
     name: Integration Tests
     runs-on: ubuntu-22.04
@@ -102,7 +114,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -113,7 +125,15 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run dev &
       - run: sleep 270
+      - name: Configure Datadog Test Visibility
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: js
+          service: gogovsg
+          api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test:integration
+        env:
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
@@ -144,7 +164,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm

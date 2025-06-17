@@ -1,7 +1,7 @@
 import { GlobalStatistics } from '..'
 
 export interface StatisticsService {
-  getGlobalStatistics: () => Promise<GlobalStatistics>
+  getGlobalStatistics: () => GlobalStatistics
 }
 
 export default StatisticsService

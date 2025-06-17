@@ -41,7 +41,6 @@ import {
 } from './modules/redirect/services'
 import { RedirectController } from './modules/redirect'
 
-import { StatisticsRepository } from './modules/statistics/repositories'
 import { StatisticsService } from './modules/statistics/services'
 import { StatisticsController } from './modules/statistics'
 
@@ -132,7 +131,6 @@ export default () => {
   bindIfUnbound(DependencyIds.redirectService, RedirectService)
   bindIfUnbound(DependencyIds.crawlerCheckService, CrawlerCheckService)
   bindIfUnbound(DependencyIds.statisticsController, StatisticsController)
-  bindIfUnbound(DependencyIds.statisticsRepository, StatisticsRepository)
   bindIfUnbound(DependencyIds.statisticsService, StatisticsService)
   bindIfUnbound(DependencyIds.linksController, RotatingLinksController)
   bindIfUnbound(DependencyIds.sentryController, SentryController)
