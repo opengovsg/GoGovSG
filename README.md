@@ -97,7 +97,7 @@ After these have been set up, set the environment variables according to the tab
 #### Server
 
 |        Environment Variable        | Required | Description/Value                                                                                                                                                                              |
-| :--------------------------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| :--------------------------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
 |              NODE_ENV              |   Yes    | `production`                                                                                                                                                                                   |
 |               DB_URI               |   Yes    | The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`                                                                                                     |
 |               OG_URL               |   Yes    | The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`                                                                                      |
@@ -146,6 +146,9 @@ After these have been set up, set the environment variables according to the tab
 |          FF_EXTERNAL_API           |    No    | Boolean, feature flag for enabling the external and admin API. Defaults to false                                                                                                               |
 |          ADMIN_API_EMAILS          |    No    | Emails with admin API access, separated by commas without spaces. Defaults to none.                                                                                                            |
 |    FF_USE_REPLICA_FOR_REDIRECTS    |    No    | Boolean, feature flag for using the replica database to look up redirects to long URLs. Defaults to false                                                                                      |
+|             USER_COUNT             |    No    | Total count of registered users to display on landing page. Defaults to the data we pulled on April 2025                                                                                       |
+|            CLICK_COUNT             |    No    | Total count of link clicks to display on landing page. Defaults to the data we pulled on April 2025                                                                                            |     |
+|             LINK_COUNT             |    No    | Total count of created links to display on landing page. Defaults to the data we pulled on April 2025                                                                                          |     |     |
 
 #### Serverless functions for link migration
 
@@ -332,4 +335,3 @@ Diagrams for our infrastructure setup can be found [here](https://lucid.app/luci
 ```javascript
 let salt = bcrypt.genSaltSync(10)
 ```
-
