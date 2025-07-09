@@ -35,7 +35,7 @@ The official Singapore government link shortener.
 
 ## Introduction
 
-GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
+GoGovSG is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
 
 There are multiple reasons why we built an official government link shortener:
 
@@ -43,7 +43,7 @@ There are multiple reasons why we built an official government link shortener:
 - Email clients might block other commercial link shorteners if they are listed as **spam** on their site
 - Citizens are afraid of **phishing** when receiving a shortened link and unsure of where it goes
 
-With GoGovSg, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
+With GoGovSG, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
 
 ## Getting Started
 
