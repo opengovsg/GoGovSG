@@ -35,7 +35,7 @@ The official Singapore government link shortener.
 
 ## Introduction
 
-GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
+GoGovSG is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
 
 There are multiple reasons why we built an official government link shortener:
 
@@ -43,7 +43,7 @@ There are multiple reasons why we built an official government link shortener:
 - Email clients might block other commercial link shorteners if they are listed as **spam** on their site
 - Citizens are afraid of **phishing** when receiving a shortened link and unsure of where it goes
 
-With GoGovSg, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
+With GoGovSG, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
 
 ## Getting Started
 
@@ -97,7 +97,7 @@ After these have been set up, set the environment variables according to the tab
 #### Server
 
 |        Environment Variable        | Required | Description/Value                                                                                                                                                                              |
-| :--------------------------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| :--------------------------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |              NODE_ENV              |   Yes    | `production`                                                                                                                                                                                   |
 |               DB_URI               |   Yes    | The postgres connection string, e.g. `postgres://postgres:postgres@postgres:5432/postgres`                                                                                                     |
 |               OG_URL               |   Yes    | The origin url, used for both google analytics and circular-redirect prevention. E.g. `https://go.gov.sg`                                                                                      |
@@ -147,8 +147,8 @@ After these have been set up, set the environment variables according to the tab
 |          ADMIN_API_EMAILS          |    No    | Emails with admin API access, separated by commas without spaces. Defaults to none.                                                                                                            |
 |    FF_USE_REPLICA_FOR_REDIRECTS    |    No    | Boolean, feature flag for using the replica database to look up redirects to long URLs. Defaults to false                                                                                      |
 |             USER_COUNT             |    No    | Total count of registered users to display on landing page. Defaults to the data we pulled on April 2025                                                                                       |
-|            CLICK_COUNT             |    No    | Total count of link clicks to display on landing page. Defaults to the data we pulled on April 2025                                                                                            |     |
-|             LINK_COUNT             |    No    | Total count of created links to display on landing page. Defaults to the data we pulled on April 2025                                                                                          |     |     |
+|            CLICK_COUNT             |    No    | Total count of link clicks to display on landing page. Defaults to the data we pulled on April 2025                                                                                            |
+|             LINK_COUNT             |    No    | Total count of created links to display on landing page. Defaults to the data we pulled on April 2025                                                                                          |
 
 #### Serverless functions for link migration
 
