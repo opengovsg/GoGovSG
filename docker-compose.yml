@@ -28,7 +28,6 @@ services:
       - REDIS_SAFE_BROWSING_URI=redis://redis:6379/4
       - SESSION_SECRET=thiscouldbeanything
       - GA_TRACKING_ID=UA-139330318-1
-      - SGID_API_HOSTNAME=https://api.id.gov.sg
 
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
@@ -110,7 +109,7 @@ services:
       dockerfile: Dockerfile.maildev-logging
     command: bin/maildev --web 80 --smtp 25 --verbose
     ports:
-      - "1080:80"
+      - '1080:80'
 
 volumes:
   pgdata:
