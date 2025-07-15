@@ -28,16 +28,23 @@ export const hasApiKeySchema = Joi.object({
   userId: Joi.number().required(),
 })
 
+const singleTagSchema = Joi.string()
+  .pattern(/^[A-Za-z0-9-_]+$/)
+  .max(25)
+
 const tagSchema = Joi.array()
   .max(MAX_NUM_TAGS_PER_LINK)
   .optional()
+  // letters, numbers, hyphens, underscores, 25 digits
   .items(
-    Joi.string().custom((tag: string, helpers) => {
-      if (!isValidTag(tag)) {
-        return helpers.message({ custom: `tag: ${tag} format is invalid` })
-      }
-      return tag
-    }),
+    singleTagSchema
+      .custom((tag: string, helpers) => {
+        if (!isValidTag(tag)) {
+          return helpers.error('tag:invalid')
+        }
+        return tag
+      })
+      .messages({ 'tag:invalid': 'Tag format is invalid.' }),
   )
   .unique((a, b) => a === b)
 
@@ -60,13 +67,13 @@ export const userTagsQueryConditions = Joi.object({
     .min(3)
     .custom((tag: string, helpers) => {
       if (!isValidTag(tag)) {
-        return helpers.message({
-          custom: `tag: ${tag} query format is invalid.`,
-        })
+        return helpers.error('tag:invalid')
       }
       return tag
     })
+    .messages({ 'tag:invalid': 'Tag format is invalid.' })
     .required(),
+
   limit: Joi.number().required(),
 })
 
