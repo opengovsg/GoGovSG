@@ -116,7 +116,6 @@ describe('LoginController', () => {
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
 
-    const getRedisKey = jest.fn()
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
     const getOtpForEmail = jest.fn()
@@ -125,7 +124,7 @@ describe('LoginController', () => {
     const authService = new AuthService(
       { hash, compare },
       { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
-      { getRedisKey, deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
+      { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       new UserRepository(new UserMapper(urlMapper), urlMapper),
     )
     const controller = new LoginController(authService)
@@ -202,7 +201,6 @@ describe('LoginController', () => {
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
 
-    const getRedisKey = jest.fn()
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
     const getOtpForEmail = jest.fn()
@@ -221,7 +219,7 @@ describe('LoginController', () => {
     const authService = new AuthService(
       { hash, compare },
       { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
-      { getRedisKey, deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
+      { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       userRepository,
     )
 
