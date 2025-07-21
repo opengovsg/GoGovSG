@@ -1,7 +1,7 @@
 import httpMocks from 'node-mocks-http'
 import {
   createRequestWithEmail,
-  createRequestWithEmailAndOtp,
+  createRequestWithEmailAndIpAndOtp,
   createRequestWithUser,
   userModelMock,
 } from '../../../../../test/server/api/util'
@@ -116,6 +116,7 @@ describe('LoginController', () => {
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
 
+    const getRedisKey = jest.fn()
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
     const getOtpForEmail = jest.fn()
@@ -124,7 +125,7 @@ describe('LoginController', () => {
     const authService = new AuthService(
       { hash, compare },
       { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
-      { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
+      { getRedisKey, deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       new UserRepository(new UserMapper(urlMapper), urlMapper),
     )
     const controller = new LoginController(authService)
@@ -152,6 +153,7 @@ describe('LoginController', () => {
       expect(res.ok).toHaveBeenCalled()
       expect(setOtpForEmail).toHaveBeenCalledWith(
         email,
+        ip,
         expect.objectContaining({
           hashedOtp: otp,
           retries: expect.any(Number),
@@ -190,6 +192,7 @@ describe('LoginController', () => {
   describe('verifyOtp tests', () => {
     const email = 'aa@open.test.sg'
     const otp = '1'
+    const ip = '1.1.1.1' // This should match the IP set in createRequestWithEmailAndIpAndOtp
 
     const hash = jest.fn()
     const compare = jest.fn()
@@ -199,6 +202,7 @@ describe('LoginController', () => {
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
 
+    const getRedisKey = jest.fn()
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
     const getOtpForEmail = jest.fn()
@@ -217,7 +221,7 @@ describe('LoginController', () => {
     const authService = new AuthService(
       { hash, compare },
       { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
-      { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
+      { getRedisKey, deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       userRepository,
     )
 
@@ -243,9 +247,9 @@ describe('LoginController', () => {
       test('valid email and otp', async () => {
         const user = { id: 1, email }
 
-        getOtpForEmail.mockImplementation((e) =>
+        getOtpForEmail.mockImplementation((e, i) =>
           Promise.resolve(
-            e === email
+            e === email && i === ip
               ? {
                   hashedOtp: otp,
                   retries: 100,
@@ -253,13 +257,13 @@ describe('LoginController', () => {
               : null,
           ),
         )
-        const req = createRequestWithEmailAndOtp(email, otp)
+        const req = createRequestWithEmailAndIpAndOtp(email, ip, otp)
         const res = getMockResponse()
         findOrCreateWithEmail.mockResolvedValue(user)
 
         await controller.verifyOtp(req, res)
 
-        expect(deleteOtpByEmail).toHaveBeenCalledWith(email)
+        expect(deleteOtpByEmail).toHaveBeenCalledWith(email, ip)
         expect(req.session!.user).toStrictEqual(user)
         expect(res.ok).toHaveBeenCalled()
       })
@@ -267,9 +271,9 @@ describe('LoginController', () => {
       test('valid email, wrong otp and expiring', async () => {
         const badOtp = '0'
 
-        getOtpForEmail.mockImplementation((e) =>
+        getOtpForEmail.mockImplementation((e, i) =>
           Promise.resolve(
-            e === email
+            e === email && i === ip
               ? {
                   hashedOtp: otp,
                   retries: 1,
@@ -277,12 +281,12 @@ describe('LoginController', () => {
               : null,
           ),
         )
-        const req = createRequestWithEmailAndOtp(email, badOtp)
+        const req = createRequestWithEmailAndIpAndOtp(email, ip, badOtp)
         const res = getMockResponse()
 
         await controller.verifyOtp(req, res)
 
-        expect(deleteOtpByEmail).toHaveBeenCalledWith(email)
+        expect(deleteOtpByEmail).toHaveBeenCalledWith(email, ip)
         expect(req.session!.user).toBeUndefined()
         expect(res.unauthorized).toHaveBeenCalled()
       })
@@ -290,7 +294,7 @@ describe('LoginController', () => {
       test('valid email and no otp in cache', async () => {
         getOtpForEmail.mockResolvedValue(null)
 
-        const req = createRequestWithEmailAndOtp(email, otp)
+        const req = createRequestWithEmailAndIpAndOtp(email, ip, otp)
         const res = getMockResponse()
 
         await controller.verifyOtp(req, res)
@@ -302,9 +306,9 @@ describe('LoginController', () => {
 
       test('valid email and wrong otp with retries left', async () => {
         const badOtp = '0'
-        getOtpForEmail.mockImplementation((e) =>
+        getOtpForEmail.mockImplementation((e, i) =>
           Promise.resolve(
-            e === email
+            e === email && i === ip
               ? {
                   hashedOtp: otp,
                   retries: 100,
@@ -313,12 +317,12 @@ describe('LoginController', () => {
           ),
         )
 
-        const req = createRequestWithEmailAndOtp(email, badOtp)
+        const req = createRequestWithEmailAndIpAndOtp(email, ip, badOtp)
         const res = getMockResponse()
 
         await controller.verifyOtp(req, res)
 
-        expect(setOtpForEmail).toHaveBeenCalledWith(email, {
+        expect(setOtpForEmail).toHaveBeenCalledWith(email, ip, {
           hashedOtp: otp,
           retries: 99,
         })
@@ -327,9 +331,9 @@ describe('LoginController', () => {
       })
 
       test('no email and has valid otp in request', async () => {
-        getOtpForEmail.mockImplementation((e) =>
+        getOtpForEmail.mockImplementation((e, i) =>
           Promise.resolve(
-            e === email
+            e === email && i === ip
               ? {
                   hashedOtp: otp,
                   retries: 100,
@@ -337,7 +341,7 @@ describe('LoginController', () => {
               : null,
           ),
         )
-        const req = createRequestWithEmailAndOtp(undefined, '1')
+        const req = createRequestWithEmailAndIpAndOtp(undefined, ip, otp)
         const res = getMockResponse()
 
         await controller.verifyOtp(req, res)
@@ -351,7 +355,7 @@ describe('LoginController', () => {
 
     test('cache down', async () => {
       getOtpForEmail.mockRejectedValue(new Error())
-      const req = createRequestWithEmailAndOtp(email, otp)
+      const req = createRequestWithEmailAndIpAndOtp(email, ip, otp)
       const res = getMockResponse()
 
       await controller.verifyOtp(req, res)
@@ -363,9 +367,9 @@ describe('LoginController', () => {
     })
 
     test('db down', async () => {
-      getOtpForEmail.mockImplementation((e) =>
+      getOtpForEmail.mockImplementation((e, i) =>
         Promise.resolve(
-          e === email
+          e === email && i === ip
             ? {
                 hashedOtp: otp,
                 retries: 100,
@@ -375,7 +379,7 @@ describe('LoginController', () => {
       )
       findOrCreateWithEmail.mockRejectedValue(new Error())
 
-      const req = createRequestWithEmailAndOtp(email, otp)
+      const req = createRequestWithEmailAndIpAndOtp(email, ip, otp)
       const res = getMockResponse()
 
       await controller.verifyOtp(req, res)
