@@ -2,14 +2,6 @@ import { StorableOtp } from '../../../repositories/types'
 
 export interface OtpRepository {
   /**
-   * Get the redis key for the otp associated with the user with the input email and IP.
-   * @param  {string} email Email of the user.
-   * @param  {string} ip IP address of the user.
-   * @returns Promise that resolves to the redis key.
-   */
-  getRedisKey(email: string, ip: string): string
-
-  /**
    * Delete the otp associated with the user with the input email and IP.
    * @param  {string} email Email of the user.
    * @param  {string} ip IP address of the user.
