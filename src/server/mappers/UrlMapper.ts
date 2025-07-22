@@ -32,6 +32,7 @@ export class UrlMapper implements Mapper<StorableUrl, UrlType> {
       contactEmail: urlType.contactEmail,
       source: urlType.source,
       tagStrings: urlType.tagStrings,
+      safeBrowsingExpiry: urlType.safeBrowsingExpiry,
     }
   }
 }

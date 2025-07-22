@@ -84,6 +84,7 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           clicks: 0,
           source: StorableUrlSource.Console,
           tagStrings: '',
+          safeBrowsingExpiry: null,
         },
       ],
       count: 0,
