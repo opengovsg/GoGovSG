@@ -59,7 +59,7 @@ describe('RedirectService', () => {
     )
   })
 
-  describe('referrer validation', () => {
+  describe('redirectFor', () => {
     it('should allow direct redirect for exact ogUrl match when user has not visited before', async () => {
       const result = await redirectService.redirectFor(
         'test',
