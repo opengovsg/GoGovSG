@@ -36,27 +36,24 @@ const mockLinkStatisticsService = {
 }
 
 describe('RedirectService', () => {
-  let redirectService: RedirectService
+  // Create service instance with mocked dependencies
+  const redirectService = new RedirectService(
+    mockUrlRepository as unknown as UrlRepositoryInterface,
+    mockCrawlerCheckService as unknown as CrawlerCheckService,
+    mockCookieArrayReducerService as unknown as CookieArrayReducerService,
+    mockLinkStatisticsService as unknown as LinkStatisticsService,
+  )
 
   beforeEach(() => {
-    // Reset mocks
     jest.clearAllMocks()
 
-    // Setup default mock returns
+    // Setup default mock returns after clearing
     mockUrlRepository.getLongUrl.mockResolvedValue('https://example.com')
     mockCrawlerCheckService.isCrawler.mockReturnValue(false)
     mockCookieArrayReducerService.userHasVisitedShortlink.mockReturnValue(false)
     mockCookieArrayReducerService.writeShortlinkToCookie.mockReturnValue([
       'test',
     ])
-
-    // Create service instance with mocked dependencies
-    redirectService = new RedirectService(
-      mockUrlRepository as unknown as UrlRepositoryInterface,
-      mockCrawlerCheckService as unknown as CrawlerCheckService,
-      mockCookieArrayReducerService as unknown as CookieArrayReducerService,
-      mockLinkStatisticsService as unknown as LinkStatisticsService,
-    )
   })
 
   describe('redirectFor', () => {
