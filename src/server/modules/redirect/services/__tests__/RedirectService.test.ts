@@ -8,12 +8,14 @@ import { RedirectType } from '../..'
 const ogUrl = 'https://go.gov.sg'
 
 // Mock the config module
-jest.mock('../../../../config', () => ({
-  logger: {
-    warn: jest.fn(),
-  },
-  ogUrl,
-}))
+jest.mock('../../../../config', () => {
+  return {
+    logger: {
+      warn: jest.fn(),
+    },
+    ogUrl: 'https://go.gov.sg',
+  }
+})
 
 // Mock dependencies
 const mockUrlRepository = {
@@ -58,7 +60,7 @@ describe('RedirectService', () => {
   })
 
   describe('referrer validation', () => {
-    it('should show transition page for exact ogUrl match when user has not visited before', async () => {
+    it('should allow direct redirect for exact ogUrl match when user has not visited before', async () => {
       const result = await redirectService.redirectFor(
         'test',
         undefined,
@@ -66,10 +68,10 @@ describe('RedirectService', () => {
         ogUrl,
       )
 
-      expect(result.redirectType).toBe(RedirectType.TransitionPage)
+      expect(result.redirectType).toBe(RedirectType.Direct)
     })
 
-    it('should show transition page for ogUrl with path when user has not visited before', async () => {
+    it('should allow direct redirect for ogUrl with path when user has not visited before', async () => {
       const result = await redirectService.redirectFor(
         'test',
         undefined,
@@ -77,10 +79,10 @@ describe('RedirectService', () => {
         `${ogUrl}/some-path`,
       )
 
-      expect(result.redirectType).toBe(RedirectType.TransitionPage)
+      expect(result.redirectType).toBe(RedirectType.Direct)
     })
 
-    it('should show transition page for ogUrl with query params when user has not visited before', async () => {
+    it('should allow direct redirect for ogUrl with query params when user has not visited before', async () => {
       const result = await redirectService.redirectFor(
         'test',
         undefined,
@@ -88,7 +90,7 @@ describe('RedirectService', () => {
         `${ogUrl}?param=value`,
       )
 
-      expect(result.redirectType).toBe(RedirectType.TransitionPage)
+      expect(result.redirectType).toBe(RedirectType.Direct)
     })
 
     it('should show transition page for ogUrl with different protocol when user has not visited before', async () => {
