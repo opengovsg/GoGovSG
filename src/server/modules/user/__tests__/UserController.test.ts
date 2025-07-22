@@ -23,6 +23,7 @@ const urlManagementService = {
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
   bulkCreate: jest.fn(),
+  deactivateMaliciousShortUrl: jest.fn(),
 }
 
 const tagManagementService = {

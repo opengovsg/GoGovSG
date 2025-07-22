@@ -92,3 +92,9 @@ export type WebRiskThreat = {
   threatTypes: string[]
   expireTime: string
 }
+
+export type RedirectDestination = {
+  longUrl: string
+  isFile: boolean
+  safeBrowsingExpiry: string | null
+}

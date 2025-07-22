@@ -597,12 +597,22 @@ describe('UrlRepository', () => {
 
   describe('getLongUrl', () => {
     it('should return from db when cache is empty', async () => {
-      await expect(repository.getLongUrl('a')).resolves.toBe('aa')
+      await expect(repository.getLongUrl('a')).resolves.toEqual({
+        longUrl: 'aa',
+        isFile: false,
+        safeBrowsingExpiry: null,
+      })
     })
 
     it('should return from cache when cache is filled', async () => {
-      redisMockClient.set('a', 'aaa')
-      await expect(repository.getLongUrl('a')).resolves.toBe('aaa')
+      // Arrange
+      const cacheUrl = {
+        longUrl: 'aaa',
+        isFile: false,
+        safeBrowsingExpiry: null,
+      }
+      redisMockClient.set('a', JSON.stringify(cacheUrl))
+      await expect(repository.getLongUrl('a')).resolves.toEqual(cacheUrl)
     })
 
     it('should return from db when cache is down', async () => {
@@ -613,7 +623,11 @@ describe('UrlRepository', () => {
         callback(new Error('Cache down'), 'Error')
         return false
       })
-      await expect(repository.getLongUrl('a')).resolves.toBe('aa')
+      await expect(repository.getLongUrl('a')).resolves.toEqual({
+        longUrl: 'aa',
+        isFile: false,
+        safeBrowsingExpiry: null,
+      })
     })
   })
 
@@ -679,5 +693,35 @@ describe('UrlRepository', () => {
         expect.objectContaining({ useMaster: true }),
       )
     })
+  })
+
+  describe('updateSafeBrowsingExpiry', () => {
+    it('should throw NotFoundError if the shortUrl does not exist', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+      const expiry = new Date(Date.now() + 1000)
+      jest.spyOn(urlModelMock, 'findOne').mockResolvedValue(null)
+
+      // Act & Assert
+      await expect(
+        repository.updateSafeBrowsingExpiry(shortUrl, expiry),
+      ).rejects.toThrow(NotFoundError)
+    })
+
+    it.skip('should update the safe browsing expiry for an existing shortUrl', () => {})
+  })
+
+  describe('deactivateShortUrl', () => {
+    it('should throw NotFoundError if the shortUrl does not exist', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+
+      // Act & Assert
+      await expect(repository.deactivateShortUrl(shortUrl)).rejects.toThrow(
+        NotFoundError,
+      )
+    })
+
+    it.skip('should deactivate an existing shortUrl', () => {})
   })
 })
