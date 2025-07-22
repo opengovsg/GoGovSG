@@ -131,7 +131,7 @@ describe('RedirectService', () => {
         'test',
         undefined,
         'Mozilla/5.0',
-        `https://staging.${ogUrl}.malicious.com`,
+        'https://staging.go.gov.sg.malicious.com',
       )
 
       expect(result.redirectType).toBe(RedirectType.TransitionPage)
