@@ -87,13 +87,18 @@ export function createRequestWithEmail(email: any): Request {
  * @param  {any} user
  * @returns A mock Request with the input email and otp.
  */
-export function createRequestWithEmailAndOtp(email: any, otp: any): Request {
+export function createRequestWithEmailAndIpAndOtp(
+  email: any,
+  ip: string,
+  otp: any,
+): Request {
   return httpMocks.createRequest({
     session: {},
     body: {
       email,
       otp,
     },
+    ip,
   })
 }
 
