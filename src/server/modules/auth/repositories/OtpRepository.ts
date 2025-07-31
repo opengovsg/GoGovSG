@@ -19,9 +19,17 @@ export class OtpRepository implements interfaces.OtpRepository {
     this.otpMapper = otpMapper
   }
 
-  public deleteOtpByEmail: (email: string) => Promise<void> = (email) => {
+  private getRedisKey(email: string, ip: string): string {
+    return `${email}:${ip}`
+  }
+
+  public deleteOtpByEmail: (email: string, ip: string) => Promise<void> = (
+    email,
+    ip,
+  ) => {
     return new Promise((resolve, reject) => {
-      otpClient.del(email, (redisDelError, resdisDelResponse) => {
+      const key = this.getRedisKey(email, ip)
+      otpClient.del(key, (redisDelError, resdisDelResponse) => {
         if (redisDelError || resdisDelResponse !== 1) {
           reject(redisDelError)
           return
@@ -32,13 +40,15 @@ export class OtpRepository implements interfaces.OtpRepository {
     })
   }
 
-  public setOtpForEmail: (email: string, otp: StorableOtp) => Promise<void> = (
-    email,
-    otp,
-  ) => {
+  public setOtpForEmail: (
+    email: string,
+    ip: string,
+    otp: StorableOtp,
+  ) => Promise<void> = (email, ip, otp) => {
     return new Promise((resolve, reject) => {
+      const key = this.getRedisKey(email, ip)
       otpClient.set(
-        email,
+        key,
         this.otpMapper.dtoToPersistence(otp),
         'EX',
         otpExpiry,
@@ -54,11 +64,13 @@ export class OtpRepository implements interfaces.OtpRepository {
     })
   }
 
-  public getOtpForEmail: (email: string) => Promise<StorableOtp | null> = (
-    email,
-  ) => {
+  public getOtpForEmail: (
+    email: string,
+    ip: string,
+  ) => Promise<StorableOtp | null> = (email, ip) => {
     return new Promise((resolve, reject) => {
-      otpClient.get(email, (redisError, string) => {
+      const key = this.getRedisKey(email, ip)
+      otpClient.get(key, (redisError, string) => {
         if (redisError) {
           reject(redisError)
           return

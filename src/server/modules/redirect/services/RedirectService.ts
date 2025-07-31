@@ -68,7 +68,7 @@ export class RedirectService {
       }
     }
 
-    const isFromTrustedPage = referrer.startsWith(ogUrl)
+    const isFromTrustedPage = RedirectService.isFromTrustedPage(referrer)
 
     const renderTransitionPage =
       !this.cookieArrayReducerService.userHasVisitedShortlink(
@@ -87,6 +87,23 @@ export class RedirectService {
       redirectType: renderTransitionPage
         ? RedirectType.TransitionPage
         : RedirectType.Direct,
+    }
+  }
+
+  /**
+   * Checks whether the referrer is from a trusted page (same origin as ogUrl).
+   * This prevents malicious sites from bypassing the transition page.
+   * @param {string} referrer - The referrer URL to check.
+   * @returns {boolean} - True if referrer is from trusted origin, false otherwise.
+   */
+  private static isFromTrustedPage(referrer: string): boolean {
+    try {
+      const referrerUrl = new URL(referrer)
+      const trustedUrl = new URL(ogUrl)
+      return referrerUrl.origin === trustedUrl.origin
+    } catch {
+      // If referrer is not a valid URL, treat as untrusted
+      return false
     }
   }
 

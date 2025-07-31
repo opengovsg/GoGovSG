@@ -68,7 +68,7 @@ export class LoginController {
     const { email, otp }: VerifyOtpRequest = req.body
 
     try {
-      const user = await this.authService.verifyOtp(email, otp)
+      const user = await this.authService.verifyOtp(email, otp, getIp(req))
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
       dogstatsd.increment(OTP_VERIFY_SUCCESS, 1, 1)
