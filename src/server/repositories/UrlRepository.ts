@@ -208,8 +208,10 @@ export class UrlRepository implements UrlRepositoryInterface {
       } catch {
         // Cache failed, look in database
         const redirectDestination = await this.getLongUrlFromDatabase(shortUrl)
-        this.cacheShortUrl(shortUrl, redirectDestination).catch((error) =>
-          logger.error(`Unable to cache short URL: ${error}`),
+        // FIXME: Cache the entire RedirectDestination object once all app
+        // clients are updated to use the new RedirectDestination type.
+        this.cacheShortUrl(shortUrl, redirectDestination.longUrl).catch(
+          (error) => logger.error(`Unable to cache short URL: ${error}`),
         )
         return redirectDestination
       }
@@ -533,11 +535,22 @@ export class UrlRepository implements UrlRepositoryInterface {
             const redirectDestination = JSON.parse(cacheLongUrl)
             resolve(redirectDestination)
           } catch (_) {
-            reject(
-              new NotFoundError(
-                `longUrl not found in cache:\tshortUrl=${shortUrl}`,
-              ),
+            logger.info(
+              `Cache lookup returned a string instead of an object:\tshortUrl=${shortUrl}`,
             )
+            resolve({
+              longUrl: cacheLongUrl,
+              isFile: false,
+              safeBrowsingExpiry: null,
+            })
+
+            // FIXME: Throw NotFoundError once all app clients are updated to
+            // use the new RedirectDestination type.
+            // reject(
+            //   new NotFoundError(
+            //     `longUrl not found in cache:\tshortUrl=${shortUrl}`,
+            //   ),
+            // )
           }
         }
       }),
@@ -549,23 +562,35 @@ export class UrlRepository implements UrlRepositoryInterface {
    * @param  {string} shortUrl Short url.
    * @param  {string} longUrl Long url.
    */
-  private cacheShortUrl: (
-    shortUrl: string,
-    redirectDestination: RedirectDestination,
-  ) => Promise<void> = (shortUrl, redirectDestination) => {
-    return new Promise((resolve, reject) => {
-      redirectClient.set(
-        shortUrl,
-        JSON.stringify(redirectDestination),
-        'EX',
-        redirectExpiry,
-        (err) => {
+  private cacheShortUrl: (shortUrl: string, longUrl: string) => Promise<void> =
+    (shortUrl, longUrl) => {
+      return new Promise((resolve, reject) => {
+        redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
           if (err) reject(err)
           else resolve()
-        },
-      )
-    })
-  }
+        })
+      })
+    }
+
+  // FIXME: This is the future implementation of the cacheShortUrl method to be
+  // used once all app clients are updated to use the new RedirectDestination
+  // private cacheShortUrl: (
+  //   shortUrl: string,
+  //   redirectDestination: RedirectDestination,
+  // ) => Promise<void> = (shortUrl, redirectDestination) => {
+  //   return new Promise((resolve, reject) => {
+  //     redirectClient.set(
+  //       shortUrl,
+  //       JSON.stringify(redirectDestination),
+  //       'EX',
+  //       redirectExpiry,
+  //       (err) => {
+  //         if (err) reject(err)
+  //         else resolve()
+  //       },
+  //     )
+  //   })
+  // }
 
   /**
    * Generates the ranking algorithm to be used in the ORDER BY clause in the
