@@ -8,6 +8,7 @@ import { UrlClicks } from './statistics/clicks'
 import { syncFunctions } from './functions'
 import { Tag } from './tag'
 import { Job, JobItem } from './job'
+import { DEV_ENV } from '../config'
 
 // One user can create many urls but each url can only be mapped to one user.
 User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
@@ -45,6 +46,8 @@ UrlClicks.belongsTo(Url, { foreignKey: 'shortUrl' })
  * Initialise the database table.
  */
 export default async () => {
-  await sequelize.sync()
+  if (DEV_ENV) {
+    await sequelize.sync()
+  }
   await syncFunctions()
 }
