@@ -40,6 +40,7 @@ const mockMailer = {
   mailOTP: jest.fn(),
   mailJobFailure: jest.fn(),
   mailJobSuccess: jest.fn(),
+  mailDeactivatedMaliciousShortUrl: jest.fn(),
 }
 
 const service = new JobManagementService(

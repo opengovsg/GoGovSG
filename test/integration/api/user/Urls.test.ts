@@ -86,7 +86,7 @@ describe('Url integration tests', () => {
       tagStrings: '',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
-      safeBrowsingExpiry: null,
+      safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
     })
   })
 
@@ -109,7 +109,7 @@ describe('Url integration tests', () => {
       tagStrings: '',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
-      safeBrowsingExpiry: null,
+      safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
     })
   })
 
@@ -153,7 +153,7 @@ describe('Url integration tests', () => {
       tagStrings: '',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
-      safeBrowsingExpiry: null,
+      safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
     })
 
     // Should be able to get updated link URL
@@ -175,7 +175,7 @@ describe('Url integration tests', () => {
           tagStrings: '',
           createdAt: expect.stringMatching(DATETIME_REGEX),
           updatedAt: expect.stringMatching(DATETIME_REGEX),
-          safeBrowsingExpiry: null,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
         },
       ],
       count: 1,
@@ -207,7 +207,7 @@ describe('Url integration tests', () => {
       tagStrings: '',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
-      safeBrowsingExpiry: null,
+      safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
     })
 
     // Should be able to get updated file URL
@@ -229,7 +229,7 @@ describe('Url integration tests', () => {
           tagStrings: '',
           createdAt: expect.stringMatching(DATETIME_REGEX),
           updatedAt: expect.stringMatching(DATETIME_REGEX),
-          safeBrowsingExpiry: null,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
         },
       ],
       count: 1,

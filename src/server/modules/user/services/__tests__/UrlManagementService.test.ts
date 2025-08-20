@@ -5,6 +5,7 @@ import {
   AlreadyOwnLinkError,
   NotFoundError,
 } from '../../../../util/error'
+import { DATETIME_REGEX } from '../../../../../../test/integration/util/helpers'
 
 describe('UrlManagementService', () => {
   const userRepository = {
@@ -28,9 +29,23 @@ describe('UrlManagementService', () => {
     plainTextSearch: jest.fn(),
     rawDirectorySearch: jest.fn(),
     bulkCreate: jest.fn(),
+    updateSafeBrowsingExpiry: jest.fn(),
+    deactivateShortUrl: jest.fn(),
   }
 
-  const service = new UrlManagementService(userRepository, urlRepository)
+  const mockMailer = {
+    initMailer: jest.fn(),
+    mailOTP: jest.fn(),
+    mailJobSuccess: jest.fn(),
+    mailJobFailure: jest.fn(),
+    mailDeactivatedMaliciousShortUrl: jest.fn(),
+  }
+
+  const service = new UrlManagementService(
+    userRepository,
+    urlRepository,
+    mockMailer,
+  )
 
   describe('createUrl', () => {
     const userId = 2
@@ -79,7 +94,13 @@ describe('UrlManagementService', () => {
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl, source: sourceConsole },
+        {
+          userId,
+          longUrl,
+          shortUrl,
+          source: sourceConsole,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+        },
         undefined,
       )
     })
@@ -100,7 +121,13 @@ describe('UrlManagementService', () => {
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
       expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl, source: sourceConsole },
+        {
+          userId,
+          longUrl,
+          shortUrl,
+          source: sourceConsole,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+        },
         {
           data: file.data,
           mimetype: file.mimetype,
@@ -134,6 +161,7 @@ describe('UrlManagementService', () => {
           userId,
           longUrl,
           shortUrl: expect.stringMatching(/^.{4}$/),
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
           source: sourceApi,
         },
         undefined,
@@ -150,6 +178,7 @@ describe('UrlManagementService', () => {
       state: undefined,
       description: 'An agency',
       contactEmail: 'contact-us@agency.gov.sg',
+      safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
     }
     const file = {
       data: Buffer.from(''),
@@ -355,6 +384,56 @@ describe('UrlManagementService', () => {
         urlMappings,
         undefined,
       })
+    })
+  })
+
+  describe('deactivateMaliciousShortUrl', () => {
+    it('should throw NotFoundError if the shortUrl does not exist', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+      urlRepository.deactivateShortUrl.mockRejectedValue(
+        new NotFoundError('Short URL not found'),
+      )
+
+      // Act & Assert
+      await expect(
+        service.deactivateMaliciousShortUrl(shortUrl),
+      ).rejects.toThrowError(NotFoundError)
+      expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
+    })
+
+    it('should throw NotFoundError if the user of the shortUrl cannot be found', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+      urlRepository.deactivateShortUrl.mockRejectedValue(
+        new NotFoundError('User not found'),
+      )
+
+      // Act & Assert
+      await expect(
+        service.deactivateMaliciousShortUrl(shortUrl),
+      ).rejects.toThrowError(NotFoundError)
+      expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
+    })
+
+    it('should successfully deactivate a malicious shortUrl and send an email to the shortUrl owner', async () => {
+      // Arrange
+      const shortUrl = 'malicious'
+      const user = { email: 'test@example.com' }
+      urlRepository.deactivateShortUrl.mockResolvedValue(undefined)
+      userRepository.findUserByUrl.mockResolvedValue(user)
+      mockMailer.mailDeactivatedMaliciousShortUrl.mockResolvedValue(undefined)
+
+      // Act
+      await service.deactivateMaliciousShortUrl(shortUrl)
+
+      // Assert
+      expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
+      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(mockMailer.mailDeactivatedMaliciousShortUrl).toHaveBeenCalledWith(
+        user.email,
+        shortUrl,
+      )
     })
   })
 })

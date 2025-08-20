@@ -6,6 +6,9 @@ import { RedirectResult, RedirectType } from '..'
 import { LinkStatisticsService } from '../../analytics/interfaces'
 import { logger, ogUrl } from '../../../config'
 import { CookieArrayReducerService, CrawlerCheckService } from '.'
+import { UrlThreatScanService } from '../../threat/interfaces'
+import { getSafeBrowsingExpiryDate } from '../../../util/safeBrowsing'
+import { UrlManagementService } from '../../user/interfaces'
 
 @injectable()
 export class RedirectService {
@@ -17,6 +20,10 @@ export class RedirectService {
 
   private linkStatisticsService: LinkStatisticsService
 
+  private urlThreatScanService: UrlThreatScanService
+
+  private urlManagementService: UrlManagementService
+
   public constructor(
     @inject(DependencyIds.urlRepository) urlRepository: UrlRepositoryInterface,
     @inject(DependencyIds.crawlerCheckService)
@@ -25,11 +32,17 @@ export class RedirectService {
     cookieArrayReducerService: CookieArrayReducerService,
     @inject(DependencyIds.linkStatisticsService)
     linkStatisticsService: LinkStatisticsService,
+    @inject(DependencyIds.urlThreatScanService)
+    urlThreatScanService: UrlThreatScanService,
+    @inject(DependencyIds.urlManagementService)
+    urlManagementService: UrlManagementService,
   ) {
     this.urlRepository = urlRepository
     this.crawlerCheckService = crawlerCheckService
     this.cookieArrayReducerService = cookieArrayReducerService
     this.linkStatisticsService = linkStatisticsService
+    this.urlThreatScanService = urlThreatScanService
+    this.urlManagementService = urlManagementService
   }
 
   public redirectFor: (
@@ -51,7 +64,34 @@ export class RedirectService {
     const shortUrl = rawShortUrl.toLowerCase()
 
     // Find longUrl to redirect to
-    const longUrl = await this.urlRepository.getLongUrl(shortUrl)
+    const { longUrl, isFile, safeBrowsingExpiry } =
+      await this.urlRepository.getLongUrl(shortUrl)
+
+    // Validate that the longUrl is not a malicious link
+    const isSafeBrowsingResultExpired =
+      !isFile &&
+      (!safeBrowsingExpiry ||
+        new Date(safeBrowsingExpiry).getTime() < Date.now())
+
+    if (isSafeBrowsingResultExpired) {
+      const isThreat = await this.urlThreatScanService.isThreat(longUrl)
+      if (isThreat) {
+        logger.warn(
+          `Malicious link attempt: ${longUrl} was detected as malicious for shortUrl ${shortUrl}`,
+        )
+
+        // Deactivate the short link and warn the short link owner
+        await this.urlManagementService.deactivateMaliciousShortUrl(shortUrl)
+
+        // NOTE: We return a 404 error here to make the user experience the same
+        // as if the short link was deactivated/not found for simplicity and to
+        // avoid inducing user panic.
+        throw new NotFoundError('Malicious link detected')
+      }
+      // Store the result of the threat scan in the database
+      const expiry = getSafeBrowsingExpiryDate({ longUrl })
+      await this.urlRepository.updateSafeBrowsingExpiry(shortUrl, expiry)
+    }
 
     // Update clicks and click statistics in database.
     try {

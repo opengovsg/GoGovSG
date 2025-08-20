@@ -14,6 +14,7 @@ import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import {
   BulkUrlMapping,
+  RedirectDestination,
   StorableFile,
   StorableUrl,
   UrlDirectory,
@@ -27,6 +28,7 @@ import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 import { TAG_SEPARATOR } from '../../shared/constants'
+import { getSafeBrowsingExpiryDate } from '../util/safeBrowsing'
 
 const { Public, Private } = FileVisibility
 
@@ -68,6 +70,7 @@ export class UrlRepository implements UrlRepositoryInterface {
       source: StorableUrlSource.Console | StorableUrlSource.Api
       longUrl?: string
       tags?: string[]
+      safeBrowsingExpiry?: string
     },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
@@ -197,21 +200,22 @@ export class UrlRepository implements UrlRepositoryInterface {
     }
   }
 
-  public getLongUrl: (shortUrl: string) => Promise<string> = async (
-    shortUrl,
-  ) => {
-    try {
-      // Cache lookup
-      return await this.getLongUrlFromCache(shortUrl)
-    } catch {
-      // Cache failed, look in database
-      const longUrl = await this.getLongUrlFromDatabase(shortUrl)
-      this.cacheShortUrl(shortUrl, longUrl).catch((error) =>
-        logger.error(`Unable to cache short URL: ${error}`),
-      )
-      return longUrl
+  public getLongUrl: (shortUrl: string) => Promise<RedirectDestination> =
+    async (shortUrl) => {
+      try {
+        // Cache lookup
+        return await this.getLongUrlFromCache(shortUrl)
+      } catch {
+        // Cache failed, look in database
+        const redirectDestination = await this.getLongUrlFromDatabase(shortUrl)
+        // FIXME: Cache the entire RedirectDestination object once all app
+        // clients are updated to use the new RedirectDestination type.
+        this.cacheShortUrl(shortUrl, redirectDestination.longUrl).catch(
+          (error) => logger.error(`Unable to cache short URL: ${error}`),
+        )
+        return redirectDestination
+      }
     }
-  }
 
   public rawDirectorySearch: (
     conditions: DirectoryQueryConditions,
@@ -480,33 +484,38 @@ export class UrlRepository implements UrlRepositoryInterface {
    * Retrieves the long url which the short url redirects to
    * from the database.
    * @param  {string} shortUrl Short url.
-   * @returns The long url that the short url redirects to.
+   * @returns {Promise<RedirectDestination>} The long url and safe browsing expiry date.
    */
-  private getLongUrlFromDatabase: (shortUrl: string) => Promise<string> =
-    async (shortUrl) => {
-      const url = await (ffUseReplicaForRedirects
-        ? Url.scope('useReplica')
-        : Url
-      ).findOne({
-        where: { shortUrl, state: StorableUrlState.Active },
-      })
-      if (!url) {
-        throw new NotFoundError(
-          `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-        )
-      }
-      return url.longUrl
+  private getLongUrlFromDatabase: (
+    shortUrl: string,
+  ) => Promise<RedirectDestination> = async (shortUrl) => {
+    const url = await (ffUseReplicaForRedirects
+      ? Url.scope('useReplica')
+      : Url
+    ).findOne({
+      where: { shortUrl, state: StorableUrlState.Active },
+    })
+    if (!url) {
+      throw new NotFoundError(
+        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+      )
     }
+    return {
+      longUrl: url.longUrl,
+      isFile: url.isFile,
+      safeBrowsingExpiry: url.safeBrowsingExpiry,
+    }
+  }
 
   /**
    * Retrieves the long url which the short url redirects to
    * from the cache.
    * @param  {string} shortUrl Short url.
-   * @returns The long url that the short url redirects to.
+   * @returns {RedirectDestination} The long url and safe browsing expiry date.
    */
-  private getLongUrlFromCache: (shortUrl: string) => Promise<string> = (
-    shortUrl,
-  ) => {
+  private getLongUrlFromCache: (
+    shortUrl: string,
+  ) => Promise<RedirectDestination> = (shortUrl) => {
     return new Promise((resolve, reject) =>
       redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
         if (cacheError) {
@@ -521,7 +530,28 @@ export class UrlRepository implements UrlRepositoryInterface {
             )
             return
           }
-          resolve(cacheLongUrl)
+
+          try {
+            const redirectDestination = JSON.parse(cacheLongUrl)
+            resolve(redirectDestination)
+          } catch (_) {
+            logger.info(
+              `Cache lookup returned a string instead of an object:\tshortUrl=${shortUrl}`,
+            )
+            resolve({
+              longUrl: cacheLongUrl,
+              isFile: false,
+              safeBrowsingExpiry: null,
+            })
+
+            // FIXME: Throw NotFoundError once all app clients are updated to
+            // use the new RedirectDestination type.
+            // reject(
+            //   new NotFoundError(
+            //     `longUrl not found in cache:\tshortUrl=${shortUrl}`,
+            //   ),
+            // )
+          }
         }
       }),
     )
@@ -541,6 +571,26 @@ export class UrlRepository implements UrlRepositoryInterface {
         })
       })
     }
+
+  // FIXME: This is the future implementation of the cacheShortUrl method to be
+  // used once all app clients are updated to use the new RedirectDestination
+  // private cacheShortUrl: (
+  //   shortUrl: string,
+  //   redirectDestination: RedirectDestination,
+  // ) => Promise<void> = (shortUrl, redirectDestination) => {
+  //   return new Promise((resolve, reject) => {
+  //     redirectClient.set(
+  //       shortUrl,
+  //       JSON.stringify(redirectDestination),
+  //       'EX',
+  //       redirectExpiry,
+  //       (err) => {
+  //         if (err) reject(err)
+  //         else resolve()
+  //       },
+  //     )
+  //   })
+  // }
 
   /**
    * Generates the ranking algorithm to be used in the ORDER BY clause in the
@@ -578,6 +628,8 @@ export class UrlRepository implements UrlRepositoryInterface {
     await sequelize.transaction(async (t) => {
       const tagStrings = tags ? tags.join(TAG_SEPARATOR) : ''
       const bulkUrlObjects = urlMappings.map(({ shortUrl, longUrl }) => {
+        const safeBrowsingExpiry = getSafeBrowsingExpiryDate({ longUrl })
+
         return {
           shortUrl,
           longUrl,
@@ -585,6 +637,7 @@ export class UrlRepository implements UrlRepositoryInterface {
           isFile: false,
           source: StorableUrlSource.Bulk,
           tagStrings,
+          safeBrowsingExpiry: safeBrowsingExpiry.toISOString(),
         }
       })
       // sequelize model method
@@ -603,6 +656,36 @@ export class UrlRepository implements UrlRepositoryInterface {
         )
       }
     })
+  }
+
+  public async updateSafeBrowsingExpiry(
+    shortUrl: string,
+    expiry: Date,
+  ): Promise<void> {
+    const url = await Url.findOne({ where: { shortUrl } })
+    if (!url) {
+      throw new NotFoundError(`Url with shortUrl ${shortUrl} not found`)
+    }
+
+    await this.update(
+      { shortUrl },
+      { safeBrowsingExpiry: expiry.toISOString() },
+      undefined,
+    )
+  }
+
+  public async deactivateShortUrl(shortUrl: string): Promise<void> {
+    const url = await Url.findOne({ where: { shortUrl } })
+
+    if (!url) {
+      throw new NotFoundError(`Url with shortUrl ${shortUrl} not found`)
+    }
+
+    await this.update(
+      { shortUrl },
+      { state: StorableUrlState.Inactive },
+      undefined,
+    )
   }
 }
 
