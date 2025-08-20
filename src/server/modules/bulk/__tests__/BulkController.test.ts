@@ -15,6 +15,7 @@ const mockUrlManagementService = {
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
   bulkCreate: jest.fn(),
+  deactivateMaliciousShortUrl: jest.fn(),
 }
 
 const controller = new BulkController(mockBulkService, mockUrlManagementService)

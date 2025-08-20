@@ -5,6 +5,7 @@ export const BULK_UPLOAD_HEADER = 'Original links to be shortened'
 export const TAG_SEPARATOR = ';'
 export const MAX_NUM_TAGS_PER_LINK = 3
 export const MIN_TAG_SEARCH_LENGTH = 3
+export const DEFAULT_URL_SCAN_RESULT_EXPIRY_SECONDS = 60 * 60 * 24 // 24 hours
 export enum BULK_QR_DOWNLOAD_FORMATS {
   CSV = 'CSV',
   PNG = 'PNG',

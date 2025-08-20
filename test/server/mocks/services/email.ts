@@ -23,6 +23,14 @@ export class MailerMock implements Mailer {
     this.mailsSent.push({ email })
     return Promise.resolve()
   }
+
+  mailDeactivatedMaliciousShortUrl(
+    email: string,
+    shortUrl: string,
+  ): Promise<void> {
+    this.mailsSent.push({ email, shortUrl })
+    return Promise.resolve()
+  }
 }
 
 @injectable()
@@ -38,6 +46,10 @@ export class MailerMockDown implements Mailer {
   }
 
   mailJobFailure(_: string): Promise<void> {
+    return Promise.reject()
+  }
+
+  mailDeactivatedMaliciousShortUrl(_: string, __: string): Promise<void> {
     return Promise.reject()
   }
 }

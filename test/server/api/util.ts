@@ -122,6 +122,8 @@ export const urlModelMock = sequelizeMock.define(
   {
     shortUrl: 'a',
     longUrl: 'aa',
+    isFile: false,
+    safeBrowsingExpiry: null,
     state: ACTIVE,
     UrlClicks: {
       clicks: 3,

@@ -16,6 +16,7 @@ export type StorableUrl = Pick<
   | 'contactEmail'
   | 'source'
   | 'tagStrings'
+  | 'safeBrowsingExpiry'
 > &
   Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
 
@@ -90,4 +91,10 @@ export type StorableOtp = {
 export type WebRiskThreat = {
   threatTypes: string[]
   expireTime: string
+}
+
+export type RedirectDestination = {
+  longUrl: string
+  isFile: boolean
+  safeBrowsingExpiry: string | null
 }

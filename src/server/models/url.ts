@@ -24,6 +24,7 @@ export interface UrlBaseType extends IdType {
   readonly description: string
   readonly source: StorableUrlSource
   readonly tagStrings: string
+  readonly safeBrowsingExpiry: string | null
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
@@ -228,6 +229,10 @@ export const Url = <UrlTypeStatic>sequelize.define(
       type: Sequelize.TEXT,
       allowNull: false,
       defaultValue: '',
+    },
+    safeBrowsingExpiry: {
+      type: Sequelize.DATE,
+      allowNull: true,
     },
   },
   {

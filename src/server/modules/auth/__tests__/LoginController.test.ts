@@ -115,6 +115,7 @@ describe('LoginController', () => {
     const initMailer = jest.fn()
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
+    const mailDeactivatedMaliciousShortUrl = jest.fn()
 
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
@@ -123,7 +124,13 @@ describe('LoginController', () => {
     const urlMapper = new UrlMapper()
     const authService = new AuthService(
       { hash, compare },
-      { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
+      {
+        mailOTP,
+        initMailer,
+        mailJobFailure,
+        mailJobSuccess,
+        mailDeactivatedMaliciousShortUrl,
+      },
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       new UserRepository(new UserMapper(urlMapper), urlMapper),
     )
@@ -200,6 +207,7 @@ describe('LoginController', () => {
     const initMailer = jest.fn()
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
+    const mailDeactivatedMaliciousShortUrl = jest.fn()
 
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
@@ -218,7 +226,13 @@ describe('LoginController', () => {
 
     const authService = new AuthService(
       { hash, compare },
-      { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
+      {
+        mailOTP,
+        initMailer,
+        mailJobFailure,
+        mailJobSuccess,
+        mailDeactivatedMaliciousShortUrl,
+      },
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       userRepository,
     )
@@ -405,6 +419,7 @@ describe('LoginController', () => {
     const initMailer = jest.fn()
     const mailJobFailure = jest.fn()
     const mailJobSuccess = jest.fn()
+    const mailDeactivatedMaliciousShortUrl = jest.fn()
     const deleteOtpByEmail = jest.fn()
     const setOtpForEmail = jest.fn()
     const getOtpForEmail = jest.fn()
@@ -421,7 +436,13 @@ describe('LoginController', () => {
 
     const authService = new AuthService(
       { hash, compare },
-      { mailOTP, initMailer, mailJobFailure, mailJobSuccess },
+      {
+        mailOTP,
+        initMailer,
+        mailJobFailure,
+        mailJobSuccess,
+        mailDeactivatedMaliciousShortUrl,
+      },
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       userRepository,
     )
