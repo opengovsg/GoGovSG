@@ -24,6 +24,7 @@ import {
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
 import TagRepositoryMock from '../mocks/repositories/TagRepository'
 import { TAG_SEPARATOR } from '../../../src/shared/constants'
+import { StorableUrl } from '../../../src/server/repositories/types'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -75,17 +76,18 @@ describe('UrlRepository', () => {
   const baseUrlClicks = {
     clicks: 2,
   }
-  const baseTemplate = {
+  const baseTemplate: Omit<StorableUrl, 'tagStrings' | 'clicks'> = {
     shortUrl: baseShortUrl,
     longUrl: baseLongUrl,
-    state: 'ACTIVE',
+    state: StorableUrlState.Active,
     isFile: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
     source: StorableUrlSource.Console,
     tags: [],
+    safeBrowsingExpiry: null,
   }
   const baseUrl = {
     ...baseTemplate,

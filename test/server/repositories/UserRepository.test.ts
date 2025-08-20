@@ -3,6 +3,11 @@ import { UserRepository } from '../../../src/server/repositories/UserRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { UserMapper } from '../../../src/server/mappers/UserMapper'
 import { NotFoundError } from '../../../src/server/util/error'
+import { StorableUrl } from '../../../src/server/repositories/types'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../src/server/repositories/enums'
 
 jest.mock('../../../src/server/models/user', () => ({
   User: userModelMock,
@@ -17,16 +22,17 @@ const userRepo = new UserRepository(
   new UrlMapper(),
 )
 
-const baseUrlTemplate = {
+const baseUrlTemplate: Omit<StorableUrl, 'tagStrings' | 'clicks'> = {
   shortUrl: 'short-link',
   longUrl: 'https://www.agency.gov.sg',
-  state: 'ACTIVE',
+  state: StorableUrlState.Active,
   isFile: false,
-  createdAt: Date.now(),
-  updatedAt: Date.now(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
   description: 'An agency of the Singapore Government',
   contactEmail: 'contact-us@agency.gov.sg',
-  source: 'CONSOLE',
+  source: StorableUrlSource.Console,
+  safeBrowsingExpiry: null,
 }
 
 const urlClicks = {

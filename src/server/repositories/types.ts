@@ -16,6 +16,7 @@ export type StorableUrl = Pick<
   | 'contactEmail'
   | 'source'
   | 'tagStrings'
+  | 'safeBrowsingExpiry'
 > &
   Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
 
