@@ -45,7 +45,11 @@ export function isHttps(url: string, useWhitelist = false): boolean {
 // Check if a URL string is valid.
 export function isValidUrl(url: string, useWhitelist = false): boolean {
   if (useWhitelist && isWhitelisted(url)) return true
-  return validator.isURL(url, URL_OPTS)
+  if (!validator.isURL(url, URL_OPTS)) return false
+
+  // NOTE: check whether it's an IP
+  const host = new URL(url).hostname
+  return !validator.isIP(host)
 }
 
 // Tests if a short link consists of alphanumeric and hyphen characters.
