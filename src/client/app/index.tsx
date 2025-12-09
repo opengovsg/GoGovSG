@@ -8,7 +8,6 @@ require('regenerator-runtime/runtime')
 import { createHashHistory } from 'history'
 
 import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
 
 import Root from './components/pages/RootPage'
 import { get } from './util/requests'
@@ -25,7 +24,7 @@ get('/api/sentry/').then((response) => {
         Sentry.init({
           dsn: sentryDns,
           integrations: [
-            new Integrations.BrowserTracing({
+            new Sentry.BrowserTracing({
               routingInstrumentation:
                 Sentry.reactRouterV5Instrumentation(history),
             }),
