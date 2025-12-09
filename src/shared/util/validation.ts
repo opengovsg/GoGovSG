@@ -33,7 +33,7 @@ export function isWhitelisted(url: string): boolean {
 
 // Checks if url is blacklisted.
 export function isBlacklisted(url: string): boolean {
-  return blacklist.some((bl) => url.includes(bl))
+  return blacklist.some((bl) => url.toLowerCase().includes(bl))
 }
 
 // Tests if a URL string begins with https://.
