@@ -77,6 +77,11 @@ describe('Test valid url check', () => {
     const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url, true)).toBe(true)
   })
+
+  test('IP addresses fails check', () => {
+    const url = 'https://8.8.8.8:4566/local-bucket/file1.pdf'
+    expect(validation.isValidUrl(url)).toBe(false)
+  })
 })
 
 describe('Test short url check', () => {
