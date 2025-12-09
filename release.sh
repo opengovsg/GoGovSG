@@ -5,6 +5,7 @@ set -e
 git checkout develop && git pull origin develop
 
 # Push to edge
+echo "Pushing develop to edge"
 git push -f origin HEAD:edge
 
 # Get current version from package.json
