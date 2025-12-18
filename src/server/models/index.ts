@@ -48,6 +48,6 @@ UrlClicks.belongsTo(Url, { foreignKey: 'shortUrl' })
 export default async () => {
   if (DEV_ENV) {
     await sequelize.sync()
+    await syncFunctions()
   }
-  await syncFunctions()
 }
