@@ -244,7 +244,16 @@ initDb()
     app.use(errorHandler)
 
     const port = 8080
-    app.listen(port, () => logger.info(`Listening on port ${port}!`))
+    const server = app.listen(port, () =>
+      logger.info(`Listening on port ${port}!`),
+    )
+    // NOTE: Express has a default timeout of 5 seconds - this means that
+    // a request from ELB -> Express server can be in-flight
+    // while express has already closed the connection, resulting in a 5xx.
+    // Refer to the below link for more information
+    // adamcrowder.net/posts/node-express-api-and-aws-alb-502/
+    server.keepAliveTimeout = 65000 // Ensure all inactive connections are terminated by the ALB, by setting this a few seconds higher than the ALB idle timeout
+    server.headersTimeout = 66000 // Ensure the headersTimeout is set higher than the keepAliveTimeout due to this nodejs regression bug: https://github.com/nodejs/node/issues/27363
 
     process.on('unhandledRejection', (error) => {
       dogstatsd.increment(ERROR_UNHANDLED_REJECTION, 1, 1)

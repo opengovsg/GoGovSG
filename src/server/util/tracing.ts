@@ -4,6 +4,7 @@ import { Span } from 'opentracing'
 
 tracer.init({
   logInjection: true,
+  runtimeMetrics: true,
 })
 tracer.use('http', {
   client: {
@@ -18,3 +19,5 @@ tracer.use('http', {
     },
   },
 })
+
+export default tracer

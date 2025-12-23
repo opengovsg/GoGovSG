@@ -1,6 +1,6 @@
 {
   "name": "GoGovSG",
-  "version": "1.85.2",
+  "version": "1.85.3",
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
   "scripts": {
@@ -25,7 +25,16 @@
     "test:integration": "jest --config=./test/integration/jest.config.js ./test/integration",
     "cz": "git-cz",
     "release": "./release.sh",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db:migrate:go:prod": "source .env.go.prod && npx sequelize-cli db:migrate",
+    "db:migrate:go:staging": "source .env.go.staging && npx sequelize-cli db:migrate",
+    "db:migrate:go:test": "source .env.go.test && npx sequelize-cli db:migrate",
+    "db:migrate:edu:prod": "source .env.edu.prod && npx sequelize-cli db:migrate",
+    "db:migrate:edu:staging": "source .env.edu.staging && npx sequelize-cli db:migrate",
+    "db:migrate:edu:test": "source .env.edu.test && npx sequelize-cli db:migrate",
+    "db:migrate:health:prod": "source .env.health.prod && npx sequelize-cli db:migrate",
+    "db:migrate:health:staging": "source .env.health.staging && npx sequelize-cli db:migrate",
+    "db:migrate:health:test": "source .env.health.test && npx sequelize-cli db:migrate"
   },
   "author": "Open Government Products, GovTech Singapore (https://open.gov.sg)",
   "license": "MIT",
