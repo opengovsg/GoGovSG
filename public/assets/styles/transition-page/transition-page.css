@@ -35,7 +35,7 @@ body {
   margin-bottom: 6px;
 }
 
-.top-half-content a {
+.top-half-content .phishing-content {
   display: block;
   color: var(--transition-top-half-content-link-color);
   font-size: 16px;
