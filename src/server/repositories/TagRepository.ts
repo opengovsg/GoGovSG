@@ -43,20 +43,34 @@ export class TagRepository implements TagRepositoryInterface {
     async (tags, t) => {
       const tagCreationResponses = tags
         ? await Promise.all(
-            tags.map((tag: string) => {
-              return Tag.findOrCreate({
+            tags.map(async (tag: string) => {
+              // NOTE: We do two operations here (find + create) to get around
+              // needing to create a temporary function as per sequelize's implementation
+              // of `findOrCreate`.
+              // This is acceptable because the max number of tags is small (max of 4),
+              // the table itself is not large (38k rows on go)
+              // and it's indexed (tagString, tagKey, id)
+              const possibleTag = await Tag.findOne({
                 where: {
                   tagString: tag,
                   tagKey: tag.toLowerCase(),
                 },
-                transaction: t,
               })
+
+              if (possibleTag) return possibleTag
+              return Tag.create(
+                {
+                  tagString: tag,
+                  tagKey: tag.toLowerCase(),
+                },
+                { transaction: t },
+              )
             }),
           )
         : []
       const newTags: TagType[] = []
       tagCreationResponses.forEach((response) => {
-        const [tag, _] = response
+        const tag = response
         if (tag) {
           newTags.push(tag)
         }
