@@ -60,11 +60,13 @@ export class UserRepository implements UserRepositoryInterface {
 
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
     async (email) => {
-      const [user, created] = await User.findOrCreate({ where: { email } })
-      if (created) {
+      let possibleUser = await User.findOne({ where: { email } })
+      if (!possibleUser) {
         dogstatsd.increment(USER_NEW, 1, 1)
+        possibleUser = await User.create({ email })
       }
-      return this.userMapper.persistenceToDto(user)
+
+      return this.userMapper.persistenceToDto(possibleUser)
     }
 
   public findOneUrlForUser: (
