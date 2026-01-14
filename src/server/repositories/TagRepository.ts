@@ -50,22 +50,36 @@ export class TagRepository implements TagRepositoryInterface {
               // This is acceptable because the max number of tags is small (max of 4),
               // the table itself is not large (38k rows on go)
               // and it's indexed (tagString, tagKey, id)
+              const tagWhere = {
+                tagString: tag,
+                tagKey: tag.toLowerCase(),
+              }
+
+              // First, try to find existing tag
               const possibleTag = await Tag.findOne({
                 transaction: t,
-                where: {
-                  tagString: tag,
-                  tagKey: tag.toLowerCase(),
-                },
+                where: tagWhere,
               })
 
               if (possibleTag) return possibleTag
-              return Tag.create(
-                {
-                  tagString: tag,
-                  tagKey: tag.toLowerCase(),
-                },
-                { transaction: t },
-              )
+
+              // If not found, try to create it
+              try {
+                return await Tag.create(tagWhere, { transaction: t })
+              } catch (error: any) {
+                // Handle race condition: another transaction created it between our find and create
+                if (
+                  error instanceof Error &&
+                  error.name === 'SequelizeUniqueConstraintError'
+                ) {
+                  const existingTag = await Tag.findOne({
+                    transaction: t,
+                    where: tagWhere,
+                  })
+                  if (existingTag) return existingTag
+                }
+                throw error
+              }
             }),
           )
         : []

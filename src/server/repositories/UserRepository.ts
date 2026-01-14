@@ -61,16 +61,37 @@ export class UserRepository implements UserRepositoryInterface {
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
     async (email) => {
       return sequelize.transaction(async (t) => {
+        // First, try to find existing user
         let possibleUser = await User.findOne({
           where: { email },
           transaction: t,
         })
-        if (!possibleUser) {
-          dogstatsd.increment(USER_NEW, 1, 1)
-          possibleUser = await User.create({ email }, { transaction: t })
+
+        if (possibleUser) {
+          return this.userMapper.persistenceToDto(possibleUser)
         }
 
-        return this.userMapper.persistenceToDto(possibleUser)
+        // If not found, try to create it
+        try {
+          possibleUser = await User.create({ email }, { transaction: t })
+          dogstatsd.increment(USER_NEW, 1, 1)
+          return this.userMapper.persistenceToDto(possibleUser)
+        } catch (error: any) {
+          // Handle race condition: another transaction created it between our find and create
+          if (
+            error instanceof Error &&
+            error.name === 'SequelizeUniqueConstraintError'
+          ) {
+            const existingUser = await User.findOne({
+              where: { email },
+              transaction: t,
+            })
+            if (existingUser) {
+              return this.userMapper.persistenceToDto(existingUser)
+            }
+          }
+          throw error
+        }
       })
     }
 
