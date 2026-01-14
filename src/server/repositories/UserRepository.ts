@@ -14,7 +14,7 @@ import { UrlClicks } from '../models/statistics/clicks'
 import { Url, UrlType } from '../models/url'
 import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
-import { escapeWildcard } from '../util/sequelize'
+import { escapeWildcard, sequelize } from '../util/sequelize'
 
 /**
  * A user repository that handles access to the data store of Users.
@@ -60,13 +60,18 @@ export class UserRepository implements UserRepositoryInterface {
 
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
     async (email) => {
-      let possibleUser = await User.findOne({ where: { email } })
-      if (!possibleUser) {
-        dogstatsd.increment(USER_NEW, 1, 1)
-        possibleUser = await User.create({ email })
-      }
+      return sequelize.transaction(async (t) => {
+        let possibleUser = await User.findOne({
+          where: { email },
+          transaction: t,
+        })
+        if (!possibleUser) {
+          dogstatsd.increment(USER_NEW, 1, 1)
+          possibleUser = await User.create({ email }, { transaction: t })
+        }
 
-      return this.userMapper.persistenceToDto(possibleUser)
+        return this.userMapper.persistenceToDto(possibleUser)
+      })
     }
 
   public findOneUrlForUser: (

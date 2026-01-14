@@ -51,6 +51,7 @@ export class TagRepository implements TagRepositoryInterface {
               // the table itself is not large (38k rows on go)
               // and it's indexed (tagString, tagKey, id)
               const possibleTag = await Tag.findOne({
+                transaction: t,
                 where: {
                   tagString: tag,
                   tagKey: tag.toLowerCase(),
