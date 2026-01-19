@@ -270,6 +270,7 @@ export const userModelMock = {
   findByPk: jest.fn(),
   findOne: jest.fn(),
   scope: jest.fn(),
+  create: jest.fn(),
   findOrCreate: ({ where: { email } }: { where: { email: string } }) =>
     Promise.resolve([
       {
