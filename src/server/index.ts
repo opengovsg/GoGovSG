@@ -170,6 +170,7 @@ initDb()
         cookie: {
           httpOnly: true,
           sameSite: 'strict',
+          domain: displayHostname.toLocaleLowerCase(),
           ...cookieSettings,
         },
         ...sessionSettings,
