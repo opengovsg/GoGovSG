@@ -11,8 +11,8 @@ import { Job, JobItem } from './job'
 import { DEV_ENV } from '../config'
 
 // One user can create many urls but each url can only be mapped to one user.
-User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: false } })
-Url.belongsTo(User, { foreignKey: { allowNull: false } })
+User.hasMany(Url, { as: 'Urls', foreignKey: { allowNull: true } })
+Url.belongsTo(User, { foreignKey: { allowNull: true } })
 
 // One user can run many jobs but each job can only be mapped to one user.
 User.hasMany(Job, { as: 'Job', foreignKey: { allowNull: false } })
@@ -47,7 +47,7 @@ UrlClicks.belongsTo(Url, { foreignKey: 'shortUrl' })
  */
 export default async () => {
   if (DEV_ENV) {
-    await sequelize.sync()
+    await sequelize.sync({ alter: true })
     await syncFunctions()
   }
 }

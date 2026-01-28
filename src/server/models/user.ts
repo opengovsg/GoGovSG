@@ -22,7 +22,7 @@ export const User = <UserTypeStatic>sequelize.define(
     email: {
       type: Sequelize.TEXT,
       unique: true,
-      allowNull: false,
+      allowNull: true,
       validate: {
         isEmail: true,
         isLowercase: true,
@@ -38,7 +38,6 @@ export const User = <UserTypeStatic>sequelize.define(
     },
     apiKeyHash: {
       type: Sequelize.TEXT,
-      unique: true,
       allowNull: true,
     },
   },
@@ -47,6 +46,7 @@ export const User = <UserTypeStatic>sequelize.define(
       {
         unique: true,
         fields: ['apiKeyHash'],
+        name: 'users_api_key_hash',
       },
     ],
     defaultScope: {
