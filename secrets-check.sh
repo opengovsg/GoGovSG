@@ -17,7 +17,7 @@ if [ "$KEY_ID" != "" -a "$KEY_ID" != "," -a "$KEY" != "" ]; then
 fi
 
 gitguardian_secrets_check() {
-  if !(command -v ggshield &> /dev/null); then
+  if ! (command -v ggshield &> /dev/null); then
     echo "Skipping GitGuardian check for secrets as ggshield is not installed."
     return 0
   fi
