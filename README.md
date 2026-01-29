@@ -1,7 +1,6 @@
 # GoGovSG
 
 [![Build Status](https://travis-ci.com/opengovsg/GoGovSG.svg?branch=develop)](https://travis-ci.com/opengovsg/GoGovSG)
-[![Coverage Status](https://coveralls.io/repos/github/opengovsg/GoGovSG/badge.svg?branch=develop)](https://coveralls.io/github/opengovsg/GoGovSG?branch=develop)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/opengovsg/GoGovSG)
 
 The official Singapore government link shortener.
@@ -36,7 +35,7 @@ The official Singapore government link shortener.
 
 ## Introduction
 
-GoGovSg is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
+GoGovSG is the official Singapore government link shortener, built by the [Open Government Products](https://open.gov.sg) team in [GovTech](https://tech.gov.sg). This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg).
 
 There are multiple reasons why we built an official government link shortener:
 
@@ -44,11 +43,11 @@ There are multiple reasons why we built an official government link shortener:
 - Email clients might block other commercial link shorteners if they are listed as **spam** on their site
 - Citizens are afraid of **phishing** when receiving a shortened link and unsure of where it goes
 
-With GoGovSg, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
+With GoGovSG, citizens are safe in the knowledge that the links are **official** and **safe**. Any authorized user can log in with their government emails and immediately create authenticated and recognisable short links.
 
 ## Getting Started
 
-Make sure you have node version `14`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
+Make sure you have node version `18`, docker-compose version >= `1.23.1` and Docker version >= `18.09.0` installed.
 
 > \*For Mac computers with Apple silicon, you will need Rosetta to be installed in order for `docker-compose@v1` to work. You can do so using the following command: `softwareupdate --install-rosetta`.
 
@@ -62,7 +61,7 @@ git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 cd gogovsg
 
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 ```
 
 ### Running Locally
@@ -121,9 +120,10 @@ After these have been set up, set the environment variables according to the tab
 |        ANNOUNCEMENT_MESSAGE        |    No    | The message in the announcement displayed as a modal to users on login                                                                                                                         |
 |         ANNOUNCEMENT_TITLE         |    No    | The title in the announcement displayed as a modal to users on login                                                                                                                           |
 |       ANNOUNCEMENT_SUBTITLE        |    No    | The subtitle in the announcement displayed as a modal to users on login                                                                                                                        |
-|           ROTATED_LINKS            |    No    | List of comma separated path of links to rotate on the landing page                                                                                                                            |
 |          ANNOUNCEMENT_URL          |    No    | The hyperlink for the button in the announcement displayed as a modal to users on login                                                                                                        |
 |         ANNOUNCEMENT_IMAGE         |    No    | The image in the announcement displayed as a modal to users on login                                                                                                                           |
+|      ANNOUNCEMENT_BUTTON_TEXT      |    No    | The text on the button in the announcement displayed as a modal to users on login                                                                                                              |
+|           ROTATED_LINKS            |    No    | List of comma separated path of links to rotate on the landing page                                                                                                                            |
 |           CSP_REPORT_URI           |    No    | A URI to report CSP violations to.                                                                                                                                                             |
 |     CSP_ONLY_REPORT_VIOLATIONS     |    No    | Only report CSP violations, do not enforce.                                                                                                                                                    |
 |          CLOUDMERSIVE_KEY          |    No    | API key for access to Cloudmersive.                                                                                                                                                            |
@@ -143,8 +143,12 @@ After these have been set up, set the environment variables according to the tab
 |         JOB_POLL_ATTEMPTS          |    No    | Number of attempts for long polling of job status before timeout of 408 is returned. Defaults to 12                                                                                            |
 |         JOB_POLL_INTERVAL          |    No    | Interval of time between attempts for long polling of job status in ms. Defaults to 5000ms (5s)                                                                                                |
 |     API_LINK_RANDOM_STR_LENGTH     |    No    | String length of randomly generated shortUrl in API created links. Defaults to 8                                                                                                               |
-|          FF_EXTERNAL_API           |    No    | Boolean, feature flag for enabling the external API. Defaults to false                                                                                                                         |
-|          ADMIN_API_EMAIL           |    No    | Email with admin API access. Defaults to none.                                                                                                                                                 |
+|          FF_EXTERNAL_API           |    No    | Boolean, feature flag for enabling the external and admin API. Defaults to false                                                                                                               |
+|          ADMIN_API_EMAILS          |    No    | Emails with admin API access, separated by commas without spaces. Defaults to none.                                                                                                            |
+|    FF_USE_REPLICA_FOR_REDIRECTS    |    No    | Boolean, feature flag for using the replica database to look up redirects to long URLs. Defaults to false                                                                                      |
+|             USER_COUNT             |    No    | Total count of registered users to display on landing page. Defaults to the data we pulled on April 2025                                                                                       |
+|            CLICK_COUNT             |    No    | Total count of link clicks to display on landing page. Defaults to the data we pulled on April 2025                                                                                            |
+|             LINK_COUNT             |    No    | Total count of created links to display on landing page. Defaults to the data we pulled on April 2025                                                                                          |
 
 #### Serverless functions for link migration
 
@@ -172,15 +176,14 @@ Finally, start the production server by running `npm start`.
 
 GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk and AWS Lambda. We also use Sentry.io to track client-side errors.
 
-|        Secrets        | Required | Description/Value                                                                                                                                                                                                              |
-| :-------------------: | :------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   AWS_ACCESS_KEY_ID   |   Yes    | AWS credential ID used to deploy to Elastic and Modify files on S3                                                                                                                                                             |
-| AWS_SECRET_ACCESS_KEY |   Yes    | AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3                                                                                                                                               |
-|   SENTRY_AUTH_TOKEN   |    No    | To get relevant permissions to upload the source maps                                                                                                                                                                          |
-|     GITHUB_TOKEN      |  Yes\*   | Used by Coveralls to verify test coverage on repo. Does not need to be manually specified as it is specified by Github Actions. [More Info](https://docs.github.com/en/actions/security-guides/automatic-token-authentication) |
-|      DD_API_KEY       |  Yes\*   | Datadog API Key used for integration with Datadog to Trace/Logs collection                                                                                                                                                     |
-|      DD_SERVICE       |    No    | Datadog service name to be used for the application                                                                                                                                                                            |
-|        DD_ENV         |    No    | Datadog application environment, e.g. `staging`, `production`                                                                                                                                                                  |
+|        Secrets        | Required | Description/Value                                                                |
+| :-------------------: | :------: | :------------------------------------------------------------------------------- |
+|   AWS_ACCESS_KEY_ID   |   Yes    | AWS credential ID used to deploy to Elastic and Modify files on S3               |
+| AWS_SECRET_ACCESS_KEY |   Yes    | AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3 |
+|   SENTRY_AUTH_TOKEN   |    No    | To get relevant permissions to upload the source maps                            |
+|      DD_API_KEY       |  Yes\*   | Datadog API Key used for integration with Datadog to Trace/Logs collection       |
+|      DD_SERVICE       |    No    | Datadog service name to be used for the application                              |
+|        DD_ENV         |    No    | Datadog application environment, e.g. `staging`, `production`                    |
 
 |                     Environment Variable                      | Required | Description/Value                                                                   |
 | :-----------------------------------------------------------: | :------: | :---------------------------------------------------------------------------------- |
@@ -332,4 +335,3 @@ Diagrams for our infrastructure setup can be found [here](https://lucid.app/luci
 ```javascript
 let salt = bcrypt.genSaltSync(10)
 ```
-
