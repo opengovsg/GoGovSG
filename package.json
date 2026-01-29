@@ -26,6 +26,8 @@
     "cz": "git-cz",
     "release": "./release.sh",
     "prepare": "husky install",
+    "db:migrate:new": "npx sequelize-cli migration:generate --name",
+    "db:migrate:test": "source .env.test && npx sequelize-cli db:migrate",
     "db:migrate:go:prod": "source .env.go.prod && npx sequelize-cli db:migrate",
     "db:migrate:go:staging": "source .env.go.staging && npx sequelize-cli db:migrate",
     "db:migrate:go:test": "source .env.go.test && npx sequelize-cli db:migrate",
