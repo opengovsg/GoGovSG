@@ -17,16 +17,18 @@ if [ "$KEY_ID" != "" -a "$KEY_ID" != "," -a "$KEY" != "" ]; then
 fi
 
 gitguardian_secrets_check() {
+  # NOTE: check if ggshield is installed
   if ! (command -v ggshield &> /dev/null); then
-    echo "Skipping GitGuardian check for secrets as ggshield is not installed."
-    return 0
+    echo "Installing ggshield"
+    brew install ggshield
   fi
 
-  [ -e .env ] && export $(cat .env | xargs)
-  if [ -z "${GITGUARDIAN_API_KEY}" ]; then
-    echo "Skipping GitGuardian check for secrets as GitGuardian API key is not configured."
-    return 0
+  # NOTE: check if user is authenticated and if not, 
+  # do the auth
+  if ! (ggshield api-status &> /dev/null); then                                      
+    ggshield auth login
   fi
+
 
   ggshield secret scan pre-commit
 }
