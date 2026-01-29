@@ -35,7 +35,7 @@ export class BulkService implements interfaces.BulkService {
 
     return new Promise((resolve, reject) => {
       Papa.parse(dataString, {
-        skipEmptyLines: false,
+        skipEmptyLines: 'greedy',
         delimiter: ',',
         complete: () => {
           // check for empty file
@@ -52,7 +52,7 @@ export class BulkService implements interfaces.BulkService {
         },
         step(step) {
           const rowData = step.data as string[]
-          const stringData = rowData[0]
+          const stringData = rowData[0].trim()
 
           if (counter === 0) {
             if (stringData !== BULK_UPLOAD_HEADER) {
@@ -67,7 +67,7 @@ export class BulkService implements interfaces.BulkService {
             const acceptableLinkCount = counter <= BULK_UPLOAD_MAX_NUM // rows include header
             const onlyOneColumn = rowData.length === 1
             const isNotBlacklisted = !validators.isBlacklisted(stringData)
-            const isNotEmpty = stringData.length > 0
+            const isEmpty = stringData.length === 0
             const isValidUrl = validators.isValidUrl(stringData)
             const isNotCircularRedirect = !validators.isCircularRedirects(
               stringData,
@@ -92,7 +92,7 @@ export class BulkService implements interfaces.BulkService {
                     counter + 1
                   }: ${rowData} contains more than one column of data`,
                 )
-              case !isNotEmpty:
+              case isEmpty:
                 dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
                   `${BULK_VALIDATION_ERROR_TAGS.isNotEmpty}`,
                 ])
