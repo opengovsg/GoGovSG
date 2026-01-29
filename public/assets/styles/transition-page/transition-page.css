@@ -16,7 +16,7 @@ body {
 }
 
 .top-half {
-  background: var(--transition-top-half-color) ;
+  background: var(--transition-top-half-color);
   height: 50vh;
   position: relative;
 }
@@ -35,7 +35,7 @@ body {
   margin-bottom: 6px;
 }
 
-.top-half-content a {
+.top-half-content .phishing-content {
   display: block;
   color: var(--transition-top-half-content-link-color);
   font-size: 16px;
@@ -67,12 +67,12 @@ body {
 
 .links-health {
   padding-top: 77px;
-  padding-left: 167px; 
+  padding-left: 167px;
 }
 
 .links-edu {
   padding-top: 77px;
-  padding-left: 172px; 
+  padding-left: 172px;
 }
 
 .bottom-half {
@@ -121,7 +121,21 @@ body {
   display: inline;
 }
 
+#built-by {
+  font-size: 12px;
+  line-height: 150%;
+  margin-right: 12px;
+  color: #757575;
+  font-weight: normal;
+}
+
 #logo {
+  margin-top: 40px;
+  display: flex;
+  padding-bottom: 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   padding-bottom: 20px;
 }
 
@@ -137,12 +151,12 @@ body {
 
   .links-health {
     padding-top: 73px;
-    padding-left: 133px; 
+    padding-left: 133px;
   }
 
   .links-edu {
     padding-top: 74px;
-    padding-left: 139px; 
+    padding-left: 139px;
   }
 
   .browser-image {
@@ -184,14 +198,14 @@ body {
 
   .links-health {
     padding-top: 74px;
-    padding-left: 114px; 
+    padding-left: 114px;
   }
 
   .links-edu {
     padding-top: 75px;
-    padding-left: 119px; 
+    padding-left: 119px;
   }
-  
+
   .top-half-content a {
     line-height: 20px;
   }

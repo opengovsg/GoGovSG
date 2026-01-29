@@ -18,7 +18,7 @@ export class StatisticsController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
-    res.status(200).json(await this.statisticsService.getGlobalStatistics())
+    res.status(200).json(this.statisticsService.getGlobalStatistics())
     return
   }
 }

@@ -80,7 +80,7 @@ async function apiKeyAdminAuthMiddleware(
   const { userId } = req.body
   const isAdmin = await apiKeyAuthService.isAdmin(userId)
   if (!isAdmin) {
-    res.unauthorized('User is unauthorized')
+    res.unauthorized(jsonMessage('User is unauthorized'))
     return
   }
   next()
@@ -117,6 +117,14 @@ router.use(
 
 /* Register APIKey protected endpoints */
 if (ffExternalApi) {
+  router.use(
+    '/v1/admin',
+    apiKeyAuthMiddleware,
+    apiKeyAdminAuthMiddleware,
+    preprocess,
+    // eslint-disable-next-line global-require
+    require('./admin-v1'),
+  )
   // eslint-disable-next-line global-require
   router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
 }

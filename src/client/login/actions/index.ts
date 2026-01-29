@@ -115,8 +115,8 @@ const getEmailValidationGlobExpression =
           dispatch<SetEmailValidatorAction>(
             setEmailValidator((email: string) => {
               return (
-                globValidator.match(email) &&
-                validator.isEmail(email, { allow_utf8_local_part: false })
+                validator.isEmail(email, { allow_utf8_local_part: false }) &&
+                globValidator.match(email)
               )
             }),
           )

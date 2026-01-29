@@ -28,30 +28,38 @@ export const hasApiKeySchema = Joi.object({
   userId: Joi.number().required(),
 })
 
+const singleTagSchema = Joi.string()
+  .pattern(/^[A-Za-z0-9-_]+$/)
+  .max(25)
+
 const tagSchema = Joi.array()
   .max(MAX_NUM_TAGS_PER_LINK)
   .optional()
+  // letters, numbers, hyphens, underscores, 25 digits
   .items(
-    Joi.string().custom((tag: string, helpers) => {
-      if (!isValidTag(tag)) {
-        return helpers.message({ custom: `tag: ${tag} format is invalid` })
-      }
-      return tag
-    }),
+    singleTagSchema
+      .custom((tag: string, helpers) => {
+        if (!isValidTag(tag)) {
+          return helpers.error('tag:invalid')
+        }
+        return tag
+      })
+      .messages({ 'tag:invalid': 'Tag format is invalid.' }),
   )
   .unique((a, b) => a === b)
 
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
-  limit: Joi.number().required(),
-  offset: Joi.number().optional(),
-  orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
+  // eslint-disable-next-line newline-per-chained-call
+  limit: Joi.number().integer().min(0).max(1000).required(),
+  offset: Joi.number().integer().min(0).optional(),
+  orderBy: Joi.string().valid('createdAt', 'clicks').optional(),
   sortDirection: Joi.string().valid('desc', 'asc').optional(),
-  searchText: Joi.string().allow('').optional(),
+  searchText: Joi.string().lowercase().allow('').optional(),
   state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
   isFile: Joi.boolean().optional(),
   tags: tagSchema.max(5),
-})
+}).oxor('searchText', 'tags')
 
 export const userTagsQueryConditions = Joi.object({
   userId: Joi.number().required(),
@@ -59,13 +67,13 @@ export const userTagsQueryConditions = Joi.object({
     .min(3)
     .custom((tag: string, helpers) => {
       if (!isValidTag(tag)) {
-        return helpers.message({
-          custom: `tag: ${tag} query format is invalid.`,
-        })
+        return helpers.error('tag:invalid')
       }
       return tag
     })
+    .messages({ 'tag:invalid': 'Tag format is invalid.' })
     .required(),
+
   limit: Joi.number().required(),
 })
 

@@ -13,3 +13,4 @@ coverage
 .idea
 .pgdata
 .cache_ggshield
+.env.*

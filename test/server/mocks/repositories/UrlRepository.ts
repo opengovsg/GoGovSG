@@ -4,6 +4,7 @@ import { injectable } from 'inversify'
 import { UrlRepositoryInterface } from '../../../../src/server/repositories/interfaces/UrlRepositoryInterface'
 import {
   BulkUrlMapping,
+  RedirectDestination,
   StorableFile,
   StorableUrl,
   UrlDirectoryPaginated,
@@ -39,7 +40,11 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     throw new Error('Not implemented')
   }
 
-  getLongUrl: (shortUrl: string) => Promise<string> = () => {
+  isShortUrlAvailable: (shortUrl: string) => Promise<boolean> = () => {
+    throw new Error('Not implemented')
+  }
+
+  getLongUrl: (shortUrl: string) => Promise<RedirectDestination> = () => {
     throw new Error('Not implemented')
   }
 
@@ -80,6 +85,7 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
           clicks: 0,
           source: StorableUrlSource.Console,
           tagStrings: '',
+          safeBrowsingExpiry: null,
         },
       ],
       count: 0,
@@ -90,6 +96,16 @@ export class UrlRepositoryMock implements UrlRepositoryInterface {
     userId: number
     urlMappings: BulkUrlMapping[]
   }) => Promise<void> = () => {
+    return Promise.resolve()
+  }
+
+  updateSafeBrowsingExpiry(_: string, __: Date): Promise<void> {
+    // Mock implementation for updating safe browsing expiry
+    return Promise.resolve()
+  }
+
+  deactivateShortUrl(_: string): Promise<void> {
+    // Mock implementation for deactivating a short URL
     return Promise.resolve()
   }
 }

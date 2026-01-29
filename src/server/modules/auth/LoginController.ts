@@ -52,7 +52,7 @@ export class LoginController {
       await this.authService.generateOtp(email, getIp(req))
     } catch (error) {
       dogstatsd.increment(OTP_GENERATE_FAILURE, 1, 1)
-      res.serverError(jsonMessage(error.message))
+      res.serverError(jsonMessage((error as Error).message))
       return
     }
 
@@ -68,7 +68,7 @@ export class LoginController {
     const { email, otp }: VerifyOtpRequest = req.body
 
     try {
-      const user = await this.authService.verifyOtp(email, otp)
+      const user = await this.authService.verifyOtp(email, otp, getIp(req))
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
       dogstatsd.increment(OTP_VERIFY_SUCCESS, 1, 1)
@@ -90,7 +90,7 @@ export class LoginController {
         logger.error(`Login email not found for user:\t${email}`)
         return
       }
-      res.serverError(jsonMessage(error.message))
+      res.serverError(jsonMessage((error as Error).message))
       return
     }
   }

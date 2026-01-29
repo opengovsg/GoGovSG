@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react'
 import copy from 'copy-to-clipboard'
 import { useDispatch } from 'react-redux'
 import {
+  Button,
   Divider,
   Drawer,
   Paper,
@@ -11,6 +12,7 @@ import {
 } from '@material-ui/core'
 import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
 import copyEmailIcon from '@assets/components/directory/directory-results/copy-email-icon.svg'
+import i18next from 'i18next'
 import { SetSuccessMessageAction } from '../../../../app/components/pages/RootPage/actions/types'
 import rootActions from '../../../../app/components/pages/RootPage/actions'
 import useAppMargins from '../../../../app/components/AppMargins/appMargins'
@@ -45,11 +47,14 @@ const useStyles = makeStyles((theme) =>
       right: '10%',
     },
     row: {
-      padding: theme.spacing(3),
+      paddingTop: theme.spacing(1.5),
+      paddingBottom: theme.spacing(1.5),
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
     },
     divider: {
-      marginTop: theme.spacing(3),
-      marginBottom: theme.spacing(3),
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2),
     },
     shortUrlRow: {
       display: 'box',
@@ -92,7 +97,7 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
   const classes = useStyles({ appMargins })
   const dispatch = useDispatch()
 
-  const onClickEvent = () => {
+  const onCopyEmail = () => {
     copy(url.email)
     dispatch<SetSuccessMessageAction>(
       rootActions.setSuccessMessage('Email has been copied'),
@@ -190,10 +195,20 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
           <input
             type="image"
             src={copyEmailIcon}
-            onClick={() => onClickEvent()}
+            onClick={onCopyEmail}
             className={classes.copyIcon}
             alt="email icon"
           />
+        </Typography>
+        <Divider className={classes.divider} />
+        <Typography className={classes.row} variant="body2">
+          <Button
+            href={i18next.t('general.links.contact')}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Request ownership
+          </Button>
         </Typography>
       </Paper>
     </Drawer>

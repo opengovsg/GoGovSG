@@ -17,6 +17,7 @@ import {
   StorableUrlSource,
   StorableUrlState,
 } from '../../../repositories/enums'
+import { UserUrlsQueryConditions } from '../../../repositories/types'
 
 import { UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
@@ -64,9 +65,10 @@ export class ApiV1Controller {
       }
       if (error instanceof Sequelize.ValidationError) {
         res.badRequest(jsonMessage(error.message))
+        return
       }
       logger.error(`Error creating short URL:\t${error}`)
-      res.badRequest(jsonMessage('Server error.'))
+      res.serverError(jsonMessage('Server error.'))
       return
     }
   }
@@ -93,7 +95,9 @@ export class ApiV1Controller {
     }
   }
 
-  private static extractUrlQueryConditions(req: Express.Request) {
+  private static extractUrlQueryConditions(
+    req: Express.Request,
+  ): UserUrlsQueryConditions {
     const { userId } = req.body
     const {
       limit = 1000,

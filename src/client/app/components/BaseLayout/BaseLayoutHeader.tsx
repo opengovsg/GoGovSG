@@ -101,6 +101,7 @@ const useStyles = makeStyles((theme) =>
         paddingRight: 0,
         minWidth: theme.spacing(6),
       },
+      order: 10,
     },
     logoutIcon: {
       width: '24px',
@@ -163,18 +164,21 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       link: i18next.t('general.links.feedback'),
       public: true,
       icon: feedbackIcon,
+      mobileOrder: 3,
     },
     {
       text: 'Guide',
       link: i18next.t('general.links.faq'),
       public: true,
       icon: helpIcon,
+      mobileOrder: 4,
     },
     {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
       icon: githubIcon,
+      mobileOrder: 5,
     },
     {
       text: 'Guide',
@@ -291,7 +295,12 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
                     }
                   >
                     {isMobileVariant && header.icon && (
-                      <img src={header.icon} alt={header.text} />
+                      <img
+                        src={header.icon}
+                        alt={header.text}
+                        height={24}
+                        width={24}
+                      />
                     )}
                     {!isMobileVariant && header.text}
                   </Button>

@@ -54,6 +54,7 @@ export const bulkTab = Selector('p').withText('From a .csv')
 export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
+
 export const blacklistValidationError = Selector('div').withText(
   'ValidationError: Creation of URLs to link shortener sites are not allowed.',
 )
@@ -63,13 +64,58 @@ export const circularRedirectValidationError = Selector('div').withText(
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
+export const maliciousFileCreation = Selector('div').withText(
+  'File is likely to be malicious.',
+)
 export const successBulkCreation = Selector('div').withText(
   'links have been created',
 )
+
+// Unavailable Short Link Page
+export const unavailableShortLink = Selector('h3').withText(
+  'This short link is not available.',
+)
+
 export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
   urlTable.child(index).child(1).child('div').child(0).child('h6').innerText
+export const urlTableRow = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(1).child('div').child(0).child('h6')
+
+export const urlTableRowShortUrlText = async (row: Selector) =>
+  // eslint-disable-next-line newline-per-chained-call
+  row.find('td').nth(1).find('div').nth(1).textContent
+
+export const urlTableOriginalUrlText = async (row: Selector) =>
+  // eslint-disable-next-line newline-per-chained-call
+  row.find('td').nth(1).find('div').nth(2).textContent
+
+export const urlTableTagsTextContent = async (row: Selector) => {
+  let returnString = ''
+  // eslint-disable-next-line newline-per-chained-call
+  const numTags = await row.find('td').nth(1).find('div').nth(3).find('button')
+    .count
+  /* eslint-disable no-await-in-loop */
+  for (let tagsCount = 0; tagsCount < numTags - 1; tagsCount += 1) {
+    returnString += `${await row
+      .find('td')
+      .nth(1)
+      .find('div')
+      .nth(3)
+      .find('button')
+      .nth(tagsCount).textContent};`
+  }
+  returnString += await row
+    .find('td')
+    .nth(1)
+    .find('div')
+    .nth(3)
+    .find('button')
+    .nth(numTags - 1).textContent
+  return returnString
+}
 
 export const searchBarLinksInput = Selector('input[placeholder="Search links"]')
 export const searchBarTagsInput = Selector('input[placeholder="Search tags"]')
@@ -103,7 +149,7 @@ export const closeButtonSnackBar = Selector(
 export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
 export const clickAway = Selector('h3')
 export const largeFileError = Selector('div').withText(
-  'File too large, please upload a file smaller than 10mb',
+  'File too large, please upload a file smaller than 20mb',
 )
 export const csvOnlyError = Selector('div').withText(
   'Only csv files are allowed',
@@ -128,6 +174,9 @@ export const filterSortPanel = Selector('.MuiCollapse-root').nth(1)
 export const userApplyButton = Selector('span').withText('Apply')
 export const userResetButton = Selector('span').withText('Reset')
 export const dateOfCreationButton = Selector('p').withText('Date of creation')
+export const mostNumberOfVisitsButton = Selector('p').withText(
+  'Most number of visits',
+)
 export const userActiveButton = Selector('p')
   .withText('Active')
   .parent()

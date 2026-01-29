@@ -44,6 +44,10 @@ export interface Mailer {
   mailOTP(email: string, otp: string, ip: string): Promise<void>
   mailJobSuccess(email: string, downloadLinks: string[]): Promise<void>
   mailJobFailure(email: string): Promise<void>
+  mailDeactivatedMaliciousShortUrl(
+    email: string,
+    shortUrl: string,
+  ): Promise<void>
 }
 
 @injectable()
@@ -156,13 +160,13 @@ export class MailerNode implements Mailer {
           (downloadLink) =>
             `<a href="${downloadLink}/${
               BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.PNG]
-            }" target="_blank">here </a>`,
+            }?x-source=email" target="_blank">here </a>`,
         )}</p>
         <p>Download QR codes for your links (SVG): ${downloadLinks.map(
           (downloadLink) =>
             `<a href="${downloadLink}/${
               BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.SVG]
-            }" target="_blank">here </a>`,
+            }?x-source=email" target="_blank">here </a>`,
         )}</p>
       `
 
@@ -183,7 +187,30 @@ export class MailerNode implements Mailer {
     const subject = `[${domainVariant}] QR code generation for your links has failed`
     const body = `Bulk generation of QR codes from your csv file has failed.
 
-        <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p> 
+        <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p>
+      `
+
+    const mailBody: MailBody = {
+      to: email,
+      body,
+      subject,
+    }
+    return this.sendMail(mailBody)
+  }
+
+  mailDeactivatedMaliciousShortUrl(
+    email: string,
+    shortUrl: string,
+  ): Promise<void> {
+    if (!email || !shortUrl) {
+      logger.error('Email or shortUrl not specified')
+      return Promise.resolve()
+    }
+
+    const subject = `[${domainVariant}] Your link has been deactivated`
+    const body = `Your link <a href="${ogUrl}/${shortUrl}" target="_blank">${ogUrl}/${shortUrl}</a> has been deactivated, as the destination link has been detected to be malicious.
+
+        <p>If you believe this is a mistake, please contact us at <a href="mailto:support@${domainVariant}">support@${domainVariant}</a>.</p>
       `
 
     const mailBody: MailBody = {

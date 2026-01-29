@@ -45,7 +45,7 @@ const jobController = container.get<JobController>(DependencyIds.jobController)
 
 const fileUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_FILE_UPLOAD_SIZE, // 10MB
+    fileSize: MAX_FILE_UPLOAD_SIZE, // 20MB
     files: 1,
   },
 })
@@ -99,7 +99,7 @@ router.post(
   preprocessFormData,
   validator.body(urlSchema),
   fileCheckController.singleFileCheck,
-  fileCheckController.fileExtensionCheck(),
+  fileCheckController.fileExtensionAndMimeTypeCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
   userController.createUrl,
@@ -117,7 +117,7 @@ router.post(
   preprocessFormData,
   validator.body(urlBulkSchema),
   fileCheckController.singleFileCheck,
-  fileCheckController.fileExtensionCheck(['csv']),
+  fileCheckController.fileExtensionAndMimeTypeCheck(['csv']),
   fileCheckController.fileVirusCheck,
   bulkController.validateAndParseCsv,
   urlCheckController.bulkUrlCheck,
@@ -144,7 +144,7 @@ router.patch(
   preprocessFormData,
   validator.body(urlEditSchema),
   fileCheckController.singleFileCheck,
-  fileCheckController.fileExtensionCheck(),
+  fileCheckController.fileExtensionAndMimeTypeCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
   userController.updateUrl,

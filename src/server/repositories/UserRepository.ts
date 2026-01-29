@@ -14,7 +14,7 @@ import { UrlClicks } from '../models/statistics/clicks'
 import { Url, UrlType } from '../models/url'
 import dogstatsd, { USER_NEW } from '../util/dogstatsd'
 import { NotFoundError } from '../util/error'
-import { escapeWildcard } from '../util/sequelize'
+import { escapeWildcard, sequelize } from '../util/sequelize'
 
 /**
  * A user repository that handles access to the data store of Users.
@@ -60,11 +60,39 @@ export class UserRepository implements UserRepositoryInterface {
 
   public findOrCreateWithEmail: (email: string) => Promise<StorableUser> =
     async (email) => {
-      const [user, created] = await User.findOrCreate({ where: { email } })
-      if (created) {
-        dogstatsd.increment(USER_NEW, 1, 1)
-      }
-      return this.userMapper.persistenceToDto(user)
+      return sequelize.transaction(async (t) => {
+        // First, try to find existing user
+        let possibleUser = await User.findOne({
+          where: { email },
+          transaction: t,
+        })
+
+        if (possibleUser) {
+          return this.userMapper.persistenceToDto(possibleUser)
+        }
+
+        // If not found, try to create it
+        try {
+          possibleUser = await User.create({ email }, { transaction: t })
+          dogstatsd.increment(USER_NEW, 1, 1)
+          return this.userMapper.persistenceToDto(possibleUser)
+        } catch (error: any) {
+          // Handle race condition: another transaction created it between our find and create
+          if (
+            error instanceof Error &&
+            error.name === 'SequelizeUniqueConstraintError'
+          ) {
+            const existingUser = await User.findOne({
+              where: { email },
+              transaction: t,
+            })
+            if (existingUser) {
+              return this.userMapper.persistenceToDto(existingUser)
+            }
+          }
+          throw error
+        }
+      })
     }
 
   public findOneUrlForUser: (
@@ -131,22 +159,22 @@ export class UserRepository implements UserRepositoryInterface {
   }
 
   private static buildQueryConditions(conditions: UserUrlsQueryConditions) {
-    const searchTextCondition = {
-      [Op.or]: [
-        {
-          shortUrl: {
-            [Op.substring]: conditions.searchText,
-          },
-        },
-        {
-          longUrl: {
-            [Op.substring]: conditions.searchText,
-          },
-        },
-      ],
-    }
     let whereConditions: any = { userId: conditions.userId }
-    if (conditions.searchText.length > 0) {
+    if (conditions.searchText && conditions.searchText.length > 0) {
+      const searchTextCondition = {
+        [Op.or]: [
+          {
+            shortUrl: {
+              [Op.substring]: conditions.searchText,
+            },
+          },
+          {
+            longUrl: {
+              [Op.substring]: conditions.searchText,
+            },
+          },
+        ],
+      }
       whereConditions = { ...whereConditions, ...searchTextCondition }
     }
 

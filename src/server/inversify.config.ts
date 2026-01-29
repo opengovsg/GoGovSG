@@ -41,7 +41,6 @@ import {
 } from './modules/redirect/services'
 import { RedirectController } from './modules/redirect'
 
-import { StatisticsRepository } from './modules/statistics/repositories'
 import { StatisticsService } from './modules/statistics/services'
 import { StatisticsController } from './modules/statistics'
 
@@ -61,13 +60,17 @@ import {
 } from './modules/analytics/services'
 import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
 import { ApiV1Controller } from './modules/api/external-v1'
+import { AdminApiV1Controller } from './modules/api/admin-v1'
 import { LinkAuditController } from './modules/audit'
 import { LinkAuditService } from './modules/audit/services'
 import { UrlHistoryRepository } from './modules/audit/repositories'
 
 import { SafeBrowsingMapper } from './modules/threat/mappers'
 import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
-import { DEFAULT_ALLOWED_FILE_EXTENSIONS } from './modules/threat/services/FileTypeFilterService'
+import {
+  DEFAULT_ALLOWED_FILE_EXTENSIONS,
+  FILE_EXTENSION_MIME_TYPE_MAP,
+} from './modules/threat/services/FileTypeFilterService'
 import {
   CloudmersiveScanService,
   FileTypeFilterService,
@@ -124,7 +127,6 @@ export default () => {
   bindIfUnbound(DependencyIds.redirectService, RedirectService)
   bindIfUnbound(DependencyIds.crawlerCheckService, CrawlerCheckService)
   bindIfUnbound(DependencyIds.statisticsController, StatisticsController)
-  bindIfUnbound(DependencyIds.statisticsRepository, StatisticsRepository)
   bindIfUnbound(DependencyIds.statisticsService, StatisticsService)
   bindIfUnbound(DependencyIds.linksController, RotatingLinksController)
   bindIfUnbound(DependencyIds.sentryController, SentryController)
@@ -142,10 +144,14 @@ export default () => {
   bindIfUnbound(DependencyIds.directoryController, DirectoryController)
   bindIfUnbound(DependencyIds.deviceCheckService, DeviceCheckService)
   bindIfUnbound(DependencyIds.apiV1Controller, ApiV1Controller)
+  bindIfUnbound(DependencyIds.adminApiV1Controller, AdminApiV1Controller)
 
   container
     .bind(DependencyIds.allowedFileExtensions)
     .toConstantValue(DEFAULT_ALLOWED_FILE_EXTENSIONS)
+  container
+    .bind(DependencyIds.fileExtensionsMimeTypeMap)
+    .toConstantValue(FILE_EXTENSION_MIME_TYPE_MAP)
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
 
   if (cloudmersiveKey) {

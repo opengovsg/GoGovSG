@@ -61,12 +61,14 @@ async function archiverZipStreamToS3(systemPath, s3Path) {
       })
       .catch((err) => {
         // upload error
-        reject(err)
+        reject(
+          new Error(`Error uploading from ${systemPath} to ${s3Path}: ${err}`),
+        )
       })
 
     archive.on('error', (err) => {
       // stream error
-      reject(err)
+      reject(new Error(`Error opening stream to s3: ${err}`))
     })
 
     // where archiver stream writes to

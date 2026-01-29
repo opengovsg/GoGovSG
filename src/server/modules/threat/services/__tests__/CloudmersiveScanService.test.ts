@@ -1,9 +1,8 @@
 import { CloudmersiveScanService } from '..'
 
-const scanFile = jest.fn()
+const scanFile = () => {}
 const scanWebsite = jest.fn()
-
-const scanFileAdvanced = () => {}
+const scanFileAdvanced = jest.fn()
 
 const api = { scanFile, scanWebsite, scanFileAdvanced }
 const file = { data: Buffer.from(''), name: '' }
@@ -14,8 +13,11 @@ describe('CloudmersiveScanService', () => {
     const service = new CloudmersiveScanService('', api)
 
     it('does not trigger file scans', async () => {
-      await expect(service.hasVirus(file)).resolves.toBeFalsy()
-      expect(scanFile).not.toHaveBeenCalled()
+      await expect(service.scanFile(file)).resolves.toEqual({
+        hasVirus: false,
+        isPasswordProtected: false,
+      })
+      expect(scanFileAdvanced).not.toHaveBeenCalled()
     })
 
     it('does not trigger url scans', async () => {
@@ -28,30 +30,40 @@ describe('CloudmersiveScanService', () => {
     const service = new CloudmersiveScanService('key', api)
 
     describe('hasVirus', () => {
-      beforeEach(() => scanFile.mockClear())
+      beforeEach(() => scanFileAdvanced.mockClear())
       it('returns false on clean file', async () => {
-        scanFile.mockImplementation((_ignored, callback) =>
-          callback(null, { CleanResult: true }),
+        scanFileAdvanced.mockImplementation((_ignored, _ignored2, callback) =>
+          callback(null, {
+            FoundViruses: null,
+            ContainsPasswordProtectedFile: false,
+          }),
         )
-        await expect(service.hasVirus(file)).resolves.toBeFalsy()
-        expect(scanFile).toHaveBeenCalled()
+        await expect(service.scanFile(file)).resolves.toEqual({
+          hasVirus: false,
+          isPasswordProtected: false,
+        })
+        expect(scanFileAdvanced).toHaveBeenCalled()
       })
 
       it('returns true on dirty file', async () => {
-        scanFile.mockImplementation((_ignored, callback) =>
-          callback(null, { CleanResult: false }),
+        scanFileAdvanced.mockImplementation((_ignored, _ignored2, callback) =>
+          callback(null, {
+            FoundViruses: [
+              { FileName: 'stream', VirusName: ' Eicar-Signature' },
+            ],
+          }),
         )
-        await expect(service.hasVirus(file)).resolves.toBeTruthy()
-        expect(scanFile).toHaveBeenCalled()
+        await expect(service.scanFile(file)).resolves.toBeTruthy()
+        expect(scanFileAdvanced).toHaveBeenCalled()
       })
 
       it('throws on scan error', async () => {
         const error = new Error()
-        scanFile.mockImplementation((_ignored, callback) =>
+        scanFileAdvanced.mockImplementation((_ignored, _ignored2, callback) =>
           callback(error, null),
         )
-        await expect(service.hasVirus(file)).rejects.toStrictEqual(error)
-        expect(scanFile).toHaveBeenCalled()
+        await expect(service.scanFile(file)).rejects.toStrictEqual(error)
+        expect(scanFileAdvanced).toHaveBeenCalled()
       })
     })
 

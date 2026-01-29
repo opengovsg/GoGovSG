@@ -10,7 +10,7 @@ export class JobRepository implements interfaces.JobRepository {
   }
 
   create: (userId: number) => Promise<JobType> = async (userId) => {
-    const job = await Job.scope(['defaultScope']).create({ userId })
+    const job = await Job.create({ userId })
     if (!job) throw new Error('Newly-created job is null')
     return job
   }

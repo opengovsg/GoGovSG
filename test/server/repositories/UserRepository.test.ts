@@ -1,8 +1,14 @@
-import { urlModelMock, userModelMock } from '../api/util'
+import { sequelizeMock, urlModelMock, userModelMock } from '../api/util'
 import { UserRepository } from '../../../src/server/repositories/UserRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { UserMapper } from '../../../src/server/mappers/UserMapper'
 import { NotFoundError } from '../../../src/server/util/error'
+import { StorableUrl } from '../../../src/server/repositories/types'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../src/server/repositories/enums'
+import { sequelize } from '../../../src/server/util/sequelize'
 
 jest.mock('../../../src/server/models/user', () => ({
   User: userModelMock,
@@ -17,16 +23,17 @@ const userRepo = new UserRepository(
   new UrlMapper(),
 )
 
-const baseUrlTemplate = {
+const baseUrlTemplate: Omit<StorableUrl, 'tagStrings' | 'clicks'> = {
   shortUrl: 'short-link',
   longUrl: 'https://www.agency.gov.sg',
-  state: 'ACTIVE',
+  state: StorableUrlState.Active,
   isFile: false,
-  createdAt: Date.now(),
-  updatedAt: Date.now(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
   description: 'An agency of the Singapore Government',
   contactEmail: 'contact-us@agency.gov.sg',
-  source: 'CONSOLE',
+  source: StorableUrlSource.Console,
+  safeBrowsingExpiry: null,
 }
 
 const urlClicks = {
@@ -144,18 +151,51 @@ describe('UserRepository', () => {
   })
 
   describe('findOrCreateByEmail', () => {
-    const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
+    const findSpy = jest.spyOn(userModelMock, 'findOne')
+    const createSpy = jest.spyOn(userModelMock, 'create')
+    const txSpy = jest.spyOn(sequelize, 'transaction')
+    // NOTE: Marking as `any` because jest infers the argument of callback
+    // to be `TransactionOptions | undefined` but the callback style
+    // is accepted by sequelize as valid syntax:
+    // https://sequelize.org/docs/v6/other-topics/transactions/#managed-transactions
+    txSpy.mockImplementation(async (callback: any) => {
+      return callback(sequelizeMock.transaction)
+    })
+    const mockUser = {
+      id: 2,
+      email: 'user@agency.gov.sg',
+      urls: undefined,
+    }
 
     beforeEach(() => {
-      findOrCreate.mockReset()
+      createSpy.mockReset()
+      findSpy.mockReset()
     })
 
-    it('directs findOrCreateWithEmail to User.findOrCreate', async () => {
-      const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
-      const user = userModelMock.findOne()
-      findOrCreate.mockResolvedValue([user, null])
-      await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
-      expect(findOrCreate).toHaveBeenCalledTimes(1)
+    it('should return the result of `findOne` directly if the result is non-null', async () => {
+      // Arrange
+      findSpy.mockResolvedValue(mockUser)
+
+      // Act
+      const actual = await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
+
+      // Assert
+      expect(findSpy).toHaveBeenCalledTimes(1)
+      expect(createSpy).toHaveBeenCalledTimes(0)
+      expect(actual).toStrictEqual(mockUser)
+    })
+    it('should call `create` and return the created user if `findOne` returns null', async () => {
+      // Arrange
+      findSpy.mockResolvedValue(null)
+      createSpy.mockResolvedValue(mockUser)
+
+      // Act
+      const actual = await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
+
+      // Assert
+      expect(findSpy).toHaveBeenCalledTimes(1)
+      expect(createSpy).toHaveBeenCalledTimes(1)
+      expect(actual).toStrictEqual(mockUser)
     })
   })
 
