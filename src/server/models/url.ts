@@ -85,6 +85,7 @@ export const UrlHistory = <UrlHistoryStatic>sequelize.define(
     },
     source: {
       type: 'enum_urls_source',
+      allowNull: false,
     },
     tagStrings: {
       type: Sequelize.TEXT,
@@ -233,6 +234,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
     },
     source: {
       type: Sequelize.ENUM,
+      allowNull: false,
       values: [BULK, API, CONSOLE],
     },
     tagStrings: {
