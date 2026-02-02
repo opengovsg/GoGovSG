@@ -1,0 +1,160 @@
+name: Build and Deploy
+
+on:
+  workflow_call:
+    inputs:
+      asset_variant:
+        description: 'Asset variant (gov, edu, health)'
+        required: true
+        type: string
+      dd_service:
+        description: 'Datadog service name'
+        required: true
+        type: string
+      serverless_service:
+        description: 'Serverless service name'
+        required: true
+        type: string
+      eb_app:
+        description: 'Elastic Beanstalk application name'
+        required: true
+        type: string
+      eb_env:
+        description: 'Elastic Beanstalk environment name'
+        required: true
+        type: string
+      branch_env:
+        description: 'Branch environment (staging or production)'
+        required: true
+        type: string
+      use_existing_version:
+        description: 'Use existing version if available'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      DD_API_KEY:
+        required: true
+
+env:
+  ECR_URL: 116366738264.dkr.ecr.ap-southeast-1.amazonaws.com
+  ECR_REPO: gogovsg
+
+jobs:
+  build:
+    name: Build and push
+    runs-on: ubuntu-22.04
+    outputs:
+      tag: ${{ steps.extract_tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
+      - name: Extract ECR tag
+        id: extract_tag
+        shell: bash
+        run: echo "tag=ghactions-${BRANCH}-${SHA}-${{ inputs.asset_variant }}" >> $GITHUB_OUTPUT
+        env:
+          BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          SHA: ${{ github.sha }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
+          TAG: ${{ steps.extract_tag.outputs.tag }}
+        run: |
+          docker build --tag my-image \
+            --build-arg __ASSET_VARIANT=${{ inputs.asset_variant }} \
+            --build-arg __DD_SERVICE=${{ inputs.dd_service }} \
+            --build-arg __DD_ENV=${{ inputs.branch_env }} .
+          docker tag my-image ${REPO}:${TAG}
+          docker push ${REPO}:${TAG}
+
+  deploy:
+    name: Deploy to Elastic Beanstalk and AWS Lambda
+    runs-on: ubuntu-22.04
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+
+      - name: Set environment variables
+        run: |
+          echo "SERVERLESS_SERVICE=${{ inputs.serverless_service }}" >> $GITHUB_ENV
+          echo "EB_APP=${{ inputs.eb_app }}" >> $GITHUB_ENV
+          echo "EB_ENV=${{ inputs.eb_env }}" >> $GITHUB_ENV
+          echo "BRANCH_ENV=${{ inputs.branch_env }}" >> $GITHUB_ENV
+
+      - name: Package Dockerrun.aws.json
+        run: |
+          sed -i -e "s|@REPO|$REPO|g" Dockerrun.aws.json
+          sed -i -e "s|@TAG|$TAG|g" Dockerrun.aws.json
+          sed -i -e "s|@DD_API_KEY|$DD_API_KEY|g" -e "s|@DD_SERVICE|$DD_SERVICE|g" -e "s|@DD_ENV|$DD_ENV|g" .ebextensions/99datadog.config
+          zip -r "deploy.zip" .ebextensions Dockerrun.aws.json
+        env:
+          REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
+          TAG: ${{ needs.build.outputs.tag }}
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_ENV: ${{ env.BRANCH_ENV }}
+          DD_SERVICE: ${{ inputs.dd_service }}
+
+      - name: Get timestamp
+        id: get_timestamp
+        shell: bash
+        run: echo "timestamp=$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Get Elastic Beanstalk label
+        id: get_label
+        shell: bash
+        run: echo "label=${{ needs.build.outputs.tag }}-${TIMESTAMP}" >> $GITHUB_OUTPUT
+        env:
+          TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
+
+      - name: Deploy to EB
+        uses: opengovsg/beanstalk-deploy@v11
+        if: env.EB_ENV != ''
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: ${{ env.EB_APP }}
+          environment_name: ${{ env.EB_ENV }}
+          version_label: ${{ steps.get_label.outputs.label }}
+          region: ap-southeast-1
+          deployment_package: deploy.zip
+          use_existing_version_if_available: ${{ inputs.use_existing_version }}
+          wait_for_deployment: false
+          wait_for_environment_recovery: false
+
+      - name: Install Serverless plugin
+        run: npm install -f serverless-plugin-include-dependencies@5.0.0
+
+      - name: Serverless deploy
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}

@@ -1,0 +1,78 @@
+name: Deploy to staging
+
+on:
+  push:
+    branches:
+      - 'staging'
+
+env:
+  SENTRY_URL: https://sentry.io/
+  SENTRY_ORG: gogovsg
+  SENTRY_PROJECT_STAGING: gogovsg-staging
+  SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
+
+jobs:
+  sentry:
+    name: Upload sourcemap to Sentry
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci --legacy-peer-deps
+      - name: Select Sentry variables
+        run: |
+          echo "SENTRY_PROJECT=$SENTRY_PROJECT_STAGING" >> $GITHUB_ENV
+          echo "SENTRY_DNS=$SENTRY_DNS_STAGING" >> $GITHUB_ENV
+      - name: Upload to Sentry
+        run: npm run build
+        env:
+          ASSET_VARIANT: gov
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+  build-and-deploy:
+    name: ${{ matrix.variant.name }}
+    strategy:
+      matrix:
+        variant:
+          - name: gogov
+            asset_variant: gov
+            dd_service: go-gov
+            serverless_service: gogovsg
+            eb_env: go-staging
+            use_existing_version: false
+          - name: edu
+            asset_variant: edu
+            dd_service: go-edu
+            serverless_service: edu
+            eb_env: edu-staging
+            use_existing_version: true
+          - name: health
+            asset_variant: health
+            dd_service: go-health
+            serverless_service: health
+            eb_env: health-staging
+            use_existing_version: true
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      asset_variant: ${{ matrix.variant.asset_variant }}
+      dd_service: ${{ matrix.variant.dd_service }}
+      serverless_service: ${{ matrix.variant.serverless_service }}
+      eb_app: gosg-stag
+      eb_env: ${{ matrix.variant.eb_env }}
+      branch_env: staging
+      use_existing_version: ${{ matrix.variant.use_existing_version }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
