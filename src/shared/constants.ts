@@ -1,10 +1,11 @@
 export const MAX_CSV_UPLOAD_SIZE = 5 * 1024 * 1024 // 5 MB
-export const MAX_FILE_UPLOAD_SIZE = 10 * 1024 * 1024 // 10 MB
+export const MAX_FILE_UPLOAD_SIZE = 20 * 1024 * 1024 // 20 MB
 export const LINK_DESCRIPTION_MAX_LENGTH = 200
 export const BULK_UPLOAD_HEADER = 'Original links to be shortened'
 export const TAG_SEPARATOR = ';'
 export const MAX_NUM_TAGS_PER_LINK = 3
 export const MIN_TAG_SEARCH_LENGTH = 3
+export const DEFAULT_URL_SCAN_RESULT_EXPIRY_SECONDS = 60 * 60 * 24 // 24 hours
 export enum BULK_QR_DOWNLOAD_FORMATS {
   CSV = 'CSV',
   PNG = 'PNG',

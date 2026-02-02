@@ -3,22 +3,25 @@ import httpMocks from 'node-mocks-http'
 import redisMock from 'redis-mock'
 import SequelizeMock from 'sequelize-mock'
 
+import { DependencyIds } from '../../../constants'
 import { ACTIVE } from '../../../models/types'
 import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { container } from '../../../util/inversify'
-import { DependencyIds } from '../../../constants'
 import { generateCookie } from '../ga'
 
+import { RedirectController } from '..'
+import { logger } from '../../../config'
+import { UrlMapper } from '../../../mappers/UrlMapper'
+import { LinkStatisticsService } from '../../analytics/interfaces'
+import { UrlThreatScanService } from '../../threat/interfaces'
+import { UrlManagementService as UrlManagementServiceInterface } from '../../user/interfaces'
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
   CrawlerCheckService,
   RedirectService,
 } from '../services'
-import { RedirectController } from '..'
-import { logger } from '../../../config'
-import { UrlMapper } from '../../../mappers/UrlMapper'
-import { LinkStatisticsService } from '../../analytics/interfaces'
+import { RedirectDestination } from '../../../repositories/types'
 
 const redisMockClient = redisMock.createClient()
 const sequelizeMock = new SequelizeMock()
@@ -30,6 +33,9 @@ const urlModelMock = sequelizeMock.define(
     longUrl: 'aa',
     state: ACTIVE,
     clicks: 8,
+    UrlClicks: {
+      clicks: 8,
+    },
   },
   {
     instanceMethods: {
@@ -107,6 +113,16 @@ const devicesModelMock = sequelizeMock.define(
   },
 )
 
+const userModelMock = sequelizeMock.define('user', {
+  id: 1,
+  email: 'test@example.com',
+})
+
+const urlClicksModelMock = sequelizeMock.define('url_clicks', {
+  shortUrl: 'a',
+  clicks: 0,
+})
+
 const mockTransaction = sequelizeMock.transaction
 
 jest.resetModules()
@@ -125,6 +141,14 @@ jest.mock('../../../models/statistics/weekday', () => ({
 
 jest.mock('../../../models/statistics/devices', () => ({
   Devices: devicesModelMock,
+}))
+
+jest.mock('../../../models/statistics/clicks', () => ({
+  UrlClicks: urlClicksModelMock,
+}))
+
+jest.mock('../../../models/user', () => ({
+  User: userModelMock,
 }))
 
 jest.mock('../../../redis', () => ({
@@ -258,6 +282,22 @@ describe('redirect API tests', () => {
     container
       .bind<LinkStatisticsService>(DependencyIds.linkStatisticsService)
       .toConstantValue(linkStatisticsServiceMock)
+    container
+      .bind<UrlThreatScanService>(DependencyIds.urlThreatScanService)
+      .toConstantValue({
+        isThreat: jest.fn().mockResolvedValue(false),
+        isThreatBulk: jest.fn().mockResolvedValue([]),
+      })
+    container
+      .bind<UrlManagementServiceInterface>(DependencyIds.urlManagementService)
+      .toConstantValue({
+        deactivateMaliciousShortUrl: jest.fn(),
+        bulkCreate: jest.fn(),
+        createUrl: jest.fn(),
+        updateUrl: jest.fn(),
+        changeOwnership: jest.fn(),
+        getUrlsWithConditions: jest.fn(),
+      })
     redisMockClient.flushall()
   })
   afterEach(() => {
@@ -480,8 +520,13 @@ describe('redirect API tests', () => {
   test('url does exists in cache but not db', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
+    const redirectDestination: RedirectDestination = {
+      longUrl: 'aa',
+      isFile: false,
+      safeBrowsingExpiry: new Date(Date.now() + 1000).toISOString(),
+    }
 
-    redisMockClient.set('aaa', 'aa')
+    redisMockClient.set('aaa', JSON.stringify(redirectDestination))
     mockDbEmpty()
 
     await container
@@ -495,9 +540,14 @@ describe('redirect API tests', () => {
   test('url in cache and db is down', async () => {
     const req = createRequestWithShortUrl('Aaa')
     const res = httpMocks.createResponse()
+    const redirectDestination: RedirectDestination = {
+      longUrl: 'aa',
+      isFile: false,
+      safeBrowsingExpiry: new Date(Date.now() + 1000).toISOString(),
+    }
 
     mockDbDown()
-    redisMockClient.set('aaa', 'aa')
+    redisMockClient.set('aaa', JSON.stringify(redirectDestination))
 
     await container
       .get<RedirectController>(DependencyIds.redirectController)

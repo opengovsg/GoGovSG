@@ -1,5 +1,6 @@
 name: ci
 on:
+  workflow_dispatch:
   push:
   pull_request:
     types: [opened, reopened]
@@ -31,9 +32,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -55,9 +56,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -66,11 +67,15 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
-      - run: npm run test
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
+      - name: Configure Datadog Test Visibility
+        uses: datadog/test-visibility-github-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          languages: js
+          service: gogovsg
+          api_key: ${{ secrets.DD_API_KEY }}
+      - run: npm run test
+        env:
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   testcafe:
     name: End To End Tests
     runs-on: ubuntu-22.04
@@ -79,9 +84,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -90,7 +95,46 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
+      - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
+      - name: Configure Datadog Test Visibility
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: js
+          service: gogovsg
+          api_key: ${{ secrets.DD_API_KEY }}
       - run: npm run test:e2e-headless
+        env:
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18.x'
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
+      - run: npm ci --legacy-peer-deps
+      - run: npm run dev &
+      - run: sleep 270
+      - name: Configure Datadog Test Visibility
+        uses: datadog/test-visibility-github-action@v2
+        with:
+          languages: js
+          service: gogovsg
+          api_key: ${{ secrets.DD_API_KEY }}
+      - run: npm run test:integration
+        env:
+          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
   gatekeep:
     name: Determine if Build & Deploy is needed
     outputs:
@@ -119,9 +163,9 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - name: Cache Node.js modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
           path: ~/.npm
@@ -202,14 +246,14 @@ jobs:
   deploy-gogov:
     name: Deploy to Elastic Beanstalk and AWS Lambda for gogov
     runs-on: ubuntu-22.04
-    needs: [ci, test, gatekeep, build-gogov]
+    needs: [ci, test, integration, gatekeep, build-gogov]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
+      - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: |
           echo SERVERLESS_SERVICE=gogovsg >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -273,7 +317,8 @@ jobs:
       - name: serverless deploy
         uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
+          # serverless-plugin-include-dependencies v6 onwards requires node 18
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies@5.0.0 && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -326,14 +371,14 @@ jobs:
   deploy-edu:
     name: Deploy to Elastic Beanstalk and AWS Lambda for edu
     runs-on: ubuntu-22.04
-    needs: [ci, test, gatekeep, build-edu]
+    needs: [ci, test, integration, gatekeep, build-edu]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
+      - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: |
           echo SERVERLESS_SERVICE=edu >> $GITHUB_ENV; 
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -399,7 +444,8 @@ jobs:
       - name: serverless deploy
         uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
+          # serverless-plugin-include-dependencies v6 onwards requires node 18
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies@5.0.0 && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -452,14 +498,14 @@ jobs:
   deploy-health:
     name: Deploy to Elastic Beanstalk and AWS Lambda for health
     runs-on: ubuntu-22.04
-    needs: [ci, test, gatekeep, build-health]
+    needs: [ci, test, integration, gatekeep, build-health]
     if: needs.gatekeep.outputs.proceed == 'true'
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
+      - name: Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - run: |
           echo SERVERLESS_SERVICE=health >> $GITHUB_ENV;
           if [[ $GITHUB_REF == $STAGING_BRANCH ]]; then
@@ -525,7 +571,8 @@ jobs:
       - name: serverless deploy
         uses: opengovsg/serverless-github-action@v3.0.0
         with:
-          args: -c "serverless plugin install --name serverless-plugin-include-dependencies && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
+          # serverless-plugin-include-dependencies v6 onwards requires node 18
+          args: -c "serverless plugin install --name serverless-plugin-include-dependencies@5.0.0 && serverless deploy --stage=$BRANCH_ENV --conceal --verbose"
           entrypoint: /bin/bash
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

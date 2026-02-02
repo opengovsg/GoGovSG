@@ -20,7 +20,11 @@ import {
   isValidTag,
   isValidTags,
 } from '../../../../shared/util/validation'
-import { MAX_NUM_TAGS_PER_LINK } from '../../../../shared/constants'
+import {
+  MAX_CSV_UPLOAD_SIZE,
+  MAX_FILE_UPLOAD_SIZE,
+  MAX_NUM_TAGS_PER_LINK,
+} from '../../../../shared/constants'
 import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
 import LinkIcon from '../../widgets/LinkIcon'
@@ -127,6 +131,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
 
   useEffect(() => {
     setFile(null) // reset file state if toggling between createType
+    setUploadFileError('')
     switch (createType) {
       case CreateType.LINK:
         GAEvent('modal page', 'click url tab')
@@ -232,7 +237,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 </Typography>
                 <div className={classes.maxSizeTextWrapper}>
                   <Typography variant="caption" className={classes.maxSizeText}>
-                    Maximum size 10mb
+                    Maximum size {formatBytes(MAX_FILE_UPLOAD_SIZE)}
                   </Typography>
                 </div>
               </div>
@@ -245,6 +250,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 buttonText="Browse"
                 fileSizeText={file ? formatBytes(file.size) : ''}
                 isUploading={isUploading}
+                maxSize={MAX_FILE_UPLOAD_SIZE}
               />
               <CollapsibleMessage
                 visible={!!uploadFileError}
@@ -315,7 +321,10 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                   visible={!!createShortLinkError}
                   type={CollapsibleMessageType.Error}
                 >
-                  <a className={classes.shortLinkError} href="/#/directory">
+                  <a
+                    className={classes.shortLinkError}
+                    href={`/#/directory?query=${shortUrl}`}
+                  >
                     {createShortLinkError}
                   </a>
                 </CollapsibleMessage>
@@ -355,7 +364,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 </Typography>
                 <div className={classes.maxSizeTextWrapper}>
                   <Typography variant="caption" className={classes.maxSizeText}>
-                    Maximum size 10mb
+                    Maximum size {formatBytes(MAX_CSV_UPLOAD_SIZE)}
                   </Typography>
                 </div>
               </div>
@@ -369,6 +378,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
                 fileSizeText={file ? formatBytes(file.size) : ''}
                 isUploading={isUploading}
                 acceptedTypes=".csv"
+                maxSize={MAX_CSV_UPLOAD_SIZE}
               />
               <CollapsibleMessage
                 visible={!!uploadFileError}

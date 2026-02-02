@@ -93,8 +93,6 @@ test('Changing the link owner should update the link history with Link Owner upd
     .pressKey('ctrl+a delete')
     .typeText(linkTransferField, `${transferEmail}`)
     .click(transferButton)
-  // Close drawer
-  await t.click(closeButtonSnackBar)
   // Sign out
   await t.click(signOutButton)
   // Login using the new link owner

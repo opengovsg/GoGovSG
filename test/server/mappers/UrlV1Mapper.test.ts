@@ -21,6 +21,7 @@ describe('url v1 mapper', () => {
       tagStrings: '1;abc;foo-bar',
       contactEmail: 'bar@open.gov.sg',
       description: 'this-is-a-description',
+      safeBrowsingExpiry: null,
     }
     const urlV1DTO = urlV1Mapper.persistenceToDto(storableUrl)
     expect(urlV1DTO).toEqual({

@@ -9,6 +9,11 @@ describe('Test whiteliste check', () => {
 })
 
 describe('Test blacklist check', () => {
+  test('example GooGle.com url is not blacklisted', () => {
+    const url = 'https://www.GooGle.com'
+    expect(validation.isBlacklisted(url)).toBe(false)
+  })
+
   test('localstack url is not blacklisted', () => {
     const url = 'http://localhost:4566'
     expect(validation.isBlacklisted(url)).toBe(false)
@@ -16,6 +21,11 @@ describe('Test blacklist check', () => {
 
   test('example bit.ly url is blacklisted', () => {
     const url = 'https://bit.ly/abc'
+    expect(validation.isBlacklisted(url)).toBe(true)
+  })
+
+  test('example Bit.Ly url is also blacklisted', () => {
+    const url = 'https://Bit.Ly/abc'
     expect(validation.isBlacklisted(url)).toBe(true)
   })
 })
@@ -66,6 +76,11 @@ describe('Test valid url check', () => {
   test('localstack url passes check with whitelist', () => {
     const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url, true)).toBe(true)
+  })
+
+  test('IP addresses fails check', () => {
+    const url = 'https://8.8.8.8:4566/local-bucket/file1.pdf'
+    expect(validation.isValidUrl(url)).toBe(false)
   })
 })
 

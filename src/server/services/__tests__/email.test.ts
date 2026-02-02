@@ -216,13 +216,13 @@ describe('Mailer tests', () => {
           (downloadLink) =>
             `<a href="${downloadLink}/${
               BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.PNG]
-            }" target="_blank">here </a>`,
+            }?x-source=email" target="_blank">here </a>`,
         )}</p>
         <p>Download QR codes for your links (SVG): ${downloadLinks.map(
           (downloadLink) =>
             `<a href="${downloadLink}/${
               BULK_QR_DOWNLOAD_MAPPINGS[BULK_QR_DOWNLOAD_FORMATS.SVG]
-            }" target="_blank">here </a>`,
+            }?x-source=email" target="_blank">here </a>`,
         )}</p>
       `
 
@@ -255,7 +255,7 @@ describe('Mailer tests', () => {
       const expectedSubject = `[${domainVariant}] QR code generation for your links has failed`
       const expectedBody = `Bulk generation of QR codes from your csv file has failed.
 
-        <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p> 
+        <p>You can still login to <a href="https://${domainVariant}/#/login" target="_blank">${domainVariant}</a> and download the QR codes for your links individually.</p>
       `
 
       await service.mailJobFailure('test@email.com')
@@ -263,6 +263,44 @@ describe('Mailer tests', () => {
         to: 'test@email.com',
         body: expectedBody,
         subject: expectedSubject,
+      })
+    })
+  })
+
+  describe('mailDeactivatedMaliciousShortUrl', () => {
+    const { MailerNode } = require('../email')
+    const service = new MailerNode()
+    const sendMailSpy = jest.spyOn(service, 'sendMail').mockImplementation()
+
+    beforeEach(() => {
+      sendMailSpy.mockClear()
+    })
+
+    it('should not send mail if email is undefined', async () => {
+      // Arrange
+      const email = null
+      const shortUrl = 'shortUrl'
+
+      // Act
+      await service.mailDeactivatedMaliciousShortUrl(email, shortUrl)
+
+      // Assert
+      expect(sendMailSpy).not.toBeCalled()
+    })
+
+    it('should call sendMail with the correct email body if email and shortUrl are specified', async () => {
+      // Arrange
+      const shortUrl = 'shortUrl'
+      const email = 'test@example.com'
+
+      // Act
+      await service.mailDeactivatedMaliciousShortUrl(email, shortUrl)
+
+      // Assert
+      expect(sendMailSpy).toHaveBeenCalledWith({
+        to: email,
+        body: expect.any(String),
+        subject: expect.any(String),
       })
     })
   })

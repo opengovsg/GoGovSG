@@ -5,7 +5,10 @@ import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { BulkService } from './interfaces'
 import { UrlManagementService } from '../user/interfaces'
-import dogstatsd from '../../util/dogstatsd'
+import dogstatsd, {
+  BULK_CREATE_FAILURE,
+  BULK_CREATE_SUCCESS,
+} from '../../util/dogstatsd'
 import { logger, shouldGenerateQRCodes } from '../../config'
 import { MessageType } from '../../../shared/util/messages'
 
@@ -41,7 +44,9 @@ export class BulkController {
       req.body.longUrls = longUrls
       next()
     } catch (error) {
-      res.badRequest(jsonMessage(error.message, MessageType.FileUploadError))
+      res.badRequest(
+        jsonMessage((error as Error).message, MessageType.FileUploadError),
+      )
       return
     }
   }
@@ -59,12 +64,11 @@ export class BulkController {
     try {
       await this.urlManagementService.bulkCreate(userId, urlMappings, tags)
     } catch (e) {
-      dogstatsd.increment('bulk.hash.failure', 1, 1)
+      dogstatsd.increment(BULK_CREATE_FAILURE, 1, 1)
       res.badRequest(jsonMessage('Something went wrong, please try again.'))
       return
     }
-
-    dogstatsd.increment('bulk.hash.success', 1, 1)
+    dogstatsd.increment(BULK_CREATE_SUCCESS, 1, 1)
     if (shouldGenerateQRCodes) {
       logger.info('shouldGenerateQRCodes true, triggering QR code generation')
       // put jobParamsList on the req body so that it can be used by JobController

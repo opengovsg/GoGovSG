@@ -186,6 +186,7 @@ const setUserAnnouncement: (payload: {
   subtitle: string
   url: string
   image: string
+  buttonText: string
 }) => SetUserAnnouncementAction = (payload) => ({
   type: UserAction.SET_USER_ANNOUNCEMENT,
   payload,

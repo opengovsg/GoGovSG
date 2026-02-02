@@ -27,7 +27,6 @@ export const DependencyIds = {
   redirectService: Symbol.for('redirectService'),
   crawlerCheckService: Symbol.for('crawlerCheckService'),
   redirectController: Symbol.for('redirectController'),
-  statisticsRepository: Symbol.for('statisticsRepository'),
   statisticsService: Symbol.for('repositoryService'),
   statisticsController: Symbol.for('statisticsController'),
   sentryController: Symbol.for('sentryController'),
@@ -50,6 +49,7 @@ export const DependencyIds = {
   urlHistoryRepository: Symbol.for('urlHistoryRepository'),
   deviceCheckService: Symbol.for('deviceCheckService'),
   allowedFileExtensions: Symbol.for('allowedFileExtensions'),
+  fileExtensionsMimeTypeMap: Symbol.for('fileExtensionsMimeTypeMap'),
   fileTypeFilterService: Symbol.for('fileTypeFilterService'),
   cloudmersiveKey: Symbol.for('cloudmersiveKey'),
   cloudmersiveClient: Symbol.for('cloudmersiveClient'),
@@ -69,6 +69,7 @@ export const DependencyIds = {
   bulkService: Symbol.for('bulkService'),
   apiKeyAuthService: Symbol.for('apiKeyAuthService'),
   apiV1Controller: Symbol.for('apiV1Controller'),
+  adminApiV1Controller: Symbol.for('adminApiV1Controller'),
 }
 
 export const ERROR_404_PATH = '404.error.ejs'

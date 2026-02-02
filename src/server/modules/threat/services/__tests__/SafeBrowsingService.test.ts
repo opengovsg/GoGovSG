@@ -55,9 +55,9 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
-    it('returns false when lookup is false', async () => {
+    it('returns false when fetchWebRiskData is empty', async () => {
       const json = jest.fn()
-      json.mockResolvedValue({ matches: null })
+      json.mockResolvedValue({})
       mockFetch.mockResolvedValue({ ok: true, json })
 
       await expect(service.isThreat(url)).resolves.toBeFalsy()
@@ -66,7 +66,7 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
-    it('returns false when lookup is null', async () => {
+    it('returns false when fetchWebRiskData is null', async () => {
       const json = jest.fn()
       json.mockResolvedValue(null)
       mockFetch.mockResolvedValue({ ok: true, json })
@@ -88,15 +88,20 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
-    it('returns false even when lookup has match', async () => {
-      const matches = {}
+    it('returns false even when fetchWebRiskData returns threat', async () => {
+      const result = {
+        threat: {
+          threatTypes: ['MALWARE'],
+          expireTime: '2024-03-20T05:29:41.898456500Z',
+        },
+      }
       const json = jest.fn()
-      json.mockResolvedValue({ matches })
+      json.mockResolvedValue(result)
       mockFetch.mockResolvedValue({ ok: true, json })
 
       await expect(service.isThreat(url)).resolves.toBeFalsy()
       expect(get).toHaveBeenCalledWith(url)
-      // expect(set).toHaveBeenCalledWith(url, matches)
+      expect(set).toHaveBeenCalledWith(url, result.threat)
       expect(mockFetch).toHaveBeenCalled()
     })
   })
@@ -129,9 +134,9 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
-    it('returns false when lookup is false', async () => {
+    it('returns false when fetchWebRiskData is empty', async () => {
       const json = jest.fn()
-      json.mockResolvedValue({ matches: null })
+      json.mockResolvedValue({})
       mockFetch.mockResolvedValue({ ok: true, json })
 
       await expect(service.isThreat(url)).resolves.toBeFalsy()
@@ -140,7 +145,7 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
-    it('returns false when lookup is null', async () => {
+    it('returns false when fetchWebRiskData is null', async () => {
       const json = jest.fn()
       json.mockResolvedValue(null)
       mockFetch.mockResolvedValue({ ok: true, json })
@@ -162,15 +167,20 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
-    it('returns true when lookup has match', async () => {
-      const matches = {}
+    it('returns true when fetchWebRiskData returns threat', async () => {
+      const result = {
+        threat: {
+          threatTypes: ['MALWARE'],
+          expireTime: '2024-03-20T05:29:41.898456500Z',
+        },
+      }
       const json = jest.fn()
-      json.mockResolvedValue({ matches })
+      json.mockResolvedValue(result)
       mockFetch.mockResolvedValue({ ok: true, json })
 
       await expect(service.isThreat(url)).resolves.toBeTruthy()
       expect(get).toHaveBeenCalledWith(url)
-      // expect(set).toHaveBeenCalledWith(url, matches)
+      expect(set).toHaveBeenCalledWith(url, result.threat)
       expect(mockFetch).toHaveBeenCalled()
     })
   })
@@ -189,10 +199,10 @@ describe('SafeBrowsingService', () => {
     beforeEach(() => {
       mockFetch.mockReset()
     })
-    const spy = jest.spyOn(service, 'lookup')
+    const spy = jest.spyOn(service, 'fetchWebRiskData')
 
     it('always returns false', async () => {
-      await expect(service.isThreatBulk([url, url], 1)).resolves.toBeFalsy()
+      await expect(service.isThreatBulk([url, url])).resolves.toBeFalsy()
       expect(spy).not.toHaveBeenCalled()
       expect(mockFetch).not.toHaveBeenCalled()
     })
@@ -210,62 +220,69 @@ describe('SafeBrowsingService', () => {
 
     const { SafeBrowsingService } = require('..')
     const service = new SafeBrowsingService({ get, set })
-    const spy = jest.spyOn(service, 'lookup')
+    const spy = jest.spyOn(service, 'fetchWebRiskData')
 
     const urls = [url, url, url, url]
-    const batchSize = 2
-    const numBatches = urls.length / batchSize
 
     beforeEach(() => {
       mockFetch.mockReset()
       spy.mockClear()
     })
 
-    it('returns false when lookup is false', async () => {
+    it('returns false when fetchWebRiskData is empty', async () => {
       const json = jest.fn()
-      json.mockResolvedValue({ matches: null })
+      json.mockResolvedValue({})
       mockFetch.mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeFalsy()
-      expect(spy).toHaveBeenCalledTimes(numBatches)
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeFalsy()
+      expect(spy).toHaveBeenCalledTimes(urls.length)
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
     })
 
-    it('returns false when lookup is null', async () => {
+    it('returns false when fetchWebRiskData is null', async () => {
       const json = jest.fn()
       json.mockResolvedValue(null)
       mockFetch.mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeFalsy()
-      expect(spy).toHaveBeenCalledTimes(numBatches)
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeFalsy()
+      expect(spy).toHaveBeenCalledTimes(urls.length)
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
     })
 
     it('returns false when any response is not ok', async () => {
       const json = jest.fn()
-      json.mockResolvedValue({ error: { message: '' } })
+      json
+        .mockResolvedValueOnce({ error: { message: '' } })
+        .mockResolvedValue({})
       mockFetch
-        .mockResolvedValueOnce({ ok: true, json })
         .mockResolvedValueOnce({ ok: false, json })
+        .mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeFalsy()
-      expect(spy).toHaveBeenCalledTimes(numBatches)
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeFalsy()
+      expect(spy).toHaveBeenCalledTimes(urls.length)
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
     })
 
-    it('returns false even when any lookup has match', async () => {
-      const matches = {}
+    it('returns false even when any fetchWebRiskData returns threat', async () => {
+      const result = {
+        threat: {
+          threatTypes: ['MALWARE'],
+          expireTime: '2024-03-20T05:29:41.898456500Z',
+        },
+      }
       const json = jest.fn()
       json.mockResolvedValue(null)
-      const jsonMatches = jest.fn()
-      jsonMatches.mockResolvedValue({ matches })
+      const jsonThreat = jest.fn()
+      jsonThreat.mockResolvedValue(result)
       mockFetch
-        .mockResolvedValueOnce({ ok: true, json })
-        .mockResolvedValueOnce({ ok: true, json: jsonMatches })
+        .mockResolvedValueOnce({ ok: true, json: jsonThreat })
+        .mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeFalsy()
-      expect(spy).toHaveBeenCalledTimes(numBatches)
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeFalsy()
+      expect(jsonThreat).toHaveBeenCalledTimes(1)
+      expect(json).toHaveBeenCalledTimes(3)
+      expect(spy).toHaveBeenCalledTimes(urls.length)
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
     })
   })
 
@@ -281,35 +298,33 @@ describe('SafeBrowsingService', () => {
 
     const { SafeBrowsingService } = require('..')
     const service = new SafeBrowsingService({ get, set })
-    const spy = jest.spyOn(service, 'lookup')
+    const spy = jest.spyOn(service, 'fetchWebRiskData')
 
     const urls = [url, url, url, url]
-    const batchSize = 2
-    const numBatches = urls.length / batchSize
 
     beforeEach(() => {
       mockFetch.mockReset()
       spy.mockClear()
     })
 
-    it('returns false when all lookups are false', async () => {
+    it('returns false when all fetchWebRiskData are empty', async () => {
       const json = jest.fn()
-      json.mockResolvedValue({ matches: null })
+      json.mockResolvedValue({})
       mockFetch.mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeFalsy()
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
-      expect(spy).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
+      expect(spy).toHaveBeenCalledTimes(urls.length)
     })
 
-    it('returns false when lookup is null', async () => {
+    it('returns false when fetchWebRiskData is null', async () => {
       const json = jest.fn()
       json.mockResolvedValue(null)
       mockFetch.mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeFalsy()
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
-      expect(spy).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
+      expect(spy).toHaveBeenCalledTimes(urls.length)
     })
 
     it('throws when any response is not ok', async () => {
@@ -319,25 +334,31 @@ describe('SafeBrowsingService', () => {
         .mockResolvedValue({ ok: true, json })
         .mockResolvedValueOnce({ ok: false, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).rejects.toBeDefined()
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
-      expect(spy).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).rejects.toBeDefined()
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
+      expect(spy).toHaveBeenCalledTimes(urls.length)
     })
 
-    it('returns true when any lookup has match', async () => {
-      const matches = {}
+    it('returns true when any fetchWebRiskData returns threat', async () => {
+      const result = {
+        threat: {
+          threatTypes: ['MALWARE'],
+          expireTime: '2024-03-20T05:29:41.898456500Z',
+        },
+      }
       const json = jest.fn()
       json.mockResolvedValue(null)
-      const jsonMatches = jest.fn()
-      jsonMatches.mockResolvedValue({ matches })
+      const jsonThreat = jest.fn()
+      jsonThreat.mockResolvedValue(result)
       mockFetch
-        .mockResolvedValueOnce({ ok: true, json })
-        .mockResolvedValueOnce({ ok: true, json: jsonMatches })
+        .mockResolvedValueOnce({ ok: true, json: jsonThreat })
+        .mockResolvedValue({ ok: true, json })
 
-      await expect(service.isThreatBulk(urls, batchSize)).resolves.toBeTruthy()
-      expect(json).toHaveBeenCalledTimes(1)
-      expect(mockFetch).toHaveBeenCalledTimes(numBatches)
-      expect(spy).toHaveBeenCalledTimes(numBatches)
+      await expect(service.isThreatBulk(urls)).resolves.toBeTruthy()
+      expect(jsonThreat).toHaveBeenCalledTimes(1)
+      expect(json).toHaveBeenCalledTimes(3)
+      expect(mockFetch).toHaveBeenCalledTimes(urls.length)
+      expect(spy).toHaveBeenCalledTimes(urls.length)
     })
   })
 })

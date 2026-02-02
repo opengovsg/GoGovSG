@@ -87,13 +87,18 @@ export function createRequestWithEmail(email: any): Request {
  * @param  {any} user
  * @returns A mock Request with the input email and otp.
  */
-export function createRequestWithEmailAndOtp(email: any, otp: any): Request {
+export function createRequestWithEmailAndIpAndOtp(
+  email: any,
+  ip: string,
+  otp: any,
+): Request {
   return httpMocks.createRequest({
     session: {},
     body: {
       email,
       otp,
     },
+    ip,
   })
 }
 
@@ -117,6 +122,8 @@ export const urlModelMock = sequelizeMock.define(
   {
     shortUrl: 'a',
     longUrl: 'aa',
+    isFile: false,
+    safeBrowsingExpiry: null,
     state: ACTIVE,
     UrlClicks: {
       clicks: 3,
@@ -263,6 +270,7 @@ export const userModelMock = {
   findByPk: jest.fn(),
   findOne: jest.fn(),
   scope: jest.fn(),
+  create: jest.fn(),
   findOrCreate: ({ where: { email } }: { where: { email: string } }) =>
     Promise.resolve([
       {

@@ -5,9 +5,18 @@ import { UrlThreatScanService } from '../interfaces'
 import { logger, safeBrowsingKey, safeBrowsingLogOnly } from '../../../config'
 import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository'
 import { DependencyIds } from '../../../constants'
+import { WebRiskThreat } from '../../../repositories/types'
 
-const ENDPOINT = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${safeBrowsingKey}`
-const SAFE_BROWSING_LIMIT = 500
+const ENDPOINT = `https://webrisk.googleapis.com/v1/uris:search?key=${safeBrowsingKey}`
+const WEB_RISK_THREAT_TYPES = [
+  'SOCIAL_ENGINEERING',
+  'MALWARE',
+  'UNWANTED_SOFTWARE',
+  // SOCIAL_ENGINEERING_EXTENDED_COVERAGE improves coverage of malicious urls
+  // but may have small amount (<10%) of potential false positives,
+  // see details https://cloud.google.com/web-risk/docs/extended-coverage
+  'SOCIAL_ENGINEERING_EXTENDED_COVERAGE',
+]
 
 @injectable()
 export class SafeBrowsingService implements UrlThreatScanService {
@@ -22,117 +31,82 @@ export class SafeBrowsingService implements UrlThreatScanService {
     this.safeBrowsingRepository = safeBrowsingRepository
   }
 
-  /**
-   * Request template for Safe Browsing. Threat lists found
-   * at /v4/threatLists and are keyed by type, platform and entry.
-   * Both ANY_PLATFORM and all the platforms are specified, the latter
-   * so that we can look up the IP_RANGE lists, which are not keyed by
-   * ANY_PLATFORM.
-   */
-  private requestTemplate = Object.freeze({
-    client: {
-      clientId: 'GoGovSG',
-      clientVersion: '1.0.0',
-    },
-    threatInfo: {
-      threatTypes: [
-        'POTENTIALLY_HARMFUL_APPLICATION',
-        'UNWANTED_SOFTWARE',
-        'MALWARE',
-        'SOCIAL_ENGINEERING',
-      ],
-      platformTypes: ['ANY_PLATFORM', 'WINDOWS', 'LINUX', 'OSX'],
-      threatEntryTypes: ['URL', 'EXECUTABLE', 'IP_RANGE'],
-    },
-  })
-
   public isThreat: (url: string) => Promise<boolean> = async (url) => {
     if (!safeBrowsingKey) {
       logger.warn(`No Safe Browsing API key provided. Not scanning url: ${url}`)
       return false
     }
-    let matches = await this.safeBrowsingRepository.get(url)
-    if (!matches) {
-      matches = await this.lookup([url])
+    let threat = await this.safeBrowsingRepository.get(url)
+    if (!threat) {
+      threat = await this.fetchWebRiskData(url)
     }
-    return !safeBrowsingLogOnly && Boolean(matches)
+    return !safeBrowsingLogOnly && Boolean(threat)
   }
 
-  private async lookup(urls: string[]) {
-    let matches = null
-    const request = { ...this.requestTemplate } as any
+  private constructWebRiskEndpoint: (
+    url: string,
+    threatTypes: string[],
+  ) => string = (url, threatTypes) => {
+    const encodedUrl = encodeURIComponent(url)
 
-    request.threatInfo.threatEntries = urls.map((url) => {
-      return { url }
-    })
+    const threatTypesQuery = threatTypes
+      .map((type: string) => `threatTypes=${type}`)
+      .join('&')
 
-    const response = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
-    })
-    const body = await response.json()
-    if (!response.ok) {
-      const error = new Error(
-        `Safe Browsing failure:\tError: ${response.statusText}\t message: ${body.error.message}`,
-      )
-      if (safeBrowsingLogOnly) {
-        logger.error(error.message)
-      } else {
-        throw error
-      }
-    } else if (body?.matches) {
-      const prefix = safeBrowsingLogOnly
-        ? 'Considered threat by Safe Browsing but ignoring'
-        : 'Malicious link content'
+    return `${ENDPOINT}&${threatTypesQuery}&uri=${encodedUrl}`
+  }
 
-      /**
-       * Result.matches is a list of threat matches for all matched urls, example:
-       * [{ "threatType": "SOCIAL_ENGINEERING", "threat": { "url": "https://testsafebrowsing.appspot.com/s/phishing.html" } }]
-       * we use _.groupBy to group threat matches by url so that the serialized form
-       * matches what is currently written into our repository for single url lookups.
-       */
-      const matchesByUrl = _.groupBy(body.matches, (obj) => obj.threat.url)
-      Object.entries(matchesByUrl).forEach(
-        ([url, threatMatch]: [string, any]) => {
+  private fetchWebRiskData: (url: string) => Promise<WebRiskThreat | null> =
+    async (url) => {
+      const endpoint = this.constructWebRiskEndpoint(url, WEB_RISK_THREAT_TYPES)
+
+      const response = await fetch(endpoint, { method: 'GET' })
+      const body = await response.json()
+      if (!response.ok) {
+        const error = new Error(
+          `Safe Browsing failure:\tError: ${response.statusText}\t message: ${body.error.message}`,
+        )
+        if (safeBrowsingLogOnly) {
+          logger.error(error.message)
+        } else {
+          throw error
+        }
+      } else if (body?.threat) {
+        const prefix = safeBrowsingLogOnly
+          ? 'Considered threat by Safe Browsing but ignoring'
+          : 'Malicious link content'
+
+        /**
+         * Result.threat.threatTypes is a list of threat matches for a url, example:
+         * "threat": { "threatTypes": ["MALWARE"], "expireTime": "2024-03-20T05:29:41.898456500Z"}.
+         */
+        logger.warn(
+          `${prefix}: ${url} yields ${JSON.stringify(body.threat, null, 2)}`,
+        )
+        try {
+          // writing to the safeBrowsingRepository should be non-blocking
+          this.safeBrowsingRepository.set(url, body.threat)
+        } catch (e) {
+          // writes are wrapped in a try-catch block to prevent errors from bubbling up
           logger.warn(
-            `${prefix}: ${url} yields ${JSON.stringify(threatMatch, null, 2)}`,
+            `failed to set ${url} in safeBrowsingRepository, skipping`,
           )
-          try {
-            // writing to the safeBrowsingRepository should be non-blocking
-            this.safeBrowsingRepository.set(url, threatMatch)
-          } catch (e) {
-            // writes are wrapped in a try-catch block to prevent errors from bubbling up
-            logger.warn(
-              `failed to set ${url} in safeBrowsingRepository, skipping`,
-            )
-          }
-        },
-      )
-      matches = body.matches
+        }
+        return body.threat
+      }
+      return null
     }
-    return matches
-  }
 
-  public isThreatBulk: (
-    urls: string[],
-    batchSize?: number,
-  ) => Promise<boolean> = async (urls, batchSize = SAFE_BROWSING_LIMIT) => {
+  public isThreatBulk: (urls: string[]) => Promise<boolean> = async (urls) => {
     if (!safeBrowsingKey) {
       logger.warn(`No Safe Browsing API key provided. Not scanning in bulk`)
       return false
     }
 
-    const urlChunks: string[][] = []
-
-    for (let i = 0; i < urls.length; i += batchSize) {
-      urlChunks.push(urls.slice(i, i + batchSize))
-    }
-
-    const matches = await Promise.all(
-      urlChunks.map((urlChunk) => this.lookup(urlChunk)),
+    const results = await Promise.all(
+      urls.map((url) => this.fetchWebRiskData(url)),
     )
-    const isThreat = matches.some((match) => Boolean(match) === true)
+    const isThreat = results.some((result) => Boolean(result))
     if (!safeBrowsingLogOnly && isThreat) {
       return true
     }

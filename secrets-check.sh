@@ -16,5 +16,29 @@ if [ "$KEY_ID" != "" -a "$KEY_ID" != "," -a "$KEY" != "" ]; then
     exit 1
 fi
 
+gitguardian_secrets_check() {
+  # NOTE: check if ggshield is installed
+  if ! (command -v ggshield &> /dev/null); then
+    echo "Installing ggshield"
+    brew install ggshield
+  fi
+
+  # NOTE: check if user is authenticated and if not, 
+  # do the auth
+  if ! (ggshield api-status &> /dev/null); then                                      
+    ggshield auth login
+  fi
+
+
+  ggshield secret scan pre-commit
+}
+
+# Check changed files for secrets using GitGuardian
+gitguardian_secrets_check
+exit_status=$?
+if [ $exit_status -ne 0 ]; then
+  exit $exit_status
+fi
+
 # Normal exit
 exit 0

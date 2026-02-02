@@ -18,9 +18,6 @@ const SALT_ROUNDS: number = Number(process.env.SALT_ROUNDS) || 10
 const OTP_EXPIRY: number = Number(process.env.OTP_EXPIRY) || 5 * 60
 // in seconds, for URL cache expiry
 const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
-// in seconds, for statistics cache expiry
-const STATISTICS_EXPIRY: number =
-  Number(process.env.STATISTICS_EXPIRY) || 5 * 60
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
@@ -121,7 +118,7 @@ if (DEV_ENV) {
     maxAge,
   }
   proxy = false
-  otpLimit = 10
+  otpLimit = 0 // disable OTP rate limit on development to allow faster logins for integration tests
 
   // Configure maildev specific options
   transporterOpts.ignoreTLS = true
@@ -171,6 +168,7 @@ export const userAnnouncement = {
   subtitle: process.env.ANNOUNCEMENT_SUBTITLE,
   url: process.env.ANNOUNCEMENT_URL,
   image: process.env.ANNOUNCEMENT_IMAGE,
+  buttonText: process.env.ANNOUNCEMENT_BUTTON_TEXT,
 }
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
@@ -193,6 +191,8 @@ export const databaseUri = process.env.DB_URI as string
 export const masterDatabaseCredentials = parseDbUri(databaseUri)
 export const replicaUri = process.env.REPLICA_URI as string
 export const replicaDatabaseCredentials = parseDbUri(replicaUri)
+export const ffUseReplicaForRedirects =
+  process.env.FF_USE_REPLICA_FOR_REDIRECTS === 'true'
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
 export const redisSessionUri = process.env.REDIS_SESSION_URI as string
 export const redisRedirectUri = process.env.REDIS_REDIRECT_URI as string
@@ -212,7 +212,6 @@ export const gaTrackingId: string | undefined = process.env.GA_TRACKING_ID
 export const saltRounds = SALT_ROUNDS
 export const otpExpiry = OTP_EXPIRY
 export const redirectExpiry = REDIRECT_EXPIRY
-export const statisticsExpiry = STATISTICS_EXPIRY
 export const sessionSettings: SessionSettings = {
   secret: process.env.SESSION_SECRET as string,
   name: 'gogovsg',
@@ -268,4 +267,10 @@ export const apiKeySalt = process.env.API_KEY_SALT as string
 export const apiLinkRandomStrLength: number =
   Number(process.env.API_LINK_RANDOM_STR_LENGTH) || 8
 export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
-export const apiAdmin: string = process.env.ADMIN_API_EMAIL || ''
+export const apiAdmins: string[] = process.env.ADMIN_API_EMAILS
+  ? process.env.ADMIN_API_EMAILS.split(',')
+  : []
+
+export const userCount = Number(process.env.USER_COUNT) || 77288
+export const clickCount = Number(process.env.CLICK_COUNT) || 666820545
+export const linkCount = Number(process.env.LINK_COUNT) || 28151439
