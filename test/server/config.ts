@@ -54,4 +54,7 @@ jest.mock('../../src/server/config', () => ({
   gaTrackingId: 'UA-000000-2',
   otpRateLimit: 5,
   ogHostname: 'go.gov.sg',
+  userCount: 1,
+  clickCount: 2,
+  linkCount: 3,
 }))

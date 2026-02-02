@@ -8,5 +8,11 @@
     {
       "ContainerPort": "8080"
     }
+  ],
+  "Volumes": [
+    {
+      "HostDirectory": "/etc/gogovsg/.env",
+      "ContainerDirectory": "/usr/src/gogovsg/.env"
+    }
   ]
 }

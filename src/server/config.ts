@@ -18,9 +18,6 @@ const SALT_ROUNDS: number = Number(process.env.SALT_ROUNDS) || 10
 const OTP_EXPIRY: number = Number(process.env.OTP_EXPIRY) || 5 * 60
 // in seconds, for URL cache expiry
 const REDIRECT_EXPIRY: number = Number(process.env.REDIRECT_EXPIRY) || 5 * 60
-// in seconds, for statistics cache expiry
-const STATISTICS_EXPIRY: number =
-  Number(process.env.STATISTICS_EXPIRY) || 5 * 60
 
 // Compulsory environment variables required for booting up
 const requiredVars: string[] = [
@@ -35,6 +32,7 @@ const requiredVars: string[] = [
   'SESSION_SECRET',
   'VALID_EMAIL_GLOB_EXPRESSION', // Glob pattern for valid emails
   'AWS_S3_BUCKET', // For file.go.gov.sg uploads
+  'API_KEY_SALT', // To generate APIKey
 ]
 
 // AWS Simple Email Service
@@ -110,25 +108,26 @@ transporterOpts = {
   maxConnections: 20,
 }
 
+const maxAge = Number(process.env.COOKIE_MAX_AGE) || 86400000 // milliseconds = 1 day
+
 if (DEV_ENV) {
   // Only configure things particular to development here
   logger.warn('Deploying in development mode.')
   cookieConfig = {
     secure: false, // do not set domain for localhost
-    maxAge: 1800000, // milliseconds = 30 min
+    maxAge,
   }
   proxy = false
-  otpLimit = 10
+  otpLimit = 0 // disable OTP rate limit on development to allow faster logins for integration tests
 
   // Configure maildev specific options
   transporterOpts.ignoreTLS = true
 } else {
   logger.info('Deploying in production mode.')
 
-  const maxAge = Number(process.env.COOKIE_MAX_AGE)
   cookieConfig = {
     secure: true,
-    maxAge: Number.isNaN(maxAge) ? 1800000 : maxAge,
+    maxAge,
   }
   exitIfAnyMissing(sesVars)
 
@@ -169,10 +168,15 @@ export const userAnnouncement = {
   subtitle: process.env.ANNOUNCEMENT_SUBTITLE,
   url: process.env.ANNOUNCEMENT_URL,
   image: process.env.ANNOUNCEMENT_IMAGE,
+  buttonText: process.env.ANNOUNCEMENT_BUTTON_TEXT,
 }
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
+export const sqsRegion = (process.env.SQS_REGION as string) || ''
+export const sqsBulkQRCodeStartUrl =
+  (process.env.SQS_BULK_QRCODE_GENERATE_START_URL as string) || ''
+export const sqsTimeout = Number(process.env.SQS_TIMEOUT) || 10000
 
 const parseDbUri = (uri: string): ConnectionOptions => {
   const { host, user, password, database, port } = parseUri(uri)
@@ -187,6 +191,8 @@ export const databaseUri = process.env.DB_URI as string
 export const masterDatabaseCredentials = parseDbUri(databaseUri)
 export const replicaUri = process.env.REPLICA_URI as string
 export const replicaDatabaseCredentials = parseDbUri(replicaUri)
+export const ffUseReplicaForRedirects =
+  process.env.FF_USE_REPLICA_FOR_REDIRECTS === 'true'
 export const redisOtpUri = process.env.REDIS_OTP_URI as string
 export const redisSessionUri = process.env.REDIS_SESSION_URI as string
 export const redisRedirectUri = process.env.REDIS_REDIRECT_URI as string
@@ -206,7 +212,6 @@ export const gaTrackingId: string | undefined = process.env.GA_TRACKING_ID
 export const saltRounds = SALT_ROUNDS
 export const otpExpiry = OTP_EXPIRY
 export const redirectExpiry = REDIRECT_EXPIRY
-export const statisticsExpiry = STATISTICS_EXPIRY
 export const sessionSettings: SessionSettings = {
   secret: process.env.SESSION_SECRET as string,
   name: 'gogovsg',
@@ -245,3 +250,27 @@ export const bulkUploadMaxNum: number =
   Number(process.env.BULK_UPLOAD_MAX_NUM) || 1000
 export const bulkUploadRandomStrLength: number =
   Number(process.env.BULK_UPLOAD_RANDOM_STR_LENGTH) || 8
+export const qrCodeJobBatchSize: number =
+  Number(process.env.BULK_QR_CODE_BATCH_SIZE) || 1000
+export const qrCodeBucketUrl: string = process.env.BULK_QR_CODE_BUCKET_URL || ''
+export const shouldGenerateQRCodes: boolean =
+  process.env.ACTIVATE_BULK_QR_CODE_GENERATION === 'true'
+export const jobPollInterval: number =
+  Number(process.env.JOB_POLL_INTERVAL) || 5000 // in ms
+export const jobPollAttempts: number =
+  Number(process.env.JOB_POLL_ATTEMPTS) || 12
+
+export const apiKeyVersion: string = process.env.API_KEY_VERSION || 'v1'
+export const apiEnv: string =
+  process.env.DD_ENV === 'production' ? 'live' : 'test'
+export const apiKeySalt = process.env.API_KEY_SALT as string
+export const apiLinkRandomStrLength: number =
+  Number(process.env.API_LINK_RANDOM_STR_LENGTH) || 8
+export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
+export const apiAdmins: string[] = process.env.ADMIN_API_EMAILS
+  ? process.env.ADMIN_API_EMAILS.split(',')
+  : []
+
+export const userCount = Number(process.env.USER_COUNT) || 77288
+export const clickCount = Number(process.env.CLICK_COUNT) || 666820545
+export const linkCount = Number(process.env.LINK_COUNT) || 28151439

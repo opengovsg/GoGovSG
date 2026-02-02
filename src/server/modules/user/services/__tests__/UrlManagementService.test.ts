@@ -1,9 +1,11 @@
 import { UrlManagementService } from '../UrlManagementService'
+import { StorableUrlSource } from '../../../../repositories/enums'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
   NotFoundError,
 } from '../../../../util/error'
+import { DATETIME_REGEX } from '../../../../../../test/integration/util/helpers'
 
 describe('UrlManagementService', () => {
   const userRepository = {
@@ -13,28 +15,47 @@ describe('UrlManagementService', () => {
     findUserByUrl: jest.fn(),
     findUrlsForUser: jest.fn(),
     findOrCreateWithEmail: jest.fn(),
+    findUserByApiKey: jest.fn(),
+    saveApiKeyHash: jest.fn(),
+    hasApiKey: jest.fn(),
   }
 
   const urlRepository = {
     update: jest.fn(),
     create: jest.fn(),
     findByShortUrlWithTotalClicks: jest.fn(),
+    isShortUrlAvailable: jest.fn(),
     getLongUrl: jest.fn(),
     plainTextSearch: jest.fn(),
     rawDirectorySearch: jest.fn(),
     bulkCreate: jest.fn(),
+    updateSafeBrowsingExpiry: jest.fn(),
+    deactivateShortUrl: jest.fn(),
   }
 
-  const service = new UrlManagementService(userRepository, urlRepository)
+  const mockMailer = {
+    initMailer: jest.fn(),
+    mailOTP: jest.fn(),
+    mailJobSuccess: jest.fn(),
+    mailJobFailure: jest.fn(),
+    mailDeactivatedMaliciousShortUrl: jest.fn(),
+  }
+
+  const service = new UrlManagementService(
+    userRepository,
+    urlRepository,
+    mockMailer,
+  )
 
   describe('createUrl', () => {
     const userId = 2
     const longUrl = 'https://www.agency.gov.sg'
     const shortUrl = 'abcdef'
+    const sourceConsole = StorableUrlSource.Console
+    const sourceApi = StorableUrlSource.Api
 
     beforeEach(() => {
       userRepository.findById.mockReset()
-      userRepository.findUserByUrl.mockReset()
       urlRepository.findByShortUrlWithTotalClicks.mockReset()
       urlRepository.create.mockReset()
     })
@@ -42,39 +63,44 @@ describe('UrlManagementService', () => {
     it('throws NotFoundError on no user', async () => {
       userRepository.findById.mockResolvedValue(null)
       await expect(
-        service.createUrl(userId, shortUrl, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).not.toHaveBeenCalled()
+      expect(urlRepository.isShortUrlAvailable).not.toHaveBeenCalledWith(
+        shortUrl,
+      )
       expect(urlRepository.create).not.toHaveBeenCalled()
     })
 
     it('throws AlreadyExistsError on existing url', async () => {
       userRepository.findById.mockResolvedValue({ id: userId })
-      userRepository.findUserByUrl.mockResolvedValue({
-        shortUrl,
-        longUrl,
-        email: userId,
-      })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(false)
       await expect(
-        service.createUrl(userId, shortUrl, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).rejects.toBeInstanceOf(AlreadyExistsError)
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).not.toHaveBeenCalled()
     })
 
     it('processes new non-file url', async () => {
       userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(true)
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
-        service.createUrl(userId, shortUrl, longUrl),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl },
+        {
+          userId,
+          longUrl,
+          shortUrl,
+          source: sourceConsole,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+        },
         undefined,
       )
     })
@@ -86,15 +112,22 @@ describe('UrlManagementService', () => {
         mimetype: 'application/json',
       }
       userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(true)
       urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
       urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
       await expect(
-        service.createUrl(userId, shortUrl, longUrl, file),
+        service.createUrl(userId, sourceConsole, shortUrl, longUrl, file),
       ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
       expect(userRepository.findById).toHaveBeenCalledWith(userId)
-      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(shortUrl)
       expect(urlRepository.create).toHaveBeenCalledWith(
-        { userId, longUrl, shortUrl },
+        {
+          userId,
+          longUrl,
+          shortUrl,
+          source: sourceConsole,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+        },
         {
           data: file.data,
           mimetype: file.mimetype,
@@ -102,16 +135,55 @@ describe('UrlManagementService', () => {
         },
       )
     })
+
+    it('processes new API-created url with no shortUrl', async () => {
+      jest.resetModules()
+      jest.mock('../../../../config', () => ({
+        apiLinkRandomStrLength: 4,
+      }))
+      // eslint-disable-next-line global-require
+      const { UrlManagementService } = require('..')
+      const service = new UrlManagementService(userRepository, urlRepository)
+
+      userRepository.findById.mockResolvedValue({ id: userId })
+      urlRepository.isShortUrlAvailable.mockResolvedValue(true)
+      urlRepository.findByShortUrlWithTotalClicks.mockResolvedValue(null)
+      urlRepository.create.mockResolvedValue({ userId, longUrl, shortUrl })
+      await expect(
+        service.createUrl(userId, sourceApi, undefined, longUrl),
+      ).resolves.toStrictEqual({ userId, longUrl, shortUrl })
+      expect(userRepository.findById).toHaveBeenCalledWith(userId)
+      expect(urlRepository.isShortUrlAvailable).toHaveBeenCalledWith(
+        expect.stringMatching(/^.{4}$/),
+      )
+      expect(urlRepository.create).toHaveBeenCalledWith(
+        {
+          userId,
+          longUrl,
+          shortUrl: expect.stringMatching(/^.{4}$/),
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+          source: sourceApi,
+        },
+        undefined,
+      )
+    })
   })
 
   describe('updateUrl', () => {
     const userId = 2
-    const url = { shortUrl: 'abcdef' }
+    const linkUrl = { shortUrl: 'abcdef', isFile: false }
+    const fileUrl = { shortUrl: 'abcdef', isFile: true }
     const options = {
       longUrl: 'https://www.agency.gov.sg',
       state: undefined,
       description: 'An agency',
       contactEmail: 'contact-us@agency.gov.sg',
+      safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+    }
+    const file = {
+      data: Buffer.from(''),
+      name: 'file.json',
+      mimetype: 'application/json',
     }
 
     beforeEach(() => {
@@ -122,54 +194,82 @@ describe('UrlManagementService', () => {
     it('throws NotFoundError on no url', async () => {
       userRepository.findOneUrlForUser.mockResolvedValue(null)
       await expect(
-        service.updateUrl(userId, url.shortUrl, options),
+        service.updateUrl(userId, linkUrl.shortUrl, options),
       ).rejects.toBeInstanceOf(NotFoundError)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        linkUrl.shortUrl,
+      )
+      expect(urlRepository.update).not.toHaveBeenCalled()
+    })
+
+    it('throws Error when updating file with longUrl', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      await expect(
+        service.updateUrl(userId, fileUrl.shortUrl, {
+          longUrl: 'https://example.com',
+        }),
+      ).rejects.toBeInstanceOf(Error)
+      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
+        userId,
+        fileUrl.shortUrl,
+      )
+      expect(urlRepository.update).not.toHaveBeenCalled()
+    })
+
+    it('throws Error when updating link with file', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      await expect(
+        service.updateUrl(userId, linkUrl.shortUrl, { file }),
+      ).rejects.toBeInstanceOf(Error)
+      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
+        userId,
+        linkUrl.shortUrl,
       )
       expect(urlRepository.update).not.toHaveBeenCalled()
     })
 
     it('updates a non-file url', async () => {
-      userRepository.findOneUrlForUser.mockResolvedValue(url)
-      urlRepository.update.mockResolvedValue(url)
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      urlRepository.update.mockResolvedValue(linkUrl)
       await expect(
-        service.updateUrl(userId, url.shortUrl, {
+        service.updateUrl(userId, linkUrl.shortUrl, {
           ...options,
           file: undefined,
         }),
-      ).resolves.toStrictEqual(url)
+      ).resolves.toStrictEqual(linkUrl)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        linkUrl.shortUrl,
       )
-      expect(urlRepository.update).toHaveBeenCalledWith(url, options, undefined)
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        linkUrl,
+        options,
+        undefined,
+      )
     })
 
     it('updates a file url', async () => {
-      const file = {
-        data: Buffer.from(''),
-        name: 'file.json',
-        mimetype: 'application/json',
-      }
-      userRepository.findOneUrlForUser.mockResolvedValue(url)
-      urlRepository.update.mockResolvedValue(url)
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      urlRepository.update.mockResolvedValue(fileUrl)
       await expect(
-        service.updateUrl(userId, url.shortUrl, {
-          ...options,
+        service.updateUrl(userId, fileUrl.shortUrl, {
           file,
         }),
-      ).resolves.toStrictEqual(url)
+      ).resolves.toStrictEqual(fileUrl)
       expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
         userId,
-        url.shortUrl,
+        fileUrl.shortUrl,
       )
-      expect(urlRepository.update).toHaveBeenCalledWith(url, options, {
-        data: file.data,
-        key: `${url.shortUrl}.json`,
-        mimetype: file.mimetype,
-      })
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        fileUrl,
+        {},
+        {
+          data: file.data,
+          key: `${fileUrl.shortUrl}.json`,
+          mimetype: file.mimetype,
+        },
+      )
     })
   })
 
@@ -284,6 +384,56 @@ describe('UrlManagementService', () => {
         urlMappings,
         undefined,
       })
+    })
+  })
+
+  describe('deactivateMaliciousShortUrl', () => {
+    it('should throw NotFoundError if the shortUrl does not exist', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+      urlRepository.deactivateShortUrl.mockRejectedValue(
+        new NotFoundError('Short URL not found'),
+      )
+
+      // Act & Assert
+      await expect(
+        service.deactivateMaliciousShortUrl(shortUrl),
+      ).rejects.toThrowError(NotFoundError)
+      expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
+    })
+
+    it('should throw NotFoundError if the user of the shortUrl cannot be found', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+      urlRepository.deactivateShortUrl.mockRejectedValue(
+        new NotFoundError('User not found'),
+      )
+
+      // Act & Assert
+      await expect(
+        service.deactivateMaliciousShortUrl(shortUrl),
+      ).rejects.toThrowError(NotFoundError)
+      expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
+    })
+
+    it('should successfully deactivate a malicious shortUrl and send an email to the shortUrl owner', async () => {
+      // Arrange
+      const shortUrl = 'malicious'
+      const user = { email: 'test@example.com' }
+      urlRepository.deactivateShortUrl.mockResolvedValue(undefined)
+      userRepository.findUserByUrl.mockResolvedValue(user)
+      mockMailer.mailDeactivatedMaliciousShortUrl.mockResolvedValue(undefined)
+
+      // Act
+      await service.deactivateMaliciousShortUrl(shortUrl)
+
+      // Assert
+      expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
+      expect(userRepository.findUserByUrl).toHaveBeenCalledWith(shortUrl)
+      expect(mockMailer.mailDeactivatedMaliciousShortUrl).toHaveBeenCalledWith(
+        user.email,
+        shortUrl,
+      )
     })
   })
 })

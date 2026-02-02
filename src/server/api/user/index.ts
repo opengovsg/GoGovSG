@@ -9,7 +9,9 @@ import {
   MAX_FILE_UPLOAD_SIZE,
 } from '../../../shared/constants'
 import {
+  hasApiKeySchema,
   ownershipTransferSchema,
+  pollJobInformationSchema,
   tagRetrievalSchema,
   urlBulkSchema,
   urlEditSchema,
@@ -19,6 +21,7 @@ import {
 import { UserController } from '../../modules/user'
 import { BulkController } from '../../modules/bulk'
 import { FileCheckController, UrlCheckController } from '../../modules/threat'
+import { JobController } from '../../modules/job'
 
 const router = Express.Router()
 
@@ -38,16 +41,18 @@ const bulkController = container.get<BulkController>(
   DependencyIds.bulkController,
 )
 
+const jobController = container.get<JobController>(DependencyIds.jobController)
+
 const fileUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_FILE_UPLOAD_SIZE, // 10MB
+    fileSize: MAX_FILE_UPLOAD_SIZE, // 20MB
     files: 1,
   },
 })
 
 const bulkCSVUploadMiddleware = fileUpload({
   limits: {
-    fileSize: MAX_CSV_UPLOAD_SIZE, // 1MB
+    fileSize: MAX_CSV_UPLOAD_SIZE, // 5MB
     files: 1,
   },
 })
@@ -55,10 +60,11 @@ const bulkCSVUploadMiddleware = fileUpload({
 const validator = createValidator({ passError: true })
 
 /**
- * Place incoming file into the request body so that it can be
+ * Place incoming file into the request body and
+ * deserialize tags in FormData so that they can be
  * validated together with the other fields by Joi.
  */
-function preprocessPotentialIncomingFile(
+function preprocessFormData(
   req: Express.Request,
   res: Express.Response,
   next: Express.NextFunction,
@@ -66,7 +72,6 @@ function preprocessPotentialIncomingFile(
   if (req.files) {
     req.body.files = req.files
     if (req.body.tags) {
-      // Tags for files sent as FormData should be deserialised from JSON format
       try {
         req.body.tags = JSON.parse(req.body.tags)
       } catch (e) {
@@ -91,12 +96,12 @@ function preprocessPotentialIncomingFile(
 router.post(
   '/url',
   fileUploadMiddleware,
-  preprocessPotentialIncomingFile,
+  preprocessFormData,
+  validator.body(urlSchema),
   fileCheckController.singleFileCheck,
-  fileCheckController.fileExtensionCheck(),
+  fileCheckController.fileExtensionAndMimeTypeCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
-  validator.body(urlSchema),
   userController.createUrl,
 )
 
@@ -109,14 +114,15 @@ router.post(
 router.post(
   '/url/bulk',
   bulkCSVUploadMiddleware,
-  preprocessPotentialIncomingFile,
+  preprocessFormData,
   validator.body(urlBulkSchema),
   fileCheckController.singleFileCheck,
-  fileCheckController.fileExtensionCheck(['csv']),
+  fileCheckController.fileExtensionAndMimeTypeCheck(['csv']),
   fileCheckController.fileVirusCheck,
   bulkController.validateAndParseCsv,
   urlCheckController.bulkUrlCheck,
   bulkController.bulkCreate,
+  jobController.createAndStartJob,
 )
 
 router.patch(
@@ -135,12 +141,12 @@ router.patch(
 router.patch(
   '/url',
   fileUploadMiddleware,
-  preprocessPotentialIncomingFile,
+  preprocessFormData,
+  validator.body(urlEditSchema),
   fileCheckController.singleFileCheck,
-  fileCheckController.fileExtensionCheck(),
+  fileCheckController.fileExtensionAndMimeTypeCheck(),
   fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
-  validator.body(urlEditSchema),
   userController.updateUrl,
 )
 
@@ -157,6 +163,22 @@ router.get(
   '/tag',
   validator.body(tagRetrievalSchema),
   userController.getTagsWithConditions,
+)
+
+router.get(
+  '/job/status',
+  validator.query(pollJobInformationSchema),
+  jobController.pollJobStatusUpdate,
+)
+
+router.get('/job/latest', jobController.getLatestJob)
+
+router.post('/apiKey', userController.createAPIKey)
+
+router.get(
+  '/hasApiKey',
+  validator.body(hasApiKeySchema),
+  userController.hasAPIKey,
 )
 
 router.get('/message', userController.getUserMessage)

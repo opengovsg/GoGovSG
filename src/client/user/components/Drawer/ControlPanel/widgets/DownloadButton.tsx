@@ -1,16 +1,7 @@
-import React, { useState } from 'react'
-import {
-  Menu,
-  MenuItem,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import React from 'react'
 import FileSaver from 'file-saver'
 
 import * as Sentry from '@sentry/react'
-import TrailingButton from './TrailingButton'
-import downloadIcon from '../assets/download-icon.svg'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
 import ConfigOption, {
@@ -18,6 +9,10 @@ import ConfigOption, {
 } from '../../../../widgets/ConfigOption'
 import { get } from '../../../../../app/util/requests'
 import { GAEvent } from '../../../../../app/util/ga'
+import {
+  DropdownButton,
+  DropdownOption,
+} from '../../../../widgets/DropdownButton'
 
 // Gets file extension from content-type.
 function getFileExtension(format: ImageFormat) {
@@ -60,113 +55,30 @@ async function downloadServerQrCode(
   }
 }
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    textDiv: {
-      width: '55%',
-    },
-    menuPaper: {
-      width: 135,
-      height: 120,
-      marginTop: 6,
-      marginBottom: 6,
-      boxShadow: '0 2px 10px 0 rgba(0, 0, 0, 0.1)',
-    },
-    menuText: {
-      fontWeight: 500,
-      paddingLeft: 30,
-      paddingRight: 30,
-    },
-    menuItemRoot: {
-      height: '50%',
-    },
-  }),
-)
-
-type Option = {
-  name: string
-  onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void
-}
-
 export default function DownloadButton() {
-  const classes = useStyles()
   const modalState = useDrawerState()
   const shortLink = modalState.relevantShortLink!
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  const options: Option[] = [
+  const options: DropdownOption[] = [
     {
       name: 'PNG',
       onClick: () => {
         downloadServerQrCode(shortLink, ImageFormat.PNG)
-        handleClose()
       },
     },
     {
       name: 'SVG',
       onClick: () => {
         downloadServerQrCode(shortLink, ImageFormat.SVG)
-        handleClose()
       },
     },
   ]
-
-  const button = (
-    <>
-      <TrailingButton onClick={handleClick} variant="outlined">
-        <div className={classes.textDiv}>Download</div>
-        <img src={downloadIcon} alt="Download" draggable={false} />
-      </TrailingButton>
-      <Menu
-        classes={{
-          paper: classes.menuPaper,
-        }}
-        MenuListProps={{ style: { padding: '5 0', height: '100%' } }}
-        anchorEl={anchorEl}
-        getContentAnchorEl={null}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        {options.map((option) => {
-          return (
-            <MenuItem
-              classes={{
-                root: classes.menuItemRoot,
-              }}
-              key={option.name}
-              onClick={option.onClick}
-              disableGutters
-            >
-              <Typography
-                className={classes.menuText}
-                variant="body2"
-                color="primary"
-              >
-                {option.name}
-              </Typography>
-            </MenuItem>
-          )
-        })}
-      </Menu>
-    </>
-  )
 
   return (
     <ConfigOption
       title="Download QR Code"
       mobile
-      trailing={button}
+      trailing={<DropdownButton buttonText="Download" options={options} />}
       trailingPosition={TrailingPosition.end}
     />
   )

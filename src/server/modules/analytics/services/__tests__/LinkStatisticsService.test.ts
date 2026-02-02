@@ -29,6 +29,9 @@ const service = new LinkStatisticsService(
     findOrCreateWithEmail: NO_OP,
     findUrlsForUser: NO_OP,
     findUserByUrl: NO_OP,
+    saveApiKeyHash: NO_OP,
+    findUserByApiKey: NO_OP,
+    hasApiKey: NO_OP,
   },
   { updateLinkStatistics, findByShortUrl },
 )

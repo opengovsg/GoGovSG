@@ -66,7 +66,7 @@ export function formatBytes(bytes: number) {
   return `${parseFloat((bytes / k ** i).toFixed(1))}${sizes[i]}`
 }
 
-export function hmtlSanitizer(dirtyHtmlString: string) {
+export function htmlSanitizer(dirtyHtmlString: string) {
   return sanitizeHtml(dirtyHtmlString, {
     allowedTags: ['b', 'i', 'em', 'strong', 'a'],
     allowedAttributes: {

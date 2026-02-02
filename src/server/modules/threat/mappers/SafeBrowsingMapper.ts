@@ -1,27 +1,25 @@
 /* eslint-disable class-methods-use-this, lines-between-class-members, no-dupe-class-members */
 import { injectable } from 'inversify'
 import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
-import { HasCacheDuration } from '../../../repositories/types'
+import { WebRiskThreat } from '../../../repositories/types'
 
 @injectable()
-export class SafeBrowsingMapper
-  implements TwoWayMapper<HasCacheDuration[], string>
-{
-  persistenceToDto(matches: string): HasCacheDuration[]
-  persistenceToDto(matches: string | null): HasCacheDuration[] | null {
-    if (!matches) {
+export class SafeBrowsingMapper implements TwoWayMapper<WebRiskThreat, string> {
+  persistenceToDto(threat: string): WebRiskThreat
+  persistenceToDto(threat: string | null): WebRiskThreat | null {
+    if (!threat) {
       return null
     }
-    return JSON.parse(matches)
+    return JSON.parse(threat)
   }
 
-  dtoToPersistence(matches: HasCacheDuration[]): string
-  dtoToPersistence(matches: HasCacheDuration[] | null): string | null {
-    if (!matches) {
+  dtoToPersistence(threat: WebRiskThreat): string
+  dtoToPersistence(threat: WebRiskThreat | null): string | null {
+    if (!threat) {
       return null
     }
 
-    return JSON.stringify(matches)
+    return JSON.stringify(threat)
   }
 }
 

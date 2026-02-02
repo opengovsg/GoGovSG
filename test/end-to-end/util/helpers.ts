@@ -5,7 +5,7 @@ import { tagText1, tagText2, tagText3 } from './config'
 // General
 export const loginButton = Selector('span').withText('Sign in')
 export const signInButton = Selector('button[type="submit"]')
-export const createLinkButton = Selector('span').withText('Create link')
+export const createLinkButton = Selector('span').withText('Create')
 export const mobileCreateLinkButton = Selector('img').withAttribute(
   'alt',
   'Create link',
@@ -28,6 +28,9 @@ export const mobileDirectoryPageButton = Selector('img')
   .withAttribute('alt', 'Directory')
   .parent()
   .parent()
+export const apiIntegrationPageButton = Selector('span')
+  .withText('API Integration')
+  .parent()
 export const signOutButton = Selector('strong').withText('Sign out').parent()
 
 // Login Page
@@ -43,24 +46,76 @@ export const recencyButton = Selector('p').withText('Most recent')
 export const resultTable = Selector('table')
 
 // User Page - general
+export const linkCountHeaderText = () =>
+  Selector('h3').withText('links').innerText
 export const drawer = Selector('div[role="presentation"]')
-export const fileTab = Selector('p').withText('From file')
+export const fileTab = Selector('p').withText('To a File')
+export const bulkTab = Selector('p').withText('From a .csv')
 export const uploadFile = Selector('input[type="file"]')
 export const activeSwitch = Selector('input[type="checkbox"]')
 export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
+
 export const blacklistValidationError = Selector('div').withText(
-  'ValidationError: Creation of URLs to link shortener sites prohibited.',
+  'ValidationError: Creation of URLs to link shortener sites are not allowed.',
 )
 export const circularRedirectValidationError = Selector('div').withText(
-  'Validation error: Circular redirects to go.gov.sg are prohibited',
+  'ValidationError: Circular redirects are not allowed.',
 )
 export const successUrlCreation = Selector('div').withText(
   'Your link has been created',
 )
+export const maliciousFileCreation = Selector('div').withText(
+  'File is likely to be malicious.',
+)
+export const successBulkCreation = Selector('div').withText(
+  'links have been created',
+)
+
+// Unavailable Short Link Page
+export const unavailableShortLink = Selector('h3').withText(
+  'This short link is not available.',
+)
+
 export const urlTable = Selector('tbody')
 export const urlTableRowUrlText = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
   urlTable.child(index).child(1).child('div').child(0).child('h6').innerText
+export const urlTableRow = (index: number) =>
+  // eslint-disable-next-line newline-per-chained-call
+  urlTable.child(index).child(1).child('div').child(0).child('h6')
+
+export const urlTableRowShortUrlText = async (row: Selector) =>
+  // eslint-disable-next-line newline-per-chained-call
+  row.find('td').nth(1).find('div').nth(1).textContent
+
+export const urlTableOriginalUrlText = async (row: Selector) =>
+  // eslint-disable-next-line newline-per-chained-call
+  row.find('td').nth(1).find('div').nth(2).textContent
+
+export const urlTableTagsTextContent = async (row: Selector) => {
+  let returnString = ''
+  // eslint-disable-next-line newline-per-chained-call
+  const numTags = await row.find('td').nth(1).find('div').nth(3).find('button')
+    .count
+  /* eslint-disable no-await-in-loop */
+  for (let tagsCount = 0; tagsCount < numTags - 1; tagsCount += 1) {
+    returnString += `${await row
+      .find('td')
+      .nth(1)
+      .find('div')
+      .nth(3)
+      .find('button')
+      .nth(tagsCount).textContent};`
+  }
+  returnString += await row
+    .find('td')
+    .nth(1)
+    .find('div')
+    .nth(3)
+    .find('button')
+    .nth(numTags - 1).textContent
+  return returnString
+}
 
 export const searchBarLinksInput = Selector('input[placeholder="Search links"]')
 export const searchBarTagsInput = Selector('input[placeholder="Search tags"]')
@@ -94,7 +149,10 @@ export const closeButtonSnackBar = Selector(
 export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
 export const clickAway = Selector('h3')
 export const largeFileError = Selector('div').withText(
-  'File too large, please upload a file smaller than 10mb',
+  'File too large, please upload a file smaller than 20mb',
+)
+export const csvOnlyError = Selector('div').withText(
+  'Only csv files are allowed',
 )
 export const fileSubmitButton = Selector('button[type="submit"]')
 export const tag1 = Selector('p').withExactText(tagText1).parent()
@@ -103,6 +161,9 @@ export const tag3 = Selector('p').withExactText(tagText3).parent()
 export const tagCloseButton1 = tag1.child('button')
 export const tagCloseButton2 = tag2.child('button')
 export const tagCloseButton3 = tag3.child('button')
+export const noResultsFoundText = Selector('p').withExactText(
+  'No results found, try expanding your search terms.',
+)
 
 // User Page - filter search
 export const userFilterSortPanelButton = Selector(
@@ -113,6 +174,9 @@ export const filterSortPanel = Selector('.MuiCollapse-root').nth(1)
 export const userApplyButton = Selector('span').withText('Apply')
 export const userResetButton = Selector('span').withText('Reset')
 export const dateOfCreationButton = Selector('p').withText('Date of creation')
+export const mostNumberOfVisitsButton = Selector('p').withText(
+  'Most number of visits',
+)
 export const userActiveButton = Selector('p')
   .withText('Active')
   .parent()
@@ -209,8 +273,37 @@ export const linkHistoryOriginalLinkH6 =
 export const linkHistoryLinkOwnerH6 = Selector('h6').withText('Link Owner')
 export const linkHistoryTagsH6 = Selector('h6').withText('Tags')
 
+// API Integration
+export const generateApiKeyButton = Selector('img')
+  .withAttribute('alt', 'generate api key')
+  .parent()
+  .parent()
+export const regenerateApiKeyButton = Selector('img')
+  .withAttribute('alt', 'Regenerate')
+  .parent()
+  .parent()
+export const iHaveCopiedButton = Selector('span')
+  .withText('Yes, I have copied')
+  .parent()
+export const copyButton = Selector('span')
+  .withText('Yes, I have copied')
+  .parent()
+  .parent()
+  .child('div')
+  .nth(0)
+  .child('div')
+  .nth(0)
+  .child('button')
+  .nth(0)
+
 // Helper Functions
 export function generateRandomString(length: number): string {
   const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
   return customAlphabet(ALPHABET, length)()
+}
+
+export async function getLinkCount(): Promise<number> {
+  const currLinkCountHeaderText = await linkCountHeaderText()
+  // currLinkCountHeaderText is a string with format "<numOfLinks> links"
+  return parseInt(currLinkCountHeaderText.split(' ')[0], 10)
 }

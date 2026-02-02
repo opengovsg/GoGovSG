@@ -89,6 +89,7 @@ type TextFieldProps = {
   rows?: number
   rowsMax?: number
   FormHelperTextProps?: object
+  disabled?: boolean
 }
 
 export default function PrefixableTextField({
@@ -102,6 +103,7 @@ export default function PrefixableTextField({
   rows,
   rowsMax,
   FormHelperTextProps,
+  disabled = false,
 }: TextFieldProps) {
   const classes = useTextFieldStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
@@ -120,6 +122,7 @@ export default function PrefixableTextField({
         startAdornment: prefix && <PrefixAdornment>{prefix}</PrefixAdornment>,
       }}
       required
+      disabled={disabled}
       variant="outlined"
       value={value}
       onChange={onChange}

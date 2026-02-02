@@ -24,6 +24,7 @@ export interface UrlBaseType extends IdType {
   readonly description: string
   readonly source: StorableUrlSource
   readonly tagStrings: string
+  readonly safeBrowsingExpiry: string | null
 }
 
 export interface UrlType extends IdType, UrlBaseType, Sequelize.Model {
@@ -55,40 +56,51 @@ type UrlHistoryStatic = typeof Sequelize.Model & {
   new (values?: object, options?: Sequelize.BuildOptions): UrlHistoryType
 }
 
-export const UrlHistory = <UrlHistoryStatic>sequelize.define('url_history', {
-  longUrl: {
-    type: Sequelize.TEXT,
-    allowNull: false,
+export const UrlHistory = <UrlHistoryStatic>sequelize.define(
+  'url_history',
+  {
+    longUrl: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+    },
+    // UrlHistory table relies on `enum_urls_state` and `enum_urls_source`
+    // enum types for the `state` and `source` columns, which is created by
+    // Url table, so this table must be defined after `Url` table.
+    state: {
+      type: 'enum_urls_state',
+      allowNull: false,
+    },
+    isFile: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+    },
+    contactEmail: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    description: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
+    source: {
+      type: 'enum_urls_source',
+      allowNull: false,
+    },
+    tagStrings: {
+      type: Sequelize.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
   },
-  // UrlHistory table relies on `enum_urls_state` and `enum_urls_source`
-  // enum types for the `state` and `source` columns, which is created by
-  // Url table, so this table must be defined after `Url` table.
-  state: {
-    type: 'enum_urls_state',
-    allowNull: false,
+  {
+    indexes: [
+      {
+        fields: ['urlShortUrl'],
+      },
+    ],
   },
-  isFile: {
-    type: Sequelize.BOOLEAN,
-    allowNull: false,
-  },
-  contactEmail: {
-    type: Sequelize.TEXT,
-    allowNull: true,
-  },
-  description: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-    defaultValue: '',
-  },
-  source: {
-    type: 'enum_urls_source',
-  },
-  tagStrings: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-    defaultValue: '',
-  },
-})
+)
 
 /**
  * Helper function to take a Url instance object and writes to the UrlHistory table.
@@ -170,7 +182,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
       validate: {
         urlCheck(url: string) {
           if (!isValidUrl(url, DEV_ENV)) {
-            throw new Error('Invalid URLs are not allowed.')
+            throw new Error('Long URL format is invalid.')
           }
         },
 
@@ -182,7 +194,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
 
         noCircularRedirects(url: string) {
           if (isCircularRedirects(url, ogHostname)) {
-            throw new Error('Circular redirects to go.gov.sg are prohibited')
+            throw new Error('Circular redirects are not allowed.')
           }
         },
 
@@ -190,7 +202,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
         blacklistCheck(longUrl: string) {
           if (isBlacklisted(longUrl)) {
             throw new Error(
-              'Database creation of URLs to link shortener sites prohibited.',
+              'Creation of URLs to link shortener sites are not allowed.',
             )
           }
         },
@@ -222,12 +234,17 @@ export const Url = <UrlTypeStatic>sequelize.define(
     },
     source: {
       type: Sequelize.ENUM,
+      allowNull: false,
       values: [BULK, API, CONSOLE],
     },
     tagStrings: {
       type: Sequelize.TEXT,
       allowNull: false,
       defaultValue: '',
+    },
+    safeBrowsingExpiry: {
+      type: Sequelize.DATE,
+      allowNull: true,
     },
   },
   {

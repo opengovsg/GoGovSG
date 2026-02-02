@@ -1,3 +1,4 @@
+import { StorableUrlSource } from '../../../repositories/enums'
 import {
   BulkUrlMapping,
   StorableUrl,
@@ -12,26 +13,40 @@ export interface UrlManagementService {
     urlMappings: BulkUrlMapping[],
     tags?: string[],
   ) => Promise<void>
+
   createUrl: (
     userId: number,
-    shortUrl: string,
+    source: StorableUrlSource.Console | StorableUrlSource.Api,
+    shortUrl?: string,
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
   ) => Promise<StorableUrl>
+
   updateUrl: (
     userId: number,
     shortUrl: string,
     options: UpdateUrlOptions,
   ) => Promise<StorableUrl>
+
   changeOwnership: (
     userId: number,
     shortUrl: string,
     newUserEmail: string,
   ) => Promise<StorableUrl>
+
   getUrlsWithConditions: (
     conditions: UserUrlsQueryConditions,
   ) => Promise<UrlsPaginated>
+
+  /**
+   * Deactivates a shortUrl to prevent it from being usable by others, due to
+   * it being detected as malicious.
+   * @param shortUrl The shortUrl to deactivate.
+   * @returns {Promise<void>} A promise that resolves when the shortUrl is deactivated.
+   * @throws {NotFoundError} If the shortUrl does not exist.
+   */
+  deactivateMaliciousShortUrl: (shortUrl: string) => Promise<void>
 }
 
 export default UrlManagementService

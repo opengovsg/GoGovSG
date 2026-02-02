@@ -1,10 +1,12 @@
 import {
   BulkUrlMapping,
+  RedirectDestination,
   StorableFile,
   StorableUrl,
   UrlDirectoryPaginated,
 } from '../types'
 import { DirectoryQueryConditions } from '../../modules/directory'
+import { StorableUrlSource } from '../enums'
 
 /**
  * A url repository that handles access to the data store of Urls.
@@ -27,7 +29,7 @@ export interface UrlRepositoryInterface {
 
   /**
    * Create a new Url in the data store.
-   * @param  {{userId:number;shortUrl:string;longUrl?:string;tags?:string[]}} properties Properties of new Url.
+   * @param  {{userId:number;shortUrl:string;source:StorableUrlSource.Console|StorableUrlSource.Api;longUrl?:string;tags?:string[]}} properties Properties of new Url.
    * @param  {StorableFile} file? File that this Url leads to, if any.
    * @returns Promise that resolves to the newly created url.
    */
@@ -35,21 +37,29 @@ export interface UrlRepositoryInterface {
     properties: {
       userId: number
       shortUrl: string
+      source: StorableUrlSource.Console | StorableUrlSource.Api
       longUrl?: string
       tags?: string[]
+      safeBrowsingExpiry?: string
     },
     file?: StorableFile,
   ): Promise<StorableUrl>
+
+  /**
+   * Returns true if shortUrl is available, otherwise false.
+   * @param {string} shortUrl The shortUrl.
+   */
+  isShortUrlAvailable: (shortUrl: string) => Promise<boolean>
 
   /**
    * Looks up the longUrl given a shortUrl from the cache, falling back
    * to the database. The cache is re-populated if the database lookup is
    * performed successfully.
    * @param {string} shortUrl The shortUrl.
-   * @returns Promise that resolves to the longUrl.
+   * @returns {Promise<RedirectDestination>} The longUrl and safe browsing expiry date.
    * @throws {NotFoundError}
    */
-  getLongUrl: (shortUrl: string) => Promise<string>
+  getLongUrl: (shortUrl: string) => Promise<RedirectDestination>
 
   /**
    * Performs search for email and plain text search.
@@ -65,4 +75,20 @@ export interface UrlRepositoryInterface {
     urlMappings: BulkUrlMapping[]
     tags?: string[]
   }): Promise<void>
+
+  /**
+   * Updates the safe browsing expiry date for a given shortUrl, with the expiry
+   * date to be determined by the consumer of this method.
+   * @param {string} shortUrl The shortUrl to update.
+   * @param expiry The expiry date to set for the safe browsing scan result.
+   * @throws {NotFoundError} If the shortUrl does not exist.
+   */
+  updateSafeBrowsingExpiry(shortUrl: string, expiry: Date): Promise<void>
+
+  /**
+   * Deactivates a shortUrl, which means it will no longer be accessible.
+   * @param {string} shortUrl The shortUrl to deactivate.
+   * @throws {NotFoundError} If the shortUrl does not exist.
+   */
+  deactivateShortUrl(shortUrl: string): Promise<void>
 }

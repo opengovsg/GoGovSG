@@ -1,16 +1,19 @@
 import * as Joi from '@hapi/joi'
 import { ACTIVE, INACTIVE } from '../../models/types'
-import blacklist from '../../resources/blacklist'
 import {
+  isBlacklisted,
+  isCircularRedirects,
   isHttps,
   isPrintableAscii,
   isValidShortUrl,
   isValidTag,
+  isValidUrl,
 } from '../../../shared/util/validation'
 import {
   LINK_DESCRIPTION_MAX_LENGTH,
   MAX_NUM_TAGS_PER_LINK,
 } from '../../../shared/constants'
+import { ogHostname } from '../../config'
 import { isValidGovEmail } from '../../util/email'
 
 export const urlRetrievalSchema = Joi.object({
@@ -21,30 +24,42 @@ export const tagRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
 
+export const hasApiKeySchema = Joi.object({
+  userId: Joi.number().required(),
+})
+
+const singleTagSchema = Joi.string()
+  .pattern(/^[A-Za-z0-9-_]+$/)
+  .max(25)
+
 const tagSchema = Joi.array()
   .max(MAX_NUM_TAGS_PER_LINK)
   .optional()
+  // letters, numbers, hyphens, underscores, 25 digits
   .items(
-    Joi.string().custom((tag: string, helpers) => {
-      if (!isValidTag(tag)) {
-        return helpers.message({ custom: `tag: ${tag} format is invalid` })
-      }
-      return tag
-    }),
+    singleTagSchema
+      .custom((tag: string, helpers) => {
+        if (!isValidTag(tag)) {
+          return helpers.error('tag:invalid')
+        }
+        return tag
+      })
+      .messages({ 'tag:invalid': 'Tag format is invalid.' }),
   )
   .unique((a, b) => a === b)
 
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
-  limit: Joi.number().required(),
-  offset: Joi.number().optional(),
-  orderBy: Joi.string().valid('updatedAt', 'createdAt', 'clicks').optional(),
+  // eslint-disable-next-line newline-per-chained-call
+  limit: Joi.number().integer().min(0).max(1000).required(),
+  offset: Joi.number().integer().min(0).optional(),
+  orderBy: Joi.string().valid('createdAt', 'clicks').optional(),
   sortDirection: Joi.string().valid('desc', 'asc').optional(),
-  searchText: Joi.string().allow('').optional(),
-  state: Joi.string().allow('').optional(),
+  searchText: Joi.string().lowercase().allow('').optional(),
+  state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
   isFile: Joi.boolean().optional(),
   tags: tagSchema.max(5),
-})
+}).oxor('searchText', 'tags')
 
 export const userTagsQueryConditions = Joi.object({
   userId: Joi.number().required(),
@@ -52,13 +67,13 @@ export const userTagsQueryConditions = Joi.object({
     .min(3)
     .custom((tag: string, helpers) => {
       if (!isValidTag(tag)) {
-        return helpers.message({
-          custom: `tag: ${tag} query format is invalid.`,
-        })
+        return helpers.error('tag:invalid')
       }
       return tag
     })
+    .messages({ 'tag:invalid': 'Tag format is invalid.' })
     .required(),
+
   limit: Joi.number().required(),
 })
 
@@ -67,18 +82,24 @@ export const urlSchema = Joi.object({
   shortUrl: Joi.string()
     .custom((url: string, helpers) => {
       if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Short url format is invalid.' })
+        return helpers.message({ custom: 'Short URL format is invalid.' })
       }
       return url
     })
     .required(),
   longUrl: Joi.string().custom((url: string, helpers) => {
     if (!isHttps(url)) {
-      return helpers.message({ custom: 'Long url must start with https://' })
+      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
     }
-    if (blacklist.some((bl) => url.includes(bl))) {
+    if (!isValidUrl(url)) {
+      return helpers.message({ custom: 'Long URL format is invalid.' })
+    }
+    if (isCircularRedirects(url, ogHostname)) {
+      return helpers.message({ custom: 'Circular redirects are not allowed.' })
+    }
+    if (isBlacklisted(url)) {
       return helpers.message({
-        custom: 'Creation of URLs to link shortener sites prohibited.',
+        custom: 'Creation of URLs to link shortener sites are not allowed.',
       })
     }
     return url
@@ -102,11 +123,17 @@ export const urlEditSchema = Joi.object({
   shortUrl: Joi.string().required(),
   longUrl: Joi.string().custom((url: string, helpers) => {
     if (!isHttps(url)) {
-      return helpers.message({ custom: 'Long url must start with https://' })
+      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
     }
-    if (blacklist.some((bl) => url.includes(bl))) {
+    if (!isValidUrl(url)) {
+      return helpers.message({ custom: 'Invalid URLs are not allowed.' })
+    }
+    if (isCircularRedirects(url, ogHostname)) {
+      return helpers.message({ custom: 'Circular redirects are not allowed.' })
+    }
+    if (isBlacklisted(url)) {
       return helpers.message({
-        custom: 'Creation of URLs to link shortener sites prohibited.',
+        custom: 'Creation of URLs to link shortener sites are not allowed.',
       })
     }
     return url
@@ -141,4 +168,8 @@ export const ownershipTransferSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
   newUserEmail: Joi.string().required(),
+})
+
+export const pollJobInformationSchema = Joi.object({
+  jobId: Joi.number().required(),
 })

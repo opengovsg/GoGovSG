@@ -14,6 +14,7 @@ import userActions from '../../actions'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
 import CloseIcon from '../../../app/components/widgets/CloseIcon'
 import { GAEvent } from '../../../app/util/ga'
+import { htmlSanitizer } from '../../../app/util/format'
 
 type StyleProps = {
   isFullScreenDialog: boolean
@@ -37,8 +38,8 @@ const useStyles = makeStyles((theme) =>
       backgroundColor: theme.palette.primary.dark,
     },
     announcementImage: {
-      width: '600px',
-      height: '30vh',
+      maxWidth: '600px',
+      maxHeight: '30vh',
       marginLeft: 'auto',
       marginRight: 'auto',
       paddingLeft: '80px',
@@ -61,12 +62,13 @@ const useStyles = makeStyles((theme) =>
     justifyCenterImage: {
       display: 'flex',
       justifyContent: 'center',
-      width: '600px',
+      maxWidth: '600px',
       [theme.breakpoints.down('sm')]: {
-        width: '100%',
+        maxWidth: '100%',
       },
     },
-    messagePadding: {
+    message: {
+      display: 'block',
       paddingLeft: theme.spacing(4),
       paddingRight: theme.spacing(4),
       whiteSpace: 'pre-line',
@@ -92,7 +94,7 @@ const useStyles = makeStyles((theme) =>
         boxShadow: 'unset',
       },
     },
-    learnMoreButton: {
+    button: {
       // @ts-ignore
       filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
       // this class is not mobile first by default as padding should not be set
@@ -102,7 +104,7 @@ const useStyles = makeStyles((theme) =>
         paddingRight: 0,
         minWidth: theme.spacing(6),
       },
-      width: theme.spacing(16),
+      minWidth: theme.spacing(16),
       marginTop: theme.spacing(3),
       backgroundColor: theme.palette.primary.dark,
       color: theme.palette.background.default,
@@ -141,7 +143,8 @@ const AnnouncementModal = () => {
             announcement.title ||
             announcement.subtitle ||
             announcement.url ||
-            announcement.image,
+            announcement.image ||
+            announcement.buttonText,
         )
         setShowModal(hasAnnouncement)
       }
@@ -215,12 +218,13 @@ const AnnouncementModal = () => {
       ) : null}
       {announcement?.message ? (
         <Typography
-          className={`${classes.justifyCenter} ${classes.messagePadding}`}
+          className={classes.message}
           variant="body2"
-        >
-          {/* Enable line break */}
-          {announcement.message.replace(/\\n/g, '\n')}
-        </Typography>
+          dangerouslySetInnerHTML={{
+            // Enable line break
+            __html: htmlSanitizer(announcement.message.replace(/\\n/g, '\n')),
+          }}
+        />
       ) : null}
       <div className={`${classes.justifyCenter} ${classes.modalBottom}`}>
         {announcement?.url ? (
@@ -230,12 +234,12 @@ const AnnouncementModal = () => {
             color="primary"
             size="large"
             variant="text"
-            className={classes.learnMoreButton}
+            className={classes.button}
             onClick={() => {
               GAEvent('Announcement Page', announcement?.title || 'successful')
             }}
           >
-            Try it now
+            {announcement.buttonText || 'Try it now'}
           </Button>
         ) : null}
       </div>

@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
 import fileUpload from 'express-fileupload'
-import dogstatsd, { MALICIOUS_ACTIVITY_FILE } from '../../util/dogstatsd'
+import dogstatsd, {
+  MALICIOUS_ACTIVITY_FILE,
+  SCAN_FAILED_FILE,
+} from '../../util/dogstatsd'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { FileTypeFilterService, VirusScanService } from './interfaces'
@@ -40,19 +43,26 @@ export class FileCheckController {
     next()
   }
 
-  public fileExtensionCheck =
+  public fileExtensionAndMimeTypeCheck =
     (allowedExtensions?: string[]) =>
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const file = req.files?.file as fileUpload.UploadedFile | undefined
-      if (
-        file &&
-        !(await this.fileTypeFilterService.hasAllowedType(
-          file,
-          allowedExtensions,
-        ))
-      ) {
-        res.unsupportedMediaType(jsonMessage('File type disallowed.'))
-        return
+
+      if (file) {
+        const fileTypeData =
+          await this.fileTypeFilterService.getExtensionAndMimeType(file)
+        if (
+          fileTypeData.extension === '' ||
+          !(await this.fileTypeFilterService.hasAllowedExtensionType(
+            fileTypeData.extension,
+            allowedExtensions,
+          ))
+        ) {
+          res.unsupportedMediaType(jsonMessage('File type disallowed.'))
+          return
+        }
+
+        file.mimetype = fileTypeData.mimeType
       }
 
       next()
@@ -64,11 +74,22 @@ export class FileCheckController {
     next: NextFunction,
   ) => Promise<void> = async (req, res, next) => {
     const file = req.files?.file as fileUpload.UploadedFile | undefined
+    const user = req.session?.user
     if (file) {
       try {
-        const hasVirus = await this.virusScanService.hasVirus(file)
+        const { hasVirus, isPasswordProtected } =
+          await this.virusScanService.scanFile(file)
+        if (isPasswordProtected) {
+          // Do not support password-protected files as they cannot be scanned for viruses
+          logger.info(
+            `User ${
+              user?.email || user?.id
+            } tried to upload a password-protected file ${file.name}`,
+          )
+          res.badRequest(jsonMessage('Cannot upload password-protected files.'))
+          return
+        }
         if (hasVirus) {
-          const user = req.session?.user
           logger.warn(
             `Malicious file attempt: User ${
               user?.email || user?.id
@@ -79,9 +100,12 @@ export class FileCheckController {
           return
         }
       } catch (error) {
+        dogstatsd.increment(SCAN_FAILED_FILE, 1, 1)
         logger.error('Unable to scan file: ', error)
         res.badRequest(
-          jsonMessage('Your file could not be scanned by antivirus software.'),
+          jsonMessage(
+            'Your file could not be scanned at this moment, please try again. If the error persists, please contact us.',
+          ),
         )
         return
       }

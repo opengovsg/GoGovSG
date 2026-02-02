@@ -13,13 +13,12 @@ describe('TagRepository', () => {
   const userId = 2
   const searchText = 'tag1'
   const scope = jest.spyOn(tagModelMock, 'scope')
-  const findOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
+  const findOneSpy = jest.spyOn(tagModelMock, 'findOne')
+  const createSpy = jest.spyOn(tagModelMock, 'create')
   const findAll = jest.fn()
 
   beforeEach(() => {
-    findAll.mockReset()
-    scope.mockReset()
-    findOrCreate.mockReset()
+    jest.resetAllMocks()
   })
 
   it('passes findTagsWithConditions through findAll', async () => {
@@ -46,19 +45,36 @@ describe('TagRepository', () => {
     })
   })
 
-  it('upsertTags calls Tag.findOrCreate correctly 2 times', async () => {
-    findOrCreate.mockResolvedValue([])
+  it('upsertTags calls `Tag.findOne` correctly 2 times and calls `Tag.create` for tags that cannot be found', async () => {
+    // Arrange
+    const findOneResults = [null, 'Tag 1']
+    findOneResults.forEach((result) => {
+      findOneSpy.mockResolvedValueOnce(result)
+    })
     const tags = ['Tag1', 'Tag2']
     const mockTransaction = sequelizeMock.transaction
+
+    // Act
     await repository.upsertTags(tags, mockTransaction)
-    expect(findOrCreate).toHaveBeenCalledTimes(tags.length)
+
+    // Assert
+    expect(findOneSpy).toHaveBeenCalledTimes(tags.length)
+    // NOTE: Only called once as `findOne` only returns `null` once
+    expect(createSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('upsertTags calls Tag.findOrCreate correctly 3 times', async () => {
-    findOrCreate.mockResolvedValue([])
+  it('upsertTags calls Tag.findOrCreate correctly 3 times and does not call `Tag.create` when all tags can be found', async () => {
+    // Arrange
     const tags = ['Tag1', 'Tag2', 'Tag3']
+    tags.forEach((tag) => findOneSpy.mockResolvedValueOnce(tag))
+
     const mockTransaction = sequelizeMock.transaction
+
+    // Act
     await repository.upsertTags(tags, mockTransaction)
-    expect(findOrCreate).toHaveBeenCalledTimes(tags.length)
+
+    // Assert
+    expect(findOneSpy).toHaveBeenCalledTimes(tags.length)
+    expect(createSpy).toHaveBeenCalledTimes(0)
   })
 })

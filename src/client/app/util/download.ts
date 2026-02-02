@@ -4,8 +4,32 @@ import rootActions from '../components/pages/RootPage/actions'
 import userActions from '../../user/actions'
 import useIsIE from '../components/BaseLayout/util/ie'
 import { GAEvent } from './ga'
+import { UrlTableConfig } from '../../user/reducers/types'
+import queryObjFromTableConfig from '../helpers/urlQueryHelper'
+import { BULK_UPLOAD_HEADER } from '../../../shared/constants'
 
-export const downloadUrls = async (urlCount: number, tableConfig: any) => {
+export const downloadCsv = (csvString: string, filename: string) => {
+  const blob = new Blob([csvString], {
+    type: 'text/csv;charset=utf-8',
+  })
+
+  if (useIsIE()) {
+    // @ts-ignore: `msSaveBlob` used for old IE versions has been removed as of TypeScript 4.4
+    navigator.msSaveBlob(blob, filename)
+  } else {
+    saveAs(blob, filename)
+  }
+}
+
+export const downloadSampleBulkCsv = () => {
+  const headers = BULK_UPLOAD_HEADER
+  const body = ['https://www.link1.com', 'https://www.link2.com']
+  const content = [headers, ...body].join('\r\n')
+  downloadCsv(content, 'sample_bulk.csv')
+  GAEvent('modal page', 'downloaded bulk sample', 'successful')
+}
+
+export const downloadUrls = async (tableConfig: UrlTableConfig) => {
   const urlsArr = []
   // set headers to csv
   urlsArr.push([
@@ -17,78 +41,47 @@ export const downloadUrls = async (urlCount: number, tableConfig: any) => {
     'Created At',
     'Last Modified\n',
   ])
-
-  const limit = 100
-  // gets 100 urls at a time
-  const numOfGetRequests = Math.ceil(urlCount / limit)
-
-  const getUrlsPromiseArray = []
-
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < numOfGetRequests; i++) {
-    const queryObj = {
-      ...tableConfig,
-      limit,
-      offset: i * limit,
-    }
-    getUrlsPromiseArray.push(userActions.getUrls(queryObj))
-  }
-
-  await Promise.all(getUrlsPromiseArray).then((promises) => {
-    // eslint-disable-next-line consistent-return
-    promises.forEach((promise) => {
-      const { json, isOk } = promise
-      if (isOk) {
-        const { urls } = json
-        urls.forEach((url) => {
-          const {
-            shortUrl,
-            longUrl,
-            state,
-            tagStrings,
-            clicks,
-            createdAt,
-            updatedAt,
-          } = url
-          //  eslint-disable-next-line prefer-template
-          urlsArr.push([
-            shortUrl,
-            longUrl,
-            state,
-            tagStrings,
-            clicks,
-            createdAt,
-            `${updatedAt}\n`,
-          ])
-        })
-      } else if (!isOk && json) {
-        // Sentry analytics: download links fail
-        Sentry.captureMessage('download links unsuccessful')
-        GAEvent('user page', 'download links', 'unsuccessful')
-
-        rootActions.setErrorMessage(json.message || '')
-        return null
-      } else {
-        // Sentry analytics: download links fail
-        Sentry.captureMessage('download links unsuccessful')
-        GAEvent('user page', 'download links', 'unsuccessful')
-
-        rootActions.setErrorMessage('Error downloading urls.')
-        return null
-      }
-      return null
+  const queryObj = queryObjFromTableConfig(tableConfig)
+  const { json, isOk } = await userActions.getUrls(queryObj)
+  if (isOk) {
+    const { urls } = json
+    urls.forEach((url) => {
+      const {
+        shortUrl,
+        longUrl,
+        state,
+        tagStrings,
+        clicks,
+        createdAt,
+        updatedAt,
+      } = url
+      //  eslint-disable-next-line prefer-template
+      urlsArr.push([
+        shortUrl,
+        longUrl,
+        state,
+        tagStrings,
+        clicks,
+        createdAt,
+        `${updatedAt}\n`,
+      ])
     })
-  })
+  } else if (!isOk && json) {
+    // Sentry analytics: download links fail
+    Sentry.captureMessage('download links unsuccessful')
+    GAEvent('user page', 'download links', 'unsuccessful')
 
-  const blob = new Blob([urlsArr.join('')], {
-    type: 'text/csv;charset=utf-8',
-  })
-
-  if (useIsIE()) {
-    navigator.msSaveBlob(blob, 'urls.csv')
+    rootActions.setErrorMessage(json.message || '')
+    return null
   } else {
-    saveAs(blob, 'urls.csv')
+    // Sentry analytics: download links fail
+    Sentry.captureMessage('download links unsuccessful')
+    GAEvent('user page', 'download links', 'unsuccessful')
+
+    rootActions.setErrorMessage('Error downloading urls.')
+    return null
   }
+  downloadCsv(urlsArr.join(''), 'urls.csv')
 
   // Google Analytics: Download links button events
   GAEvent('user page', 'download links button', 'successful')
@@ -96,5 +89,6 @@ export const downloadUrls = async (urlCount: number, tableConfig: any) => {
 }
 
 export default {
+  downloadSampleBulkCsv,
   downloadUrls,
 }

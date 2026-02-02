@@ -1,14 +1,21 @@
 /* eslint-disable global-require */
 import httpMocks from 'node-mocks-http'
 import { ValidationError } from 'sequelize'
-import { StorableUrlState } from '../../../repositories/enums'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../repositories/enums'
 import {
   createGetTagsRequestWithUser,
   createRequestWithUser,
 } from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
-import { AlreadyExistsError, NotFoundError } from '../../../util/error'
+import {
+  AlreadyExistsError,
+  InvalidUrlUpdateError,
+  NotFoundError,
+} from '../../../util/error'
 
 const urlManagementService = {
   createUrl: jest.fn(),
@@ -16,10 +23,16 @@ const urlManagementService = {
   changeOwnership: jest.fn(),
   getUrlsWithConditions: jest.fn(),
   bulkCreate: jest.fn(),
+  deactivateMaliciousShortUrl: jest.fn(),
 }
 
 const tagManagementService = {
   getTagsWithConditions: jest.fn(),
+}
+
+const apiKeyAuthService = {
+  upsertApiKey: jest.fn(),
+  hasApiKey: jest.fn(),
 }
 
 const userMessage = 'The quick brown fox jumps over a lazy dog'
@@ -36,6 +49,7 @@ describe('UserController', () => {
     userMessage,
     userAnnouncement,
     tagManagementService,
+    apiKeyAuthService,
   )
 
   describe('createUrl', () => {
@@ -59,6 +73,7 @@ describe('UserController', () => {
       const userId = 1
       const shortUrl = 'abcdef'
       const longUrl = 'https://www.agency.gov.sg'
+      const source = StorableUrlSource.Console
       const tags = ['tag1', 'tag2', 'tag3']
       const req = httpMocks.createRequest({
         body: {
@@ -78,6 +93,7 @@ describe('UserController', () => {
       expect(res.ok).toHaveBeenCalledWith(result)
       expect(urlManagementService.createUrl).toHaveBeenCalledWith(
         userId,
+        source,
         shortUrl,
         longUrl,
         undefined,
@@ -260,6 +276,21 @@ describe('UserController', () => {
       )
     })
 
+    it('reports bad request on InvalidUrlUpdateError', async () => {
+      const req = createRequestWithUser(undefined)
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      urlManagementService.updateUrl.mockRejectedValue(
+        new InvalidUrlUpdateError(''),
+      )
+
+      await controller.updateUrl(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        message: expect.any(String),
+      })
+    })
+
     it('reports bad request on Error', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
@@ -328,7 +359,7 @@ describe('UserController', () => {
         1,
       )
     })
-    it('call getTagsWithConditions with invalid searchText, less than 3 characters', async () => {
+    it('reports bad request on calling getTagsWithConditions with invalid searchText, less than 3 characters', async () => {
       const searchText = 't'
       const req = httpMocks.createRequest({
         query: { searchText },
@@ -342,7 +373,7 @@ describe('UserController', () => {
       await controller.getTagsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
-    it('call getTagsWithConditions with invalid searchText, special characters', async () => {
+    it('reports bad request on calling getTagsWithConditions with invalid searchText, special characters', async () => {
       const searchText = '#$%'
       const req = httpMocks.createRequest({
         query: { searchText },
@@ -405,13 +436,11 @@ describe('UserController', () => {
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith({
         limit: 1000,
         offset: 0,
-        orderBy: 'updatedAt',
+        orderBy: 'createdAt',
         sortDirection: 'desc',
-        searchText: '',
         userId: 1,
         state: undefined,
         isFile: undefined,
-        tags: [],
       })
     })
 
@@ -451,7 +480,6 @@ describe('UserController', () => {
         userId,
         state,
         isFile: undefined,
-        tags: [],
       })
     })
 
@@ -502,7 +530,7 @@ describe('UserController', () => {
       await controller.getUrlsWithConditions(req, res)
       expect(res.ok).toHaveBeenCalledWith(result)
       expect(urlManagementService.getUrlsWithConditions).toHaveBeenCalledWith(
-        expect.objectContaining({ isFile: false, tags: [] }),
+        expect.objectContaining({ isFile: false }),
       )
     })
 
@@ -523,46 +551,61 @@ describe('UserController', () => {
       )
     })
 
-    it('processes query with invalid tags-long', async () => {
+    it('reports bad request on query with invalid tags-long', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
         query: { isFile: 'false', tags: '01234567890123456789012345;tag2' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
-    it('processes query with invalid tags-special character', async () => {
+    it('reports bad request on query with invalid tags-special character', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
         query: { isFile: 'false', tags: 'tag1^%^;tag2' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
     })
 
-    it('processes query with more than 5 tags', async () => {
+    it('reports bad request on query with more than 5 tags', async () => {
       const req = httpMocks.createRequest({
         body: { userId: 1 },
         query: { isFile: 'false', tags: 'tag1;tag2;tag3;tag4;tag5;tag6' },
       })
       const res: any = httpMocks.createResponse()
-      res.ok = jest.fn()
       res.badRequest = jest.fn()
-      const result = { urls: [], count: 0 }
-      urlManagementService.getUrlsWithConditions.mockResolvedValue(result)
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('reports bad request on query with invalid state', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', state: 'invalid' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      await controller.getUrlsWithConditions(req, res)
+      expect(res.badRequest).toHaveBeenCalledTimes(1)
+    })
+
+    it('reports bad request on query with empty state', async () => {
+      const req = httpMocks.createRequest({
+        body: { userId: 1 },
+        query: { isFile: 'false', state: '' },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
 
       await controller.getUrlsWithConditions(req, res)
       expect(res.badRequest).toHaveBeenCalledTimes(1)
@@ -579,6 +622,56 @@ describe('UserController', () => {
       expect(res.serverError).toHaveBeenCalledWith({
         message: expect.any(String),
       })
+    })
+  })
+
+  describe('createAPIKey', () => {
+    beforeEach(() => {
+      apiKeyAuthService.upsertApiKey.mockReset()
+    })
+    it('apiKeyService.createAPIKey is called exactly one time', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      await controller.createAPIKey(req, res)
+      expect(apiKeyAuthService.upsertApiKey).toHaveBeenCalledTimes(1)
+      expect(res.ok).toHaveBeenCalledTimes(1)
+    })
+    it('error is handled properly', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      apiKeyAuthService.upsertApiKey = jest
+        .fn()
+        .mockRejectedValue(new Error('Server Error'))
+      res.serverError = jest.fn()
+      await controller.createAPIKey(req, res)
+      expect(apiKeyAuthService.upsertApiKey).toHaveBeenCalledTimes(1)
+      expect(res.serverError).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('hasAPIKey', () => {
+    beforeEach(() => {
+      apiKeyAuthService.hasApiKey.mockReset()
+    })
+    it('apiKeyAuthService.hasAPIKey is called exactly one time', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      apiKeyAuthService.hasApiKey.mockResolvedValue(true)
+      res.ok = jest.fn()
+      await controller.hasAPIKey(req, res)
+      expect(apiKeyAuthService.hasApiKey).toHaveBeenCalledTimes(1)
+      expect(res.ok).toHaveBeenCalledTimes(1)
+    })
+    it('Error is handled properly', async () => {
+      const req: any = httpMocks.createRequest()
+      const res: any = httpMocks.createResponse()
+      apiKeyAuthService.hasApiKey.mockRejectedValue(new Error('Server Error'))
+      res.serverError = jest.fn()
+      res.ok = jest.fn()
+      await controller.hasAPIKey(req, res)
+      expect(apiKeyAuthService.hasApiKey).toHaveBeenCalledTimes(1)
+      expect(res.serverError).toHaveBeenCalledTimes(1)
     })
   })
 

@@ -5,12 +5,30 @@ import { Mailer } from '../../../../src/server/services/email'
 
 @injectable()
 export class MailerMock implements Mailer {
-  mailsSent: { email: string; otp: string }[] = []
+  mailsSent: any[] = []
 
   initMailer() {}
 
   mailOTP = (email: string, otp: string): Promise<void> => {
     this.mailsSent.push({ email, otp })
+    return Promise.resolve()
+  }
+
+  mailJobSuccess(email: string, downloadLinks: string[]): Promise<void> {
+    this.mailsSent.push({ email, downloadLinks })
+    return Promise.resolve()
+  }
+
+  mailJobFailure(email: string): Promise<void> {
+    this.mailsSent.push({ email })
+    return Promise.resolve()
+  }
+
+  mailDeactivatedMaliciousShortUrl(
+    email: string,
+    shortUrl: string,
+  ): Promise<void> {
+    this.mailsSent.push({ email, shortUrl })
     return Promise.resolve()
   }
 }
@@ -21,5 +39,17 @@ export class MailerMockDown implements Mailer {
 
   mailOTP(_: string, __: string): Promise<void> {
     return Promise.reject(Error('Unable to send OTP'))
+  }
+
+  mailJobSuccess(_: string, __: string[]): Promise<void> {
+    return Promise.reject()
+  }
+
+  mailJobFailure(_: string): Promise<void> {
+    return Promise.reject()
+  }
+
+  mailDeactivatedMaliciousShortUrl(_: string, __: string): Promise<void> {
+    return Promise.reject()
   }
 }

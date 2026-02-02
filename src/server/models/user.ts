@@ -7,6 +7,7 @@ import { emailValidator } from '../config'
 // Users
 export interface UserType extends IdType, Sequelize.Model {
   readonly email: string
+  readonly apiKeyHash: string
   readonly Urls: UrlType[]
 }
 
@@ -21,19 +22,33 @@ export const User = <UserTypeStatic>sequelize.define(
     email: {
       type: Sequelize.TEXT,
       unique: true,
-      allowNull: false,
+      allowNull: true,
       validate: {
         isEmail: true,
         isLowercase: true,
-        is: emailValidator.makeRe(),
+        is: {
+          args: emailValidator.makeRe(),
+          msg: 'Email domain is not whitelisted.',
+        },
       },
       set(this: Settable, email: string) {
         // must save email as lowercase
         this.setDataValue('email', email.trim().toLowerCase())
       },
     },
+    apiKeyHash: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
   },
   {
+    indexes: [
+      {
+        unique: true,
+        fields: ['apiKeyHash'],
+        name: 'users_api_key_hash',
+      },
+    ],
     defaultScope: {
       useMaster: true,
     },

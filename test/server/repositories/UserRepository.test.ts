@@ -1,8 +1,14 @@
-import { urlModelMock, userModelMock } from '../api/util'
+import { sequelizeMock, urlModelMock, userModelMock } from '../api/util'
 import { UserRepository } from '../../../src/server/repositories/UserRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
 import { UserMapper } from '../../../src/server/mappers/UserMapper'
 import { NotFoundError } from '../../../src/server/util/error'
+import { StorableUrl } from '../../../src/server/repositories/types'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../../src/server/repositories/enums'
+import { sequelize } from '../../../src/server/util/sequelize'
 
 jest.mock('../../../src/server/models/user', () => ({
   User: userModelMock,
@@ -17,16 +23,17 @@ const userRepo = new UserRepository(
   new UrlMapper(),
 )
 
-const baseUrlTemplate = {
+const baseUrlTemplate: Omit<StorableUrl, 'tagStrings' | 'clicks'> = {
   shortUrl: 'short-link',
   longUrl: 'https://www.agency.gov.sg',
-  state: 'ACTIVE',
+  state: StorableUrlState.Active,
   isFile: false,
-  createdAt: Date.now(),
-  updatedAt: Date.now(),
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
   description: 'An agency of the Singapore Government',
   contactEmail: 'contact-us@agency.gov.sg',
-  source: 'CONSOLE',
+  source: StorableUrlSource.Console,
+  safeBrowsingExpiry: null,
 }
 
 const urlClicks = {
@@ -45,6 +52,19 @@ const expectedUrl = {
   tagStrings: undefined,
 }
 
+const baseUser = {
+  id: 2,
+  email: 'user@agency.gov.sg',
+  update: jest.fn(),
+  apiKeyHash: 'apiKeyHash',
+}
+
+const baseUserNoKeyHash = {
+  id: 2,
+  email: 'user@agency.gov.sg',
+  update: jest.fn(),
+  apiKeyHash: null,
+}
 describe('UserRepository', () => {
   describe('findById', () => {
     const findByPk = jest.spyOn(userModelMock, 'findByPk')
@@ -131,19 +151,51 @@ describe('UserRepository', () => {
   })
 
   describe('findOrCreateByEmail', () => {
-    const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
+    const findSpy = jest.spyOn(userModelMock, 'findOne')
+    const createSpy = jest.spyOn(userModelMock, 'create')
+    const txSpy = jest.spyOn(sequelize, 'transaction')
+    // NOTE: Marking as `any` because jest infers the argument of callback
+    // to be `TransactionOptions | undefined` but the callback style
+    // is accepted by sequelize as valid syntax:
+    // https://sequelize.org/docs/v6/other-topics/transactions/#managed-transactions
+    txSpy.mockImplementation(async (callback: any) => {
+      return callback(sequelizeMock.transaction)
+    })
+    const mockUser = {
+      id: 2,
+      email: 'user@agency.gov.sg',
+      urls: undefined,
+    }
 
     beforeEach(() => {
-      findOrCreate.mockReset()
+      createSpy.mockReset()
+      findSpy.mockReset()
     })
 
-    it('directs findOrCreateWithEmail to User.findOrCreate', async () => {
-      const findOrCreate = jest.spyOn(userModelMock, 'findOrCreate')
-      const user = userModelMock.findOne()
-      findOrCreate.mockResolvedValue([user, null])
-      await expect(
-        userRepo.findOrCreateWithEmail('user@agency.gov.sg'),
-      ).resolves.toBe(user)
+    it('should return the result of `findOne` directly if the result is non-null', async () => {
+      // Arrange
+      findSpy.mockResolvedValue(mockUser)
+
+      // Act
+      const actual = await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
+
+      // Assert
+      expect(findSpy).toHaveBeenCalledTimes(1)
+      expect(createSpy).toHaveBeenCalledTimes(0)
+      expect(actual).toStrictEqual(mockUser)
+    })
+    it('should call `create` and return the created user if `findOne` returns null', async () => {
+      // Arrange
+      findSpy.mockResolvedValue(null)
+      createSpy.mockResolvedValue(mockUser)
+
+      // Act
+      const actual = await userRepo.findOrCreateWithEmail('user@agency.gov.sg')
+
+      // Assert
+      expect(findSpy).toHaveBeenCalledTimes(1)
+      expect(createSpy).toHaveBeenCalledTimes(1)
+      expect(actual).toStrictEqual(mockUser)
     })
   })
 
@@ -293,6 +345,70 @@ describe('UserRepository', () => {
           { tagStrings: { [Symbol('iLike')]: '%tag%' } },
           { tagStrings: { [Symbol('iLike')]: '%tag\\_foo\\_bar%' } },
         ],
+      })
+    })
+  })
+
+  describe('saveApiKeyHash', () => {
+    const apiKeyHash = 'apiKeyHash'
+    const findOne = jest.spyOn(userModelMock, 'findOne')
+    const update = jest.spyOn(baseUser, 'update')
+    beforeEach(() => {
+      findOne.mockReset()
+      update.mockReset()
+    })
+    it("user's apiKeyHash is updated correctly", async () => {
+      findOne.mockResolvedValue(baseUser)
+      await userRepo.saveApiKeyHash(baseUser.id, apiKeyHash)
+      expect(findOne).toBeCalledTimes(1)
+      expect(update).toBeCalledTimes(1)
+      expect(update).toHaveBeenCalledWith({ apiKeyHash })
+    })
+    it('user not found, error is thrown', async () => {
+      findOne.mockResolvedValue(null)
+      await expect(
+        userRepo.saveApiKeyHash(baseUser.id, apiKeyHash),
+      ).rejects.toBeInstanceOf(NotFoundError)
+      expect(findOne).toBeCalledTimes(1)
+      expect(update).toBeCalledTimes(0)
+    })
+  })
+
+  describe('hasApiKey', () => {
+    const findOne = jest.spyOn(userModelMock, 'findOne')
+    beforeEach(() => {
+      findOne.mockReset()
+    })
+    it('hasApiKey is returned correctly', async () => {
+      findOne.mockResolvedValue(baseUser)
+      const hasApiKey = await userRepo.hasApiKey(baseUser.id)
+      expect(hasApiKey).toEqual(!!baseUser.apiKeyHash)
+    })
+    it('hasApiKey false is returned correctly', async () => {
+      findOne.mockResolvedValue(baseUserNoKeyHash)
+      const hasApiKey = await userRepo.hasApiKey(baseUserNoKeyHash.id)
+      expect(hasApiKey).toEqual(false)
+    })
+    it('user not found, error is thrown', async () => {
+      findOne.mockResolvedValue(null)
+      await expect(userRepo.hasApiKey(baseUser.id)).rejects.toBeInstanceOf(
+        NotFoundError,
+      )
+      expect(findOne).toBeCalledTimes(1)
+    })
+  })
+
+  describe('findUserByApiKey', async () => {
+    const apiKeyHash = 'apiKeyHash'
+    const findOne = jest.spyOn(userModelMock, 'findOne')
+    beforeEach(() => {
+      findOne.mockReset()
+    })
+    it('call find one with correct param', async () => {
+      await userRepo.findUserByApiKey(apiKeyHash)
+      expect(findOne).toHaveBeenCalledTimes(1)
+      expect(findOne).toHaveBeenCalledWith({
+        where: { apiKeyHash },
       })
     })
   })

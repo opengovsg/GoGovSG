@@ -16,6 +16,7 @@ export type StorableUrl = Pick<
   | 'contactEmail'
   | 'source'
   | 'tagStrings'
+  | 'safeBrowsingExpiry'
 > &
   Pick<UrlClicksType, 'clicks'> & { tags?: string[] }
 
@@ -37,15 +38,15 @@ export type StorableUser = {
 export type BulkUrlMapping = Pick<StorableUrl, 'shortUrl' | 'longUrl'>
 
 export type UserUrlsQueryConditions = {
+  userId: number
   limit: number
   offset: number
   orderBy: string
   sortDirection: string
-  searchText: string
-  userId: number
-  state: string | undefined
-  isFile: boolean | undefined
-  tags: string[]
+  state?: string
+  isFile?: boolean
+  searchText?: string
+  tags?: string[]
 }
 
 export type UserTagsQueryConditions = {
@@ -87,12 +88,13 @@ export type StorableOtp = {
   retries: number
 }
 
-/**
- * Has a cache duration expressed as a human-readable
- * time interval. An example of this is the threat matches
- * returned by Google Safe Browsing, which have a cacheDuration
- * specified as the number of seconds followed by 's'.
- */
-export type HasCacheDuration = {
-  cacheDuration: string
+export type WebRiskThreat = {
+  threatTypes: string[]
+  expireTime: string
+}
+
+export type RedirectDestination = {
+  longUrl: string
+  isFile: boolean
+  safeBrowsingExpiry: string | null
 }

@@ -28,8 +28,10 @@ services:
       - REDIS_SAFE_BROWSING_URI=redis://redis:6379/4
       - SESSION_SECRET=thiscouldbeanything
       - GA_TRACKING_ID=UA-139330318-1
+
       - OG_URL=https://go.gov.sg
       - VALID_EMAIL_GLOB_EXPRESSION=*.gov.sg
+      - COOKIE_MAX_AGE=86400000
       - LOGIN_MESSAGE=Your OTP might take awhile to get to you.
       - USER_MESSAGE=User message test
       - ANNOUNCEMENT_MESSAGE=Search by email to find link owners, or by keyword to discover other links! \n PRO TIP! Search your email domain to find out all the links made by your agency.
@@ -37,21 +39,34 @@ services:
       - ANNOUNCEMENT_SUBTITLE=Search all go.gov.sg links
       - ANNOUNCEMENT_URL=https://go.gov.sg/
       - ANNOUNCEMENT_IMAGE=/assets/gov/transition-page/images/directory-browser.svg
+      - ANNOUNCEMENT_BUTTON_TEXT=Try me now
       - AWS_S3_BUCKET=local-bucket
       - ROTATED_LINKS=whatsapp,passport,spsc,sppr
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
       - CSP_ONLY_REPORT_VIOLATIONS=true
-      - SAFE_BROWSING_KEY=
-      - CLOUDMERSIVE_KEY=
+      - SAFE_BROWSING_KEY
+      - CLOUDMERSIVE_KEY
       - ASSET_VARIANT=gov
       - SES_HOST=maildev
       - SES_PORT=25
-      - POSTMAN_API_KEY=
-      - POSTMAN_API_URL=
-      - ACTIVATE_POSTMAN_FALLBACK=
+      - POSTMAN_API_KEY
+      - POSTMAN_API_URL
+      - ACTIVATE_POSTMAN_FALLBACK
       - BULK_UPLOAD_MAX_NUM=1000
       - BULK_UPLOAD_RANDOM_STR_LENGTH=8
+      - SQS_BULK_QRCODE_GENERATE_START_URL
+      - SQS_TIMEOUT=10000
+      - SQS_REGION
+      - BULK_QR_CODE_BATCH_SIZE=1000
+      - ACTIVATE_BULK_QR_CODE_GENERATION=false
+      - JOB_POLL_ATTEMPTS=12
+      - JOB_POLL_INTERVAL=5000
+      - BULK_QR_CODE_BUCKET_URL
+      - API_LINK_RANDOM_STR_LENGTH=8
+      - API_KEY_SALT=$$2b$$10$$9rBKuE4Gb5ravnvP4xjoPu
+      - FF_EXTERNAL_API=true
+      - ADMIN_API_EMAILS=integration-test-admin@open.gov.sg
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
@@ -70,7 +85,7 @@ services:
     ports:
       - '6379:6379'
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:1.2
     container_name: gogovsg-localstack
     ports:
       - '4566:4566'
@@ -94,7 +109,7 @@ services:
       dockerfile: Dockerfile.maildev-logging
     command: bin/maildev --web 80 --smtp 25 --verbose
     ports:
-      - "1080:80"
+      - '1080:80'
 
 volumes:
   pgdata:

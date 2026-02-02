@@ -1,7 +1,16 @@
-import { Selector } from 'testcafe'
+import { ClientFunction, Selector } from 'testcafe'
+import * as fs from 'fs'
+import { fetch } from 'cross-fetch'
 import {
+  apiLocation,
   circularRedirectUrl,
+  dummyBulkCsv,
+  dummyBulkCsvRelativePath,
+  dummyChangedFilePath,
   dummyFilePath,
+  dummyMaliciousFilePath,
+  dummyMaliciousRelativePath,
+  dummyRelativeChangedFilePath,
   dummyRelativePath,
   invalidShortUrl,
   largeFileSize,
@@ -10,18 +19,24 @@ import {
   smallFileSize,
   tagText1,
   tagText2,
+  tagText3,
 } from './util/config'
 import {
   blacklistValidationError,
+  bulkTab,
   circularRedirectValidationError,
+  closeDrawerButton,
   createLinkButton,
   createUrlModal,
+  csvOnlyError,
   fileSubmitButton,
   fileTab,
   generateRandomString,
   generateUrlImage,
+  getLinkCount,
   largeFileError,
   longUrlTextField,
+  maliciousFileCreation,
   resultTable,
   searchBarLinkButton,
   searchBarLinksInput,
@@ -29,17 +44,25 @@ import {
   searchBarTagButton,
   searchBarTagsInput,
   shortUrlTextField,
+  successBulkCreation,
   successUrlCreation,
   tag1,
+  tag3,
   tagCloseButton1,
-  tagCloseButton2,
   tagsAutocompleteInput,
+  unavailableShortLink,
   uploadFile,
   urlTable,
 } from './util/helpers'
 import LoginProcedure from './util/LoginProcedure'
 import firstLinkHandle from './util/FirstLinkHandle'
-import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
+import {
+  createBulkCsv,
+  createEmptyFileOfSize,
+  createMaliciousFile,
+  deleteFile,
+} from './util/fileHandle'
+import { linkCreationProcedure } from './util/LinkCreationProcedure'
 
 // eslint-disable-next-line no-undef
 fixture(`URL Creation`)
@@ -168,11 +191,11 @@ test('The file based shortlink test.', async (t) => {
     // It should clear tags input after the previous link was successfully created
     .expect(tag1.exists)
     .notOk()
-    // It should show an error below the file input when a file larger than 10MB is chosen
+    // It should show an error below the file input when a file larger than 20MB is chosen
     .expect(largeFileError.exists)
     .ok()
 
-  // It should disable the submit button when a file larger than 10MB is chosen
+  // It should disable the submit button when a file larger than 20MB is chosen
   await t.expect(fileSubmitButton.hasAttribute('disabled')).ok()
 
   // Delete 11mb file
@@ -198,7 +221,7 @@ test('The URL searching test.', async (t) => {
     .wait(1000)
     // Searching on the user page search bar shows links that are relevant to the search term.
     // eslint-disable-next-line
-    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
+    .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText,)
     .eql(`/${generatedUrlActive}-search`)
 
   await t
@@ -217,4 +240,134 @@ test('The URL searching test.', async (t) => {
     // eslint-disable-next-line
     .expect(resultTable.child('tbody').child(0).child(1).child(0).child(0).child('h6').innerText)
     .eql(`/${generatedUrlActive}-search`)
+})
+
+test('The bulk based test.', async (t) => {
+  await t.click(createLinkButton.nth(0))
+
+  const longUrls = Array(100).fill('https://google.com')
+  const currLinkCount = await getLinkCount()
+  const expectedLinkCount = currLinkCount + longUrls.length
+
+  // valid file
+  await createBulkCsv(dummyBulkCsv, longUrls)
+
+  await t
+    .click(bulkTab)
+    .setFilesToUpload(uploadFile, dummyBulkCsvRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText3)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+
+  await t.wait(2000)
+
+  await t
+    // It should show an success snackbar when a new file link has been added
+    .expect(successBulkCreation.exists)
+    .ok()
+    // The number of links should increase by numLongUrls
+    .expect(await getLinkCount())
+    .eql(expectedLinkCount)
+    // It should show tags on the newly created short urls
+    .expect(urlTable.child(0).find('span').withExactText(tagText3).exists)
+    .ok()
+
+  // Delete valid file
+  await deleteFile(dummyBulkCsv)
+
+  // invalid file (non-csv)
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
+  await t
+    .click(createLinkButton.nth(0))
+    .click(bulkTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    // It should clear tags input after bulk creation was successful
+    .expect(tag3.exists)
+    .notOk()
+    .click(createLinkButton.nth(2))
+    .expect(csvOnlyError.exists)
+    .ok()
+
+  // Delete invalid file (non-csv)
+  await deleteFile(dummyFilePath)
+})
+
+test('The malicious file test.', async (t) => {
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+
+  const generatedfileUrl = await shortUrlTextField.value
+
+  // Generate Malicious file
+  await createMaliciousFile()
+
+  await t
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyMaliciousRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+  await t
+    // It should show an error snackbar when malicious file uploaded
+    .expect(maliciousFileCreation.exists)
+    .ok()
+  await deleteFile(dummyMaliciousFilePath)
+  // Check that row is not created
+  const linkRow = Selector(`h6[title="${generatedfileUrl}"]`)
+
+  await t.expect(linkRow.exists).notOk()
+})
+
+test('The update file test', async (t) => {
+  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+
+  const generatedfileUrl = await shortUrlTextField.value
+  const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const directoryPath = `${process.env.HOME}/Downloads/${generatedfileUrl}.csv`
+  // Generate 1mb file
+  await createEmptyFileOfSize(dummyFilePath, smallFileSize)
+
+  await t
+    .click(fileTab)
+    .setFilesToUpload(uploadFile, dummyRelativePath)
+    .click(tagsAutocompleteInput)
+    .typeText(tagsAutocompleteInput, tagText1)
+    .pressKey('enter')
+    .click(createLinkButton.nth(2))
+
+  await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
+  await t
+    .click(fileRow)
+    .setFilesToUpload(uploadFile, dummyRelativeChangedFilePath)
+    .click(closeDrawerButton)
+
+  await t.navigateTo(`${apiLocation}/${generatedfileUrl}`)
+  await t.wait(7000)
+
+  await t.expect(fs.existsSync(directoryPath)).ok()
+
+  await deleteFile(dummyFilePath)
+  await deleteFile(dummyChangedFilePath)
+
+  // Delete downloaded file
+  fs.unlink(directoryPath, () => {})
+})
+
+test('Test active and inactive link redirects', async (t) => {
+  const { generatedUrlActive, generatedUrlInactive } =
+    await linkCreationProcedure(t)
+
+  // Check inactive link
+  const inactiveResult = await fetch(`${apiLocation}/${generatedUrlInactive}`)
+  await t.expect(inactiveResult.status === 404).ok()
+  await t.navigateTo(`${apiLocation}/${generatedUrlInactive}`)
+  await t.expect(unavailableShortLink.exists).ok()
+
+  // Check active link redirect
+  await t.navigateTo(`${apiLocation}/${generatedUrlActive}`)
+  await t.wait(7000)
+  const getCurrentUrl = ClientFunction(() => window.location)
+  await t.expect((await getCurrentUrl()).host === 'www.google.com').ok()
 })

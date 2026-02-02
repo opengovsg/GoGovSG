@@ -4,6 +4,7 @@ export const USER_PAGE = '/user'
 export const SEARCH_PAGE = '/search'
 export const NOT_FOUND_PAGE = '/404/:shortUrl'
 export const DIRECTORY_PAGE = '/directory'
+export const API_INTEGRATION_PAGE = '/apiintegration'
 
 export const snackbarVariants = { ERROR: 0, INFO: 1, SUCCESS: 2 }
 

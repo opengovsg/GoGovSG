@@ -1,4 +1,11 @@
 import { inject, injectable } from 'inversify'
+import { getSafeBrowsingExpiryDate } from '../../../util/safeBrowsing'
+import { GoUploadedFile, UpdateUrlOptions } from '..'
+import { apiLinkRandomStrLength } from '../../../config'
+import { DependencyIds } from '../../../constants'
+import { BULK } from '../../../models/types'
+import { StorableUrlSource } from '../../../repositories/enums'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
 import {
   BulkUrlMapping,
@@ -7,6 +14,7 @@ import {
   UrlsPaginated,
   UserUrlsQueryConditions,
 } from '../../../repositories/types'
+import { Mailer } from '../../../services/email'
 import dogstatsd, {
   SHORTLINK_CREATE,
   SHORTLINK_CREATE_TAG_IS_FILE,
@@ -15,14 +23,14 @@ import dogstatsd, {
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
+  InvalidUrlUpdateError,
   NotFoundError,
 } from '../../../util/error'
-import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
-import { GoUploadedFile, UpdateUrlOptions } from '..'
-import { DependencyIds } from '../../../constants'
-import { BULK, CONSOLE } from '../../../models/types'
+import generateShortUrl from '../../../util/url'
 import * as interfaces from '../interfaces'
+
+const API_LINK_RANDOM_STR_LENGTH = apiLinkRandomStrLength
 
 @injectable()
 export class UrlManagementService implements interfaces.UrlManagementService {
@@ -30,33 +38,55 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
   private urlRepository: UrlRepositoryInterface
 
+  private mailer: Mailer
+
   constructor(
     @inject(DependencyIds.userRepository)
     userRepository: UserRepositoryInterface,
     @inject(DependencyIds.urlRepository)
     urlRepository: UrlRepositoryInterface,
+    @inject(DependencyIds.mailer) mailer: Mailer,
   ) {
     this.userRepository = userRepository
     this.urlRepository = urlRepository
+    this.mailer = mailer
   }
 
   createUrl: (
     userId: number,
-    shortUrl: string,
+    source: StorableUrlSource.Console | StorableUrlSource.Api,
+    shortUrl?: string,
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
-  ) => Promise<StorableUrl> = async (userId, shortUrl, longUrl, file, tags) => {
+  ) => Promise<StorableUrl> = async (
+    userId,
+    source,
+    originalShortUrl,
+    longUrl,
+    file,
+    tags,
+  ) => {
     const user = await this.userRepository.findById(userId)
     if (!user) {
-      throw new NotFoundError('User not found')
+      throw new NotFoundError('User not found.')
     }
 
-    const owner = await this.userRepository.findUserByUrl(shortUrl)
-    if (owner) {
-      throw new AlreadyExistsError(
-        `Short link "${shortUrl}" is used. Click here to find out more`,
-      )
+    let shortUrl = originalShortUrl
+    if (shortUrl === undefined) {
+      if (source !== StorableUrlSource.Api) {
+        throw new Error(
+          'Short link can only be undefined for API created links.',
+        )
+      }
+      shortUrl = await generateShortUrl(API_LINK_RANDOM_STR_LENGTH)
+    }
+
+    const isShortUrlAvailable = await this.urlRepository.isShortUrlAvailable(
+      shortUrl,
+    )
+    if (!isShortUrlAvailable) {
+      throw new AlreadyExistsError(`Short link "${shortUrl}" is already used.`)
     }
 
     const storableFile: StorableFile | undefined = file
@@ -67,6 +97,10 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         }
       : undefined
 
+    const safeBrowsingExpiry = getSafeBrowsingExpiryDate({
+      longUrl: longUrl || '',
+    })
+
     // Success
     const result = await this.urlRepository.create(
       {
@@ -74,12 +108,14 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         longUrl,
         shortUrl,
         tags,
+        source,
+        safeBrowsingExpiry: safeBrowsingExpiry.toISOString(),
       },
       storableFile,
     )
     dogstatsd.increment(SHORTLINK_CREATE, 1, 1, [
       `${SHORTLINK_CREATE_TAG_IS_FILE}:${!!file}`,
-      `${SHORTLINK_CREATE_TAG_SOURCE}:${CONSOLE}`, // TODO: distinguish between console and API sources eventually
+      `${SHORTLINK_CREATE_TAG_SOURCE}:${source}`,
     ])
 
     return result
@@ -96,6 +132,10 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
     if (!url) {
       throw new NotFoundError(`Short link "${shortUrl}" not found for user.`)
+    } else if (url.isFile && options.longUrl) {
+      throw new InvalidUrlUpdateError(`Cannot update longUrl for file.`)
+    } else if (!url.isFile && options.file) {
+      throw new InvalidUrlUpdateError(`Cannot update file for link.`)
     }
 
     const storableFile: StorableFile | undefined = file
@@ -106,9 +146,26 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         }
       : undefined
 
+    // NOTE: We only update the safeBrowsingExpiry if longUrl is provided, which
+    // means that the longUrl was able to be scanned for threats.
+    // The longUrl can be undefined when editing other fields, or even changing
+    // the short link from INACTIVE to ACTIVE.
+    const safeBrowsingExpiry = longUrl
+      ? getSafeBrowsingExpiryDate({
+          longUrl,
+        }).toISOString()
+      : undefined
+
     return this.urlRepository.update(
       url,
-      { longUrl, state, description, contactEmail, tags },
+      {
+        longUrl,
+        state,
+        description,
+        contactEmail,
+        tags,
+        safeBrowsingExpiry,
+      },
       storableFile,
     )
   }
@@ -166,6 +223,19 @@ export class UrlManagementService implements interfaces.UrlManagementService {
       `${SHORTLINK_CREATE_TAG_IS_FILE}:false`,
       `${SHORTLINK_CREATE_TAG_SOURCE}:${BULK}`,
     ])
+  }
+
+  deactivateMaliciousShortUrl: (shortUrl: string) => Promise<void> = async (
+    shortUrl,
+  ) => {
+    await this.urlRepository.deactivateShortUrl(shortUrl)
+    const user = await this.userRepository.findUserByUrl(shortUrl)
+    if (!user) {
+      throw new NotFoundError(`User not found for short link "${shortUrl}".`)
+    }
+
+    // Send email to user notifying them of the deactivation
+    await this.mailer.mailDeactivatedMaliciousShortUrl(user.email, shortUrl)
   }
 }
 

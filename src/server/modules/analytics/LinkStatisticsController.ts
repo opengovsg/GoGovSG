@@ -38,7 +38,7 @@ export class LinkStatisticsController {
         res.status(200).json(linkStats)
         return
       } catch (error) {
-        res.status(404).send(jsonMessage(error.message))
+        res.status(404).send(jsonMessage((error as Error).message))
         return
       }
     }

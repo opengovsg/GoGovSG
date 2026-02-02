@@ -67,6 +67,12 @@ export interface LinkChangeSet {
   updatedAt: string
 }
 
+export enum StatusBarVariant {
+  Success = 'SUCCESS',
+  Error = 'ERROR',
+  Info = 'INFO',
+}
+
 export type UserState = {
   initialised: boolean
   isFetchingUrls: boolean
@@ -88,8 +94,15 @@ export type UserState = {
     subtitle: string | undefined
     url: string | undefined
     image: string | undefined
+    buttonText: string | undefined
   } | null
   linkHistory: Array<LinkChangeSet>
   linkHistoryCount: number
   tags: string[]
+  statusBarMessage: {
+    header: string
+    body: string
+    variant: StatusBarVariant
+    callbacks: string[]
+  }
 }

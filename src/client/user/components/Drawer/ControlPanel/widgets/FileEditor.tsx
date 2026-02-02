@@ -1,18 +1,11 @@
 import React, { useState } from 'react'
-import {
-  CircularProgress,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { createStyles, makeStyles } from '@material-ui/core'
 import { FileInputField } from '../../../../widgets/FileInputField'
 import CollapsibleMessage from '../../../../../app/components/CollapsibleMessage'
 import {
   CollapsibleMessagePosition,
   CollapsibleMessageType,
 } from '../../../../../app/components/CollapsibleMessage/types'
-import TrailingButton from './TrailingButton'
 import ConfigOption, {
   TrailingPosition,
 } from '../../../../widgets/ConfigOption'
@@ -20,6 +13,8 @@ import Tooltip from '../../../../widgets/Tooltip'
 import useShortLink from '../util/shortlink'
 import { useDrawerState } from '../../index'
 import { removeHttpsProtocol } from '../../../../../app/util/url'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../../../../shared/constants'
+import { formatBytes } from '../../../../../app/util/format'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -40,8 +35,6 @@ const useStyles = makeStyles((theme) =>
 
 export default function FileEditor() {
   const classes = useStyles()
-  const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const drawerStates = useDrawerState()
   const { shortLinkDispatch, shortLinkState, isUploading } = useShortLink(
     drawerStates.relevantShortLink!,
@@ -53,7 +46,9 @@ export default function FileEditor() {
     <div className={classes.originalFileLabel}>
       Original file{' '}
       <Tooltip
-        title="Original file will be replaced after you select file. Maximum file size is 10mb."
+        title={`Original file will be replaced after you select file. Maximum file size is ${formatBytes(
+          MAX_FILE_UPLOAD_SIZE,
+        )}.`}
         imageAltText="Replace file help"
       />
     </div>
@@ -68,12 +63,14 @@ export default function FileEditor() {
             className={classes.fileInputField}
             uploadFileError={uploadFileError}
             textFieldHeight="44px"
-            inputId="replace-file-input"
-            text={originalLongUrl}
+            fileNameText={originalLongUrl}
+            buttonText="Replace file"
+            isUploading={isUploading}
             setFile={(newFile) => {
               shortLinkDispatch?.replaceFile(newFile, setUploadFileError)
             }}
             setUploadFileError={setUploadFileError}
+            maxSize={MAX_FILE_UPLOAD_SIZE}
           />
           <CollapsibleMessage
             type={CollapsibleMessageType.Error}
@@ -84,25 +81,7 @@ export default function FileEditor() {
           </CollapsibleMessage>
         </>
       }
-      trailing={
-        <label htmlFor="replace-file-input">
-          <TrailingButton
-            onClick={() => {}}
-            disabled={isUploading}
-            variant={isMobileView ? 'contained' : 'outlined'}
-            fullWidth={isMobileView}
-            component="span"
-          >
-            {isUploading ? (
-              <CircularProgress color="primary" size={20} />
-            ) : (
-              'Replace file'
-            )}
-          </TrailingButton>
-        </label>
-      }
-      wrapTrailing={isMobileView}
-      trailingPosition={TrailingPosition.end}
+      trailingPosition={TrailingPosition.none}
     />
   )
 }

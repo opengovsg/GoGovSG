@@ -22,6 +22,8 @@ import directoryIcon from '@assets/components/app/base-layout/directory-icon.svg
 import feedbackIcon from '@assets/components/app/base-layout/feedback-icon.svg'
 import githubIcon from '@assets/components/app/base-layout/github-icon.svg'
 import signinIcon from '@assets/components/app/base-layout/signin-icon.svg'
+import apiIcon from '@assets/components/app/base-layout/api-icon.svg'
+import homeIcon from '@assets/components/app/base-layout/home-icon.svg'
 import Section from '../Section'
 import loginActions from '../../../login/actions'
 import { GoGovReduxState } from '../../reducers/types'
@@ -99,6 +101,7 @@ const useStyles = makeStyles((theme) =>
         paddingRight: 0,
         minWidth: theme.spacing(6),
       },
+      order: 10,
     },
     logoutIcon: {
       width: '24px',
@@ -133,32 +136,63 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
   const headers = [
     {
+      text: 'Dashboard',
+      link: i18next.t('general.links.dashboard'),
+      public: false,
+      icon: homeIcon,
+      mobileOrder: 1,
+      internalLink: true,
+    },
+    {
       text: 'Directory',
       link: i18next.t('general.links.directory'),
       public: false,
       icon: directoryIcon,
-      mobileOrder: 1,
+      mobileOrder: 2,
       internalLink: true,
+    },
+    {
+      text: 'API Integration',
+      link: i18next.t('general.links.apiintegration'),
+      public: false,
+      icon: apiIcon,
+      mobileOrder: 3,
+      internalLink: true,
+    },
+    {
+      text: 'Send us feedback',
+      link: i18next.t('general.links.feedback'),
+      public: true,
+      icon: feedbackIcon,
+      mobileOrder: 3,
+    },
+    {
+      text: 'Guide',
+      link: i18next.t('general.links.faq'),
+      public: true,
+      icon: helpIcon,
+      mobileOrder: 4,
     },
     {
       text: 'Contribute',
       link: i18next.t('general.links.contribute'),
       public: true,
       icon: githubIcon,
+      mobileOrder: 5,
     },
     {
-      text: 'FAQ',
+      text: 'Guide',
       link: i18next.t('general.links.faq'),
       public: false,
       icon: helpIcon,
-      mobileOrder: 2,
+      mobileOrder: 4,
     },
     {
-      text: 'Help us improve',
+      text: 'Send us feedback',
       link: i18next.t('general.links.contact'),
       public: false,
       icon: feedbackIcon,
-      mobileOrder: 3,
+      mobileOrder: 5,
     },
   ]
 
@@ -261,7 +295,12 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
                     }
                   >
                     {isMobileVariant && header.icon && (
-                      <img src={header.icon} alt={header.text} />
+                      <img
+                        src={header.icon}
+                        alt={header.text}
+                        height={24}
+                        width={24}
+                      />
                     )}
                     {!isMobileVariant && header.text}
                   </Button>

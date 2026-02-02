@@ -7,13 +7,14 @@ import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
 import { redirectClient } from '../redis'
-import { logger, redirectExpiry } from '../config'
+import { ffUseReplicaForRedirects, logger, redirectExpiry } from '../config'
 import { sequelize } from '../util/sequelize'
 import { DependencyIds } from '../constants'
 import { FileVisibility, S3Interface } from '../services/aws'
 import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
 import {
   BulkUrlMapping,
+  RedirectDestination,
   StorableFile,
   StorableUrl,
   UrlDirectory,
@@ -27,6 +28,7 @@ import { DirectoryQueryConditions } from '../modules/directory'
 import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 import { TAG_SEPARATOR } from '../../shared/constants'
+import { getSafeBrowsingExpiryDate } from '../util/safeBrowsing'
 
 const { Public, Private } = FileVisibility
 
@@ -65,8 +67,10 @@ export class UrlRepository implements UrlRepositoryInterface {
     properties: {
       userId: number
       shortUrl: string
+      source: StorableUrlSource.Console | StorableUrlSource.Api
       longUrl?: string
       tags?: string[]
+      safeBrowsingExpiry?: string
     },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {
@@ -81,7 +85,6 @@ export class UrlRepository implements UrlRepositoryInterface {
           : properties.longUrl,
         isFile: !!file,
         tagStrings,
-        source: StorableUrlSource.Console,
       }
       const url = await Url.create(urlStaticDTO, {
         transaction: t,
@@ -175,21 +178,42 @@ export class UrlRepository implements UrlRepositoryInterface {
     return this.urlMapper.persistenceToDto(newUrl)
   }
 
-  public getLongUrl: (shortUrl: string) => Promise<string> = async (
+  /**
+   * @param  {string} shortUrl Short url.
+   * @returns {Promise<boolean>} Returns true if shortUrl is available and false otherwise.
+   */
+  public isShortUrlAvailable: (shortUrl: string) => Promise<boolean> = async (
     shortUrl,
   ) => {
     try {
       // Cache lookup
-      return await this.getLongUrlFromCache(shortUrl)
+      await this.getLongUrlFromCache(shortUrl)
+      // if long url does not exist, throws error
+      // return false if no error since long url exists
+      return false
     } catch {
       // Cache failed, look in database
-      const longUrl = await this.getLongUrlFromDatabase(shortUrl)
-      this.cacheShortUrl(shortUrl, longUrl).catch((error) =>
-        logger.error(`Unable to cache short URL: ${error}`),
-      )
-      return longUrl
+      const url = await Url.findOne({
+        where: { shortUrl },
+      })
+      return !url
     }
   }
+
+  public getLongUrl: (shortUrl: string) => Promise<RedirectDestination> =
+    async (shortUrl) => {
+      try {
+        // Cache lookup
+        return await this.getLongUrlFromCache(shortUrl)
+      } catch {
+        // Cache failed, look in database
+        const redirectDestination = await this.getLongUrlFromDatabase(shortUrl)
+        this.cacheShortUrl(shortUrl, redirectDestination).catch((error) =>
+          logger.error(`Unable to cache short URL: ${error}`),
+        )
+        return redirectDestination
+      }
+    }
 
   public rawDirectorySearch: (
     conditions: DirectoryQueryConditions,
@@ -265,14 +289,24 @@ export class UrlRepository implements UrlRepositoryInterface {
       AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
       AND "urls"."isFile" IN (:queryFile)
       AND "urls"."state" In (:queryState)
-      ORDER BY (${rankingAlgorithm}) DESC`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT :limit OFFSET :offset`
+    const countQuery = `
+      SELECT count(*)
+      FROM urls AS "urls"
+      JOIN users
+      ON "urls"."userId" = "users"."id"
+      AND "users"."email" LIKE ANY (ARRAY[:likeQuery])
+      AND "urls"."isFile" IN (:queryFile)
+      AND "urls"."state" In (:queryState)`
 
-    // Search only once to get both urls and count
-    const urlsModel = (await sequelize.query(rawQuery, {
+    const urls = (await sequelize.query(rawQuery, {
       replacements: {
         likeQuery,
         queryFile,
         queryState,
+        limit,
+        offset,
       },
       type: QueryTypes.SELECT,
       model: Url,
@@ -280,12 +314,20 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
       useMaster: true,
     })) as Array<UrlDirectory>
+    const countResult = (await sequelize.query(countQuery, {
+      replacements: {
+        likeQuery,
+        queryFile,
+        queryState,
+      },
+      type: QueryTypes.SELECT,
+      raw: true,
+      plain: true,
+      useMaster: true,
+    })) as { count: string }
 
-    const count = urlsModel.length
-    const ending = Math.min(count, offset + limit)
-    const slicedUrlsModel = urlsModel.slice(offset, ending)
-
-    return { count, urls: slicedUrlsModel }
+    const count = Number(countResult.count)
+    return { urls, count }
   }
 
   /**
@@ -313,6 +355,7 @@ export class UrlRepository implements UrlRepositoryInterface {
     const newQuery = extractShortUrl(query) || query
     const queryFile = this.getQueryFileText(isFile)
     const queryState = this.getQueryStateText(state)
+
     const rawQuery = `
       SELECT "urls"."shortUrl", "users"."email", "urls"."state", "urls"."isFile"
       FROM urls AS "urls"
@@ -320,16 +363,25 @@ export class UrlRepository implements UrlRepositoryInterface {
       ON "urls"."shortUrl" = "url_clicks"."shortUrl"
       JOIN users
       ON "urls"."userId" = "users"."id"
-      JOIN plainto_tsquery('english', $newQuery) query
+      JOIN plainto_tsquery('english', :newQuery) query
       ON query @@ (${urlVector})
       ${queryFile}
       ${queryState}
-      ORDER BY (${rankingAlgorithm}) DESC`
+      ORDER BY (${rankingAlgorithm}) DESC
+      LIMIT :limit OFFSET :offset`
+    const countQuery = `
+      SELECT count(*)
+      FROM urls AS "urls"
+      JOIN plainto_tsquery('english', :newQuery) query
+      ON query @@ (${urlVector})
+      ${queryFile}
+      ${queryState}`
 
-    // Search only once to get both urls and count
-    const urlsModel = (await sequelize.query(rawQuery, {
-      bind: {
+    const urls = (await sequelize.query(rawQuery, {
+      replacements: {
         newQuery,
+        limit,
+        offset,
       },
       raw: true,
       type: QueryTypes.SELECT,
@@ -337,12 +389,18 @@ export class UrlRepository implements UrlRepositoryInterface {
       mapToModel: true,
       useMaster: true,
     })) as Array<UrlDirectory>
+    const countResult = (await sequelize.query(countQuery, {
+      replacements: {
+        newQuery,
+      },
+      raw: true,
+      plain: true,
+      type: QueryTypes.SELECT,
+      useMaster: true,
+    })) as { count: string }
 
-    const count = urlsModel.length
-    const ending = Math.min(count, offset + limit)
-    const slicedUrlsModel = urlsModel.slice(offset, ending)
-
-    return { count, urls: slicedUrlsModel }
+    const count = Number(countResult.count)
+    return { urls, count }
   }
 
   /**
@@ -424,30 +482,38 @@ export class UrlRepository implements UrlRepositoryInterface {
    * Retrieves the long url which the short url redirects to
    * from the database.
    * @param  {string} shortUrl Short url.
-   * @returns The long url that the short url redirects to.
+   * @returns {Promise<RedirectDestination>} The long url and safe browsing expiry date.
    */
-  private getLongUrlFromDatabase: (shortUrl: string) => Promise<string> =
-    async (shortUrl) => {
-      const url = await Url.findOne({
-        where: { shortUrl, state: StorableUrlState.Active },
-      })
-      if (!url) {
-        throw new NotFoundError(
-          `shortUrl not found in database:\tshortUrl=${shortUrl}`,
-        )
-      }
-      return url.longUrl
+  private getLongUrlFromDatabase: (
+    shortUrl: string,
+  ) => Promise<RedirectDestination> = async (shortUrl) => {
+    const url = await (ffUseReplicaForRedirects
+      ? Url.scope('useReplica')
+      : Url
+    ).findOne({
+      where: { shortUrl, state: StorableUrlState.Active },
+    })
+    if (!url) {
+      throw new NotFoundError(
+        `shortUrl not found in database:\tshortUrl=${shortUrl}`,
+      )
     }
+    return {
+      longUrl: url.longUrl,
+      isFile: url.isFile,
+      safeBrowsingExpiry: url.safeBrowsingExpiry,
+    }
+  }
 
   /**
    * Retrieves the long url which the short url redirects to
    * from the cache.
    * @param  {string} shortUrl Short url.
-   * @returns The long url that the short url redirects to.
+   * @returns {RedirectDestination} The long url and safe browsing expiry date.
    */
-  private getLongUrlFromCache: (shortUrl: string) => Promise<string> = (
-    shortUrl,
-  ) => {
+  private getLongUrlFromCache: (
+    shortUrl: string,
+  ) => Promise<RedirectDestination> = (shortUrl) => {
     return new Promise((resolve, reject) =>
       redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
         if (cacheError) {
@@ -462,7 +528,28 @@ export class UrlRepository implements UrlRepositoryInterface {
             )
             return
           }
-          resolve(cacheLongUrl)
+
+          try {
+            const redirectDestination = JSON.parse(cacheLongUrl)
+            resolve(redirectDestination)
+          } catch (_) {
+            logger.info(
+              `Cache lookup returned a string instead of an object:\tshortUrl=${shortUrl}`,
+            )
+            resolve({
+              longUrl: cacheLongUrl,
+              isFile: false,
+              safeBrowsingExpiry: null,
+            })
+
+            // FIXME: Throw NotFoundError once all app clients are updated to
+            // use the new RedirectDestination type.
+            // reject(
+            //   new NotFoundError(
+            //     `longUrl not found in cache:\tshortUrl=${shortUrl}`,
+            //   ),
+            // )
+          }
         }
       }),
     )
@@ -473,15 +560,23 @@ export class UrlRepository implements UrlRepositoryInterface {
    * @param  {string} shortUrl Short url.
    * @param  {string} longUrl Long url.
    */
-  private cacheShortUrl: (shortUrl: string, longUrl: string) => Promise<void> =
-    (shortUrl, longUrl) => {
-      return new Promise((resolve, reject) => {
-        redirectClient.set(shortUrl, longUrl, 'EX', redirectExpiry, (err) => {
+  private cacheShortUrl: (
+    shortUrl: string,
+    redirectDestination: RedirectDestination,
+  ) => Promise<void> = (shortUrl, redirectDestination) => {
+    return new Promise((resolve, reject) => {
+      redirectClient.set(
+        shortUrl,
+        JSON.stringify(redirectDestination),
+        'EX',
+        redirectExpiry,
+        (err) => {
           if (err) reject(err)
           else resolve()
-        })
-      })
-    }
+        },
+      )
+    })
+  }
 
   /**
    * Generates the ranking algorithm to be used in the ORDER BY clause in the
@@ -519,6 +614,8 @@ export class UrlRepository implements UrlRepositoryInterface {
     await sequelize.transaction(async (t) => {
       const tagStrings = tags ? tags.join(TAG_SEPARATOR) : ''
       const bulkUrlObjects = urlMappings.map(({ shortUrl, longUrl }) => {
+        const safeBrowsingExpiry = getSafeBrowsingExpiryDate({ longUrl })
+
         return {
           shortUrl,
           longUrl,
@@ -526,6 +623,7 @@ export class UrlRepository implements UrlRepositoryInterface {
           isFile: false,
           source: StorableUrlSource.Bulk,
           tagStrings,
+          safeBrowsingExpiry: safeBrowsingExpiry.toISOString(),
         }
       })
       // sequelize model method
@@ -544,6 +642,36 @@ export class UrlRepository implements UrlRepositoryInterface {
         )
       }
     })
+  }
+
+  public async updateSafeBrowsingExpiry(
+    shortUrl: string,
+    expiry: Date,
+  ): Promise<void> {
+    const url = await Url.findOne({ where: { shortUrl } })
+    if (!url) {
+      throw new NotFoundError(`Url with shortUrl ${shortUrl} not found`)
+    }
+
+    await this.update(
+      { shortUrl },
+      { safeBrowsingExpiry: expiry.toISOString() },
+      undefined,
+    )
+  }
+
+  public async deactivateShortUrl(shortUrl: string): Promise<void> {
+    const url = await Url.findOne({ where: { shortUrl } })
+
+    if (!url) {
+      throw new NotFoundError(`Url with shortUrl ${shortUrl} not found`)
+    }
+
+    await this.update(
+      { shortUrl },
+      { state: StorableUrlState.Inactive },
+      undefined,
+    )
   }
 }
 

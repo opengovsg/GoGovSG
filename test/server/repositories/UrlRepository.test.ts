@@ -24,6 +24,7 @@ import {
 import { DirectoryQueryConditions } from '../../../src/server/modules/directory'
 import TagRepositoryMock from '../mocks/repositories/TagRepository'
 import { TAG_SEPARATOR } from '../../../src/shared/constants'
+import { StorableUrl } from '../../../src/server/repositories/types'
 
 jest.mock('../../../src/server/models/url', () => ({
   Url: urlModelMock,
@@ -75,17 +76,18 @@ describe('UrlRepository', () => {
   const baseUrlClicks = {
     clicks: 2,
   }
-  const baseTemplate = {
+  const baseTemplate: Omit<StorableUrl, 'tagStrings' | 'clicks'> = {
     shortUrl: baseShortUrl,
     longUrl: baseLongUrl,
-    state: 'ACTIVE',
+    state: StorableUrlState.Active,
     isFile: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     description: 'An agency of the Singapore Government',
     contactEmail: 'contact-us@agency.gov.sg',
-    source: 'CONSOLE',
+    source: StorableUrlSource.Console,
     tags: [],
+    safeBrowsingExpiry: null,
   }
   const baseUrl = {
     ...baseTemplate,
@@ -143,6 +145,7 @@ describe('UrlRepository', () => {
     const userId = 2
     const shortUrl = 'abcdef'
     const longUrl = 'https://www.agency.gov.sg'
+    const source = StorableUrlSource.Console
 
     beforeEach(() => {
       create.mockReset()
@@ -157,7 +160,7 @@ describe('UrlRepository', () => {
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(baseTemplate)
       await expect(
-        repository.create({ userId, shortUrl, longUrl }),
+        repository.create({ userId, shortUrl, longUrl, source }),
       ).resolves.toStrictEqual(baseStorableUrl)
       expect(create).toHaveBeenCalledWith(
         {
@@ -180,7 +183,13 @@ describe('UrlRepository', () => {
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(baseUrlWithTags)
       await expect(
-        repository.create({ userId, shortUrl, longUrl, tags: baseTags }),
+        repository.create({
+          userId,
+          shortUrl,
+          longUrl,
+          source,
+          tags: baseTags,
+        }),
       ).resolves.toStrictEqual(baseStorableUrlWithTags)
       expect(create).toHaveBeenCalledWith(
         {
@@ -219,7 +228,10 @@ describe('UrlRepository', () => {
       scope.mockImplementationOnce(() => ({ findByPk }))
       create.mockResolvedValue(url)
       await expect(
-        repository.create({ userId: baseUserId, shortUrl: baseShortUrl }, file),
+        repository.create(
+          { userId: baseUserId, shortUrl: baseShortUrl, source },
+          file,
+        ),
       ).resolves.toStrictEqual(storableUrl)
       expect(create).toHaveBeenCalledWith(
         {
@@ -265,7 +277,12 @@ describe('UrlRepository', () => {
       create.mockResolvedValue(url)
       await expect(
         repository.create(
-          { userId: baseUserId, shortUrl: baseShortUrl, tags: baseTags },
+          {
+            userId: baseUserId,
+            shortUrl: baseShortUrl,
+            source,
+            tags: baseTags,
+          },
           file,
         ),
       ).resolves.toStrictEqual(storableUrlWithTags)
@@ -580,12 +597,22 @@ describe('UrlRepository', () => {
 
   describe('getLongUrl', () => {
     it('should return from db when cache is empty', async () => {
-      await expect(repository.getLongUrl('a')).resolves.toBe('aa')
+      await expect(repository.getLongUrl('a')).resolves.toEqual({
+        longUrl: 'aa',
+        isFile: false,
+        safeBrowsingExpiry: null,
+      })
     })
 
     it('should return from cache when cache is filled', async () => {
-      redisMockClient.set('a', 'aaa')
-      await expect(repository.getLongUrl('a')).resolves.toBe('aaa')
+      // Arrange
+      const cacheUrl = {
+        longUrl: 'aaa',
+        isFile: false,
+        safeBrowsingExpiry: null,
+      }
+      redisMockClient.set('a', JSON.stringify(cacheUrl))
+      await expect(repository.getLongUrl('a')).resolves.toEqual(cacheUrl)
     })
 
     it('should return from db when cache is down', async () => {
@@ -596,7 +623,11 @@ describe('UrlRepository', () => {
         callback(new Error('Cache down'), 'Error')
         return false
       })
-      await expect(repository.getLongUrl('a')).resolves.toBe('aa')
+      await expect(repository.getLongUrl('a')).resolves.toEqual({
+        longUrl: 'aa',
+        isFile: false,
+        safeBrowsingExpiry: null,
+      })
     })
   })
 
@@ -662,5 +693,35 @@ describe('UrlRepository', () => {
         expect.objectContaining({ useMaster: true }),
       )
     })
+  })
+
+  describe('updateSafeBrowsingExpiry', () => {
+    it('should throw NotFoundError if the shortUrl does not exist', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+      const expiry = new Date(Date.now() + 1000)
+      jest.spyOn(urlModelMock, 'findOne').mockResolvedValue(null)
+
+      // Act & Assert
+      await expect(
+        repository.updateSafeBrowsingExpiry(shortUrl, expiry),
+      ).rejects.toThrow(NotFoundError)
+    })
+
+    it.skip('should update the safe browsing expiry for an existing shortUrl', () => {})
+  })
+
+  describe('deactivateShortUrl', () => {
+    it('should throw NotFoundError if the shortUrl does not exist', async () => {
+      // Arrange
+      const shortUrl = 'nonexistent'
+
+      // Act & Assert
+      await expect(repository.deactivateShortUrl(shortUrl)).rejects.toThrow(
+        NotFoundError,
+      )
+    })
+
+    it.skip('should deactivate an existing shortUrl', () => {})
   })
 })
