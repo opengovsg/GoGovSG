@@ -1,5 +1,5 @@
 import Express from 'express'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { createValidator } from 'express-joi-validation'
 
 import { DependencyIds } from '../constants'

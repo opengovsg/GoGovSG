@@ -1,5 +1,5 @@
 import Express from 'express'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { createValidator } from 'express-joi-validation'
 
 import ImageFormat from '../../shared/util/image-format'
