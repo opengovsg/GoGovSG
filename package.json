@@ -57,7 +57,7 @@
     "archiver": "^5.3.1",
     "aws-sdk": "^2.1354.0",
     "babel-polyfill": "^6.26.0",
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.19.2",
     "chart.js": "^2.9.4",
     "cheerio": "^1.0.0-rc.10",
