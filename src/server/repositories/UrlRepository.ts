@@ -312,7 +312,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       model: Url,
       raw: true,
       mapToModel: true,
-      useMaster: true,
     })) as Array<UrlDirectory>
     const countResult = (await sequelize.query(countQuery, {
       replacements: {
@@ -323,7 +322,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       type: QueryTypes.SELECT,
       raw: true,
       plain: true,
-      useMaster: true,
     })) as { count: string }
 
     const count = Number(countResult.count)
@@ -387,7 +385,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       type: QueryTypes.SELECT,
       model: Url,
       mapToModel: true,
-      useMaster: true,
     })) as Array<UrlDirectory>
     const countResult = (await sequelize.query(countQuery, {
       replacements: {
@@ -396,7 +393,6 @@ export class UrlRepository implements UrlRepositoryInterface {
       raw: true,
       plain: true,
       type: QueryTypes.SELECT,
-      useMaster: true,
     })) as { count: string }
 
     const count = Number(countResult.count)
