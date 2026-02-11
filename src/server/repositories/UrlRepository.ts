@@ -3,6 +3,7 @@
 import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
 import _ from 'lodash'
+import validator from 'validator'
 import { Url, UrlType } from '../models/url'
 import { UrlClicks } from '../models/statistics/clicks'
 import { NotFoundError } from '../util/error'
@@ -29,6 +30,11 @@ import { extractShortUrl, sanitiseQuery } from '../util/parse'
 import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
 import { TAG_SEPARATOR } from '../../shared/constants'
 import { getSafeBrowsingExpiryDate } from '../util/safeBrowsing'
+import dogstatsd, {
+  DIRECTORY_SEARCH_DOMAIN,
+  DIRECTORY_SEARCH_EMAIL,
+  DIRECTORY_SEARCH_UNIQUE_DOMAINS,
+} from '../util/dogstatsd'
 
 const { Public, Private } = FileVisibility
 
@@ -274,6 +280,34 @@ export class UrlRepository implements UrlRepositoryInterface {
     const emails = query.toString().split(' ')
     // split email/domains by space into tokens, also reduces injections
     const likeQuery = emails.map(sanitiseQuery)
+
+    const domains = emails.filter((email) => {
+      return !validator.isEmail(email)
+    })
+
+    const validEmails = emails.filter((email) => {
+      return validator.isEmail(email)
+    })
+
+    if (domains.length > 0) {
+      dogstatsd.increment(DIRECTORY_SEARCH_DOMAIN, 1, [
+        `environment:${process.env.DD_ENV}`,
+        `env:${process.env.DD_ENV}`,
+      ])
+      domains.forEach((domain) => {
+        dogstatsd.set(`${DIRECTORY_SEARCH_UNIQUE_DOMAINS}`, domain, 1, [
+          `environment:${process.env.DD_ENV}`,
+          `env:${process.env.DD_ENV}`,
+        ])
+      })
+    }
+
+    if (validEmails.length > 0) {
+      dogstatsd.increment(DIRECTORY_SEARCH_EMAIL, 1, [
+        `environment:${process.env.DD_ENV}`,
+        `env:${process.env.DD_ENV}`,
+      ])
+    }
 
     const queryFile = this.getQueryFileEmail(isFile)
     const queryState = this.getQueryStateEmail(state)
