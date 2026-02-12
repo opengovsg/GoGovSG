@@ -48,7 +48,8 @@ describe('Url integration tests', () => {
   const longUrl = 'https://example.com'
 
   beforeEach(async () => {
-    ;({ email } = await createIntegrationTestUser())
+    const { email: _email } = await createIntegrationTestUser()
+    email = _email
     authCookie = await getAuthCookie(email)
   })
 
@@ -112,17 +113,6 @@ describe('Url integration tests', () => {
       safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
     })
   })
-
-  // it('should be unable to create file that is too large', async () => {
-  //   const shortUrl = await generateRandomString(6)
-  //   const formData = new FormData()
-  //   const largeTextFile = readFile(LARGE_TEXT_FILE_PATH)
-  //   formData.append('file', largeTextFile)
-  //   formData.append('shortUrl', shortUrl)
-
-  //   const res = await postFormData(API_USER_URL, formData, authCookie)
-  //   expect(res.status).toBe(400)
-  // })
 
   it('should be able to update link url', async () => {
     const shortUrl = await generateRandomString(6)
@@ -235,10 +225,4 @@ describe('Url integration tests', () => {
       count: 1,
     })
   })
-
-  // it('should be able to transfer ownership', async () => {
-  // })
-
-  // it('should verify that transferred links no longer appear', async () => {
-  // })
 })

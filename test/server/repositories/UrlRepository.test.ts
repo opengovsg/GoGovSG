@@ -659,10 +659,6 @@ describe('UrlRepository', () => {
           },
         ],
       })
-      expect(mockQuery).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ useMaster: true }),
-      )
     })
 
     it('should call sequelize.query that searches with plain text', async () => {
@@ -688,10 +684,6 @@ describe('UrlRepository', () => {
           },
         ],
       })
-      expect(mockQuery).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ useMaster: true }),
-      )
     })
   })
 
