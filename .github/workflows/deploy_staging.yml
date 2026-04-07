@@ -5,41 +5,7 @@ on:
     branches:
       - 'staging'
 
-env:
-  SENTRY_URL: https://sentry.io/
-  SENTRY_ORG: gogovsg
-  SENTRY_PROJECT_STAGING: gogovsg-staging
-  SENTRY_DNS_STAGING: https://5adc575a35d8443fb6ae6c83cee91a07@o372043.ingest.sentry.io/5185989
-
 jobs:
-  sentry:
-    name: Upload sourcemap to Sentry
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - run: npm ci --legacy-peer-deps
-      - name: Select Sentry variables
-        run: |
-          echo "SENTRY_PROJECT=$SENTRY_PROJECT_STAGING" >> $GITHUB_ENV
-          echo "SENTRY_DNS=$SENTRY_DNS_STAGING" >> $GITHUB_ENV
-      - name: Upload to Sentry
-        run: npm run build
-        env:
-          ASSET_VARIANT: gov
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
   build-and-deploy:
     name: ${{ matrix.variant.name }}
     strategy:
