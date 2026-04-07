@@ -27,7 +27,6 @@ import {
   displayHostname,
   logger,
   s3Bucket,
-  sentryDns,
   sessionSettings,
   trustProxy,
 } from './config'
@@ -89,9 +88,6 @@ const connectSrc = [
 ]
 if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
-}
-if (sentryDns) {
-  connectSrc.push(parseDomain(sentryDns))
 }
 
 const app = express()

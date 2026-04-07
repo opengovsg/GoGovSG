@@ -1,7 +1,6 @@
 import React from 'react'
 import FileSaver from 'file-saver'
 
-import * as Sentry from '@sentry/react'
 import { useDrawerState } from '../..'
 import ImageFormat from '../../../../../../shared/util/image-format'
 import ConfigOption, {
@@ -49,8 +48,6 @@ async function downloadServerQrCode(
     })
     FileSaver.saveAs(blob, `${fileName}.${getFileExtension(format)}`)
   } else {
-    // Sentry analytics: qr code download fail
-    Sentry.captureMessage(`generate qr code for ${format} unsuccessful`)
     GAEvent('qr code generation', format.toString(), 'unsuccesful')
   }
 }
