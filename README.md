@@ -110,11 +110,6 @@ After these have been set up, set the environment variables according to the tab
 |           SESSION_SECRET           |   Yes    | For hashing browser sessions, e.g. `change-this`                                                                                                                                               |
 |    VALID_EMAIL_GLOB_EXPRESSION     |   Yes    | The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com` |
 |           GA_TRACKING_ID           |    No    | The Google Analytics tracking ID, e.g. `UA-12345678-9`                                                                                                                                         |
-|         SENTRY_AUTH_TOKEN          |    No    | To get relevant permissions to upload the source maps.                                                                                                                                         |
-|             SENTRY_DNS             |    No    | The Sentry DNS used for bug and error tracking. e.g. `https://12345@sentry.io/12345`                                                                                                           |
-|             SENTRY_ORG             |    No    | Our Sentry organisation name, e.g. `example-org`                                                                                                                                               |
-|           SENTRY_PROJECT           |    No    | The relevant Sentry project. e.g. `project-prod`                                                                                                                                               |
-|             SENTRY_URL             |    No    | The Sentry url. e.g. `https://sentry.io/`                                                                                                                                                      |
 |           LOGIN_MESSAGE            |    No    | A text message that will be displayed on the login page as a snackbar                                                                                                                          |
 |            USER_MESSAGE            |    No    | A text message that will be displayed as a banner, once the user has logged in                                                                                                                 |
 |        ANNOUNCEMENT_MESSAGE        |    No    | The message in the announcement displayed as a modal to users on login                                                                                                                         |
@@ -174,13 +169,12 @@ Finally, start the production server by running `npm start`.
 
 ### Deploying
 
-GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk and AWS Lambda. We also use Sentry.io to track client-side errors.
+GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk and AWS Lambda.
 
 |        Secrets        | Required | Description/Value                                                                |
 | :-------------------: | :------: | :------------------------------------------------------------------------------- |
 |   AWS_ACCESS_KEY_ID   |   Yes    | AWS credential ID used to deploy to Elastic and Modify files on S3               |
 | AWS_SECRET_ACCESS_KEY |   Yes    | AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3 |
-|   SENTRY_AUTH_TOKEN   |    No    | To get relevant permissions to upload the source maps                            |
 |      DD_API_KEY       |  Yes\*   | Datadog API Key used for integration with Datadog to Trace/Logs collection       |
 |      DD_SERVICE       |    No    | Datadog service name to be used for the application                              |
 |        DD_ENV         |    No    | Datadog application environment, e.g. `staging`, `production`                    |
@@ -193,10 +187,6 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |               PRODUCTION_BRANCH, STAGING_BRANCH               |   Yes    | Name of Git branches for triggerring deployments to production/staging respectively |
 |                            ECR_URL                            |   Yes    | AWS ECR Docker container registry URI to push built images to                       |
 |                           ECR_REPO                            |   Yes    | Name of repository in AWS ECR containing images                                     |
-|                          SENTRY_ORG                           |    No    | Sentry.io organisation name                                                         |
-|       SENTRY_PROJECT_PRODUCTION, SENTRY_PROJECT_STAGING       |    No    | Sentry.io project name                                                              |
-|                          SENTRY_URL                           |    No    | Sentry.io URL e.g. `https://sentry.io/`                                             |
-|           SENTRY_DNS_PRODUCTION,SENTRY_DNS_STAGING            |    No    | Sentry.io endpoint to post client-side errors to                                    |
 |                         API_KEY_SALT                          |   Yes    | Salt used for APIKey hashing, guide to salt generation [here](#salt-generation)     |
 
 ## Operations
