@@ -4,7 +4,6 @@ import querystring, { ParsedUrlQueryInput } from 'querystring'
 import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import * as Sentry from '@sentry/react'
 import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   CloseCreateUrlModalAction,
@@ -665,8 +664,6 @@ const createUrlOrRedirect =
 
     // Test for malformed short URL
     if (!/^[a-z0-9-]/.test(shortUrl)) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
       GAEvent('modal page', 'create link from url', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -685,8 +682,6 @@ const createUrlOrRedirect =
     }
 
     if (!isValidUrl(longUrl)) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
       GAEvent('modal page', 'create link from url', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -697,8 +692,6 @@ const createUrlOrRedirect =
     }
 
     if (!isValidTags(tags)) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
       GAEvent('modal page', 'create link from url', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -715,8 +708,6 @@ const createUrlOrRedirect =
     })
 
     if (!response.ok) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with url unsuccessful')
       GAEvent('modal page', 'create link from url', 'unsuccessful')
 
       if (response.status === 401) {
@@ -759,8 +750,6 @@ const transferOwnership =
             rootActions.setSuccessMessage(successMessage),
           )
         } else {
-          // Sentry analytics: transfer ownership fail
-          Sentry.captureMessage('transfer ownership unsuccessful')
           GAEvent(
             'transfer link ownership',
             'unsuccessful',
@@ -802,8 +791,6 @@ const uploadFile =
       user: { shortUrl, tags },
     } = getState()
     if (file === null) {
-      // Sentry analytics: create link with file fail
-      Sentry.captureMessage('create link with file unsuccessful')
       GAEvent('modal page', 'create link from file', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -814,8 +801,6 @@ const uploadFile =
     }
 
     if (!/^[a-z0-9-]/.test(shortUrl)) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with file unsuccessful')
       GAEvent('modal page', 'create link from file', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -828,8 +813,6 @@ const uploadFile =
     }
 
     if (!isValidTags(tags)) {
-      // Sentry analytics: create link with url fail
-      Sentry.captureMessage('create link with file unsuccessful')
       GAEvent('modal page', 'create link from file', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -851,8 +834,6 @@ const uploadFile =
     const response = await postFormData('/api/user/url', data)
     dispatch<SetIsUploadingAction>(setIsUploading(false))
     if (!response.ok) {
-      // Sentry analytics: create link with file fail
-      Sentry.captureMessage('create link with file unsuccessful')
       GAEvent('modal page', 'create link from file', 'unsuccessful')
 
       await handleError(dispatch, response)
@@ -1018,8 +999,6 @@ const bulkCreateUrl =
     } = getState()
 
     if (file === null) {
-      // Sentry analytics: bulk create link with file fail
-      Sentry.captureMessage('bulk create upload missing file')
       GAEvent('modal page', 'bulk create upload', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -1035,7 +1014,6 @@ const bulkCreateUrl =
           rootActions.setErrorMessage('File is invalid.'),
         )
         dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-        Sentry.captureMessage('bulk create upload invalid file')
         GAEvent('modal page', 'bulk create upload', 'unsuccessful')
         return
       }
@@ -1044,7 +1022,6 @@ const bulkCreateUrl =
           rootActions.setErrorMessage('Only csv files are allowed.'),
         )
         dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-        Sentry.captureMessage('bulk create upload invalid file')
         GAEvent('modal page', 'bulk create upload', 'unsuccessful')
         return
       }
@@ -1054,14 +1031,12 @@ const bulkCreateUrl =
           rootActions.setErrorMessage('Bulk csv file exceeds the size limit'),
         )
         dispatch<SetFileUploadStateAction>(setFileUploadState(false))
-        Sentry.captureMessage('bulk create upload invalid file')
         GAEvent('modal page', 'bulk create upload', 'unsuccessful')
         return
       }
     }
 
     if (!isValidTags(tags)) {
-      Sentry.captureMessage('bulk create upload invalid tags')
       GAEvent('modal page', 'bulk create upload', 'unsuccessful')
 
       dispatch<SetErrorMessageAction>(
@@ -1079,13 +1054,11 @@ const bulkCreateUrl =
     const response = await postFormData('/api/user/url/bulk', data)
     dispatch<SetIsUploadingAction>(setIsUploading(false))
     if (!response.ok) {
-      Sentry.captureMessage('bulk creation invalid')
       GAEvent('modal page', 'bulk creation', 'unsuccessful')
 
       await handleError(dispatch, response)
       dispatch<SetFileUploadStateAction>(setFileUploadState(false))
     } else {
-      Sentry.captureMessage('bulk creation success')
       GAEvent('modal page', 'bulk creation', 'successful')
       dispatch<void>(getUrlsForUser())
       dispatch<ResetUserStateAction>(resetUserState())

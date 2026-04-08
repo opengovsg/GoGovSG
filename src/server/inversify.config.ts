@@ -45,7 +45,6 @@ import { StatisticsService } from './modules/statistics/services'
 import { StatisticsController } from './modules/statistics'
 
 import { RotatingLinksController } from './modules/display/RotatingLinksController'
-import { SentryController } from './modules/sentry/SentryController'
 
 import { AuthService, CryptographyBcrypt } from './modules/auth/services'
 import { LoginController, LogoutController } from './modules/auth'
@@ -129,7 +128,6 @@ export default () => {
   bindIfUnbound(DependencyIds.statisticsController, StatisticsController)
   bindIfUnbound(DependencyIds.statisticsService, StatisticsService)
   bindIfUnbound(DependencyIds.linksController, RotatingLinksController)
-  bindIfUnbound(DependencyIds.sentryController, SentryController)
   bindIfUnbound(DependencyIds.loginController, LoginController)
   bindIfUnbound(DependencyIds.authService, AuthService)
   bindIfUnbound(DependencyIds.logoutController, LogoutController)

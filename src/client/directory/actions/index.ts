@@ -2,7 +2,6 @@ import { ThunkAction } from 'redux-thunk'
 import { Dispatch } from 'react'
 import querystring from 'querystring'
 import { History } from 'history'
-import * as Sentry from '@sentry/react'
 import {
   DirectoryActionType,
   ResetDirectoryResultsAction,
@@ -77,7 +76,6 @@ const getDirectoryResults =
     if (!response.ok) {
       // Report error from endpoints
       GAEvent('directory page', query, 'unsuccessful')
-      Sentry.captureMessage('directory search unsuccessful')
       dispatch(
         rootActions.setErrorMessage(
           json.message || 'Error fetching search results',

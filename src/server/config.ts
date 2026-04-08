@@ -234,8 +234,6 @@ export const accessEndpoint =
 
 export const dbPoolSize = Number(process.env.DB_POOL_SIZE) || 40
 
-export const sentryDns: string | undefined = process.env.SENTRY_DNS
-
 const displayHostnameMap = {
   gov: 'Go.gov.sg',
   edu: 'For.edu.sg',

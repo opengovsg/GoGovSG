@@ -1,5 +1,4 @@
 import { saveAs } from 'file-saver'
-import * as Sentry from '@sentry/react'
 import rootActions from '../components/pages/RootPage/actions'
 import userActions from '../../user/actions'
 import useIsIE from '../components/BaseLayout/util/ie'
@@ -67,15 +66,11 @@ export const downloadUrls = async (tableConfig: UrlTableConfig) => {
       ])
     })
   } else if (!isOk && json) {
-    // Sentry analytics: download links fail
-    Sentry.captureMessage('download links unsuccessful')
     GAEvent('user page', 'download links', 'unsuccessful')
 
     rootActions.setErrorMessage(json.message || '')
     return null
   } else {
-    // Sentry analytics: download links fail
-    Sentry.captureMessage('download links unsuccessful')
     GAEvent('user page', 'download links', 'unsuccessful')
 
     rootActions.setErrorMessage('Error downloading urls.')

@@ -17,7 +17,6 @@ const router = Express.Router()
 router.use('/logout', require('./logout'))
 router.use('/login', require('./login'))
 router.use('/stats', require('./statistics'))
-router.use('/sentry', require('./sentry'))
 router.use('/links', require('./links'))
 router.use('/ga', require('./ga'))
 

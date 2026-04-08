@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import * as Sentry from '@sentry/react'
 import { get } from '../../../../../../app/util/requests'
 import { LinkStatistics } from '../../../../../../../shared/interfaces/link-statistics'
 import { GAEvent } from '../../../../../../app/util/ga'
@@ -25,8 +24,6 @@ export const useStatistics = (shortUrl: string) => {
       const response = await get(endpoint)
 
       if (response.status !== 200) {
-        // Sentry analytics: fetching analytics fail
-        Sentry.captureMessage(`fetching analytics data unsuccessful`)
         GAEvent(
           'drawer page analytics data',
           'fetch analytics data',

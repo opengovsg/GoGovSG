@@ -7,34 +7,12 @@ require('regenerator-runtime/runtime')
 
 import { createHashHistory } from 'history'
 
-import * as Sentry from '@sentry/react'
-
 import Root from './components/pages/RootPage'
-import { get } from './util/requests'
 import { i18nInit } from './i18n'
 import store from './store'
 
 const history = createHashHistory()
 
-// If SENTRY_DNS env var is specified, init sentry.
-get('/api/sentry/').then((response) => {
-  if (response.ok) {
-    response.text().then((sentryDns) => {
-      if (sentryDns) {
-        Sentry.init({
-          dsn: sentryDns,
-          integrations: [
-            new Sentry.BrowserTracing({
-              routingInstrumentation:
-                Sentry.reactRouterV5Instrumentation(history),
-            }),
-          ],
-          tracesSampleRate: 1.0,
-        })
-      }
-    })
-  }
-})
 i18nInit.then(() =>
   render(
     <Root store={store} history={history} />,

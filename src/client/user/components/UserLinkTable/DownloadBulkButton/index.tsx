@@ -1,6 +1,5 @@
 import React from 'react'
 
-import * as Sentry from '@sentry/react'
 import { GAEvent } from '../../../../app/util/ga'
 import { DropdownButton, DropdownOption } from '../../../widgets/DropdownButton'
 import {
@@ -19,7 +18,6 @@ function downloadFileFromS3(
       )
       GAEvent(`qr code bulk download`, format, 'successful')
     } catch (e) {
-      Sentry.captureMessage(`qr code bulk download for ${format} unsuccessful`)
       GAEvent('qr code bulk download', format, 'unsuccesful')
     }
   })
