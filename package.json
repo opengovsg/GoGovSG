@@ -69,7 +69,6 @@
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.16.3",
     "cross-fetch": "^3.1.5",
-    "datadog-winston": "^1.5.1",
     "date-fns-tz": "^1.3.4",
     "dd-trace": "^2.30.1",
     "dotenv": "^16.3.1",
@@ -125,7 +124,7 @@
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
     "webpack": "^5.76.0",
-    "winston": "^3.8.1"
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
