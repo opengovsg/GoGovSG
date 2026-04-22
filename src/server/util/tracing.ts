@@ -3,6 +3,7 @@ import { ClientRequest, IncomingMessage } from 'http'
 import { Span } from 'opentracing'
 
 tracer.init({
+  profiling: true,
   logInjection: true,
   runtimeMetrics: true,
 })
