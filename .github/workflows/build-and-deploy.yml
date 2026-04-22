@@ -84,6 +84,8 @@ jobs:
           docker build --tag my-image \
             --build-arg __ASSET_VARIANT=${{ inputs.asset_variant }} \
             --build-arg __DD_SERVICE=${{ inputs.dd_service }} \
+            --build-arg DD_GIT_REPOSITORY_URL=${{ github.event.repository.html_url }} \
+            --build-arg DD_GIT_COMMIT_SHA=$(git rev-parse HEAD) \
             --build-arg __DD_ENV=${{ inputs.branch_env }} .
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}

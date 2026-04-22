@@ -12,6 +12,12 @@ ENV DD_SERVICE=${__DD_SERVICE}
 ARG __DD_ENV
 ENV DD_ENV=${__DD_ENV}
 
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
+
 WORKDIR /usr/src/gogovsg
 
 # For Express server
@@ -38,7 +44,7 @@ RUN { \
   npm run build; \
   echo "Removing devDependencies for production..."; \
   npm prune --production --legacy-peer-deps; \
-}
+  }
 
 # Builds and starts Node server for production
 CMD ["npm", "run", "start"]
