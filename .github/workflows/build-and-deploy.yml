@@ -90,6 +90,15 @@ jobs:
           docker tag my-image ${REPO}:${TAG}
           docker push ${REPO}:${TAG}
 
+      - name: Upload source maps to Datadog
+        run: |
+          npx @datadog/datadog-ci sourcemaps upload ./build \
+            --service=gogovsg \
+            --release-version=$(node -p "require('./package.json').version") \
+            --minified-path-prefix=/usr/src/gogovsg/build
+        env:
+          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+
   deploy:
     name: Deploy to Elastic Beanstalk and AWS Lambda
     runs-on: ubuntu-22.04

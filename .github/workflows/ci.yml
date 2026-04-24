@@ -29,14 +29,6 @@ jobs:
       - run: npm run build
         env:
           ASSET_VARIANT: gov
-      - name: Upload source maps to Datadog
-        run: |
-          npx @datadog/datadog-ci sourcemaps upload ./build \
-            --service=gogovsg \
-            --release-version=$(node -p "require('./package.json').version") \
-            --minified-path-prefix=/usr/src/gogovsg/build
-        env:
-          DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
 
   test:
     name: Test
