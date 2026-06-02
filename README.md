@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.com/opengovsg/GoGovSG.svg?branch=develop)](https://travis-ci.com/opengovsg/GoGovSG)
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/opengovsg/GoGovSG)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/opengovsg/GoGovSG)
 
 The official Singapore government link shortener.
 
