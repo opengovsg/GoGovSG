@@ -114,7 +114,10 @@ describe('LinkStatisticsRepository', () => {
                 [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
               },
             },
-            required: false,
+            // Fetched in a separate query to avoid a cartesian product with
+            // the WeekdayClicks hasMany association.
+            separate: true,
+            order: [['date', 'ASC']],
           },
         ]),
       }),
