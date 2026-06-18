@@ -112,6 +112,10 @@ export class LinkStatisticsRepository
           // explodes for links with a long history of daily clicks (e.g. when
           // downloading the full click statistics with a large offset).
           separate: true,
+          // Keep the parent Url (and its device/weekday/total stats) even when
+          // there are no daily clicks in range, e.g. for links inactive over
+          // the requested period.
+          required: false,
           order: [['date', 'ASC']],
         },
         {

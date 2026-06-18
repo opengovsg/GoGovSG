@@ -118,6 +118,8 @@ describe('LinkStatisticsRepository', () => {
             // Fetched in a separate query to avoid a cartesian product with
             // the WeekdayClicks hasMany association.
             separate: true,
+            // Keep the parent Url even when there are no daily clicks in range.
+            required: false,
             order: [['date', 'ASC']],
           },
           {
