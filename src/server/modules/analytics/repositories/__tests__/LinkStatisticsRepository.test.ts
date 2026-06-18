@@ -9,6 +9,7 @@ import {
   updateLinkStatistics,
 } from '../LinkStatisticsRepository'
 import { DailyClicks } from '../../../../models/statistics/daily'
+import { WeekdayClicks } from '../../../../models/statistics/weekday'
 import { getLocalDayGroup } from '../../../../util/time'
 
 jest.mock('../../../../util/sequelize', () => ({
@@ -118,6 +119,17 @@ describe('LinkStatisticsRepository', () => {
             // the WeekdayClicks hasMany association.
             separate: true,
             order: [['date', 'ASC']],
+          },
+          {
+            model: WeekdayClicks,
+            as: 'WeekdayClicks',
+            // Fetched in a separate query to avoid a cartesian product with
+            // the DailyClicks hasMany association.
+            separate: true,
+            order: [
+              ['weekday', 'ASC'],
+              ['hours', 'ASC'],
+            ],
           },
         ]),
       }),
