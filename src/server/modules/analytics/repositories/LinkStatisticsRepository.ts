@@ -99,25 +99,34 @@ export class LinkStatisticsRepository
           as: 'DailyClicks',
           where: {
             date: {
-              // To retrieve a range from today, and up to 6 days ago inclusive.
+              // To retrieve a range from today, and up to offsetDays ago inclusive.
               [Op.between]: [
                 getLocalDayGroup(-1 * offsetDays),
                 getLocalDayGroup(),
               ],
             },
           },
-          // As previously accessed links can be inactive for over a week.
+          // Fetch in a separate query rather than via a JOIN. Loading both
+          // DailyClicks and WeekdayClicks (two hasMany associations) in a
+          // single query produces a cartesian product of their rows, which
+          // explodes for links with a long history of daily clicks (e.g. when
+          // downloading the full click statistics with a large offset).
+          separate: true,
+          // Keep the parent Url (and its device/weekday/total stats) even when
+          // there are no daily clicks in range, e.g. for links inactive over
+          // the requested period.
           required: false,
+          order: [['date', 'ASC']],
         },
         {
           model: WeekdayClicks,
           as: 'WeekdayClicks',
+          separate: true,
+          order: [
+            ['weekday', 'ASC'],
+            ['hours', 'ASC'],
+          ],
         },
-      ],
-      order: [
-        [{ model: DailyClicks, as: 'DailyClicks' }, 'date', 'ASC'],
-        [{ model: WeekdayClicks, as: 'WeekdayClicks' }, 'weekday', 'ASC'],
-        [{ model: WeekdayClicks, as: 'WeekdayClicks' }, 'hours', 'ASC'],
       ],
     })
     if (url) {

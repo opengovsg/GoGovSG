@@ -9,6 +9,7 @@ import {
   updateLinkStatistics,
 } from '../LinkStatisticsRepository'
 import { DailyClicks } from '../../../../models/statistics/daily'
+import { WeekdayClicks } from '../../../../models/statistics/weekday'
 import { getLocalDayGroup } from '../../../../util/time'
 
 jest.mock('../../../../util/sequelize', () => ({
@@ -114,7 +115,23 @@ describe('LinkStatisticsRepository', () => {
                 [Op.between]: [getLocalDayGroup(-6), getLocalDayGroup()],
               },
             },
+            // Fetched in a separate query to avoid a cartesian product with
+            // the WeekdayClicks hasMany association.
+            separate: true,
+            // Keep the parent Url even when there are no daily clicks in range.
             required: false,
+            order: [['date', 'ASC']],
+          },
+          {
+            model: WeekdayClicks,
+            as: 'WeekdayClicks',
+            // Fetched in a separate query to avoid a cartesian product with
+            // the DailyClicks hasMany association.
+            separate: true,
+            order: [
+              ['weekday', 'ASC'],
+              ['hours', 'ASC'],
+            ],
           },
         ]),
       }),
