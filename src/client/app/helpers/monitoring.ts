@@ -3,8 +3,8 @@ import { ddEnv, ddService } from '../../../shared/util/environment-variables'
 
 const initMonitoring = () => {
   datadogRum.init({
-    applicationId: '898ea704-7347-45dc-b40c-bf85359e062e',
-    clientToken: 'pub40fb07aa43d3f6f034d8fcc7f1df867b',
+    applicationId: process.env.REACT_APP_DATADOG_APP_ID || '',
+    clientToken: process.env.REACT_APP_DATADOG_CLIENT_TOKEN || '',
     site: 'datadoghq.com',
     service: ddService,
     env: ddEnv,
