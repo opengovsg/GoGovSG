@@ -11,7 +11,11 @@ const wellFormedEmailSchema = createEmailSchema()
  * @param email The email to be validated.
  */
 export function isValidGovEmail(email: string) {
-  return validator.isEmail(email) && emailValidator.match(email) && wellFormedEmailSchema.safeParse(email).success
+  return (
+    validator.isEmail(email) &&
+    emailValidator.match(email) &&
+    wellFormedEmailSchema.safeParse(email).success
+  )
 }
 
 export default { isValidGovEmail }
