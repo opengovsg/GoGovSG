@@ -23,7 +23,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
       - run: npm run lint
       - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
       - run: npm run build
@@ -47,7 +47,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
         with:
@@ -75,7 +75,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
@@ -104,7 +104,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
       - run: npm run dev &
       - run: sleep 270
       - name: Configure Datadog Test Visibility

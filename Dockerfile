@@ -35,7 +35,7 @@ RUN fc-cache -f
 # Install libraries
 COPY package.json package-lock.json ./
 
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 
 COPY . ./
 
@@ -43,7 +43,7 @@ RUN { \
   echo "Building..."; \
   npm run build; \
   echo "Removing devDependencies for production..."; \
-  npm prune --production --legacy-peer-deps; \
+  npm prune --production; \
   }
 
 # Builds and starts Node server for production
