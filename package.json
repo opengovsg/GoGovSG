@@ -4,12 +4,10 @@
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
   "scripts": {
-    "lint-js": "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --ignore-path .gitignore .",
-    "lint-ts": "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.json --ignore-path .gitignore .",
-    "lint-js:fix": "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --ignore-path .gitignore --fix .",
-    "lint-ts:fix": "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.json --ignore-path .gitignore --fix .",
-    "lint": "npm run lint-js && npm run lint-ts",
-    "lint:fix": "npm run lint-js:fix && npm run lint-ts:fix",
+    "lint": "oxlint --type-aware .",
+    "lint:fix": "oxlint --type-aware --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
     "build": "tsc && webpack --mode production",
     "postbuild": "copyfiles -u 1 src/server/views/**/* build && copyfiles -u 4 src/server/modules/qr/assets/**/* build/server/modules/qr",
     "version": "auto-changelog -p && git add CHANGELOG.md",
@@ -121,7 +119,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
-    "@babel/eslint-parser": "^7.29.7",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/preset-env": "^7.29.7",
     "@babel/preset-react": "^7.29.7",
@@ -155,8 +152,6 @@
     "@types/ua-parser-js": "^0.7.36",
     "@types/upng-js": "^2.1.2",
     "@types/validator": "^13.6.2",
-    "@typescript-eslint/eslint-plugin": "^8.66.0",
-    "@typescript-eslint/parser": "^8.66.0",
     "auto-changelog": "^2.3.0",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
@@ -165,17 +160,7 @@
     "copyfiles": "^2.4.1",
     "csv-parse": "^5.3.6",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^8.57.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-prettier": "^9.1.2",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jest": "^28.14.0",
-    "eslint-plugin-jsdoc": "^50.6.3",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-import": "^2.32.0",
     "form-data": "^4.0.4",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^7.0.0",
@@ -183,8 +168,11 @@
     "jsqr": "^1.4.0",
     "lint-staged": "^11.0.0",
     "node-mocks-http": "^1.10.1",
+    "oxfmt": "0.62.0",
+    "oxlint": "1.77.0",
+    "oxlint-plugin-eslint": "1.77.0",
+    "oxlint-tsgolint": "7.0.2001",
     "path-browserify": "^1.0.1",
-    "prettier": "2.3.2",
     "redis-mock": "^0.56.3",
     "sequelize-mock": "^0.10.2",
     "serverless-plugin-include-dependencies": "^5.0.0",
@@ -202,12 +190,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "lint-staged": {
-    "**/*.(js|jsx)": [
-      "eslint --ext .js,.jsx --no-eslintrc -c .eslintrc.js.json --fix"
-    ],
-    "**/*.(ts|tsx)": [
-      "eslint --ext .ts,.tsx --no-eslintrc -c .eslintrc.json --fix"
-    ]
+    "**/*.(js|jsx|ts|tsx)": ["oxlint --type-aware --fix", "oxfmt --write"]
   },
   "config": {
     "commitizen": {
