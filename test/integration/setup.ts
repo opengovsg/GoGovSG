@@ -1,5 +1,2 @@
-import { File } from 'node:buffer'
-
-if (typeof globalThis.File === 'undefined') {
-  globalThis.File = File
-}
+// Integration tests reuse the shared Node/Jest polyfills.
+import '../server/polyfills.js'

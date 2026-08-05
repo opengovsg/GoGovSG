@@ -25,7 +25,7 @@ module.exports = {
   },
   collectCoverageFrom: ['./src/server/**/*.{ts,js}'],
   coveragePathIgnorePatterns: ['./node_modules/', './test/', '__tests__'],
-  setupFiles: ['./test/server/setup.ts'],
+  setupFiles: ['./test/server/polyfills.js', './test/server/setup.ts'],
   modulePathIgnorePatterns: ['./test/end-to-end', './test/integration'],
   // Jest 26 does not resolve package.json "exports"; map CJS entry points explicitly.
   moduleNameMapper: {
