@@ -67,8 +67,6 @@ module.exports = () => {
       },
       fallback: {
         path: require.resolve('path-browserify'),
-        querystring: require.resolve('querystring-es3'),
-        url: require.resolve('url/'),
         zlib: false,
         http: false,
         https: false,
@@ -98,19 +96,10 @@ module.exports = () => {
     },
     devServer: {
       port: 3000,
-      proxy: [
-        {
-          context: ['/api'],
-          target: 'http://localhost:8080',
-        },
-        {
-          context: (pathname: string) =>
-            !pathname.startsWith('/assets/') &&
-            pathname !== '/bundle.js' &&
-            !pathname.startsWith('/favicon'),
-          target: 'http://localhost:8080',
-        },
-      ],
+      proxy: {
+        '/api': 'http://localhost:8080',
+        '!/(assets/**|bundle.js|favicon*)': 'http://localhost:8080',
+      },
       historyApiFallback: true,
       allowedHosts: 'all',
     },
