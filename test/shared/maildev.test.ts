@@ -1,4 +1,14 @@
-import { MaildevMessage, findOtpForRecipient, isAddressedTo } from './maildev'
+jest.mock('cross-fetch')
+
+import fetch from 'cross-fetch'
+import {
+  MaildevMessage,
+  findOtpForRecipient,
+  getMaildevMessageIds,
+  isAddressedTo,
+} from './maildev'
+
+const mockedFetch = fetch as jest.MockedFunction<typeof fetch>
 
 const message = (
   overrides: Partial<MaildevMessage> & Pick<MaildevMessage, 'id'>,
@@ -70,5 +80,45 @@ describe('maildev OTP helpers', () => {
     ]
 
     expect(findOtpForRecipient(inbox, 'user@open.gov.sg', ['stale'])).toBeNull()
+  })
+})
+
+describe('getMaildevMessageIds', () => {
+  const maildevUrl = 'http://localhost:1080/email/'
+
+  afterEach(() => {
+    mockedFetch.mockReset()
+  })
+
+  it('returns an empty baseline when the inbox is reachable but empty', async () => {
+    mockedFetch.mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    } as Response)
+
+    await expect(
+      getMaildevMessageIds(maildevUrl, { intervalMs: 10, timeoutMs: 1000 }),
+    ).resolves.toEqual([])
+  })
+
+  it('retries until maildev responds', async () => {
+    mockedFetch
+      .mockRejectedValueOnce(new Error('ECONNREFUSED'))
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [{ id: 'existing' }],
+      } as Response)
+
+    await expect(
+      getMaildevMessageIds(maildevUrl, { intervalMs: 10, timeoutMs: 1000 }),
+    ).resolves.toEqual(['existing'])
+  })
+
+  it('throws when the baseline cannot be read in time', async () => {
+    mockedFetch.mockRejectedValue(new Error('ECONNREFUSED'))
+
+    await expect(
+      getMaildevMessageIds(maildevUrl, { intervalMs: 10, timeoutMs: 50 }),
+    ).rejects.toThrow('Timed out reading maildev inbox baseline')
   })
 })
