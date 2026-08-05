@@ -82,11 +82,12 @@ const isResendOTPPending: () => ResendOtpPendingAction = () => ({
 
 const isResendOTPError = isVerifyOTPError
 
-const isResendOTPDisabled: (errorMessage?: string) => ResendOtpDisabledAction =
-  (errorMessage) => ({
-    type: RESEND_OTP_DISABLED,
-    payload: errorMessage,
-  })
+const isResendOTPDisabled: (
+  errorMessage?: string,
+) => ResendOtpDisabledAction = (errorMessage) => ({
+  type: RESEND_OTP_DISABLED,
+  payload: errorMessage,
+})
 
 const isLoggedInSuccess: (user: { id: string }) => IsLoggedInSuccessAction = (
   user,
