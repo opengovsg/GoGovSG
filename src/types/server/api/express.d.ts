@@ -1,11 +1,7 @@
-import { RedisStore } from 'connect-redis'
+export {}
 
 declare global {
   namespace Express {
-    interface Request {
-      sessionStore: RedisStore
-    }
-
     interface Response {
       ok(content?: Buffer | object | string): void
       created(content?: Buffer | object | string): void
