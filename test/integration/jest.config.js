@@ -9,6 +9,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   setupFiles: ['<rootDir>/setup.ts'],
+  globalSetup: '<rootDir>/globalSetup.ts',
   transform: {
     'node_modules/((@borewit|@tokenizer)/[^/]+|file-type|strtok3|token-types|uint8array-extras)/.+\\.(m)?js$':
       [
