@@ -47,6 +47,17 @@ jobs:
       - run: npm run build
         env:
           ASSET_VARIANT: gov
+
+  lockfile-lint:
+    name: Lockfile Lint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      # Only needs package-lock.json on disk, not node_modules -- skip the
+      # full setup action's npm ci.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
       - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
 
   test:
