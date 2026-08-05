@@ -77,9 +77,6 @@ jobs:
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
-      - run: npm run docker:build
-      - run: npm run docker:up
-      - run: sleep 270
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
         with:
