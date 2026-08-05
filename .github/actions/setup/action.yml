@@ -1,0 +1,21 @@
+name: 'Setup and install'
+description: 'Common setup steps for CI jobs (Node.js + npm install)'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: 'package.json'
+
+    - name: Cache Node.js modules
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+          ${{ runner.OS }}-
+
+    - shell: bash
+      run: npm ci --legacy-peer-deps

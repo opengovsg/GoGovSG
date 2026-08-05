@@ -8,6 +8,7 @@
     "lint:fix": "oxlint --type-aware --fix .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "build": "tsc && webpack --mode production",
     "postbuild": "copyfiles -u 1 src/server/views/**/* build && copyfiles -u 4 src/server/modules/qr/assets/**/* build/server/modules/qr",
     "version": "auto-changelog -p && git add CHANGELOG.md",
