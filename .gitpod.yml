@@ -6,7 +6,7 @@ tasks:
     init: pip install --quiet localstack[full]
     command: /workspace/.pip-modules/bin/localstack start --host
   - before: npm install maildev -g
-    command: echo "maildev.on('new', ({ html }) => console.log('The login OTP is ' + html.match(/\d{6}/)[0]))" >> $(which maildev) && maildev --verbose
+    command: echo "maildev.on('new', ({ html }) => console.log('The login OTP is ' + html.match(/<b>([A-Z0-9]{6})<\\/b>/)[1]))" >> $(which maildev) && maildev --verbose
   - before: export ACCESS_ENDPOINT=`gp url 4566`
     init: npm install
     command: /tmp/wait-for-it.sh localhost:4566 -t 0 -- ./init-localstack.sh && echo "Run npm run docker-dev to begin"
