@@ -16,7 +16,7 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           node-version: '22'
-      - run: npm run lint
+      - run: pnpm run lint
 
   format:
     name: Format
@@ -28,7 +28,7 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           node-version: '22'
-      - run: npm run format:check
+      - run: pnpm run format:check
 
   typecheck:
     name: Typecheck
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup
-      - run: npm run typecheck
+      - run: pnpm run typecheck
 
   build:
     name: Build
@@ -44,21 +44,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup
-      - run: npm run build
+      - run: pnpm run build
         env:
           ASSET_VARIANT: gov
 
-  lockfile-lint:
-    name: Lockfile Lint
+  audit-signatures:
+    name: Audit Signatures
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      # Only needs package-lock.json on disk, not node_modules -- skip the
-      # full setup action's npm ci.
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-      - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
+      # lockfile-lint doesn't understand pnpm-lock.yaml's format (only npm/yarn) --
+      # pnpm's own signature verification is the native equivalent.
+      - uses: ./.github/actions/setup
+      - run: pnpm audit signatures
 
   test:
     name: Test
@@ -72,7 +70,7 @@ jobs:
           languages: js
           service: gogovsg
           api_key: ${{ secrets.DD_API_KEY }}
-      - run: npm run test
+      - run: pnpm run test
         env:
           NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
 
@@ -89,7 +87,7 @@ jobs:
           languages: js
           service: gogovsg
           api_key: ${{ secrets.DD_API_KEY }}
-      - run: npm run test:e2e-headless
+      - run: pnpm run test:e2e-headless
         env:
           NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
 
@@ -99,7 +97,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/setup
-      - run: npm run dev &
+      - run: pnpm run dev &
       - run: sleep 270
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
@@ -107,6 +105,6 @@ jobs:
           languages: js
           service: gogovsg
           api_key: ${{ secrets.DD_API_KEY }}
-      - run: npm run test:integration
+      - run: pnpm run test:integration
         env:
           NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
