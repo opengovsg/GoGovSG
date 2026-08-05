@@ -1,4 +1,7 @@
-import { fetch } from 'cross-fetch'
+import {
+  clearMaildevInbox,
+  waitForOtpFromMaildev,
+} from '../../shared/maildev'
 import { testEmail } from './config'
 import {
   loginButton,
@@ -18,30 +21,12 @@ const loginProcedure = async (t, loginEmail = testEmail) => {
     .typeText('#email', `${loginEmail}`)
     .click(signInButton)
 
-  await fetch('http://localhost:1080/email/', {
-    method: 'GET',
-  })
-    .then((res) => {
-      if (!res.ok) {
-        console.log(res.status)
-      }
-      return res.json()
-    })
-    .then((json) => {
-      const mailIndex = json.length - 1
-      const mailBody = json[mailIndex].html
-      const mailOTP = JSON.stringify(mailBody).match(/\d{6}/)[0]
-      return mailOTP
-    })
-    .then(async (mailOTP) => {
-      await t.typeText('#otp', mailOTP)
-    })
+  const mailOTP = await waitForOtpFromMaildev()
+  await t.typeText('#otp', mailOTP)
 
   await t.click(signInButton).click(loginSuccessAlert)
 
-  await fetch('http://localhost:1080/email/all', {
-    method: 'DELETE',
-  })
+  await clearMaildevInbox()
 
   if (await userModal.exists) {
     await t.click(userModalCloseButton)
