@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) =>
 /**
  * Show the API Integration page.
  */
-const ApiIntegrationPage = () => {
+function ApiIntegrationPage() {
   const dispatch = useDispatch()
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,

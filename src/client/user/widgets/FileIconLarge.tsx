@@ -5,7 +5,7 @@ type FileIconLargeProps = {
 }
 
 // Temporary solution until we implement IE compatible scaling for assets
-export default ({ color = '#384A51' }: FileIconLargeProps) => {
+export default function ({ color = '#384A51' }: FileIconLargeProps) {
   return (
     <svg
       width="20"
