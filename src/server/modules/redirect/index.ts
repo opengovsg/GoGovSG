@@ -1,16 +1,6 @@
 import { RedirectController } from './RedirectController'
 
-export enum RedirectType {
-  Direct,
-  TransitionPage,
-}
-
-export type RedirectResult = {
-  visitedUrls: string[]
-  longUrl: string
-  redirectType: RedirectType
-}
-
+export { RedirectType, RedirectResult } from './types'
 export { RedirectController } from './RedirectController'
 
 export default RedirectController
