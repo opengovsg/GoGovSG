@@ -82,9 +82,8 @@ export class UrlManagementService implements interfaces.UrlManagementService {
       shortUrl = await generateShortUrl(API_LINK_RANDOM_STR_LENGTH)
     }
 
-    const isShortUrlAvailable = await this.urlRepository.isShortUrlAvailable(
-      shortUrl,
-    )
+    const isShortUrlAvailable =
+      await this.urlRepository.isShortUrlAvailable(shortUrl)
     if (!isShortUrlAvailable) {
       throw new AlreadyExistsError(`Short link "${shortUrl}" is already used.`)
     }

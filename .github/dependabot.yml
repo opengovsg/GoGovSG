@@ -31,7 +31,7 @@ updates:
 
       babel:
         patterns:
-          - "@babel/*"
+          - '@babel/*'
 
       inversify:
         # reflect-metadata major must match inversify peer (e.g. v6 needs ~0.2.x)
@@ -43,10 +43,10 @@ updates:
         patterns:
           - jest
           - ts-jest
-          - "@types/jest"
+          - '@types/jest'
           - testcafe
           - supertest
-          - "@types/supertest"
+          - '@types/supertest'
           - node-mocks-http
 
       # oxlint-tsgolint's version encodes the TypeScript version it embeds and
@@ -67,19 +67,19 @@ updates:
           - react
           - react-dom
           - react-*
-          - "@types/react*"
+          - '@types/react*'
           - redux
           - redux-*
           - history
 
       material-ui:
         patterns:
-          - "@material-ui/*"
+          - '@material-ui/*'
 
       chartjs:
         patterns:
           - chart.js
-          - "@types/chart.js"
+          - '@types/chart.js'
           - react-chartjs-2
 
       i18next:
@@ -99,10 +99,10 @@ updates:
           - morgan
           - cookie-parser
           - cookie-session
-          - "@types/express*"
-          - "@types/cookie*"
-          - "@types/morgan"
-          - "@types/body-parser"
+          - '@types/express*'
+          - '@types/cookie*'
+          - '@types/morgan'
+          - '@types/body-parser'
 
       sequelize-pg:
         patterns:
@@ -116,18 +116,18 @@ updates:
           - redis
           - redis-*
           - connect-redis
-          - "@types/redis*"
-          - "@types/connect-redis"
+          - '@types/redis*'
+          - '@types/connect-redis'
 
       bcrypt:
         patterns:
           - bcrypt
-          - "@types/bcrypt"
+          - '@types/bcrypt'
 
       datadog:
         patterns:
           - dd-trace
-          - "@datadog/*"
+          - '@datadog/*'
 
       date-fns:
         patterns:
@@ -138,7 +138,7 @@ updates:
 
       commitlint:
         patterns:
-          - "@commitlint/*"
+          - '@commitlint/*'
           - commitizen
           - cz-conventional-changelog
 

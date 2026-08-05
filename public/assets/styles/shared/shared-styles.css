@@ -8,11 +8,11 @@
   position: relative;
   background-color: #f0f0f0;
   height: auto;
-  font-size: 14px
+  font-size: 14px;
 }
 
 .sgds-masthead .sgds-icon {
-  font-size: 20px
+  font-size: 20px;
 }
 
 .sgds-masthead a {
@@ -27,7 +27,7 @@
 }
 
 .sgds-masthead a:hover {
-  color: #151515
+  color: #151515;
 }
 
 /* body and html styles */
@@ -39,10 +39,12 @@ body {
 
 html {
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility
+  text-rendering: optimizeLegibility;
 }
 
-*, ::after, ::before {
+*,
+::after,
+::before {
   box-sizing: inherit;
 }
 
@@ -55,7 +57,7 @@ html {
 }
 
 .top-half-content a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .browser-image {

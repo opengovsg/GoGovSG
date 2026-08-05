@@ -47,9 +47,8 @@ export class DirectoryController {
     }
 
     try {
-      const { urls, count } = await this.directorySearchService.plainTextSearch(
-        queryConditions,
-      )
+      const { urls, count } =
+        await this.directorySearchService.plainTextSearch(queryConditions)
 
       res.ok({
         urls,

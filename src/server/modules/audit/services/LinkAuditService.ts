@@ -110,9 +110,8 @@ export class LinkAuditService implements interfaces.LinkAuditService {
     if (!userOwnsLink) {
       throw new NotFoundError('User does not own this short url')
     }
-    const totalCount = await this.urlHistoryRepository.getCountByShortUrl(
-      shortUrl,
-    )
+    const totalCount =
+      await this.urlHistoryRepository.getCountByShortUrl(shortUrl)
 
     const urlHistories = await this.urlHistoryRepository.findByShortUrl(
       shortUrl,

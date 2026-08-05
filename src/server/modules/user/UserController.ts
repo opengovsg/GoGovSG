@@ -280,9 +280,8 @@ export class UserController {
       return
     }
     try {
-      const tags = await this.tagManagementService.getTagsWithConditions(
-        queryConditions,
-      )
+      const tags =
+        await this.tagManagementService.getTagsWithConditions(queryConditions)
       res.ok(tags)
       return
     } catch (error) {
