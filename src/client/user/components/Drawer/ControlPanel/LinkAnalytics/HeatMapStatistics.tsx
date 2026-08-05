@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { HeatmapSeries, XAxis, XYPlot, YAxis } from 'react-vis'
+import { Scatter } from 'react-chartjs-2'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
@@ -22,6 +22,8 @@ const useStyles = makeStyles(() => ({
     marginTop: 24,
   },
 }))
+
+const HOUR_TICKS_TO_SHOW = ['12am', '6am', '12pm', '6pm']
 
 const processInputStatistics = (rawStatistics: WeekdayClicks[]) => {
   const zeroed = getZeroedHeatMap()
@@ -47,6 +49,26 @@ const flipChart = (data: HeatMapDataPoint[]): HeatMapDataPoint[] => {
   return data.map((point) => {
     return { x: point.y, y: point.x, color: point.color } as HeatMapDataPoint
   })
+}
+
+const hexToRgb = (hex: string): [number, number, number] => {
+  const parsed = hex.replace('#', '')
+  const r = parseInt(parsed.substring(0, 2), 16)
+  const g = parseInt(parsed.substring(2, 4), 16)
+  const b = parseInt(parsed.substring(4, 6), 16)
+  return [r, g, b]
+}
+
+const interpolateColor = (from: string, to: string, ratio: number): string => {
+  const clampedRatio = Number.isFinite(ratio)
+    ? Math.min(Math.max(ratio, 0), 1)
+    : 0
+  const [r1, g1, b1] = hexToRgb(from)
+  const [r2, g2, b2] = hexToRgb(to)
+  const r = Math.round(r1 + (r2 - r1) * clampedRatio)
+  const g = Math.round(g1 + (g2 - g1) * clampedRatio)
+  const b = Math.round(b1 + (b2 - b1) * clampedRatio)
+  return `rgb(${r}, ${g}, ${b})`
 }
 
 export type HeatMapStatisticsProps = {
@@ -81,50 +103,82 @@ export default function HeatMapStatistics({
     }
   }, [windowSize])
 
+  const chartWidth = Math.max(width, 275)
+  const chartHeight = isMobileView ? 500 : Math.max(width * 0.5, 275)
+
+  const xDomain = isMobileView ? getWeekRange() : getDayRange()
+  const yDomain = isMobileView
+    ? getDayRange().reverse()
+    : getWeekRange().reverse()
+
+  const columns = xDomain.length
+  const rows = yDomain.length
+  const plotWidth = chartWidth - 50
+  const plotHeight = chartHeight - 32
+  const cellSize = Math.min(plotWidth / columns, plotHeight / rows)
+  const pointRadius = (cellSize * 0.9) / Math.SQRT2
+
+  const data = {
+    datasets: [
+      {
+        data: clicks.map((point) => ({ x: point.x, y: point.y })),
+        pointBackgroundColor: clicks.map((point) =>
+          interpolateColor(
+            theme.palette.secondary.light,
+            theme.palette.secondary.dark,
+            (point.color - minClicks) / (maxClicks - minClicks),
+          ),
+        ),
+        pointBorderColor: 'white',
+        pointBorderWidth: 2,
+        pointStyle: 'rect' as const,
+        pointRadius,
+        pointHoverRadius: pointRadius,
+        showLine: false,
+      },
+    ],
+  }
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    legend: { display: false },
+    tooltips: { enabled: false },
+    scales: {
+      xAxes: [
+        {
+          type: 'category',
+          position: 'top',
+          labels: xDomain,
+          offset: true,
+          ticks: {
+            fontColor: theme.palette.primary.main,
+            fontSize: theme.typography.caption.fontSize,
+            callback: (value: string) =>
+              isMobileView || HOUR_TICKS_TO_SHOW.includes(value) ? value : '',
+          },
+        },
+      ],
+      yAxes: [
+        {
+          type: 'category',
+          labels: yDomain,
+          offset: true,
+          ticks: {
+            fontColor: theme.palette.primary.main,
+            fontSize: theme.typography.caption.fontSize,
+          },
+        },
+      ],
+    },
+  }
+
   return (
     <BaseStatisticsLayout title="When do your users visit?">
       <div ref={containerEl} className={classes.root}>
-        <XYPlot
-          width={Math.max(width, 275)}
-          height={isMobileView ? 500 : Math.max(width * 0.5, 275)}
-          margin={{ left: 50, top: 32 }}
-          xType="ordinal"
-          xDomain={isMobileView ? getWeekRange() : getDayRange()}
-          yType="ordinal"
-          yDomain={
-            isMobileView ? getDayRange().reverse() : getWeekRange().reverse()
-          }
-        >
-          <XAxis
-            orientation="top"
-            tickValues={
-              !isMobileView ? ['12am', '6am', '12pm', '6pm'] : undefined
-            }
-            style={{
-              fill: theme.palette.primary.main,
-              fontSize: theme.typography.caption.fontSize,
-            }}
-          />
-          <YAxis
-            style={{
-              fill: theme.palette.primary.main,
-              fontSize: theme.typography.caption.fontSize,
-            }}
-          />
-          <HeatmapSeries
-            className="heatmap-statistics"
-            colorRange={[
-              theme.palette.secondary.light,
-              theme.palette.secondary.dark,
-            ]}
-            colorDomain={[minClicks, maxClicks]}
-            data={clicks as any[]}
-            style={{
-              stroke: 'white',
-              strokeWidth: '2px',
-            }}
-          />
-        </XYPlot>
+        <div style={{ width: chartWidth, height: chartHeight }}>
+          <Scatter data={data} options={options as any} />
+        </div>
         <HeatmapLegend minClicks={minClicks} maxClicks={maxClicks} />
       </div>
     </BaseStatisticsLayout>
