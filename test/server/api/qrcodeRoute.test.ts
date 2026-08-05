@@ -23,7 +23,7 @@ container
 import app from './setup'
 
 describe('GET /api/qrcode', () => {
-  test('return a qrcode', async (done) => {
+  test('return a qrcode', async () => {
     const ogUrl = 'undefined'
     const url = 'random'
     const format = 'image%2Fpng'
@@ -40,6 +40,5 @@ describe('GET /api/qrcode', () => {
     const code = jsQR(out.data, out.width, out.height)
     expect(code).not.toBeNull()
     expect(code!.data).toEqual(`${ogUrl}/${url}`)
-    done()
   })
 })

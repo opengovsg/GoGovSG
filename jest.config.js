@@ -1,6 +1,16 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          warnOnly: true,
+        },
+      },
+    ],
+  },
   coverageThreshold: {
     global: {
       statements: 24,
@@ -17,4 +27,5 @@ module.exports = {
     '^zod/v4/core$': '<rootDir>/node_modules/zod/v4/core/index.cjs',
     '^zod/v4$': '<rootDir>/node_modules/zod/v4/index.cjs',
   },
+  transformIgnorePatterns: ['/node_modules/(?!(sanitize-html|htmlparser2)/)'],
 }
