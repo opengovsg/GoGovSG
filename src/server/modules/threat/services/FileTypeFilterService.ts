@@ -1,4 +1,4 @@
-import { fileTypeFromBuffer } from 'file-type'
+import FileType from 'file-type'
 import { inject, injectable } from 'inversify'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
@@ -55,7 +55,7 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     name: string
     data: Buffer
   }) => Promise<FileTypeData> = async ({ name, data }) => {
-    const fileType = await fileTypeFromBuffer(data)
+    const fileType = await FileType.fromBuffer(data)
     let ext: string | undefined = fileType?.ext
     let mimeType: string | undefined = fileType?.mime
     if (!ext || !mimeType) {

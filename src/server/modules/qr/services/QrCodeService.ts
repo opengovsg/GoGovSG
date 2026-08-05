@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio'
+import cheerio from 'cheerio'
 import fs from 'fs'
 import QRCode from 'qrcode'
 import { resolve } from 'path'
