@@ -67,6 +67,7 @@ module.exports = () => {
       },
       fallback: {
         path: require.resolve('path-browserify'),
+        url: require.resolve('url/'),
         zlib: false,
         http: false,
         https: false,
