@@ -193,7 +193,10 @@
     "webpack-dev-server": "^4.15.1"
   },
   "lint-staged": {
-    "**/*.(js|jsx|ts|tsx)": ["oxlint --type-aware --fix", "oxfmt --write"]
+    "**/*.(js|jsx|ts|tsx)": [
+      "oxlint --type-aware --fix",
+      "oxfmt --write"
+    ]
   },
   "config": {
     "commitizen": {
