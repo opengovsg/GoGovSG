@@ -35,6 +35,7 @@ import {
   generateUrlImage,
   getLinkCount,
   largeFileError,
+  linkRowByShortUrl,
   longUrlTextField,
   maliciousFileCreation,
   resultTable,
@@ -79,7 +80,7 @@ test('The URL based shortlink test.', async (t) => {
   await t.click(generateUrlImage).expect(shortUrlTextField.value).notEql('')
 
   const generatedUrl = await shortUrlTextField.value
-  const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkRow = linkRowByShortUrl(generatedUrl)
   const linkTableRow = linkRow.parent('tr')
 
   // It should prevent creation of short urls pointing to long urls hosted on blacklisted domains
@@ -150,7 +151,7 @@ test('The file based shortlink test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedfileUrl = await shortUrlTextField.value
-  const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const fileRow = linkRowByShortUrl(generatedfileUrl)
   const fileTableRow = fileRow.parent('tr')
 
   // Generate 1mb file
@@ -323,7 +324,7 @@ test.skip('The malicious file test.', async (t) => {
     .ok()
   await deleteFile(dummyMaliciousFilePath)
   // Check that row is not created
-  const linkRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const linkRow = linkRowByShortUrl(generatedfileUrl)
 
   await t.expect(linkRow.exists).notOk()
 })
@@ -332,7 +333,7 @@ test('The update file test', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedfileUrl = await shortUrlTextField.value
-  const fileRow = Selector(`h6[title="${generatedfileUrl}"]`)
+  const fileRow = linkRowByShortUrl(generatedfileUrl)
   const directoryPath = `${process.env.HOME}/Downloads/${generatedfileUrl}.csv`
   // Generate 1mb file
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)

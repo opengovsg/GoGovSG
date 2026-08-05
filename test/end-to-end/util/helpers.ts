@@ -84,6 +84,10 @@ export const urlTableRow = (index: number) =>
   // eslint-disable-next-line newline-per-chained-call
   urlTable.child(index).child(1).child('div').child(0).child('h6')
 
+// Prefer text over h6[title]: MUI Tooltip strips the native title attribute while open.
+export const linkRowByShortUrl = (shortUrl: string) =>
+  Selector('h6').withExactText(`/${shortUrl}`)
+
 export const urlTableRowShortUrlText = async (row: Selector) =>
   // eslint-disable-next-line newline-per-chained-call
   row.find('td').nth(1).find('div').nth(1).textContent

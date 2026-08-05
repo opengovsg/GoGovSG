@@ -1,4 +1,4 @@
-import { ClientFunction, Selector } from 'testcafe'
+import { ClientFunction } from 'testcafe'
 import {
   apiLocation,
   dummyFilePath,
@@ -27,6 +27,7 @@ import {
   inactiveWord,
   largeFileError,
   linkErrorSnackBar,
+  linkRowByShortUrl,
   linkTransferField,
   longUrl,
   longUrlTextField,
@@ -63,7 +64,7 @@ test('Drawer functionality test for url.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrl = await shortUrlTextField.value
-  const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkRow = linkRowByShortUrl(generatedUrl)
   const linkTableRow = linkRow.parent('tr')
 
   await t.typeText(tagsAutocompleteInput, tagText1).pressKey('enter')
@@ -179,7 +180,7 @@ test('Drawer functionality test for file.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedFileUrl = await shortUrlTextField.value
-  const linkRow = Selector(`h6[title="${generatedFileUrl}"]`)
+  const linkRow = linkRowByShortUrl(generatedFileUrl)
 
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
@@ -212,7 +213,7 @@ test.before(async (t) => {
   await t.typeText(tagsAutocompleteInput, tagText1).pressKey('enter')
 
   const generatedUrl = await shortUrlTextField.value
-  const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkRow = linkRowByShortUrl(generatedUrl)
   const linkTableRow = linkRow.parent('tr')
 
   await t
@@ -264,7 +265,7 @@ test('Link transfer toast test.', async (t) => {
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
 
   const generatedUrl = await shortUrlTextField.value
-  const linkRow = Selector(`h6[title="${generatedUrl}"]`)
+  const linkRow = linkRowByShortUrl(generatedUrl)
 
   await t
     .typeText(longUrlTextField, `${shortUrl}`)

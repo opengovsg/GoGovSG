@@ -16,6 +16,7 @@ import {
   fileTab,
   generateRandomString,
   generateUrlImage,
+  linkRowByShortUrl,
   longUrl,
   longUrlTextField,
   mobileCreateLinkButton,
@@ -49,8 +50,24 @@ const fetchLink = async (shortUrlSlug, numberOfFetches) => {
   })
 }
 
+<<<<<<< HEAD
 const seedLinkClicks = async (generatedUrl, numberOfFetches) => {
   await fetchLink(generatedUrl, numberOfFetches)
+=======
+const getUrlAndFetch = async (t, generatedUrl, numberOfFetches) => {
+  const linkRowPopular = linkRowByShortUrl(generatedUrl)
+  await t.click(linkRowPopular)
+
+  const shortLink = Selector(
+    '.MuiTypography-root.MuiTypography-subtitle2',
+  ).withText(generatedUrl)
+
+  const shortUrlValue = await shortLink.innerText
+
+  await t.click(closeDrawerButton)
+
+  await fetchLink(shortUrlValue, numberOfFetches)
+>>>>>>> 856781dc (fix(e2e): select link rows by short-url text, not Tooltip title)
 }
 
 const generateSearchKey = () => {
@@ -129,7 +146,7 @@ export const linkCreationProcedure = async (t) => {
 
   const generatedUrlInactive = `${await shortUrlTextField.value}${searchKeyWithDash}`
 
-  const linkRowInactive = Selector(`h6[title="${generatedUrlInactive}"]`)
+  const linkRowInactive = linkRowByShortUrl(generatedUrlInactive)
 
   await t
     .typeText(shortUrlTextField, searchKeyWithDash) // concat generated searchKey
