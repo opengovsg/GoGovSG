@@ -20,7 +20,11 @@ export type MaildevMessage = {
   text?: string
   to?: MaildevAddress[]
   envelope?: {
-    to?: string[]
+    /**
+     * Maildev 1.1.0 stores smtp-server Address objects; newer docs show strings.
+     * Accept either so recipient matching does not throw.
+     */
+    to?: Array<string | MaildevAddress>
   }
 }
 
@@ -39,11 +43,25 @@ export type WaitForOtpOptions = {
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase()
 
+const asAddress = (
+  entry: string | MaildevAddress | undefined,
+): string | null => {
+  if (typeof entry === 'string') {
+    return entry
+  }
+  if (entry && typeof entry.address === 'string') {
+    return entry.address
+  }
+  return null
+}
+
 const recipientAddresses = (message: MaildevMessage): string[] => {
   const fromTo = (message.to ?? [])
-    .map((entry) => entry.address)
+    .map(asAddress)
     .filter((address): address is string => Boolean(address))
-  const fromEnvelope = message.envelope?.to ?? []
+  const fromEnvelope = (message.envelope?.to ?? [])
+    .map(asAddress)
+    .filter((address): address is string => Boolean(address))
   return [...fromTo, ...fromEnvelope].map(normalizeEmail)
 }
 
