@@ -200,7 +200,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
             dispatch(loginActions.verifyOTP(otp))
           },
           titleMessage: 'One time password',
-          placeholder: 'e.g. 123456',
+          placeholder: 'e.g. A1B2C3',
           buttonMessage: 'Submit',
           textError: () => false,
           textErrorMessage: () => '',

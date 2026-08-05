@@ -87,7 +87,7 @@ export class AuthService implements interfaces.AuthService {
     }
 
     const isOtpMatch = await this.cryptography.compare(
-      otp,
+      otp.toUpperCase(),
       retrievedOtp.hashedOtp,
     )
 

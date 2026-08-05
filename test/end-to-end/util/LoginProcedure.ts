@@ -30,7 +30,7 @@ const loginProcedure = async (t, loginEmail = testEmail) => {
     .then((json) => {
       const mailIndex = json.length - 1
       const mailBody = json[mailIndex].html
-      const mailOTP = JSON.stringify(mailBody).match(/\d{6}/)[0]
+      const mailOTP = JSON.stringify(mailBody).match(/<b>([A-Z0-9]{6})<\/b>/)[1]
       return mailOTP
     })
     .then(async (mailOTP) => {

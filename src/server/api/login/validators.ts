@@ -14,7 +14,12 @@ export const otpVerificationSchema = Joi.object({
       return email
     })
     .required(),
-  otp: Joi.string().required(),
+  otp: Joi.string()
+    .pattern(/^[A-Za-z0-9]{6}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'OTP must be 6 alphanumeric characters.',
+    }),
 })
 
 export const otpGenerationSchema = Joi.object({
