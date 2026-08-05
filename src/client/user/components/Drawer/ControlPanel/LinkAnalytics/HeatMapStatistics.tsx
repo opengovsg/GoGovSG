@@ -118,6 +118,17 @@ export default function HeatMapStatistics({
   const cellSize = Math.min(plotWidth / columns, plotHeight / rows)
   const pointRadius = (cellSize * 0.9) / Math.SQRT2
 
+  const categoryTick =
+    (labels: string[], formatLabel: (label: string) => string) =>
+    (value: string | number) => {
+      const index = typeof value === 'number' ? value : Number(value)
+      if (!Number.isInteger(index) || index < 0 || index >= labels.length) {
+        return ''
+      }
+
+      return formatLabel(labels[index])
+    }
+
   const data = {
     datasets: [
       {
@@ -150,26 +161,38 @@ export default function HeatMapStatistics({
     scales: {
       xAxes: [
         {
-          type: 'category',
+          type: 'linear',
           position: 'top',
-          labels: xDomain,
           offset: true,
           ticks: {
+            min: 0,
+            max: xDomain.length - 1,
+            stepSize: 1,
             fontColor: theme.palette.primary.main,
             fontSize: theme.typography.caption.fontSize,
-            callback: (value: string) =>
-              isMobileView || HOUR_TICKS_TO_SHOW.includes(value) ? value : '',
+            callback: categoryTick(xDomain, (label) =>
+              isMobileView || HOUR_TICKS_TO_SHOW.includes(label) ? label : '',
+            ),
+          },
+          gridLines: {
+            offsetGridLines: true,
           },
         },
       ],
       yAxes: [
         {
-          type: 'category',
-          labels: yDomain,
+          type: 'linear',
           offset: true,
           ticks: {
+            min: 0,
+            max: yDomain.length - 1,
+            stepSize: 1,
             fontColor: theme.palette.primary.main,
             fontSize: theme.typography.caption.fontSize,
+            callback: categoryTick(yDomain, (label) => label),
+          },
+          gridLines: {
+            offsetGridLines: true,
           },
         },
       ],
