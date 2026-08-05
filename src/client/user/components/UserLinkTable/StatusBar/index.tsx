@@ -112,29 +112,30 @@ function StatusBar() {
     }
   }, [header, body])
 
+  if (!showStatusBar || !hasStatusBarAlert) {
+    return null
+  }
+
   return (
-    showStatusBar &&
-    hasStatusBarAlert && (
-      <Alert
-        icon={icon}
-        className={`${colorClass} ${classes.content}`}
-        action={
-          <>
-            {variant === StatusBarVariant.Success && callbacks.length >= 0 && (
-              <DownloadBulkButton bulkCsvIds={callbacks} />
-            )}
-            {variant !== StatusBarVariant.Info && (
-              <CloseButton onClick={dispatchCloseStatusBar} />
-            )}
-          </>
-        }
-      >
-        <AlertTitle>{header}</AlertTitle>
-        <Typography variant="caption" className={classes.messageBody}>
-          {body}
-        </Typography>
-      </Alert>
-    )
+    <Alert
+      icon={icon}
+      className={`${colorClass} ${classes.content}`}
+      action={
+        <>
+          {variant === StatusBarVariant.Success && callbacks.length >= 0 && (
+            <DownloadBulkButton bulkCsvIds={callbacks} />
+          )}
+          {variant !== StatusBarVariant.Info && (
+            <CloseButton onClick={dispatchCloseStatusBar} />
+          )}
+        </>
+      }
+    >
+      <AlertTitle>{header}</AlertTitle>
+      <Typography variant="caption" className={classes.messageBody}>
+        {body}
+      </Typography>
+    </Alert>
   )
 }
 

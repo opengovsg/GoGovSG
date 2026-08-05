@@ -69,12 +69,19 @@ type LinkHistoryItemProps = {
   removeBottomConnector: boolean
 }
 
-function TagList({ tagStrings }: { tagStrings: string }) {
+function TagList({ tagStrings }: { tagStrings: string }): JSX.Element {
   const classes = useStyles()
+  if (tagStrings === '') {
+    return <span>no tag</span>
+  }
   const tags = tagStrings.split(TAG_SEPARATOR)
-  return tagStrings === ''
-    ? 'no tag'
-    : tags.map((tag) => <Chip label={tag} className={classes.chip} />)
+  return (
+    <>
+      {tags.map((tag) => (
+        <Chip key={tag} label={tag} className={classes.chip} />
+      ))}
+    </>
+  )
 }
 
 export default function LinkHistoryItem({
