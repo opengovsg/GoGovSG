@@ -1,4 +1,4 @@
-import { createEmailSchema } from '@opengovsg/validators'
+import { createEmailSchema } from '@opengovsg/validators/email'
 import validator from 'validator'
 import { emailValidator } from '../config'
 
