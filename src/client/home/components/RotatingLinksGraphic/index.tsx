@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const RotatingLinksGraphic = () => {
+function RotatingLinksGraphic() {
   const classes = useStyles({
     heightToWidthRatio: 419 / 765,
     linkBoxWidthToImageWidth: 662.01 / 765,

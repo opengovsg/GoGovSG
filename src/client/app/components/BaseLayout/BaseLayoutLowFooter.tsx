@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const BaseLayoutLowFooter = () => {
+function BaseLayoutLowFooter() {
   const classes = useStyles()
 
   return (

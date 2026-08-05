@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Button,
   ClickAwayListener,
@@ -93,10 +93,10 @@ export default function TagsAutocomplete({
     }
   }
 
-  function onClickAway() {
+  const onClickAway = useCallback(() => {
     resetTagSuggestions()
     addTagInputToTags()
-  }
+  }, [tagInput, tags, setTagInput, setTags])
 
   useEffect(() => {
     async function getTagSuggestions() {

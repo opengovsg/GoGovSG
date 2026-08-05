@@ -40,7 +40,7 @@ type EmptyStateProps = {
   urlsFiltered: boolean
 }
 
-const EmptyState = ({ urlsFiltered }: EmptyStateProps) => {
+function EmptyState({ urlsFiltered }: EmptyStateProps) {
   const classes = useState({ urlsFiltered })
   return (
     <div className={classes.emptyStateContainer}>

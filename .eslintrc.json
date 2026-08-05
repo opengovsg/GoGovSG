@@ -14,6 +14,15 @@
   "rules": {
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "react/function-component-definition": "off",
+    "import/no-import-module-exports": "off",
+    "no-restricted-exports": "off",
+    "react/jsx-no-useless-fragment": "error",
+    "default-param-last": "error",
+    "no-promise-executor-return": "error",
+    "prefer-regex-literals": "error",
+    "class-methods-use-this": "off",
+    "react/no-unstable-nested-components": ["error", { "allowAsProps": true }],
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "react/jsx-no-duplicate-props": ["error", { "ignoreCase": false }],
     "react/require-default-props": "off",
@@ -34,7 +43,7 @@
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
     "import/no-cycle": "off",
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/test/end-to-end/**", "**/test/integration/**", "**/*.test.ts"]}]
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/test/end-to-end/**", "**/test/integration/**", "**/*.test.ts", "webpack.config.ts"]}]
   },
   "env": {
     "browser": true,
@@ -42,6 +51,9 @@
   },
   "settings": {
     "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+      },
       "alias": {
         "map": [
           ["^~", "./src/client"],

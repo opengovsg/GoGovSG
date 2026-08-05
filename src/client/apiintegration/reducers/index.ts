@@ -14,7 +14,8 @@ const initialState: ApiState = {
   apiKey: '',
 }
 
-const api = (state = initialState, action: ApiKeyActionType) => {
+const api = (state: ApiState | undefined, action: ApiKeyActionType) => {
+  const currentState = state ?? initialState
   let nextState = {}
   switch (action.type) {
     case USER_HAS_API_KEY:
@@ -45,9 +46,9 @@ const api = (state = initialState, action: ApiKeyActionType) => {
       }
       break
     default:
-      return state
+      return currentState
   }
-  return { ...state, ...nextState }
+  return { ...currentState, ...nextState }
 }
 
 export default api

@@ -40,10 +40,11 @@ const initialState: UserState = {
   },
 }
 
-const user: (state: UserState, action: UserActionType) => UserState = (
-  state = initialState,
-  action,
-) => {
+const user: (
+  state: UserState | undefined,
+  action: UserActionType,
+) => UserState = (state, action) => {
+  const currentState = state ?? initialState
   let nextState: Partial<UserState> = {}
 
   switch (action.type) {
@@ -101,7 +102,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_EDITED_LONG_URL: {
       const { editedLongUrl, shortUrl } = action.payload
       nextState = {
-        urls: state.urls.map((url) => {
+        urls: currentState.urls.map((url) => {
           if (shortUrl !== url.shortUrl) {
             return url
           }
@@ -116,7 +117,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_EDITED_CONTACT_EMAIL: {
       const { editedContactEmail, shortUrl } = action.payload
       nextState = {
-        urls: state.urls.map((url) => {
+        urls: currentState.urls.map((url) => {
           if (shortUrl !== url.shortUrl) {
             return url
           }
@@ -131,7 +132,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_EDITED_DESCRIPTION: {
       const { editedDescription, shortUrl } = action.payload
       nextState = {
-        urls: state.urls.map((url) => {
+        urls: currentState.urls.map((url) => {
           if (shortUrl !== url.shortUrl) {
             return url
           }
@@ -164,7 +165,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       const { shortUrl, toState } = action.payload
 
       nextState = {
-        urls: state.urls.map((url) => {
+        urls: currentState.urls.map((url) => {
           if (shortUrl !== url.shortUrl) {
             return url
           }
@@ -189,7 +190,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_URL_TABLE_CONFIG:
       nextState = {
         tableConfig: {
-          ...state.tableConfig,
+          ...currentState.tableConfig,
           ...action.payload,
         },
       }
@@ -197,7 +198,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_URL_FILTER:
       nextState = {
         tableConfig: {
-          ...state.tableConfig,
+          ...currentState.tableConfig,
           filter: action.payload,
           pageNumber: 0,
         },
@@ -211,7 +212,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_URL_UPLOAD_STATE:
       nextState = {
         uploadState: {
-          ...state.uploadState,
+          ...currentState.uploadState,
           urlUpload: action.payload,
         },
       }
@@ -219,7 +220,7 @@ const user: (state: UserState, action: UserActionType) => UserState = (
     case UserAction.SET_FILE_UPLOAD_STATE:
       nextState = {
         uploadState: {
-          ...state.uploadState,
+          ...currentState.uploadState,
           fileUpload: action.payload,
         },
       }
@@ -237,11 +238,11 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       break
     case UserAction.CLOSE_STATUS_BAR:
       nextState = {
-        ...state,
+        ...currentState,
         statusBarMessage: {
           header: '',
           body: '',
-          variant: state.statusBarMessage.variant,
+          variant: currentState.statusBarMessage.variant,
           callbacks: [],
         },
       }
@@ -277,9 +278,9 @@ const user: (state: UserState, action: UserActionType) => UserState = (
       }
       break
     default:
-      return state
+      return currentState
   }
-  return { ...state, ...nextState }
+  return { ...currentState, ...nextState }
 }
 
 export default user

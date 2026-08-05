@@ -22,39 +22,36 @@ container
 import app from './setup'
 
 describe('GET /api/login/email/domains', () => {
-  test('return an email domain', async (done) => {
+  test('return an email domain', async () => {
     const res = await request(app).get('/api/login/emaildomains')
 
     expect(res.text).toBe('*.test.sg')
     expect(res.status).toBe(200)
-    done()
   })
 })
 
 describe('GET /api/login/message', () => {
-  test('get back message banner', async (done) => {
+  test('get back message banner', async () => {
     const res = await request(app).get('/api/login/message')
 
     expect(res.text).toBe('login message')
     expect(res.status).toBe(200)
-    done()
   })
 })
 
 describe('POST /api/login/otp', () => {
-  test('notify the generation of an OTP', async (done) => {
+  test('notify the generation of an OTP', async () => {
     const res = await request(app)
       .post('/api/login/otp')
       .send({ email: 'otpgo.gov@open.test.sg' })
     expect(res.status).toBe(200)
     expect(res.ok).toBe(true)
     expect(res.body.message).toBe('OTP generated and sent.')
-    done()
   })
 })
 
 describe('POST /api/login/verify', () => {
-  test('verify the OTP', async (done) => {
+  test('verify the OTP', async () => {
     // Prime cache
     getOtpCache().setOtpForEmail('otpgo.gov@open.test.sg', '127.0.0.1', {
       hashedOtp: '1',
@@ -65,16 +62,14 @@ describe('POST /api/login/verify', () => {
       .send({ email: 'otpgo.gov@open.test.sg', otp: '1' })
     expect(res.status).toBe(200)
     expect(res.body.message).toBe('OTP hash verification ok.')
-    done()
   })
 })
 
 describe('GET /api/login/isLoggedIn', () => {
-  test('verify is loggedin', async (done) => {
+  test('verify is loggedin', async () => {
     const res = await request(app)
       .get('/api/login/isLoggedIn')
       .set('prime', '1')
     expect(res.status).toBe(200)
-    done()
   })
 })
