@@ -104,17 +104,31 @@ export const listMaildevMessages = async (
   return json as MaildevMessage[]
 }
 
+export type MaildevRetryOptions = {
+  timeoutMs?: number
+  intervalMs?: number
+}
+
 /** Snapshot inbox message ids before triggering an OTP email. */
 export const getMaildevMessageIds = async (
   maildevUrl = DEFAULT_MAILDEV_URL,
+  { timeoutMs = 30_000, intervalMs = 1_000 }: MaildevRetryOptions = {},
 ): Promise<string[]> => {
-  try {
-    const messages = await listMaildevMessages(maildevUrl)
-    return messages.map((message) => message.id).filter(Boolean)
-  } catch {
-    // maildev may not be ready yet; treat as empty baseline
-    return []
+  const deadline = Date.now() + timeoutMs
+
+  /* eslint-disable no-await-in-loop */
+  while (Date.now() < deadline) {
+    try {
+      const messages = await listMaildevMessages(maildevUrl)
+      return messages.map((message) => message.id).filter(Boolean)
+    } catch {
+      // maildev may not be ready yet; retry until we know the inbox state
+    }
+    await sleep(intervalMs)
   }
+  /* eslint-enable no-await-in-loop */
+
+  throw new Error('Timed out reading maildev inbox baseline')
 }
 
 /**
