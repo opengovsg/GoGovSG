@@ -1,6 +1,7 @@
 import { Selector } from 'testcafe'
 import { fetch } from 'cross-fetch'
 import {
+  apiLocation,
   dummyFilePath,
   dummyRelativePath,
   shortUrl,
@@ -24,37 +25,32 @@ import {
 
 /**
  * Fetch link multiple times to increase usage of link.
+ * Hits the Express server directly and waits for all requests to finish
+ * so directory popularity sort sees the updated click counts.
  */
-const fetchLink = async (url, numberOfFetches) => {
-  const get = async (url) => {
-    const res = await fetch(url)
-    return res.ok
+const fetchLink = async (shortUrlSlug, numberOfFetches) => {
+  const url = `${apiLocation}/${shortUrlSlug}`
+  const get = async (targetUrl) => {
+    // Do not follow the outbound redirect; the click is recorded on the
+    // first response from the short-link server.
+    const res = await fetch(targetUrl, { redirect: 'manual' })
+    return res.status >= 200 && res.status < 400
   }
 
   const fetchArray: Promise<boolean>[] = []
   for (let index = 0; index < numberOfFetches; index += 1) {
     fetchArray.push(get(url))
   }
-  Promise.all(fetchArray).then((values: boolean[]) => {
-    console.log(
-      `Url: ${url} was fetched ${values.filter(Boolean).length} times`,
-    )
+  const values = await Promise.all(fetchArray)
+  console.log(`Url: ${url} was fetched ${values.filter(Boolean).length} times`)
+  // Server updates click stats without awaiting; give writes a moment to land.
+  await new Promise((resolve) => {
+    setTimeout(resolve, 1500)
   })
 }
 
-const getUrlAndFetch = async (t, generatedUrl, numberOfFetches) => {
-  const linkRowPopular = Selector(`h6[title="${generatedUrl}"]`)
-  await t.click(linkRowPopular)
-
-  const shortLink = Selector(
-    '.MuiTypography-root.MuiTypography-subtitle2',
-  ).withText(generatedUrl)
-
-  const shortUrlValue = await shortLink.innerText
-
-  await t.click(closeDrawerButton)
-
-  await fetchLink(shortUrlValue, numberOfFetches)
+const seedLinkClicks = async (generatedUrl, numberOfFetches) => {
+  await fetchLink(generatedUrl, numberOfFetches)
 }
 
 const generateSearchKey = () => {
@@ -106,7 +102,7 @@ export const linkCreationProcedure = async (t) => {
 
   await firstLinkHandle(t)
 
-  await getUrlAndFetch(t, generatedUrlMostPopular, 10)
+  await seedLinkClicks(generatedUrlMostPopular, 10)
 
   // Save url - 2nd most popular link
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
@@ -117,7 +113,7 @@ export const linkCreationProcedure = async (t) => {
     .typeText(longUrlTextField, `${shortUrl}`)
     .click(createLinkButton.nth(2))
 
-  await getUrlAndFetch(t, generatedUrlSecondMostPopular, 8)
+  await seedLinkClicks(generatedUrlSecondMostPopular, 8)
 
   // Save url - active link + 3rd most recent link
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
