@@ -2,11 +2,11 @@
 
 Candidates for `package.json` overrides that were **not** applied in the security-deps PR. Review each before adding.
 
-## Remaining audit findings (11 as of this branch)
+## Remaining audit findings (5 as of this branch)
 
 ### 1. `tar` via `bcrypt` → `@mapbox/node-pre-gyp` (critical)
 
-- **Status:** Resolved — upgraded `bcrypt` to `^6.0.0` (no longer pulls vulnerable `tar` chain).
+- **Status:** Resolved — upgraded `bcrypt` to `^6.0.0`.
 
 ### 2. `sharp` libvips CVEs (high)
 
@@ -25,17 +25,15 @@ Candidates for `package.json` overrides that were **not** applied in the securit
 
 ### 4. `aws-sdk` v2 region validation (moderate)
 
-- **Status:** Resolved — migrated to `@aws-sdk/client-s3`, `@aws-sdk/client-sqs`, and `@aws-sdk/lib-storage` v3.
+- **Status:** Resolved — migrated to AWS SDK v3 modular clients.
 
-### 5. `@typescript-eslint` v8 (high, dev-only)
+### 5. `@typescript-eslint` v8 / ESLint 8 (high, dev-only)
 
-- **Suggested fix:** `@typescript-eslint/eslint-plugin` and `parser` at `^8.x`
-- **Blocker:** Requires `eslint@^8.57.0` and `eslint-config-airbnb@^19`; current stack uses ESLint 7 + `babel-eslint`
-- **Resolution:** Skip for now (dev-only). Revisit with ESLint 8 + `@babel/eslint-parser` migration.
+- **Status:** Resolved — upgraded to `eslint@^8.57.0`, `eslint-config-airbnb@^19`, `@typescript-eslint/*@^8.66`, `@babel/eslint-parser`, `eslint-plugin-jest@^28`, `eslint-plugin-jsdoc@^50`, and `typescript@^4.9.5`. New Airbnb 19 rules disabled in `.eslintrc.json` to preserve existing lint behaviour.
 
 ### 6. `file-type` ASF parser DoS (moderate)
 
-- **Status:** Resolved — upgraded to `file-type@^22.0.1`, switched to `fileTypeFromBuffer`, and added Jest/babel transforms for ESM dependencies (`file-type`, `strtok3`, `token-types`, `@tokenizer/*`, `@borewit/*`, `uint8array-extras`).
+- **Status:** Resolved — upgraded to `file-type@^22.0.1` with Jest ESM/babel transforms.
 
 ## Previously considered (addressed in the security-deps PR without overrides)
 
@@ -47,11 +45,12 @@ Candidates for `package.json` overrides that were **not** applied in the securit
 | `jest` / `ts-jest` | Upgraded to v29 |
 | `webpack-dev-server` | Upgraded to v5 |
 | `testcafe` | Upgraded to v3 |
-| `@commitlint/travis-cli` | Removed (unused; husky uses `@commitlint/cli` only) |
+| `@commitlint/travis-cli` | Removed (unused) |
 | `bcrypt` | Upgraded to `^6.0.0` |
 | `aws-sdk` v2 | Migrated to AWS SDK v3 modular clients |
 | `uuid` (direct) | Upgraded to `^11.1.0` |
 | `file-type` | Upgraded to `^22.0.1` with Jest ESM support |
+| ESLint / `@typescript-eslint` | Upgraded to ESLint 8 + `@typescript-eslint` v8 |
 
 ## Do not use `npm audit fix --force`
 
@@ -60,5 +59,5 @@ It incorrectly suggests downgrades (`sequelize@3.x`, `aws-sdk@1.x`, `webpack-dev
 ## Suggested follow-up order
 
 1. `sharp@0.35+` (item 2) — blocked on Node 20
-2. ESLint 8 + `@typescript-eslint` v8 (item 5) — dev tooling only
-3. Transitive `uuid` in `sequelize` / `sockjs` — optional overrides if audit noise remains unacceptable
+2. Transitive `uuid` in `sequelize` / `sockjs` — optional overrides if audit noise remains unacceptable
+3. Adopt new Airbnb 19 lint rules incrementally (currently disabled in `.eslintrc.json`)
