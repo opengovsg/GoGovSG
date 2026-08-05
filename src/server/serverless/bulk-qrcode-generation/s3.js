@@ -1,9 +1,8 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
-const { Upload } = require('@aws-sdk/lib-storage')
+const { S3 } = require('aws-sdk')
 const stream = require('stream')
 const archiver = require('archiver')
 
-const s3 = new S3Client()
+const s3 = new S3()
 const { BULK_GENERATION_BUCKET } = process.env
 if (!BULK_GENERATION_BUCKET)
   throw Error('Environment variable for BULK_GENERATION_BUCKET is missing')
@@ -17,7 +16,7 @@ async function uploadToS3(fileBuffer, fileType, fileKey) {
       Key: fileKey,
     }
 
-    await s3.send(new PutObjectCommand(params))
+    await s3.putObject(params).promise()
     console.log(`Successfully uploaded ${fileKey}`)
   } catch (e) {
     throw Error(`Error uploading to S3 bucket: ${e}`)
@@ -27,20 +26,18 @@ async function uploadToS3(fileBuffer, fileType, fileKey) {
 // https://stackoverflow.com/questions/37336050/pipe-a-stream-to-s3-upload
 const streamToS3 = (key) => {
   const writeStream = new stream.PassThrough()
-  const upload = new Upload({
-    client: s3,
-    params: {
+  const s3Promise = s3
+    .upload({
       Bucket: BULK_GENERATION_BUCKET,
       Key: key,
       Body: writeStream,
       ContentType: 'application/zip',
       ServerSideEncryption: 'AES256',
-    },
-  })
-  upload.on('httpUploadProgress', (progress) => {
-    console.log(progress)
-  })
-  const s3Promise = upload.done()
+    })
+    .on('httpUploadProgress', (progress) => {
+      console.log(progress)
+    })
+    .promise()
   return {
     writeStream,
     s3Promise,

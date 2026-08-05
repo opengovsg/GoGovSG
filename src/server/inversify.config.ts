@@ -1,6 +1,4 @@
-import { S3Client } from '@aws-sdk/client-s3'
-import { NodeHttpHandler } from '@smithy/node-http-handler'
-import { SQSClient } from '@aws-sdk/client-sqs'
+import AWS from 'aws-sdk'
 
 import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
 
@@ -193,13 +191,13 @@ export default () => {
   bindIfUnbound(DependencyIds.mailer, MailerNode)
 
   if (DEV_ENV) {
-    const s3Client = new S3Client({
+    const s3Client = new AWS.S3({
       credentials: {
         accessKeyId: 'foobar',
         secretAccessKey: 'foobar',
       },
       endpoint: bucketEndpoint,
-      forcePathStyle: true,
+      s3ForcePathStyle: true,
     })
     container
       .bind(DependencyIds.fileURLPrefix)
@@ -207,22 +205,22 @@ export default () => {
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
 
     container.bind(DependencyIds.sqsClient).toConstantValue(
-      new SQSClient({
+      new AWS.SQS({
         region: sqsRegion,
-        requestHandler: new NodeHttpHandler({
-          requestTimeout: sqsTimeout,
-        }),
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
       }),
     )
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
-    container.bind(DependencyIds.s3Client).toConstantValue(new S3Client())
+    container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
     container.bind(DependencyIds.sqsClient).toConstantValue(
-      new SQSClient({
+      new AWS.SQS({
         region: sqsRegion,
-        requestHandler: new NodeHttpHandler({
-          requestTimeout: sqsTimeout,
-        }),
+        httpOptions: {
+          timeout: sqsTimeout,
+        },
       }),
     )
   }
