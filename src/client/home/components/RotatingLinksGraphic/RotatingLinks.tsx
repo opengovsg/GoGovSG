@@ -1,4 +1,7 @@
 import React, { FunctionComponent } from 'react'
+// react-typed's package.json resolves `types` to its ESM build even though
+// `require` resolves to its CJS build; the require() call at runtime (via webpack) is correct.
+// @ts-expect-error
 import { ReactTyped } from 'react-typed'
 
 type RotatingLinksType = {
