@@ -1,3 +1,3 @@
-const useSearchInputHeight = () => 48
+const getSearchInputHeight = () => 48
 
-export default useSearchInputHeight
+export default getSearchInputHeight

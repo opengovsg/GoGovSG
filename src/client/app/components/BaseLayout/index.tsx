@@ -13,7 +13,7 @@ import Masthead from './Masthead'
 import BaseLayoutHeader from './BaseLayoutHeader'
 import BaseLayoutFooter from './BaseLayoutFooter'
 import BaseLayoutLowFooter from './BaseLayoutLowFooter'
-import useIsIE from './util/ie'
+import checkIsIE from './util/ie'
 import BannerForIE from './BannerForIE'
 import { USER_PAGE } from '../../util/types'
 import Banner from './widgets/Banner'
@@ -68,7 +68,7 @@ const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
 }: PropsWithChildren<BaseLayoutProps>) => {
   const classes = useStyles()
   const path = useLocation().pathname
-  const isIE = useIsIE()
+  const isIE = checkIsIE()
   const message = useSelector((state: GoGovReduxState) => state.user.message)
 
   const toStick = isIE || !!message

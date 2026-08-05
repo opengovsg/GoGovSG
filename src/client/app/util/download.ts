@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver'
 import rootActions from '../components/pages/RootPage/actions'
 import userActions from '../../user/actions'
-import useIsIE from '../components/BaseLayout/util/ie'
+import checkIsIE from '../components/BaseLayout/util/ie'
 import { GAEvent } from './ga'
 import { UrlTableConfig } from '../../user/reducers/types'
 import queryObjFromTableConfig from '../helpers/urlQueryHelper'
@@ -12,7 +12,7 @@ export const downloadCsv = (csvString: string, filename: string) => {
     type: 'text/csv;charset=utf-8',
   })
 
-  if (useIsIE()) {
+  if (checkIsIE()) {
     // @ts-ignore: `msSaveBlob` used for old IE versions has been removed as of TypeScript 4.4
     navigator.msSaveBlob(blob, filename)
   } else {

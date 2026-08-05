@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import useSearchInputHeight from '../SearchInput/searchInputHeight'
+import getSearchInputHeight from '../SearchInput/searchInputHeight'
 
 export default makeStyles((theme) =>
   createStyles({
@@ -7,7 +7,7 @@ export default makeStyles((theme) =>
       width: '100%',
       position: 'absolute',
       left: 0,
-      top: useSearchInputHeight() + 10,
+      top: getSearchInputHeight() + 10,
       zIndex: 1000,
       [theme.breakpoints.down('sm')]: {
         top: 0,
