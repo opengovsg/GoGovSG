@@ -106,10 +106,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: pnpm/action-setup@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v1
         with:
           node-version: '18.x'
+          cache: 'pnpm'
 
       - name: Set environment variables
         run: |
@@ -158,8 +161,10 @@ jobs:
           wait_for_deployment: false
           wait_for_environment_recovery: false
 
-      - name: Install Serverless plugin
-        run: npm install -f serverless-plugin-include-dependencies@5.0.0
+      - name: Install dependencies
+        # serverless-plugin-include-dependencies is already a pinned devDependency;
+        # a frozen-lockfile install replaces the old ad-hoc unpinned `npm install -f`.
+        run: pnpm install --frozen-lockfile
 
       - name: Serverless deploy
         uses: serverless/github-action@v3.2
