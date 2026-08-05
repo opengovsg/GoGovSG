@@ -19,8 +19,12 @@ import bindInversifyDependencies from '../../../src/server/inversify.config'
 // Bind all defaults (after the mocks have been binded)
 bindInversifyDependencies()
 
-// Import testing Routes
-import api from '../../../src/server/api'
+// Import testing Routes.
+// A dynamic require, not a static import: ES imports are hoisted above
+// bindInversifyDependencies() by the compiler, but this file (and api/index.ts,
+// which resolves inversify bindings at module-load time) depends on binding
+// registration having already run first.
+const api = require('../../../src/server/api').default
 
 const app = express()
 app.use(bodyParser.json())
