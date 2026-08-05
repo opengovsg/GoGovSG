@@ -62,13 +62,13 @@ git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 cd gogovsg
 
 # Install dependencies
-npm install
+pnpm install
 ```
 
 ### Running Locally
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Docker-compose will spin up a postgresql database and redis container to be connected to the backend server.
@@ -164,9 +164,9 @@ After these have been set up, set the environment variables according to the tab
 |      GCS_BUCKET       |   Yes    |       Name of bucket in GCS to write to       | No                         |
 | CRONITOR_MONITOR_CODE |    No    | ID for Cronitor monitor to monitor batch jobs | No                         |
 
-Trigger the typescript compilation and webpack bundling process by calling `npm run build`.
+Trigger the typescript compilation and webpack bundling process by calling `pnpm run build`.
 
-Finally, start the production server by running `npm start`.
+Finally, start the production server by running `pnpm start`.
 
 ### Deploying
 
@@ -237,7 +237,7 @@ Babel requires plugins to do the transformation. Presets are the set of plugins 
 
 [.oxlintrc.json file](https://oxc.rs/docs/guide/usage/linter/config.html) describes the lint rules enforced across the codebase, migrated from this project's original Airbnb-derived ESLint configuration. `.oxfmtrc.json` describes formatting options (2-space indentation, no semicolons, single quotes), migrated from the original Prettier configuration.
 
-Run `npm run lint` / `npm run lint:fix` to lint, and `npm run format` / `npm run format:check` to format.
+Run `pnpm run lint` / `pnpm run lint:fix` to lint, and `pnpm run format` / `pnpm run format:check` to format.
 
 ### Webpack
 
@@ -297,12 +297,12 @@ Express is a web application framework for Node.js. It is used to build our back
 
 ### Concurrently
 
-[Concurrently](https://github.com/kimmobrunfeldt/concurrently) is used to run multiple commands concurrently. I am using it to run the webpack dev server and the backend node server concurrently in the development environment. Below are the npm/yarn script commands used.
+[Concurrently](https://github.com/kimmobrunfeldt/concurrently) is used to run multiple commands concurrently. I am using it to run the webpack dev server and the backend node server concurrently in the development environment. Below are the package.json script commands used.
 
 ```javascript
 "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
 "server": "nodemon src/server/index.js",
-"dev": "concurrently \"npm run server\" \"npm run client\""
+"dev": "concurrently \"pnpm run server\" \"pnpm run client\""
 ```
 
 ### VSCode + Oxc
