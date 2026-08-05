@@ -1,4 +1,8 @@
-import { S3 } from 'aws-sdk'
+import {
+  PutObjectAclCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import {
   clicksModelMock,
   devicesModelMock,
@@ -53,7 +57,24 @@ jest.mock('../../../src/server/util/sequelize', () => ({
   sequelize: { query: mockQuery, transaction: mockTransaction },
 }))
 
-const s3Client = new S3()
+const s3Client = new S3Client()
+const s3Send = jest.spyOn(s3Client, 'send').mockResolvedValue({})
+
+const getPutObjectCalls = () =>
+  s3Send.mock.calls
+    .map(([command]) => command)
+    .filter(
+      (command): command is PutObjectCommand =>
+        command instanceof PutObjectCommand,
+    )
+
+const getPutObjectAclCalls = () =>
+  s3Send.mock.calls
+    .map(([command]) => command)
+    .filter(
+      (command): command is PutObjectAclCommand =>
+        command instanceof PutObjectAclCommand,
+    )
 const s3Bucket = 'bucket'
 const fileURLPrefix = 'prefix'
 
@@ -135,12 +156,8 @@ describe('UrlRepository', () => {
   describe('create', () => {
     const create = jest.spyOn(urlModelMock, 'create')
     const scope = jest.spyOn(urlModelMock, 'scope')
-    const putObject = jest.spyOn(s3Client, 'putObject')
     const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     const findByPk = jest.fn()
-
-    // @ts-ignore
-    putObject.mockReturnValue({ promise: () => Promise.resolve() })
 
     const userId = 2
     const shortUrl = 'abcdef'
@@ -149,7 +166,7 @@ describe('UrlRepository', () => {
 
     beforeEach(() => {
       create.mockReset()
-      putObject.mockClear()
+      s3Send.mockClear()
       findByPk.mockReset()
       scope.mockReset()
       tagFindOrCreate.mockReset()
@@ -175,7 +192,7 @@ describe('UrlRepository', () => {
       )
       expect(tagFindOrCreate).toHaveBeenCalledTimes(0)
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
-      expect(putObject).not.toHaveBeenCalled()
+      expect(s3Send).not.toHaveBeenCalled()
     })
 
     it('creates the specified longUrl with tags', async () => {
@@ -204,7 +221,7 @@ describe('UrlRepository', () => {
         expect.anything(),
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
-      expect(putObject).not.toHaveBeenCalled()
+      expect(s3Send).not.toHaveBeenCalled()
       expect(baseUrlWithTags.addTags).toHaveBeenCalledTimes(1)
     })
 
@@ -245,7 +262,7 @@ describe('UrlRepository', () => {
         expect.anything(),
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
-      expect(putObject).toHaveBeenCalledWith({
+      expect(getPutObjectCalls()[0]?.input).toEqual({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
         Body: file.data,
@@ -299,7 +316,7 @@ describe('UrlRepository', () => {
         expect.anything(),
       )
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
-      expect(putObject).toHaveBeenCalledWith({
+      expect(getPutObjectCalls()[0]?.input).toEqual({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
         Body: file.data,
@@ -314,25 +331,17 @@ describe('UrlRepository', () => {
   describe('update', () => {
     const findOne = jest.spyOn(urlModelMock, 'findOne')
     const scope = jest.spyOn(urlModelMock, 'scope')
-    const putObject = jest.spyOn(s3Client, 'putObject')
-    const putObjectAcl = jest.spyOn(s3Client, 'putObjectAcl')
     const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     beforeEach(() => {
       findOne.mockReset()
       scope.mockReset()
-      putObject.mockClear()
-      putObjectAcl.mockClear()
+      s3Send.mockClear()
       tagFindOrCreate.mockClear()
     })
 
     afterAll(() => {
       findOne.mockRestore()
     })
-
-    // @ts-ignore
-    putObject.mockReturnValue({ promise: () => Promise.resolve() })
-    // @ts-ignore
-    putObjectAcl.mockReturnValue({ promise: () => Promise.resolve() })
 
     it('should throw NotFoundError on not found', async () => {
       scope.mockImplementationOnce(() => urlModelMock)
@@ -343,8 +352,8 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(putObject).not.toHaveBeenCalled()
-      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(getPutObjectCalls()).toHaveLength(0)
+      expect(getPutObjectAclCalls()).toHaveLength(0)
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
 
@@ -360,8 +369,8 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(putObject).not.toHaveBeenCalled()
-      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(getPutObjectCalls()).toHaveLength(0)
+      expect(getPutObjectAclCalls()).toHaveLength(0)
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
       expect(scope).toHaveBeenCalledWith(['defaultScope', 'getClicks'])
     })
@@ -382,8 +391,8 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(putObject).not.toHaveBeenCalled()
-      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(getPutObjectCalls()).toHaveLength(0)
+      expect(getPutObjectAclCalls()).toHaveLength(0)
       expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
       expect(tagRepository.upsertTags).toHaveBeenCalledWith(
         baseTags,
@@ -423,8 +432,8 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(putObject).not.toHaveBeenCalled()
-      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(getPutObjectCalls()).toHaveLength(0)
+      expect(getPutObjectAclCalls()).toHaveLength(0)
       expect(update).toHaveBeenCalledWith({ description }, expect.anything())
     })
 
@@ -458,8 +467,8 @@ describe('UrlRepository', () => {
         where: { shortUrl: baseShortUrl },
       })
       expect(tagRepository.upsertTags).toHaveBeenCalledTimes(1)
-      expect(putObject).not.toHaveBeenCalled()
-      expect(putObjectAcl).not.toHaveBeenCalled()
+      expect(getPutObjectCalls()).toHaveLength(0)
+      expect(getPutObjectAclCalls()).toHaveLength(0)
       expect(update).toHaveBeenCalledWith(
         { description, tags: newTags, tagStrings: baseTagStrings },
         expect.anything(),
@@ -488,10 +497,9 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(putObject).not.toHaveBeenCalled()
-      expect(update).toHaveBeenCalledWith({ state }, expect.anything())
+      expect(getPutObjectCalls()).toHaveLength(0)
 
-      expect(putObjectAcl).toHaveBeenCalledWith({
+      expect(getPutObjectAclCalls()[0]?.input).toEqual({
         Bucket: s3Bucket,
         Key: fileBucket.getKeyFromLongUrl(baseLongUrl),
         ACL: FileVisibility.Public,
@@ -525,10 +533,10 @@ describe('UrlRepository', () => {
       expect(findOne).toHaveBeenCalledWith({
         where: { shortUrl: baseShortUrl },
       })
-      expect(putObject).not.toHaveBeenCalled()
+      expect(getPutObjectCalls()).toHaveLength(0)
       expect(update).toHaveBeenCalledWith({ state }, expect.anything())
 
-      expect(putObjectAcl).toHaveBeenCalledWith({
+      expect(getPutObjectAclCalls()[0]?.input).toEqual({
         Bucket: s3Bucket,
         Key: fileBucket.getKeyFromLongUrl(baseLongUrl),
         ACL: FileVisibility.Private,
@@ -579,12 +587,12 @@ describe('UrlRepository', () => {
         { longUrl: newLongUrl },
         expect.anything(),
       )
-      expect(putObjectAcl).toHaveBeenCalledWith({
+      expect(getPutObjectAclCalls()[0]?.input).toEqual({
         Bucket: s3Bucket,
         Key: oldKey,
         ACL: FileVisibility.Private,
       })
-      expect(putObject).toHaveBeenCalledWith({
+      expect(getPutObjectCalls()[0]?.input).toEqual({
         ContentType: file.mimetype,
         Bucket: s3Bucket,
         Body: file.data,
