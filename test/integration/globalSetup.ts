@@ -49,13 +49,13 @@ const waitForPostgres = async (): Promise<void> => {
 
 const usersTableExists = async (): Promise<boolean> =>
   withPostgres(async (sequelize) => {
-    const [rows] = await sequelize.query<{ exists: boolean }>(
+    const [rows] = await sequelize.query(
       `SELECT EXISTS (
         SELECT FROM information_schema.tables
         WHERE table_schema = 'public' AND table_name = 'users'
       ) AS "exists"`,
     )
-    return Boolean(rows[0]?.exists)
+    return Boolean((rows[0] as { exists: boolean })?.exists)
   })
 
 const waitForUsersTable = async (): Promise<void> => {
