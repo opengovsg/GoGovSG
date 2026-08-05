@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) =>
 const textFieldHeight = useSearchInputHeight()
 
 // Search Input field.
-const SearchInput = () => {
+function SearchInput() {
   const dispatch = useDispatch()
 
   const tableConfig = useSelector(

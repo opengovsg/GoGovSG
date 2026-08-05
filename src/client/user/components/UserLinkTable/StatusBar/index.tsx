@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const StatusBar = () => {
+function StatusBar() {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const [showStatusBar, setShowStatusBar] = useState<boolean>(true)

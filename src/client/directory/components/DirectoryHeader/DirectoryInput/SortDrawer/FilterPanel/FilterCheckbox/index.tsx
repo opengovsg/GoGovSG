@@ -31,7 +31,7 @@ export type FilterCheckboxProps = {
   onClick: () => void
 }
 
-export default ({ checked, className, onClick }: FilterCheckboxProps) => {
+export default function ({ checked, className, onClick }: FilterCheckboxProps) {
   const classes = useStyles()
   return (
     <IconButton className={className} onClick={onClick}>

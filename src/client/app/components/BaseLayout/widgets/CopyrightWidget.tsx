@@ -26,7 +26,7 @@ type CopyrightWidgetProps = {
   className?: string
 }
 
-const CopyrightWidget = ({ className }: CopyrightWidgetProps) => {
+function CopyrightWidget({ className }: CopyrightWidgetProps) {
   const classes = useStyles()
   return (
     <span className={classNames(className, classes.copyright)}>

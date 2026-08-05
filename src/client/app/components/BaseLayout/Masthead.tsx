@@ -33,7 +33,7 @@ const useStyles = makeStyles(() =>
     },
   }),
 )
-const Masthead = ({ isSticky, toStick }: MastheadProps) => {
+function Masthead({ isSticky, toStick }: MastheadProps) {
   const classes = useStyles({ isSticky, toStick })
   return (
     <div className={classes.masthead}>

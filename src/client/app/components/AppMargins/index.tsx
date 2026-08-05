@@ -33,7 +33,7 @@ type AppMarginsProps = {
   children: React.ReactNode
 }
 
-export const ApplyAppMargins = ({ className, children }: AppMarginsProps) => {
+export function ApplyAppMargins({ className, children }: AppMarginsProps) {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   return (
@@ -43,7 +43,7 @@ export const ApplyAppMargins = ({ className, children }: AppMarginsProps) => {
   )
 }
 
-export const IgnoreAppMargins = ({ className, children }: AppMarginsProps) => {
+export function IgnoreAppMargins({ className, children }: AppMarginsProps) {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   return (
@@ -53,10 +53,10 @@ export const IgnoreAppMargins = ({ className, children }: AppMarginsProps) => {
   )
 }
 
-export const IgnoreAppRightMargins = ({
+export function IgnoreAppRightMargins({
   className,
   children,
-}: AppMarginsProps) => {
+}: AppMarginsProps) {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   return (

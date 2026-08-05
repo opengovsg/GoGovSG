@@ -21,7 +21,7 @@ type BuiltByWidgetProps = {
   className?: string
 }
 
-const OgpWidget = ({ className }: BuiltByWidgetProps) => {
+function OgpWidget({ className }: BuiltByWidgetProps) {
   const classes = useStyles()
   return (
     <div className={classNames(className, classes.builtByLinkGroup)}>

@@ -9,7 +9,7 @@ export type SortButtonProps = {
   onClick: () => void
 }
 
-const SortButton = ({ columnLabel, isSelected, onClick }: SortButtonProps) => {
+function SortButton({ columnLabel, isSelected, onClick }: SortButtonProps) {
   const classes = useStyles()
   return (
     <Button

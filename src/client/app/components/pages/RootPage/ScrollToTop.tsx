@@ -13,7 +13,7 @@ type ScrollToTopProps = {
   children: ReactNode
 }
 
-const ScrollToTop = ({ children }: ScrollToTopProps) => {
+function ScrollToTop({ children }: ScrollToTopProps) {
   const location = useLocation().pathname
   const prevProps = usePrevious(location)
   useEffect(() => {

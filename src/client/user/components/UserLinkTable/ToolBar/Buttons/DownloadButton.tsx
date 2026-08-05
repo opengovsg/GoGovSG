@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const DownloadButton = () => {
+function DownloadButton() {
   const classes = useStyles()
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,

@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const MessageSnackbar = () => {
+function MessageSnackbar() {
   const theme = useTheme()
   const classes = useStyles()
   const message = useSelector(

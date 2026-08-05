@@ -118,7 +118,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const AnnouncementModal = () => {
+function AnnouncementModal() {
   const dispatch = useDispatch()
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })

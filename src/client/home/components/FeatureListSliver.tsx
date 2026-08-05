@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const FeatureListSliver = () => {
+function FeatureListSliver() {
   const classes = useStyles()
   const theme = useTheme()
   const isDesktopWidth = useMediaQuery(theme.breakpoints.up('lg'))

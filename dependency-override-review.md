@@ -29,7 +29,7 @@ Candidates for `package.json` overrides that were **not** applied in the securit
 
 ### 5. `@typescript-eslint` v8 / ESLint 8 (high, dev-only)
 
-- **Status:** Resolved — upgraded to `eslint@^8.57.0`, `eslint-config-airbnb@^19`, `@typescript-eslint/*@^8.66`, `@babel/eslint-parser`, `eslint-plugin-jest@^28`, `eslint-plugin-jsdoc@^50`, and `typescript@^4.9.5`. New Airbnb 19 rules disabled in `.eslintrc.json` to preserve existing lint behaviour.
+- **Status:** Resolved — upgraded to `eslint@^8.57.0`, `eslint-config-airbnb@^19`, `@typescript-eslint/*@^8.66`, `@babel/eslint-parser`, `eslint-plugin-jest@^28`, `eslint-plugin-jsdoc@^50`, and `typescript@^4.9.5`. Applied ESLint autofixes for `react/function-component-definition` across client components; remaining Airbnb 19 rules that cannot be autofixed are disabled in `.eslintrc.json`.
 
 ### 6. `file-type` ASF parser DoS (moderate)
 
