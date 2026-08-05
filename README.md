@@ -62,7 +62,7 @@ git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 cd gogovsg
 
 # Install dependencies
-npm install --legacy-peer-deps
+npm install
 ```
 
 ### Running Locally
