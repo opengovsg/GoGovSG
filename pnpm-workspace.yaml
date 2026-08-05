@@ -1,0 +1,11 @@
+allowBuilds:
+  '@datadog/native-appsec': false
+  '@datadog/native-iast-taint-tracking': false
+  '@datadog/native-metrics': false
+  '@swc/core': true
+  aws-sdk: false
+  bcrypt: true
+  core-js: false
+  esbuild: true
+  sharp: true
+  unix-dgram: true
