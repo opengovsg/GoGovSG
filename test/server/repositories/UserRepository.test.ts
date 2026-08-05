@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { sequelizeMock, urlModelMock, userModelMock } from '../api/util'
 import { UserRepository } from '../../../src/server/repositories/UserRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
@@ -341,9 +342,9 @@ describe('UserRepository', () => {
       expect(findAndCountAll).toHaveBeenCalled()
       expect(findAndCountAll.mock.calls[0][0].where).toMatchObject({
         userId: 2,
-        [Symbol('or')]: [
-          { tagStrings: { [Symbol('iLike')]: '%tag%' } },
-          { tagStrings: { [Symbol('iLike')]: '%tag\\_foo\\_bar%' } },
+        [Op.or]: [
+          { tagStrings: { [Op.iLike]: '%tag%' } },
+          { tagStrings: { [Op.iLike]: '%tag\\_foo\\_bar%' } },
         ],
       })
     })
@@ -398,7 +399,7 @@ describe('UserRepository', () => {
     })
   })
 
-  describe('findUserByApiKey', async () => {
+  describe('findUserByApiKey', () => {
     const apiKeyHash = 'apiKeyHash'
     const findOne = jest.spyOn(userModelMock, 'findOne')
     beforeEach(() => {
