@@ -1,5 +1,9 @@
 import { testEmail } from './config'
-import { clearMaildevInbox, waitForOtpFromMaildev } from '../../shared/maildev'
+import {
+  clearMaildevInbox,
+  getMaildevMessageIds,
+  waitForOtpFromMaildev,
+} from '../../shared/maildev'
 import {
   loginButton,
   loginSuccessAlert,
@@ -13,12 +17,15 @@ import {
  */
 const loginProcedure = async (t, loginEmail = testEmail) => {
   await t.maximizeWindow()
-  await t
-    .click(loginButton)
-    .typeText('#email', `${loginEmail}`)
-    .click(signInButton)
+  await t.click(loginButton).typeText('#email', `${loginEmail}`)
 
-  const mailOTP = await waitForOtpFromMaildev()
+  const afterMessageIds = await getMaildevMessageIds()
+  await t.click(signInButton)
+
+  const mailOTP = await waitForOtpFromMaildev({
+    to: loginEmail,
+    afterMessageIds,
+  })
   await t.typeText('#otp', mailOTP)
 
   await t.click(signInButton).click(loginSuccessAlert)
