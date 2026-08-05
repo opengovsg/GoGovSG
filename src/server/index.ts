@@ -16,8 +16,12 @@ import bindInversifyDependencies from './inversify.config'
 // properly-bound containers
 bindInversifyDependencies()
 
-// Routes
-import api from './api'
+// Routes.
+// A dynamic require, not a static import: ES imports are hoisted above
+// bindInversifyDependencies() by some compilers, but api/index.ts resolves
+// inversify bindings at module-load time and needs binding registration to
+// have already run.
+const api = require('./api').default
 
 // Logger configuration
 import {
