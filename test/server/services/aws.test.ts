@@ -1,3 +1,4 @@
+import { PutObjectAclCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { container } from '../../../src/server/util/inversify'
 import {
   FileVisibility,
@@ -10,52 +11,62 @@ describe('S3ServerSide', () => {
   const fileURLPrefix = 'https://'
   const s3Bucket = 'file-staging.go.gov.sg'
 
-  const MockS3 = jest.fn(() => ({
-    putObjectAcl: jest.fn(() => ({ promise: jest.fn() })),
-    putObject: jest.fn(() => ({ promise: jest.fn() })),
-  }))
-  let mockS3Client = new MockS3()
+  const mockS3Client = {
+    send: jest.fn(),
+  }
 
   afterEach(() => {
     container.unbindAll()
   })
   beforeEach(() => {
-    mockS3Client = new MockS3()
+    mockS3Client.send.mockReset()
     container.bind(DependencyIds.fileURLPrefix).toConstantValue(fileURLPrefix)
     container.bind(DependencyIds.s3Bucket).toConstantValue(s3Bucket)
     container.bind(DependencyIds.s3Client).toConstantValue(mockS3Client)
     container.bind<S3Interface>(DependencyIds.s3).to(S3ServerSide)
   })
 
-  it('should call s3Client.putObjectAcl on setS3ObjectACL', () => {
+  it('should call s3Client.send with PutObjectAclCommand on setS3ObjectACL', () => {
     const key = 'key'
     const acl = FileVisibility.Private
     const s3 = container.get<S3Interface>(DependencyIds.s3)
     s3.setS3ObjectACL(key, acl)
-    expect(mockS3Client.putObjectAcl).toHaveBeenCalled()
-    expect(mockS3Client.putObjectAcl).toHaveBeenCalledWith({
-      Bucket: s3Bucket,
-      Key: key,
-      ACL: acl,
-    })
+    expect(mockS3Client.send).toHaveBeenCalled()
+    expect(mockS3Client.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: {
+          Bucket: s3Bucket,
+          Key: key,
+          ACL: acl,
+        },
+      }),
+    )
+    expect(mockS3Client.send.mock.calls[0][0]).toBeInstanceOf(
+      PutObjectAclCommand,
+    )
   })
 
-  it('should call s3Client.putObject on uploadFileToS3', () => {
+  it('should call s3Client.send with PutObjectCommand on uploadFileToS3', () => {
     const file = Buffer.from([])
     const key = 'key'
     const fileType = 'type'
 
     const s3 = container.get<S3Interface>(DependencyIds.s3)
     s3.uploadFileToS3(file, key, fileType)
-    expect(mockS3Client.putObject).toHaveBeenCalled()
-    expect(mockS3Client.putObject).toHaveBeenCalledWith({
-      ContentType: fileType,
-      Bucket: s3Bucket,
-      Body: file,
-      Key: key,
-      ACL: FileVisibility.Public,
-      CacheControl: `no-cache`,
-    })
+    expect(mockS3Client.send).toHaveBeenCalled()
+    expect(mockS3Client.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: {
+          ContentType: fileType,
+          Bucket: s3Bucket,
+          Body: file,
+          Key: key,
+          ACL: FileVisibility.Public,
+          CacheControl: `no-cache`,
+        },
+      }),
+    )
+    expect(mockS3Client.send.mock.calls[0][0]).toBeInstanceOf(PutObjectCommand)
   })
 
   it('should return correct file link when provided with a short url', () => {
