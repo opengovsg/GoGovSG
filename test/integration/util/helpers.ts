@@ -2,7 +2,10 @@ import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import fs from 'fs'
 import { customAlphabet } from 'nanoid/async'
-import { waitForOtpFromMaildev } from '../../shared/maildev'
+import {
+  getMaildevMessageIds,
+  waitForOtpFromMaildev,
+} from '../../shared/maildev'
 import {
   API_KEY_SALT,
   API_LOGIN_OTP,
@@ -61,11 +64,16 @@ export const deleteIntegrationTestUser: (email: string) => Promise<void> =
 export const getAuthCookie: (email: string) => Promise<string> = async (
   email,
 ) => {
+  const afterMessageIds = await getMaildevMessageIds(LOCAL_EMAIL_URL)
   const otpRes = await postJson(API_LOGIN_OTP, {
     email,
   })
   if (!otpRes.ok) throw new Error('Failed to generate OTP')
-  const emailOTP = await waitForOtpFromMaildev(LOCAL_EMAIL_URL)
+  const emailOTP = await waitForOtpFromMaildev({
+    to: email,
+    afterMessageIds,
+    maildevUrl: LOCAL_EMAIL_URL,
+  })
   const verifyRes = await postJson(API_LOGIN_VERIFY, {
     email,
     otp: emailOTP,
