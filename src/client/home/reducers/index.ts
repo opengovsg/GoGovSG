@@ -13,9 +13,10 @@ const initialState: HomeState = {
   },
 }
 const home = (
-  state: HomeState = initialState,
+  state: HomeState | undefined,
   action: HomeActionType,
 ): HomeState => {
+  const currentState = state ?? initialState
   let nextState = {}
 
   switch (action.type) {
@@ -30,9 +31,9 @@ const home = (
       }
       break
     default:
-      return state
+      return currentState
   }
-  return { ...state, ...nextState }
+  return { ...currentState, ...nextState }
 }
 
 export default home

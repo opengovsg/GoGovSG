@@ -26,7 +26,11 @@ const initialState: LoginState = {
   formVariant: loginFormVariants.types.EMAIL_READY,
 }
 
-export const login = (state = initialState, action: LoginActionType) => {
+export const login = (
+  state: LoginState | undefined,
+  action: LoginActionType,
+) => {
+  const currentState = state ?? initialState
   let nextState = {}
 
   switch (action.type) {
@@ -88,7 +92,7 @@ export const login = (state = initialState, action: LoginActionType) => {
       }
       break
     default:
-      return state
+      return currentState
   }
-  return { ...state, ...nextState }
+  return { ...currentState, ...nextState }
 }

@@ -21,7 +21,7 @@ function ScrollToTop({ children }: ScrollToTopProps) {
       window.scrollTo(0, 0)
     }
   })
-  return <>{children}</>
+  return children
 }
 
 export default ScrollToTop

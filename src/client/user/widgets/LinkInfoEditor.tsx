@@ -174,7 +174,7 @@ export default function LinkInfoEditor({
             error={!isContactEmailValid}
           />
         }
-        trailing={<></>}
+        trailing={null}
         wrapTrailing={isMobileView}
         trailingPosition={TrailingPosition.none}
       />
@@ -209,7 +209,7 @@ export default function LinkInfoEditor({
             </CollapsibleMessage>
           </>
         }
-        trailing={<></>}
+        trailing={null}
         wrapTrailing={isMobileView}
         trailingPosition={TrailingPosition.none}
       />

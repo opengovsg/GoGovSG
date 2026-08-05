@@ -14,19 +14,20 @@ const initialState = {
     variant: snackbarVariants.ERROR,
   },
 }
-const root: (state: RootState, action: RootActionType) => RootState = (
-  state = initialState,
+const root: (
+  state: RootState | undefined,
   action: RootActionType,
-) => {
+) => RootState = (state, action) => {
+  const currentState = state ?? initialState
   let nextState = {}
 
   switch (action.type) {
     case CLOSE_SNACKBAR:
       nextState = {
-        ...state,
+        ...currentState,
         snackbarMessage: {
           message: '',
-          variant: state.snackbarMessage.variant,
+          variant: currentState.snackbarMessage.variant,
         },
       }
       break
@@ -56,9 +57,9 @@ const root: (state: RootState, action: RootActionType) => RootState = (
       break
 
     default:
-      return state
+      return currentState
   }
-  return { ...state, ...nextState }
+  return { ...currentState, ...nextState }
 }
 
 export default root

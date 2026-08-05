@@ -26,21 +26,18 @@ function DownloadButton() {
     (state: GoGovReduxState) => state.user.tableConfig,
   )
   return (
-    // Only shown when actions are not minified.
-    <>
-      {!useMinifiedActions() && (
-        <span className={classes.downloadButtonContainer}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => downloadUrls(tableConfig)}
-            className={classes.downloadButton}
-          >
-            <Typography variant="body2">Download links</Typography>
-          </Button>
-        </span>
-      )}
-    </>
+    !useMinifiedActions() && (
+      <span className={classes.downloadButtonContainer}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => downloadUrls(tableConfig)}
+          className={classes.downloadButton}
+        >
+          <Typography variant="body2">Download links</Typography>
+        </Button>
+      </span>
+    )
   )
 }
 

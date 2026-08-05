@@ -1,8 +1,8 @@
 import crossFetch from 'cross-fetch'
 
 export const postJson = (
-  url: string = '',
-  data: object = {},
+  url?: string,
+  data?: object,
   options?: RequestInit,
 ) => {
   const opts = options || {
@@ -13,9 +13,9 @@ export const postJson = (
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify(data),
+    body: JSON.stringify(data ?? {}),
   }
-  return crossFetch(url, opts)
+  return crossFetch(url ?? '', opts)
 }
 
 export const postFormData = (
@@ -33,11 +33,7 @@ export const postFormData = (
   return crossFetch(url, opts)
 }
 
-export const patch = (
-  url: string = '',
-  data: object = {},
-  options?: RequestInit,
-) => {
+export const patch = (url?: string, data?: object, options?: RequestInit) => {
   const opts = options || {
     method: 'PATCH',
     mode: 'same-origin',
@@ -46,14 +42,14 @@ export const patch = (
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify(data),
+    body: JSON.stringify(data ?? {}),
   }
 
-  return crossFetch(url, opts)
+  return crossFetch(url ?? '', opts)
 }
 
 export const patchFormData = (
-  url: string = '',
+  url: string,
   data: FormData,
   options?: RequestInit,
 ) => {
