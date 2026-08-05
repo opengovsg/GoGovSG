@@ -80,7 +80,25 @@ module.exports = () => {
         {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
-          use: 'ts-loader',
+          use: {
+            loader: 'swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                  tsx: true,
+                },
+                transform: {
+                  react: {
+                    runtime: 'classic',
+                  },
+                },
+                // Matches @babel/preset-env's IE11 target for .js files
+                // (babel.config.json) -- this app has real IE11 support code.
+                target: 'es5',
+              },
+            },
+          },
         },
         {
           test: /\.(js|jsx)$/,
