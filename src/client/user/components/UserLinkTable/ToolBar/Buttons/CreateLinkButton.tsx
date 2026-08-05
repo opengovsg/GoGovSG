@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const CreateLinkButton = () => {
+function CreateLinkButton() {
   const dispatch = useDispatch()
   const openCreateUrlModal = () => dispatch(userActions.openCreateUrlModal())
   const classes = useStyles()

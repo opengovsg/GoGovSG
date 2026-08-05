@@ -27,7 +27,7 @@ type PrefixAdornmentProps = {
   children: React.ReactNode
 }
 
-const PrefixAdornment = ({ children }: PrefixAdornmentProps) => {
+function PrefixAdornment({ children }: PrefixAdornmentProps) {
   const classes = usePrefixAdornmentStyles()
   return (
     <InputAdornment className={classes.startAdornment} position="start">
