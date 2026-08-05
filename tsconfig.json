@@ -1,13 +1,6 @@
 {
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "lib",
-    "tests",
-    "**/__tests__"
-  ],
+  "include": ["src"],
+  "exclude": ["node_modules", "lib", "tests", "**/__tests__"],
   "compileOnSave": true,
   "compilerOptions": {
     /* Basic Options */
@@ -22,7 +15,7 @@
     "jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
     // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
-    "sourceMap": true, /* Generates corresponding '.map' file. */
+    "sourceMap": true /* Generates corresponding '.map' file. */,
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
     "outDir": "./build" /* Redirect output structure to the directory. */,
     "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
@@ -51,12 +44,8 @@
     /* Module Resolution Options */
     "moduleResolution": "node16" /* Specify module resolution strategy. */,
     "paths": {
-      "*": [
-        "./src/types/*"
-      ],
-      "@assets/*": [
-        "./src/client/app/assets/gov/*"
-      ]
+      "*": ["./src/types/*"],
+      "@assets/*": ["./src/client/app/assets/gov/*"]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */

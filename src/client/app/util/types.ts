@@ -17,7 +17,7 @@ enum FormState {
 }
 
 type VariantKey = keyof typeof FormState
-export type VariantType = typeof FormState[VariantKey]
+export type VariantType = (typeof FormState)[VariantKey]
 
 type VariantFlags = {
   [key in VariantKey]: {

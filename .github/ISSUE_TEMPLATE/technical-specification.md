@@ -4,7 +4,6 @@ about: Describe an engineering solution for delivery
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 # Technical Proposal
@@ -15,7 +14,7 @@ assignees: ''
 
 Summary of the problem (from the perspective of the user), the context, suggested solution, and the stakeholders.
 
-### Glossary  or Terminology
+### Glossary or Terminology
 
 New terms you come across as you research your design or terms you may suspect your readers/stakeholders not to know.
 
@@ -57,7 +56,7 @@ Pros and cons of the current solution
 
 External components that the solution will interact with and that it will alter
 Dependencies of the current solution
-Pros and cons of the proposed  solution
+Pros and cons of the proposed solution
 Data Model / Schema Changes
 Schema definitions
 New data models
