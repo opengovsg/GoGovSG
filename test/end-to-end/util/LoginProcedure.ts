@@ -1,5 +1,5 @@
 import { testEmail } from './config'
-import { waitForOtpFromMaildev, clearMaildevInbox } from '../../shared/maildev'
+import { clearMaildevInbox, waitForOtpFromMaildev } from '../../shared/maildev'
 import {
   loginButton,
   loginSuccessAlert,
