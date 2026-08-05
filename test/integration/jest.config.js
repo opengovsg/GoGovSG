@@ -8,6 +8,7 @@ if (typeof global.File === 'undefined') {
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  globalSetup: '<rootDir>/globalSetup.ts',
   setupFiles: ['<rootDir>/setup.ts'],
   transform: {
     'node_modules/((@borewit|@tokenizer)/[^/]+|file-type|strtok3|token-types|uint8array-extras)/.+\\.(m)?js$':
