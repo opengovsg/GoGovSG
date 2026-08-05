@@ -98,10 +98,19 @@ module.exports = () => {
     },
     devServer: {
       port: 3000,
-      proxy: {
-        '/api': 'http://localhost:8080',
-        '!/(assets/**|bundle.js|favicon*)': 'http://localhost:8080',
-      },
+      proxy: [
+        {
+          context: ['/api'],
+          target: 'http://localhost:8080',
+        },
+        {
+          context: (pathname: string) =>
+            !pathname.startsWith('/assets/') &&
+            pathname !== '/bundle.js' &&
+            !pathname.startsWith('/favicon'),
+          target: 'http://localhost:8080',
+        },
+      ],
       historyApiFallback: true,
       allowedHosts: 'all',
     },
