@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import fs from 'fs'
 import { customAlphabet } from 'nanoid/async'
+import { waitForOtpFromMaildev } from '../../shared/maildev'
 import {
   API_KEY_SALT,
   API_LOGIN_OTP,
@@ -10,7 +11,7 @@ import {
   LOCAL_EMAIL_URL,
 } from '../config'
 import { createDbUser, deleteDbUser } from './db'
-import { get, postJson } from './requests'
+import { postJson } from './requests'
 
 export const DATETIME_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
 
@@ -64,11 +65,7 @@ export const getAuthCookie: (email: string) => Promise<string> = async (
     email,
   })
   if (!otpRes.ok) throw new Error('Failed to generate OTP')
-  const emailRes = await get(LOCAL_EMAIL_URL)
-  if (!emailRes.ok) throw new Error('Failed to check email for OTP')
-  const emailJson = await emailRes.json()
-  const emailBody = emailJson[emailJson.length - 1].html
-  const emailOTP = JSON.stringify(emailBody).match(/\d{6}/)![0]
+  const emailOTP = await waitForOtpFromMaildev(LOCAL_EMAIL_URL)
   const verifyRes = await postJson(API_LOGIN_VERIFY, {
     email,
     otp: emailOTP,
