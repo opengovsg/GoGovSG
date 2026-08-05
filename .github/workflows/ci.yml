@@ -105,7 +105,8 @@ jobs:
             ${{ runner.OS }}-node-
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
-      - run: npm run dev &
+      - run: docker compose -f docker-compose.yml build
+      - run: docker compose -f docker-compose.yml up -d
       - run: sleep 270
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
