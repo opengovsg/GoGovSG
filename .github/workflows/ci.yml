@@ -106,7 +106,7 @@ jobs:
             ${{ runner.OS }}-
       - run: npm ci --legacy-peer-deps
       - run: npm run dev &
-      - run: sleep 360
+      - run: sleep 270
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
         with:
