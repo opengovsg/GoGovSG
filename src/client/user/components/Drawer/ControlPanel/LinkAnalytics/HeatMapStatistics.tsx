@@ -121,7 +121,10 @@ export default function HeatMapStatistics({
   const data = {
     datasets: [
       {
-        data: clicks.map((point) => ({ x: point.x, y: point.y })),
+        data: clicks.map((point) => ({
+          x: xDomain.indexOf(point.x),
+          y: yDomain.indexOf(point.y),
+        })),
         pointBackgroundColor: clicks.map((point) =>
           interpolateColor(
             theme.palette.secondary.light,
