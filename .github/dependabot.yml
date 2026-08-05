@@ -1,11 +1,190 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# Dependabot version updates for npm.
+# Groups bundle packages that share upgrade constraints or break CI when bumped alone.
+# See: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
+#
+# Group order matters: the first matching group wins.
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: npm
+    directory: /
     schedule:
-      interval: "daily"
+      interval: daily
+    groups:
+      # --- Build toolchains (tight coupling) ---
+
+      webpack:
+        patterns:
+          - webpack
+          - webpack-cli
+          - webpack-dev-server
+          - html-webpack-plugin
+          - clean-webpack-plugin
+          - babel-loader
+
+      typescript:
+        patterns:
+          - typescript
+          - "@typescript-eslint/*"
+          - ts-loader
+          - ts-node
+          - ts-node-dev
+
+      babel:
+        patterns:
+          - "@babel/*"
+
+      inversify:
+        # reflect-metadata major must match inversify peer (e.g. v6 needs ~0.2.x)
+        patterns:
+          - inversify
+          - reflect-metadata
+
+      jest:
+        patterns:
+          - jest
+          - ts-jest
+          - "@types/jest"
+          - eslint-plugin-jest
+          - testcafe
+          - supertest
+          - "@types/supertest"
+          - node-mocks-http
+
+      prettier:
+        patterns:
+          - prettier
+          - eslint-config-prettier
+          - eslint-plugin-prettier
+
+      eslint:
+        patterns:
+          - eslint
+          - eslint-config-*
+          - eslint-plugin-*
+          - eslint-import-resolver-*
+        exclude-patterns:
+          - "@typescript-eslint/*"
+          - eslint-plugin-jest
+
+      # --- UI / client ---
+
+      react:
+        patterns:
+          - react
+          - react-dom
+          - react-*
+          - "@types/react*"
+          - redux
+          - redux-*
+          - history
+
+      material-ui:
+        patterns:
+          - "@material-ui/*"
+
+      chartjs:
+        patterns:
+          - chart.js
+          - "@types/chart.js"
+          - react-chartjs-2
+
+      i18next:
+        patterns:
+          - i18next
+          - i18next-*
+          - react-i18next
+
+      # --- Server / API ---
+
+      express:
+        patterns:
+          - express
+          - body-parser
+          - express-*
+          - helmet
+          - morgan
+          - cookie-parser
+          - cookie-session
+          - "@types/express*"
+          - "@types/cookie*"
+          - "@types/morgan"
+          - "@types/body-parser"
+
+      sequelize-pg:
+        patterns:
+          - sequelize
+          - sequelize-*
+          - pg
+          - pg-*
+
+      redis:
+        patterns:
+          - redis
+          - redis-*
+          - connect-redis
+          - "@types/redis*"
+          - "@types/connect-redis"
+
+      bcrypt:
+        patterns:
+          - bcrypt
+          - "@types/bcrypt"
+
+      datadog:
+        patterns:
+          - dd-trace
+          - "@datadog/*"
+
+      date-fns:
+        patterns:
+          - date-fns
+          - date-fns-*
+
+      # --- Repo hygiene ---
+
+      commitlint:
+        patterns:
+          - "@commitlint/*"
+          - commitizen
+          - cz-conventional-changelog
+
+      husky-lint-staged:
+        patterns:
+          - husky
+          - lint-staged
+
+      # --- Security updates: mirror critical toolchains ---
+
+      webpack-security:
+        applies-to: security-updates
+        patterns:
+          - webpack
+          - webpack-cli
+          - webpack-dev-server
+
+      typescript-security:
+        applies-to: security-updates
+        patterns:
+          - typescript
+          - "@typescript-eslint/*"
+          - ts-jest
+
+      jest-security:
+        applies-to: security-updates
+        patterns:
+          - jest
+          - ts-jest
+          - testcafe
+
+      express-security:
+        applies-to: security-updates
+        patterns:
+          - express
+          - express-*
+
+      react-security:
+        applies-to: security-updates
+        patterns:
+          - react
+          - react-dom
