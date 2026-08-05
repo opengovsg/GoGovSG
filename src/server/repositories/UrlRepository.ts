@@ -544,7 +544,7 @@ export class UrlRepository implements UrlRepositoryInterface {
   private getLongUrlFromCache: (
     shortUrl: string,
   ) => Promise<RedirectDestination> = (shortUrl) => {
-    return new Promise((resolve, reject) =>
+    return new Promise((resolve, reject) => {
       redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
         if (cacheError) {
           logger.error(`Cache lookup failed unexpectedly:\t${cacheError}`)
@@ -581,8 +581,8 @@ export class UrlRepository implements UrlRepositoryInterface {
             // )
           }
         }
-      }),
-    )
+      })
+    })
   }
 
   /**

@@ -255,31 +255,31 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
                 <div className={classes.searchInputIcon}>{getSearchIcon()}</div>
               </div>
             ),
-            endAdornment: (
-              <>
-                {showAdornments && (
-                  <>
-                    {query && (
-                      <IconButton
-                        onClick={onClearQuery}
-                        className={classes.closeButton}
-                      >
-                        <CloseIcon
-                          size={isMobileView ? 20 : 24}
-                          color="#BBBBBB"
-                        />
-                      </IconButton>
-                    )}
-                    <IconButton
-                      className={classes.searchOptionsButton}
-                      onClick={() => setIsSortPanelOpen(true)}
-                    >
-                      <SearchSortIcon size={isMobileView ? 20 : 30} />
-                    </IconButton>
-                  </>
-                )}
-              </>
-            ),
+            endAdornment:
+              showAdornments &&
+              (query ? (
+                <>
+                  <IconButton
+                    onClick={onClearQuery}
+                    className={classes.closeButton}
+                  >
+                    <CloseIcon size={isMobileView ? 20 : 24} color="#BBBBBB" />
+                  </IconButton>
+                  <IconButton
+                    className={classes.searchOptionsButton}
+                    onClick={() => setIsSortPanelOpen(true)}
+                  >
+                    <SearchSortIcon size={isMobileView ? 20 : 30} />
+                  </IconButton>
+                </>
+              ) : (
+                <IconButton
+                  className={classes.searchOptionsButton}
+                  onClick={() => setIsSortPanelOpen(true)}
+                >
+                  <SearchSortIcon size={isMobileView ? 20 : 30} />
+                </IconButton>
+              )),
           }}
           // TextField takes in two separate inputProps and InputProps,
           // each having its own purpose.

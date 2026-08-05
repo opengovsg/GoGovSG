@@ -51,57 +51,53 @@ const FilterDrawer: FunctionComponent<FilterDrawerProps> = ({
     setIsFilterOpen(false)
   }
 
-  return (
-    <>
-      {isMobileView ? (
-        <Drawer
-          anchor="bottom"
-          open={isFilterOpen}
-          onBackdropClick={handleDrawerClose}
-          onEscapeKeyDown={handleDrawerClose}
-        >
-          <Collapse in={isFilterOpen}>
-            <Paper className={classes.filterPanel}>
-              <Typography variant="h4" className={classes.headerText}>
-                Search by
-              </Typography>
-              <Divider />
-              <Grid>
-                {labels.map((label) => (
-                  <SortButton
-                    onClick={() => {
-                      onClick(label)
-                      setIsFilterOpen(false)
-                    }}
-                    key={label}
-                    columnLabel={label}
-                    isSelected={label === selectedLabel}
-                  />
-                ))}
-              </Grid>
-            </Paper>
-          </Collapse>
-        </Drawer>
-      ) : (
-        <Collapse in={isFilterOpen}>
-          <Paper className={classes.filterPanel}>
-            <Grid>
-              {labels.map((label) => (
-                <SortButton
-                  onClick={() => {
-                    onClick(label)
-                    setIsFilterOpen(false)
-                  }}
-                  key={label}
-                  columnLabel={`Search by ${label}`}
-                  isSelected={label === selectedLabel}
-                />
-              ))}
-            </Grid>
-          </Paper>
-        </Collapse>
-      )}
-    </>
+  return isMobileView ? (
+    <Drawer
+      anchor="bottom"
+      open={isFilterOpen}
+      onBackdropClick={handleDrawerClose}
+      onEscapeKeyDown={handleDrawerClose}
+    >
+      <Collapse in={isFilterOpen}>
+        <Paper className={classes.filterPanel}>
+          <Typography variant="h4" className={classes.headerText}>
+            Search by
+          </Typography>
+          <Divider />
+          <Grid>
+            {labels.map((label) => (
+              <SortButton
+                onClick={() => {
+                  onClick(label)
+                  setIsFilterOpen(false)
+                }}
+                key={label}
+                columnLabel={label}
+                isSelected={label === selectedLabel}
+              />
+            ))}
+          </Grid>
+        </Paper>
+      </Collapse>
+    </Drawer>
+  ) : (
+    <Collapse in={isFilterOpen}>
+      <Paper className={classes.filterPanel}>
+        <Grid>
+          {labels.map((label) => (
+            <SortButton
+              onClick={() => {
+                onClick(label)
+                setIsFilterOpen(false)
+              }}
+              key={label}
+              columnLabel={`Search by ${label}`}
+              isSelected={label === selectedLabel}
+            />
+          ))}
+        </Grid>
+      </Paper>
+    </Collapse>
   )
 }
 
