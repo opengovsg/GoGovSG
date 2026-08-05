@@ -121,10 +121,10 @@ if (ffExternalApi) {
     apiKeyAuthMiddleware,
     apiKeyAdminAuthMiddleware,
     preprocess,
-    // eslint-disable-next-line global-require
+    // eslint-disable-next-line node/global-require
     require('./admin-v1'),
   )
-  // eslint-disable-next-line global-require
+  // eslint-disable-next-line node/global-require
   router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
 }
 
