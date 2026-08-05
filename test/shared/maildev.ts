@@ -64,8 +64,8 @@ export const extractOtpFromBody = (body: unknown): string | null => {
 }
 
 /**
- * Return the OTP from the newest new message to `to` that contains a six-digit
- * code. Skips newer non-OTP mail for the same recipient (e.g. Job notices).
+ * Return the OTP from the newest message that is both addressed to `to` and
+ * absent from `afterMessageIds`. Used by the poller and covered by unit tests.
  */
 export const findOtpForRecipient = (
   messages: MaildevMessage[],
@@ -82,16 +82,12 @@ export const findOtpForRecipient = (
       isAddressedTo(message, to),
   )
 
-  for (let index = candidates.length - 1; index >= 0; index -= 1) {
-    const otp = extractOtpFromBody(
-      candidates[index].html ?? candidates[index].text,
-    )
-    if (otp) {
-      return otp
-    }
+  if (candidates.length === 0) {
+    return null
   }
 
-  return null
+  const newest = candidates[candidates.length - 1]
+  return extractOtpFromBody(newest.html ?? newest.text)
 }
 
 export const listMaildevMessages = async (
