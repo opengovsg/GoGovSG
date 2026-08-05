@@ -2,6 +2,9 @@ import fetch from 'cross-fetch'
 
 const DEFAULT_MAILDEV_URL = 'http://localhost:1080/email/'
 const DEFAULT_CLEAR_URL = 'http://localhost:1080/email/all'
+/** Keep polling snappy: integration beforeEach has a 5s Jest hook timeout. */
+const DEFAULT_POLL_INTERVAL_MS = 200
+const DEFAULT_TIMEOUT_MS = 30_000
 
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => {
@@ -116,7 +119,10 @@ export type MaildevRetryOptions = {
 /** Snapshot inbox message ids before triggering an OTP email. */
 export const getMaildevMessageIds = async (
   maildevUrl = DEFAULT_MAILDEV_URL,
-  { timeoutMs = 30_000, intervalMs = 1_000 }: MaildevRetryOptions = {},
+  {
+    timeoutMs = DEFAULT_TIMEOUT_MS,
+    intervalMs = DEFAULT_POLL_INTERVAL_MS,
+  }: MaildevRetryOptions = {},
 ): Promise<string[]> => {
   const deadline = Date.now() + timeoutMs
 
@@ -143,8 +149,8 @@ export const waitForOtpFromMaildev = async ({
   to,
   afterMessageIds,
   maildevUrl = DEFAULT_MAILDEV_URL,
-  timeoutMs = 30_000,
-  intervalMs = 1_000,
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+  intervalMs = DEFAULT_POLL_INTERVAL_MS,
 }: WaitForOtpOptions): Promise<string> => {
   const deadline = Date.now() + timeoutMs
 
