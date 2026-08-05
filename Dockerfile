@@ -33,18 +33,19 @@ RUN wget https://github.com/IBM/plex/blob/master/packages/plex-sans/fonts/comple
 RUN fc-cache -f
 
 # Install libraries
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN npm ci
+RUN corepack enable && corepack prepare pnpm@11.20.0 --activate
+RUN pnpm install --frozen-lockfile
 
 COPY . ./
 
 RUN { \
   echo "Building..."; \
-  npm run build; \
+  pnpm run build; \
   echo "Removing devDependencies for production..."; \
-  npm prune --production; \
+  pnpm prune --prod; \
   }
 
 # Builds and starts Node server for production
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "run", "start"]
