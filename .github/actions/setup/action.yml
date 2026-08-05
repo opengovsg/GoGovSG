@@ -18,4 +18,4 @@ runs:
           ${{ runner.OS }}-
 
     - shell: bash
-      run: npm ci --legacy-peer-deps
+      run: npm ci
