@@ -4,7 +4,7 @@ type StarIconProps = {
   color?: string
 }
 
-export default ({ color = '#6D9067' }: StarIconProps) => {
+export default function ({ color = '#6D9067' }: StarIconProps) {
   return (
     <svg
       width="20"

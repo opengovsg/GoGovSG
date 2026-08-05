@@ -112,7 +112,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const LandingGraphicSliver = () => {
+function LandingGraphicSliver() {
   const classes = useStyles()
   const useTopPaddingMultipler = () => {
     const theme = useTheme()

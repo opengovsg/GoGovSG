@@ -4,7 +4,7 @@ type CsvIconProps = {
   color: string
 }
 
-export default ({ color = '#384A51' }: CsvIconProps) => {
+export default function ({ color = '#384A51' }: CsvIconProps) {
   return (
     <svg
       width="16"
