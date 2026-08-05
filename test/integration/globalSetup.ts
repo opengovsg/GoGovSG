@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import fetch from 'cross-fetch'
 import { Sequelize } from 'sequelize'
 import { DB_URI } from './config'
