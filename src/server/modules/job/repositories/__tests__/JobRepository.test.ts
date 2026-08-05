@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 import SequelizeMock from 'sequelize-mock'
 import { JobStatusEnum } from '../../../../../shared/util/jobs'
 

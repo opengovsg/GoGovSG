@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 /// <reference types="jest" />
 /// <reference types="node" />
 

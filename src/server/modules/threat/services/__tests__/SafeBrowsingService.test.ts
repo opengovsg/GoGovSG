@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 
 describe('SafeBrowsingService', () => {
   const get = jest.fn()
