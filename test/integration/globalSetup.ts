@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import net from 'net'
 import { Sequelize } from 'sequelize'
 import { DB_URI } from './config'
 import setIntegrationServerEnv from './env'
@@ -45,6 +46,33 @@ const waitForPostgres = async (): Promise<void> => {
   throw new Error('Timed out waiting for Postgres')
 }
 
+const waitForPort = async (
+  port: number,
+  host = 'localhost',
+  timeoutMs = WAIT_TIMEOUT_MS,
+): Promise<void> => {
+  const deadline = Date.now() + timeoutMs
+
+  /* eslint-disable no-await-in-loop */
+  while (Date.now() < deadline) {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const socket = net.connect(port, host, () => {
+          socket.end()
+          resolve()
+        })
+        socket.on('error', reject)
+      })
+      return
+    } catch {
+      await sleep(POLL_INTERVAL_MS)
+    }
+  }
+  /* eslint-enable no-await-in-loop */
+
+  throw new Error(`Timed out waiting for ${host}:${port}`)
+}
+
 const usersTableExists = async (): Promise<boolean> =>
   withPostgres(async (sequelize) => {
     const [rows] = await sequelize.query(
@@ -69,4 +97,5 @@ const bootstrapSchemaIfNeeded = async (): Promise<void> => {
 export default async (): Promise<void> => {
   await waitForPostgres()
   await bootstrapSchemaIfNeeded()
+  await waitForPort(8080)
 }
