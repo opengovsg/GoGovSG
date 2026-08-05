@@ -1,0 +1,1065 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "import",
+    "react",
+    "jsx-a11y",
+    "unicorn",
+    "typescript",
+    "jest",
+    "node"
+  ],
+  "jsPlugins": [
+    {
+      "name": "eslint-js",
+      "specifier": "oxlint-plugin-eslint"
+    },
+    {
+      "name": "import-js",
+      "specifier": "eslint-plugin-import"
+    }
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true,
+    "es2018": true,
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
+  "options": {
+    "typeAware": true
+  },
+  "settings": {
+    "propWrapperFunctions": [
+      "forbidExtraProps",
+      "exact",
+      "Object.freeze"
+    ],
+    "react": {
+      "version": "17.0.2"
+    }
+  },
+  "rules": {
+    "array-callback-return": [
+      "error",
+      {
+        "allowImplicit": true
+      }
+    ],
+    "block-scoped-var": "error",
+    "default-case": [
+      "error",
+      {
+        "commentPattern": "^no default$"
+      }
+    ],
+    "default-case-last": "error",
+    "default-param-last": "error",
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "grouped-accessor-pairs": "error",
+    "guard-for-in": "error",
+    "max-classes-per-file": [
+      "error",
+      1
+    ],
+    "no-alert": "warn",
+    "no-caller": "error",
+    "no-case-declarations": "error",
+    "no-constructor-return": "error",
+    "no-else-return": [
+      "error",
+      {
+        "allowElseIf": false
+      }
+    ],
+    "no-empty-function": [
+      "error",
+      {
+        "allow": [
+          "arrowFunctions",
+          "functions",
+          "methods"
+        ]
+      }
+    ],
+    "no-empty-pattern": "error",
+    "no-eval": "error",
+    "no-extend-native": "error",
+    "no-extra-bind": "error",
+    "no-extra-label": "error",
+    "no-fallthrough": "error",
+    "no-global-assign": [
+      "error",
+      {
+        "exceptions": []
+      }
+    ],
+    "no-implied-eval": "error",
+    "no-iterator": "error",
+    "no-labels": [
+      "error",
+      {
+        "allowLoop": false,
+        "allowSwitch": false
+      }
+    ],
+    "no-lone-blocks": "error",
+    "no-loop-func": "error",
+    "no-multi-str": "error",
+    "no-new": "error",
+    "no-new-func": "error",
+    "no-new-wrappers": "error",
+    "no-nonoctal-decimal-escape": "error",
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "acc",
+          "accumulator",
+          "e",
+          "ctx",
+          "context",
+          "req",
+          "request",
+          "res",
+          "response",
+          "$scope",
+          "staticContext"
+        ]
+      }
+    ],
+    "no-proto": "error",
+    "no-redeclare": "error",
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "arguments",
+        "property": "callee",
+        "message": "arguments.callee is deprecated"
+      },
+      {
+        "object": "global",
+        "property": "isFinite",
+        "message": "Please use Number.isFinite instead"
+      },
+      {
+        "object": "self",
+        "property": "isFinite",
+        "message": "Please use Number.isFinite instead"
+      },
+      {
+        "object": "window",
+        "property": "isFinite",
+        "message": "Please use Number.isFinite instead"
+      },
+      {
+        "object": "global",
+        "property": "isNaN",
+        "message": "Please use Number.isNaN instead"
+      },
+      {
+        "object": "self",
+        "property": "isNaN",
+        "message": "Please use Number.isNaN instead"
+      },
+      {
+        "object": "window",
+        "property": "isNaN",
+        "message": "Please use Number.isNaN instead"
+      },
+      {
+        "property": "__defineGetter__",
+        "message": "Please use Object.defineProperty instead."
+      },
+      {
+        "property": "__defineSetter__",
+        "message": "Please use Object.defineProperty instead."
+      },
+      {
+        "object": "Math",
+        "property": "pow",
+        "message": "Use the exponentiation operator (**) instead."
+      }
+    ],
+    "no-return-assign": [
+      "error",
+      "always"
+    ],
+    "no-script-url": "error",
+    "no-self-assign": [
+      "error",
+      {
+        "props": true
+      }
+    ],
+    "no-self-compare": "error",
+    "no-sequences": "error",
+    "no-throw-literal": "error",
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": false,
+        "allowTernary": false,
+        "allowTaggedTemplates": false
+      }
+    ],
+    "no-unused-labels": "error",
+    "no-useless-catch": "error",
+    "no-useless-concat": "error",
+    "no-useless-escape": "error",
+    "no-void": "error",
+    "no-with": "error",
+    "prefer-promise-reject-errors": [
+      "error",
+      {
+        "allowEmptyReject": true
+      }
+    ],
+    "prefer-regex-literals": [
+      "error",
+      {
+        "disallowRedundantWrapping": true
+      }
+    ],
+    "radix": "error",
+    "vars-on-top": "error",
+    "yoda": "error",
+    "for-direction": "error",
+    "getter-return": [
+      "error",
+      {
+        "allowImplicit": true
+      }
+    ],
+    "no-async-promise-executor": "error",
+    "no-await-in-loop": "error",
+    "no-compare-neg-zero": "error",
+    "no-cond-assign": [
+      "error",
+      "always"
+    ],
+    "no-constant-condition": "warn",
+    "no-control-regex": "error",
+    "no-debugger": "error",
+    "no-dupe-else-if": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "error",
+    "no-empty-character-class": "error",
+    "no-ex-assign": "error",
+    "no-extra-boolean-cast": "error",
+    "no-func-assign": "error",
+    "no-import-assign": "error",
+    "no-inner-declarations": "error",
+    "no-invalid-regexp": "error",
+    "no-irregular-whitespace": "error",
+    "no-loss-of-precision": "error",
+    "no-misleading-character-class": "error",
+    "no-obj-calls": "error",
+    "no-promise-executor-return": "error",
+    "no-prototype-builtins": "error",
+    "no-regex-spaces": "error",
+    "no-setter-return": "error",
+    "no-sparse-arrays": "error",
+    "no-template-curly-in-string": "error",
+    "no-unreachable": "error",
+    "no-unsafe-finally": "error",
+    "no-unsafe-negation": "error",
+    "no-unsafe-optional-chaining": [
+      "error",
+      {
+        "disallowArithmeticOperators": true
+      }
+    ],
+    "no-useless-backreference": "error",
+    "use-isnan": "error",
+    "valid-typeof": [
+      "error",
+      {
+        "requireStringLiterals": true
+      }
+    ],
+    "func-names": "warn",
+    "new-cap": [
+      "error",
+      {
+        "newIsCap": true,
+        "newIsCapExceptions": [],
+        "capIsNew": false,
+        "capIsNewExceptions": [
+          "Immutable.Map",
+          "Immutable.Set",
+          "Immutable.List"
+        ]
+      }
+    ],
+    "no-array-constructor": "error",
+    "no-bitwise": "error",
+    "no-continue": "error",
+    "no-lonely-if": "error",
+    "no-multi-assign": [
+      "error"
+    ],
+    "no-nested-ternary": "error",
+    "no-plusplus": "error",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"
+        ],
+        "allowAfterThis": false,
+        "allowAfterSuper": false,
+        "enforceInMethodNames": true
+      }
+    ],
+    "no-unneeded-ternary": [
+      "error",
+      {
+        "defaultAssignment": false
+      }
+    ],
+    "operator-assignment": [
+      "error",
+      "always"
+    ],
+    "prefer-exponentiation-operator": "error",
+    "prefer-object-spread": "error",
+    "unicode-bom": [
+      "error",
+      "never"
+    ],
+    "no-delete-var": "error",
+    "no-label-var": "error",
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "isFinite",
+        "message": "Use Number.isFinite instead https://github.com/airbnb/javascript#standard-library--isfinite"
+      },
+      {
+        "name": "isNaN",
+        "message": "Use Number.isNaN instead https://github.com/airbnb/javascript#standard-library--isnan"
+      },
+      "addEventListener",
+      "blur",
+      "close",
+      "closed",
+      "confirm",
+      "defaultStatus",
+      "defaultstatus",
+      "event",
+      "external",
+      "find",
+      "focus",
+      "frameElement",
+      "frames",
+      "history",
+      "innerHeight",
+      "innerWidth",
+      "length",
+      "location",
+      "locationbar",
+      "menubar",
+      "moveBy",
+      "moveTo",
+      "name",
+      "onblur",
+      "onerror",
+      "onfocus",
+      "onload",
+      "onresize",
+      "onunload",
+      "open",
+      "opener",
+      "opera",
+      "outerHeight",
+      "outerWidth",
+      "pageXOffset",
+      "pageYOffset",
+      "parent",
+      "print",
+      "removeEventListener",
+      "resizeBy",
+      "resizeTo",
+      "screen",
+      "screenLeft",
+      "screenTop",
+      "screenX",
+      "screenY",
+      "scroll",
+      "scrollbars",
+      "scrollBy",
+      "scrollTo",
+      "scrollX",
+      "scrollY",
+      "self",
+      "status",
+      "statusbar",
+      "stop",
+      "toolbar",
+      "top"
+    ],
+    "no-shadow-restricted-names": "error",
+    "constructor-super": "error",
+    "no-class-assign": "error",
+    "no-const-assign": "error",
+    "no-dupe-class-members": "error",
+    "no-this-before-super": "error",
+    "no-useless-computed-key": "error",
+    "no-useless-constructor": "error",
+    "no-useless-rename": [
+      "error",
+      {
+        "ignoreDestructuring": false,
+        "ignoreImport": false,
+        "ignoreExport": false
+      }
+    ],
+    "no-var": "error",
+    "object-shorthand": [
+      "error",
+      "always",
+      {
+        "ignoreConstructors": false,
+        "avoidQuotes": true
+      }
+    ],
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": true
+      }
+    ],
+    "prefer-destructuring": [
+      "error",
+      {
+        "VariableDeclarator": {
+          "array": false,
+          "object": true
+        },
+        "AssignmentExpression": {
+          "array": true,
+          "object": false
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "prefer-numeric-literals": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+    "prefer-template": "error",
+    "require-yield": "error",
+    "symbol-description": "error",
+    "import/no-named-as-default": "warn",
+    "import/no-named-as-default-member": "warn",
+    "import/no-mutable-exports": "error",
+    "import/no-amd": "error",
+    "import/no-duplicates": "error",
+    "import/newline-after-import": "error",
+    "import/prefer-default-export": "error",
+    "import/no-absolute-path": "error",
+    "import/no-dynamic-require": "error",
+    "import/no-webpack-loader-syntax": "error",
+    "import/no-named-default": "error",
+    "import/no-self-import": "error",
+    "react/jsx-boolean-value": [
+      "error",
+      "never",
+      {
+        "always": []
+      }
+    ],
+    "react/jsx-no-undef": "error",
+    "react/jsx-pascal-case": [
+      "error",
+      {
+        "allowAllCaps": true,
+        "ignore": []
+      }
+    ],
+    "react/no-danger": "warn",
+    "react/no-did-update-set-state": "error",
+    "react/no-will-update-set-state": "error",
+    "react/no-is-mounted": "error",
+    "react/no-unknown-property": "error",
+    "react/prefer-es6-class": [
+      "error",
+      "always"
+    ],
+    "react/react-in-jsx-scope": "error",
+    "react/self-closing-comp": "error",
+    "react/jsx-no-target-blank": [
+      "error",
+      {
+        "enforceDynamicLinks": "always"
+      }
+    ],
+    "react/jsx-no-comment-textnodes": "error",
+    "react/no-render-return-value": "error",
+    "react/no-find-dom-node": "error",
+    "react/no-danger-with-children": "error",
+    "react/style-prop-object": "error",
+    "react/no-unescaped-entities": "error",
+    "react/no-children-prop": "error",
+    "react/no-array-index-key": "error",
+    "react/void-dom-elements-no-children": "error",
+    "react/no-redundant-should-component-update": "error",
+    "react/jsx-curly-brace-presence": [
+      "error",
+      {
+        "props": "never",
+        "children": "never"
+      }
+    ],
+    "react/button-has-type": [
+      "error",
+      {
+        "button": true,
+        "submit": true,
+        "reset": false
+      }
+    ],
+    "react/no-this-in-sfc": "error",
+    "react/jsx-fragments": [
+      "error",
+      "syntax"
+    ],
+    "react/state-in-constructor": [
+      "error",
+      "always"
+    ],
+    "react/jsx-no-script-url": [
+      "error",
+      [
+        {
+          "name": "Link",
+          "props": [
+            "to"
+          ]
+        }
+      ]
+    ],
+    "react/jsx-no-useless-fragment": "error",
+    "react/jsx-no-constructed-context-values": "error",
+    "react/no-namespace": "error",
+    "jsx-a11y/alt-text": [
+      "error",
+      {
+        "elements": [
+          "img",
+          "object",
+          "area",
+          "input[type=\"image\"]"
+        ],
+        "img": [],
+        "object": [],
+        "area": [],
+        "input[type=\"image\"]": []
+      }
+    ],
+    "jsx-a11y/anchor-has-content": "error",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": [
+          "Link"
+        ],
+        "specialLink": [
+          "to"
+        ],
+        "aspects": [
+          "noHref",
+          "invalidHref",
+          "preferButton"
+        ]
+      }
+    ],
+    "jsx-a11y/aria-activedescendant-has-tabindex": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-proptypes": "error",
+    "jsx-a11y/aria-role": [
+      "error",
+      {
+        "ignoreNonDOM": false
+      }
+    ],
+    "jsx-a11y/aria-unsupported-elements": "error",
+    "jsx-a11y/click-events-have-key-events": "error",
+    "jsx-a11y/control-has-associated-label": [
+      "error",
+      {
+        "labelAttributes": [
+          "label"
+        ],
+        "controlComponents": [],
+        "ignoreElements": [
+          "audio",
+          "canvas",
+          "embed",
+          "input",
+          "textarea",
+          "tr",
+          "video"
+        ],
+        "ignoreRoles": [
+          "grid",
+          "listbox",
+          "menu",
+          "menubar",
+          "radiogroup",
+          "row",
+          "tablist",
+          "toolbar",
+          "tree",
+          "treegrid"
+        ],
+        "depth": 5
+      }
+    ],
+    "jsx-a11y/heading-has-content": [
+      "error",
+      {
+        "components": [
+          ""
+        ]
+      }
+    ],
+    "jsx-a11y/html-has-lang": "error",
+    "jsx-a11y/iframe-has-title": "error",
+    "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y/interactive-supports-focus": "error",
+    "jsx-a11y/lang": "error",
+    "jsx-a11y/media-has-caption": [
+      "error",
+      {
+        "audio": [],
+        "video": [],
+        "track": []
+      }
+    ],
+    "jsx-a11y/mouse-events-have-key-events": "error",
+    "jsx-a11y/no-access-key": "error",
+    "jsx-a11y/no-autofocus": [
+      "error",
+      {
+        "ignoreNonDOM": true
+      }
+    ],
+    "jsx-a11y/no-distracting-elements": [
+      "error",
+      {
+        "elements": [
+          "marquee",
+          "blink"
+        ]
+      }
+    ],
+    "jsx-a11y/no-interactive-element-to-noninteractive-role": [
+      "error",
+      {
+        "tr": [
+          "none",
+          "presentation"
+        ]
+      }
+    ],
+    "jsx-a11y/no-noninteractive-element-interactions": [
+      "error",
+      {
+        "handlers": [
+          "onClick",
+          "onMouseDown",
+          "onMouseUp",
+          "onKeyPress",
+          "onKeyDown",
+          "onKeyUp"
+        ]
+      }
+    ],
+    "jsx-a11y/no-noninteractive-element-to-interactive-role": [
+      "error",
+      {
+        "ul": [
+          "listbox",
+          "menu",
+          "menubar",
+          "radiogroup",
+          "tablist",
+          "tree",
+          "treegrid"
+        ],
+        "ol": [
+          "listbox",
+          "menu",
+          "menubar",
+          "radiogroup",
+          "tablist",
+          "tree",
+          "treegrid"
+        ],
+        "li": [
+          "menuitem",
+          "option",
+          "row",
+          "tab",
+          "treeitem"
+        ],
+        "table": [
+          "grid"
+        ],
+        "td": [
+          "gridcell"
+        ]
+      }
+    ],
+    "jsx-a11y/no-noninteractive-tabindex": [
+      "error",
+      {
+        "tags": [],
+        "roles": [
+          "tabpanel"
+        ]
+      }
+    ],
+    "jsx-a11y/no-redundant-roles": "error",
+    "jsx-a11y/no-static-element-interactions": [
+      "error",
+      {
+        "handlers": [
+          "onClick",
+          "onMouseDown",
+          "onMouseUp",
+          "onKeyPress",
+          "onKeyDown",
+          "onKeyUp"
+        ]
+      }
+    ],
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/role-supports-aria-props": "error",
+    "jsx-a11y/scope": "error",
+    "jsx-a11y/tabindex-no-positive": "error",
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "no-unreachable-loop": [
+      "error",
+      {
+        "ignore": []
+      }
+    ],
+    "import/named": [
+      "error"
+    ],
+    "import/export": [
+      "error"
+    ],
+    "react/require-render-return": [
+      "error"
+    ],
+    "node/global-require": "error",
+    "node/no-new-require": "error",
+    "node/no-path-concat": "error",
+    "unicorn/no-new-buffer": "error",
+    "eslint-js/one-var": [
+      "error",
+      "never"
+    ],
+    "eslint-js/camelcase": [
+      "error",
+      {
+        "properties": "never",
+        "ignoreDestructuring": false,
+        "ignoreImports": false,
+        "ignoreGlobals": false
+      }
+    ],
+    "eslint-js/spaced-comment": [
+      "error",
+      "always",
+      {
+        "line": {
+          "exceptions": [
+            "-",
+            "+"
+          ],
+          "markers": [
+            "=",
+            "!",
+            "/"
+          ]
+        },
+        "block": {
+          "exceptions": [
+            "-",
+            "+"
+          ],
+          "markers": [
+            "=",
+            "!",
+            ":",
+            "::"
+          ],
+          "balanced": true
+        }
+      }
+    ],
+    "eslint-js/lines-around-directive": [
+      "error",
+      {
+        "before": "always",
+        "after": "always"
+      }
+    ],
+    "eslint-js/newline-per-chained-call": [
+      "error",
+      {
+        "ignoreChainWithDepth": 4
+      }
+    ],
+    "eslint-js/no-return-await": "error",
+    "eslint-js/no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ForInStatement",
+        "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+      },
+      {
+        "selector": "ForOfStatement",
+        "message": "iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations."
+      },
+      {
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+      }
+    ],
+    "import-js/no-useless-path-segments": [
+      "error",
+      {
+        "commonjs": true
+      }
+    ],
+    "import-js/no-relative-packages": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "rules": {
+        "no-use-before-define": [
+          "error"
+        ],
+        "react/jsx-no-duplicate-props": "error",
+        "react/no-string-refs": "error",
+        "react/jsx-filename-extension": [
+          "error",
+          {
+            "extensions": [
+              ".js",
+              ".jsx",
+              ".ts",
+              ".tsx"
+            ]
+          }
+        ],
+        "react/jsx-props-no-spreading": [
+          "error",
+          {
+            "html": "enforce",
+            "custom": "enforce",
+            "explicitSpread": "ignore",
+            "exceptions": []
+          }
+        ],
+        "react/no-unstable-nested-components": [
+          "error",
+          {
+            "allowAsProps": true
+          }
+        ],
+        "jsx-a11y/label-has-associated-control": [
+          "error",
+          {
+            "labelComponents": [],
+            "labelAttributes": [],
+            "controlComponents": [],
+            "assert": "both",
+            "depth": 25
+          }
+        ],
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/prefer-to-have-length": "warn",
+        "jest/valid-expect": "error",
+        "typescript/dot-notation": [
+          "error",
+          {
+            "allowKeywords": true,
+            "allowPattern": ""
+          }
+        ],
+        "typescript/consistent-return": "error",
+        "typescript/no-deprecated": "warn",
+        "import-js/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": [
+              "**/test/end-to-end/**",
+              "**/test/integration/**",
+              "**/*.test.ts",
+              "webpack.config.ts"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/*.js",
+        "**/*.jsx"
+      ],
+      "rules": {
+        "no-use-before-define": [
+          "error",
+          {
+            "functions": true,
+            "classes": true,
+            "variables": true
+          }
+        ],
+        "react/jsx-no-duplicate-props": "error",
+        "react/no-string-refs": "warn",
+        "react/no-unstable-nested-components": "error",
+        "class-methods-use-this": [
+          "error",
+          {
+            "exceptMethods": [
+              "render",
+              "getInitialState",
+              "getDefaultProps",
+              "getChildContext",
+              "componentWillMount",
+              "UNSAFE_componentWillMount",
+              "componentDidMount",
+              "componentWillReceiveProps",
+              "UNSAFE_componentWillReceiveProps",
+              "shouldComponentUpdate",
+              "componentWillUpdate",
+              "UNSAFE_componentWillUpdate",
+              "componentDidUpdate",
+              "componentWillUnmount",
+              "componentDidCatch",
+              "getSnapshotBeforeUpdate"
+            ]
+          }
+        ],
+        "no-useless-return": "error",
+        "no-shadow": "error",
+        "no-unused-vars": [
+          "error",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": true
+          }
+        ],
+        "import/first": "error",
+        "import/extensions": [
+          "error",
+          "ignorePackages",
+          {
+            "js": "never",
+            "jsx": "never",
+            "ts": "never",
+            "tsx": "never"
+          }
+        ],
+        "import/no-cycle": "error",
+        "react/function-component-definition": [
+          "error",
+          {
+            "namedComponents": [
+              "function-declaration",
+              "function-expression"
+            ],
+            "unnamedComponents": "function-expression"
+          }
+        ],
+        "no-undef": "error",
+        "no-restricted-exports": [
+          "error",
+          {
+            "restrictedNamedExports": [
+              "default",
+              "then"
+            ]
+          }
+        ],
+        "eslint-js/consistent-return": "error",
+        "eslint-js/dot-notation": [
+          "error",
+          {
+            "allowKeywords": true,
+            "allowPattern": ""
+          }
+        ],
+        "import-js/no-import-module-exports": [
+          "error",
+          {
+            "exceptions": []
+          }
+        ],
+        "import-js/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": [
+              "test/**",
+              "tests/**",
+              "spec/**",
+              "**/__tests__/**",
+              "**/__mocks__/**",
+              "test.{js,jsx}",
+              "test-*.{js,jsx}",
+              "**/*{.,_}{test,spec}.{js,jsx}",
+              "**/jest.config.js",
+              "**/jest.setup.js",
+              "**/vue.config.js",
+              "**/webpack.config.js",
+              "**/webpack.config.*.js",
+              "**/rollup.config.js",
+              "**/rollup.config.*.js",
+              "**/gulpfile.js",
+              "**/gulpfile.*.js",
+              "**/Gruntfile{,.js}",
+              "**/protractor.conf.js",
+              "**/protractor.conf.*.js",
+              "**/karma.conf.js",
+              "**/.eslintrc.js"
+            ],
+            "optionalDependencies": false
+          }
+        ]
+      }
+    }
+  ]
+}
