@@ -90,7 +90,7 @@ let otpLimit: number = 5
 // All session variables will now be casted to non-nullable strings
 transporterOpts = {
   host: process.env.SES_HOST as string,
-  port: process.env.SES_PORT as string,
+  port: Number(process.env.SES_PORT),
   pool: true,
   maxMessages: 100,
   maxConnections: 20,
