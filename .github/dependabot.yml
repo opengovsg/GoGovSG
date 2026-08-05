@@ -25,7 +25,6 @@ updates:
       typescript:
         patterns:
           - typescript
-          - "@typescript-eslint/*"
           - ts-loader
           - ts-node
           - ts-node-dev
@@ -45,27 +44,21 @@ updates:
           - jest
           - ts-jest
           - "@types/jest"
-          - eslint-plugin-jest
           - testcafe
           - supertest
           - "@types/supertest"
           - node-mocks-http
 
-      prettier:
+      # oxlint-tsgolint's version encodes the TypeScript version it embeds and
+      # must stay paired with oxlint; oxlint-plugin-eslint tracks oxlint's release
+      # cadence. eslint-plugin-import is a jsPlugin loaded by oxlint at lint time.
+      oxc:
         patterns:
-          - prettier
-          - eslint-config-prettier
-          - eslint-plugin-prettier
-
-      eslint:
-        patterns:
-          - eslint
-          - eslint-config-*
-          - eslint-plugin-*
-          - eslint-import-resolver-*
-        exclude-patterns:
-          - "@typescript-eslint/*"
-          - eslint-plugin-jest
+          - oxlint
+          - oxlint-tsgolint
+          - oxlint-plugin-eslint
+          - oxfmt
+          - eslint-plugin-import
 
       # --- UI / client ---
 
@@ -167,7 +160,6 @@ updates:
         applies-to: security-updates
         patterns:
           - typescript
-          - "@typescript-eslint/*"
           - ts-jest
 
       jest-security:
