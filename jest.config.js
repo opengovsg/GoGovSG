@@ -2,13 +2,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   transform: {
-    'node_modules/((@borewit|@tokenizer)/[^/]+|file-type|strtok3|token-types|uint8array-extras)/.+\\.(m)?js$':
-      [
-        'babel-jest',
-        {
-          presets: [['@babel/preset-env', { targets: { node: 'current' } }]],
-        },
-      ],
     '^.+\\.tsx?$': [
       'ts-jest',
       {
@@ -25,7 +18,7 @@ module.exports = {
   },
   collectCoverageFrom: ['./src/server/**/*.{ts,js}'],
   coveragePathIgnorePatterns: ['./node_modules/', './test/', '__tests__'],
-  setupFiles: ['./test/server/polyfills.js', './test/server/setup.ts'],
+  setupFiles: ['./test/server/setup.ts'],
   modulePathIgnorePatterns: ['./test/end-to-end', './test/integration'],
   // Jest 26 does not resolve package.json "exports"; map CJS entry points explicitly.
   moduleNameMapper: {
@@ -34,7 +27,4 @@ module.exports = {
     '^zod/v4/core$': '<rootDir>/node_modules/zod/v4/core/index.cjs',
     '^zod/v4$': '<rootDir>/node_modules/zod/v4/index.cjs',
   },
-  transformIgnorePatterns: [
-    '/node_modules/(?!(sanitize-html|htmlparser2|file-type|strtok3|token-types|uint8array-extras|@tokenizer|@borewit)/)',
-  ],
 }
