@@ -36,8 +36,12 @@ container
   .bind<LinkStatisticsService>(DependencyIds.linkStatisticsService)
   .toConstantValue({ getLinkStatistics, updateLinkStatistics })
 
-// Importing setup app
-import app from './setup'
+// Importing setup app.
+// A dynamic require, not a static import: ES imports are hoisted above the
+// container.bind() mock registrations above by the compiler, but setup.ts's
+// bindInversifyDependencies() only binds an identifier if nothing else has
+// claimed it yet -- these mocks need to run first.
+const app = require('./setup').default
 
 describe('GET /api/link-stats', () => {
   test('get statistics of mocked link', async () => {
