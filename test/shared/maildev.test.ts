@@ -81,6 +81,40 @@ describe('maildev OTP helpers', () => {
 
     expect(findOtpForRecipient(inbox, 'user@open.gov.sg', ['stale'])).toBeNull()
   })
+
+  it('returns the newest OTP when a newer non-OTP email follows', () => {
+    const inbox = [
+      message({
+        id: 'otp',
+        html: '<p>Your OTP is 111111</p>',
+        to: [{ address: 'user@open.gov.sg' }],
+      }),
+      message({
+        id: 'notice',
+        html: '<p>Your QR codes are ready</p>',
+        to: [{ address: 'user@open.gov.sg' }],
+      }),
+    ]
+
+    expect(findOtpForRecipient(inbox, 'user@open.gov.sg', [])).toBe('111111')
+  })
+
+  it('prefers the newest OTP-bearing message', () => {
+    const inbox = [
+      message({
+        id: 'old-otp',
+        html: '<p>111111</p>',
+        to: [{ address: 'user@open.gov.sg' }],
+      }),
+      message({
+        id: 'new-otp',
+        html: '<p>222222</p>',
+        to: [{ address: 'user@open.gov.sg' }],
+      }),
+    ]
+
+    expect(findOtpForRecipient(inbox, 'user@open.gov.sg', [])).toBe('222222')
+  })
 })
 
 describe('getMaildevMessageIds', () => {
