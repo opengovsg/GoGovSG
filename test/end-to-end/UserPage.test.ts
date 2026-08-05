@@ -1,4 +1,3 @@
-import { Selector } from 'testcafe'
 import { parse } from 'csv-parse'
 import { createReadStream } from 'fs'
 import {
@@ -22,6 +21,7 @@ import {
   filterSortPanel,
   generateRandomString,
   generateUrlImage,
+  linkRowByShortUrl,
   longUrl,
   longUrlTextField,
   mostNumberOfVisitsButton,
@@ -74,7 +74,7 @@ test('User page test on filter search by link', async (t) => {
 
   // Save short url 2 - inactive link
   const generatedUrlInactive = await shortUrlTextField.value
-  const linkRowInactive = Selector(`h6[title="${generatedUrlInactive}"]`)
+  const linkRowInactive = linkRowByShortUrl(generatedUrlInactive)
 
   await t
     .typeText(longUrlTextField, `${shortUrl}`)
@@ -193,7 +193,7 @@ test('User page test on filter search by tags', async (t) => {
   // Save short url 1: link with tag 1
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
   const generatedUrl1 = await shortUrlTextField.value
-  const linkTableRow1 = Selector(`h6[title="${generatedUrl1}"]`).parent('tr')
+  const linkTableRow1 = linkRowByShortUrl(generatedUrl1).parent('tr')
   await t
     .typeText(longUrlTextField, shortUrl)
     .click(tagsAutocompleteInput)
@@ -205,7 +205,7 @@ test('User page test on filter search by tags', async (t) => {
   // Save short url 2: link with tags 1 and 2
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
   const generatedUrl2 = await shortUrlTextField.value
-  const linkTableRow2 = Selector(`h6[title="${generatedUrl2}"]`).parent('tr')
+  const linkTableRow2 = linkRowByShortUrl(generatedUrl2).parent('tr')
   await t
     .typeText(longUrlTextField, shortUrl)
     .click(tagsAutocompleteInput)
@@ -218,7 +218,7 @@ test('User page test on filter search by tags', async (t) => {
   // Save short url 3: file with tags 2 and 3
   await t.click(createLinkButton.nth(0)).click(generateUrlImage)
   const generatedUrl3 = await shortUrlTextField.value
-  const linkTableRow3 = Selector(`h6[title="${generatedUrl3}"]`).parent('tr')
+  const linkTableRow3 = linkRowByShortUrl(generatedUrl3).parent('tr')
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
   await t
     .click(fileTab)
