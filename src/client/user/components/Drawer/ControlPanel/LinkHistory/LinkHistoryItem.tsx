@@ -72,13 +72,9 @@ type LinkHistoryItemProps = {
 function TagList({ tagStrings }: { tagStrings: string }) {
   const classes = useStyles()
   const tags = tagStrings.split(TAG_SEPARATOR)
-  return (
-    <>
-      {tagStrings === ''
-        ? 'no tag'
-        : tags.map((tag) => <Chip label={tag} className={classes.chip} />)}
-    </>
-  )
+  return tagStrings === ''
+    ? 'no tag'
+    : tags.map((tag) => <Chip label={tag} className={classes.chip} />)
 }
 
 export default function LinkHistoryItem({

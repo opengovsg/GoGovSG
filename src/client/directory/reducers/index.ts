@@ -12,9 +12,10 @@ export const initialState: DirectoryState = {
 }
 
 const directory: (
-  state: DirectoryState,
+  state: DirectoryState | undefined,
   action: DirectoryActionType,
-) => DirectoryState = (state = initialState, action) => {
+) => DirectoryState = (state, action) => {
+  const currentState = state ?? initialState
   let nextState: Partial<DirectoryState> = {}
   switch (action.type) {
     case SET_DIRECTORY_RESULTS:
@@ -28,9 +29,9 @@ const directory: (
       nextState = initialState
       break
     default:
-      break
+      return currentState
   }
-  return { ...state, ...nextState }
+  return { ...currentState, ...nextState }
 }
 
 export default directory
