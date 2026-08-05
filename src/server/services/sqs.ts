@@ -1,5 +1,5 @@
-import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs'
 import { inject, injectable } from 'inversify'
+import { SQS } from 'aws-sdk'
 import { DependencyIds } from '../constants'
 import { logger, sqsBulkQRCodeStartUrl } from '../config'
 
@@ -9,21 +9,21 @@ export interface SQSServiceInterface {
 
 @injectable()
 export class SQSService implements SQSServiceInterface {
-  private sqsClient: SQSClient
+  private sqsClient: SQS
 
-  constructor(@inject(DependencyIds.sqsClient) sqsClient: SQSClient) {
+  constructor(@inject(DependencyIds.sqsClient) sqsClient: SQS) {
     this.sqsClient = sqsClient
   }
 
   sendMessage: (message: any) => Promise<void> = async (message) => {
     logger.info(`sending message ${message} to SQS`)
     try {
-      const resp = await this.sqsClient.send(
-        new SendMessageCommand({
+      const resp = await this.sqsClient
+        .sendMessage({
           MessageBody: JSON.stringify(message),
           QueueUrl: sqsBulkQRCodeStartUrl,
-        }),
-      )
+        })
+        .promise()
       logger.info(`SQS sendMessage success, messageId: ${resp.MessageId}`)
     } catch (err) {
       logger.error(`Failed to send SQS message ${message}`)
