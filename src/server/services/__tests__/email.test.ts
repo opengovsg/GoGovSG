@@ -4,7 +4,7 @@ import {
   BULK_QR_DOWNLOAD_MAPPINGS,
 } from '../../../shared/constants'
 
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 
 /**
  * Unit tests for Mailer.

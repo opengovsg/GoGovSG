@@ -159,7 +159,7 @@ export class JobManagementService implements interfaces.JobManagementService {
     }
 
     let attempts = 0
-    // eslint-disable-next-line consistent-return
+    // eslint-disable-next-line typescript/consistent-return
     const executePoll = async (resolve: any, reject: any) => {
       if (attempts === jobPollAttempts) {
         return reject(new Error('Exceeded max attempts'))

@@ -16,7 +16,7 @@ export const useWindowSize = () => {
     if (!isClient) return
     const handleResize = () => setWindowSize(getSize())
     window.addEventListener('resize', handleResize)
-    // eslint-disable-next-line consistent-return
+    // eslint-disable-next-line typescript/consistent-return
     return () => window.removeEventListener('resize', handleResize)
   }, [])
   return windowSize

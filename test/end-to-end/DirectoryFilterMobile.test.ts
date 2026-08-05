@@ -20,7 +20,7 @@ fixture(`Directory Filter Mobile view`)
   })
 
 test('Populate with links', async (t) => {
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  // eslint-disable-next-line no-use-before-define
   const createdLinks = await singleLinkCreationProcedure(t)
   // eslint-disable-next-line no-param-reassign
   t.fixtureCtx.createdLinks = createdLinks

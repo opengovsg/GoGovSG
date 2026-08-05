@@ -14,7 +14,7 @@ export const urlRetrievalSchema = Joi.object({
 })
 
 export const userUrlsQueryConditions = Joi.object({
-  // eslint-disable-next-line newline-per-chained-call
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
   limit: Joi.number().integer().min(0).max(1000).optional(),
   offset: Joi.number().integer().min(0).optional(),
   orderBy: Joi.string().valid('createdAt', 'clicks').optional(),

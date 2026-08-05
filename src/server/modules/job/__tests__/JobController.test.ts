@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 import httpMocks from 'node-mocks-http'
 import _ from 'lodash'
 import express from 'express'

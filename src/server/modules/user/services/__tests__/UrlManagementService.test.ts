@@ -141,7 +141,7 @@ describe('UrlManagementService', () => {
       jest.mock('../../../../config', () => ({
         apiLinkRandomStrLength: 4,
       }))
-      // eslint-disable-next-line global-require
+      // eslint-disable-next-line node/global-require
       const { UrlManagementService } = require('..')
       const service = new UrlManagementService(userRepository, urlRepository)
 
