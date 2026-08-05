@@ -21,13 +21,12 @@ updates:
           - html-webpack-plugin
           - clean-webpack-plugin
           - babel-loader
+          - swc-loader
 
       typescript:
         patterns:
           - typescript
-          - ts-loader
-          - ts-node
-          - ts-node-dev
+          - tsx
 
       babel:
         patterns:
@@ -42,7 +41,8 @@ updates:
       jest:
         patterns:
           - jest
-          - ts-jest
+          - '@swc/jest'
+          - '@swc/core'
           - '@types/jest'
           - testcafe
           - supertest
@@ -160,13 +160,12 @@ updates:
         applies-to: security-updates
         patterns:
           - typescript
-          - ts-jest
 
       jest-security:
         applies-to: security-updates
         patterns:
           - jest
-          - ts-jest
+          - '@swc/jest'
           - testcafe
 
       express-security:
