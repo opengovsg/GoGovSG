@@ -17,7 +17,7 @@ import {
 import filterSortIcon from '@assets/components/user/user-link-table/toolbar/filtersort-icon.svg'
 import FilterSortPanel from '../FilterSortPanel'
 import userActions from '../../../../actions'
-import useSearchInputHeight from './searchInputHeight'
+import getSearchInputHeight from './searchInputHeight'
 import LinkIcon from '../../../../widgets/LinkIcon'
 import TagIcon from '../../../../widgets/TagIcon'
 import ArrowDownIcon from '../../../../../app/components/widgets/ArrowDownIcon'
@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 // Height of the text field in the search input.
-const textFieldHeight = useSearchInputHeight()
+const textFieldHeight = getSearchInputHeight()
 
 // Search Input field.
 function SearchInput() {
@@ -116,7 +116,7 @@ function SearchInput() {
     (state: GoGovReduxState) => state.user.tableConfig,
   )
   const { isTag, searchInput } = tableConfig
-  const searchInputHeight = useSearchInputHeight()
+  const searchInputHeight = getSearchInputHeight()
   const classes = useStyles({ textFieldHeight, searchInputHeight })
 
   const setSearchInput = (searchInput: string) => {

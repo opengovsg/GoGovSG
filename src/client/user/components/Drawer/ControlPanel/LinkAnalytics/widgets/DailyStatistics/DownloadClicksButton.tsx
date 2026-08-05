@@ -6,7 +6,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles'
 import rootActions from '../../../../../../../app/components/pages/RootPage/actions'
 import downloadIcon from '../../assets/download.svg'
 import { get } from '../../../../../../../app/util/requests'
-import useIsIE from '../../../../../../../app/components/BaseLayout/util/ie'
+import checkIsIE from '../../../../../../../app/components/BaseLayout/util/ie'
 import { useDrawerState } from '../../../../index'
 import { GAEvent } from '../../../../../../../app/util/ga'
 
@@ -27,7 +27,7 @@ async function downloadClicks(shortUrl: string, onError: () => void) {
     type: 'text/csv;charset=utf-8',
   })
 
-  if (useIsIE()) {
+  if (checkIsIE()) {
     // @ts-ignore: `msSaveBlob` used for old IE versions has been removed as of TypeScript 4.4
     navigator.msSaveBlob(blob, 'clicks.csv')
   } else {
