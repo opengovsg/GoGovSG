@@ -3,31 +3,45 @@ import { response } from 'express'
 
 export {}
 
-/* eslint-disable func-names */
-response.ok = function (content) {
+/* eslint-disable func-names, @typescript-eslint/no-explicit-any */
+response.ok = function (content: Buffer | object | string | undefined) {
   this.status(200).send(content)
 }
-response.created = function (content) {
+response.created = function (content: Buffer | object | string | undefined) {
   this.status(201).send(content)
 }
-response.badRequest = function (content) {
+;(response as any).badRequest = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(400).send(content)
 }
-response.unauthorized = function (content) {
+;(response as any).unauthorized = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(401).send(content)
 }
-response.forbidden = function (content) {
+;(response as any).forbidden = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(403).send(content)
 }
-response.notFound = function (content) {
+;(response as any).notFound = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(404).send(content)
 }
-response.unsupportedMediaType = function (content) {
+;(response as any).unsupportedMediaType = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(415).send(content)
 }
-response.unprocessableEntity = function (content) {
+;(response as any).unprocessableEntity = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(422).send(content)
 }
-response.serverError = function (content) {
+;(response as any).serverError = function (
+  content: Buffer | object | string | undefined,
+) {
   this.status(500).send(content)
 }

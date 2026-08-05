@@ -1,6 +1,4 @@
-import 'reflect-metadata'
 import { File } from 'node:buffer'
-import './config'
 
 if (typeof globalThis.File === 'undefined') {
   globalThis.File = File

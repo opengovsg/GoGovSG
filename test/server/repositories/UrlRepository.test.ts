@@ -58,23 +58,19 @@ jest.mock('../../../src/server/util/sequelize', () => ({
 }))
 
 const s3Client = new S3Client()
-const s3Send = jest.spyOn(s3Client, 'send').mockResolvedValue({})
+const s3Send = jest
+  .spyOn(s3Client, 'send')
+  .mockResolvedValue({} as Awaited<ReturnType<S3Client['send']>>)
 
 const getPutObjectCalls = () =>
   s3Send.mock.calls
     .map(([command]) => command)
-    .filter(
-      (command): command is PutObjectCommand =>
-        command instanceof PutObjectCommand,
-    )
+    .filter((command) => command instanceof PutObjectCommand)
 
 const getPutObjectAclCalls = () =>
   s3Send.mock.calls
     .map(([command]) => command)
-    .filter(
-      (command): command is PutObjectAclCommand =>
-        command instanceof PutObjectAclCommand,
-    )
+    .filter((command) => command instanceof PutObjectAclCommand)
 const s3Bucket = 'bucket'
 const fileURLPrefix = 'prefix'
 

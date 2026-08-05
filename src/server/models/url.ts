@@ -224,7 +224,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
       validate: {
         isEmail: true,
         isLowercase: true,
-        is: emailValidator.makeRe(),
+        is: emailValidator.makeRe() as RegExp,
       },
     },
     description: {

@@ -67,6 +67,8 @@ module.exports = () => {
       },
       fallback: {
         path: require.resolve('path-browserify'),
+        querystring: require.resolve('querystring-es3'),
+        url: require.resolve('url/'),
         zlib: false,
         http: false,
         https: false,
