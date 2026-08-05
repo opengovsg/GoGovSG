@@ -5,7 +5,7 @@ async function fsMkdirOverwriteSync(dirPath, overwrite = true) {
   if (overwrite) {
     try {
       fs.rmdirSync(dirPath, { recursive: true, force: true })
-    } catch (e) {
+    } catch {
       console.log(`no folder found or unable to remove ${dirPath}`)
     }
   }
@@ -16,7 +16,7 @@ async function fsMkdirOverwriteSync(dirPath, overwrite = true) {
 async function fsRmdirRecursiveSync(dirPath) {
   try {
     fs.rmdirSync(dirPath, { recursive: true, force: true })
-  } catch (e) {
+  } catch {
     console.log(`unable to remove ${dirPath}`)
   }
 }

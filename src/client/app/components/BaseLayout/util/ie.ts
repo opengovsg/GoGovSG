@@ -1,6 +1,6 @@
 // Checks if the browser is IE11.
-const useIsIE = (): boolean => {
+const checkIsIE = (): boolean => {
   return 'documentMode' in window.document
 }
 
-export default useIsIE
+export default checkIsIE
