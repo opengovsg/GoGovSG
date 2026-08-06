@@ -161,7 +161,10 @@ export const userAnnouncement = {
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
-export const sqsRegion = (process.env.SQS_REGION as string) || ''
+// aws-sdk v3's SQSClient throws synchronously at construction if region
+// resolves to an empty string (v2 tolerated it), so fall back to a valid
+// region instead of ''.
+export const sqsRegion = (process.env.SQS_REGION as string) || 'ap-southeast-1'
 export const sqsBulkQRCodeStartUrl =
   (process.env.SQS_BULK_QRCODE_GENERATE_START_URL as string) || ''
 export const sqsTimeout = Number(process.env.SQS_TIMEOUT) || 10000
