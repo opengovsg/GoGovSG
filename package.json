@@ -207,8 +207,8 @@
     "upng-js": "^2.1.0",
     "url": "^0.11.4",
     "webpack": "^5.109.2",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.15.2"
+    "webpack-cli": "^7.2.2",
+    "webpack-dev-server": "^6.0.0"
   },
   "lint-staged": {
     "**/*.(js|jsx|ts|tsx)": [
