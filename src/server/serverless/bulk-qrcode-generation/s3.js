@@ -1,7 +1,7 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const { Upload } = require('@aws-sdk/lib-storage')
 const stream = require('stream')
-const archiver = require('archiver')
+const { ZipArchive } = require('archiver')
 
 const s3 = new S3Client()
 const { BULK_GENERATION_BUCKET } = process.env
@@ -52,7 +52,7 @@ async function archiverZipStreamToS3(systemPath, s3Path) {
   return new Promise((resolve, reject) => {
     const { writeStream, s3Promise } = streamToS3(s3Path)
 
-    const archive = archiver('zip', {
+    const archive = new ZipArchive({
       zlib: { level: 9 }, // Sets the compression level.
     })
 
