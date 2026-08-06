@@ -14,11 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      # oxlint (and oxlint-plugin-eslint) require Node ^20.19.0 || >=22.12.0,
-      # newer than this app's own Node 18 target -- CI-tooling-only override.
       - uses: ./.github/actions/setup
-        with:
-          node-version: '22'
       - run: pnpm run lint
 
   format:
@@ -26,11 +22,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      # oxfmt requires Node ^20.19.0 || >=22.12.0, newer than this app's own
-      # Node 18 target -- CI-tooling-only override.
       - uses: ./.github/actions/setup
-        with:
-          node-version: '22'
       - run: pnpm run format:check
 
   typecheck:
