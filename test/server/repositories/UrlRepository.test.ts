@@ -1,4 +1,8 @@
-import { S3 } from 'aws-sdk'
+import {
+  PutObjectAclCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import {
   clicksModelMock,
   devicesModelMock,
@@ -53,7 +57,7 @@ jest.mock('../../../src/server/util/sequelize', () => ({
   sequelize: { query: mockQuery, transaction: mockTransaction },
 }))
 
-const s3Client = new S3()
+const s3Client = new S3Client()
 const s3Bucket = 'bucket'
 const fileURLPrefix = 'prefix'
 
@@ -135,12 +139,9 @@ describe('UrlRepository', () => {
   describe('create', () => {
     const create = jest.spyOn(urlModelMock, 'create')
     const scope = jest.spyOn(urlModelMock, 'scope')
-    const putObject = jest.spyOn(s3Client, 'putObject')
+    const putObject = jest.fn()
     const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     const findByPk = jest.fn()
-
-    // @ts-ignore
-    putObject.mockReturnValue({ promise: () => Promise.resolve() })
 
     const userId = 2
     const shortUrl = 'abcdef'
@@ -150,6 +151,12 @@ describe('UrlRepository', () => {
     beforeEach(() => {
       create.mockReset()
       putObject.mockClear()
+      putObject.mockReturnValue(Promise.resolve())
+      // @ts-ignore
+      jest.spyOn(s3Client, 'send').mockImplementation((command) => {
+        if (command instanceof PutObjectCommand) return putObject(command.input)
+        return Promise.resolve()
+      })
       findByPk.mockReset()
       scope.mockReset()
       tagFindOrCreate.mockReset()
@@ -314,25 +321,29 @@ describe('UrlRepository', () => {
   describe('update', () => {
     const findOne = jest.spyOn(urlModelMock, 'findOne')
     const scope = jest.spyOn(urlModelMock, 'scope')
-    const putObject = jest.spyOn(s3Client, 'putObject')
-    const putObjectAcl = jest.spyOn(s3Client, 'putObjectAcl')
+    const putObject = jest.fn()
+    const putObjectAcl = jest.fn()
     const tagFindOrCreate = jest.spyOn(tagModelMock, 'findOrCreate')
     beforeEach(() => {
       findOne.mockReset()
       scope.mockReset()
       putObject.mockClear()
+      putObject.mockReturnValue(Promise.resolve())
       putObjectAcl.mockClear()
+      putObjectAcl.mockReturnValue(Promise.resolve())
+      // @ts-ignore
+      jest.spyOn(s3Client, 'send').mockImplementation((command) => {
+        if (command instanceof PutObjectCommand) return putObject(command.input)
+        if (command instanceof PutObjectAclCommand)
+          return putObjectAcl(command.input)
+        return Promise.resolve()
+      })
       tagFindOrCreate.mockClear()
     })
 
     afterAll(() => {
       findOne.mockRestore()
     })
-
-    // @ts-ignore
-    putObject.mockReturnValue({ promise: () => Promise.resolve() })
-    // @ts-ignore
-    putObjectAcl.mockReturnValue({ promise: () => Promise.resolve() })
 
     it('should throw NotFoundError on not found', async () => {
       scope.mockImplementationOnce(() => urlModelMock)

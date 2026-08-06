@@ -68,6 +68,10 @@ module.exports = () => {
       fallback: {
         path: require.resolve('path-browserify'),
         url: require.resolve('url/'),
+        // Directly imported by client actions (src/client/*/actions) for
+        // query-string building; previously satisfied only incidentally by
+        // aws-sdk v2's own transitive dependency of the same package name.
+        querystring: require.resolve('querystring-es3'),
         zlib: false,
         http: false,
         https: false,
