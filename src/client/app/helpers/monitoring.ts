@@ -10,11 +10,11 @@ const initMonitoring = () => {
     env: ddEnv,
     // Specify a version number to identify the deployed version of your application in Datadog
     // version: '1.0.0',
-    sampleRate: 100,
-    premiumSampleRate: 100,
-    trackInteractions: true,
+    sessionSampleRate: 100,
+    sessionReplaySampleRate: 100,
+    trackUserInteractions: true,
     defaultPrivacyLevel: 'mask-user-input',
-    allowedTracingOrigins: [
+    allowedTracingUrls: [
       'https://go.gov.sg',
       'https://for.edu.sg',
       'https://for.sg',
