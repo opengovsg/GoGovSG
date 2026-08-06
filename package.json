@@ -192,7 +192,7 @@
     "serverless-plugin-include-dependencies": "^5.1.0",
     "supertest": "^6.3.4",
     "swc-loader": "^0.2.7",
-    "testcafe": "3.7.4",
+    "testcafe": "3.7.6",
     "tsx": "^4.23.6",
     "typescript": "^7.0.2",
     "upng-js": "^2.1.0",
