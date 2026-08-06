@@ -1,3 +1,4 @@
+import { Page } from '@playwright/test'
 import { createLinkButton } from './helpers'
 
 /**
@@ -6,13 +7,13 @@ import { createLinkButton } from './helpers'
  * If there is at least 1 link in the account, link button 1 will be present.
  * If viewing in mobile mode, link button 0 will be present.
  */
-const firstLinkHandle = async (t) => {
-  if (await createLinkButton.nth(2).exists) {
-    await t.click(createLinkButton.nth(2))
-  } else if (await createLinkButton.nth(1).exists) {
-    await t.click(createLinkButton.nth(1))
+export async function firstLinkHandle(page: Page): Promise<void> {
+  if ((await createLinkButton(page).nth(2).count()) > 0) {
+    await createLinkButton(page).nth(2).click()
+  } else if ((await createLinkButton(page).nth(1).count()) > 0) {
+    await createLinkButton(page).nth(1).click()
   } else {
-    await t.click(createLinkButton.nth(0))
+    await createLinkButton(page).nth(0).click()
   }
 }
 
