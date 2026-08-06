@@ -31,6 +31,10 @@ const apiOtpGeneratorLimiter = rateLimit({
     )
     res.status(options.statusCode).send(options.message)
   },
+  // `max: 0` disabled rate limiting entirely on v5 and earlier, but v7+
+  // flipped that to block every request instead, so `otpRateLimit = 0`
+  // (dev/test) must skip the limiter explicitly to keep that behaviour.
+  skip: () => otpRateLimit <= 0,
   windowMs: 60000, // 1 minute
   max: otpRateLimit,
 })
