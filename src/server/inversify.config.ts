@@ -12,6 +12,7 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  s3Region,
   sqsRegion,
   sqsTimeout,
   userAnnouncement,
@@ -193,6 +194,7 @@ export default () => {
 
   if (DEV_ENV) {
     const s3Client = new S3Client({
+      region: s3Region,
       credentials: {
         accessKeyId: 'foobar',
         secretAccessKey: 'foobar',
@@ -213,7 +215,9 @@ export default () => {
     )
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
-    container.bind(DependencyIds.s3Client).toConstantValue(new S3Client())
+    container
+      .bind(DependencyIds.s3Client)
+      .toConstantValue(new S3Client({ region: s3Region }))
     container.bind(DependencyIds.sqsClient).toConstantValue(
       new SQSClient({
         region: sqsRegion,
