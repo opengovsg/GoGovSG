@@ -51,15 +51,11 @@ jobs:
         env:
           ASSET_VARIANT: gov
 
-  audit-signatures:
-    name: Audit Signatures
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v2
-      # lockfile-lint doesn't understand pnpm-lock.yaml's format (only npm/yarn) --
-      # pnpm's own signature verification is the native equivalent.
-      - uses: ./.github/actions/setup
-      - run: pnpm audit signatures
+  # `lockfile-lint` doesn't understand pnpm-lock.yaml (npm/yarn only), and its
+  # pnpm-native replacement, `pnpm audit signatures`, needs pnpm >=11.1.0 --
+  # this repo is pinned to pnpm 10.x because it still targets Node 18 (pnpm
+  # v11 requires Node >=22.13). No lockfile-integrity CI check currently
+  # replaces the old lockfile-lint job; revisit once Node is bumped to 22+.
 
   test:
     name: Test

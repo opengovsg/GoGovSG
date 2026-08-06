@@ -19,7 +19,7 @@ RUN fc-cache -f
 # Install libraries
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN corepack enable && corepack prepare pnpm@11.20.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 RUN pnpm install --frozen-lockfile
 
 COPY . ./
