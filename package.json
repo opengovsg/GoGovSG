@@ -82,7 +82,7 @@
     "express-rate-limit": "^8.6.2",
     "express-session": "^1.19.0",
     "file-saver": "^2.0.5",
-    "file-type": "^21.3.4",
+    "file-type": "^22.0.1",
     "helmet": "^4.6.0",
     "history": "^4.10.1",
     "hot-shots": "^17.1.0",
