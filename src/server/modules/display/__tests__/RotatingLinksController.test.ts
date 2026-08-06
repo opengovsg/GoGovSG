@@ -9,6 +9,6 @@ describe('RotatingLinksController tests', () => {
     jest.spyOn(res, 'send')
     controller.getRotatingLinks(req, res)
 
-    expect(res.send).toBeCalledWith(linksToRotate)
+    expect(res.send).toHaveBeenCalledWith(linksToRotate)
   })
 })

@@ -155,7 +155,7 @@ describe('LoginController', () => {
       await controller.generateOtp(req, res)
 
       expect(hash).toHaveBeenCalledWith(otp, saltRounds)
-      expect(mailOTP).toBeCalledWith(email, otp, ip)
+      expect(mailOTP).toHaveBeenCalledWith(email, otp, ip)
       expect(res.ok).toHaveBeenCalled()
       expect(setOtpForEmail).toHaveBeenCalledWith(
         email,
@@ -174,10 +174,10 @@ describe('LoginController', () => {
 
       await controller.generateOtp(req, res)
 
-      expect(mailOTP).toBeCalledWith(email, otp, ip)
+      expect(mailOTP).toHaveBeenCalledWith(email, otp, ip)
       expect(res.serverError).toHaveBeenCalled()
 
-      expect(logger.error).toBeCalled()
+      expect(logger.error).toHaveBeenCalled()
     })
 
     test('otp cache down', async () => {
@@ -191,7 +191,7 @@ describe('LoginController', () => {
       expect(mailOTP).not.toHaveBeenCalled()
       expect(res.serverError).toHaveBeenCalled()
 
-      expect(logger.error).toBeCalled()
+      expect(logger.error).toHaveBeenCalled()
     })
   })
 
@@ -375,7 +375,7 @@ describe('LoginController', () => {
       expect(req.session!.user).toBeUndefined()
       expect(res.serverError).toHaveBeenCalled()
 
-      expect(logger.error).toBeCalled()
+      expect(logger.error).toHaveBeenCalled()
     })
 
     test('db down', async () => {
@@ -400,7 +400,7 @@ describe('LoginController', () => {
       expect(req.session!.user).toBeUndefined()
       expect(res.serverError).toHaveBeenCalled()
 
-      expect(logger.error).toBeCalled()
+      expect(logger.error).toHaveBeenCalled()
     })
   })
 

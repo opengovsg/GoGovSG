@@ -263,7 +263,7 @@ describe('JobController unit test', () => {
       expect(jobManagementService.updateJobItemStatus).toHaveBeenCalled()
       expect(req.body).not.toHaveProperty('jobId')
       expect(res.ok).not.toHaveBeenCalled()
-      expect(responseSpy).toBeCalledWith(404)
+      expect(responseSpy).toHaveBeenCalledWith(404)
     })
   })
 
@@ -360,9 +360,11 @@ describe('JobController unit test', () => {
         )
 
         await controller.getLatestJob(req, res)
-        expect(jobManagementService.getLatestJobForUser).toBeCalledWith(userId)
-        expect(res.ok).toBeCalledWith(mockJobInformation)
-        expect(res.serverError).not.toBeCalled()
+        expect(jobManagementService.getLatestJobForUser).toHaveBeenCalledWith(
+          userId,
+        )
+        expect(res.ok).toHaveBeenCalledWith(mockJobInformation)
+        expect(res.serverError).not.toHaveBeenCalled()
       })
 
       it('should respond with res.ok if jobManagementService.getLatestJob is unable to find a job for user', async () => {
@@ -379,9 +381,11 @@ describe('JobController unit test', () => {
         )
 
         await controller.getLatestJob(req, res)
-        expect(jobManagementService.getLatestJobForUser).toBeCalledWith(userId)
-        expect(res.ok).toBeCalled()
-        expect(res.serverError).not.toBeCalled()
+        expect(jobManagementService.getLatestJobForUser).toHaveBeenCalledWith(
+          userId,
+        )
+        expect(res.ok).toHaveBeenCalled()
+        expect(res.serverError).not.toHaveBeenCalled()
       })
 
       it('should respond with badRequest if jobManagementService.getLatestJob fails', async () => {
@@ -397,9 +401,11 @@ describe('JobController unit test', () => {
         jobManagementService.getLatestJobForUser.mockRejectedValue(new Error())
 
         await controller.getLatestJob(req, res)
-        expect(jobManagementService.getLatestJobForUser).toBeCalledWith(userId)
-        expect(res.ok).not.toBeCalled()
-        expect(res.serverError).toBeCalled()
+        expect(jobManagementService.getLatestJobForUser).toHaveBeenCalledWith(
+          userId,
+        )
+        expect(res.ok).not.toHaveBeenCalled()
+        expect(res.serverError).toHaveBeenCalled()
       })
     })
 
@@ -441,12 +447,12 @@ describe('JobController unit test', () => {
         )
 
         await controller.pollJobStatusUpdate(req, res)
-        expect(jobManagementService.pollJobStatusUpdate).toBeCalledWith(
+        expect(jobManagementService.pollJobStatusUpdate).toHaveBeenCalledWith(
           userCredentials.id,
           jobId,
         )
-        expect(res.ok).toBeCalledWith(mockJobInformation)
-        expect(res.notFound).not.toBeCalled()
+        expect(res.ok).toHaveBeenCalledWith(mockJobInformation)
+        expect(res.notFound).not.toHaveBeenCalled()
       })
 
       it('should respond with notFound if jobManagementService.pollJobStatusUpdate is unable to find job', async () => {
@@ -464,8 +470,8 @@ describe('JobController unit test', () => {
         )
 
         await controller.pollJobStatusUpdate(req, res)
-        expect(res.notFound).toBeCalled()
-        expect(res.ok).not.toBeCalled()
+        expect(res.notFound).toHaveBeenCalled()
+        expect(res.ok).not.toHaveBeenCalled()
       })
 
       it('should throw 408 if jobManagementService.pollJobStatusUpdate exceeds long polling timeout', async () => {
@@ -485,13 +491,13 @@ describe('JobController unit test', () => {
         )
 
         await controller.pollJobStatusUpdate(req, res)
-        expect(jobManagementService.pollJobStatusUpdate).toBeCalledWith(
+        expect(jobManagementService.pollJobStatusUpdate).toHaveBeenCalledWith(
           userCredentials.id,
           jobId,
         )
-        expect(res.status).toBeCalledWith(408)
-        expect(res.ok).not.toBeCalled()
-        expect(res.notFound).not.toBeCalled()
+        expect(res.status).toHaveBeenCalledWith(408)
+        expect(res.ok).not.toHaveBeenCalled()
+        expect(res.notFound).not.toHaveBeenCalled()
       })
     })
   })

@@ -231,7 +231,7 @@ describe('RedirectService', () => {
         // Act & Assert
         await expect(
           service.redirectFor('shortUrl', undefined, '', ''),
-        ).rejects.toThrowError(NotFoundError)
+        ).rejects.toThrow(NotFoundError)
       })
 
       it('should not throw NotFoundError if the longUrl is malicious but the safe browsing result is not expired', async () => {
@@ -246,7 +246,7 @@ describe('RedirectService', () => {
         // Act & Assert
         await expect(
           service.redirectFor('shortUrl', undefined, '', ''),
-        ).resolves.not.toThrowError(NotFoundError)
+        ).resolves.not.toThrow(NotFoundError)
       })
 
       it('should update the safe browsing expiry if the longUrl is not malicious', async () => {
