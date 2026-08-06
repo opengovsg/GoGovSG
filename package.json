@@ -3,7 +3,7 @@
   "version": "1.88.1",
   "description": "Link shortener for Singapore government.",
   "main": "src/server/index.js",
-  "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e",
+  "packageManager": "pnpm@11.20.0+sha512.9a6f330a95b66446ea088faf1521405a8a01f07fde7124cc9958dfed52d4bb436737e65b08f85f37b46fcba375092558ac51262b816844b22f63406ed166bfee",
   "scripts": {
     "lint": "oxlint --type-aware .",
     "lint:fix": "oxlint --type-aware --fix .",
@@ -45,7 +45,7 @@
     "url": "git+https://github.com/opengovsg/GoGovSG.git"
   },
   "engines": {
-    "node": "18"
+    "node": "24"
   },
   "dependencies": {
     "@datadog/browser-rum": "^4.15.0",

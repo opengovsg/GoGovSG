@@ -1,15 +1,6 @@
 name: 'Setup and install'
 description: 'Common setup steps for CI jobs (Node.js + pnpm install)'
 
-inputs:
-  node-version:
-    description: >-
-      Node version to use, overriding package.json's engines.node. Only
-      needed for tooling (e.g. oxlint/oxfmt) that requires a newer Node
-      than the app itself targets.
-    required: false
-    default: ''
-
 runs:
   using: composite
   steps:
@@ -17,7 +8,6 @@ runs:
 
     - uses: actions/setup-node@v4
       with:
-        node-version: ${{ inputs.node-version }}
         node-version-file: 'package.json'
         cache: 'pnpm'
 

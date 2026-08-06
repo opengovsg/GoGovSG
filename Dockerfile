@@ -1,4 +1,4 @@
-FROM node:18-alpine3.18
+FROM node:24-alpine3.24
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -35,7 +35,7 @@ RUN fc-cache -f
 # Install libraries
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
+RUN corepack enable && corepack prepare pnpm@11.20.0 --activate
 RUN pnpm install --frozen-lockfile
 
 COPY . ./
