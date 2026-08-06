@@ -1,4 +1,4 @@
-FROM node:18-alpine3.18
+FROM node:24-alpine3.24
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 

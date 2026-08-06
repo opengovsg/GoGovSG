@@ -45,7 +45,7 @@
     "url": "git+https://github.com/opengovsg/GoGovSG.git"
   },
   "engines": {
-    "node": "18"
+    "node": "24"
   },
   "dependencies": {
     "@datadog/browser-rum": "^4.15.0",
