@@ -174,13 +174,7 @@ describe('Url integration tests', () => {
 
   it('should be able to update file url', async () => {
     const shortUrl = await generateRandomString(6)
-    const createRes = await createFileUrl(shortUrl, authCookie)
-    // eslint-disable-next-line no-console
-    console.log(
-      'DEBUG create status:',
-      createRes.status,
-      JSON.stringify(await createRes.clone().json()),
-    )
+    await createFileUrl(shortUrl, authCookie)
 
     const formData = new FormData()
     const imageFile = readFile(IMAGE_FILE_PATH)
@@ -189,8 +183,6 @@ describe('Url integration tests', () => {
 
     const res = await patchFormData(API_USER_URL, formData, authCookie)
     const body = await res.json()
-    // eslint-disable-next-line no-console
-    console.log('DEBUG update status:', res.status, JSON.stringify(body))
     expect(res.status).toBe(200)
     expect(body).toEqual({
       shortUrl,
