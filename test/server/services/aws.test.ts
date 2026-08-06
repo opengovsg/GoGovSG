@@ -1,3 +1,4 @@
+import { PutObjectAclCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import { container } from '../../../src/server/util/inversify'
 import {
   FileVisibility,
@@ -11,8 +12,7 @@ describe('S3ServerSide', () => {
   const s3Bucket = 'file-staging.go.gov.sg'
 
   const MockS3 = jest.fn(() => ({
-    putObjectAcl: jest.fn(() => ({ promise: jest.fn() })),
-    putObject: jest.fn(() => ({ promise: jest.fn() })),
+    send: jest.fn(),
   }))
   let mockS3Client = new MockS3()
 
@@ -27,28 +27,32 @@ describe('S3ServerSide', () => {
     container.bind<S3Interface>(DependencyIds.s3).to(S3ServerSide)
   })
 
-  it('should call s3Client.putObjectAcl on setS3ObjectACL', () => {
+  it('should call s3Client.send with PutObjectAclCommand on setS3ObjectACL', () => {
     const key = 'key'
     const acl = FileVisibility.Private
     const s3 = container.get<S3Interface>(DependencyIds.s3)
     s3.setS3ObjectACL(key, acl)
-    expect(mockS3Client.putObjectAcl).toHaveBeenCalled()
-    expect(mockS3Client.putObjectAcl).toHaveBeenCalledWith({
+    expect(mockS3Client.send).toHaveBeenCalledTimes(1)
+    const command = mockS3Client.send.mock.calls[0][0]
+    expect(command).toBeInstanceOf(PutObjectAclCommand)
+    expect(command.input).toStrictEqual({
       Bucket: s3Bucket,
       Key: key,
       ACL: acl,
     })
   })
 
-  it('should call s3Client.putObject on uploadFileToS3', () => {
+  it('should call s3Client.send with PutObjectCommand on uploadFileToS3', () => {
     const file = Buffer.from([])
     const key = 'key'
     const fileType = 'type'
 
     const s3 = container.get<S3Interface>(DependencyIds.s3)
     s3.uploadFileToS3(file, key, fileType)
-    expect(mockS3Client.putObject).toHaveBeenCalled()
-    expect(mockS3Client.putObject).toHaveBeenCalledWith({
+    expect(mockS3Client.send).toHaveBeenCalledTimes(1)
+    const command = mockS3Client.send.mock.calls[0][0]
+    expect(command).toBeInstanceOf(PutObjectCommand)
+    expect(command.input).toStrictEqual({
       ContentType: fileType,
       Bucket: s3Bucket,
       Body: file,
