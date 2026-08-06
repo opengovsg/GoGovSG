@@ -218,7 +218,7 @@ const isLoggedIn =
           })
           dispatch<IsLoggedInSuccessAction>(isLoggedInSuccess(user))
         } else {
-          datadogRum.removeUser()
+          datadogRum.clearUser()
           dispatch<IsLoggedOutAction>(isLoggedOut())
         }
       })
