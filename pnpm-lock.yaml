@@ -218,9 +218,6 @@ importers:
       ua-parser-js:
         specifier: ^2.0.10
         version: 2.0.10
-      uuid:
-        specifier: ^11.1.1
-        version: 11.1.1
       validator:
         specifier: ^13.15.35
         version: 13.15.35
