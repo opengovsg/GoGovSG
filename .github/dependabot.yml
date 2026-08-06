@@ -90,6 +90,11 @@ updates:
 
       # --- Server / API ---
 
+      aws-sdk:
+        # All @aws-sdk/* v3 packages share the same version number.
+        patterns:
+          - '@aws-sdk/*'
+
       express:
         patterns:
           - express
