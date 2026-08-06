@@ -1,3 +1,4 @@
+import { Page } from '@playwright/test'
 import { testEmail } from './config'
 import {
   clearMaildevInbox,
@@ -12,28 +13,29 @@ import {
   userModalCloseButton,
 } from './helpers'
 
-/**
- * Process of login into test account.
- */
-const loginProcedure = async (t, loginEmail = testEmail) => {
-  await t.maximizeWindow()
-  await t.click(loginButton).typeText('#email', `${loginEmail}`)
+export async function loginProcedure(
+  page: Page,
+  loginEmail: string = testEmail,
+): Promise<void> {
+  await loginButton(page).click()
+  await page.locator('#email').fill(loginEmail)
 
   const afterMessageIds = await getMaildevMessageIds()
-  await t.click(signInButton)
+  await signInButton(page).click()
 
   const mailOTP = await waitForOtpFromMaildev({
     to: loginEmail,
     afterMessageIds,
   })
-  await t.typeText('#otp', mailOTP)
+  await page.locator('#otp').fill(mailOTP)
 
-  await t.click(signInButton).click(loginSuccessAlert)
+  await signInButton(page).click()
+  await loginSuccessAlert(page).click()
 
   await clearMaildevInbox()
 
-  if (await userModal.exists) {
-    await t.click(userModalCloseButton)
+  if ((await userModal(page).count()) > 0) {
+    await userModalCloseButton(page).click()
   }
 }
 

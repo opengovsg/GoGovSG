@@ -1,304 +1,441 @@
+import { Page, Locator } from '@playwright/test'
 import { customAlphabet } from 'nanoid'
-import { ClientFunction, Selector } from 'testcafe'
 import { tagText1, tagText2, tagText3 } from './config'
 
+const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// Matches Playwright's `hasText` filter against the FULL trimmed text content,
+// mirroring testcafe's `.withExactText()` (hasText alone does substring match).
+export const exactText = (value: string): RegExp =>
+  new RegExp(`^${escapeRegExp(value)}$`)
+
 // General
-export const loginButton = Selector('span').withText('Sign in')
-export const signInButton = Selector('button[type="submit"]')
-export const createLinkButton = Selector('span').withText('Create')
-export const mobileCreateLinkButton = Selector('img').withAttribute(
-  'alt',
-  'Create link',
-)
-export const loginSuccessAlert = Selector('div[role="alert"]').child(1).child(0)
-export const userModal = Selector('div[aria-labelledby="userModal"]')
-export const userModalCloseButton = userModal.child(0).child(0).child(1)
-export const generateUrlImage = Selector('img[src="/assets/refresh-icon.svg"]')
-export const shortUrlTextField = Selector(
-  'input[placeholder="your customised link"]',
-)
-export const longUrlTextField = Selector('input[placeholder="Enter URL"]')
-export const tagsAutocompleteInput = Selector('input[placeholder="Add tag"]')
-export const tagsAutocompleteTags = tagsAutocompleteInput.sibling('div')
-export const getLocation = ClientFunction(() => document.location.href)
-export const directoryPageButton = Selector('span')
-  .withText('Directory')
-  .parent()
-export const mobileDirectoryPageButton = Selector('img')
-  .withAttribute('alt', 'Directory')
-  .parent()
-  .parent()
-export const apiIntegrationPageButton = Selector('span')
-  .withText('API Integration')
-  .parent()
-export const signOutButton = Selector('strong').withText('Sign out').parent()
+export const loginButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Sign in' })
+export const signInButton = (page: Page): Locator =>
+  page.locator('button[type="submit"]')
+export const createLinkButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Create' })
+export const mobileCreateLinkButton = (page: Page): Locator =>
+  page.locator('img[alt="Create link"]')
+export const loginSuccessAlert = (page: Page): Locator =>
+  page
+    .locator('div[role="alert"]')
+    .locator('xpath=./*')
+    .nth(1)
+    .locator('xpath=./*')
+    .nth(0)
+export const userModal = (page: Page): Locator =>
+  page.locator('div[aria-labelledby="userModal"]')
+export const userModalCloseButton = (page: Page): Locator =>
+  userModal(page)
+    .locator('xpath=./*')
+    .nth(0)
+    .locator('xpath=./*')
+    .nth(0)
+    .locator('xpath=./*')
+    .nth(1)
+export const generateUrlImage = (page: Page): Locator =>
+  page.locator('img[src="/assets/refresh-icon.svg"]')
+export const shortUrlTextField = (page: Page): Locator =>
+  page.locator('input[placeholder="your customised link"]')
+export const longUrlTextField = (page: Page): Locator =>
+  page.locator('input[placeholder="Enter URL"]')
+export const tagsAutocompleteInput = (page: Page): Locator =>
+  page.locator('input[placeholder="Add tag"]')
+export const tagsAutocompleteTags = (page: Page): Locator =>
+  tagsAutocompleteInput(page).locator('xpath=following-sibling::div')
+export const getLocation = (page: Page): string => page.url()
+export const directoryPageButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Directory' }).locator('xpath=..')
+export const mobileDirectoryPageButton = (page: Page): Locator =>
+  page.locator('img[alt="Directory"]').locator('xpath=..').locator('xpath=..')
+export const apiIntegrationPageButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'API Integration' }).locator('xpath=..')
+export const signOutButton = (page: Page): Locator =>
+  page.locator('strong', { hasText: 'Sign out' }).locator('xpath=..')
 
 // Login Page
-export const emailHelperText = Selector('#email-helper-text')
-export const resendOtpButton = Selector('span').withText('Resend OTP').parent()
+export const emailHelperText = (page: Page): Locator =>
+  page.locator('#email-helper-text')
+export const resendOtpButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Resend OTP' }).locator('xpath=..')
 
 // Search Page
-export const searchTextField = Selector(
-  'input[placeholder="Search all go.gov.sg links"]',
-)
-export const filterPanelButton = searchTextField.parent().child('button').nth(1)
-export const recencyButton = Selector('p').withText('Most recent')
-export const resultTable = Selector('table')
+export const searchTextField = (page: Page): Locator =>
+  page.locator('input[placeholder="Search all go.gov.sg links"]')
+export const filterPanelButton = (page: Page): Locator =>
+  searchTextField(page).locator('xpath=..').locator('xpath=./button').nth(1)
+export const recencyButton = (page: Page): Locator =>
+  page.locator('p', { hasText: 'Most recent' })
+export const resultTable = (page: Page): Locator => page.locator('table')
 
 // User Page - general
-export const linkCountHeaderText = () =>
-  Selector('h3').withText('links').innerText
-export const drawer = Selector('div[role="presentation"]')
-export const fileTab = Selector('p').withText('To a File')
-export const bulkTab = Selector('p').withText('From a .csv')
-export const uploadFile = Selector('input[type="file"]')
-export const activeSwitch = Selector('input[type="checkbox"]')
-export const createUrlModal = Selector('div[aria-labelledby="createUrlModal"]')
+export const linkCountHeaderText = (page: Page): Promise<string> =>
+  page.locator('h3', { hasText: 'links' }).innerText()
+export const drawer = (page: Page): Locator =>
+  page.locator('div[role="presentation"]')
+export const fileTab = (page: Page): Locator =>
+  page.locator('p', { hasText: 'To a File' })
+export const bulkTab = (page: Page): Locator =>
+  page.locator('p', { hasText: 'From a .csv' })
+export const uploadFile = (page: Page): Locator =>
+  page.locator('input[type="file"]')
+export const activeSwitch = (page: Page): Locator =>
+  page.locator('input[type="checkbox"]')
+export const createUrlModal = (page: Page): Locator =>
+  page.locator('div[aria-labelledby="createUrlModal"]')
 
-export const blacklistValidationError = Selector('div').withText(
-  'ValidationError: Creation of URLs to link shortener sites are not allowed.',
-)
-export const circularRedirectValidationError = Selector('div').withText(
-  'ValidationError: Circular redirects are not allowed.',
-)
-export const successUrlCreation = Selector('div').withText(
-  'Your link has been created',
-)
-export const maliciousFileCreation = Selector('div').withText(
-  'File is likely to be malicious.',
-)
-export const successBulkCreation = Selector('div').withText(
-  'links have been created',
-)
+export const blacklistValidationError = (page: Page): Locator =>
+  page.locator('div', {
+    hasText:
+      'ValidationError: Creation of URLs to link shortener sites are not allowed.',
+  })
+export const circularRedirectValidationError = (page: Page): Locator =>
+  page.locator('div', {
+    hasText: 'ValidationError: Circular redirects are not allowed.',
+  })
+export const successUrlCreation = (page: Page): Locator =>
+  page.locator('div', { hasText: 'Your link has been created' })
+export const maliciousFileCreation = (page: Page): Locator =>
+  page.locator('div', { hasText: 'File is likely to be malicious.' })
+export const successBulkCreation = (page: Page): Locator =>
+  page.locator('div', { hasText: 'links have been created' })
 
 // Unavailable Short Link Page
-export const unavailableShortLink = Selector('h3').withText(
-  'This short link is not available.',
-)
+export const unavailableShortLink = (page: Page): Locator =>
+  page.locator('h3', { hasText: 'This short link is not available.' })
 
-export const urlTable = Selector('tbody')
-export const urlTableRowUrlText = (index: number) =>
-  // eslint-disable-next-line eslint-js/newline-per-chained-call
-  urlTable.child(index).child(1).child('div').child(0).child('h6').innerText
-export const urlTableRow = (index: number) =>
-  // eslint-disable-next-line eslint-js/newline-per-chained-call
-  urlTable.child(index).child(1).child('div').child(0).child('h6')
+export const urlTable = (page: Page): Locator => page.locator('tbody')
+export const urlTableRowUrlText = (
+  page: Page,
+  index: number,
+): Promise<string> =>
+  urlTable(page)
+    .locator('xpath=./*')
+    .nth(index)
+    .locator('xpath=./*')
+    .nth(1)
+    .locator('xpath=./div')
+    .locator('xpath=./*')
+    .nth(0)
+    .locator('xpath=./h6')
+    .innerText()
+export const urlTableRow = (page: Page, index: number): Locator =>
+  urlTable(page)
+    .locator('xpath=./*')
+    .nth(index)
+    .locator('xpath=./*')
+    .nth(1)
+    .locator('xpath=./div')
+    .locator('xpath=./*')
+    .nth(0)
+    .locator('xpath=./h6')
 
 // Prefer text over h6[title]: MUI Tooltip strips the native title attribute while open.
-export const linkRowByShortUrl = (shortUrl: string) =>
-  Selector('h6').withExactText(`/${shortUrl}`)
+export const linkRowByShortUrl = (page: Page, shortUrl: string): Locator =>
+  page.locator('h6', { hasText: exactText(`/${shortUrl}`) })
 
-export const urlTableRowShortUrlText = async (row: Selector) =>
+export const urlTableRowShortUrlText = (row: Locator): Promise<string | null> =>
   // eslint-disable-next-line eslint-js/newline-per-chained-call
-  row.find('td').nth(1).find('div').nth(1).textContent
+  row.locator('td').nth(1).locator('div').nth(1).textContent()
 
-export const urlTableOriginalUrlText = async (row: Selector) =>
+export const urlTableOriginalUrlText = (row: Locator): Promise<string | null> =>
   // eslint-disable-next-line eslint-js/newline-per-chained-call
-  row.find('td').nth(1).find('div').nth(2).textContent
+  row.locator('td').nth(1).locator('div').nth(2).textContent()
 
-export const urlTableTagsTextContent = async (row: Selector) => {
+export const urlTableTagsTextContent = async (
+  row: Locator,
+): Promise<string> => {
   let returnString = ''
-  // eslint-disable-next-line eslint-js/newline-per-chained-call
-  const numTags = await row.find('td').nth(1).find('div').nth(3).find('button')
-    .count
+  const numTags = await row
+    .locator('td')
+    .nth(1)
+    .locator('div')
+    .nth(3)
+    .locator('button')
+    .count()
   /* eslint-disable no-await-in-loop */
   for (let tagsCount = 0; tagsCount < numTags - 1; tagsCount += 1) {
     returnString += `${await row
-      .find('td')
+      .locator('td')
       .nth(1)
-      .find('div')
+      .locator('div')
       .nth(3)
-      .find('button')
-      .nth(tagsCount).textContent};`
+      .locator('button')
+      .nth(tagsCount)
+      .textContent()};`
   }
-  returnString += await row
-    .find('td')
+  returnString += (await row
+    .locator('td')
     .nth(1)
-    .find('div')
+    .locator('div')
     .nth(3)
-    .find('button')
-    .nth(numTags - 1).textContent
+    .locator('button')
+    .nth(numTags - 1)
+    .textContent()) as string
+  /* eslint-enable no-await-in-loop */
   return returnString
 }
 
-export const searchBarLinksInput = Selector('input[placeholder="Search links"]')
-export const searchBarTagsInput = Selector('input[placeholder="Search tags"]')
-export const searchBarLinkButton = Selector('span').withExactText('Link')
-export const searchBarTagButton = Selector('span').withExactText('Tag')
-export const searchBarSearchByTag = Selector('p').withExactText('Search by Tag')
-export const downloadLinkButton = Selector('p')
-  .withText('Download links')
-  .parent()
-  .parent()
-export const closeDrawerButton = drawer.child(2).child('main').child('button')
-export const longUrl = Selector('input[placeholder="Original link"]')
-export const inactiveWord = Selector('span').withText('inactive')
-export const urlSaveButton = Selector('span').withText('Save').nth(0)
-export const urlUpdatedSnackbar =
-  Selector('.MuiSnackbar-root').withExactText('URL is updated.')
-export const tagsUpdatedSnackbar =
-  Selector('.MuiSnackbar-root').withExactText('Tags are updated.')
-export const helperText = Selector('p').withText(
-  `This doesn't look like a valid url.`,
-)
-export const linkTransferField = Selector(
-  'input[placeholder="Email of link recipient"]',
-)
-export const transferButton = Selector('span').withText('Transfer')
-export const tagsSaveButton = Selector('span').withText('Save').nth(1)
-export const successSnackBar = Selector('.MuiSnackbar-root') // MuiSnackbarContent-message
-export const closeButtonSnackBar = Selector(
-  'div[class="MuiSnackbarContent-action"]',
-).child('button')
-export const linkErrorSnackBar = Selector('div[role="alert"]').child(1).child(0)
-export const clickAway = Selector('h3')
-export const largeFileError = Selector('div').withText(
-  'File too large, please upload a file smaller than 20mb',
-)
-export const csvOnlyError = Selector('div').withText(
-  'Only csv files are allowed',
-)
-export const fileSubmitButton = Selector('button[type="submit"]')
-export const tag1 = Selector('p').withExactText(tagText1).parent()
-export const tag2 = Selector('p').withExactText(tagText2).parent()
-export const tag3 = Selector('p').withExactText(tagText3).parent()
-export const tagCloseButton1 = tag1.child('button')
-export const tagCloseButton2 = tag2.child('button')
-export const tagCloseButton3 = tag3.child('button')
-export const noResultsFoundText = Selector('p').withExactText(
-  'No results found, try expanding your search terms.',
-)
+export const searchBarLinksInput = (page: Page): Locator =>
+  page.locator('input[placeholder="Search links"]')
+export const searchBarTagsInput = (page: Page): Locator =>
+  page.locator('input[placeholder="Search tags"]')
+export const searchBarLinkButton = (page: Page): Locator =>
+  page.locator('span', { hasText: exactText('Link') })
+export const searchBarTagButton = (page: Page): Locator =>
+  page.locator('span', { hasText: exactText('Tag') })
+export const searchBarSearchByTag = (page: Page): Locator =>
+  page.locator('p', { hasText: exactText('Search by Tag') })
+export const downloadLinkButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Download links' })
+    .locator('xpath=..')
+    .locator('xpath=..')
+export const closeDrawerButton = (page: Page): Locator =>
+  drawer(page)
+    .locator('xpath=./*')
+    .nth(2)
+    .locator('xpath=./main')
+    .locator('xpath=./button')
+export const longUrl = (page: Page): Locator =>
+  page.locator('input[placeholder="Original link"]')
+export const inactiveWord = (page: Page): Locator =>
+  page.locator('span', { hasText: 'inactive' })
+export const urlSaveButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Save' }).nth(0)
+export const urlUpdatedSnackbar = (page: Page): Locator =>
+  page.locator('.MuiSnackbar-root', { hasText: exactText('URL is updated.') })
+export const tagsUpdatedSnackbar = (page: Page): Locator =>
+  page.locator('.MuiSnackbar-root', {
+    hasText: exactText('Tags are updated.'),
+  })
+export const helperText = (page: Page): Locator =>
+  page.locator('p', { hasText: `This doesn't look like a valid url.` })
+export const linkTransferField = (page: Page): Locator =>
+  page.locator('input[placeholder="Email of link recipient"]')
+export const transferButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Transfer' })
+export const tagsSaveButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Save' }).nth(1)
+export const successSnackBar = (page: Page): Locator =>
+  page.locator('.MuiSnackbar-root')
+export const closeButtonSnackBar = (page: Page): Locator =>
+  page
+    .locator('div[class="MuiSnackbarContent-action"]')
+    .locator('xpath=./button')
+export const linkErrorSnackBar = (page: Page): Locator =>
+  page
+    .locator('div[role="alert"]')
+    .locator('xpath=./*')
+    .nth(1)
+    .locator('xpath=./*')
+    .nth(0)
+export const clickAway = (page: Page): Locator => page.locator('h3')
+export const largeFileError = (page: Page): Locator =>
+  page.locator('div', {
+    hasText: 'File too large, please upload a file smaller than 20mb',
+  })
+export const csvOnlyError = (page: Page): Locator =>
+  page.locator('div', { hasText: 'Only csv files are allowed' })
+export const fileSubmitButton = (page: Page): Locator =>
+  page.locator('button[type="submit"]')
+export const tag1 = (page: Page): Locator =>
+  page.locator('p', { hasText: exactText(tagText1) }).locator('xpath=..')
+export const tag2 = (page: Page): Locator =>
+  page.locator('p', { hasText: exactText(tagText2) }).locator('xpath=..')
+export const tag3 = (page: Page): Locator =>
+  page.locator('p', { hasText: exactText(tagText3) }).locator('xpath=..')
+export const tagCloseButton1 = (page: Page): Locator =>
+  tag1(page).locator('xpath=./button')
+export const tagCloseButton2 = (page: Page): Locator =>
+  tag2(page).locator('xpath=./button')
+export const tagCloseButton3 = (page: Page): Locator =>
+  tag3(page).locator('xpath=./button')
+export const noResultsFoundText = (page: Page): Locator =>
+  page.locator('p', {
+    hasText: exactText('No results found, try expanding your search terms.'),
+  })
 
 // User Page - filter search
-export const userFilterSortPanelButton = Selector(
-  'img[alt="Filter and sort icon"]',
-)
-export const filterDrawer = Selector('.MuiCollapse-root').nth(0)
-export const filterSortPanel = Selector('.MuiCollapse-root').nth(1)
-export const userApplyButton = Selector('span').withText('Apply')
-export const userResetButton = Selector('span').withText('Reset')
-export const dateOfCreationButton = Selector('p').withText('Date of creation')
-export const mostNumberOfVisitsButton = Selector('p').withText(
-  'Most number of visits',
-)
-export const userActiveButton = Selector('p')
-  .withText('Active')
-  .parent()
-  .child('button')
-  .nth(0)
-export const userInactiveButton = Selector('p')
-  .withText('Active')
-  .parent()
-  .child('button')
-  .nth(1)
-export const userLinkButton = Selector('p')
-  .withExactText('Link')
-  .parent()
-  .child('button')
-  .nth(0)
-export const userFileButton = Selector('p')
-  .withExactText('Link')
-  .parent()
-  .child('button')
-  .nth(1)
+export const userFilterSortPanelButton = (page: Page): Locator =>
+  page.locator('img[alt="Filter and sort icon"]')
+export const filterDrawer = (page: Page): Locator =>
+  page.locator('.MuiCollapse-root').nth(0)
+export const filterSortPanel = (page: Page): Locator =>
+  page.locator('.MuiCollapse-root').nth(1)
+export const userApplyButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Apply' })
+export const userResetButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Reset' })
+export const dateOfCreationButton = (page: Page): Locator =>
+  page.locator('p', { hasText: 'Date of creation' })
+export const mostNumberOfVisitsButton = (page: Page): Locator =>
+  page.locator('p', { hasText: 'Most number of visits' })
+export const userActiveButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Active' })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(0)
+export const userInactiveButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Active' })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(1)
+export const userLinkButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: exactText('Link') })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(0)
+// NOTE: matches the original testcafe suite's selector verbatim (it also
+// matches on 'Link' text, not 'File') -- preserved as-is, not a new bug.
+export const userFileButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: exactText('Link') })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(1)
 
 // Directory Page
-export const directoryUrlTableRowUrl = (index: number) =>
-  // eslint-disable-next-line eslint-js/newline-per-chained-call
-  urlTable.child(index).child(0).child('p').child(1).child('span')
-export const directoryUrlTableRowUrlText = (index: number) =>
-  directoryUrlTableRowUrl(index).innerText
-export const directoryUrlTableRowEmail = (index: number) =>
-  urlTable.child(index).child(2).child('p')
-export const directoryTextFieldKeyword = Selector(
-  'input[placeholder="Enter a keyword"]',
-)
-export const toggle = Selector('span').withText('Keyword')
-export const emailToggle = Selector('p').withText('Search by Email')
-export const directoryTextFieldEmail = Selector(
-  'input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
-)
-export const directoryFilterPanelButton = Selector('.MuiIconButton-label')
-export const directoryFilterPanel = Selector('.MuiCollapse-root').nth(1)
+export const directoryUrlTableRowUrl = (page: Page, index: number): Locator =>
+  urlTable(page)
+    .locator('xpath=./*')
+    .nth(index)
+    .locator('xpath=./*')
+    .nth(0)
+    .locator('xpath=./p')
+    .locator('xpath=./*')
+    .nth(1)
+    .locator('xpath=./span')
+export const directoryUrlTableRowUrlText = (
+  page: Page,
+  index: number,
+): Promise<string> => directoryUrlTableRowUrl(page, index).innerText()
+export const directoryUrlTableRowEmail = (page: Page, index: number): Locator =>
+  urlTable(page)
+    .locator('xpath=./*')
+    .nth(index)
+    .locator('xpath=./*')
+    .nth(2)
+    .locator('xpath=./p')
+export const directoryTextFieldKeyword = (page: Page): Locator =>
+  page.locator('input[placeholder="Enter a keyword"]')
+export const toggle = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Keyword' })
+export const emailToggle = (page: Page): Locator =>
+  page.locator('p', { hasText: 'Search by Email' })
+export const directoryTextFieldEmail = (page: Page): Locator =>
+  page.locator(
+    'input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
+  )
+export const directoryFilterPanelButton = (page: Page): Locator =>
+  page.locator('.MuiIconButton-label')
+export const directoryFilterPanel = (page: Page): Locator =>
+  page.locator('.MuiCollapse-root').nth(1)
 export const sortButtonSelectedBackground = 'rgb(249, 249, 249)'
-export const mostRecentFilter = Selector('p')
-  .withText('Most recent')
-  .parent()
-  .parent()
-export const mostPopularFilter = Selector('p')
-  .withText('Most popular')
-  .parent()
-  .parent()
-export const applyButton = Selector('span').withText('Apply').parent()
-export const resetButton = Selector('span').withText('Reset').parent()
+export const mostRecentFilter = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Most recent' })
+    .locator('xpath=..')
+    .locator('xpath=..')
+export const mostPopularFilter = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Most popular' })
+    .locator('xpath=..')
+    .locator('xpath=..')
+export const applyButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Apply' }).locator('xpath=..')
+export const resetButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Reset' }).locator('xpath=..')
 export const uncheckedButtonBackground = 'rgba(0, 0, 0, 0)'
 
-export const linkButton = Selector('p')
-  .withText('Link')
-  .parent()
-  .child('button')
-  .nth(0)
-export const linkButtonStyle = linkButton.child().child()
-export const fileButton = Selector('p')
-  .withText('File')
-  .parent()
-  .child('button')
-  .nth(1)
-export const fileButtonStyle = fileButton.child().child()
-export const activeButton = Selector('p')
-  .withText('Active')
-  .parent()
-  .child('button')
-  .nth(0)
-export const activeButtonStyle = activeButton.child().child()
-export const inactiveButton = Selector('p')
-  .withText('Inactive')
-  .parent()
-  .child('button')
-  .nth(1)
-export const inactiveButtonStyle = inactiveButton.child().child()
+export const linkButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Link' })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(0)
+export const linkButtonStyle = (page: Page): Locator =>
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
+  linkButton(page).locator('xpath=./*').first().locator('xpath=./*').first()
+export const fileButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'File' })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(1)
+export const fileButtonStyle = (page: Page): Locator =>
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
+  fileButton(page).locator('xpath=./*').first().locator('xpath=./*').first()
+export const activeButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Active' })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(0)
+export const activeButtonStyle = (page: Page): Locator =>
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
+  activeButton(page).locator('xpath=./*').first().locator('xpath=./*').first()
+export const inactiveButton = (page: Page): Locator =>
+  page
+    .locator('p', { hasText: 'Inactive' })
+    .locator('xpath=..')
+    .locator('xpath=./button')
+    .nth(1)
+export const inactiveButtonStyle = (page: Page): Locator =>
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
+  inactiveButton(page).locator('xpath=./*').first().locator('xpath=./*').first()
 
-export const copyAlert = Selector('div').withText('Email has been copied')
+export const copyAlert = (page: Page): Locator =>
+  page.locator('div', { hasText: 'Email has been copied' })
 
-export const bottomMobilePanel = Selector('div.MuiDrawer-paper')
-export const mobileCopyEmailIcon = Selector('input').withAttribute(
-  'alt',
-  'email icon',
-)
+export const bottomMobilePanel = (page: Page): Locator =>
+  page.locator('div.MuiDrawer-paper')
+export const mobileCopyEmailIcon = (page: Page): Locator =>
+  page.locator('input[alt="email icon"]')
 // Transition Page
-export const skipButton = Selector('#skip')
+export const skipButton = (page: Page): Locator => page.locator('#skip')
 
 // Link History
-export const linkHistoryViewButton = Selector('p').withText('View Link History')
-export const linkHistoryCreateSpan = Selector('span').withText(' created for ')
-export const linkHistoryLinkStatusH6 = Selector('h6').withText('Link Status')
-export const linkHistoryOriginalLinkH6 =
-  Selector('h6').withText('Original Link')
-export const linkHistoryLinkOwnerH6 = Selector('h6').withText('Link Owner')
-export const linkHistoryTagsH6 = Selector('h6').withText('Tags')
+export const linkHistoryViewButton = (page: Page): Locator =>
+  page.locator('p', { hasText: 'View Link History' })
+export const linkHistoryCreateSpan = (page: Page): Locator =>
+  page.locator('span', { hasText: ' created for ' })
+export const linkHistoryLinkStatusH6 = (page: Page): Locator =>
+  page.locator('h6', { hasText: 'Link Status' })
+export const linkHistoryOriginalLinkH6 = (page: Page): Locator =>
+  page.locator('h6', { hasText: 'Original Link' })
+export const linkHistoryLinkOwnerH6 = (page: Page): Locator =>
+  page.locator('h6', { hasText: 'Link Owner' })
+export const linkHistoryTagsH6 = (page: Page): Locator =>
+  page.locator('h6', { hasText: 'Tags' })
 
 // API Integration
-export const generateApiKeyButton = Selector('img')
-  .withAttribute('alt', 'generate api key')
-  .parent()
-  .parent()
-export const regenerateApiKeyButton = Selector('img')
-  .withAttribute('alt', 'Regenerate')
-  .parent()
-  .parent()
-export const iHaveCopiedButton = Selector('span')
-  .withText('Yes, I have copied')
-  .parent()
-export const copyButton = Selector('span')
-  .withText('Yes, I have copied')
-  .parent()
-  .parent()
-  .child('div')
-  .nth(0)
-  .child('div')
-  .nth(0)
-  .child('button')
-  .nth(0)
+export const generateApiKeyButton = (page: Page): Locator =>
+  page
+    .locator('img[alt="generate api key"]')
+    .locator('xpath=..')
+    .locator('xpath=..')
+export const regenerateApiKeyButton = (page: Page): Locator =>
+  page.locator('img[alt="Regenerate"]').locator('xpath=..').locator('xpath=..')
+export const iHaveCopiedButton = (page: Page): Locator =>
+  page.locator('span', { hasText: 'Yes, I have copied' }).locator('xpath=..')
+export const copyButton = (page: Page): Locator =>
+  page
+    .locator('span', { hasText: 'Yes, I have copied' })
+    .locator('xpath=..')
+    .locator('xpath=..')
+    .locator('xpath=./div')
+    .nth(0)
+    .locator('xpath=./div')
+    .nth(0)
+    .locator('xpath=./button')
+    .nth(0)
 
 // Helper Functions
 export function generateRandomString(length: number): string {
@@ -306,8 +443,8 @@ export function generateRandomString(length: number): string {
   return customAlphabet(ALPHABET, length)()
 }
 
-export async function getLinkCount(): Promise<number> {
-  const currLinkCountHeaderText = await linkCountHeaderText()
+export async function getLinkCount(page: Page): Promise<number> {
+  const currLinkCountHeaderText = await linkCountHeaderText(page)
   // currLinkCountHeaderText is a string with format "<numOfLinks> links"
   return parseInt(currLinkCountHeaderText.split(' ')[0], 10)
 }
