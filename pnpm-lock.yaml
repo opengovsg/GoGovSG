@@ -122,19 +122,19 @@ importers:
         specifier: ^3.1103.0
         version: 3.1103.0(@aws-sdk/client-s3@3.1103.0)
       '@datadog/browser-rum':
-        specifier: ^4.15.0
+        specifier: ^4.50.1
         version: 4.50.1
       '@material-ui/core':
-        specifier: ^4.11.4
+        specifier: ^4.12.4
         version: 4.12.4(@types/react@17.0.93)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@material-ui/lab':
-        specifier: ^4.0.0-alpha.61
+        specifier: 4.0.0-alpha.61
         version: 4.0.0-alpha.61(@material-ui/core@4.12.4(@types/react@17.0.93)(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react@17.0.93)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       '@opengovsg/validators':
         specifier: ^1.4.1
         version: 1.4.1(zod@3.25.76)
       '@types/papaparse':
-        specifier: ^5.3.5
+        specifier: ^5.5.2
         version: 5.5.2
       archiver:
         specifier: ^5.3.2
@@ -146,49 +146,49 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       body-parser:
-        specifier: ^1.20.3
+        specifier: ^1.20.6
         version: 1.20.6(supports-color@8.1.1)
       chart.js:
         specifier: ^2.9.4
         version: 2.9.4
       cheerio:
-        specifier: ^1.0.0-rc.10
-        version: 1.0.0-rc.10
+        specifier: ^1.2.0
+        version: 1.2.0
       classnames:
-        specifier: ^2.3.1
+        specifier: ^2.5.1
         version: 2.5.1
       cloudmersive-virus-api-client:
-        specifier: ^1.2.2
+        specifier: ^1.4.0
         version: 1.4.0(supports-color@8.1.1)
       connect-redis:
-        specifier: ^6.0.0
+        specifier: ^6.1.3
         version: 6.1.3
       cookie-parser:
-        specifier: ^1.4.6
+        specifier: ^1.4.7
         version: 1.4.7
       cookie-session:
         specifier: ^2.1.1
         version: 2.1.1(supports-color@8.1.1)
       copy-to-clipboard:
-        specifier: ^3.3.1
+        specifier: ^3.3.3
         version: 3.3.3
       core-js:
         specifier: ^3.49.0
         version: 3.49.0
       cross-fetch:
-        specifier: ^3.1.5
+        specifier: ^3.2.0
         version: 3.2.0
       date-fns:
         specifier: ^2.30.0
         version: 2.30.0
       date-fns-tz:
-        specifier: ^1.3.4
+        specifier: ^1.3.8
         version: 1.3.8(date-fns@2.30.0)
       dd-trace:
         specifier: ^5.119.0
         version: 5.119.0(@openfeature/server-sdk@1.23.0(@openfeature/core@1.12.0))
       dotenv:
-        specifier: ^16.3.1
+        specifier: ^16.6.1
         version: 16.6.1
       ejs:
         specifier: ^3.1.10
@@ -203,16 +203,16 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(joi@17.13.4)
       express-rate-limit:
-        specifier: ^5.3.0
+        specifier: ^5.5.1
         version: 5.5.1
       express-session:
-        specifier: ^1.18.1
+        specifier: ^1.19.0
         version: 1.19.0(supports-color@8.1.1)
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5
       file-type:
-        specifier: ^21.3.1
+        specifier: ^21.3.4
         version: 21.3.4(supports-color@8.1.1)
       helmet:
         specifier: ^4.6.0
@@ -221,10 +221,10 @@ importers:
         specifier: ^4.10.1
         version: 4.10.1
       hot-shots:
-        specifier: ^9.2.0
+        specifier: ^9.3.0
         version: 9.3.0
       i18next:
-        specifier: ^20.4.0
+        specifier: ^20.6.1
         version: 20.6.1
       i18next-http-backend:
         specifier: ^4.0.1
@@ -239,34 +239,34 @@ importers:
         specifier: ^4.18.1
         version: 4.18.1
       minimatch:
-        specifier: ^3.1.2
+        specifier: ^3.1.5
         version: 3.1.5
       moment:
-        specifier: ^2.29.4
+        specifier: ^2.30.1
         version: 2.30.1
       moment-timezone:
-        specifier: ^0.5.35
+        specifier: ^0.5.48
         version: 0.5.48
       morgan:
         specifier: ^1.11.0
         version: 1.11.0(supports-color@8.1.1)
       nanoid:
-        specifier: ^3.3.2
+        specifier: ^3.3.17
         version: 3.3.17
       nodemailer:
         specifier: ^9.0.4
         version: 9.0.4
       papaparse:
-        specifier: ^5.3.2
+        specifier: ^5.5.4
         version: 5.5.4
       pg:
-        specifier: ^8.6.0
+        specifier: ^8.22.0
         version: 8.22.0
       pg-connection-string:
-        specifier: ^2.5.0
+        specifier: ^2.14.0
         version: 2.14.0
       qrcode:
-        specifier: ^1.5.0
+        specifier: ^1.5.4
         version: 1.5.4
       react:
         specifier: ^17.0.2
@@ -278,16 +278,16 @@ importers:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
       react-ga:
-        specifier: ^3.3.0
+        specifier: ^3.3.1
         version: 3.3.1(prop-types@15.8.1)(react@17.0.2)
       react-i18next:
         specifier: ^11.18.6
         version: 11.18.6(i18next@20.6.1)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       react-redux:
-        specifier: ^7.2.4
+        specifier: ^7.2.9
         version: 7.2.9(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       react-router-dom:
-        specifier: ^5.2.0
+        specifier: ^5.3.4
         version: 5.3.4(react@17.0.2)
       react-typed:
         specifier: ^2.0.12
@@ -296,37 +296,37 @@ importers:
         specifier: ^3.1.2
         version: 3.1.2
       redux:
-        specifier: ^4.1.1
+        specifier: ^4.2.1
         version: 4.2.1
       redux-devtools-extension:
         specifier: ^2.13.9
         version: 2.13.9(redux@4.2.1)
       redux-thunk:
-        specifier: ^2.4.1
+        specifier: ^2.4.2
         version: 2.4.2(redux@4.2.1)
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
       regenerator-runtime:
-        specifier: ^0.13.8
+        specifier: ^0.13.11
         version: 0.13.11
       sanitize-html:
-        specifier: ^2.17.5
-        version: 2.17.5
+        specifier: ^2.17.6
+        version: 2.17.6
       sequelize:
         specifier: ^6.37.8
         version: 6.37.8(pg@8.22.0)(supports-color@8.1.1)
       sharp:
         specifier: ^0.35.3
-        version: 0.35.3(@types/node@15.14.9)
+        version: 0.35.3(@types/node@24.13.3)
       ua-parser-js:
-        specifier: ^0.7.28
+        specifier: ^0.7.41
         version: 0.7.41
       uuid:
         specifier: ^11.1.1
         version: 11.1.1
       validator:
-        specifier: ^13.15.15
+        specifier: ^13.15.35
         version: 13.15.35
       winston:
         specifier: ^3.19.0
@@ -348,10 +348,10 @@ importers:
         specifier: ^7.29.7
         version: 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
       '@commitlint/cli':
-        specifier: ^17.6.6
+        specifier: ^17.8.1
         version: 17.8.1(@swc/core@1.15.47)
       '@commitlint/config-conventional':
-        specifier: ^17.6.6
+        specifier: ^17.8.1
         version: 17.8.1
       '@datadog/datadog-ci':
         specifier: 5.22.0
@@ -366,40 +366,40 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       '@types/body-parser':
-        specifier: ^1.19.5
+        specifier: ^1.19.6
         version: 1.19.6
       '@types/chart.js':
-        specifier: ^2.9.34
+        specifier: ^2.9.41
         version: 2.9.41
       '@types/cloudmersive-virus-api-client':
-        specifier: ^1.1.1
+        specifier: ^1.1.4
         version: 1.1.4
       '@types/connect-redis':
         specifier: 0.0.17
         version: 0.0.17
       '@types/cookie-parser':
-        specifier: ^1.4.3
+        specifier: ^1.4.10
         version: 1.4.10(@types/express@4.17.25)
       '@types/cookie-session':
-        specifier: ^2.0.39
+        specifier: ^2.0.49
         version: 2.0.49
       '@types/d3':
-        specifier: ^6.7.3
+        specifier: ^6.7.8
         version: 6.7.8
       '@types/express':
-        specifier: ^4.17.12
+        specifier: ^4.17.25
         version: 4.17.25
       '@types/express-fileupload':
-        specifier: ^1.1.7
+        specifier: ^1.5.1
         version: 1.5.1
       '@types/express-rate-limit':
         specifier: ^5.1.3
         version: 5.1.3
       '@types/express-session':
-        specifier: ^1.17.4
+        specifier: ^1.19.0
         version: 1.19.0
       '@types/file-saver':
-        specifier: ^2.0.2
+        specifier: ^2.0.7
         version: 2.0.7
       '@types/history':
         specifier: ^4.7.11
@@ -408,73 +408,73 @@ importers:
         specifier: ^29.5.14
         version: 29.5.14
       '@types/lodash':
-        specifier: ^4.14.170
+        specifier: ^4.17.25
         version: 4.17.25
       '@types/morgan':
-        specifier: ^1.9.3
+        specifier: ^1.9.10
         version: 1.9.10
       '@types/node':
-        specifier: ^15.14.0
-        version: 15.14.9
+        specifier: ^24.0.0
+        version: 24.13.3
       '@types/qrcode':
-        specifier: ^1.4.0
+        specifier: ^1.5.6
         version: 1.5.6
       '@types/react':
-        specifier: ^17.0.2
+        specifier: ^17.0.93
         version: 17.0.93
       '@types/react-dom':
-        specifier: ^17.0.2
+        specifier: ^17.0.26
         version: 17.0.26(@types/react@17.0.93)
       '@types/react-redux':
-        specifier: ^7.1.16
+        specifier: ^7.1.34
         version: 7.1.34
       '@types/react-router-dom':
-        specifier: ^5.1.7
+        specifier: ^5.3.3
         version: 5.3.3
       '@types/redis':
         specifier: ^2.8.32
         version: 2.8.32
       '@types/redis-mock':
-        specifier: ^0.17.0
+        specifier: ^0.17.3
         version: 0.17.3
       '@types/sanitize-html':
-        specifier: ^2.6.2
+        specifier: ^2.16.1
         version: 2.16.1
       '@types/sharp':
-        specifier: ^0.28.4
+        specifier: ^0.28.6
         version: 0.28.6
       '@types/supertest':
-        specifier: ^2.0.11
+        specifier: ^2.0.16
         version: 2.0.16
       '@types/ua-parser-js':
-        specifier: ^0.7.36
+        specifier: ^0.7.39
         version: 0.7.39
       '@types/upng-js':
-        specifier: ^2.1.2
+        specifier: ^2.1.5
         version: 2.1.5
       '@types/validator':
-        specifier: ^13.6.2
+        specifier: ^13.15.10
         version: 13.15.10
       auto-changelog:
-        specifier: ^2.3.0
+        specifier: ^2.6.0
         version: 2.6.0
       babel-loader:
-        specifier: ^8.2.2
+        specifier: ^8.4.1
         version: 8.4.1(@babel/core@7.29.7(supports-color@8.1.1))(webpack@5.109.2)
       clean-webpack-plugin:
         specifier: ^3.0.0
         version: 3.0.0(webpack@5.109.2)
       commitizen:
         specifier: ^4.3.2
-        version: 4.3.2(@swc/core@1.15.47)(@types/node@15.14.9)
+        version: 4.3.2(@swc/core@1.15.47)(@types/node@24.13.3)
       concurrently:
-        specifier: ^6.2.0
+        specifier: ^6.5.1
         version: 6.5.1
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
       csv-parse:
-        specifier: ^5.3.6
+        specifier: ^5.6.0
         version: 5.6.0
       cz-conventional-changelog:
         specifier: ^3.3.0
@@ -486,26 +486,26 @@ importers:
         specifier: ^2.32.0
         version: 2.32.0(eslint@9.39.5(supports-color@8.1.1))(supports-color@8.1.1)
       form-data:
-        specifier: ^4.0.4
+        specifier: ^4.0.6
         version: 4.0.6
       html-webpack-plugin:
-        specifier: ^5.5.0
+        specifier: ^5.6.8
         version: 5.6.8(webpack@5.109.2)
       husky:
-        specifier: ^7.0.0
+        specifier: ^7.0.4
         version: 7.0.4
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
+        version: 29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       jsqr:
         specifier: ^1.4.0
         version: 1.4.0
       lint-staged:
-        specifier: ^11.0.0
+        specifier: ^11.2.6
         version: 11.2.6
       node-mocks-http:
-        specifier: ^1.10.1
-        version: 1.18.1(@types/express@4.17.25)(@types/node@15.14.9)
+        specifier: ^1.18.1
+        version: 1.18.1(@types/express@4.17.25)(@types/node@24.13.3)
       oxfmt:
         specifier: 0.62.0
         version: 0.62.0
@@ -534,10 +534,10 @@ importers:
         specifier: ^0.10.2
         version: 0.10.2
       serverless-plugin-include-dependencies:
-        specifier: ^5.0.0
-        version: 5.0.0(supports-color@8.1.1)
+        specifier: ^5.1.0
+        version: 5.1.0(supports-color@8.1.1)
       supertest:
-        specifier: ^6.1.3
+        specifier: ^6.3.4
         version: 6.3.4(supports-color@8.1.1)
       swc-loader:
         specifier: ^0.2.7
@@ -546,8 +546,8 @@ importers:
         specifier: 3.7.4
         version: 3.7.4(supports-color@8.1.1)
       tsx:
-        specifier: ^4.23.1
-        version: 4.23.5
+        specifier: ^4.23.6
+        version: 4.23.7
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -558,13 +558,13 @@ importers:
         specifier: ^0.11.4
         version: 0.11.4
       webpack:
-        specifier: ^5.76.0
+        specifier: ^5.109.2
         version: 5.109.2(@swc/core@1.15.47)(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(postcss@8.5.25)(uglify-js@3.19.3)(webpack-cli@4.10.0)
       webpack-cli:
-        specifier: ^4.7.2
+        specifier: ^4.10.0
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.109.2)
       webpack-dev-server:
-        specifier: ^4.15.1
+        specifier: ^4.15.2
         version: 4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack-cli@4.10.0)(webpack@5.109.2)
 
 packages:
@@ -2961,9 +2961,6 @@ packages:
   '@types/node-forge@1.3.14':
     resolution: {integrity: sha512-mhVF2BnD4BO+jtOp7z1CdzaK4mbuK0LLQYAvdOLqHTavxFNq4zA1EmYkpnFjP8HOUzedfQkRnp0E2ulSAYSzAw==}
 
-  '@types/node@15.14.9':
-    resolution: {integrity: sha512-qjd88DrCxupx/kJD5yQgZdcYKZKSIGBVDIBE1/LTGcNm3d2Np/jxojkdePDdfnBHJc5W7vSMpbJ1aB7p/Py69A==}
-
   '@types/node@20.14.5':
     resolution: {integrity: sha512-aoRR+fJkZT2l0aGOJhuA8frnCSoNX6W7U2mpNq63+BxBIj5BQFt8rHy627kijCmm63ijdSdwvGgpUsU6MBsZZA==}
 
@@ -3755,12 +3752,12 @@ packages:
   check-error@1.0.3:
     resolution: {integrity: sha512-iKEoDYaRmd1mxM90a2OEfWhjsjPpYPuQ+lMYsoxB126+t8fw7ySEO48nmDg5COTjxDI65/Y2OWpeEHk3ZOe8zg==}
 
-  cheerio-select@1.6.0:
-    resolution: {integrity: sha512-eq0GdBvxVFbqWgmCm7M3XGs1I8oLy/nExUnh6oLqmBditPO9AqQJrkslDpMun/hZ0yyTs8L0m85OHp4ho6Qm9g==}
+  cheerio-select@2.1.0:
+    resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
 
-  cheerio@1.0.0-rc.10:
-    resolution: {integrity: sha512-g0J0q/O6mW8z5zxQ3A8E8J1hUgp4SMOvEoW/x84OwyHKe/Zccz83PVT4y5Crcr530FV6NgmKI1qvGTKVl9XXVw==}
-    engines: {node: '>= 6'}
+  cheerio@1.2.0:
+    resolution: {integrity: sha512-WDrybc/gKFpTYQutKIK6UvfcuxijIZfMfXaYm8NMsPQxSYvf+13fXUJ4rztGGbJcBQ/GF55gvrZ0Bc0bj/mqvg==}
+    engines: {node: '>=20.18.1'}
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -4088,6 +4085,9 @@ packages:
   css-select@4.3.0:
     resolution: {integrity: sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==}
 
+  css-select@5.2.2:
+    resolution: {integrity: sha512-TizTzUddG/xYLA3NXodFM0fSbNizXjOKhqiQQwvhlspadZokn1KDy0NZFS0wuEubIYAV5/c1/lAr0TaaFXEXzw==}
+
   css-vendor@2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
 
@@ -4371,8 +4371,16 @@ packages:
   dom-serializer@2.0.0:
     resolution: {integrity: sha512-wIkAryiqt/nV5EQKqQpo3SToSOV9J0DnbJqwK7Wv/Trc92zIAYZ4FlMu+JPFW1DfGFt81ZTCGgDEabffXeLyJg==}
 
+  dom-serializer@3.1.1:
+    resolution: {integrity: sha512-4MEa38/QexBob6gFNwu+EGdWvhJ1OKuNwdYY3Y3NyeWDQfnGeDYQUDfIRzWu5B5gsv03so2Uxd28YC6zrsx3Lw==}
+    engines: {node: '>=20.19.0'}
+
   domelementtype@2.3.0:
     resolution: {integrity: sha512-OLETBj6w0OsagBwdXnPdN0cnMfF9opN69co+7ZrbfPGrdpPVNBUj02spi6B1N7wChLQiPn4CSH/zJvXw56gmHw==}
+
+  domelementtype@3.0.0:
+    resolution: {integrity: sha512-umCQid3jKbDmVjx8jGaW7uUykm4DEUeyV21hPxNMo2nV955DhUThwqyOIDtreepP31hl84X7G5U9ZfsWvIB3Pg==}
+    engines: {node: '>=20.19.0'}
 
   domhandler@4.3.1:
     resolution: {integrity: sha512-GrwoxYN+uWlzO8uhUXRl0P+kHE4GtVPfYzVLcUxPL7KNdHKj66vvlhiweIHqYYXWlw+T8iLMp42Lm67ghw4WMQ==}
@@ -4382,11 +4390,19 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
+  domhandler@6.0.1:
+    resolution: {integrity: sha512-gYzvtM72ZtxQO0T048kd6HWSbbGCNOUwcnfQ01cqIJ4X2IYKFFHZ5mKvrQETcFXxsRObZulDaKmy//R7TPtsBg==}
+    engines: {node: '>=20.19.0'}
+
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
+
+  domutils@4.0.2:
+    resolution: {integrity: sha512-qI4JLRKnSzqFqr7hAlS5xQDusBCjKSEG4t4+7aNrIQMHBcsC2TGEhuyABJdYkgSewL57PNLYEiibY2iPKhKpaA==}
+    engines: {node: '>=20.19.0'}
 
   dot-case@3.0.4:
     resolution: {integrity: sha512-Kv5nKlh6yRrdrGvxeJ2e5y2eRUpkUosIW4A2AS38zwSz27zu7ufDwQPi5Jhs3XAlGNetl3bmnGhQsMtkKJnj3w==}
@@ -4462,6 +4478,9 @@ packages:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
 
+  encoding-sniffer@0.2.1:
+    resolution: {integrity: sha512-5gvq20T6vfpekVtqrYQsSCFZ1wEg5+wW0/QaZMWkFr6BqD3NfKs0rLCx4rrVlSWJeZb5NBJgVLswK/w2MWU+Gw==}
+
   end-of-stream@1.4.5:
     resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
@@ -4487,6 +4506,10 @@ packages:
   entities@7.0.1:
     resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
     engines: {node: '>=0.12'}
+
+  entities@8.0.0:
+    resolution: {integrity: sha512-zwfzJecQ/Uej6tusMqwAqU/6KL2XaB2VZ2Jg54Je6ahNBGNH6Ek6g3jjNCF0fG9EWQKGZNddNjU5F1ZQn/sBnA==}
+    engines: {node: '>=20.19.0'}
 
   envinfo@7.21.0:
     resolution: {integrity: sha512-Lw7I8Zp5YKHFCXL7+Dz95g4CcbMEpgvqZNNq3AmlT5XAV6CgAAk6gyAMqn2zjw08K9BHfcNuKrMiCPLByGafow==}
@@ -5138,6 +5161,10 @@ packages:
   htmlparser2@10.1.0:
     resolution: {integrity: sha512-VTZkM9GWRAtEpveh7MSF6SjjrpNVNNVJfFup7xTY3UpFtm67foy9HDVXneLtFVt4pMz5kZtgNcvCniNFb1hlEQ==}
 
+  htmlparser2@12.0.0:
+    resolution: {integrity: sha512-Tz7u1i95/g2x2jz81+x0FBVhBhY5aRTvD3tXXdFaljuNdzDLJ8UGNRrTcj2cgQvAg3iW/h77Fz15nLW0L0CrZw==}
+    engines: {node: '>=20.19.0'}
+
   htmlparser2@6.1.0:
     resolution: {integrity: sha512-gyyPk6rgonLFEDGoeRgQNaEUvdJ4ktTmmUh/h2t7s+M8oPpIPxgNACWa+6ESR57kXstwqPiCut0V8NRpcwgU7A==}
 
@@ -5214,6 +5241,10 @@ packages:
 
   iconv-lite@0.5.1:
     resolution: {integrity: sha512-ONHr16SQvKZNSqjQT9gy5z24Jw+uqfO02/ngBSBoqChZ+W8qXX7GPRa1RoUnzGADw8K63R1BXUMzarCVQBpY8Q==}
+    engines: {node: '>=0.10.0'}
+
+  iconv-lite@0.6.3:
+    resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
   iconv-lite@0.7.3:
@@ -6523,17 +6554,17 @@ packages:
   parse-srcset@1.0.2:
     resolution: {integrity: sha512-/2qh0lav6CmI15FzA3i/2Bzk2zCgQhGMkvhOhKNcBVQ1ldgpbfiNTVslmooUmWJcADi1f1kIeynbDRVzNlfR6Q==}
 
-  parse5-htmlparser2-tree-adapter@6.0.1:
-    resolution: {integrity: sha512-qPuWvbLgvDGilKc5BoicRovlT4MtYT6JfJyBOMDsKoiT+GiuP5qyrPCnR9HcPECIJJmZh5jRndyNThnhhb/vlA==}
+  parse5-htmlparser2-tree-adapter@7.1.0:
+    resolution: {integrity: sha512-ruw5xyKs6lrpo9x9rCZqZZnIUntICjQAd0Wsmp396Ul9lN/h+ifgVV1x1gZHi8euej6wTfpqX8j+BFQxF0NS/g==}
+
+  parse5-parser-stream@7.1.2:
+    resolution: {integrity: sha512-JyeQc9iwFLn5TbvvqACIF/VXG6abODeB3Fwmv/TGdLk2LfbWkaySGY72at4+Ty7EkPZj854u4CrICqNk2qIbow==}
 
   parse5@1.5.1:
     resolution: {integrity: sha512-w2jx/0tJzvgKwZa58sj2vAYq/S/K1QJfIB3cWYea/Iu1scFPDQQ3IQiVZTHWtRBwAjv2Yd7S/xeZf3XqLDb3bA==}
 
   parse5@2.2.3:
     resolution: {integrity: sha512-yJQdbcT+hCt6HD+BuuUvjHUdNwerQIKSJSm7tXjtp6oIH5Mxbzlt/VIIeWxblsgcDt1+E7kxPeilD5McWswStA==}
-
-  parse5@6.0.1:
-    resolution: {integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==}
 
   parse5@7.3.0:
     resolution: {integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==}
@@ -7142,8 +7173,9 @@ packages:
   sanitize-filename@1.6.4:
     resolution: {integrity: sha512-9ZyI08PsvdQl2r/bBIGubpVdR3RR9sY6RDiWFPreA21C/EFlQhmgo20UZlNjZMMZNubusLhAQozkA0Od5J21Eg==}
 
-  sanitize-html@2.17.5:
-    resolution: {integrity: sha512-ZmU1joGRrvoyctKIiuwUxqR6moLoU2Wk+2bMccN6f7UwhAmwYDvWziqPxRDDN2Qip62NqnIrVrT9akbL6Wretg==}
+  sanitize-html@2.17.6:
+    resolution: {integrity: sha512-M4bo9tfv1yfhQZZKkc6dL07ALrGJtfvNOuhX3hU9AVPR/uPQ+nKOJBqTYc7LfMQblTW04mtSWDJWEyLvygJsLA==}
+    engines: {node: '>=22.12.0'}
 
   scheduler@0.20.2:
     resolution: {integrity: sha512-2eWfGgAqqWFGqtdMmcL5zCMK1U8KlXv8SQFGglL3CEtd0aDVDWgeF/YoCmvln55m5zSk3J/20hTaSBeSObsQDQ==}
@@ -7246,9 +7278,10 @@ packages:
     resolution: {integrity: sha512-x0RTqQel6g5SY7Lg6ZreMmsOzncHFU7nhnRWkKgWuMTu5NN0DR5oruckMqRvacAN9d5w6ARnRBXl9xhDCgfMeA==}
     engines: {node: '>= 0.8.0'}
 
-  serverless-plugin-include-dependencies@5.0.0:
-    resolution: {integrity: sha512-VuEJqXomoE1mLqJUg5CV09NeBoufLRYaBr1cmr6BjXCB1Dfmq5vlBxHS74Ccna1p2/kxR9zUMOFprfATttdE0g==}
+  serverless-plugin-include-dependencies@5.1.0:
+    resolution: {integrity: sha512-OhPHNL4yx5xqTml8cYyFLHEZZGmPRIqdNKP8gS8uFTR59lMcnoK/xm9jhBjG72TqJeLOaoZOYOLxsd2RpV5KJw==}
     engines: {node: '>=4.0'}
+    deprecated: Bug in this feature, use 5.0 for now
 
   set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
@@ -7705,8 +7738,8 @@ packages:
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
 
-  tsx@4.23.5:
-    resolution: {integrity: sha512-rw55FUaqOoI7RvlQwLbhO4nSDApnQ4/CykPuiQ/EPvtrX3WA9Ig55jIt9VvbBJbzJuj12ueRu4PMZ2SxPVbihg==}
+  tsx@4.23.7:
+    resolution: {integrity: sha512-3f/u/+UDCNQ7iwUZW9FCMnNGIHzElGJYh0S/yy8IvWSsn5O7fEO/897FaG7FA2W8yryiRyuwXZ1PYLAKYaqSuQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -7813,6 +7846,10 @@ packages:
 
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
+
+  undici@7.29.0:
+    resolution: {integrity: sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==}
+    engines: {node: '>=20.18.1'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
     resolution: {integrity: sha512-dA8WbNeb2a6oQzAQ55YlT5vQAWGV9WXOsi3SskE3bcCdM0P4SDd+24zS/OCacdRq5BkdsRj9q3Pg6YyQoxIGqg==}
@@ -8001,6 +8038,15 @@ packages:
   websocket-extensions@0.1.4:
     resolution: {integrity: sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==}
     engines: {node: '>=0.8.0'}
+
+  whatwg-encoding@3.1.1:
+    resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
+    engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+
+  whatwg-mimetype@4.0.0:
+    resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
+    engines: {node: '>=18'}
 
   whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
@@ -9716,12 +9762,12 @@ snapshots:
   '@img/sharp-win32-x64@0.35.3':
     optional: true
 
-  '@inquirer/external-editor@1.0.3(@types/node@15.14.9)':
+  '@inquirer/external-editor@1.0.3(@types/node@24.13.3)':
     dependencies:
       chardet: 2.2.0
       iconv-lite: 0.7.3
     optionalDependencies:
-      '@types/node': 15.14.9
+      '@types/node': 24.13.3
 
   '@inversifyjs/common@1.4.0': {}
 
@@ -10753,8 +10799,6 @@ snapshots:
     dependencies:
       '@types/node': 24.13.3
 
-  '@types/node@15.14.9': {}
-
   '@types/node@20.14.5':
     dependencies:
       undici-types: 5.26.5
@@ -11635,23 +11679,28 @@ snapshots:
     dependencies:
       get-func-name: 2.0.2
 
-  cheerio-select@1.6.0:
+  cheerio-select@2.1.0:
     dependencies:
-      css-select: 4.3.0
+      boolbase: 1.0.0
+      css-select: 5.2.2
       css-what: 6.2.2
       domelementtype: 2.3.0
-      domhandler: 4.3.1
-      domutils: 2.8.0
+      domhandler: 5.0.3
+      domutils: 3.2.2
 
-  cheerio@1.0.0-rc.10:
+  cheerio@1.2.0:
     dependencies:
-      cheerio-select: 1.6.0
-      dom-serializer: 1.4.1
-      domhandler: 4.3.1
-      htmlparser2: 6.1.0
-      parse5: 6.0.1
-      parse5-htmlparser2-tree-adapter: 6.0.1
-      tslib: 2.8.1
+      cheerio-select: 2.1.0
+      dom-serializer: 2.0.0
+      domhandler: 5.0.3
+      domutils: 3.2.2
+      encoding-sniffer: 0.2.1
+      htmlparser2: 10.1.0
+      parse5: 7.3.0
+      parse5-htmlparser2-tree-adapter: 7.1.0
+      parse5-parser-stream: 7.1.2
+      undici: 7.29.0
+      whatwg-mimetype: 4.0.0
 
   chokidar@3.6.0:
     dependencies:
@@ -11797,7 +11846,7 @@ snapshots:
 
   commander@8.3.0: {}
 
-  commitizen@4.3.2(@swc/core@1.15.47)(@types/node@15.14.9):
+  commitizen@4.3.2(@swc/core@1.15.47)(@types/node@24.13.3):
     dependencies:
       cachedir: 2.4.0
       cz-conventional-changelog: 3.3.0(@swc/core@1.15.47)
@@ -11807,7 +11856,7 @@ snapshots:
       find-root: 1.1.0
       fs-extra: 9.1.0
       glob: 7.2.3
-      inquirer: 8.2.7(@types/node@15.14.9)
+      inquirer: 8.2.7(@types/node@24.13.3)
       is-utf8: 0.2.1
       lodash: 4.18.1
       minimist: 1.2.8
@@ -11979,13 +12028,13 @@ snapshots:
       crc-32: 1.2.2
       readable-stream: 3.6.2
 
-  create-jest@29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
+  create-jest@29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
+      jest-config: 29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -12018,6 +12067,14 @@ snapshots:
       domutils: 2.8.0
       nth-check: 2.1.1
 
+  css-select@5.2.2:
+    dependencies:
+      boolbase: 1.0.0
+      css-what: 6.2.2
+      domhandler: 5.0.3
+      domutils: 3.2.2
+      nth-check: 2.1.1
+
   css-vendor@2.0.8:
     dependencies:
       '@babel/runtime': 7.29.7
@@ -12034,7 +12091,7 @@ snapshots:
   cz-conventional-changelog@3.3.0(@swc/core@1.15.47):
     dependencies:
       chalk: 2.4.2
-      commitizen: 4.3.2(@swc/core@1.15.47)(@types/node@15.14.9)
+      commitizen: 4.3.2(@swc/core@1.15.47)(@types/node@24.13.3)
       conventional-commit-types: 3.0.0
       lodash.map: 4.6.0
       longest: 2.0.1
@@ -12324,7 +12381,15 @@ snapshots:
       domhandler: 5.0.3
       entities: 4.5.0
 
+  dom-serializer@3.1.1:
+    dependencies:
+      domelementtype: 3.0.0
+      domhandler: 6.0.1
+      entities: 8.0.0
+
   domelementtype@2.3.0: {}
+
+  domelementtype@3.0.0: {}
 
   domhandler@4.3.1:
     dependencies:
@@ -12333,6 +12398,10 @@ snapshots:
   domhandler@5.0.3:
     dependencies:
       domelementtype: 2.3.0
+
+  domhandler@6.0.1:
+    dependencies:
+      domelementtype: 3.0.0
 
   domutils@2.8.0:
     dependencies:
@@ -12345,6 +12414,12 @@ snapshots:
       dom-serializer: 2.0.0
       domelementtype: 2.3.0
       domhandler: 5.0.3
+
+  domutils@4.0.2:
+    dependencies:
+      dom-serializer: 3.1.1
+      domelementtype: 3.0.0
+      domhandler: 6.0.1
 
   dot-case@3.0.4:
     dependencies:
@@ -12402,6 +12477,11 @@ snapshots:
 
   encodeurl@2.0.0: {}
 
+  encoding-sniffer@0.2.1:
+    dependencies:
+      iconv-lite: 0.6.3
+      whatwg-encoding: 3.1.1
+
   end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
@@ -12423,6 +12503,8 @@ snapshots:
   entities@6.0.1: {}
 
   entities@7.0.1: {}
+
+  entities@8.0.0: {}
 
   envinfo@7.21.0: {}
 
@@ -13308,6 +13390,13 @@ snapshots:
       domutils: 3.2.2
       entities: 7.0.1
 
+  htmlparser2@12.0.0:
+    dependencies:
+      domelementtype: 3.0.0
+      domhandler: 6.0.1
+      domutils: 4.0.2
+      entities: 8.0.0
+
   htmlparser2@6.1.0:
     dependencies:
       domelementtype: 2.3.0
@@ -13392,6 +13481,10 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
+  iconv-lite@0.6.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
   iconv-lite@0.7.3:
     dependencies:
       safer-buffer: 2.1.2
@@ -13449,9 +13542,9 @@ snapshots:
 
   ini@1.3.8: {}
 
-  inquirer@8.2.7(@types/node@15.14.9):
+  inquirer@8.2.7(@types/node@24.13.3):
     dependencies:
-      '@inquirer/external-editor': 1.0.3(@types/node@15.14.9)
+      '@inquirer/external-editor': 1.0.3(@types/node@24.13.3)
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       cli-cursor: 3.1.0
@@ -13782,16 +13875,16 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
+  jest-cli@29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
       '@jest/core': 29.7.0(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
+      create-jest: 29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       exit: 0.1.2
       import-local: 3.2.0
-      jest-config: 29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
+      jest-config: 29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.3
@@ -13800,37 +13893,6 @@ snapshots:
       - babel-plugin-macros
       - supports-color
       - ts-node
-
-  jest-config@29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
-    dependencies:
-      '@babel/core': 7.29.7(supports-color@8.1.1)
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      babel-jest: 29.7.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0(supports-color@8.1.1)
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0(supports-color@8.1.1)
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.8
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    optionalDependencies:
-      '@types/node': 15.14.9
-      ts-node: 10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - supports-color
 
   jest-config@29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
@@ -14086,12 +14148,12 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
+  jest@29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
       '@jest/core': 29.7.0(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       '@jest/types': 29.6.3
       import-local: 3.2.0
-      jest-cli: 29.7.0(@types/node@15.14.9)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
+      jest-cli: 29.7.0(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -14596,7 +14658,7 @@ snapshots:
 
   node-int64@0.4.0: {}
 
-  node-mocks-http@1.18.1(@types/express@4.17.25)(@types/node@15.14.9):
+  node-mocks-http@1.18.1(@types/express@4.17.25)(@types/node@24.13.3):
     dependencies:
       accepts: 1.3.8
       content-disposition: 0.5.4
@@ -14609,7 +14671,7 @@ snapshots:
       type-is: 1.6.18
     optionalDependencies:
       '@types/express': 4.17.25
-      '@types/node': 15.14.9
+      '@types/node': 24.13.3
 
   node-releases@2.0.52: {}
 
@@ -14909,15 +14971,18 @@ snapshots:
 
   parse-srcset@1.0.2: {}
 
-  parse5-htmlparser2-tree-adapter@6.0.1:
+  parse5-htmlparser2-tree-adapter@7.1.0:
     dependencies:
-      parse5: 6.0.1
+      domhandler: 5.0.3
+      parse5: 7.3.0
+
+  parse5-parser-stream@7.1.2:
+    dependencies:
+      parse5: 7.3.0
 
   parse5@1.5.1: {}
 
   parse5@2.2.3: {}
-
-  parse5@6.0.1: {}
 
   parse5@7.3.0:
     dependencies:
@@ -15529,11 +15594,11 @@ snapshots:
     dependencies:
       truncate-utf8-bytes: 1.0.2
 
-  sanitize-html@2.17.5:
+  sanitize-html@2.17.6:
     dependencies:
       deepmerge: 4.3.1
       escape-string-regexp: 4.0.0
-      htmlparser2: 10.1.0
+      htmlparser2: 12.0.0
       is-plain-object: 5.0.0
       launder: 1.7.1
       parse-srcset: 1.0.2
@@ -15660,7 +15725,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serverless-plugin-include-dependencies@5.0.0(supports-color@8.1.1):
+  serverless-plugin-include-dependencies@5.1.0(supports-color@8.1.1):
     dependencies:
       micromatch: 4.0.8
       precinct: 8.3.1(supports-color@8.1.1)
@@ -15703,7 +15768,7 @@ snapshots:
     dependencies:
       kind-of: 6.0.3
 
-  sharp@0.35.3(@types/node@15.14.9):
+  sharp@0.35.3(@types/node@24.13.3):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -15734,7 +15799,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.3
       '@img/sharp-win32-ia32': 0.35.3
       '@img/sharp-win32-x64': 0.35.3
-      '@types/node': 15.14.9
+      '@types/node': 24.13.3
 
   shebang-command@2.0.0:
     dependencies:
@@ -16341,26 +16406,6 @@ snapshots:
     dependencies:
       utf8-byte-length: 1.0.5
 
-  ts-node@10.9.2(@swc/core@1.15.47)(@types/node@15.14.9)(typescript@7.0.2):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.12
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 15.14.9
-      acorn: 8.18.0
-      acorn-walk: 8.3.5
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.4
-      make-error: 1.3.6
-      typescript: 7.0.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    optionalDependencies:
-      '@swc/core': 1.15.47
-
   ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
@@ -16376,6 +16421,26 @@ snapshots:
       diff: 4.0.4
       make-error: 1.3.6
       typescript: 5.9.3
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    optionalDependencies:
+      '@swc/core': 1.15.47
+
+  ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2):
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.12
+      '@tsconfig/node12': 1.0.11
+      '@tsconfig/node14': 1.0.3
+      '@tsconfig/node16': 1.0.4
+      '@types/node': 24.13.3
+      acorn: 8.18.0
+      acorn-walk: 8.3.5
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.4
+      make-error: 1.3.6
+      typescript: 7.0.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
@@ -16399,7 +16464,7 @@ snapshots:
       tslib: 1.14.1
       typescript: 3.9.10
 
-  tsx@4.23.5:
+  tsx@4.23.7:
     dependencies:
       esbuild: 0.28.1
     optionalDependencies:
@@ -16519,6 +16584,8 @@ snapshots:
   undici-types@5.26.5: {}
 
   undici-types@7.18.2: {}
+
+  undici@7.29.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -16745,6 +16812,12 @@ snapshots:
       websocket-extensions: 0.1.4
 
   websocket-extensions@0.1.4: {}
+
+  whatwg-encoding@3.1.1:
+    dependencies:
+      iconv-lite: 0.6.3
+
+  whatwg-mimetype@4.0.0: {}
 
   whatwg-url@5.0.0:
     dependencies:
