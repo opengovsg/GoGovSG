@@ -179,3 +179,16 @@ updates:
         patterns:
           - react
           - react-dom
+
+  # Keeps SHA-pinned Actions (see .github/workflows/*.yml) refreshed instead
+  # of going stale forever.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+
+  # Keeps the digest-pinned base image (see Dockerfile*) refreshed.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
