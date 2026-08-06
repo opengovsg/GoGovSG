@@ -13,4 +13,7 @@ coverage
 .idea
 .pgdata
 .cache_ggshield
+playwright-report
+test-results
+blob-report
 .env.*
