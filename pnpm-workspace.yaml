@@ -1,3 +1,10 @@
+# The app's webpack config and several ambient @types imports assume a flat,
+# npm-style node_modules (Node core-module polyfills, @types packages pulled
+# in only transitively) rather than declaring every one of those explicitly.
+# Hoisted linking matches npm's flat resolution instead of pnpm's isolated
+# default, so the migration doesn't need to hunt down every such case.
+nodeLinker: hoisted
+
 allowBuilds:
   '@datadog/native-appsec': false
   '@datadog/native-iast-taint-tracking': false
