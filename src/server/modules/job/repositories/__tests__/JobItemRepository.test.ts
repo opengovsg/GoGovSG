@@ -39,7 +39,7 @@ describe('JobItemRepository', () => {
       scope.mockImplementationOnce(() => ({ findOne }))
       findOne.mockResolvedValueOnce(mockJobItem)
       await expect(repository.findByJobItemId(1)).resolves.toEqual(mockJobItem)
-      expect(scope).toBeCalledWith(['defaultScope'])
+      expect(scope).toHaveBeenCalledWith(['defaultScope'])
     })
   })
 

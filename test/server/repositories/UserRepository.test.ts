@@ -361,8 +361,8 @@ describe('UserRepository', () => {
     it("user's apiKeyHash is updated correctly", async () => {
       findOne.mockResolvedValue(baseUser)
       await userRepo.saveApiKeyHash(baseUser.id, apiKeyHash)
-      expect(findOne).toBeCalledTimes(1)
-      expect(update).toBeCalledTimes(1)
+      expect(findOne).toHaveBeenCalledTimes(1)
+      expect(update).toHaveBeenCalledTimes(1)
       expect(update).toHaveBeenCalledWith({ apiKeyHash })
     })
     it('user not found, error is thrown', async () => {
@@ -370,8 +370,8 @@ describe('UserRepository', () => {
       await expect(
         userRepo.saveApiKeyHash(baseUser.id, apiKeyHash),
       ).rejects.toBeInstanceOf(NotFoundError)
-      expect(findOne).toBeCalledTimes(1)
-      expect(update).toBeCalledTimes(0)
+      expect(findOne).toHaveBeenCalledTimes(1)
+      expect(update).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -395,7 +395,7 @@ describe('UserRepository', () => {
       await expect(userRepo.hasApiKey(baseUser.id)).rejects.toBeInstanceOf(
         NotFoundError,
       )
-      expect(findOne).toBeCalledTimes(1)
+      expect(findOne).toHaveBeenCalledTimes(1)
     })
   })
 

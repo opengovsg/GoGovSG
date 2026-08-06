@@ -38,7 +38,7 @@ describe('LinkStatisticsController test', () => {
 
     await controller.getLinkStatistics(req, res)
     expect(getLinkStatistics).not.toHaveBeenCalled()
-    expect(responseSpy).toBeCalledWith(404)
+    expect(responseSpy).toHaveBeenCalledWith(404)
   })
 
   test('authenticated user with no short url', async () => {
@@ -49,7 +49,7 @@ describe('LinkStatisticsController test', () => {
 
     await controller.getLinkStatistics(req, res)
     expect(getLinkStatistics).not.toHaveBeenCalled()
-    expect(responseSpy).toBeCalledWith(404)
+    expect(responseSpy).toHaveBeenCalledWith(404)
   })
 
   test('unauthenticated user with short url', async () => {
@@ -60,7 +60,7 @@ describe('LinkStatisticsController test', () => {
 
     await controller.getLinkStatistics(req, res)
     expect(getLinkStatistics).not.toHaveBeenCalled()
-    expect(responseSpy).toBeCalledWith(401)
+    expect(responseSpy).toHaveBeenCalledWith(401)
   })
 
   test('authenticated user with short url', async () => {
@@ -71,12 +71,12 @@ describe('LinkStatisticsController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(
+    expect(getLinkStatistics).toHaveBeenCalledWith(
       userCredentials.id,
       'test',
       undefined,
     )
-    expect(responseSpy).toBeCalledWith(200)
+    expect(responseSpy).toHaveBeenCalledWith(200)
   })
 
   test('authenticated user with short url and offset', async () => {
@@ -88,8 +88,12 @@ describe('LinkStatisticsController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(userCredentials.id, 'test', 3650)
-    expect(responseSpy).toBeCalledWith(200)
+    expect(getLinkStatistics).toHaveBeenCalledWith(
+      userCredentials.id,
+      'test',
+      3650,
+    )
+    expect(responseSpy).toHaveBeenCalledWith(200)
   })
 
   test('LinkStatisticsService throws error', async () => {
@@ -102,11 +106,11 @@ describe('LinkStatisticsController test', () => {
     getLinkStatistics.mockRejectedValue(new Error(':('))
 
     await controller.getLinkStatistics(req, res)
-    expect(getLinkStatistics).toBeCalledWith(
+    expect(getLinkStatistics).toHaveBeenCalledWith(
       userCredentials.id,
       'test',
       undefined,
     )
-    expect(responseSpy).toBeCalledWith(404)
+    expect(responseSpy).toHaveBeenCalledWith(404)
   })
 })
