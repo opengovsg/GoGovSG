@@ -145,7 +145,7 @@
     "@types/express-session": "^1.19.0",
     "@types/file-saver": "^2.0.7",
     "@types/history": "^4.7.11",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "@types/lodash": "^4.17.25",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.0.0",
