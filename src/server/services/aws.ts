@@ -1,5 +1,10 @@
-import { AWSError, S3 } from 'aws-sdk'
-import { PromiseResult } from 'aws-sdk/lib/request'
+import {
+  PutObjectAclCommand,
+  PutObjectAclCommandOutput,
+  PutObjectCommand,
+  PutObjectCommandOutput,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import { inject, injectable } from 'inversify'
 import { DependencyIds } from '../constants'
 
@@ -13,12 +18,12 @@ export interface S3Interface {
   setS3ObjectACL: (
     key: string,
     acl: FileVisibility,
-  ) => Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>>
+  ) => Promise<PutObjectAclCommandOutput>
   uploadFileToS3: (
     file: Buffer,
     key: string,
     fileType: string,
-  ) => Promise<PromiseResult<S3.PutObjectOutput, AWSError>>
+  ) => Promise<PutObjectCommandOutput>
   buildFileLongUrl: (key: string) => string
   getKeyFromLongUrl: (longUrl: string) => string
 }
@@ -27,14 +32,14 @@ export interface S3Interface {
 /* eslint class-methods-use-this: ["error", { "exceptMethods":
   ["setS3ObjectACL", "uploadFileToS3", "buildFileLongUrl", "getKeyFromLongUrl"] }] */
 export class S3ServerSide implements S3Interface {
-  private s3Client: S3
+  private s3Client: S3Client
 
   private s3Bucket: string
 
   private fileURLPrefix: string
 
   constructor(
-    @inject(DependencyIds.s3Client) s3Client: S3,
+    @inject(DependencyIds.s3Client) s3Client: S3Client,
     @inject(DependencyIds.s3Bucket) s3Bucket: string,
     @inject(DependencyIds.fileURLPrefix) fileURLPrefix: string,
   ) {
@@ -46,21 +51,20 @@ export class S3ServerSide implements S3Interface {
   setS3ObjectACL(
     key: string,
     acl: FileVisibility,
-  ): Promise<PromiseResult<S3.PutObjectAclOutput, AWSError>> {
+  ): Promise<PutObjectAclCommandOutput> {
     const params = {
       Bucket: this.s3Bucket,
       Key: key,
       ACL: acl,
     }
-    const result = this.s3Client.putObjectAcl(params).promise()
-    return result
+    return this.s3Client.send(new PutObjectAclCommand(params))
   }
 
   uploadFileToS3(
     file: Buffer,
     key: string,
     fileType: string,
-  ): Promise<PromiseResult<S3.PutObjectOutput, AWSError>> {
+  ): Promise<PutObjectCommandOutput> {
     const params = {
       ContentType: fileType,
       Bucket: this.s3Bucket,
@@ -69,7 +73,7 @@ export class S3ServerSide implements S3Interface {
       ACL: FileVisibility.Public,
       CacheControl: `no-cache`,
     }
-    return this.s3Client.putObject(params).promise()
+    return this.s3Client.send(new PutObjectCommand(params))
   }
 
   buildFileLongUrl(key: string): string {
