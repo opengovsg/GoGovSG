@@ -820,7 +820,8 @@
               "**/test/end-to-end/**",
               "**/test/integration/**",
               "**/*.test.ts",
-              "webpack.config.ts"
+              "webpack.config.ts",
+              "playwright.config.ts"
             ]
           }
         ]
