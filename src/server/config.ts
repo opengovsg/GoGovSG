@@ -165,6 +165,11 @@ export const linksToRotate = process.env.ROTATED_LINKS
 // resolves to an empty string (v2 tolerated it), so fall back to a valid
 // region instead of ''.
 export const sqsRegion = (process.env.SQS_REGION as string) || 'ap-southeast-1'
+// aws-sdk v3's S3Client has no region set here, and unlike v2 it doesn't
+// tolerate a missing region: it throws when a command is sent, since there's
+// no env var/IMDS fallback available in CI or in the docker-dev container.
+export const s3Region =
+  (process.env.AWS_S3_REGION as string) || 'ap-southeast-1'
 export const sqsBulkQRCodeStartUrl =
   (process.env.SQS_BULK_QRCODE_GENERATE_START_URL as string) || ''
 export const sqsTimeout = Number(process.env.SQS_TIMEOUT) || 10000
