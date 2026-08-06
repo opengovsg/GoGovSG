@@ -398,7 +398,7 @@ describe('UrlManagementService', () => {
       // Act & Assert
       await expect(
         service.deactivateMaliciousShortUrl(shortUrl),
-      ).rejects.toThrowError(NotFoundError)
+      ).rejects.toThrow(NotFoundError)
       expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
     })
 
@@ -412,7 +412,7 @@ describe('UrlManagementService', () => {
       // Act & Assert
       await expect(
         service.deactivateMaliciousShortUrl(shortUrl),
-      ).rejects.toThrowError(NotFoundError)
+      ).rejects.toThrow(NotFoundError)
       expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
     })
 

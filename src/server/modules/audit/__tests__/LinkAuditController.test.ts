@@ -53,7 +53,7 @@ describe('LinkAuditController test', () => {
 
     await controller.getLinkAudit(req, res)
     expect(getLinkAudit).not.toHaveBeenCalled()
-    expect(responseSpy).toBeCalledWith(404)
+    expect(responseSpy).toHaveBeenCalledWith(404)
   })
 
   test('authenticated user with no short url', async () => {
@@ -64,7 +64,7 @@ describe('LinkAuditController test', () => {
 
     await controller.getLinkAudit(req, res)
     expect(getLinkAudit).not.toHaveBeenCalled()
-    expect(responseSpy).toBeCalledWith(404)
+    expect(responseSpy).toHaveBeenCalledWith(404)
   })
 
   test('unauthenticated user with short url', async () => {
@@ -75,7 +75,7 @@ describe('LinkAuditController test', () => {
 
     await controller.getLinkAudit(req, res)
     expect(getLinkAudit).not.toHaveBeenCalled()
-    expect(responseSpy).toBeCalledWith(401)
+    expect(responseSpy).toHaveBeenCalledWith(401)
   })
 
   test('authenticated user with short url', async () => {
@@ -86,13 +86,13 @@ describe('LinkAuditController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkAudit(req, res)
-    expect(getLinkAudit).toBeCalledWith(
+    expect(getLinkAudit).toHaveBeenCalledWith(
       userCredentials.id,
       'test',
       undefined,
       undefined,
     )
-    expect(responseSpy).toBeCalledWith(200)
+    expect(responseSpy).toHaveBeenCalledWith(200)
   })
 
   test('authenticated user with short url, limit and offset', async () => {
@@ -105,8 +105,13 @@ describe('LinkAuditController test', () => {
     req.session!.user = userCredentials
 
     await controller.getLinkAudit(req, res)
-    expect(getLinkAudit).toBeCalledWith(userCredentials.id, 'test', 10, 10)
-    expect(responseSpy).toBeCalledWith(200)
+    expect(getLinkAudit).toHaveBeenCalledWith(
+      userCredentials.id,
+      'test',
+      10,
+      10,
+    )
+    expect(responseSpy).toHaveBeenCalledWith(200)
   })
 
   test('LinkAuditService throws error for invalid limit or offset', async () => {
@@ -119,13 +124,13 @@ describe('LinkAuditController test', () => {
     getLinkAudit.mockRejectedValue(new Error(':('))
 
     await controller.getLinkAudit(req, res)
-    expect(getLinkAudit).toBeCalledWith(
+    expect(getLinkAudit).toHaveBeenCalledWith(
       userCredentials.id,
       'test',
       undefined,
       undefined,
     )
-    expect(responseSpy).toBeCalledWith(400)
+    expect(responseSpy).toHaveBeenCalledWith(400)
   })
 
   test('LinkAuditService throws NotFoundError', async () => {
@@ -138,12 +143,12 @@ describe('LinkAuditController test', () => {
     getLinkAudit.mockRejectedValue(new NotFoundError(':('))
 
     await controller.getLinkAudit(req, res)
-    expect(getLinkAudit).toBeCalledWith(
+    expect(getLinkAudit).toHaveBeenCalledWith(
       userCredentials.id,
       'test',
       undefined,
       undefined,
     )
-    expect(responseSpy).toBeCalledWith(404)
+    expect(responseSpy).toHaveBeenCalledWith(404)
   })
 })
