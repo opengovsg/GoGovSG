@@ -12,4 +12,7 @@ coverage
 .dccache
 .idea
 .pgdata
+playwright-report
+test-results
+blob-report
 .env.*
