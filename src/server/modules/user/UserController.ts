@@ -107,14 +107,7 @@ export class UserController {
         return
       }
       logger.error(`Error creating short URL:\t${error}`)
-      // TEMP DEBUG: surface the real error to diagnose CI-only failure.
-      res.badRequest(
-        jsonMessage(
-          `Server error. DEBUG: ${
-            error instanceof Error ? error.stack || error.message : error
-          }`,
-        ),
-      )
+      res.badRequest(jsonMessage('Server error.'))
       return
     }
   }
