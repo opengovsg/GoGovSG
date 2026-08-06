@@ -58,7 +58,7 @@ describe('DirectoryController unit test', () => {
       isEmail: true,
     }
 
-    expect(plainTextSearch).toBeCalledWith(conditions)
+    expect(plainTextSearch).toHaveBeenCalledWith(conditions)
     expect(okSpy).toHaveBeenCalledWith(searchResults)
   })
 
@@ -88,7 +88,7 @@ describe('DirectoryController unit test', () => {
       isEmail: true,
     }
 
-    expect(plainTextSearch).toBeCalledWith(conditions)
+    expect(plainTextSearch).toHaveBeenCalledWith(conditions)
     expect(okSpy).toHaveBeenCalledWith(searchResults)
   })
 
@@ -119,7 +119,7 @@ describe('DirectoryController unit test', () => {
       isFile: undefined,
       isEmail: true,
     }
-    expect(plainTextSearch).toBeCalledWith(conditions)
-    expect(logger.error).toBeCalled()
+    expect(plainTextSearch).toHaveBeenCalledWith(conditions)
+    expect(logger.error).toHaveBeenCalled()
   })
 })
