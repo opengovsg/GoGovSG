@@ -45,8 +45,8 @@ import {
   urlSaveButton,
   urlUpdatedSnackbar,
 } from './util/helpers'
-import { loginProcedure } from './util/LoginProcedure'
 import { logoutProcedure } from './util/LogoutProcedure'
+import { restoreAuthState, transferUserAuthFile } from './util/auth'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 import { gotoPage } from './util/navigation'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
@@ -170,13 +170,6 @@ test('Drawer functionality test for file.', async ({ page }) => {
 })
 
 test('Link transfer test.', async ({ page }) => {
-  // Fixture already logged in as testEmail. Sign out first so we can prime
-  // the transferEmail account (mirrors the original testcafe before-hook).
-  await logoutProcedure(page)
-  await loginProcedure(page, transferEmail)
-  await logoutProcedure(page)
-  await loginProcedure(page, testEmail)
-
   await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   await tagsAutocompleteInput(page).fill(tagText1)
@@ -215,8 +208,7 @@ test('Link transfer test.', async ({ page }) => {
 
   // Verify the link is in the transfer email
   await logoutProcedure(page)
-
-  await loginProcedure(page, transferEmail)
+  await restoreAuthState(page, transferUserAuthFile)
 
   await expect(linkRow).toBeVisible()
 
