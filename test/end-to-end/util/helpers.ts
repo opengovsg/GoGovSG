@@ -379,6 +379,12 @@ export const directoryFilterPanelButton = (page: Page): Locator =>
 export const directoryFilterPanel = (page: Page): Locator =>
   page.locator('.MuiCollapse-root').filter({ hasText: 'Most recent' })
 export const sortButtonSelectedBackground = 'rgb(249, 249, 249)'
+/** WebKit often reports colors as rgba(...); compare channels only. */
+export const cssRgbChannels = (color: string): string => {
+  const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i)
+  if (!match) return color.trim()
+  return `${match[1]}, ${match[2]}, ${match[3]}`
+}
 export const mostRecentFilter = (page: Page): Locator =>
   page
     .locator('p', { hasText: 'Most recent' })

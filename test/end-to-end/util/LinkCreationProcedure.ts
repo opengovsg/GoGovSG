@@ -153,6 +153,9 @@ export const linkCreationProcedure = async (page: Page) => {
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
   await createLinkButton(page).nth(2).click()
+  await expect(linkRowByShortUrl(page, generatedUrlFile)).toBeVisible({
+    timeout: 30_000,
+  })
 
   await deleteFile(dummyFilePath)
 
