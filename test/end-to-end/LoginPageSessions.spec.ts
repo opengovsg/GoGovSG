@@ -8,9 +8,6 @@ import {
 import { emailHelperText, loginButton, signInButton } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
 
-// Exercises the login flow itself; start signed out.
-test.use({ storageState: { cookies: [], origins: [] } })
-
 test('Invalid Email that does not end with .gov.sg and should not allow submission', async ({
   page,
 }) => {
