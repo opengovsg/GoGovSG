@@ -4,7 +4,6 @@ import {
   tagText1,
   tagText2,
   tagText3,
-  testEmail,
   transferEmail,
 } from './util/config'
 import {
