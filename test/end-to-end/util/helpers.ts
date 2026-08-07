@@ -233,7 +233,7 @@ export const closeDrawerButton = (page: Page): Locator =>
 export const longUrl = (page: Page): Locator =>
   page.locator('input[placeholder="Original link"]')
 export const inactiveWord = (page: Page): Locator =>
-  page.locator('span', { hasText: 'inactive' })
+  page.locator('span', { hasText: exactText('inactive') })
 export const urlSaveButton = (page: Page): Locator =>
   page.locator('span', { hasText: 'Save' }).nth(0)
 export const urlUpdatedSnackbar = (page: Page): Locator =>
@@ -335,11 +335,9 @@ export const userLinkButton = (page: Page): Locator =>
     .locator('xpath=..')
     .locator('xpath=./button')
     .nth(0)
-// NOTE: matches the original testcafe suite's selector verbatim (it also
-// matches on 'Link' text, not 'File') -- preserved as-is, not a new bug.
 export const userFileButton = (page: Page): Locator =>
   page
-    .locator('p', { hasText: exactText('Link') })
+    .locator('p', { hasText: exactText('File') })
     .locator('xpath=..')
     .locator('xpath=./button')
     .nth(1)
@@ -396,6 +394,8 @@ export const cssRgbChannels = (color: string): string => {
 }
 export const sortOptionSelected = (sortOption: Locator): Locator =>
   sortOption.locator('svg')
+export const filterOptionSelected = (filterOption: Locator): Locator =>
+  filterOption.locator('svg')
 export const mostRecentFilter = (page: Page): Locator =>
   page
     .locator('p', { hasText: 'Most recent' })

@@ -16,6 +16,7 @@ import {
   closeDrawerButton,
   dateOfCreationButton,
   downloadLinkButton,
+  drawer,
   exactText,
   fileTab,
   filterSortPanel,
@@ -78,6 +79,7 @@ test('User page test on filter search by link', async ({ page }) => {
 
   await activeSwitch(page).nth(0).click()
   await closeDrawerButton(page).click()
+  await expect(drawer(page)).toBeHidden()
 
   await openCreateLinkModal(page)
   await generateUrlImage(page).click()
@@ -100,9 +102,13 @@ test('User page test on filter search by link', async ({ page }) => {
   // Links should be sorted by their created time in descending order when enabling sort by Date of creation and clicking apply
   await dateOfCreationButton(page).click()
   await userApplyButton(page).click()
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrlFile}`)
-  expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrlInactive}`)
-  expect(await urlTableRowUrlText(page, 2)).toBe(`/${generatedUrlActive}`)
+  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrlFile}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 1))
+    .toBe(`/${generatedUrlInactive}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 2))
+    .toBe(`/${generatedUrlActive}`)
 
   // Inactive links should be filtered out by checking only Active and clicking apply
   // Panel should be closed when apply is clicked
@@ -110,7 +116,9 @@ test('User page test on filter search by link', async ({ page }) => {
   await userActiveButton(page).click()
   await userApplyButton(page).click()
   await expect(filterSortPanel(page)).toHaveCSS('height', '0px')
-  expect(await urlTableRowUrlText(page, 1)).not.toBe(`/${generatedUrlInactive}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 1))
+    .not.toBe(`/${generatedUrlInactive}`)
 
   // Active links should be filtered out by checking only Inactive and clicking apply
   // Panel should be closed and links sorted by created time with no filtering after clicking on reset. All links and files should be visible.
@@ -119,7 +127,9 @@ test('User page test on filter search by link', async ({ page }) => {
   await userFilterSortPanelButton(page).click()
   await userInactiveButton(page).click()
   await userApplyButton(page).click()
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrlInactive}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 0))
+    .toBe(`/${generatedUrlInactive}`)
 
   // File links should be filtered out by checking only Link and clicking apply
   await userFilterSortPanelButton(page).click()
@@ -127,7 +137,9 @@ test('User page test on filter search by link', async ({ page }) => {
   await userFilterSortPanelButton(page).click()
   await userLinkButton(page).click()
   await userApplyButton(page).click()
-  expect(await urlTableRowUrlText(page, 0)).not.toBe(`/${generatedUrlFile}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 0))
+    .not.toBe(`/${generatedUrlFile}`)
 
   // Non-file links should be filtered out by checking only File and clicking apply
   await userFilterSortPanelButton(page).click()
@@ -135,7 +147,9 @@ test('User page test on filter search by link', async ({ page }) => {
   await userFilterSortPanelButton(page).click()
   await userFileButton(page).click()
   await userApplyButton(page).click()
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrlFile}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 0))
+    .toBe(`/${generatedUrlFile}`)
 
   // Panel should be closed when clicking outside of it
   await userFilterSortPanelButton(page).click()

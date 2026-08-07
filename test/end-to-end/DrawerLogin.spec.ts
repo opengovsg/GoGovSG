@@ -3,7 +3,6 @@ import {
   apiLocation,
   dummyFilePath,
   largeFileSize,
-  rootLocation,
   shortUrl,
   smallFileSize,
   subUrl,
@@ -32,7 +31,6 @@ import {
   longUrlTextField,
   openCreateLinkModal,
   shortUrlTextField,
-  signOutButton,
   successSnackBar,
   tag1,
   tag2,
@@ -48,6 +46,7 @@ import {
   urlUpdatedSnackbar,
 } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
+import { logoutProcedure } from './util/LogoutProcedure'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
@@ -172,11 +171,9 @@ test('Drawer functionality test for file.', async ({ page }) => {
 test('Link transfer test.', async ({ page }) => {
   // Fixture already logged in as testEmail. Sign out first so we can prime
   // the transferEmail account (mirrors the original testcafe before-hook).
-  await signOutButton(page).click()
-  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
+  await logoutProcedure(page)
   await loginProcedure(page, transferEmail)
-  await signOutButton(page).click()
-  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
+  await logoutProcedure(page)
   await loginProcedure(page, testEmail)
 
   await openCreateLinkModal(page)
@@ -216,8 +213,7 @@ test('Link transfer test.', async ({ page }) => {
   await expect(successSnackBar(page)).not.toBeVisible()
 
   // Verify the link is in the transfer email
-  await signOutButton(page).click()
-  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
+  await logoutProcedure(page)
 
   await loginProcedure(page, transferEmail)
 
