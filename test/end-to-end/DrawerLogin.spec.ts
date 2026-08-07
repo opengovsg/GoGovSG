@@ -206,7 +206,7 @@ test('Link transfer test.', async ({ page }) => {
   await expect(successSnackBar(page)).toBeVisible()
 
   // Toasters to not disappear on clickaway (i.e. to prevent premature closure when user clickaway to save url)
-  await clickAway(page).click()
+  await clickAway(page)
   await expect(successSnackBar(page)).toBeVisible()
 
   // Toasters to disappear when user clicks on the X only
@@ -244,7 +244,7 @@ test('Link transfer toast test.', async ({ page }) => {
   await transferButton(page).click()
 
   // Toasters to disappear after 5sec
-  await clickAway(page).click()
+  await clickAway(page)
   await page.waitForTimeout(5000)
   await expect(successSnackBar(page)).not.toBeVisible()
 })
