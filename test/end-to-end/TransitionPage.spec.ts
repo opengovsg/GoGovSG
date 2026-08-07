@@ -2,16 +2,16 @@ import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { rootLocation, shortUrl } from './util/config'
 import {
-  createLinkButton,
   generateUrlImage,
   longUrlTextField,
+  openCreateLinkModal,
   shortUrlTextField,
   skipButton,
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 
 test('Transition Page test.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedUrlActive = await shortUrlTextField(page).inputValue()
