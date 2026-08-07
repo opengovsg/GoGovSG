@@ -5,13 +5,9 @@ import {
   apiLocation,
   circularRedirectUrl,
   dummyBulkCsv,
-  dummyBulkCsvRelativePath,
   dummyChangedFilePath,
   dummyFilePath,
   dummyMaliciousFilePath,
-  dummyMaliciousRelativePath,
-  dummyRelativeChangedFilePath,
-  dummyRelativePath,
   invalidShortUrl,
   largeFileSize,
   shortUrl,
@@ -147,7 +143,7 @@ test('The file based shortlink test.', async ({ page }) => {
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
@@ -176,7 +172,7 @@ test('The file based shortlink test.', async ({ page }) => {
 
   await createLinkButton(page).nth(0).click()
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   // It should clear tags input after the previous link was successfully created
   await expect(tag1(page)).not.toBeVisible()
   // It should show an error below the file input when a file larger than 20MB is chosen
@@ -246,7 +242,7 @@ test('The bulk based test.', async ({ page }) => {
   await createBulkCsv(dummyBulkCsv, longUrls)
 
   await bulkTab(page).click()
-  await uploadFile(page).setInputFiles(dummyBulkCsvRelativePath)
+  await uploadFile(page).setInputFiles(dummyBulkCsv)
   await tagsAutocompleteInput(page).fill(tagText3)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
@@ -273,7 +269,7 @@ test('The bulk based test.', async ({ page }) => {
 
   await createLinkButton(page).nth(0).click()
   await bulkTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   // It should clear tags input after bulk creation was successful
   await expect(tag3(page)).not.toBeVisible()
   await createLinkButton(page).nth(2).click()
@@ -293,7 +289,7 @@ test.skip('The malicious file test.', async ({ page }) => {
   await createMaliciousFile()
 
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyMaliciousRelativePath)
+  await uploadFile(page).setInputFiles(dummyMaliciousFilePath)
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
@@ -320,14 +316,14 @@ test('The update file test', async ({ page }) => {
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
 
   await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
   await fileRow.click()
-  await uploadFile(page).setInputFiles(dummyRelativeChangedFilePath)
+  await uploadFile(page).setInputFiles(dummyChangedFilePath)
   await closeDrawerButton(page).click()
 
   // Navigating to a file short-link triggers a genuine CSV download -- wait
