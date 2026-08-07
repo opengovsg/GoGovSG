@@ -12,9 +12,6 @@ export const tagText3 = 'fooBAR123'
 export const rootLocation = 'http://localhost:3000'
 export const apiLocation = 'http://localhost:8080'
 export const otp = '111111'
-// Playwright's setInputFiles resolves paths from process cwd (repo root),
-// unlike testcafe's setFilesToUpload which was relative to the test file.
-// Create, upload, and delete must all use these same cwd-relative paths.
 export const dummyMaliciousFilePath = './test/end-to-end/eicar.com.txt'
 export const dummyFilePath = './test/end-to-end/anotherDummy.txt'
 export const dummyChangedFilePath = './test/end-to-end/changedDummy.csv'
