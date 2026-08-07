@@ -3,13 +3,10 @@ import { Page } from '@playwright/test'
 /**
  * Navigates and waits for `DOMContentLoaded` rather than `load`.
  *
- * Playwright's `page.goto` defaults to `waitUntil: 'load'`, which blocks until
- * every subresource settles -- including the transition page's `async` gtag
- * tag, which delays the load event until it resolves over the network.
- * testcafe never did this: its `pageLoadTimeout` (default 3s) caps how long it
- * waits for load after `DOMContentLoaded` and then proceeds regardless. Under
- * `dev` the app ships unminified bundles alongside third-party tags, so
- * waiting for full load can consume the entire test budget.
+ * `page.goto` defaults to `waitUntil: 'load'`, which blocks until every
+ * subresource settles -- including the transition page's `async` gtag tag,
+ * which holds the load event until it resolves over the network. Waiting for
+ * that can consume the whole test budget.
  *
  * Every assertion in this suite waits on its own locator, so nothing depends
  * on subresources having settled.

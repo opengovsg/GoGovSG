@@ -74,10 +74,9 @@ test('Valid OTP should log the user in', async ({ page }) => {
   await expect(page).toHaveURL(/user/)
 })
 
-// Signing out lives here rather than in the link-transfer specs because
-// /api/logout destroys the session server-side. This spec runs on its own
-// session (see `emptyStorageState` above), so tearing it down cannot
-// invalidate the storage state shared by the rest of the suite.
+// Sign-out lives here, not in the link-transfer specs: this spec owns its
+// session (`emptyStorageState` above), so destroying it server-side cannot
+// invalidate the storage state the rest of the suite shares.
 test('Signing out ends the session', async ({ page }) => {
   await gotoPage(page, rootLocation)
   await loginProcedure(page)

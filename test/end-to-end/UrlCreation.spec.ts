@@ -56,6 +56,7 @@ import {
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 import { gotoPage } from './util/navigation'
+import { userLinksRefetch } from './util/waits'
 import {
   createBulkCsv,
   createEmptyFileOfSize,
@@ -123,7 +124,6 @@ test('The URL based shortlink test.', async ({ page }) => {
   // It should show an autocomplete option for the previously created tag when creating a new link
   await openCreateLinkModal(page)
   await tagsAutocompleteInput(page).fill('tag')
-  await page.waitForTimeout(1000)
   // TableTag chips on existing rows are contained buttons; suggestions use text buttons.
   await expect(
     page.locator('button.MuiButton-text', { hasText: exactText(tagText2) }),
@@ -215,10 +215,13 @@ test('The URL searching test.', async ({ page }) => {
     .nth(0)
     .locator('xpath=./h6')
 
+  // Bound to this query: the refetch from creating the link above may still be
+  // in flight and would otherwise satisfy the wait.
+  const linkSearch = userLinksRefetch(page, { searchText: 'search' })
   await searchBarLinksInput(page).fill('search')
-  await page.waitForTimeout(1000)
+  await linkSearch
   // Searching on the user page search bar shows links that are relevant to the search term.
-  expect(await tableText.innerText()).toBe(`/${generatedUrlActive}-search`)
+  await expect(tableText).toHaveText(`/${generatedUrlActive}-search`)
 
   await searchBarLinkButton(page).click()
   await searchBarSearchByTag(page).click()
@@ -226,10 +229,13 @@ test('The URL searching test.', async ({ page }) => {
   await expect(searchBarTagButton(page)).toBeVisible()
   expect(await searchBarTagsInput(page).innerText()).toBe('')
 
+  // Await the refetch: clearing the input above already put this link back on
+  // top, so a bare assertion could pass before the tag query ever ran.
+  const tagSearch = userLinksRefetch(page)
   await searchBarTagsInput(page).fill(randomTagText)
-  await page.waitForTimeout(3000)
+  await tagSearch
   // Searching by tags on the user page search bar shows links that are relevant to the search term.
-  expect(await tableText.innerText()).toBe(`/${generatedUrlActive}-search`)
+  await expect(tableText).toHaveText(`/${generatedUrlActive}-search`)
 })
 
 test('The bulk based test.', async ({ page }) => {
@@ -248,12 +254,11 @@ test('The bulk based test.', async ({ page }) => {
   await tagsAutocompleteInput(page).press('Enter')
   await firstLinkHandle(page)
 
-  await page.waitForTimeout(2000)
-
   // It should show an success snackbar when a new file link has been added
   await expect(successBulkCreation(page)).toBeVisible()
-  // The number of links should increase by numLongUrls
-  expect(await getLinkCount(page)).toBe(expectedLinkCount)
+  // The number of links should increase by numLongUrls. Poll: the count header
+  // updates on the table refetch, which trails the snackbar.
+  await expect.poll(() => getLinkCount(page)).toBe(expectedLinkCount)
   // It should show tags on the newly created short urls
   await expect(
     urlTable(page)
@@ -361,8 +366,10 @@ test('Test active and inactive link redirects', async ({ page }) => {
   await gotoPage(page, `${apiLocation}/${generatedUrlInactive}`)
   await expect(unavailableShortLink(page)).toBeVisible()
 
-  // Check active link redirect
+  // Check active link redirect. The transition page holds ~6s; poll so this
+  // exits on the redirect, with a budget clear of that timer.
   await gotoPage(page, `${apiLocation}/${generatedUrlActive}`)
-  await page.waitForTimeout(7000)
-  expect(new URL(page.url()).host === 'www.google.com').toBeTruthy()
+  await expect(page).toHaveURL((url) => url.host === 'www.google.com', {
+    timeout: 15_000,
+  })
 })
