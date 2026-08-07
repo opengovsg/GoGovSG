@@ -102,7 +102,9 @@ test('User page test on filter search by link', async ({ page }) => {
   // Links should be sorted by their created time in descending order when enabling sort by Date of creation and clicking apply
   await dateOfCreationButton(page).click()
   await userApplyButton(page).click()
-  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrlFile}`)
+  await expect
+    .poll(() => urlTableRowUrlText(page, 0))
+    .toBe(`/${generatedUrlFile}`)
   await expect
     .poll(() => urlTableRowUrlText(page, 1))
     .toBe(`/${generatedUrlInactive}`)
