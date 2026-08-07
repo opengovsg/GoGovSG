@@ -46,8 +46,11 @@ export const longUrlTextField = (page: Page): Locator =>
   page.locator('input[placeholder="Enter URL"]')
 export const tagsAutocompleteInput = (page: Page): Locator =>
   page.locator('input[placeholder="Add tag"]')
+// FormTag chips are startAdornment siblings before the input, not after it.
 export const tagsAutocompleteTags = (page: Page): Locator =>
-  tagsAutocompleteInput(page).locator('xpath=following-sibling::div')
+  tagsAutocompleteInput(page)
+    .locator('xpath=ancestor::div[contains(@class,"MuiInputBase-root")][1]')
+    .locator('xpath=./div')
 export const directoryPageButton = (page: Page): Locator =>
   page.locator('span', { hasText: 'Directory' }).locator('xpath=..')
 export const mobileDirectoryPageButton = (page: Page): Locator =>
@@ -248,10 +251,21 @@ export const linkErrorSnackBar = (page: Page): Locator =>
     .nth(1)
     .locator('xpath=./*')
     .nth(0)
-// Click the user-page link-count heading (outside the drawer) to dismiss
-// overlays. A bare `h3` also matches drawer titles under strict mode.
-export const clickAway = (page: Page): Locator =>
-  page.locator('h3', { hasText: /\d+\s+links?/ })
+// Click outside panels/drawers. Prefer the drawer backdrop when the edit
+// drawer is open (the link-count heading sits behind it and is not clickable).
+export const clickAway = async (page: Page): Promise<void> => {
+  const backdrop = page.locator('.MuiDrawer-root .MuiBackdrop-root')
+  if ((await backdrop.count()) > 0) {
+    await backdrop.click()
+    return
+  }
+  const linkCount = page.locator('h3', { hasText: /\d+\s+links?/ })
+  if ((await linkCount.count()) > 0) {
+    await linkCount.click()
+    return
+  }
+  await page.mouse.click(1, 1)
+}
 export const largeFileError = (page: Page): Locator =>
   page.getByText('File too large, please upload a file smaller than 20mb')
 export const csvOnlyError = (page: Page): Locator =>
@@ -281,7 +295,7 @@ export const userFilterSortPanelButton = (page: Page): Locator =>
 export const filterDrawer = (page: Page): Locator =>
   page.locator('.MuiCollapse-root').nth(0)
 export const filterSortPanel = (page: Page): Locator =>
-  page.locator('.MuiCollapse-root').nth(1)
+  page.locator('.MuiCollapse-root').filter({ hasText: 'Date of creation' })
 export const userApplyButton = (page: Page): Locator =>
   page.locator('span', { hasText: 'Apply' })
 export const userResetButton = (page: Page): Locator =>
@@ -350,9 +364,17 @@ export const directoryTextFieldEmail = (page: Page): Locator =>
     'input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
   )
 export const directoryFilterPanelButton = (page: Page): Locator =>
-  page.locator('.MuiIconButton-label')
+  page
+    .locator('.MuiInputBase-root')
+    .filter({
+      has: page.locator(
+        'input[placeholder="Enter a keyword"], input[placeholder="Enter an email or email domain e.g. @mom.gov.sg"]',
+      ),
+    })
+    .locator('button')
+    .last()
 export const directoryFilterPanel = (page: Page): Locator =>
-  page.locator('.MuiCollapse-root').nth(1)
+  page.locator('.MuiCollapse-root').filter({ hasText: 'Most recent' })
 export const sortButtonSelectedBackground = 'rgb(249, 249, 249)'
 export const mostRecentFilter = (page: Page): Locator =>
   page

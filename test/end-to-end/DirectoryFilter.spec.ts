@@ -46,7 +46,7 @@ test.describe.serial('Directory Filter', () => {
     await directoryFilterPanelButton(page).click()
     await expect(directoryFilterPanel(page)).toBeVisible()
     // Panel should be closed when clicking outside of it
-    await clickAway(page).click()
+    await clickAway(page)
     await expect(directoryFilterPanel(page)).not.toBeVisible()
 
     // Default search results should be by keyword, sort by recency, with all states, both url and file types
