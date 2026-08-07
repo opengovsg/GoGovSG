@@ -23,6 +23,7 @@ import {
   closeDrawerButton,
   createLinkButton,
   createUrlModal,
+  cssRgbChannels,
   csvOnlyError,
   exactText,
   fileSubmitButton,
@@ -51,7 +52,6 @@ import {
   unavailableShortLink,
   uploadFile,
   urlTable,
-  cssRgbChannels,
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 import {
@@ -109,7 +109,7 @@ test('The URL based shortlink test.', async ({ page }) => {
   await firstLinkHandle(page)
 
   // It should show an success snackbar when a new url has been added
-  await expect(successUrlCreation(page)).toBeVisible({ timeout: 30_000 })
+  await expect(successUrlCreation(page)).toBeVisible()
   // It should show the new short url on the user's links table when a new link is created
   await expect(linkRow).toBeVisible()
   // The new short url should be highlighted on the user's links table when a new link is created
@@ -154,7 +154,7 @@ test('The file based shortlink test.', async ({ page }) => {
   await createLinkButton(page).nth(2).click()
 
   // It should show an success snackbar when a new file link has been added
-  await expect(successUrlCreation(page)).toBeVisible({ timeout: 30_000 })
+  await expect(successUrlCreation(page)).toBeVisible()
   // It should show the short url on the user's link table when a new file link is created
   await expect(fileRow).toBeVisible()
   // The new short url should be highlighted on the user's links table when a new file link is created
@@ -254,8 +254,10 @@ test('The bulk based test.', async ({ page }) => {
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
 
+  await page.waitForTimeout(2000)
+
   // It should show an success snackbar when a new file link has been added
-  await expect(successBulkCreation(page)).toBeVisible({ timeout: 60_000 })
+  await expect(successBulkCreation(page)).toBeVisible()
   // The number of links should increase by numLongUrls
   expect(await getLinkCount(page)).toBe(expectedLinkCount)
   // It should show tags on the newly created short urls
@@ -325,12 +327,12 @@ test('The update file test', async ({ page }) => {
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
-  await expect(successUrlCreation(page)).toBeVisible({ timeout: 30_000 })
+  await expect(successUrlCreation(page)).toBeVisible()
 
   await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
   await fileRow.click()
   await uploadFile(page).setInputFiles(dummyChangedFilePath)
-  await expect(successLinkUpdate(page)).toBeVisible({ timeout: 30_000 })
+  await expect(successLinkUpdate(page)).toBeVisible()
   await closeDrawerButton(page).click()
 
   // Assert redirect target, not Playwright's download event. S3 objects have no
