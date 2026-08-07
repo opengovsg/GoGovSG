@@ -6,6 +6,9 @@ export default defineConfig({
   testMatch: '**/*.spec.ts',
   timeout: 60_000,
   fullyParallel: false,
+  // Shared maildev inbox: parallel workers race on clearMaildevInbox() and
+  // steal each other's OTPs. Serialise the suite onto one worker.
+  workers: 1,
   retries: 0,
   reporter: 'list',
   use: {

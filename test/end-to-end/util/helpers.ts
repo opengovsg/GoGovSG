@@ -75,8 +75,10 @@ export const resultTable = (page: Page): Locator => page.locator('table')
 // User Page - general
 export const linkCountHeaderText = (page: Page): Promise<string> =>
   page.locator('h3', { hasText: 'links' }).innerText()
+// Prefer MuiDrawer-root over bare [role=presentation]: a tags autocomplete
+// popover also uses role=presentation and collides under strict mode.
 export const drawer = (page: Page): Locator =>
-  page.locator('div[role="presentation"]')
+  page.locator('div.MuiDrawer-root[role="presentation"]')
 export const fileTab = (page: Page): Locator =>
   page.locator('p', { hasText: 'To a File' })
 export const bulkTab = (page: Page): Locator =>
@@ -88,21 +90,23 @@ export const activeSwitch = (page: Page): Locator =>
 export const createUrlModal = (page: Page): Locator =>
   page.locator('div[aria-labelledby="createUrlModal"]')
 
+// Snackbar text lives in nested divs; bare `div` + hasText matches ancestors
+// (#root, .MuiSnackbar-root, [role=alert], message) and trips strict mode.
 export const blacklistValidationError = (page: Page): Locator =>
-  page.locator('div', {
+  page.locator('[role="alert"]', {
     hasText:
       'ValidationError: Creation of URLs to link shortener sites are not allowed.',
   })
 export const circularRedirectValidationError = (page: Page): Locator =>
-  page.locator('div', {
+  page.locator('[role="alert"]', {
     hasText: 'ValidationError: Circular redirects are not allowed.',
   })
 export const successUrlCreation = (page: Page): Locator =>
-  page.locator('div', { hasText: 'Your link has been created' })
+  page.locator('[role="alert"]', { hasText: 'Your link has been created' })
 export const maliciousFileCreation = (page: Page): Locator =>
-  page.locator('div', { hasText: 'File is likely to be malicious.' })
+  page.locator('[role="alert"]', { hasText: 'File is likely to be malicious.' })
 export const successBulkCreation = (page: Page): Locator =>
-  page.locator('div', { hasText: 'links have been created' })
+  page.locator('[role="alert"]', { hasText: 'links have been created' })
 
 // Unavailable Short Link Page
 export const unavailableShortLink = (page: Page): Locator =>
@@ -184,10 +188,20 @@ export const searchBarLinksInput = (page: Page): Locator =>
   page.locator('input[placeholder="Search links"]')
 export const searchBarTagsInput = (page: Page): Locator =>
   page.locator('input[placeholder="Search tags"]')
+// Scope to the search input's own toggle button. A bare `span` + exact 'Link'
+// matches both MUI's .MuiButton-label wrapper and the inner label span.
 export const searchBarLinkButton = (page: Page): Locator =>
-  page.locator('span', { hasText: exactText('Link') })
+  page
+    .locator('.MuiInputBase-root')
+    .filter({ has: page.locator('input[placeholder="Search links"]') })
+    .locator('button')
+    .first()
 export const searchBarTagButton = (page: Page): Locator =>
-  page.locator('span', { hasText: exactText('Tag') })
+  page
+    .locator('.MuiInputBase-root')
+    .filter({ has: page.locator('input[placeholder="Search tags"]') })
+    .locator('button')
+    .first()
 export const searchBarSearchByTag = (page: Page): Locator =>
   page.locator('p', { hasText: exactText('Search by Tag') })
 export const downloadLinkButton = (page: Page): Locator =>
@@ -234,13 +248,14 @@ export const linkErrorSnackBar = (page: Page): Locator =>
     .nth(1)
     .locator('xpath=./*')
     .nth(0)
-export const clickAway = (page: Page): Locator => page.locator('h3')
+// Click the user-page link-count heading (outside the drawer) to dismiss
+// overlays. A bare `h3` also matches drawer titles under strict mode.
+export const clickAway = (page: Page): Locator =>
+  page.locator('h3', { hasText: /\d+\s+links?/ })
 export const largeFileError = (page: Page): Locator =>
-  page.locator('div', {
-    hasText: 'File too large, please upload a file smaller than 20mb',
-  })
+  page.getByText('File too large, please upload a file smaller than 20mb')
 export const csvOnlyError = (page: Page): Locator =>
-  page.locator('div', { hasText: 'Only csv files are allowed' })
+  page.locator('[role="alert"]', { hasText: 'Only csv files are allowed' })
 export const fileSubmitButton = (page: Page): Locator =>
   page.locator('button[type="submit"]')
 export const tag1 = (page: Page): Locator =>
@@ -393,7 +408,7 @@ export const inactiveButtonStyle = (page: Page): Locator =>
   inactiveButton(page).locator('xpath=./*').first().locator('xpath=./*').first()
 
 export const copyAlert = (page: Page): Locator =>
-  page.locator('div', { hasText: 'Email has been copied' })
+  page.locator('[role="alert"]', { hasText: 'Email has been copied' })
 
 export const bottomMobilePanel = (page: Page): Locator =>
   page.locator('div.MuiDrawer-paper')

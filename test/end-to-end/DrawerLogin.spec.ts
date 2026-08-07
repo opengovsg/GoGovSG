@@ -2,7 +2,6 @@ import { test, expect } from './fixtures'
 import {
   apiLocation,
   dummyFilePath,
-  dummyRelativePath,
   largeFileSize,
   rootLocation,
   shortUrl,
@@ -157,23 +156,25 @@ test('Drawer functionality test for file.', async ({ page }) => {
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await createLinkButton(page).nth(2).click()
 
   await deleteFile(dummyFilePath)
   await createEmptyFileOfSize(dummyFilePath, largeFileSize)
 
   await linkRow.click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await expect(largeFileError(page)).toBeVisible()
 
   await deleteFile(dummyFilePath)
 })
 
 test('Link transfer test.', async ({ page }) => {
-  // Login to the transfer email to activate it, then log back out.
-  // Mirrors the original testcafe `test.before` hook, which primed the
-  // transferEmail account before this test's body ran.
+  test.setTimeout(120_000)
+  // Fixture already logged in as testEmail. Sign out first so we can prime
+  // the transferEmail account (mirrors the original testcafe before-hook).
+  await signOutButton(page).click()
+  await page.goto(rootLocation)
   await loginProcedure(page, transferEmail)
   await signOutButton(page).click()
   await page.goto(rootLocation)

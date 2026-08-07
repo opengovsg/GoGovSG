@@ -4,7 +4,6 @@ import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import {
   dummyFilePath,
-  dummyRelativePath,
   shortUrl,
   smallFileSize,
   tagText1,
@@ -89,7 +88,7 @@ test('User page test on filter search by link', async ({ page }) => {
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await createLinkButton(page).nth(2).click()
 
   await deleteFile(dummyFilePath)
@@ -199,7 +198,7 @@ test('User page test on filter search by tags', async ({ page }) => {
   )
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await tagsAutocompleteInput(page).click()
   await tagsAutocompleteInput(page).fill(tagText2)
   await tagsAutocompleteInput(page).press('Enter')

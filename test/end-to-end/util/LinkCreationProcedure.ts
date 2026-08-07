@@ -1,12 +1,6 @@
 import { fetch } from 'cross-fetch'
 import { expect, Page } from '@playwright/test'
-import {
-  apiLocation,
-  dummyFilePath,
-  dummyRelativePath,
-  shortUrl,
-  smallFileSize,
-} from './config'
+import { apiLocation, dummyFilePath, shortUrl, smallFileSize } from './config'
 import { createEmptyFileOfSize, deleteFile } from './fileHandle'
 import { firstLinkHandle } from './FirstLinkHandle'
 import {
@@ -157,7 +151,7 @@ export const linkCreationProcedure = async (page: Page) => {
 
   await shortUrlTextField(page).fill(generatedUrlFile)
   await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyRelativePath)
+  await uploadFile(page).setInputFiles(dummyFilePath)
   await createLinkButton(page).nth(2).click()
 
   await deleteFile(dummyFilePath)
