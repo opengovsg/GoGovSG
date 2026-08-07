@@ -85,10 +85,10 @@ test('Changing the link owner should update the link history with Link Owner upd
 }) => {
   // Prime transferEmail (fixture already logged in as testEmail).
   await signOutButton(page).click()
-  await page.goto(rootLocation)
+  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
   await loginProcedure(page, transferEmail)
   await signOutButton(page).click()
-  await page.goto(rootLocation)
+  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
   await loginProcedure(page, testEmail)
 
   // Create new link
@@ -106,7 +106,7 @@ test('Changing the link owner should update the link history with Link Owner upd
   }
   // Sign out
   await signOutButton(page).click()
-  await page.goto(rootLocation)
+  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
   // Login using the new link owner
   await loginProcedure(page, transferEmail)
   // Open Drawer
