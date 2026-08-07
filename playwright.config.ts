@@ -27,7 +27,10 @@ export default defineConfig({
     // arrives with a trace instead of just a stack.
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    // on-first-retry, not retain-on-failure: the latter records every test and
+    // throws the passing ones away, which taxes the whole suite to capture the
+    // rare failure.
+    video: 'on-first-retry',
     // Fail a stuck navigation on its own, well inside the test budget, rather
     // than letting it consume the whole thing and report as a generic timeout.
     navigationTimeout: 30_000,
