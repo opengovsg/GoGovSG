@@ -256,7 +256,8 @@ export const linkErrorSnackBar = (page: Page): Locator =>
 export const clickAway = async (page: Page): Promise<void> => {
   const backdrop = page.locator('.MuiDrawer-root .MuiBackdrop-root')
   if ((await backdrop.count()) > 0) {
-    await backdrop.click()
+    // Drawer paper can intercept a normal click on the backdrop.
+    await backdrop.click({ force: true })
     return
   }
   const linkCount = page.locator('h3', { hasText: /\d+\s+links?/ })
@@ -356,7 +357,7 @@ export const directoryUrlTableRowEmail = (page: Page, index: number): Locator =>
 export const directoryTextFieldKeyword = (page: Page): Locator =>
   page.locator('input[placeholder="Enter a keyword"]')
 export const toggle = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Keyword' })
+  page.getByRole('button', { name: 'Keyword', exact: true })
 export const emailToggle = (page: Page): Locator =>
   page.locator('p', { hasText: 'Search by Email' })
 export const directoryTextFieldEmail = (page: Page): Locator =>

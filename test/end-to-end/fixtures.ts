@@ -1,21 +1,19 @@
 import { test as base, expect, Page } from '@playwright/test'
 import { rootLocation } from './util/config'
-import { loginProcedure } from './util/LoginProcedure'
+import { userModal, userModalCloseButton } from './util/helpers'
 
 /**
- * Overrides the built-in `page` fixture so every test in a spec file that
- * imports `test` from here starts on an already-logged-in (default test
- * account) page, matching the testcafe suite's per-fixture
- * `.beforeEach(LoginProcedure)`.
- *
- * Spec files that need a different login email (ApiIntegration) or that
- * exercise the login flow itself (LoginPageSessions) import `test`/`expect`
- * from '@playwright/test' directly instead of from here.
+ * Logged-in session comes from auth.setup.ts via project storageState.
+ * Specs that need a blank or alternate session (ApiIntegration,
+ * LoginPageSessions) import from '@playwright/test' and call test.use()
+ * to clear storageState.
  */
 export const test = base.extend<{ page: Page }>({
   page: async ({ page }, runTest) => {
     await page.goto(rootLocation)
-    await loginProcedure(page)
+    if ((await userModal(page).count()) > 0) {
+      await userModalCloseButton(page).click()
+    }
     await runTest(page)
   },
 })
