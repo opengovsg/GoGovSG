@@ -14,7 +14,6 @@ import {
   activeSwitch,
   clickAway,
   closeDrawerButton,
-  createLinkButton,
   dateOfCreationButton,
   downloadLinkButton,
   exactText,
@@ -27,6 +26,7 @@ import {
   longUrlTextField,
   mostNumberOfVisitsButton,
   noResultsFoundText,
+  openCreateLinkModal,
   searchBarLinkButton,
   searchBarLinksInput,
   searchBarTagButton,
@@ -53,7 +53,7 @@ import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 import { TAG_SEPARATOR } from '../../src/shared/constants'
 
 test('User page test on filter search by link', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   // Create links for filter and search
@@ -64,7 +64,7 @@ test('User page test on filter search by link', async ({ page }) => {
 
   await firstLinkHandle(page)
 
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   // Save short url 2 - inactive link
@@ -72,14 +72,14 @@ test('User page test on filter search by link', async ({ page }) => {
   const linkRowInactive = linkRowByShortUrl(page, generatedUrlInactive)
 
   await longUrlTextField(page).fill(`${shortUrl}`)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
   await linkRowInactive.click()
   await expect(longUrl(page)).toHaveValue(`${shortUrl}`)
 
   await activeSwitch(page).nth(0).click()
   await closeDrawerButton(page).click()
 
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   // Save short url 3 - file link
@@ -89,7 +89,7 @@ test('User page test on filter search by link', async ({ page }) => {
 
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await deleteFile(dummyFilePath)
 
@@ -155,7 +155,7 @@ test('User page test on filter search by link', async ({ page }) => {
 test('User page test on filter search by tags', async ({ page }) => {
   // Create links for filter and search by tags
   // Save short url 1: link with tag 1
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   const generatedUrl1 = await shortUrlTextField(page).inputValue()
   const linkTableRow1 = linkRowByShortUrl(page, generatedUrl1).locator(
@@ -169,7 +169,7 @@ test('User page test on filter search by tags', async ({ page }) => {
   await firstLinkHandle(page)
 
   // Save short url 2: link with tags 1 and 2
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   const generatedUrl2 = await shortUrlTextField(page).inputValue()
   const linkTableRow2 = linkRowByShortUrl(page, generatedUrl2).locator(
@@ -181,10 +181,10 @@ test('User page test on filter search by tags', async ({ page }) => {
   await tagsAutocompleteInput(page).press('Enter')
   await tagsAutocompleteInput(page).fill(tagText2)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   // Save short url 3: file with tags 2 and 3
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   const generatedUrl3 = await shortUrlTextField(page).inputValue()
   const linkTableRow3 = linkRowByShortUrl(page, generatedUrl3).locator(
@@ -198,7 +198,7 @@ test('User page test on filter search by tags', async ({ page }) => {
   await tagsAutocompleteInput(page).press('Enter')
   await tagsAutocompleteInput(page).fill(tagText3)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
   await deleteFile(dummyFilePath)
 
   // Click on tag 1 from url 1
@@ -262,7 +262,7 @@ test('User page test on filter search by tags', async ({ page }) => {
 })
 
 test('User page shows ellipsis on long link', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   const longUrlString = generateRandomString(60)
   await shortUrlTextField(page).fill(longUrlString)
   await longUrlTextField(page).fill(`${shortUrl}`)

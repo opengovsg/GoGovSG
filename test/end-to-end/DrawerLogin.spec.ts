@@ -18,7 +18,6 @@ import {
   clickAway,
   closeButtonSnackBar,
   closeDrawerButton,
-  createLinkButton,
   drawer,
   exactText,
   fileTab,
@@ -31,6 +30,7 @@ import {
   linkTransferField,
   longUrl,
   longUrlTextField,
+  openCreateLinkModal,
   shortUrlTextField,
   signOutButton,
   successSnackBar,
@@ -52,7 +52,7 @@ import { firstLinkHandle } from './util/FirstLinkHandle'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
 test('Drawer functionality test for url.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedUrl = await shortUrlTextField(page).inputValue()
@@ -147,7 +147,7 @@ test('Drawer functionality test for url.', async ({ page }) => {
 })
 
 test('Drawer functionality test for file.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedFileUrl = await shortUrlTextField(page).inputValue()
@@ -157,7 +157,7 @@ test('Drawer functionality test for file.', async ({ page }) => {
 
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await deleteFile(dummyFilePath)
   await createEmptyFileOfSize(dummyFilePath, largeFileSize)
@@ -179,7 +179,7 @@ test('Link transfer test.', async ({ page }) => {
   await page.goto(rootLocation)
   await loginProcedure(page, testEmail)
 
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
@@ -189,7 +189,7 @@ test('Link transfer test.', async ({ page }) => {
   const linkTableRow = linkRow.locator('xpath=ancestor::tr')
 
   await longUrlTextField(page).fill(`${shortUrl}`)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await linkRow.click()
   await linkTransferField(page).fill(`${testEmail}`)
@@ -230,14 +230,14 @@ test('Link transfer test.', async ({ page }) => {
 })
 
 test('Link transfer toast test.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedUrl = await shortUrlTextField(page).inputValue()
   const linkRow = linkRowByShortUrl(page, generatedUrl)
 
   await longUrlTextField(page).fill(`${shortUrl}`)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await linkRow.click()
   await linkTransferField(page).fill(`${testEmail}`)

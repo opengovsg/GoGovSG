@@ -24,7 +24,7 @@ import {
   mostPopularFilter,
   mostRecentFilter,
   resetButton,
-  sortButtonSelectedBackground,
+  sortOptionSelected,
   toggle,
   uncheckedButtonBackground,
   userApplyButton,
@@ -83,20 +83,8 @@ test.describe.serial('Directory Filter', () => {
         ),
       ),
     ).toBe(cssRgbChannels(uncheckedButtonBackground))
-    expect(
-      cssRgbChannels(
-        await mostPopularFilter(page).evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        ),
-      ),
-    ).not.toBe(cssRgbChannels(sortButtonSelectedBackground))
-    expect(
-      cssRgbChannels(
-        await mostRecentFilter(page).evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        ),
-      ),
-    ).toBe(cssRgbChannels(sortButtonSelectedBackground))
+    await expect(sortOptionSelected(mostPopularFilter(page))).toHaveCount(0)
+    await expect(sortOptionSelected(mostRecentFilter(page))).toBeVisible()
   })
 
   test('Directory Page test search by keyword and email', async ({ page }) => {
@@ -335,20 +323,8 @@ test.describe.serial('Directory Filter', () => {
         ),
       ),
     ).not.toBe(cssRgbChannels(uncheckedButtonBackground))
-    expect(
-      cssRgbChannels(
-        await mostPopularFilter(page).evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        ),
-      ),
-    ).toBe(cssRgbChannels(sortButtonSelectedBackground))
-    expect(
-      cssRgbChannels(
-        await mostRecentFilter(page).evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        ),
-      ),
-    ).not.toBe(cssRgbChannels(sortButtonSelectedBackground))
+    await expect(sortOptionSelected(mostPopularFilter(page))).toBeVisible()
+    await expect(sortOptionSelected(mostRecentFilter(page))).toHaveCount(0)
 
     // reset
     await directoryFilterPanelButton(page).click()
@@ -381,20 +357,8 @@ test.describe.serial('Directory Filter', () => {
         ),
       ),
     ).toBe(cssRgbChannels(uncheckedButtonBackground))
-    expect(
-      cssRgbChannels(
-        await mostPopularFilter(page).evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        ),
-      ),
-    ).not.toBe(cssRgbChannels(sortButtonSelectedBackground))
-    expect(
-      cssRgbChannels(
-        await mostRecentFilter(page).evaluate(
-          (el) => getComputedStyle(el).backgroundColor,
-        ),
-      ),
-    ).toBe(cssRgbChannels(sortButtonSelectedBackground))
+    await expect(sortOptionSelected(mostPopularFilter(page))).toHaveCount(0)
+    await expect(sortOptionSelected(mostRecentFilter(page))).toBeVisible()
   })
 
   test('Directory Page test url row interactions', async ({ page }) => {

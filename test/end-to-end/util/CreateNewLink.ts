@@ -1,10 +1,10 @@
 import { expect, Page } from '@playwright/test'
 import { shortUrl, tagText1 } from './config'
 import {
-  createLinkButton,
   createUrlModal,
   generateUrlImage,
   longUrlTextField,
+  openCreateLinkModal,
   shortUrlTextField,
   tagsAutocompleteInput,
 } from './helpers'
@@ -12,7 +12,7 @@ import { firstLinkHandle } from './FirstLinkHandle'
 
 export async function createNewLink(page: Page): Promise<string> {
   // The create url modal opens when the "Create link" button is clicked.
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await expect(createUrlModal(page)).toBeVisible()
 
   // It should populate the short url input box on the create url modal with a random string when the refresh icon on the short url input box is pressed
