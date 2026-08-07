@@ -6,14 +6,13 @@ import { firstLinkHandle } from './FirstLinkHandle'
 import {
   activeSwitch,
   closeDrawerButton,
-  createLinkButton,
   fileTab,
   generateRandomString,
   generateUrlImage,
   linkRowByShortUrl,
   longUrl,
   longUrlTextField,
-  mobileCreateLinkButton,
+  openCreateLinkModal,
   shortUrlTextField,
   uploadFile,
 } from './helpers'
@@ -63,11 +62,7 @@ const generateSearchKey = () => {
 }
 
 const clickCreateLinkButton = async (page: Page): Promise<void> => {
-  if ((await createLinkButton(page).nth(0).count()) > 0) {
-    await createLinkButton(page).nth(0).click()
-  } else {
-    await mobileCreateLinkButton(page).click()
-  }
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 }
 
@@ -93,7 +88,7 @@ export const linkCreationProcedure = async (page: Page) => {
   const { searchKey, searchKeyWithDash } = generateSearchKey()
 
   // Save url - most popular link
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   const generatedUrlMostPopular = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
@@ -105,27 +100,27 @@ export const linkCreationProcedure = async (page: Page) => {
   await seedLinkClicks(generatedUrlMostPopular, 10)
 
   // Save url - 2nd most popular link
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   const generatedUrlSecondMostPopular = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
   await shortUrlTextField(page).fill(generatedUrlSecondMostPopular)
   await longUrlTextField(page).fill(shortUrl)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await seedLinkClicks(generatedUrlSecondMostPopular, 8)
 
   // Save url - active link + 3rd most recent link
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   const generatedUrlActive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
   await shortUrlTextField(page).fill(generatedUrlActive)
   await longUrlTextField(page).fill(shortUrl)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   // Save url - inactive link + 2nd most recent link
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedUrlInactive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
@@ -134,7 +129,7 @@ export const linkCreationProcedure = async (page: Page) => {
 
   await shortUrlTextField(page).fill(generatedUrlInactive)
   await longUrlTextField(page).fill(shortUrl)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
   await linkRowInactive.click()
   await expect(longUrl(page)).toHaveValue(shortUrl)
 
@@ -142,7 +137,7 @@ export const linkCreationProcedure = async (page: Page) => {
   await closeDrawerButton(page).click()
 
   // Save url - file link + most recent link
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedUrlFile = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
@@ -152,7 +147,7 @@ export const linkCreationProcedure = async (page: Page) => {
   await shortUrlTextField(page).fill(generatedUrlFile)
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await deleteFile(dummyFilePath)
 

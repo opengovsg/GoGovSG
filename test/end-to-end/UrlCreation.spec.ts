@@ -21,7 +21,7 @@ import {
   bulkTab,
   circularRedirectValidationError,
   closeDrawerButton,
-  createLinkButton,
+  createSubmitButton,
   createUrlModal,
   cssRgbChannels,
   csvOnlyError,
@@ -35,6 +35,7 @@ import {
   linkRowByShortUrl,
   longUrlTextField,
   maliciousFileCreation,
+  openCreateLinkModal,
   resultTable,
   searchBarLinkButton,
   searchBarLinksInput,
@@ -64,7 +65,7 @@ import { linkCreationProcedure } from './util/LinkCreationProcedure'
 
 test('The URL based shortlink test.', async ({ page }) => {
   // The create url modal opens when the "Create link" button is clicked.
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await expect(createUrlModal(page)).toBeVisible()
 
   // It should populate the short url input box on the create url modal with a random string when the refresh icon on the short url input box is pressed
@@ -78,22 +79,14 @@ test('The URL based shortlink test.', async ({ page }) => {
   // It should prevent creation of short urls pointing to long urls hosted on blacklisted domains
   await longUrlTextField(page).fill(`${invalidShortUrl}`)
 
-  if ((await createLinkButton(page).nth(2).count()) > 0) {
-    await createLinkButton(page).nth(2).click()
-  } else {
-    await createLinkButton(page).nth(1).click()
-  }
+  await createSubmitButton(page).click()
 
   await expect(blacklistValidationError(page)).toBeVisible()
 
   // It should prevent creation of short urls pointing to long urls hosted on our domains (circular redirects)
   await longUrlTextField(page).fill(`${circularRedirectUrl}`)
 
-  if ((await createLinkButton(page).nth(2).count()) > 0) {
-    await createLinkButton(page).nth(2).click()
-  } else {
-    await createLinkButton(page).nth(1).click()
-  }
+  await createSubmitButton(page).click()
 
   await expect(circularRedirectValidationError(page)).toBeVisible()
 
@@ -127,7 +120,7 @@ test('The URL based shortlink test.', async ({ page }) => {
   ).toBeVisible()
 
   // It should show an autocomplete option for the previously created tag when creating a new link
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await tagsAutocompleteInput(page).fill('tag')
   await page.waitForTimeout(1000)
   // TableTag chips on existing rows are contained buttons; suggestions use text buttons.
@@ -137,7 +130,7 @@ test('The URL based shortlink test.', async ({ page }) => {
 })
 
 test('The file based shortlink test.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedfileUrl = await shortUrlTextField(page).inputValue()
@@ -151,7 +144,7 @@ test('The file based shortlink test.', async ({ page }) => {
   await uploadFile(page).setInputFiles(dummyFilePath)
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   // It should show an success snackbar when a new file link has been added
   await expect(successUrlCreation(page)).toBeVisible()
@@ -177,7 +170,7 @@ test('The file based shortlink test.', async ({ page }) => {
   // Generate 11mb file
   await createEmptyFileOfSize(dummyFilePath, largeFileSize)
 
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
   // It should clear tags input after the previous link was successfully created
@@ -193,7 +186,7 @@ test('The file based shortlink test.', async ({ page }) => {
 })
 
 test('The URL searching test.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedUrlActive = await shortUrlTextField(page).inputValue()
@@ -205,7 +198,7 @@ test('The URL searching test.', async ({ page }) => {
   await longUrlTextField(page).fill(`${shortUrl}`)
   await tagsAutocompleteInput(page).fill(randomTagText)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   // testcafe selectors are lazily re-queried on each use, so keep this as a
   // Locator (not an awaited string) to mirror re-evaluation on every assert.
@@ -239,7 +232,7 @@ test('The URL searching test.', async ({ page }) => {
 })
 
 test('The bulk based test.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
 
   const longUrls = Array(100).fill('https://google.com')
   const currLinkCount = await getLinkCount(page)
@@ -252,7 +245,7 @@ test('The bulk based test.', async ({ page }) => {
   await uploadFile(page).setInputFiles(dummyBulkCsv)
   await tagsAutocompleteInput(page).fill(tagText3)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
 
   await page.waitForTimeout(2000)
 
@@ -274,12 +267,12 @@ test('The bulk based test.', async ({ page }) => {
   // invalid file (non-csv)
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await bulkTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
   // It should clear tags input after bulk creation was successful
   await expect(tag3(page)).not.toBeVisible()
-  await createLinkButton(page).nth(2).click()
+  await createSubmitButton(page).click()
   await expect(csvOnlyError(page)).toBeVisible()
 
   // Delete invalid file (non-csv)
@@ -287,7 +280,7 @@ test('The bulk based test.', async ({ page }) => {
 })
 
 test.skip('The malicious file test.', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedfileUrl = await shortUrlTextField(page).inputValue()
@@ -299,7 +292,7 @@ test.skip('The malicious file test.', async ({ page }) => {
   await uploadFile(page).setInputFiles(dummyMaliciousFilePath)
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await createSubmitButton(page).click()
 
   // It should show an error snackbar when malicious file uploaded
   await expect(maliciousFileCreation(page)).toBeVisible()
@@ -313,7 +306,7 @@ test.skip('The malicious file test.', async ({ page }) => {
 })
 
 test('The update file test', async ({ page }) => {
-  await createLinkButton(page).nth(0).click()
+  await openCreateLinkModal(page)
   await generateUrlImage(page).click()
 
   const generatedfileUrl = await shortUrlTextField(page).inputValue()
@@ -326,7 +319,7 @@ test('The update file test', async ({ page }) => {
   await uploadFile(page).setInputFiles(dummyFilePath)
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
-  await createLinkButton(page).nth(2).click()
+  await firstLinkHandle(page)
   await expect(successUrlCreation(page)).toBeVisible()
 
   await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
