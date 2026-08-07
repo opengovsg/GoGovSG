@@ -87,6 +87,7 @@ test('Changing the original link should update the link history with Original Li
 
 test('Changing the link owner should update the link history with Link Owner update change set', async ({
   page,
+  browserName,
 }) => {
   // Create new link
   const generatedShortLink = await createNewLink(page)
@@ -103,7 +104,7 @@ test('Changing the link owner should update the link history with Link Owner upd
   }
   // Sign out
   await logoutProcedure(page)
-  await restoreAuthState(page, transferUserAuthFile)
+  await restoreAuthState(page, transferUserAuthFile(browserName))
   // Open Drawer
   await linkRow.click()
   // Go to link history

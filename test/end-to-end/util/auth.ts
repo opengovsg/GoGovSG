@@ -6,9 +6,17 @@ import { gotoPage } from './navigation'
 
 export const authDir = path.join(__dirname, '..', '.auth')
 
-export const testUserAuthFile = path.join(authDir, 'test-user.json')
+/**
+ * Storage state is keyed by browser because CI installs only the browser for
+ * its matrix shard (`playwright install <browser>`). Each browser project
+ * authenticates through its own setup project, so the login run never reaches
+ * for a binary that shard did not install.
+ */
+export const testUserAuthFile = (browserName: string): string =>
+  path.join(authDir, `${browserName}-test-user.json`)
 
-export const transferUserAuthFile = path.join(authDir, 'transfer-user.json')
+export const transferUserAuthFile = (browserName: string): string =>
+  path.join(authDir, `${browserName}-transfer-user.json`)
 
 /** Clears project-level storage state for specs that exercise the login flow. */
 export const emptyStorageState: StorageState = { cookies: [], origins: [] }
@@ -25,16 +33,21 @@ export async function restoreAuthState(
     await page.context().addCookies(state.cookies)
   }
 
-  for (const origin of state.origins ?? []) {
-    await page.goto(origin.origin)
-    if (origin.localStorage.length > 0) {
-      await page.evaluate((items) => {
-        for (const { name, value } of items) {
-          window.localStorage.setItem(name, value)
-        }
-      }, origin.localStorage)
-    }
-  }
+  // The app is single-origin, so every saved localStorage entry belongs to
+  // rootLocation. Writing them in one pass avoids navigating per origin --
+  // `announcement` in particular has to be in place before the user page
+  // mounts, or the post-login modal reappears and swallows the next click.
+  const storedItems = (state.origins ?? []).flatMap(
+    (origin) => origin.localStorage,
+  )
 
   await gotoPage(page, rootLocation)
+  if (storedItems.length > 0) {
+    await page.evaluate((items) => {
+      items.forEach(({ name, value }) =>
+        window.localStorage.setItem(name, value),
+      )
+    }, storedItems)
+    await gotoPage(page, rootLocation)
+  }
 }
