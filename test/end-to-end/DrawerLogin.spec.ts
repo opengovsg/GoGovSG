@@ -170,7 +170,15 @@ test('Drawer functionality test for file.', async ({ page }) => {
 })
 
 test('Link transfer test.', async ({ page }) => {
-  // transferEmail is created in auth.setup.ts; storageState already has testEmail.
+  // Fixture already logged in as testEmail. Sign out first so we can prime
+  // the transferEmail account (mirrors the original testcafe before-hook).
+  await signOutButton(page).click()
+  await page.goto(rootLocation)
+  await loginProcedure(page, transferEmail)
+  await signOutButton(page).click()
+  await page.goto(rootLocation)
+  await loginProcedure(page, testEmail)
+
   await createLinkButton(page).nth(0).click()
   await generateUrlImage(page).click()
   await tagsAutocompleteInput(page).fill(tagText1)
