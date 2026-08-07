@@ -48,8 +48,12 @@ export default defineConfig({
     })),
   ],
   webServer: {
-    command: 'pnpm run dev',
-    url: rootLocation,
+    command: 'pnpm run dev:e2e',
+    // Probe the bundle, not the root: this is the one URL that proves both that
+    // Express is up and that `dist` is built and mounted. Rooting the check at
+    // `/` would go green against a plain `pnpm run dev` stack, whose Express has
+    // no `dist` to serve, and the suite would then fail on 404s instead.
+    url: `${rootLocation}/bundle.js`,
     timeout: 270_000,
     reuseExistingServer: !process.env.CI,
   },
