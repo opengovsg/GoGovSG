@@ -16,4 +16,5 @@ coverage
 playwright-report
 test-results
 blob-report
+test/end-to-end/.auth
 .env.*

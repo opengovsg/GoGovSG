@@ -9,6 +9,9 @@ import {
   regenerateApiKeyButton,
 } from './util/helpers'
 
+// Each test creates a fresh user; do not reuse the shared storageState session.
+test.use({ storageState: { cookies: [], origins: [] } })
+
 test.beforeEach(async ({ page }) => {
   const email = `${Date.now().toString()}@open.gov.sg`
   await page.goto(rootLocation)

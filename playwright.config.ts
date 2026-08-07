@@ -1,9 +1,10 @@
 import { defineConfig } from '@playwright/test'
-import { rootLocation } from './test/end-to-end/util/config'
+import { rootLocation, userAuthFile } from './test/end-to-end/util/config'
+
+const browsers = ['chromium', 'firefox', 'webkit'] as const
 
 export default defineConfig({
   testDir: './test/end-to-end',
-  testMatch: '**/*.spec.ts',
   timeout: 60_000,
   fullyParallel: false,
   // Shared maildev inbox: parallel workers race on clearMaildevInbox() and
@@ -16,22 +17,26 @@ export default defineConfig({
     viewport: { width: 1280, height: 800 },
     trace: 'off',
   },
-  projects: [
+  projects: browsers.flatMap((browserName) => [
     {
-      name: 'chromium',
-      use: { browserName: 'chromium' },
+      name: `setup-${browserName}`,
+      testMatch: /auth\.setup\.ts/,
+      use: { browserName },
     },
     {
-      name: 'firefox',
-      use: { browserName: 'firefox' },
+      name: browserName,
+      testMatch: /.*\.spec\.ts/,
+      use: {
+        browserName,
+        storageState: userAuthFile(browserName),
+      },
+      dependencies: [`setup-${browserName}`],
     },
-    {
-      name: 'webkit',
-      use: { browserName: 'webkit' },
-    },
-  ],
+  ]),
   webServer: {
-    command: 'pnpm run dev',
+    // Production webpack/tsc build served by Express (no webpack-dev-server).
+    // Server stays on NODE_ENV=development for local HTTP cookies + maildev.
+    command: 'pnpm run dev:e2e',
     url: rootLocation,
     timeout: 270_000,
     reuseExistingServer: !process.env.CI,
