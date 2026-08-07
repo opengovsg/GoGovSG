@@ -29,8 +29,8 @@ import {
   urlSaveButton,
   urlUpdatedSnackbar,
 } from './util/helpers'
-import { loginProcedure } from './util/LoginProcedure'
 import { logoutProcedure } from './util/LogoutProcedure'
+import { restoreAuthState, transferUserAuthFile } from './util/auth'
 import { createNewLink } from './util/CreateNewLink'
 
 test('Creating a new url updates the link history with create change set', async ({
@@ -88,12 +88,6 @@ test('Changing the original link should update the link history with Original Li
 test('Changing the link owner should update the link history with Link Owner update change set', async ({
   page,
 }) => {
-  // Prime transferEmail (fixture already logged in as testEmail).
-  await logoutProcedure(page)
-  await loginProcedure(page, transferEmail)
-  await logoutProcedure(page)
-  await loginProcedure(page, testEmail)
-
   // Create new link
   const generatedShortLink = await createNewLink(page)
   const linkRow = linkRowByShortUrl(page, generatedShortLink)
@@ -109,8 +103,7 @@ test('Changing the link owner should update the link history with Link Owner upd
   }
   // Sign out
   await logoutProcedure(page)
-  // Login using the new link owner
-  await loginProcedure(page, transferEmail)
+  await restoreAuthState(page, transferUserAuthFile)
   // Open Drawer
   await linkRow.click()
   // Go to link history
