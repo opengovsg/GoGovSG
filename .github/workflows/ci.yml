@@ -79,6 +79,10 @@ jobs:
   playwright:
     name: End To End Tests (${{ matrix.browser }})
     runs-on: ubuntu-22.04
+    # actions/cache needs write to save browser binaries between runs.
+    permissions:
+      contents: read
+      actions: write
     strategy:
       fail-fast: false
       matrix:
@@ -87,8 +91,21 @@ jobs:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-${{ matrix.browser }}
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
+      - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps ${{ matrix.browser }}
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
