@@ -70,6 +70,10 @@ jobs:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - name: Configure Datadog Test Visibility
+        # Non-blocking: this action installs dd-trace from the npm registry, so
+        # a registry hiccup fails it for reasons unrelated to the code under test
+        # Telemetry failure is not worth blocking the suite.
+        continue-on-error: true
         uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
           languages: js
@@ -77,7 +81,7 @@ jobs:
           api_key: ${{ secrets.DD_API_KEY }}
       - run: pnpm run test
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+          NODE_OPTIONS: ${{ env.DD_TRACE_PACKAGE && format('-r {0}', env.DD_TRACE_PACKAGE) || '' }}
 
   playwright:
     name: End To End Tests (${{ matrix.browser }})
@@ -97,6 +101,10 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
       - name: Configure Datadog Test Visibility
+        # Non-blocking: this action installs dd-trace from the npm registry, so
+        # a registry hiccup fails it for reasons unrelated to the code under test
+        # Telemetry failure is not worth blocking the suite.
+        continue-on-error: true
         uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
           languages: js
@@ -104,7 +112,7 @@ jobs:
           api_key: ${{ secrets.DD_API_KEY }}
       - run: pnpm exec playwright test --project=${{ matrix.browser }}
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+          NODE_OPTIONS: ${{ env.DD_TRACE_PACKAGE && format('-r {0}', env.DD_TRACE_PACKAGE) || '' }}
       # Traces, screenshots, videos and the per-failure page snapshot. Without
       # these, a CI-only flake can only be investigated by pushing a commit and
       # reading stdout.
@@ -126,6 +134,10 @@ jobs:
       - run: pnpm run dev &
       - run: sleep 270
       - name: Configure Datadog Test Visibility
+        # Non-blocking: this action installs dd-trace from the npm registry, so
+        # a registry hiccup fails it for reasons unrelated to the code under test
+        # Telemetry failure is not worth blocking the suite.
+        continue-on-error: true
         uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
           languages: js
@@ -133,4 +145,4 @@ jobs:
           api_key: ${{ secrets.DD_API_KEY }}
       - run: pnpm run test:integration
         env:
-          NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+          NODE_OPTIONS: ${{ env.DD_TRACE_PACKAGE && format('-r {0}', env.DD_TRACE_PACKAGE) || '' }}
