@@ -307,6 +307,8 @@ test.skip('The malicious file test.', async ({ page }) => {
 })
 
 test('The update file test', async ({ page }) => {
+  // WebKit needs a longer budget for the post-navigation download event.
+  test.setTimeout(90_000)
   await createLinkButton(page).nth(0).click()
   await generateUrlImage(page).click()
 
@@ -329,8 +331,9 @@ test('The update file test', async ({ page }) => {
 
   // Navigating to a file short-link triggers a genuine CSV download -- wait
   // for the deterministic download event instead of polling the filesystem.
+  // WebKit is slower to start the download after navigation.
   const [download] = await Promise.all([
-    page.waitForEvent('download'),
+    page.waitForEvent('download', { timeout: 60_000 }),
     page.goto(`${apiLocation}/${generatedfileUrl}`),
   ])
   expect(await download.path()).toBeTruthy()

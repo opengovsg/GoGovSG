@@ -5,7 +5,6 @@ import {
   tagText1,
   tagText2,
   tagText3,
-  testEmail,
   transferEmail,
 } from './util/config'
 import {
@@ -83,14 +82,7 @@ test('Changing the original link should update the link history with Original Li
 test('Changing the link owner should update the link history with Link Owner update change set', async ({
   page,
 }) => {
-  // Prime transferEmail (fixture already logged in as testEmail).
-  await signOutButton(page).click()
-  await page.goto(rootLocation)
-  await loginProcedure(page, transferEmail)
-  await signOutButton(page).click()
-  await page.goto(rootLocation)
-  await loginProcedure(page, testEmail)
-
+  // transferEmail is created in auth.setup.ts; storageState already has testEmail.
   // Create new link
   const generatedShortLink = await createNewLink(page)
   const linkRow = linkRowByShortUrl(page, generatedShortLink)

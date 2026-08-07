@@ -1,3 +1,5 @@
+import path from 'path'
+
 export const testEmail = 'testcafe@open.gov.sg'
 export const transferEmail = 'transfer@open.gov.sg'
 export const incorrectEmail = 'testcafe@hotmail.com'
@@ -9,9 +11,11 @@ export const circularRedirectUrl = 'go.gov.sg/test'
 export const tagText1 = 'tag_1'
 export const tagText2 = 'TAG-2'
 export const tagText3 = 'fooBAR123'
-export const rootLocation = 'http://localhost:3000'
+export const rootLocation = 'http://localhost:8080'
 export const apiLocation = 'http://localhost:8080'
 export const otp = '111111'
+export const userAuthFile = (browserName: string) =>
+  path.join('test/end-to-end/.auth', `${browserName}.json`)
 export const dummyMaliciousFilePath = './test/end-to-end/eicar.com.txt'
 export const dummyFilePath = './test/end-to-end/anotherDummy.txt'
 export const dummyChangedFilePath = './test/end-to-end/changedDummy.csv'
