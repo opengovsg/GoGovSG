@@ -1,6 +1,5 @@
 import { test, expect } from './fixtures'
 import {
-  rootLocation,
   subUrl,
   tagText1,
   tagText2,
@@ -21,7 +20,6 @@ import {
   linkRowByShortUrl,
   linkTransferField,
   longUrl,
-  signOutButton,
   successSnackBar,
   tagCloseButton1,
   tagsAutocompleteInput,
@@ -30,6 +28,7 @@ import {
   urlSaveButton,
 } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
+import { logoutProcedure } from './util/LogoutProcedure'
 import { createNewLink } from './util/CreateNewLink'
 
 test('Creating a new url updates the link history with create change set', async ({
@@ -84,11 +83,9 @@ test('Changing the link owner should update the link history with Link Owner upd
   page,
 }) => {
   // Prime transferEmail (fixture already logged in as testEmail).
-  await signOutButton(page).click()
-  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
+  await logoutProcedure(page)
   await loginProcedure(page, transferEmail)
-  await signOutButton(page).click()
-  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
+  await logoutProcedure(page)
   await loginProcedure(page, testEmail)
 
   // Create new link
@@ -105,8 +102,7 @@ test('Changing the link owner should update the link history with Link Owner upd
     await closeButtonSnackBar(page).click()
   }
   // Sign out
-  await signOutButton(page).click()
-  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
+  await logoutProcedure(page)
   // Login using the new link owner
   await loginProcedure(page, transferEmail)
   // Open Drawer
