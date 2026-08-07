@@ -93,9 +93,7 @@ export const createSubmitButton = (page: Page): Locator =>
 export const openCreateLinkModal = async (page: Page): Promise<void> => {
   const modal = createUrlModal(page)
   await expect(modal).toBeHidden()
-  await page
-    .getByRole('button', { name: 'Create link', exact: true })
-    .click()
+  await page.getByRole('button', { name: 'Create link', exact: true }).click()
   await expect(modal).toBeVisible()
 }
 export const submitCreateLinkModal = async (page: Page): Promise<void> => {
