@@ -8,6 +8,7 @@ import {
 import { emptyStorageState } from './util/auth'
 import { emailHelperText, loginButton, signInButton } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
+import { logoutProcedure } from './util/LogoutProcedure'
 import { gotoPage } from './util/navigation'
 
 test.use({ storageState: emptyStorageState })
@@ -71,4 +72,19 @@ test('Valid OTP should log the user in', async ({ page }) => {
   // Redirects to /user if user has an existing session (ie logged in previously on the same browser)
   await gotoPage(page, rootLocation)
   await expect(page).toHaveURL(/user/)
+})
+
+// Signing out lives here rather than in the link-transfer specs because
+// /api/logout destroys the session server-side. This spec runs on its own
+// session (see `emptyStorageState` above), so tearing it down cannot
+// invalidate the storage state shared by the rest of the suite.
+test('Signing out ends the session', async ({ page }) => {
+  await gotoPage(page, rootLocation)
+  await loginProcedure(page)
+
+  await logoutProcedure(page)
+
+  // The session is gone server-side, not just cleared in the browser.
+  await gotoPage(page, `${rootLocation}/#/user`)
+  await expect(page).toHaveURL(/login/)
 })

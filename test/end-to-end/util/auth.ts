@@ -21,7 +21,12 @@ export const transferUserAuthFile = (browserName: string): string =>
 /** Clears project-level storage state for specs that exercise the login flow. */
 export const emptyStorageState: StorageState = { cookies: [], origins: [] }
 
-/** Restore a saved session onto the current page (e.g. after logout). */
+/**
+ * Swap the current page onto a different saved session. Use this to change
+ * accounts mid-test instead of signing out: /api/logout destroys the session
+ * server-side, which would invalidate the storage state shared by every
+ * later test.
+ */
 export async function restoreAuthState(
   page: Page,
   authFile: string,

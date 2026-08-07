@@ -29,7 +29,6 @@ import {
   urlSaveButton,
   urlUpdatedSnackbar,
 } from './util/helpers'
-import { logoutProcedure } from './util/LogoutProcedure'
 import { restoreAuthState, transferUserAuthFile } from './util/auth'
 import { createNewLink } from './util/CreateNewLink'
 
@@ -102,8 +101,9 @@ test('Changing the link owner should update the link history with Link Owner upd
   if ((await successSnackBar(page).count()) > 0) {
     await closeButtonSnackBar(page).click()
   }
-  // Sign out
-  await logoutProcedure(page)
+  // Switch to the new owner by restoring their cookies rather than signing
+  // out: /api/logout destroys the session server-side, which would invalidate
+  // the shared storage state for every test that runs after this one.
   await restoreAuthState(page, transferUserAuthFile(browserName))
   // Open Drawer
   await linkRow.click()
