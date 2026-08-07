@@ -30,7 +30,6 @@ export default function CreateButton({ className }: CreateButtonProps) {
       variant="contained"
       onClick={openCreateUrlModal}
       className={classNames(className, classes.createButton)}
-      data-testid="empty-state-create-link-button"
     >
       Create link
     </Button>
