@@ -24,8 +24,10 @@ import {
   tagCloseButton1,
   tagsAutocompleteInput,
   tagsSaveButton,
+  tagsUpdatedSnackbar,
   transferButton,
   urlSaveButton,
+  urlUpdatedSnackbar,
 } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
 import { logoutProcedure } from './util/LogoutProcedure'
@@ -53,8 +55,11 @@ test('Disabling the link should update the link history with Link Status update 
   const linkRow = linkRowByShortUrl(page, generatedShortLink)
   // Click the url in the table to open the drawer
   await linkRow.click()
-  // Disable the link
+  // Disable the link. toggleUrlState only updates the store once the PATCH
+  // comes back ok, so the switch flipping is proof the change was persisted --
+  // without this the link history can be fetched before the server has it.
   await activeSwitch(page).click()
+  await expect(activeSwitch(page)).not.toBeChecked()
   // Go to link history
   await linkHistoryViewButton(page).click()
   // Check if the link history span is created
@@ -73,6 +78,7 @@ test('Changing the original link should update the link history with Original Li
   // Update the original link
   await longUrl(page).fill(`${subUrl}`)
   await urlSaveButton(page).click()
+  await expect(urlUpdatedSnackbar(page)).toBeVisible()
   // Go to link history
   await linkHistoryViewButton(page).click()
   // Check if the link history span is created
@@ -128,6 +134,7 @@ test('Changing the tags should update the link history with Tags update change s
   await tagsAutocompleteInput(page).fill(tagText3)
   await tagsAutocompleteInput(page).press('Enter')
   await tagsSaveButton(page).click()
+  await expect(tagsUpdatedSnackbar(page)).toBeVisible()
   // Go to link history
   await linkHistoryViewButton(page).click()
   // Check if the link history span is created
