@@ -42,6 +42,7 @@ import {
   searchBarTagsInput,
   shortUrlTextField,
   successBulkCreation,
+  successLinkUpdate,
   successUrlCreation,
   tag1,
   tag3,
@@ -307,8 +308,6 @@ test.skip('The malicious file test.', async ({ page }) => {
 })
 
 test('The update file test', async ({ page }) => {
-  // WebKit needs a longer budget for the post-navigation download event.
-  test.setTimeout(90_000)
   await createLinkButton(page).nth(0).click()
   await generateUrlImage(page).click()
 
@@ -323,20 +322,31 @@ test('The update file test', async ({ page }) => {
   await tagsAutocompleteInput(page).fill(tagText1)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
+  await expect(successUrlCreation(page)).toBeVisible()
 
   await createEmptyFileOfSize(dummyChangedFilePath, smallFileSize)
   await fileRow.click()
   await uploadFile(page).setInputFiles(dummyChangedFilePath)
+  await expect(successLinkUpdate(page)).toBeVisible()
   await closeDrawerButton(page).click()
 
-  // Navigating to a file short-link triggers a genuine CSV download -- wait
-  // for the deterministic download event instead of polling the filesystem.
-  // WebKit is slower to start the download after navigation.
-  const [download] = await Promise.all([
-    page.waitForEvent('download', { timeout: 60_000 }),
-    page.goto(`${apiLocation}/${generatedfileUrl}`),
-  ])
-  expect(await download.path()).toBeTruthy()
+  // Assert redirect target, not Playwright's download event. S3 objects have no
+  // Content-Disposition: attachment, so WebKit opens them inline and never
+  // emits download. Replace changes anotherDummy.txt -> changedDummy.csv, so
+  // the object key must end in .csv. Googlebot skips the transition page.
+  const redirectResponse = await fetch(`${apiLocation}/${generatedfileUrl}`, {
+    redirect: 'manual',
+    headers: { 'User-Agent': 'Googlebot/2.1' },
+  })
+  expect(redirectResponse.status).toBe(302)
+  const location = redirectResponse.headers.get('location')
+  expect(location).toContain(`/${generatedfileUrl}.csv`)
+  if (!location) {
+    throw new Error(`Missing Location header for /${generatedfileUrl}`)
+  }
+
+  const fileResponse = await fetch(location)
+  expect(fileResponse.ok).toBeTruthy()
 
   await deleteFile(dummyFilePath)
   await deleteFile(dummyChangedFilePath)
