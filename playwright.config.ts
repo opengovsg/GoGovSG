@@ -2,10 +2,11 @@ import { defineConfig } from '@playwright/test'
 import { rootLocation } from './test/end-to-end/util/config'
 import { testUserAuthFile } from './test/end-to-end/util/auth'
 
+const browserNames = ['chromium', 'firefox', 'webkit'] as const
+
 export default defineConfig({
   testDir: './test/end-to-end',
   testMatch: '**/*.spec.ts',
-  globalSetup: './test/end-to-end/global-setup.ts',
   // testcafe had no per-test budget at all -- only selector/assertion/page-load
   // timeouts -- so tests that were merely slow still passed. WebKit runs the
   // suite ~40% slower than Chromium.
@@ -37,18 +38,19 @@ export default defineConfig({
     navigationTimeout: 30_000,
   },
   projects: [
-    {
-      name: 'chromium',
-      use: { browserName: 'chromium', storageState: testUserAuthFile },
-    },
-    {
-      name: 'firefox',
-      use: { browserName: 'firefox', storageState: testUserAuthFile },
-    },
-    {
-      name: 'webkit',
-      use: { browserName: 'webkit', storageState: testUserAuthFile },
-    },
+    // One setup project per browser: `--project=<browser>` pulls in only that
+    // browser's setup, so a CI shard that installed a single browser binary
+    // never tries to launch another one to log in.
+    ...browserNames.map((browserName) => ({
+      name: `setup-${browserName}`,
+      testMatch: /auth\.setup\.ts$/,
+      use: { browserName },
+    })),
+    ...browserNames.map((browserName) => ({
+      name: browserName,
+      use: { browserName, storageState: testUserAuthFile(browserName) },
+      dependencies: [`setup-${browserName}`],
+    })),
   ],
   webServer: {
     command: 'pnpm run dev',

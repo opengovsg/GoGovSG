@@ -169,7 +169,7 @@ test('Drawer functionality test for file.', async ({ page }) => {
   await deleteFile(dummyFilePath)
 })
 
-test('Link transfer test.', async ({ page }) => {
+test('Link transfer test.', async ({ page, browserName }) => {
   await openCreateLinkModal(page)
   await generateUrlImage(page).click()
   await tagsAutocompleteInput(page).fill(tagText1)
@@ -208,7 +208,7 @@ test('Link transfer test.', async ({ page }) => {
 
   // Verify the link is in the transfer email
   await logoutProcedure(page)
-  await restoreAuthState(page, transferUserAuthFile)
+  await restoreAuthState(page, transferUserAuthFile(browserName))
 
   await expect(linkRow).toBeVisible()
 
