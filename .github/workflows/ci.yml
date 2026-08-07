@@ -129,7 +129,10 @@ jobs:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - name: Start the stack
-        run: pnpm run dev &
+        # server-only: this suite drives the API directly and never loads a
+        # page, so the webpack dev server would only cost a compile and then
+        # contend for CPU with the tests.
+        run: pnpm run dev:server-only &
       - name: Wait for the stack to accept requests
         # Replaces a blind `sleep 270` that cost the full 270s even though the
         # stack is usually serving well inside 120s, and that reported a
