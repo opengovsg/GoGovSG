@@ -122,6 +122,17 @@ jobs:
       - run: pnpm exec playwright test --project=${{ matrix.browser }}
         env:
           NODE_OPTIONS: -r ${{ env.DD_TRACE_PACKAGE }}
+      # Traces, screenshots, videos and the per-failure page snapshot. Without
+      # these, a CI-only flake can only be investigated by pushing a commit and
+      # reading stdout.
+      - if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
 
   integration:
     name: Integration Tests
