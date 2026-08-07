@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test'
-import { anonymousTest as test } from './fixtures'
+import { test, expect } from '@playwright/test'
 import { loginProcedure } from './util/LoginProcedure'
 import { gotoPage } from './util/navigation'
 import { rootLocation } from './util/config'

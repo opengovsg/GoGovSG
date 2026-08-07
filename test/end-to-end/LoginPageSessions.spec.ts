@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test'
-import { anonymousTest as test } from './fixtures'
+import { test, expect } from '@playwright/test'
 import {
   incorrectEmail,
   incorrectOtp,
