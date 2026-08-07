@@ -1,5 +1,7 @@
-import { test, expect } from '@playwright/test'
+import { expect } from '@playwright/test'
+import { anonymousTest as test } from './fixtures'
 import { loginProcedure } from './util/LoginProcedure'
+import { gotoPage } from './util/navigation'
 import { rootLocation } from './util/config'
 import {
   apiIntegrationPageButton,
@@ -11,7 +13,7 @@ import {
 
 test.beforeEach(async ({ page }) => {
   const email = `${Date.now().toString()}@open.gov.sg`
-  await page.goto(rootLocation)
+  await gotoPage(page, rootLocation)
   await loginProcedure(page, email)
 })
 
