@@ -1,0 +1,7 @@
+# Override for Playwright e2e: production webpack/tsc build, no webpack-dev-server.
+# Keeps NODE_ENV=development so HTTP cookies, maildev, and OTP limits still work locally.
+services:
+  app:
+    command: sh -c "pnpm run build && pnpm run start"
+    ports:
+      - '8080:8080'

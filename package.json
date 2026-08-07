@@ -19,6 +19,7 @@
     "server-dev": "tsx watch --inspect=0.0.0.0 -r dotenv/config src/server/index.ts",
     "docker-dev": "concurrently \"pnpm run server-dev\" \"pnpm run client-dev\"",
     "dev": "docker compose -f docker-compose.yml up --build",
+    "dev:e2e": "docker compose -f docker-compose.yml -f docker-compose.e2e.yml up --build",
     "test": "jest",
     "test:ci": "jest --coverage",
     "test:e2e": "playwright test --headed",
