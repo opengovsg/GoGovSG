@@ -84,7 +84,7 @@ test.describe.serial('Directory Filter', () => {
       ),
     ).toBe(cssRgbChannels(uncheckedButtonBackground))
     await expect(sortOptionSelected(mostPopularFilter(page))).toHaveCount(0)
-    await expect(sortOptionSelected(mostRecentFilter(page))).toBeVisible()
+    await expect(sortOptionSelected(mostRecentFilter(page))).toHaveCount(1)
   })
 
   test('Directory Page test search by keyword and email', async ({ page }) => {
@@ -323,7 +323,7 @@ test.describe.serial('Directory Filter', () => {
         ),
       ),
     ).not.toBe(cssRgbChannels(uncheckedButtonBackground))
-    await expect(sortOptionSelected(mostPopularFilter(page))).toBeVisible()
+    await expect(sortOptionSelected(mostPopularFilter(page))).toHaveCount(1)
     await expect(sortOptionSelected(mostRecentFilter(page))).toHaveCount(0)
 
     // reset
@@ -358,7 +358,7 @@ test.describe.serial('Directory Filter', () => {
       ),
     ).toBe(cssRgbChannels(uncheckedButtonBackground))
     await expect(sortOptionSelected(mostPopularFilter(page))).toHaveCount(0)
-    await expect(sortOptionSelected(mostRecentFilter(page))).toBeVisible()
+    await expect(sortOptionSelected(mostRecentFilter(page))).toHaveCount(1)
   })
 
   test('Directory Page test url row interactions', async ({ page }) => {
