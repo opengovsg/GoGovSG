@@ -55,6 +55,7 @@ import {
   urlTable,
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
+import { gotoPage } from './util/navigation'
 import {
   createBulkCsv,
   createEmptyFileOfSize,
@@ -357,11 +358,11 @@ test('Test active and inactive link redirects', async ({ page }) => {
   // Check inactive link
   const inactiveResult = await fetch(`${apiLocation}/${generatedUrlInactive}`)
   expect(inactiveResult.status === 404).toBeTruthy()
-  await page.goto(`${apiLocation}/${generatedUrlInactive}`)
+  await gotoPage(page, `${apiLocation}/${generatedUrlInactive}`)
   await expect(unavailableShortLink(page)).toBeVisible()
 
   // Check active link redirect
-  await page.goto(`${apiLocation}/${generatedUrlActive}`)
+  await gotoPage(page, `${apiLocation}/${generatedUrlActive}`)
   await page.waitForTimeout(7000)
   expect(new URL(page.url()).host === 'www.google.com').toBeTruthy()
 })
