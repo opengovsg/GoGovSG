@@ -1,0 +1,16 @@
+# Runs Express without the webpack dev server.
+#
+# For consumers that only talk to the API. The integration suite is one: it
+# drives localhost:8080/api, maildev, localstack and Postgres directly, and
+# never loads a page, so compiling and serving a client bundle is pure cost --
+# both the initial compile and the CPU the watcher then contends for.
+#
+# Overlay on the base file, which still supplies every environment variable:
+#   docker compose -f docker-compose.yml -f docker-compose.server-only.yml up
+#
+# NODE_ENV stays `development`, as inherited. That is load-bearing beyond
+# convenience: src/server/config.ts sets otpLimit = 0 only in development,
+# without which the integration suite's repeated logins hit the OTP rate limit.
+services:
+  app:
+    command: pnpm run server-dev
