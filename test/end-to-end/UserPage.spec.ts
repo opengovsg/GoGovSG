@@ -95,9 +95,7 @@ test('User page test on filter search by link', async ({ page }) => {
 
   // Clicking on the button at the end of the search input should open the sort and filter panel
   await userFilterSortPanelButton(page).click()
-  expect(
-    await filterSortPanel(page).evaluate((el) => getComputedStyle(el).height),
-  ).not.toBe('0px')
+  await expect(filterSortPanel(page)).not.toHaveCSS('height', '0px')
 
   // Links should be sorted by their created time in descending order when enabling sort by Date of creation and clicking apply
   await dateOfCreationButton(page).click()
@@ -111,9 +109,7 @@ test('User page test on filter search by link', async ({ page }) => {
   await userFilterSortPanelButton(page).click()
   await userActiveButton(page).click()
   await userApplyButton(page).click()
-  expect(
-    await filterSortPanel(page).evaluate((el) => getComputedStyle(el).height),
-  ).toBe('0px')
+  await expect(filterSortPanel(page)).toHaveCSS('height', '0px')
   expect(await urlTableRowUrlText(page, 1)).not.toBe(`/${generatedUrlInactive}`)
 
   // Active links should be filtered out by checking only Inactive and clicking apply
@@ -143,10 +139,8 @@ test('User page test on filter search by link', async ({ page }) => {
 
   // Panel should be closed when clicking outside of it
   await userFilterSortPanelButton(page).click()
-  await clickAway(page).click()
-  expect(
-    await filterSortPanel(page).evaluate((el) => getComputedStyle(el).height),
-  ).toBe('0px')
+  await clickAway(page)
+  await expect(filterSortPanel(page)).toHaveCSS('height', '0px')
 
   // Searching for a non-existent link should show that no results are found
   await searchBarLinksInput(page).fill('this-link-does-not-exist')
@@ -251,6 +245,7 @@ test('User page test on filter search by tags', async ({ page }) => {
 
   // Change search input to 'TaG_', a case-insensitive partial match for tag 1 but not 2 nor 3
   await searchBarTagsInput(page).fill('TaG_')
+  await page.waitForTimeout(2000)
   // Link table should show urls 2 and 1 on top
   expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl2}`)
   expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl1}`)
