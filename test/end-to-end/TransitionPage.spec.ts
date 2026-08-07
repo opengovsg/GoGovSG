@@ -9,6 +9,7 @@ import {
   skipButton,
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
+import { gotoPage } from './util/navigation'
 
 test('Transition Page test.', async ({ page }) => {
   await openCreateLinkModal(page)
@@ -24,7 +25,7 @@ test('Transition Page test.', async ({ page }) => {
   await page.waitForTimeout(3000)
 
   // Accessing a short link with a trailing slash should not result in a broken transition page.
-  await page.goto(`${rootLocation}/${generatedUrlActive}-redirect/`)
+  await gotoPage(page, `${rootLocation}/${generatedUrlActive}-redirect/`)
 
   // Accessing a short link for the first time shows the transition page.
   await expect(page).toHaveURL((url) =>
@@ -44,6 +45,6 @@ test('Transition Page test.', async ({ page }) => {
   })
 
   // Visiting the same short link again does not show the transition page.
-  await page.goto(`${rootLocation}/${generatedUrlActive}-redirect/`)
+  await gotoPage(page, `${rootLocation}/${generatedUrlActive}-redirect/`)
   await expect(page).toHaveURL((url) => url.href.includes(shortUrl))
 })
