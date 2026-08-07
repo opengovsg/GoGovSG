@@ -5,9 +5,12 @@ import {
   rootLocation,
   testEmail,
 } from './util/config'
+import { emptyStorageState } from './util/auth'
 import { emailHelperText, loginButton, signInButton } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
 import { gotoPage } from './util/navigation'
+
+test.use({ storageState: emptyStorageState })
 
 test('Invalid Email that does not end with .gov.sg and should not allow submission', async ({
   page,
