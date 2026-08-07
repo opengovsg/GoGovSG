@@ -20,13 +20,19 @@ export const createBulkCsv = (fileName: string, longUrls: string[]) => {
 }
 
 /**
- * Overwrite file if exists, else create a buffer of `size` printable bytes.
- * Avoid sparse NUL files: Cloudmersive `allowInvalidFiles: false` can reject them.
+ * Overwrite file if exists, else create.
  */
 export const createEmptyFileOfSize = (fileName: string, size: number) => {
   return new Promise((resolve, reject) => {
     try {
-      fs.writeFileSync(fileName, Buffer.alloc(Math.max(size, 0), 0x61))
+      const newFile = fs.openSync(fileName, 'w')
+      if (size > 0) {
+        // Write one byte (with code 0) at the desired offset
+        // This forces the expanding of the file and fills the gap
+        // with characters with code 0
+        fs.writeSync(newFile, Buffer.alloc(1), 0, 1, size - 1)
+      }
+      fs.closeSync(newFile)
       resolve(true)
     } catch (error) {
       reject(error)

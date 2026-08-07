@@ -107,11 +107,9 @@ test.describe.serial('Directory Filter', () => {
 
     // search by keyword
     await directoryTextFieldKeyword(page).fill(`${generatedUrlFile}`)
-    await expect
-      .poll(async () => directoryUrlTableRowUrlText(page, 0), {
-        timeout: 15_000,
-      })
-      .toBe(`/${generatedUrlFile}`)
+    expect(await directoryUrlTableRowUrlText(page, 0)).toBe(
+      `/${generatedUrlFile}`,
+    )
     // change in url
     await expect(page).toHaveURL(new RegExp(`query=${generatedUrlFile}`))
 
