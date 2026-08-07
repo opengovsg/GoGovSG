@@ -16,6 +16,7 @@ import {
   shortUrlTextField,
   uploadFile,
 } from './helpers'
+import { waitForRecordedClicks } from './waits'
 
 /**
  * Fetch link multiple times to increase usage of link.
@@ -23,6 +24,7 @@ import {
  * so directory popularity sort sees the updated click counts.
  */
 const fetchLink = async (
+  page: Page,
   shortUrlSlug: string,
   numberOfFetches: number,
 ): Promise<void> => {
@@ -39,18 +41,19 @@ const fetchLink = async (
     fetchArray.push(get(url))
   }
   const values = await Promise.all(fetchArray)
-  console.log(`Url: ${url} was fetched ${values.filter(Boolean).length} times`)
-  // Server updates click stats without awaiting; give writes a moment to land.
-  await new Promise((resolve) => {
-    setTimeout(resolve, 1500)
-  })
+  const recordedClicks = values.filter(Boolean).length
+  console.log(`Url: ${url} was fetched ${recordedClicks} times`)
+  // Server updates click stats without awaiting, so poll until the recorded
+  // count catches up rather than sleeping past the write.
+  await waitForRecordedClicks(page, shortUrlSlug, recordedClicks)
 }
 
 const seedLinkClicks = async (
+  page: Page,
   generatedUrl: string,
   numberOfFetches: number,
 ): Promise<void> => {
-  await fetchLink(generatedUrl, numberOfFetches)
+  await fetchLink(page, generatedUrl, numberOfFetches)
 }
 
 const generateSearchKey = () => {
@@ -97,7 +100,7 @@ export const linkCreationProcedure = async (page: Page) => {
 
   await firstLinkHandle(page)
 
-  await seedLinkClicks(generatedUrlMostPopular, 10)
+  await seedLinkClicks(page, generatedUrlMostPopular, 10)
 
   // Save url - 2nd most popular link
   await openCreateLinkModal(page)
@@ -108,7 +111,7 @@ export const linkCreationProcedure = async (page: Page) => {
   await longUrlTextField(page).fill(shortUrl)
   await firstLinkHandle(page)
 
-  await seedLinkClicks(generatedUrlSecondMostPopular, 8)
+  await seedLinkClicks(page, generatedUrlSecondMostPopular, 8)
 
   // Save url - active link + 3rd most recent link
   await openCreateLinkModal(page)

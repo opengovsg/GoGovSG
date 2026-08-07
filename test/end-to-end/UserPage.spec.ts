@@ -51,6 +51,7 @@ import {
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
+import { userLinksRefetch } from './util/waits'
 import { TAG_SEPARATOR } from '../../src/shared/constants'
 
 test('User page test on filter search by link', async ({ page }) => {
@@ -160,7 +161,6 @@ test('User page test on filter search by link', async ({ page }) => {
 
   // Searching for a non-existent link should show that no results are found
   await searchBarLinksInput(page).fill('this-link-does-not-exist')
-  await page.waitForTimeout(1000)
   // Should display no results found
   await expect(noResultsFoundText(page)).toBeVisible()
   // Links input and dropdown should still exist
@@ -217,24 +217,27 @@ test('User page test on filter search by tags', async ({ page }) => {
   await firstLinkHandle(page)
   await deleteFile(dummyFilePath)
 
-  // Click on tag 1 from url 1
+  // Click on tag 1 from url 1. Bound to this query: creating url 3 above
+  // dispatches a refetch that may still be in flight.
+  const tag1Search = userLinksRefetch(page, { tags: tagText1 })
   await linkTableRow1.locator('span', { hasText: exactText(tagText1) }).click()
-  await page.waitForTimeout(2000)
+  await tag1Search
   // Link table should show urls 2 and 1 on top
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl2}`)
-  expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl1}`)
+  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl2}`)
+  await expect.poll(() => urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl1}`)
   // Search dropdown should change to search by tags
   await expect(searchBarTagButton(page)).toBeVisible()
   // Search input should change to tag 1
   expect(await searchBarTagsInput(page).inputValue()).toBe(tagText1)
 
   // Click on tag 2 from url 2
+  const tag2Search = userLinksRefetch(page)
   await linkTableRow2.locator('span', { hasText: exactText(tagText2) }).click()
-  await page.waitForTimeout(2000)
+  await tag2Search
   // Link table should show urls 3, 2, and 1 on top
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)
-  expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl2}`)
-  expect(await urlTableRowUrlText(page, 2)).toBe(`/${generatedUrl1}`)
+  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)
+  await expect.poll(() => urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl2}`)
+  await expect.poll(() => urlTableRowUrlText(page, 2)).toBe(`/${generatedUrl1}`)
   // Search dropdown should remain at search by tags
   await expect(searchBarTagButton(page)).toBeVisible()
   // Search input should change to tag 1 + tag separator + tag 2
@@ -242,34 +245,38 @@ test('User page test on filter search by tags', async ({ page }) => {
     `${tagText1}${TAG_SEPARATOR}${tagText2}`,
   )
 
-  // Add semicolon and non-existent tag to search input
+  // Add semicolon and non-existent tag to search input. This block and the next
+  // assert the table is *unchanged*, so awaiting the refetch is what makes them
+  // meaningful -- polling alone would pass on the previous results.
+  const orConditionSearch = userLinksRefetch(page)
   await searchBarTagsInput(page).fill(`${TAG_SEPARATOR}zzzzzzzzzzzzzzzzzzzz`)
-  await page.waitForTimeout(2000)
+  await orConditionSearch
   // Link table should still show urls 3, 2, and 1 on top (because of OR condition between search tags)
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)
-  expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl2}`)
-  expect(await urlTableRowUrlText(page, 2)).toBe(`/${generatedUrl1}`)
+  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)
+  await expect.poll(() => urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl2}`)
+  await expect.poll(() => urlTableRowUrlText(page, 2)).toBe(`/${generatedUrl1}`)
 
   // Delete tags from search input
+  const clearedSearch = userLinksRefetch(page)
   await searchBarTagsInput(page).click()
   await searchBarTagsInput(page).fill('')
-  await page.waitForTimeout(2000)
+  await clearedSearch
   // Link table should show urls 3, 2, and 1 on top
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)
-  expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl2}`)
-  expect(await urlTableRowUrlText(page, 2)).toBe(`/${generatedUrl1}`)
+  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)
+  await expect.poll(() => urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl2}`)
+  await expect.poll(() => urlTableRowUrlText(page, 2)).toBe(`/${generatedUrl1}`)
 
   // Change search input to 'TaG_', a case-insensitive partial match for tag 1 but not 2 nor 3
+  const partialMatchSearch = userLinksRefetch(page)
   await searchBarTagsInput(page).fill('TaG_')
-  await page.waitForTimeout(2000)
+  await partialMatchSearch
   // Link table should show urls 2 and 1 on top
-  expect(await urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl2}`)
-  expect(await urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl1}`)
+  await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl2}`)
+  await expect.poll(() => urlTableRowUrlText(page, 1)).toBe(`/${generatedUrl1}`)
 
   // Change search input to a single non-existent tag
   await searchBarTagsInput(page).click()
   await searchBarTagsInput(page).fill('this-tag-does-not-exist')
-  await page.waitForTimeout(2000)
   // Should display no results found
   await expect(noResultsFoundText(page)).toBeVisible()
   // Tag input and dropdown should still exist
@@ -284,7 +291,7 @@ test('User page shows ellipsis on long link', async ({ page }) => {
   await longUrlTextField(page).fill(`${shortUrl}`)
   await firstLinkHandle(page)
   // wait for it to appear on the table
-  await page.waitForTimeout(1000)
+  await expect(linkRowByShortUrl(page, longUrlString)).toBeVisible()
   const tableRow = urlTableRow(page, 0)
   const overflow = await tableRow.evaluate(
     (el) => getComputedStyle(el).textOverflow,
