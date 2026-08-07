@@ -106,6 +106,8 @@ export const circularRedirectValidationError = (page: Page): Locator =>
   })
 export const successUrlCreation = (page: Page): Locator =>
   page.locator('[role="alert"]', { hasText: 'Your link has been created' })
+export const successLinkUpdate = (page: Page): Locator =>
+  page.locator('[role="alert"]', { hasText: 'Your link has been updated.' })
 export const maliciousFileCreation = (page: Page): Locator =>
   page.locator('[role="alert"]', { hasText: 'File is likely to be malicious.' })
 export const successBulkCreation = (page: Page): Locator =>
