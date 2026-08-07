@@ -83,7 +83,6 @@ test('Changing the original link should update the link history with Original Li
 test('Changing the link owner should update the link history with Link Owner update change set', async ({
   page,
 }) => {
-  test.setTimeout(120_000)
   // Prime transferEmail (fixture already logged in as testEmail).
   await signOutButton(page).click()
   await page.goto(rootLocation)
