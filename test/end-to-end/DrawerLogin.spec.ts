@@ -205,11 +205,8 @@ test('Link transfer test.', async ({ page, browserName }) => {
   }
   await expect(successSnackBar(page)).not.toBeVisible()
 
-  // Verify the link is in the transfer email. Swap sessions by restoring the
-  // transfer user's cookies rather than signing out: /api/logout destroys the
-  // session server-side, which would invalidate the shared storage state for
-  // every test that runs after this one. Sign-out itself is covered in
-  // LoginPageSessions.spec.ts, which owns its session.
+  // Verify the link is in the transfer email. Swap sessions by restoring
+  // cookies, not by signing out -- see restoreAuthState.
   await restoreAuthState(page, transferUserAuthFile(browserName))
 
   await expect(linkRow).toBeVisible()
@@ -234,8 +231,11 @@ test('Link transfer toast test.', async ({ page }) => {
   await linkTransferField(page).fill(`${testEmail}`)
   await transferButton(page).click()
 
-  // Toasters to disappear after 5sec
+  // Assert it appeared first, or `not.toBeVisible()` below passes vacuously on
+  // a transfer that never showed a toast.
+  await expect(successSnackBar(page)).toBeVisible()
+
+  // Toasters to disappear after 5sec; retrying exits as soon as it hides.
   await clickAway(page)
-  await page.waitForTimeout(5000)
-  await expect(successSnackBar(page)).not.toBeVisible()
+  await expect(successSnackBar(page)).not.toBeVisible({ timeout: 10_000 })
 })
