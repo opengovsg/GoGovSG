@@ -170,7 +170,6 @@ test('Drawer functionality test for file.', async ({ page }) => {
 })
 
 test('Link transfer test.', async ({ page }) => {
-  test.setTimeout(120_000)
   // Fixture already logged in as testEmail. Sign out first so we can prime
   // the transferEmail account (mirrors the original testcafe before-hook).
   await signOutButton(page).click()
