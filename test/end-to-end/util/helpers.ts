@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test'
+import { expect, Page, Locator } from '@playwright/test'
 import { customAlphabet } from 'nanoid'
 import { tagText1, tagText2, tagText3 } from './config'
 
@@ -17,10 +17,6 @@ export const loginButton = (page: Page): Locator =>
   page.locator('.MuiButton-label', { hasText: 'Sign in' })
 export const signInButton = (page: Page): Locator =>
   page.locator('button[type="submit"]')
-export const createLinkButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Create' })
-export const mobileCreateLinkButton = (page: Page): Locator =>
-  page.locator('img[alt="Create link"]')
 export const loginSuccessAlert = (page: Page): Locator =>
   page
     .locator('div[role="alert"]')
@@ -92,6 +88,22 @@ export const activeSwitch = (page: Page): Locator =>
   page.locator('input[type="checkbox"]')
 export const createUrlModal = (page: Page): Locator =>
   page.locator('div[aria-labelledby="createUrlModal"]')
+export const createSubmitButton = (page: Page): Locator =>
+  createUrlModal(page).getByRole('button', { name: 'Create', exact: true })
+export const openCreateLinkModal = async (page: Page): Promise<void> => {
+  const modal = createUrlModal(page)
+  await expect(modal).toBeHidden()
+  await page
+    .getByRole('button', { name: 'Create link', exact: true })
+    .click()
+  await expect(modal).toBeVisible()
+}
+export const submitCreateLinkModal = async (page: Page): Promise<void> => {
+  const modal = createUrlModal(page)
+  await expect(modal).toBeVisible()
+  await createSubmitButton(page).click()
+  await expect(modal).toBeHidden()
+}
 
 // Snackbar text lives in nested divs; bare `div` + hasText matches ancestors
 // (#root, .MuiSnackbar-root, [role=alert], message) and trips strict mode.
@@ -378,13 +390,14 @@ export const directoryFilterPanelButton = (page: Page): Locator =>
     .last()
 export const directoryFilterPanel = (page: Page): Locator =>
   page.locator('.MuiCollapse-root').filter({ hasText: 'Most recent' })
-export const sortButtonSelectedBackground = 'rgb(249, 249, 249)'
 /** WebKit often reports colors as rgba(...); compare channels only. */
 export const cssRgbChannels = (color: string): string => {
   const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i)
   if (!match) return color.trim()
   return `${match[1]}, ${match[2]}, ${match[3]}`
 }
+export const sortOptionSelected = (sortOption: Locator): Locator =>
+  sortOption.locator('svg')
 export const mostRecentFilter = (page: Page): Locator =>
   page
     .locator('p', { hasText: 'Most recent' })
