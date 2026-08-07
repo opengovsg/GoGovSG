@@ -90,17 +90,10 @@ export const createUrlModal = (page: Page): Locator =>
   page.locator('div[aria-labelledby="createUrlModal"]')
 export const createSubmitButton = (page: Page): Locator =>
   createUrlModal(page).getByRole('button', { name: 'Create', exact: true })
-// The toolbar container, not the button inside it. The button is re-created
-// when the minified breakpoint resolves, and `getByRole('button', { name:
-// 'Create link' })` also matches the empty-state button and the minified icon
-// button's `alt` text -- so it could resolve to an element that is about to be
-// detached, which stalls Playwright's click until the test times out.
-export const createLinkButton = (page: Page): Locator =>
-  page.getByTestId('create-link-button')
 export const openCreateLinkModal = async (page: Page): Promise<void> => {
   const modal = createUrlModal(page)
   await expect(modal).toBeHidden()
-  await createLinkButton(page).click()
+  await page.getByRole('button', { name: 'Create link', exact: true }).click()
   await expect(modal).toBeVisible()
 }
 export const submitCreateLinkModal = async (page: Page): Promise<void> => {

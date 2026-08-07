@@ -24,13 +24,7 @@ function CreateLinkButton() {
   const openCreateUrlModal = () => dispatch(userActions.openCreateUrlModal())
   const classes = useStyles()
   return (
-    // The container carries the test hook: the inner button remounts when the
-    // minified breakpoint resolves, and both branches expose the same "Create
-    // link" accessible name as the empty-state button.
-    <span
-      className={classes.createLinkButtonContainer}
-      data-testid="create-link-button"
-    >
+    <span className={classes.createLinkButtonContainer}>
       {useMinifiedActions() ? (
         <ContainedIconButton onClick={openCreateUrlModal}>
           <img src={addIcon} alt="Create link" />
