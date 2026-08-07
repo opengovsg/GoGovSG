@@ -126,8 +126,9 @@ test('The URL based shortlink test.', async ({ page }) => {
   await createLinkButton(page).nth(0).click()
   await tagsAutocompleteInput(page).fill('tag')
   await page.waitForTimeout(1000)
+  // TableTag chips on existing rows are contained buttons; suggestions use text buttons.
   await expect(
-    page.locator('button', { hasText: exactText(tagText2) }),
+    page.locator('button.MuiButton-text', { hasText: exactText(tagText2) }),
   ).toBeVisible()
 })
 
