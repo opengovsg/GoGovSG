@@ -173,10 +173,10 @@ test('Link transfer test.', async ({ page }) => {
   // Fixture already logged in as testEmail. Sign out first so we can prime
   // the transferEmail account (mirrors the original testcafe before-hook).
   await signOutButton(page).click()
-  await page.goto(rootLocation)
+  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
   await loginProcedure(page, transferEmail)
   await signOutButton(page).click()
-  await page.goto(rootLocation)
+  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
   await loginProcedure(page, testEmail)
 
   await openCreateLinkModal(page)
@@ -217,7 +217,7 @@ test('Link transfer test.', async ({ page }) => {
 
   // Verify the link is in the transfer email
   await signOutButton(page).click()
-  await page.goto(rootLocation)
+  await page.goto(rootLocation, { waitUntil: 'domcontentloaded' })
 
   await loginProcedure(page, transferEmail)
 
