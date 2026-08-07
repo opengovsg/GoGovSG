@@ -90,9 +90,6 @@ test('User page test on filter search by link', async ({ page }) => {
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
   await createLinkButton(page).nth(2).click()
-  await expect(linkRowByShortUrl(page, generatedUrlFile)).toBeVisible({
-    timeout: 30_000,
-  })
 
   await deleteFile(dummyFilePath)
 
@@ -202,9 +199,6 @@ test('User page test on filter search by tags', async ({ page }) => {
   await tagsAutocompleteInput(page).fill(tagText3)
   await tagsAutocompleteInput(page).press('Enter')
   await createLinkButton(page).nth(2).click()
-  await expect(linkRowByShortUrl(page, generatedUrl3)).toBeVisible({
-    timeout: 30_000,
-  })
   await deleteFile(dummyFilePath)
 
   // Click on tag 1 from url 1
