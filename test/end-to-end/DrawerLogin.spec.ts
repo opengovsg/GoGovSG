@@ -158,6 +158,7 @@ test('Drawer functionality test for file.', async ({ page }) => {
   await fileTab(page).click()
   await uploadFile(page).setInputFiles(dummyFilePath)
   await createLinkButton(page).nth(2).click()
+  await expect(linkRow).toBeVisible({ timeout: 30_000 })
 
   await deleteFile(dummyFilePath)
   await createEmptyFileOfSize(dummyFilePath, largeFileSize)

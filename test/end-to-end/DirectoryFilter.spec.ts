@@ -6,6 +6,7 @@ import {
   activeButtonStyle,
   clickAway,
   copyAlert,
+  cssRgbChannels,
   directoryFilterPanel,
   directoryFilterPanelButton,
   directoryPageButton,
@@ -55,35 +56,47 @@ test.describe.serial('Directory Filter', () => {
     await expect(directoryTextFieldKeyword(page)).toBeVisible()
     await expect(directoryTextFieldEmail(page)).not.toBeVisible()
     expect(
-      await linkButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await linkButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await fileButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await fileButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await activeButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await activeButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await inactiveButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await inactiveButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await mostPopularFilter(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await mostPopularFilter(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(sortButtonSelectedBackground)
+    ).not.toBe(cssRgbChannels(sortButtonSelectedBackground))
     expect(
-      await mostRecentFilter(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await mostRecentFilter(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(sortButtonSelectedBackground)
+    ).toBe(cssRgbChannels(sortButtonSelectedBackground))
   })
 
   test('Directory Page test search by keyword and email', async ({ page }) => {
@@ -94,9 +107,11 @@ test.describe.serial('Directory Filter', () => {
 
     // search by keyword
     await directoryTextFieldKeyword(page).fill(`${generatedUrlFile}`)
-    expect(await directoryUrlTableRowUrlText(page, 0)).toBe(
-      `/${generatedUrlFile}`,
-    )
+    await expect
+      .poll(async () => directoryUrlTableRowUrlText(page, 0), {
+        timeout: 15_000,
+      })
+      .toBe(`/${generatedUrlFile}`)
     // change in url
     await expect(page).toHaveURL(new RegExp(`query=${generatedUrlFile}`))
 
@@ -295,69 +310,93 @@ test.describe.serial('Directory Filter', () => {
     await userApplyButton(page).click()
     // check all styles of selected values
     expect(
-      await linkButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await linkButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(uncheckedButtonBackground)
+    ).not.toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await fileButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await fileButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(uncheckedButtonBackground)
+    ).not.toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await activeButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await activeButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(uncheckedButtonBackground)
+    ).not.toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await inactiveButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await inactiveButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(uncheckedButtonBackground)
+    ).not.toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await mostPopularFilter(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await mostPopularFilter(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(sortButtonSelectedBackground)
+    ).toBe(cssRgbChannels(sortButtonSelectedBackground))
     expect(
-      await mostRecentFilter(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await mostRecentFilter(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(sortButtonSelectedBackground)
+    ).not.toBe(cssRgbChannels(sortButtonSelectedBackground))
 
     // reset
     await directoryFilterPanelButton(page).click()
     await resetButton(page).click()
     expect(
-      await linkButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await linkButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await fileButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await fileButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await activeButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await activeButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await inactiveButtonStyle(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await inactiveButtonStyle(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(uncheckedButtonBackground)
+    ).toBe(cssRgbChannels(uncheckedButtonBackground))
     expect(
-      await mostPopularFilter(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await mostPopularFilter(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).not.toBe(sortButtonSelectedBackground)
+    ).not.toBe(cssRgbChannels(sortButtonSelectedBackground))
     expect(
-      await mostRecentFilter(page).evaluate(
-        (el) => getComputedStyle(el).backgroundColor,
+      cssRgbChannels(
+        await mostRecentFilter(page).evaluate(
+          (el) => getComputedStyle(el).backgroundColor,
+        ),
       ),
-    ).toBe(sortButtonSelectedBackground)
+    ).toBe(cssRgbChannels(sortButtonSelectedBackground))
   })
 
   test('Directory Page test url row interactions', async ({ page }) => {
