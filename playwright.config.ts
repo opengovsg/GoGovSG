@@ -1,13 +1,14 @@
 import { defineConfig } from '@playwright/test'
 import { rootLocation } from './test/end-to-end/util/config'
+import { testUserAuthFile } from './test/end-to-end/util/auth'
 
 export default defineConfig({
   testDir: './test/end-to-end',
   testMatch: '**/*.spec.ts',
+  globalSetup: './test/end-to-end/global-setup.ts',
   // testcafe had no per-test budget at all -- only selector/assertion/page-load
-  // timeouts -- so tests that were merely slow still passed. The heaviest tests
-  // here run four OTP round-trips through maildev before they start asserting,
-  // and WebKit runs the suite ~40% slower than Chromium.
+  // timeouts -- so tests that were merely slow still passed. WebKit runs the
+  // suite ~40% slower than Chromium.
   timeout: 90_000,
   fullyParallel: false,
   // Shared maildev inbox: parallel workers race on clearMaildevInbox() and
@@ -38,15 +39,15 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { browserName: 'chromium' },
+      use: { browserName: 'chromium', storageState: testUserAuthFile },
     },
     {
       name: 'firefox',
-      use: { browserName: 'firefox' },
+      use: { browserName: 'firefox', storageState: testUserAuthFile },
     },
     {
       name: 'webkit',
-      use: { browserName: 'webkit' },
+      use: { browserName: 'webkit', storageState: testUserAuthFile },
     },
   ],
   webServer: {

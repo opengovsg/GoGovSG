@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { emptyStorageState } from './util/auth'
 import { loginProcedure } from './util/LoginProcedure'
 import { gotoPage } from './util/navigation'
 import { rootLocation } from './util/config'
@@ -9,6 +10,8 @@ import {
   iHaveCopiedButton,
   regenerateApiKeyButton,
 } from './util/helpers'
+
+test.use({ storageState: emptyStorageState })
 
 test.beforeEach(async ({ page }) => {
   const email = `${Date.now().toString()}@open.gov.sg`
