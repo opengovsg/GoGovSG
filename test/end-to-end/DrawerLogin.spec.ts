@@ -48,6 +48,7 @@ import {
 import { loginProcedure } from './util/LoginProcedure'
 import { logoutProcedure } from './util/LogoutProcedure'
 import { firstLinkHandle } from './util/FirstLinkHandle'
+import { gotoPage } from './util/navigation'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
 
 test('Drawer functionality test for url.', async ({ page }) => {
@@ -136,7 +137,7 @@ test('Drawer functionality test for url.', async ({ page }) => {
 
   // Url is updated/saved when user enters a new url, then clicks "save" - check redirect with port 8080
   await activeSwitch(page).nth(0).click()
-  await page.goto(`${apiLocation}/${generatedUrl}`)
+  await gotoPage(page, `${apiLocation}/${generatedUrl}`)
   // The redirect through the short-link API can take close to 6s; poll
   // instead of the original fixed 6s sleep (evidence for the margin, not
   // for a blind wait).
