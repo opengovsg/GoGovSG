@@ -16,7 +16,6 @@ import {
   emailToggle,
   fileButton,
   fileButtonStyle,
-  getLocation,
   inactiveButton,
   inactiveButtonStyle,
   linkButton,
@@ -41,7 +40,7 @@ test.describe.serial('Directory Filter', () => {
   test('Default settings', async ({ page }) => {
     // Clicking on the directory page button brings user to directory page
     await directoryPageButton(page).click()
-    expect(getLocation(page)).toMatch(/directory/)
+    await expect(page).toHaveURL(/directory/)
 
     // Clicking on the button at the end of the search input should open the sort and filter panel
     await directoryFilterPanelButton(page).click()
@@ -99,7 +98,7 @@ test.describe.serial('Directory Filter', () => {
       `/${generatedUrlFile}`,
     )
     // change in url
-    expect(getLocation(page)).toMatch(new RegExp(`query=${generatedUrlFile}`))
+    await expect(page).toHaveURL(new RegExp(`query=${generatedUrlFile}`))
 
     // search by email
     await toggle(page).click()
@@ -110,11 +109,11 @@ test.describe.serial('Directory Filter', () => {
     await directoryTextFieldEmail(page).fill(testEmail)
     expect(await directoryUrlTableRowEmail(page, 0).innerText()).toBe(testEmail)
     // change in url (email in url)
-    expect(getLocation(page)).toMatch(
+    await expect(page).toHaveURL(
       new RegExp(`query=${testEmail}`.replace('@', '%40')),
     )
     // change in url (isEmail in url)
-    expect(getLocation(page)).toMatch(/isEmail=true/)
+    await expect(page).toHaveURL(/isEmail=true/)
   })
 
   test('Directory Page test recency sort order', async ({ page }) => {

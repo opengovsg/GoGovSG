@@ -7,7 +7,6 @@ import {
   longUrlTextField,
   shortUrlTextField,
   skipButton,
-  getLocation,
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 
@@ -28,7 +27,9 @@ test('Transition Page test.', async ({ page }) => {
   await page.goto(`${rootLocation}/${generatedUrlActive}-redirect/`)
 
   // Accessing a short link for the first time shows the transition page.
-  expect(getLocation(page)).toContain(`${generatedUrlActive}-redirect`)
+  await expect(page).toHaveURL((url) =>
+    url.href.includes(`${generatedUrlActive}-redirect`),
+  )
 
   // skip button is shown.
   const skipButtonOpacity = await skipButton(page).evaluate(
@@ -37,10 +38,12 @@ test('Transition Page test.', async ({ page }) => {
   expect(skipButtonOpacity).toBe('1')
 
   // After 6 seconds, user is redirected from the transition page to the correct destination long url.
-  await page.waitForTimeout(6000)
-  expect(getLocation(page)).toContain(`${shortUrl}`)
+  // Poll instead of a blind wait; 8s gives headroom past the known ~6s timer.
+  await expect(page).toHaveURL((url) => url.href.includes(shortUrl), {
+    timeout: 8000,
+  })
 
   // Visiting the same short link again does not show the transition page.
   await page.goto(`${rootLocation}/${generatedUrlActive}-redirect/`)
-  expect(getLocation(page)).toContain(`${shortUrl}`)
+  await expect(page).toHaveURL((url) => url.href.includes(shortUrl))
 })

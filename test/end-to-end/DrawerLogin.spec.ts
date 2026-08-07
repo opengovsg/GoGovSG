@@ -24,7 +24,6 @@ import {
   exactText,
   fileTab,
   generateUrlImage,
-  getLocation,
   helperText,
   inactiveWord,
   largeFileError,
@@ -140,8 +139,12 @@ test('Drawer functionality test for url.', async ({ page }) => {
   // Url is updated/saved when user enters a new url, then clicks "save" - check redirect with port 8080
   await activeSwitch(page).nth(0).click()
   await page.goto(`${apiLocation}/${generatedUrl}`)
-  await page.waitForTimeout(6000)
-  expect(getLocation(page)).toContain(`${subUrl}`)
+  // The redirect through the short-link API can take close to 6s; poll
+  // instead of the original fixed 6s sleep (evidence for the margin, not
+  // for a blind wait).
+  await expect(page).toHaveURL((url) => url.href.includes(subUrl), {
+    timeout: 8000,
+  })
 })
 
 test('Drawer functionality test for file.', async ({ page }) => {

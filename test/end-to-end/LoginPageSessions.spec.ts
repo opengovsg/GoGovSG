@@ -5,12 +5,7 @@ import {
   rootLocation,
   testEmail,
 } from './util/config'
-import {
-  emailHelperText,
-  getLocation,
-  loginButton,
-  signInButton,
-} from './util/helpers'
+import { emailHelperText, loginButton, signInButton } from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
 
 test('Invalid Email that does not end with .gov.sg and should not allow submission', async ({
@@ -61,7 +56,7 @@ test('Visiting/user should redirect to login page when not logged in', async ({
 }) => {
   await page.goto(`${rootLocation}/#/user`)
   // Visiting /user should redirect to login page when not logged in
-  expect(getLocation(page)).toMatch(/login/)
+  await expect(page).toHaveURL(/login/)
 })
 
 test('Valid OTP should log the user in', async ({ page }) => {
@@ -71,5 +66,5 @@ test('Valid OTP should log the user in', async ({ page }) => {
 
   // Redirects to /user if user has an existing session (ie logged in previously on the same browser)
   await page.goto(rootLocation)
-  expect(getLocation(page)).toMatch(/user/)
+  await expect(page).toHaveURL(/user/)
 })

@@ -11,8 +11,10 @@ export const exactText = (value: string): RegExp =>
   new RegExp(`^${escapeRegExp(value)}$`)
 
 // General
+// Scoped to .MuiButton-label: a bare `span` with text 'Sign in' also matches
+// the "Are you a public officer? Sign in" caption link next to this button.
 export const loginButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Sign in' })
+  page.locator('.MuiButton-label', { hasText: 'Sign in' })
 export const signInButton = (page: Page): Locator =>
   page.locator('button[type="submit"]')
 export const createLinkButton = (page: Page): Locator =>
@@ -46,7 +48,6 @@ export const tagsAutocompleteInput = (page: Page): Locator =>
   page.locator('input[placeholder="Add tag"]')
 export const tagsAutocompleteTags = (page: Page): Locator =>
   tagsAutocompleteInput(page).locator('xpath=following-sibling::div')
-export const getLocation = (page: Page): string => page.url()
 export const directoryPageButton = (page: Page): Locator =>
   page.locator('span', { hasText: 'Directory' }).locator('xpath=..')
 export const mobileDirectoryPageButton = (page: Page): Locator =>

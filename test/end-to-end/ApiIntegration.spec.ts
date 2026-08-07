@@ -5,7 +5,6 @@ import {
   apiIntegrationPageButton,
   copyButton,
   generateApiKeyButton,
-  getLocation,
   iHaveCopiedButton,
   regenerateApiKeyButton,
 } from './util/helpers'
@@ -18,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 
 test('No API Key view', async ({ page }) => {
   await apiIntegrationPageButton(page).click()
-  expect(getLocation(page)).toMatch(/apiintegration/)
+  await expect(page).toHaveURL(/apiintegration/)
 
   await expect(generateApiKeyButton(page)).toBeVisible()
   await expect(regenerateApiKeyButton(page)).not.toBeVisible()
