@@ -134,6 +134,11 @@ export const linkCreationProcedure = async (page: Page) => {
   await expect(longUrl(page)).toHaveValue(shortUrl)
 
   await activeSwitch(page).click()
+  // Wait for the PATCH to land before closing the drawer. This link is the
+  // "inactive" fixture for every directory and user-page filter assertion
+  // downstream, so letting the drawer close early leaves those tests filtering
+  // against a link that is still active.
+  await expect(activeSwitch(page)).not.toBeChecked()
   await closeDrawerButton(page).click()
 
   // Save url - file link + most recent link
