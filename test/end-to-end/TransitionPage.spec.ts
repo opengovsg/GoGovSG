@@ -3,6 +3,7 @@ import { test } from './fixtures'
 import { rootLocation, shortUrl } from './util/config'
 import {
   generateUrlImage,
+  linkRowByShortUrl,
   longUrlTextField,
   openCreateLinkModal,
   shortUrlTextField,
@@ -22,7 +23,13 @@ test('Transition Page test.', async ({ page }) => {
 
   await firstLinkHandle(page)
 
-  await page.waitForTimeout(3000)
+  // The row appearing means the server has the link, so the navigation below
+  // cannot race creation. Do not probe the redirect endpoint over HTTP instead:
+  // page.request shares the cookie jar, and a first hit there sets the cookie
+  // that suppresses the transition page this test asserts on.
+  await expect(
+    linkRowByShortUrl(page, `${generatedUrlActive}-redirect`),
+  ).toBeVisible()
 
   // Accessing a short link with a trailing slash should not result in a broken transition page.
   await gotoPage(page, `${rootLocation}/${generatedUrlActive}-redirect/`)
