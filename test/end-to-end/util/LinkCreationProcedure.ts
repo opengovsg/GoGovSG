@@ -1,21 +1,16 @@
 import { fetch } from 'cross-fetch'
-import { expect, Page } from '@playwright/test'
+import { Page } from '@playwright/test'
 import { apiLocation, dummyFilePath, shortUrl, smallFileSize } from './config'
 import { createEmptyFileOfSize, deleteFile } from './fileHandle'
 import { firstLinkHandle } from './FirstLinkHandle'
 import {
-  activeSwitch,
-  closeDrawerButton,
-  fileTab,
   generateRandomString,
   generateUrlImage,
-  linkRowByShortUrl,
-  longUrl,
   longUrlTextField,
   openCreateLinkModal,
   shortUrlTextField,
-  uploadFile,
 } from './helpers'
+import { seedFileLink, seedUrlLink } from './seed'
 import { waitForRecordedClicks } from './waits'
 
 /**
@@ -84,79 +79,61 @@ export const singleLinkCreationProcedure = async (page: Page) => {
   return { searchKey, generatedUrlActive }
 }
 /**
- * Process of creating various types of links into test account.
+ * Creates the standard fixture set -- two clicked links, an active one, an
+ * inactive one and a file -- in the test account, sharing one random search key
+ * so a spec can isolate its own links from every other spec's.
+ *
+ * Seeded through the API rather than the modal: the specs that consume this
+ * assert on directory and user-page filtering, sorting and redirects, none of
+ * which is a statement about the create-link modal. UrlCreation.spec.ts owns
+ * that, through the UI, deliberately.
+ *
+ * Creation order is the recency order the directory specs assert on, so these
+ * are seeded in sequence rather than concurrently -- `createdAt` has millisecond
+ * resolution and concurrent inserts would leave the order undefined.
  */
 export const linkCreationProcedure = async (page: Page) => {
   // create key to searchBy
   const { searchKey, searchKeyWithDash } = generateSearchKey()
+  const slug = () => `${generateRandomString(6)}${searchKeyWithDash}`
 
   // Save url - most popular link
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-  const generatedUrlMostPopular = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
-
-  await shortUrlTextField(page).fill(generatedUrlMostPopular)
-  await longUrlTextField(page).fill(shortUrl)
-
-  await firstLinkHandle(page)
-
+  const generatedUrlMostPopular = slug()
+  await seedUrlLink(page, {
+    shortUrl: generatedUrlMostPopular,
+    longUrl: shortUrl,
+  })
   await seedLinkClicks(page, generatedUrlMostPopular, 10)
 
   // Save url - 2nd most popular link
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-  const generatedUrlSecondMostPopular = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
-
-  await shortUrlTextField(page).fill(generatedUrlSecondMostPopular)
-  await longUrlTextField(page).fill(shortUrl)
-  await firstLinkHandle(page)
-
+  const generatedUrlSecondMostPopular = slug()
+  await seedUrlLink(page, {
+    shortUrl: generatedUrlSecondMostPopular,
+    longUrl: shortUrl,
+  })
   await seedLinkClicks(page, generatedUrlSecondMostPopular, 8)
 
   // Save url - active link + 3rd most recent link
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-  const generatedUrlActive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
+  const generatedUrlActive = slug()
+  await seedUrlLink(page, { shortUrl: generatedUrlActive, longUrl: shortUrl })
 
-  await shortUrlTextField(page).fill(generatedUrlActive)
-  await longUrlTextField(page).fill(shortUrl)
-  await firstLinkHandle(page)
-
-  // Save url - inactive link + 2nd most recent link
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-
-  const generatedUrlInactive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
-
-  const linkRowInactive = linkRowByShortUrl(page, generatedUrlInactive)
-
-  await shortUrlTextField(page).fill(generatedUrlInactive)
-  await longUrlTextField(page).fill(shortUrl)
-  await firstLinkHandle(page)
-  await linkRowInactive.click()
-  await expect(longUrl(page)).toHaveValue(shortUrl)
-
-  await activeSwitch(page).click()
-  // Wait for the PATCH to land before closing the drawer. This link is the
-  // "inactive" fixture for every directory and user-page filter assertion
-  // downstream, so letting the drawer close early leaves those tests filtering
-  // against a link that is still active.
-  await expect(activeSwitch(page)).not.toBeChecked()
-  await closeDrawerButton(page).click()
+  // Save url - inactive link + 2nd most recent link. This is the "inactive"
+  // fixture behind every downstream state filter, and the PATCH is awaited, so
+  // no test can filter against a link that is still active.
+  const generatedUrlInactive = slug()
+  await seedUrlLink(page, {
+    shortUrl: generatedUrlInactive,
+    longUrl: shortUrl,
+    active: false,
+  })
 
   // Save url - file link + most recent link
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-
-  const generatedUrlFile = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
-
+  const generatedUrlFile = slug()
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
-
-  await shortUrlTextField(page).fill(generatedUrlFile)
-  await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyFilePath)
-  await firstLinkHandle(page)
-
+  await seedFileLink(page, {
+    shortUrl: generatedUrlFile,
+    filePath: dummyFilePath,
+  })
   await deleteFile(dummyFilePath)
 
   return {
