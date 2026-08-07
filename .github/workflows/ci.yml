@@ -131,8 +131,36 @@ jobs:
     steps:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
-      - run: pnpm run dev &
-      - run: sleep 270
+      - name: Start the stack
+        run: pnpm run dev &
+      - name: Wait for the stack to accept requests
+        # Replaces a blind `sleep 270` that cost the full 270s even though the
+        # stack is usually serving well inside 120s, and that reported a
+        # not-yet-ready stack as a confusing test failure rather than as a
+        # startup timeout.
+        #
+        # Any HTTP status means the listener is up: these routes are
+        # auth-guarded, so a 401 proves readiness as well as a 200 does.
+        # Postgres needs no probe of its own -- Express runs sequelize.sync at
+        # boot, so it cannot answer before the database is reachable.
+        run: |
+          set -uo pipefail
+          # Without -f, curl exits 0 for any HTTP response and non-zero only
+          # when it could not get one, which is exactly the distinction we want.
+          listening() {
+            curl -s -o /dev/null -m 5 "$1"
+          }
+          deadline=$((SECONDS + 300))
+          until listening http://localhost:8080/api/user/message \
+            && listening http://localhost:1080/email \
+            && listening http://localhost:4566/local-bucket; do
+            if [ "$SECONDS" -ge "$deadline" ]; then
+              echo "::error::stack was still not serving after 300s"
+              exit 1
+            fi
+            sleep 3
+          done
+          echo "stack ready after ${SECONDS}s"
       - name: Configure Datadog Test Visibility
         # Non-blocking: this action installs dd-trace from the npm registry, so
         # a registry hiccup fails it for reasons unrelated to the code under test
@@ -146,3 +174,7 @@ jobs:
       - run: pnpm run test:integration
         env:
           NODE_OPTIONS: ${{ env.DD_TRACE_PACKAGE && format('-r {0}', env.DD_TRACE_PACKAGE) || '' }}
+      # Without these, a stack that fails to boot leaves nothing to diagnose it
+      # with: the readiness gate above only reports that it never came up.
+      - if: failure()
+        run: docker compose -f docker-compose.yml logs --tail=200
