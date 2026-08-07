@@ -1,13 +1,16 @@
 import { test, expect } from './fixtures'
 import {
+  rootLocation,
   subUrl,
   tagText1,
   tagText2,
   tagText3,
+  testEmail,
   transferEmail,
 } from './util/config'
 import {
   activeSwitch,
+  closeButtonSnackBar,
   exactText,
   linkHistoryCreateSpan,
   linkHistoryLinkOwnerH6,
@@ -19,6 +22,7 @@ import {
   linkTransferField,
   longUrl,
   signOutButton,
+  successSnackBar,
   tagCloseButton1,
   tagsAutocompleteInput,
   tagsSaveButton,
@@ -79,6 +83,15 @@ test('Changing the original link should update the link history with Original Li
 test('Changing the link owner should update the link history with Link Owner update change set', async ({
   page,
 }) => {
+  test.setTimeout(120_000)
+  // Prime transferEmail (fixture already logged in as testEmail).
+  await signOutButton(page).click()
+  await page.goto(rootLocation)
+  await loginProcedure(page, transferEmail)
+  await signOutButton(page).click()
+  await page.goto(rootLocation)
+  await loginProcedure(page, testEmail)
+
   // Create new link
   const generatedShortLink = await createNewLink(page)
   const linkRow = linkRowByShortUrl(page, generatedShortLink)
@@ -87,8 +100,14 @@ test('Changing the link owner should update the link history with Link Owner upd
   // Transfer ownership of the link
   await linkTransferField(page).fill(`${transferEmail}`)
   await transferButton(page).click()
+  await expect(successSnackBar(page)).toBeVisible()
+  // Dismiss the transfer toast so it doesn't intercept the Sign out click.
+  if ((await successSnackBar(page).count()) > 0) {
+    await closeButtonSnackBar(page).click()
+  }
   // Sign out
   await signOutButton(page).click()
+  await page.goto(rootLocation)
   // Login using the new link owner
   await loginProcedure(page, transferEmail)
   // Open Drawer
