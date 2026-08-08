@@ -19,8 +19,19 @@ RUN apk update && apk add --no-cache font-freefont python3 make g++ && rm -rf /v
 # integration job: a single GitHub hiccup here fails the image build, which
 # surfaces as "Process from config.webServer was not able to start" and reads
 # like a test failure. That is exactly how the firefox job died on 881ad2ad.
-RUN wget --tries=5 --waitretry=5 --timeout=30 "https://github.com/IBM/plex/blob/bf260093582f04622aacc1e9f9ca604d7ccd0c42/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true" -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf && \
-  echo "6b17a35a31ded2e81b3ed19e5eb532d22b9a0b5a76833b0d757a5c71ab5e0f6c  /usr/share/fonts/freefont/IBMPlexSans-Regular.otf" | sha256sum -c -
+#
+# The retry is a shell loop rather than wget flags: this is BusyBox wget, which
+# supports -T but has no --tries or --waitretry. The checksum below is the gate
+# -- if every attempt fails the file is absent or partial and the build stops
+# there, so the retry cannot mask a genuine failure.
+RUN for attempt in 1 2 3 4 5; do \
+      wget -T 30 -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf \
+        "https://github.com/IBM/plex/blob/bf260093582f04622aacc1e9f9ca604d7ccd0c42/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true" \
+        && break; \
+      echo "font download attempt $attempt failed; retrying in 5s"; \
+      sleep 5; \
+    done; \
+    echo "6b17a35a31ded2e81b3ed19e5eb532d22b9a0b5a76833b0d757a5c71ab5e0f6c  /usr/share/fonts/freefont/IBMPlexSans-Regular.otf" | sha256sum -c -
 RUN fc-cache -f
 
 # Install libraries
