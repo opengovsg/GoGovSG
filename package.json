@@ -20,8 +20,6 @@
     "docker-dev": "concurrently \"pnpm run server-dev\" \"pnpm run client-dev\"",
     "dev": "docker compose -f docker-compose.yml up --build",
     "dev:server-only": "docker compose -f docker-compose.yml -f docker-compose.server-only.yml up --build",
-    "build:client": "ASSET_VARIANT=gov NODE_OPTIONS='-r tsx/cjs' webpack --mode production",
-    "dev:e2e": "pnpm run build:client && docker compose -f docker-compose.yml -f docker-compose.e2e.yml up --build",
     "test": "jest",
     "test:ci": "jest --coverage",
     "test:e2e": "playwright test --headed",
