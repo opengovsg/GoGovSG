@@ -1,19 +1,19 @@
 import React, { FunctionComponent, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Grid } from '@material-ui/core'
-import SortPanel from '../../../../../app/components/widgets/SortPanel'
-import userActions from '../../../../actions'
-import FilterPanel from './FilterPanel'
-import FilterSortPanelFooter from './FilterSortPanelFooter'
+import SortPanel from '../../../../../app/components/widgets/SortPanel/index.js'
+import userActions from '../../../../actions/index.js'
+import FilterPanel from './FilterPanel/index.js'
+import FilterSortPanelFooter from './FilterSortPanelFooter/index.js'
 import {
   SortDirection,
   UrlState,
   UrlTableConfig,
   UrlTableFilterConfig,
-} from '../../../../reducers/types'
-import { initialSortConfig } from '../../../../constants'
-import CollapsingPanel from '../../../../../app/components/widgets/CollapsingPanel'
-import useStyles from './styles'
+} from '../../../../reducers/types.js'
+import { initialSortConfig } from '../../../../constants.js'
+import CollapsingPanel from '../../../../../app/components/widgets/CollapsingPanel.js'
+import useStyles from './styles.js'
 
 type FilterSortPanelProps = {
   isOpen: boolean

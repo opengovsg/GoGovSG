@@ -1,4 +1,4 @@
-import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types'
+import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types.js'
 
 export const USER_HAS_API_KEY = 'USER_HAS_API_KEY'
 export const USER_HAS_NO_API_KEY = 'USER_HAS_NO_API_KEY'

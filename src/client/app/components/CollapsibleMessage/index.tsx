@@ -1,7 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { Collapse } from '@material-ui/core'
-import useStyles from './styles'
-import { CollapsibleMessagePosition, CollapsibleMessageProps } from './types'
+import useStyles from './styles.js'
+import { CollapsibleMessagePosition, CollapsibleMessageProps } from './types.js'
 
 const CollapsibleMessage: FunctionComponent<CollapsibleMessageProps> = ({
   type,

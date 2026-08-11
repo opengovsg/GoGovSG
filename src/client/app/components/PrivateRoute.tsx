@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useEffect } from 'react'
 import { Redirect, Route } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { LOGIN_PAGE } from '../util/types'
-import loginActions from '../../login/actions'
-import { GoGovReduxState } from '../reducers/types'
+import { LOGIN_PAGE } from '../util/types.js'
+import loginActions from '../../login/actions/index.js'
+import { GoGovReduxState } from '../reducers/types.js'
 
 type PrivateRouteProps = {
   component: React.ComponentType<any>
