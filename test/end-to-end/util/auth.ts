@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import type { BrowserContext, Page } from '@playwright/test'
 
 /**
@@ -11,7 +12,9 @@ type StorageState = Awaited<ReturnType<BrowserContext['storageState']>>
 import { rootLocation } from './config'
 import { gotoPage } from './navigation'
 
-export const authDir = path.join(__dirname, '..', '.auth')
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+
+export const authDir = path.join(dirname, '..', '.auth')
 
 /**
  * Storage state is keyed by browser because CI installs only the browser for

@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { ACTIVE, INACTIVE } from '../../models/types.js'
 import {
   isBlacklisted,

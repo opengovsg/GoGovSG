@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import { logger } from '../../config.js'
 import { isValidGovEmail } from '../../util/email.js'
 
