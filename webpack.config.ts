@@ -1,10 +1,15 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
+import { createRequire } from 'module'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import webpack from 'webpack'
 
-import assetVariant from './src/shared/util/asset-variant'
-import { ddEnv, ddService } from './src/shared/util/environment-variables'
+import assetVariant from './src/shared/util/asset-variant.js'
+import { ddEnv, ddService } from './src/shared/util/environment-variables.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url)
 
 const outputDirectory = 'dist'
 const srcDirectory = path.join(__dirname, 'src/client/app')
@@ -42,7 +47,7 @@ const metaVariantMap = {
 }
 const metaVariant = metaVariantMap[assetVariant] || govMetaTags
 
-module.exports = () => {
+export default () => {
   const jsBundle = {
     target: ['web', 'es5'],
     entry: [
@@ -60,6 +65,9 @@ module.exports = () => {
     },
     resolve: {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
+      extensionAlias: {
+        '.js': ['.js', '.ts', '.tsx'],
+      },
       alias: {
         '~': srcDirectory,
         // this aliases all "@assets" imports to read from the correct assetVariant asset directory
