@@ -3,6 +3,7 @@
   "version": "1.88.1",
   "description": "Link shortener for Singapore government.",
   "private": true,
+  "type": "module",
   "main": "src/server/index.js",
   "packageManager": "pnpm@12.0.0",
   "scripts": {
