@@ -6,6 +6,20 @@ import assetVariant from '../../shared/util/asset-variant'
 import { container } from '../util/inversify'
 import ApiKeyAuthService from '../modules/user/services/ApiKeyAuthService'
 
+import logoutRouter from './logout'
+import loginRouter from './login'
+import statisticsRouter from './statistics'
+import linksRouter from './links'
+import gaRouter from './ga'
+import userRouter from './user'
+import qrcodeRouter from './qrcode'
+import linkStatisticsRouter from './link-statistics'
+import linkAuditRouter from './link-audit'
+import directoryRouter from './directory'
+import callbackRouter from './callback'
+import adminV1Router from './admin-v1'
+import externalV1Router from './external-v1'
+
 const BEARER_STRING = 'Bearer'
 const BEARER_SEPARATOR = ' '
 const apiKeyAuthService = container.get<ApiKeyAuthService>(
@@ -14,11 +28,11 @@ const apiKeyAuthService = container.get<ApiKeyAuthService>(
 const router = Express.Router()
 
 /*  Public routes that do not need to be protected */
-router.use('/logout', require('./logout'))
-router.use('/login', require('./login'))
-router.use('/stats', require('./statistics'))
-router.use('/links', require('./links'))
-router.use('/ga', require('./ga'))
+router.use('/logout', logoutRouter)
+router.use('/login', loginRouter)
+router.use('/stats', statisticsRouter)
+router.use('/links', linksRouter)
+router.use('/ga', gaRouter)
 
 /**
  * To protect private user routes.
@@ -101,17 +115,17 @@ function preprocess(
 }
 
 /* Register protected endpoints */
-router.use('/user', userGuard, preprocess, require('./user'))
-router.use('/qrcode', userGuard, require('./qrcode'))
-router.use('/link-stats', userGuard, require('./link-statistics'))
-router.use('/link-audit', userGuard, require('./link-audit'))
-router.use('/directory', userGuard, require('./directory'))
+router.use('/user', userGuard, preprocess, userRouter)
+router.use('/qrcode', userGuard, qrcodeRouter)
+router.use('/link-stats', userGuard, linkStatisticsRouter)
+router.use('/link-audit', userGuard, linkAuditRouter)
+router.use('/directory', userGuard, directoryRouter)
 
 router.use(
   '/callback',
   apiKeyAuthMiddleware,
   apiKeyAdminAuthMiddleware,
-  require('./callback'),
+  callbackRouter,
 )
 
 /* Register APIKey protected endpoints */
@@ -121,11 +135,9 @@ if (ffExternalApi) {
     apiKeyAuthMiddleware,
     apiKeyAdminAuthMiddleware,
     preprocess,
-    // eslint-disable-next-line node/global-require
-    require('./admin-v1'),
+    adminV1Router,
   )
-  // eslint-disable-next-line node/global-require
-  router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
+  router.use('/v1', apiKeyAuthMiddleware, preprocess, externalV1Router)
 }
 
 router.use((_, res) => {
