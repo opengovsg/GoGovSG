@@ -201,11 +201,13 @@ export default () => {
       },
       endpoint: bucketEndpoint,
       forcePathStyle: true,
-      // LocalStack's S3 responses don't always carry a `Date` header the SDK
-      // can parse. aws-sdk v3's clock-skew "correction" mutates this client's
-      // shared systemClockOffset to NaN the first time that happens, which
-      // then poisons every later request's signing (throws "Invalid time
-      // value") for the lifetime of this client instance.
+      // Some local S3 emulators' responses don't always carry a `Date`
+      // header the SDK can parse. aws-sdk v3's clock-skew "correction"
+      // mutates this client's shared systemClockOffset to NaN the first
+      // time that happens, which then poisons every later request's
+      // signing (throws "Invalid time value") for the lifetime of this
+      // client instance. Kept defensively; not yet confirmed whether floci
+      // reproduces the quirk this was originally added for (LocalStack did).
       disableClockSkewCorrection: true,
     })
     container

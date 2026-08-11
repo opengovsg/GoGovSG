@@ -84,8 +84,6 @@ services:
     ports:
       - '6379:6379'
   floci:
-    # LocalStack replacement (MIT-licensed) — see docs/investigations/floci-vs-localstack.md
-    # for why. -compat tag ships `awslocal`, which init-localstack.sh depends on.
     image: floci/floci:1.6.0-compat@sha256:15ba10dace4a29d94f0e36c03dc3c2ec5bfc4364a1cf9c67f9def4e530ae2c2c
     container_name: gogovsg-floci
     ports:
@@ -99,9 +97,7 @@ services:
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     volumes:
-      # floci only supports the newer LocalStack init-hook convention
-      # (no /docker-entrypoint-initaws.d/ support).
-      - ./init-localstack.sh:/etc/localstack/init/ready.d/init-localstack.sh
+      - ./init-s3-bucket.sh:/etc/localstack/init/ready.d/init-s3-bucket.sh
       - './.floci:/tmp/floci'
   maildev:
     image: maildev/maildev
