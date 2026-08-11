@@ -1,4 +1,4 @@
-import { customAlphabet } from 'nanoid/async'
+import { customAlphabet } from 'nanoid'
 import { CookieArrayReducerService } from '..'
 import { cookieSessionMaxSizeBytes } from '../../../../config'
 

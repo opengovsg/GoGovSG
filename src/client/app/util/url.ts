@@ -1,4 +1,4 @@
-import { customAlphabet } from 'nanoid/async'
+import { customAlphabet } from 'nanoid'
 
 const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
 const LENGTH = 6

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import fs from 'fs'
-import { customAlphabet } from 'nanoid/async'
+import { customAlphabet } from 'nanoid'
 import {
   getMaildevMessageIds,
   waitForOtpFromMaildev,
