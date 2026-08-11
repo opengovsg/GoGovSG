@@ -59,7 +59,10 @@ import { container } from './util/inversify.js'
 import { DependencyIds, ERROR_404_PATH } from './constants.js'
 import { Mailer } from './services/email.js'
 import parseDomain from './util/domain.js'
-import { RedirectController } from './modules/redirect/index.js'
+import {
+  RedirectController,
+  shortUrlRouteGuard,
+} from './modules/redirect/index.js'
 import assetVariant from '../shared/util/asset-variant.js'
 import dogstatsd, { ERROR_UNHANDLED_REJECTION } from './util/dogstatsd.js'
 // Define our own token for client ip
@@ -209,7 +212,8 @@ initDb()
       redirectController.gtagForTransitionPage,
     )
     app.get(
-      '/:shortUrl([a-zA-Z0-9-]+).?',
+      '/:shortUrl',
+      shortUrlRouteGuard,
       ...redirectSpecificMiddleware,
       redirectController.redirect,
     ) // The Redirect Endpoint
