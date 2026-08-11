@@ -187,6 +187,13 @@ initDb()
         ...sessionSettings,
       } as session.SessionOptions),
       // application/json
+      // Deliberately body-parser@1.x, not Express 5's own bundled
+      // express.json() (body-parser@2.x): body-parser@1.x sets
+      // `req.body = req.body || {}` even on a bodyless GET request, while
+      // express.json() would leave req.body as `undefined`. Several /api
+      // middlewares (userGuard, apiKeyAuthMiddleware, preprocess) do
+      // `req.body.xyz = ...` and would throw on GET requests if this were
+      // swapped for express.json().
       bodyParser.json(),
     ]
 
@@ -229,7 +236,7 @@ initDb()
 
     const errorHandler: express.ErrorRequestHandler = (
       err,
-      _req,
+      req,
       res,
       _next,
     ) => {
@@ -248,6 +255,24 @@ initDb()
         // This catches body-parser errors and returns a 400 error message
         console.error(err)
         res.badRequest(jsonMessage('Bad Request. JSON is malformed'))
+        return
+      }
+
+      if (err instanceof URIError) {
+        // Express 5's router decodes the matched `:shortUrl` path segment
+        // (via decodeURIComponent) before any route handler runs, and
+        // throws a URIError straight into this error handler when the
+        // segment is malformed percent-encoding (e.g. `/%`, `/%zz`,
+        // `/%c0%af`). That's not a server error — it just means the
+        // request doesn't resolve to a short URL, same as any other
+        // non-matching path, so render the same 404 the catch-all handler
+        // above renders instead of the generic 500 page.
+        const shortUrl = req.path.slice(1)
+        res.status(404).render(ERROR_404_PATH, {
+          shortUrl,
+          assetVariant,
+          displayHostname,
+        })
         return
       }
 
