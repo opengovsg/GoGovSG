@@ -1,7 +1,8 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import i18next from 'i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../app/hooks'
 import {
   Hidden,
   LinearProgress,
@@ -118,7 +119,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   location = undefined,
 }: LoginPageProps) => {
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const getEmailValidator = dispatch(
     loginActions.getEmailValidationGlobExpression(),
   )

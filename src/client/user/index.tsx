@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../app/hooks'
 import Drawer from './components/Drawer'
 import CreateUrlModal from './components/CreateUrlModal'
 import AnnouncementModal from './components/AnnouncementModal'
@@ -27,7 +28,7 @@ function UserPage() {
   const emailValidator = useSelector(
     (state: GoGovReduxState) => state.login.emailValidator,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const getUrlsForUser = () => dispatch(userActions.getUrlsForUser())
   const getEmailValidator = () =>
     dispatch(loginActions.getEmailValidationGlobExpression())
