@@ -1,11 +1,11 @@
-export {
+export type {
   LinkAudit,
   LinkAuditService,
   LinkChangeSet,
   LinkChangeKey,
   LinkChangeType,
 } from './LinkAuditService.js'
-export {
+export type {
   UrlHistoryRecord,
   UrlHistoryRepository,
 } from './UrlHistoryRepository.js'
