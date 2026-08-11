@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import { CollapsibleMessageStyles, CollapsibleMessageType } from './types'
+import { CollapsibleMessageStyles, CollapsibleMessageType } from './types.js'
 
 export default makeStyles((theme) =>
   createStyles({

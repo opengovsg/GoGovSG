@@ -2,9 +2,9 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 
-import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
-import useIsFiltered from '../../../EmptyState/isFiltered'
-import usePrevState from '../../../CreateUrlModal/helpers/prevState'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions.js'
+import useIsFiltered from '../../../EmptyState/isFiltered.js'
+import usePrevState from '../../../CreateUrlModal/helpers/prevState.js'
 
 export function useIsFetchingUrls(): boolean {
   const isFetchingUrls = useSelector((state: any) => state.user.isFetchingUrls)

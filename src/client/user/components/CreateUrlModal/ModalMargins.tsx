@@ -1,7 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import { ApplyAppMargins } from '../../../app/components/AppMargins'
-import useFullScreenDialog from '../../helpers/fullScreenDialog'
+import { ApplyAppMargins } from '../../../app/components/AppMargins/index.js'
+import useFullScreenDialog from '../../helpers/fullScreenDialog.js'
 
 type StyleProps = {
   applyRightMargin?: boolean

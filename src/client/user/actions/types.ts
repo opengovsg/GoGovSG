@@ -4,9 +4,9 @@ import {
   UrlTableConfig,
   UrlTableFilterConfig,
   UrlType,
-} from '../reducers/types'
+} from '../reducers/types.js'
 
-import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types'
+import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types.js'
 
 /* User actions */
 

@@ -6,8 +6,8 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
-import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent'
+import useAppMargins from '../../../../../app/components/AppMargins/appMargins.js'
+import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent/index.js'
 
 type DirectoryTablePaginationProps = {
   pageCount: number

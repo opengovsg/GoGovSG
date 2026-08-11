@@ -7,15 +7,15 @@ import { Store } from 'redux'
 
 import { History } from 'history'
 
-import PrivateRoute from '../../PrivateRoute'
-import HomePage from '../../../../home'
-import LoginPage from '../../../../login'
-import UserPage from '../../../../user'
-import NotFoundPage from '../NotFoundPage'
-import DirectoryPage from '../../../../directory'
-import MessageSnackbar from '../../MessageSnackbar'
-import ScrollToTop from './ScrollToTop'
-import ApiIntegrationPage from '../../../../apiintegration'
+import PrivateRoute from '../../PrivateRoute.js'
+import HomePage from '../../../../home/index.js'
+import LoginPage from '../../../../login/index.js'
+import UserPage from '../../../../user/index.js'
+import NotFoundPage from '../NotFoundPage/index.js'
+import DirectoryPage from '../../../../directory/index.js'
+import MessageSnackbar from '../../MessageSnackbar.js'
+import ScrollToTop from './ScrollToTop.js'
+import ApiIntegrationPage from '../../../../apiintegration/index.js'
 
 // Add extra favicons to webpack bundle
 import '@assets/favicon/android-chrome-192x192.png'
@@ -31,8 +31,8 @@ import {
   LOGIN_PAGE,
   NOT_FOUND_PAGE,
   USER_PAGE,
-} from '../../../util/types'
-import theme from '../../../theme'
+} from '../../../util/types.js'
+import theme from '../../../theme/index.js'
 
 type RootProps = {
   store: Store

@@ -4,10 +4,10 @@ import {
   LoadStatsAction,
   SET_LINKS_TO_ROTATE,
   SetLinksToRotateAction,
-} from './types'
-import { get } from '../../app/util/requests'
-import { LinksToRotate } from '../reducers/types'
-import { GetReduxState } from '../../app/actions/types'
+} from './types.js'
+import { get } from '../../app/util/requests.js'
+import { LinksToRotate } from '../reducers/types.js'
+import { GetReduxState } from '../../app/actions/types.js'
 
 const setLinksToRotate: (payload: LinksToRotate) => SetLinksToRotateAction = (
   payload,

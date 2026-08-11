@@ -1,17 +1,17 @@
 import React from 'react'
 import FileSaver from 'file-saver'
 
-import { useDrawerState } from '../..'
-import ImageFormat from '../../../../../../shared/util/image-format'
+import { useDrawerState } from '../../index.js'
+import ImageFormat from '../../../../../../shared/util/image-format.js'
 import ConfigOption, {
   TrailingPosition,
-} from '../../../../widgets/ConfigOption'
-import { get } from '../../../../../app/util/requests'
-import { GAEvent } from '../../../../../app/util/ga'
+} from '../../../../widgets/ConfigOption.js'
+import { get } from '../../../../../app/util/requests.js'
+import { GAEvent } from '../../../../../app/util/ga.js'
 import {
   DropdownButton,
   DropdownOption,
-} from '../../../../widgets/DropdownButton'
+} from '../../../../widgets/DropdownButton.js'
 
 // Gets file extension from content-type.
 function getFileExtension(format: ImageFormat) {

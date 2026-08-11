@@ -1,9 +1,9 @@
-import { HomeState } from './types'
+import { HomeState } from './types.js'
 import {
   HomeActionType,
   LOAD_STATS,
   SET_LINKS_TO_ROTATE,
-} from '../actions/types'
+} from '../actions/types.js'
 
 const initialState: HomeState = {
   statistics: {

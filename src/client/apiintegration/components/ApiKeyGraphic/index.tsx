@@ -9,13 +9,13 @@ import {
 import i18next from 'i18next'
 import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
 import { useDispatch } from 'react-redux'
-import PrefixableTextField from '../../../user/widgets/PrefixableTextField'
-import TrailingButton from '../../../user/components/Drawer/ControlPanel/widgets/TrailingButton'
+import PrefixableTextField from '../../../user/widgets/PrefixableTextField.js'
+import TrailingButton from '../../../user/components/Drawer/ControlPanel/widgets/TrailingButton.js'
 import ConfigOption, {
   TrailingPosition,
-} from '../../../user/widgets/ConfigOption'
-import apiActions from '../../actions'
-import Tooltip from '../../../user/widgets/Tooltip'
+} from '../../../user/widgets/ConfigOption.js'
+import apiActions from '../../actions/index.js'
+import Tooltip from '../../../user/widgets/Tooltip.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

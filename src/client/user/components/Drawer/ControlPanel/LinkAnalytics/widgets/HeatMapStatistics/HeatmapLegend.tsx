@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
-import { compactNumberFormatter } from '../../../../../../../app/util/format'
+import { compactNumberFormatter } from '../../../../../../../app/util/format.js'
 
 export type HeatmapLegendItemStylesProps = {
   color: string

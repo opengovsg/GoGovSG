@@ -1,7 +1,7 @@
 import React from 'react'
 import { Theme, Typography, createStyles, makeStyles } from '@material-ui/core'
 
-import { ApplyAppMargins } from '../../AppMargins'
+import { ApplyAppMargins } from '../../AppMargins/index.js'
 
 type BannerForProps = {
   text: string

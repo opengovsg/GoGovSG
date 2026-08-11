@@ -1,5 +1,5 @@
 import { datadogRum } from '@datadog/browser-rum'
-import { ddEnv, ddService } from '../../../shared/util/environment-variables'
+import { ddEnv, ddService } from '../../../shared/util/environment-variables.js'
 
 const initMonitoring = () => {
   datadogRum.init({

@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
-import useShortLink from '../util/shortlink'
-import { removeHttpsProtocol } from '../../../../../app/util/url'
-import { useDrawerState } from '../../index'
-import { isValidLongUrl } from '../../../../../../shared/util/validation'
+import useShortLink from '../util/shortlink.js'
+import { removeHttpsProtocol } from '../../../../../app/util/url.js'
+import { useDrawerState } from '../../index.js'
+import { isValidLongUrl } from '../../../../../../shared/util/validation.js'
 import ConfigOption, {
   TrailingPosition,
-} from '../../../../widgets/ConfigOption'
-import PrefixableTextField from '../../../../widgets/PrefixableTextField'
-import TrailingButton from './TrailingButton'
+} from '../../../../widgets/ConfigOption.js'
+import PrefixableTextField from '../../../../widgets/PrefixableTextField.js'
+import TrailingButton from './TrailingButton.js'
 
 export default function LongUrlEditor() {
   const theme = useTheme()

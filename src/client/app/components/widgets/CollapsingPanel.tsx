@@ -6,7 +6,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import CloseIcon from './CloseIcon'
+import CloseIcon from './CloseIcon.js'
 
 type CollapsingPanelProps = {
   isOpen: boolean

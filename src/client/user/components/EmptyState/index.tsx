@@ -1,7 +1,7 @@
 import React from 'react'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import emptyStateGraphic from '@assets/components/user/empty-state/empty-state.svg'
-import CreateButton from './CreateButton'
+import CreateButton from './CreateButton.js'
 
 const useState = makeStyles((theme) =>
   createStyles({

@@ -1,11 +1,11 @@
 import { saveAs } from 'file-saver'
-import rootActions from '../components/pages/RootPage/actions'
-import userActions from '../../user/actions'
-import checkIsIE from '../components/BaseLayout/util/ie'
-import { GAEvent } from './ga'
-import { UrlTableConfig } from '../../user/reducers/types'
-import queryObjFromTableConfig from '../helpers/urlQueryHelper'
-import { BULK_UPLOAD_HEADER } from '../../../shared/constants'
+import rootActions from '../components/pages/RootPage/actions/index.js'
+import userActions from '../../user/actions/index.js'
+import checkIsIE from '../components/BaseLayout/util/ie.js'
+import { GAEvent } from './ga.js'
+import { UrlTableConfig } from '../../user/reducers/types.js'
+import queryObjFromTableConfig from '../helpers/urlQueryHelper.js'
+import { BULK_UPLOAD_HEADER } from '../../../shared/constants.js'
 
 export const downloadCsv = (csvString: string, filename: string) => {
   const blob = new Blob([csvString], {

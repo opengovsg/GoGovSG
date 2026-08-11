@@ -1,12 +1,12 @@
-import { snackbarVariants } from '../../../../util/types'
-import { RootState } from './types'
+import { snackbarVariants } from '../../../../util/types.js'
+import { RootState } from './types.js'
 import {
   CLOSE_SNACKBAR,
   RootActionType,
   SET_ERROR_MESSAGE,
   SET_INFO_MESSAGE,
   SET_SUCCESS_MESSAGE,
-} from '../actions/types'
+} from '../actions/types.js'
 
 const initialState = {
   snackbarMessage: {

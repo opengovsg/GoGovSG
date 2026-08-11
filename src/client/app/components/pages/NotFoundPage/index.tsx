@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import BaseLayout from '../../BaseLayout'
+import BaseLayout from '../../BaseLayout/index.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

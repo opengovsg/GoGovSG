@@ -15,7 +15,7 @@ import antiPhishingIcon from '@assets/components/home/feature-list-sliver/home-p
 import customisedIcon from '@assets/components/home/feature-list-sliver/home-page-customised-icon.svg'
 import analyticsIcon from '@assets/components/home/feature-list-sliver/home-page-analytics-icon.svg'
 import fileSharingIcon from '@assets/components/home/feature-list-sliver/home-page-file-sharing-icon.svg'
-import { htmlSanitizer } from '../../app/util/format'
+import { htmlSanitizer } from '../../app/util/format.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

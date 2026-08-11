@@ -8,14 +8,14 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import CloseIcon from '../../../app/components/widgets/CloseIcon'
-import CreateLinkForm from './CreateLinkForm'
-import useFullScreenDialog from '../../helpers/fullScreenDialog'
-import ModalMargins from './ModalMargins'
-import userActions from '../../actions'
-import AddDescriptionForm from './AddDescriptionForm'
-import { GAEvent, GAPageView } from '../../../app/util/ga'
-import { GoGovReduxState } from '../../../app/reducers/types'
+import CloseIcon from '../../../app/components/widgets/CloseIcon.js'
+import CreateLinkForm from './CreateLinkForm.js'
+import useFullScreenDialog from '../../helpers/fullScreenDialog.js'
+import ModalMargins from './ModalMargins.js'
+import userActions from '../../actions/index.js'
+import AddDescriptionForm from './AddDescriptionForm.js'
+import { GAEvent, GAPageView } from '../../../app/util/ga.js'
+import { GoGovReduxState } from '../../../app/reducers/types.js'
 
 type StyleProps = {
   isFullScreenDialog: boolean

@@ -11,10 +11,10 @@ import {
   makeStyles,
 } from '@material-ui/core'
 
-import homeActions from '../actions'
-import numberFormatter from '../../app/util/format'
-import StatisticsGraphic from './StatisticsGraphic'
-import { GoGovReduxState } from '../../app/reducers/types'
+import homeActions from '../actions/index.js'
+import numberFormatter from '../../app/util/format.js'
+import StatisticsGraphic from './StatisticsGraphic/index.js'
+import { GoGovReduxState } from '../../app/reducers/types.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import { get } from '../../../../../../app/util/requests'
-import { LinkStatistics } from '../../../../../../../shared/interfaces/link-statistics'
-import { GAEvent } from '../../../../../../app/util/ga'
+import { get } from '../../../../../../app/util/requests.js'
+import { LinkStatistics } from '../../../../../../../shared/interfaces/link-statistics.js'
+import { GAEvent } from '../../../../../../app/util/ga.js'
 
 export type LinkStatisticsState = {
   status: number | null

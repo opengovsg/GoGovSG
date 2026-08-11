@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import { FileInputField } from '../../../../widgets/FileInputField'
-import CollapsibleMessage from '../../../../../app/components/CollapsibleMessage'
+import { FileInputField } from '../../../../widgets/FileInputField.js'
+import CollapsibleMessage from '../../../../../app/components/CollapsibleMessage/index.js'
 import {
   CollapsibleMessagePosition,
   CollapsibleMessageType,
-} from '../../../../../app/components/CollapsibleMessage/types'
+} from '../../../../../app/components/CollapsibleMessage/types.js'
 import ConfigOption, {
   TrailingPosition,
-} from '../../../../widgets/ConfigOption'
-import Tooltip from '../../../../widgets/Tooltip'
-import useShortLink from '../util/shortlink'
-import { useDrawerState } from '../../index'
-import { removeHttpsProtocol } from '../../../../../app/util/url'
-import { MAX_FILE_UPLOAD_SIZE } from '../../../../../../shared/constants'
-import { formatBytes } from '../../../../../app/util/format'
+} from '../../../../widgets/ConfigOption.js'
+import Tooltip from '../../../../widgets/Tooltip.js'
+import useShortLink from '../util/shortlink.js'
+import { useDrawerState } from '../../index.js'
+import { removeHttpsProtocol } from '../../../../../app/util/url.js'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../../../../shared/constants.js'
+import { formatBytes } from '../../../../../app/util/format.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

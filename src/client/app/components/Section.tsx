@@ -1,6 +1,6 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import { ApplyAppMargins } from './AppMargins'
+import { ApplyAppMargins } from './AppMargins/index.js'
 
 type styleProps = {
   backgroundType: string

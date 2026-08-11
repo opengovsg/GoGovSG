@@ -24,9 +24,9 @@ import githubIcon from '@assets/components/app/base-layout/github-icon.svg'
 import signinIcon from '@assets/components/app/base-layout/signin-icon.svg'
 import apiIcon from '@assets/components/app/base-layout/api-icon.svg'
 import homeIcon from '@assets/components/app/base-layout/home-icon.svg'
-import Section from '../Section'
-import loginActions from '../../../login/actions'
-import { GoGovReduxState } from '../../reducers/types'
+import Section from '../Section.js'
+import loginActions from '../../../login/actions/index.js'
+import { GoGovReduxState } from '../../reducers/types.js'
 
 type StyleProps = {
   isLoggedIn: boolean

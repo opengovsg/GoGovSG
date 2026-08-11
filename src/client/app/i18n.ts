@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 import Backend from 'i18next-http-backend'
 import { initReactI18next } from 'react-i18next'
-import assetVariant from '../../shared/util/asset-variant'
+import assetVariant from '../../shared/util/asset-variant.js'
 
 const pathVariant = `/locales/${assetVariant}/{{lng}}/{{ns}}.json`
 

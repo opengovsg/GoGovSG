@@ -1,12 +1,12 @@
 import React from 'react'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 
-import { useDrawerState } from '../../index'
-import useShortLink from '../util/shortlink'
-import GoSwitch from '../../../../widgets/GoSwitch'
+import { useDrawerState } from '../../index.js'
+import useShortLink from '../util/shortlink.js'
+import GoSwitch from '../../../../widgets/GoSwitch.js'
 import ConfigOption, {
   TrailingPosition,
-} from '../../../../widgets/ConfigOption'
+} from '../../../../widgets/ConfigOption.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -1,6 +1,6 @@
-import { UserAction, UserActionType } from '../actions/types'
-import { StatusBarVariant, UserState } from './types'
-import { initialSortConfig } from '../constants'
+import { UserAction, UserActionType } from '../actions/types.js'
+import { StatusBarVariant, UserState } from './types.js'
+import { initialSortConfig } from '../constants.js'
 
 const initialState: UserState = {
   initialised: false,
