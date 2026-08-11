@@ -1,5 +1,5 @@
 import ReactGA from 'react-ga'
-import { get } from './requests.js'
+import { get } from './requests'
 
 // Checks if reactga has initalised
 let hasInit = false

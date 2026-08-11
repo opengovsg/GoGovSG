@@ -1,4 +1,4 @@
-import { UrlType } from '../../user/reducers/types.js'
+import { UrlType } from '../../user/reducers/types'
 
 export type UrlTypePublic = Omit<UrlType, 'clicks'>
 

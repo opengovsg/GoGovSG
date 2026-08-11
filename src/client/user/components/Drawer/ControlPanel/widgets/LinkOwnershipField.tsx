@@ -4,12 +4,12 @@ import i18next from 'i18next'
 
 import ConfigOption, {
   TrailingPosition,
-} from '../../../../widgets/ConfigOption.js'
-import { useDrawerState } from '../../index.js'
-import useShortLink from '../util/shortlink.js'
-import Tooltip from '../../../../widgets/Tooltip.js'
-import PrefixableTextField from '../../../../widgets/PrefixableTextField.js'
-import TrailingButton from './TrailingButton.js'
+} from '../../../../widgets/ConfigOption'
+import { useDrawerState } from '../../index'
+import useShortLink from '../util/shortlink'
+import Tooltip from '../../../../widgets/Tooltip'
+import PrefixableTextField from '../../../../widgets/PrefixableTextField'
+import TrailingButton from './TrailingButton'
 
 type LinkOwnershipFieldProps = {
   closeModal: () => void

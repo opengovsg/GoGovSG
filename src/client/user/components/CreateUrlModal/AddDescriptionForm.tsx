@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
-import LinkInfoEditor from '../../widgets/LinkInfoEditor.js'
-import ModalMargins from './ModalMargins.js'
-import { patch } from '../../../app/util/requests.js'
-import userActions from '../../actions/index.js'
-import rootActions from '../../../app/components/pages/RootPage/actions/index.js'
-import { GoGovReduxState } from '../../../app/reducers/types.js'
+import LinkInfoEditor from '../../widgets/LinkInfoEditor'
+import ModalMargins from './ModalMargins'
+import { patch } from '../../../app/util/requests'
+import userActions from '../../actions'
+import rootActions from '../../../app/components/pages/RootPage/actions'
+import { GoGovReduxState } from '../../../app/reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -10,15 +10,15 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import FilterDrawer from '../../../../app/components/FilterDrawer/index.js'
-import ArrowDownIcon from '../../../../app/components/widgets/ArrowDownIcon.js'
-import CloseIcon from '../../../../app/components/widgets/CloseIcon.js'
-import SearchSortIcon from '../../../../app/components/widgets/SearchSortIcon.js'
-import SearchIcon from '../../../../app/components/widgets/SearchIcon.js'
-import EmailIcon from '../../../../app/components/widgets/EmailIcon.js'
-import { sortOptions } from '../../../constants.js'
-import { SearchResultsSortOrder } from '../../../../../shared/search.js'
-import SortDrawer from './SortDrawer/index.js'
+import FilterDrawer from '../../../../app/components/FilterDrawer'
+import ArrowDownIcon from '../../../../app/components/widgets/ArrowDownIcon'
+import CloseIcon from '../../../../app/components/widgets/CloseIcon'
+import SearchSortIcon from '../../../../app/components/widgets/SearchSortIcon'
+import SearchIcon from '../../../../app/components/widgets/SearchIcon'
+import EmailIcon from '../../../../app/components/widgets/EmailIcon'
+import { sortOptions } from '../../../constants'
+import { SearchResultsSortOrder } from '../../../../../shared/search'
+import SortDrawer from './SortDrawer'
 
 type DirectoryInputProps = {
   showAdornments?: boolean

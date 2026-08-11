@@ -12,11 +12,11 @@ import { Autocomplete } from '@material-ui/lab'
 import {
   MAX_NUM_TAGS_PER_LINK,
   MIN_TAG_SEARCH_LENGTH,
-} from '../../../shared/constants.js'
-import { MAX_TAG_LENGTH, isValidTag } from '../../../shared/util/validation.js'
-import { SEARCH_TIMEOUT, TEXT_FIELD_HEIGHT } from '../constants.js'
-import { get } from '../../app/util/requests.js'
-import FormTag from './FormTag.js'
+} from '../../../shared/constants'
+import { MAX_TAG_LENGTH, isValidTag } from '../../../shared/util/validation'
+import { SEARCH_TIMEOUT, TEXT_FIELD_HEIGHT } from '../constants'
+import { get } from '../../app/util/requests'
+import FormTag from './FormTag'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

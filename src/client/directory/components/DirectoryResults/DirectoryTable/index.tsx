@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react'
 import { Table, TableBody, createStyles, makeStyles } from '@material-ui/core'
-import { UrlTypePublic } from '../../../reducers/types.js'
-import DirectoryTableRow from './DirectoryTableRow/index.js'
-import DirectoryTablePagination from './DirectoryTablePagination/index.js'
+import { UrlTypePublic } from '../../../reducers/types'
+import DirectoryTableRow from './DirectoryTableRow'
+import DirectoryTablePagination from './DirectoryTablePagination'
 
 type DirectoryTableProps = {
   searchResults: Array<UrlTypePublic>

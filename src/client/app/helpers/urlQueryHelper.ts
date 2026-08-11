@@ -1,4 +1,4 @@
-import { UrlTableConfig } from '../../user/reducers/types.js'
+import { UrlTableConfig } from '../../user/reducers/types'
 
 const queryObjFromTableConfig = (tableConfig: UrlTableConfig) => {
   const {

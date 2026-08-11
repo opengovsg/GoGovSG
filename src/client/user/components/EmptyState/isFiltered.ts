@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { GoGovReduxState } from '../../../app/reducers/types.js'
+import { GoGovReduxState } from '../../../app/reducers/types'
 
 export default function useIsFiltered() {
   const tableConfig = useSelector(

@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux'
 import { createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
 import mainImage from '@assets/components/home/rotating-links-graphic/landing-main.svg'
-import RotatingLinks from './RotatingLinks.js'
-import { GoGovReduxState } from '../../../app/reducers/types.js'
+import RotatingLinks from './RotatingLinks'
+import { GoGovReduxState } from '../../../app/reducers/types'
 
 type styleProps = {
   heightToWidthRatio: number

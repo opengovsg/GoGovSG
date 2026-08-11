@@ -11,9 +11,9 @@ import {
   SET_EMAIL_VALIDATOR,
   VERIFY_OTP_ERROR,
   VERIFY_OTP_PENDING,
-} from '../actions/types.js'
-import { loginFormVariants } from '../../app/util/types.js'
-import { LoginState } from './types.js'
+} from '../actions/types'
+import { loginFormVariants } from '../../app/util/types'
+import { LoginState } from './types'
 
 export const defaultEmailValidator = (email: string) =>
   validator.isEmail(email, { allow_utf8_local_part: false })

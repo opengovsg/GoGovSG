@@ -1,5 +1,5 @@
-import { HomeStatistics, LinksToRotate } from '../reducers/types.js'
-import { ReduxPayloadAction } from '../../app/actions/types.js'
+import { HomeStatistics, LinksToRotate } from '../reducers/types'
+import { ReduxPayloadAction } from '../../app/actions/types'
 
 export const LOAD_STATS = 'LOAD_STATS'
 export const SET_LINKS_TO_ROTATE = 'SET_LINKS_TO_ROTATE'

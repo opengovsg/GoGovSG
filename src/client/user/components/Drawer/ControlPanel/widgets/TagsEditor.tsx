@@ -7,19 +7,19 @@ import {
 } from '@material-ui/core'
 import _ from 'lodash'
 
-import useShortLink from '../util/shortlink.js'
-import { useDrawerState } from '../../index.js'
+import useShortLink from '../util/shortlink'
+import { useDrawerState } from '../../index'
 import ConfigOption, {
   TrailingPosition,
-} from '../../../../widgets/ConfigOption.js'
-import TagsAutocomplete from '../../../../widgets/TagsAutocomplete.js'
-import Tooltip from '../../../../widgets/Tooltip.js'
-import { MAX_NUM_TAGS_PER_LINK } from '../../../../../../shared/constants.js'
-import TrailingButton from './TrailingButton.js'
+} from '../../../../widgets/ConfigOption'
+import TagsAutocomplete from '../../../../widgets/TagsAutocomplete'
+import Tooltip from '../../../../widgets/Tooltip'
+import { MAX_NUM_TAGS_PER_LINK } from '../../../../../../shared/constants'
+import TrailingButton from './TrailingButton'
 import {
   isValidTag,
   isValidTags,
-} from '../../../../../../shared/util/validation.js'
+} from '../../../../../../shared/util/validation'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

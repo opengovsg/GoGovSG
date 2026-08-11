@@ -3,7 +3,7 @@ import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
 import { ThunkDispatch } from 'redux-thunk'
 import validator from 'validator'
-import { GAEvent } from '../../app/util/ga.js'
+import { GAEvent } from '../../app/util/ga'
 import {
   EmailValidatorType,
   GET_OTP_EMAIL_ERROR,
@@ -26,20 +26,20 @@ import {
   VERIFY_OTP_PENDING,
   VerifyOtpErrorAction,
   VerifyOtpPendingAction,
-} from './types.js'
-import { loginFormVariants } from '../../app/util/types.js'
-import { get, postJson } from '../../app/util/requests.js'
-import userActions from '../../user/actions/index.js'
-import rootActions from '../../app/components/pages/RootPage/actions/index.js'
-import { defaultEmailValidator } from '../reducers/index.js'
-import { WipeUserStateAction } from '../../user/actions/types.js'
-import { GetReduxState } from '../../app/actions/types.js'
-import { GoGovReduxState } from '../../app/reducers/types.js'
+} from './types'
+import { loginFormVariants } from '../../app/util/types'
+import { get, postJson } from '../../app/util/requests'
+import userActions from '../../user/actions'
+import rootActions from '../../app/components/pages/RootPage/actions'
+import { defaultEmailValidator } from '../reducers'
+import { WipeUserStateAction } from '../../user/actions/types'
+import { GetReduxState } from '../../app/actions/types'
+import { GoGovReduxState } from '../../app/reducers/types'
 import {
   CloseSnackbarAction,
   SetErrorMessageAction,
   SetSuccessMessageAction,
-} from '../../app/components/pages/RootPage/actions/types.js'
+} from '../../app/components/pages/RootPage/actions/types'
 
 const isGetOTPSuccess: (email: string) => GetOtpEmailSuccessAction = (
   email,

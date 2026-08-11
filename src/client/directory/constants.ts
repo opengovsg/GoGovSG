@@ -1,4 +1,4 @@
-import { SearchResultsSortOrder } from '../../shared/search.js'
+import { SearchResultsSortOrder } from '../../shared/search'
 
 /**
  * The available sorting options for GoDirectory which includes popularity and recency.

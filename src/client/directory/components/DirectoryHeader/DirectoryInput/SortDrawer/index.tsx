@@ -5,14 +5,14 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import useAppMargins from '../../../../../app/components/AppMargins/appMargins.js'
-import BottomDrawer from '../../../../../app/components/widgets/BottomDrawer/index.js'
-import SortPanel from '../../../../../app/components/widgets/SortPanel/index.js'
-import { SearchResultsSortOrder } from '../../../../../../shared/search.js'
-import FilterPanel from './FilterPanel/index.js'
-import FilterSortPanelFooter from './FilterSortPanelFooter/index.js'
-import CollapsingPanel from '../../../../../app/components/widgets/CollapsingPanel.js'
-import { defaultSortOption } from '../../../../constants.js'
+import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
+import BottomDrawer from '../../../../../app/components/widgets/BottomDrawer'
+import SortPanel from '../../../../../app/components/widgets/SortPanel'
+import { SearchResultsSortOrder } from '../../../../../../shared/search'
+import FilterPanel from './FilterPanel'
+import FilterSortPanelFooter from './FilterSortPanelFooter'
+import CollapsingPanel from '../../../../../app/components/widgets/CollapsingPanel'
+import { defaultSortOption } from '../../../../constants'
 
 type SortDrawerProps = {
   open: boolean

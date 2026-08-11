@@ -1,6 +1,6 @@
 import { PaletteType } from '@material-ui/core'
 import { createTheme, responsiveFontSizes } from '@material-ui/core/styles'
-import assetVariant from '../../../shared/util/asset-variant.js'
+import assetVariant from '../../../shared/util/asset-variant'
 
 // Provides theme spacing, breakpoint values for the main theme to consume.
 const basicTheme = createTheme({

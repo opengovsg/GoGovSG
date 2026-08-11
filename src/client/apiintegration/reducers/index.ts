@@ -1,4 +1,4 @@
-import { ApiState } from './types.js'
+import { ApiState } from './types'
 import {
   ApiKeyActionType,
   CLOSE_API_KEY_MODAL,
@@ -6,7 +6,7 @@ import {
   OPEN_API_KEY_MODAL,
   USER_HAS_API_KEY,
   USER_HAS_NO_API_KEY,
-} from '../actions/types.js'
+} from '../actions/types'
 
 const initialState: ApiState = {
   hasApiKey: false,

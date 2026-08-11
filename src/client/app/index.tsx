@@ -7,9 +7,9 @@ import 'regenerator-runtime/runtime'
 
 import { createHashHistory } from 'history'
 
-import Root from './components/pages/RootPage/index.js'
-import { i18nInit } from './i18n.js'
-import store from './store.js'
+import Root from './components/pages/RootPage'
+import { i18nInit } from './i18n'
+import store from './store'
 
 const history = createHashHistory()
 

@@ -13,37 +13,37 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
-import useCreateLinkFormStyles from './styles/createLinkForm.js'
+import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,
   isValidShortUrl,
   isValidTag,
   isValidTags,
-} from '../../../../shared/util/validation.js'
+} from '../../../../shared/util/validation'
 import {
   MAX_CSV_UPLOAD_SIZE,
   MAX_FILE_UPLOAD_SIZE,
   MAX_NUM_TAGS_PER_LINK,
-} from '../../../../shared/constants.js'
-import ModalMargins from './ModalMargins.js'
+} from '../../../../shared/constants'
+import ModalMargins from './ModalMargins'
 import refreshIcon from './assets/refresh-icon.svg'
-import LinkIcon from '../../widgets/LinkIcon.js'
-import FileIcon from '../../widgets/FileIcon.js'
-import CsvIcon from '../../widgets/CsvIcon.js'
-import StarIcon from '../../widgets/StarIcon.js'
-import { formatBytes } from '../../../app/util/format.js'
-import CollapsibleMessage from '../../../app/components/CollapsibleMessage/index.js'
-import CreateTypeButton from './components/CreateTypeButton.js'
-import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessage/types.js'
-import { downloadSampleBulkCsv } from '../../../app/util/download.js'
-import { FileInputField } from '../../widgets/FileInputField.js'
-import userActions from '../../actions/index.js'
-import { GAEvent } from '../../../app/util/ga.js'
-import { GoGovReduxState } from '../../../app/reducers/types.js'
-import { TEXT_FIELD_HEIGHT } from '../../constants.js'
-import FormStartAdorment from './FormStartAdorment.js'
-import Tooltip from '../../widgets/Tooltip.js'
-import TagsAutocomplete from '../../widgets/TagsAutocomplete.js'
+import LinkIcon from '../../widgets/LinkIcon'
+import FileIcon from '../../widgets/FileIcon'
+import CsvIcon from '../../widgets/CsvIcon'
+import StarIcon from '../../widgets/StarIcon'
+import { formatBytes } from '../../../app/util/format'
+import CollapsibleMessage from '../../../app/components/CollapsibleMessage'
+import CreateTypeButton from './components/CreateTypeButton'
+import { CollapsibleMessageType } from '../../../app/components/CollapsibleMessage/types'
+import { downloadSampleBulkCsv } from '../../../app/util/download'
+import { FileInputField } from '../../widgets/FileInputField'
+import userActions from '../../actions'
+import { GAEvent } from '../../../app/util/ga'
+import { GoGovReduxState } from '../../../app/reducers/types'
+import { TEXT_FIELD_HEIGHT } from '../../constants'
+import FormStartAdorment from './FormStartAdorment'
+import Tooltip from '../../widgets/Tooltip'
+import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
 type CreateLinkFormProps = {
   onSubmitLink: (history: History) => {}

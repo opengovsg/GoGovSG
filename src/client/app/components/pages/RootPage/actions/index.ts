@@ -7,7 +7,7 @@ import {
   SetErrorMessageAction,
   SetInfoMessageAction,
   SetSuccessMessageAction,
-} from './types.js'
+} from './types'
 
 const closeSnackbar: () => CloseSnackbarAction = () => ({
   type: CLOSE_SNACKBAR,

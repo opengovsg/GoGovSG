@@ -1,4 +1,4 @@
-import { SortDirection } from './reducers/types.js'
+import { SortDirection } from './reducers/types'
 
 export const initialSortConfig = {
   orderBy: 'createdAt',

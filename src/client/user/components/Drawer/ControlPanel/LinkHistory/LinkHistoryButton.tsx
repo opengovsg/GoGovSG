@@ -6,7 +6,7 @@ import {
   makeStyles,
   useTheme,
 } from '@material-ui/core'
-import HistoryIcon from '../widgets/HistoryIcon.js'
+import HistoryIcon from '../widgets/HistoryIcon'
 
 const useStyles = makeStyles(() =>
   createStyles({
