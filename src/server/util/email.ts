@@ -1,5 +1,5 @@
 import validator from 'validator'
-import { emailValidator } from '../config'
+import { emailValidator } from '../config.js'
 
 /**
  * Checks if an email is valid and whether it follows a specified regex pattern.

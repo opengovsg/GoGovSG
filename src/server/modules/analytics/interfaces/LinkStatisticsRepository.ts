@@ -1,5 +1,5 @@
-import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
-import { DeviceType } from '.'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics.js'
+import { DeviceType } from './index.js'
 
 export interface LinkStatisticsRepository {
   /**

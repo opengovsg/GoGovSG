@@ -1,13 +1,13 @@
 import Express from 'express'
 import fileUpload from 'express-fileupload'
 import { createValidator } from 'express-joi-validation'
-import { DependencyIds } from '../../constants'
-import { container } from '../../util/inversify'
-import jsonMessage from '../../util/json'
+import { DependencyIds } from '../../constants.js'
+import { container } from '../../util/inversify.js'
+import jsonMessage from '../../util/json.js'
 import {
   MAX_CSV_UPLOAD_SIZE,
   MAX_FILE_UPLOAD_SIZE,
-} from '../../../shared/constants'
+} from '../../../shared/constants.js'
 import {
   hasApiKeySchema,
   ownershipTransferSchema,
@@ -17,11 +17,14 @@ import {
   urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
-} from './validators'
-import { UserController } from '../../modules/user'
-import { BulkController } from '../../modules/bulk'
-import { FileCheckController, UrlCheckController } from '../../modules/threat'
-import { JobController } from '../../modules/job'
+} from './validators.js'
+import { UserController } from '../../modules/user/index.js'
+import { BulkController } from '../../modules/bulk/index.js'
+import {
+  FileCheckController,
+  UrlCheckController,
+} from '../../modules/threat/index.js'
+import { JobController } from '../../modules/job/index.js'
 
 const router = Express.Router()
 

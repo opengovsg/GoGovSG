@@ -1,17 +1,20 @@
 import { inject, injectable } from 'inversify'
-import { NotFoundError } from '../../../util/error'
-import * as interfaces from '../interfaces'
-import { DependencyIds } from '../../../constants'
-import { Mailer } from '../../../services/email'
-import { JobItemStatusEnum, JobStatusEnum } from '../../../../shared/util/jobs'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
-import { JobItemType, JobType } from '../../../models/job'
+import { NotFoundError } from '../../../util/error.js'
+import * as interfaces from '../interfaces/index.js'
+import { DependencyIds } from '../../../constants.js'
+import { Mailer } from '../../../services/email.js'
+import {
+  JobItemStatusEnum,
+  JobStatusEnum,
+} from '../../../../shared/util/jobs.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
+import { JobItemType, JobType } from '../../../models/job.js'
 import {
   jobPollAttempts,
   jobPollInterval,
   logger,
   qrCodeBucketUrl,
-} from '../../../config'
+} from '../../../config.js'
 
 @injectable()
 export class JobManagementService implements interfaces.JobManagementService {

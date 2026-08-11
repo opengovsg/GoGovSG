@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this, no-dupe-class-members */
 import { injectable } from 'inversify'
-import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
-import { WebRiskThreat } from '../../../repositories/types'
+import { TwoWayMapper } from '../../../mappers/TwoWayMapper.js'
+import { WebRiskThreat } from '../../../repositories/types.js'
 
 @injectable()
 export class SafeBrowsingMapper implements TwoWayMapper<WebRiskThreat, string> {

@@ -1,4 +1,4 @@
-import { emailValidator, ogHostname } from '../config'
+import { emailValidator, ogHostname } from '../config.js'
 
 /**
  * Remove wildcard and escape characters from the query.

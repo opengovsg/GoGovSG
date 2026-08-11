@@ -1,6 +1,6 @@
-import { StorableUrl } from '../../../repositories/types'
+import { StorableUrl } from '../../../repositories/types.js'
 
-export { AdminApiV1Controller } from './AdminApiV1Controller'
+export { AdminApiV1Controller } from './AdminApiV1Controller.js'
 
 type LongUrlProperty = {
   longUrl: string

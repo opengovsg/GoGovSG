@@ -1,4 +1,4 @@
 export {
   JobManagementService,
   JobManagementService as default,
-} from './JobManagementService'
+} from './JobManagementService.js'

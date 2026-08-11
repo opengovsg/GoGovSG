@@ -4,12 +4,12 @@ import { inject, injectable } from 'inversify'
 import dogstatsd, {
   MALICIOUS_ACTIVITY_LINK,
   SCAN_FAILED_LINK,
-} from '../../util/dogstatsd'
-import jsonMessage from '../../util/json'
-import { UrlCreationRequest } from '../user'
-import { UrlThreatScanService } from './interfaces'
-import { DependencyIds } from '../../constants'
-import { logger } from '../../config'
+} from '../../util/dogstatsd.js'
+import jsonMessage from '../../util/json.js'
+import { UrlCreationRequest } from '../user/index.js'
+import { UrlThreatScanService } from './interfaces/index.js'
+import { DependencyIds } from '../../constants.js'
+import { logger } from '../../config.js'
 
 @injectable()
 export class UrlCheckController {

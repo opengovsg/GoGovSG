@@ -1,5 +1,5 @@
-export { SafeBrowsingRepository } from './SafeBrowsingRepository'
+export { SafeBrowsingRepository } from './SafeBrowsingRepository.js'
 
-export { FileTypeFilterService } from './FileTypeFilterService'
-export { UrlThreatScanService } from './UrlThreatScanService'
-export { VirusScanService } from './VirusScanService'
+export { FileTypeFilterService } from './FileTypeFilterService.js'
+export { UrlThreatScanService } from './UrlThreatScanService.js'
+export { VirusScanService } from './VirusScanService.js'
