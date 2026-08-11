@@ -1,6 +1,5 @@
 import './util/tracing.js' // This is import has to be placed at the top for Tracing to work properly
 import 'reflect-metadata' // This import has to be placed at the top level for Dependency Injection
-import { createRequire } from 'module'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import bodyParser from 'body-parser'
@@ -21,12 +20,17 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 bindInversifyDependencies()
 
 // Routes.
-// A dynamic require, not a static import: ES imports are hoisted above
+// A dynamic import, not a static one: ES imports are hoisted above
 // bindInversifyDependencies() by some compilers, but api/index.ts resolves
 // inversify bindings at module-load time and needs binding registration to
-// have already run.
-const require = createRequire(import.meta.url)
-const api = require('./api').default
+// have already run. `import()` (not `require()` via createRequire) is used
+// so this shares Node's real module registry under every loader — tsx's
+// dev-mode watcher does not honor shared module identity between
+// createRequire()'d and natively-imported modules, which previously caused
+// a second, unbound `container` singleton to be instantiated under
+// `server-dev` specifically (production, via `tsc`-built output + plain
+// `node`, was unaffected).
+const api = (await import('./api/index.js')).default
 
 // Logger configuration
 import {
