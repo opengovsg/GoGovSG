@@ -46,4 +46,4 @@ router.get(
   qrCodeController.createGoQrCode,
 )
 
-module.exports = router
+export default router

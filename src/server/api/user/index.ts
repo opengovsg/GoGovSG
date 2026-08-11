@@ -185,4 +185,4 @@ router.get('/message', userController.getUserMessage)
 
 router.get('/announcement', userController.getUserAnnouncement)
 
-export = router
+export default router

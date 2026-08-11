@@ -10,4 +10,4 @@ const logoutController = container.get<LogoutController>(
 
 router.get('/', logoutController.logOut)
 
-export = router
+export default router

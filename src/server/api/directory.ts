@@ -32,4 +32,4 @@ router.get(
   directoryController.getDirectoryWithConditions,
 )
 
-module.exports = router
+export default router

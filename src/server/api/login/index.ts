@@ -70,4 +70,4 @@ router.post(
  */
 router.get('/isLoggedIn', loginController.getIsLoggedIn)
 
-module.exports = router
+export default router

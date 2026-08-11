@@ -12,4 +12,4 @@ const gaController = container.get<GaController>(DependencyIds.gaController)
  */
 router.get('/', gaController.getGaId)
 
-module.exports = router
+export default router

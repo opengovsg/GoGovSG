@@ -30,4 +30,4 @@ router.post(
   jobController.updateJob,
 )
 
-module.exports = router
+export default router
