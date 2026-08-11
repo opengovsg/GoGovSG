@@ -1,3 +1,3 @@
-export { AuthService } from './AuthService.js'
-export { OtpRepository } from './OtpRepository.js'
-export { Cryptography } from './Cryptography.js'
+export type { AuthService } from './AuthService.js'
+export type { OtpRepository } from './OtpRepository.js'
+export type { Cryptography } from './Cryptography.js'
