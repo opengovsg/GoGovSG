@@ -2,7 +2,7 @@ import * as validation from '../../../src/shared/util/validation'
 import { ogHostname } from '../../../src/server/config'
 
 describe('Test whiteliste check', () => {
-  test('localstack url is whitelisted', () => {
+  test('floci url is whitelisted', () => {
     const url = 'http://localhost:4566'
     expect(validation.isWhitelisted(url)).toBe(true)
   })
@@ -14,7 +14,7 @@ describe('Test blacklist check', () => {
     expect(validation.isBlacklisted(url)).toBe(false)
   })
 
-  test('localstack url is not blacklisted', () => {
+  test('floci url is not blacklisted', () => {
     const url = 'http://localhost:4566'
     expect(validation.isBlacklisted(url)).toBe(false)
   })
@@ -41,12 +41,12 @@ describe('Test https check', () => {
     expect(validation.isHttps(url)).toBe(true)
   })
 
-  test('localstack url fails check by default', () => {
+  test('floci url fails check by default', () => {
     const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isHttps(url)).toBe(false)
   })
 
-  test('localstack url passes check with whitelist', () => {
+  test('floci url passes check with whitelist', () => {
     const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isHttps(url, true)).toBe(true)
   })
@@ -68,12 +68,12 @@ describe('Test valid url check', () => {
     expect(validation.isValidUrl(url)).toBe(false)
   })
 
-  test('localstack url fails check by default', () => {
+  test('floci url fails check by default', () => {
     const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url)).toBe(false)
   })
 
-  test('localstack url passes check with whitelist', () => {
+  test('floci url passes check with whitelist', () => {
     const url = 'http://localhost:4566/local-bucket/file1.pdf'
     expect(validation.isValidUrl(url, true)).toBe(true)
   })

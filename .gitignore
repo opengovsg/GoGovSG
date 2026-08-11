@@ -1,4 +1,4 @@
-.localstack
+.floci
 .vscode
 .env
 .logs
