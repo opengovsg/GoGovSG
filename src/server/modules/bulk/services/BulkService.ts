@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import * as Papa from 'papaparse'
+import Papa from 'papaparse'
 import { UploadedFile } from 'express-fileupload'
 import * as interfaces from '../interfaces/BulkService.js'
 
