@@ -160,28 +160,31 @@ export default RedirectController
 In `src/server/index.ts`, add the import next to the existing `RedirectController` import (line 62):
 
 ```ts
-import { RedirectController, shortUrlRouteGuard } from './modules/redirect/index.js'
+import {
+  RedirectController,
+  shortUrlRouteGuard,
+} from './modules/redirect/index.js'
 ```
 
 Then replace lines 211-215:
 
 ```ts
-    app.get(
-      '/:shortUrl([a-zA-Z0-9-]+).?',
-      ...redirectSpecificMiddleware,
-      redirectController.redirect,
-    ) // The Redirect Endpoint
+app.get(
+  '/:shortUrl([a-zA-Z0-9-]+).?',
+  ...redirectSpecificMiddleware,
+  redirectController.redirect,
+) // The Redirect Endpoint
 ```
 
 with:
 
 ```ts
-    app.get(
-      '/:shortUrl',
-      shortUrlRouteGuard,
-      ...redirectSpecificMiddleware,
-      redirectController.redirect,
-    ) // The Redirect Endpoint
+app.get(
+  '/:shortUrl',
+  shortUrlRouteGuard,
+  ...redirectSpecificMiddleware,
+  redirectController.redirect,
+) // The Redirect Endpoint
 ```
 
 - [ ] **Step 6: Run the full unit test suite**
