@@ -1,4 +1,4 @@
-import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types'
+import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types.js'
 
 export const GET_OTP_EMAIL_SUCCESS = 'GET_OTP_EMAIL_SUCCESS'
 export const GET_OTP_EMAIL_PENDING = 'GET_OTP_EMAIL_PENDING'

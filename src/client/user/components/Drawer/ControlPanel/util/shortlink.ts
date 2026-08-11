@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import userActions from '../../../../actions'
-import { isValidLongUrl } from '../../../../../../shared/util/validation'
-import { UrlType } from '../../../../reducers/types'
-import { GoGovReduxState } from '../../../../../app/reducers/types'
+import userActions from '../../../../actions/index.js'
+import { isValidLongUrl } from '../../../../../../shared/util/validation.js'
+import { UrlType } from '../../../../reducers/types.js'
+import { GoGovReduxState } from '../../../../../app/reducers/types.js'
 
 type Dispatch = () => (dispatch: any) => void
 

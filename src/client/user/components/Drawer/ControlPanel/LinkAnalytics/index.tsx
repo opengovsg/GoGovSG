@@ -10,19 +10,19 @@ import {
   makeStyles,
 } from '@material-ui/core'
 
-import { useDrawerState } from '../..'
-import { useStatistics } from './util/statistics'
-import DeviceStatistics from './DeviceStatistics'
-import { LinkStatistics } from '../../../../../../shared/interfaces/link-statistics'
-import DailyStatistics from './DailyStatistics'
-import HeatMapStatistics from './HeatMapStatistics'
+import { useDrawerState } from '../../index.js'
+import { useStatistics } from './util/statistics.js'
+import DeviceStatistics from './DeviceStatistics.js'
+import { LinkStatistics } from '../../../../../../shared/interfaces/link-statistics.js'
+import DailyStatistics from './DailyStatistics.js'
+import HeatMapStatistics from './HeatMapStatistics.js'
 
 import devicesLogo from './assets/devices-logo.svg'
 import clicksLogo from './assets/chart-logo.svg'
 import trafficLogo from './assets/traffic-logo.svg'
-import BetaTag from '../../../../../app/components/widgets/BetaTag'
-import { GAEvent, GAPageView } from '../../../../../app/util/ga'
-import NoLinkAnalyticsGraphic from './NoLinkAnalyticsGraphic'
+import BetaTag from '../../../../../app/components/widgets/BetaTag/index.js'
+import { GAEvent, GAPageView } from '../../../../../app/util/ga.js'
+import NoLinkAnalyticsGraphic from './NoLinkAnalyticsGraphic.js'
 
 const useLinkAnalyticsStyles = makeStyles((theme) =>
   createStyles({

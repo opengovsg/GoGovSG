@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useReducer } from 'react'
-import ControlPanel from './ControlPanel'
+import ControlPanel from './ControlPanel/index.js'
 import {
   Action,
   State,
   drawerReducer,
   initialState,
-} from './ControlPanel/util/reducers'
+} from './ControlPanel/util/reducers.js'
 
 type DrawerContextType = {
   state: State

@@ -1,9 +1,9 @@
 import { ThunkDispatch } from 'redux-thunk'
 import { Dispatch } from 'redux'
-import { GoGovReduxState } from '../../app/reducers/types'
-import { SetErrorMessageAction } from '../../app/components/pages/RootPage/actions/types'
-import { get, postFormData } from '../../app/util/requests'
-import rootActions from '../../app/components/pages/RootPage/actions'
+import { GoGovReduxState } from '../../app/reducers/types.js'
+import { SetErrorMessageAction } from '../../app/components/pages/RootPage/actions/types.js'
+import { get, postFormData } from '../../app/util/requests.js'
+import rootActions from '../../app/components/pages/RootPage/actions/index.js'
 import {
   CLOSE_API_KEY_MODAL,
   CloseApiKeyModalAction,
@@ -15,7 +15,7 @@ import {
   USER_HAS_NO_API_KEY,
   UserHasApiKeyAction,
   UserHasNoApiKeyAction,
-} from './types'
+} from './types.js'
 
 const userHasApiKey: () => UserHasApiKeyAction = () => ({
   type: USER_HAS_API_KEY,

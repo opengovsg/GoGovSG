@@ -1,10 +1,10 @@
 import { ThunkDispatch } from 'redux-thunk'
-import { GoGovReduxState } from '../reducers/types'
-import { HomeActionType } from '../../home/actions/types'
-import { RootActionType } from '../components/pages/RootPage/actions/types'
-import { UserActionType } from '../../user/actions/types'
-import { LoginActionType } from '../../login/actions/types'
-import { DirectoryActionType } from '../../directory/actions/types'
+import { GoGovReduxState } from '../reducers/types.js'
+import { HomeActionType } from '../../home/actions/types.js'
+import { RootActionType } from '../components/pages/RootPage/actions/types.js'
+import { UserActionType } from '../../user/actions/types.js'
+import { LoginActionType } from '../../login/actions/types.js'
+import { DirectoryActionType } from '../../directory/actions/types.js'
 
 export type GetReduxState = () => GoGovReduxState
 

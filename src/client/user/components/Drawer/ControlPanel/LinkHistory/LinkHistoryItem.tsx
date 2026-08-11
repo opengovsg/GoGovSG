@@ -11,9 +11,9 @@ import {
   TimelineSeparator,
 } from '@material-ui/lab/'
 
-import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types'
-import { useDrawerState } from '../..'
-import { TAG_SEPARATOR } from '../../../../../../shared/constants'
+import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types.js'
+import { useDrawerState } from '../../index.js'
+import { TAG_SEPARATOR } from '../../../../../../shared/constants.js'
 
 const TAG_STRING_FIELD = 'tagStrings'
 

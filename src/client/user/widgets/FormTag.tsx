@@ -5,8 +5,8 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import CloseIcon from '../../app/components/widgets/CloseIcon'
-import { TEXT_FIELD_HEIGHT } from '../constants'
+import CloseIcon from '../../app/components/widgets/CloseIcon.js'
+import { TEXT_FIELD_HEIGHT } from '../constants.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
