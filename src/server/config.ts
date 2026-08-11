@@ -222,9 +222,8 @@ export const safeBrowsingLogOnly = process.env.SAFE_BROWSING_LOG_ONLY === 'true'
 export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
 export const safeBrowsingKey: string | undefined = process.env.SAFE_BROWSING_KEY
 
-// LocalStack variables.
-export const bucketEndpoint =
-  process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
+// S3 emulator (floci) variables.
+export const bucketEndpoint = process.env.BUCKET_ENDPOINT || 'http://floci:4566'
 export const accessEndpoint =
   process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
 
