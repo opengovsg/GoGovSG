@@ -6,8 +6,8 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import useStyles from '../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/styles'
-import SortButton from './SortButton'
+import useStyles from '../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/styles.js'
+import SortButton from './SortButton/index.js'
 
 export type SortPanelProps = {
   onChoose: (orderBy: string) => void

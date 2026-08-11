@@ -8,11 +8,11 @@ import {
   getDayRange,
   getWeekRange,
   getZeroedHeatMap,
-} from './util/date-range'
-import BaseStatisticsLayout from './BaseStatisticsLayout'
-import { useWindowSize } from './util/window-size'
-import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
-import { WeekdayClicks } from '../../../../../../shared/interfaces/link-statistics'
+} from './util/date-range.js'
+import BaseStatisticsLayout from './BaseStatisticsLayout.js'
+import { useWindowSize } from './util/window-size.js'
+import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend.js'
+import { WeekdayClicks } from '../../../../../../shared/interfaces/link-statistics.js'
 
 const useStyles = makeStyles(() => ({
   root: {

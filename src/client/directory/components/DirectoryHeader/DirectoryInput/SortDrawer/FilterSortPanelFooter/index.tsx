@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Grid } from '@material-ui/core'
 
-import useStyles from '../../styles'
+import useStyles from '../../styles.js'
 
 export type FilterSortPanelFooterProps = {
   onApply: () => void

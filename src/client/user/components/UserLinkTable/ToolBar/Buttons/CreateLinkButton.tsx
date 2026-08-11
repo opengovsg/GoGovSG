@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux'
 import { createStyles, makeStyles } from '@material-ui/core'
 
 import addIcon from '@assets/components/user/user-link-table/toolbar/add-icon.svg'
-import userActions from '../../../../actions'
-import ContainedIconButton from './templates/ContainedIconButton'
-import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
-import OvalContainedButton from './templates/OvalContainedButton'
+import userActions from '../../../../actions/index.js'
+import ContainedIconButton from './templates/ContainedIconButton.js'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions.js'
+import OvalContainedButton from './templates/OvalContainedButton.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

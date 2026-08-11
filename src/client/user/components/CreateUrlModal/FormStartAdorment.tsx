@@ -5,7 +5,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import { TEXT_FIELD_HEIGHT } from '../../constants'
+import { TEXT_FIELD_HEIGHT } from '../../constants.js'
 
 type StyleProps = {
   textFieldHeight: number

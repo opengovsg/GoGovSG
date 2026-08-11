@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import { createStyles, makeStyles } from '@material-ui/core'
-import CloseIcon from '../../app/components/widgets/CloseIcon'
+import CloseIcon from '../../app/components/widgets/CloseIcon.js'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
