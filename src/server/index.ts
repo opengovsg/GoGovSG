@@ -2,6 +2,7 @@ import './util/tracing' // This is import has to be placed at the top for Tracin
 import 'reflect-metadata' // This import has to be placed at the top level for Dependency Injection
 import { createRequire } from 'module'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import bodyParser from 'body-parser'
 import express from 'express'
 import helmet from 'helmet'
@@ -12,6 +13,11 @@ import cookieParser from 'cookie-parser'
 import connectRedis from 'connect-redis'
 import jsonMessage from './util/json'
 import bindInversifyDependencies from './inversify.config'
+
+// @ts-ignore TS1470 - import.meta is invalid under tsc's current CJS-per-file
+// detection until Task 9 flips package.json to "type": "module"; valid at
+// runtime on Node 24 regardless. Remove this ts-ignore in Task 9.
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Happens at the top so all imports will have
 // properly-bound containers
@@ -158,7 +164,7 @@ initDb()
       app.set('trust proxy', trustProxy)
     }
 
-    app.set('views', path.resolve(__dirname, './views'))
+    app.set('views', path.resolve(dirname, './views'))
     app.set('view engine', 'ejs')
 
     const apiSpecificMiddleware = [
