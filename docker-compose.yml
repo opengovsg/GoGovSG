@@ -9,7 +9,7 @@ services:
     depends_on:
       - postgres
       - redis
-      - localstack
+      - floci
     ports:
       - '3000:3000' # Webpack dev server
       - '8080:8080' # Express
@@ -83,24 +83,26 @@ services:
     image: redis:5.0.3-alpine@sha256:f8c22abc77f3f9cc1c2516062e4a2a71375859d7922da3faf9e4160e6ba4c3c2
     ports:
       - '6379:6379'
-  localstack:
-    image: localstack/localstack:1.2@sha256:41216e34e25546654c58b8075b133027eab3d958e605ef2e7af168d1f05a9364
-    container_name: gogovsg-localstack
+  floci:
+    # LocalStack replacement (MIT-licensed) — see docs/investigations/floci-vs-localstack.md
+    # for why. -compat tag ships `awslocal`, which init-localstack.sh depends on.
+    image: floci/floci:1.6.0-compat@sha256:15ba10dace4a29d94f0e36c03dc3c2ec5bfc4364a1cf9c67f9def4e530ae2c2c
+    container_name: gogovsg-floci
     ports:
       - '4566:4566'
-      - '8055:8080' # View deployed resources @ http://localhost:8055/#!/infra.
     environment:
-      - SERVICES=s3 # AWS services to emulate.
       - DEBUG=1 # Display relevant logs.
-      - DATA_DIR=/tmp/localstack/data # Directory Localstack saves data internally.
-      - HOSTNAME_EXTERNAL=localstack
+      - FLOCI_STORAGE_MODE=persistent
+      - FLOCI_STORAGE_PERSISTENT_PATH=/tmp/floci/data
+      - FLOCI_HOSTNAME=floci
       - AWS_BUCKET_NAME=local-bucket
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     volumes:
-      - ./init-localstack.sh:/docker-entrypoint-initaws.d/init-localstack.sh # Initialise the bucket.
-      - './.localstack:/tmp/localstack'
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      # floci only supports the newer LocalStack init-hook convention
+      # (no /docker-entrypoint-initaws.d/ support).
+      - ./init-localstack.sh:/etc/localstack/init/ready.d/init-localstack.sh
+      - './.floci:/tmp/floci'
   maildev:
     image: maildev/maildev
     build:
