@@ -90,15 +90,12 @@ services:
       - '4566:4566'
     environment:
       - DEBUG=1 # Display relevant logs.
-      - FLOCI_STORAGE_MODE=persistent
-      - FLOCI_STORAGE_PERSISTENT_PATH=/tmp/floci/data
       - FLOCI_HOSTNAME=floci
       - AWS_BUCKET_NAME=local-bucket
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
     volumes:
       - ./init-s3-bucket.sh:/etc/localstack/init/ready.d/init-s3-bucket.sh
-      - './.floci:/tmp/floci'
   maildev:
     image: maildev/maildev
     build:
