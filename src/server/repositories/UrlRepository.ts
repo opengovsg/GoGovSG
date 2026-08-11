@@ -501,10 +501,8 @@ export class UrlRepository implements UrlRepositoryInterface {
   private invalidateCache: (shortUrl: string) => Promise<void> = async (
     shortUrl,
   ) => {
-    redirectClient.del(shortUrl, (err) => {
-      if (err) {
-        logger.error(`Short URL could not be purged from cache:\t${err}`)
-      }
+    await redirectClient.del(shortUrl).catch((err) => {
+      logger.error(`Short URL could not be purged from cache:\t${err}`)
     })
   }
 
@@ -542,46 +540,39 @@ export class UrlRepository implements UrlRepositoryInterface {
    */
   private getLongUrlFromCache: (
     shortUrl: string,
-  ) => Promise<RedirectDestination> = (shortUrl) => {
-    return new Promise((resolve, reject) => {
-      redirectClient.get(shortUrl, (cacheError, cacheLongUrl) => {
-        if (cacheError) {
-          logger.error(`Cache lookup failed unexpectedly:\t${cacheError}`)
-          reject(cacheError)
-        } else {
-          if (!cacheLongUrl) {
-            reject(
-              new NotFoundError(
-                `longUrl not found in cache:\tshortUrl=${shortUrl}`,
-              ),
-            )
-            return
-          }
+  ) => Promise<RedirectDestination> = async (shortUrl) => {
+    let cacheLongUrl: string | null
+    try {
+      cacheLongUrl = await redirectClient.get(shortUrl)
+    } catch (cacheError) {
+      logger.error(`Cache lookup failed unexpectedly:\t${cacheError}`)
+      throw cacheError
+    }
 
-          try {
-            const redirectDestination = JSON.parse(cacheLongUrl)
-            resolve(redirectDestination)
-          } catch (_) {
-            logger.info(
-              `Cache lookup returned a string instead of an object:\tshortUrl=${shortUrl}`,
-            )
-            resolve({
-              longUrl: cacheLongUrl,
-              isFile: false,
-              safeBrowsingExpiry: null,
-            })
+    if (!cacheLongUrl) {
+      throw new NotFoundError(
+        `longUrl not found in cache:\tshortUrl=${shortUrl}`,
+      )
+    }
 
-            // FIXME: Throw NotFoundError once all app clients are updated to
-            // use the new RedirectDestination type.
-            // reject(
-            //   new NotFoundError(
-            //     `longUrl not found in cache:\tshortUrl=${shortUrl}`,
-            //   ),
-            // )
-          }
-        }
-      })
-    })
+    try {
+      return JSON.parse(cacheLongUrl)
+    } catch (_) {
+      logger.info(
+        `Cache lookup returned a string instead of an object:\tshortUrl=${shortUrl}`,
+      )
+      return {
+        longUrl: cacheLongUrl,
+        isFile: false,
+        safeBrowsingExpiry: null,
+      }
+
+      // FIXME: Throw NotFoundError once all app clients are updated to
+      // use the new RedirectDestination type.
+      // throw new NotFoundError(
+      //   `longUrl not found in cache:\tshortUrl=${shortUrl}`,
+      // )
+    }
   }
 
   /**
@@ -592,19 +583,12 @@ export class UrlRepository implements UrlRepositoryInterface {
   private cacheShortUrl: (
     shortUrl: string,
     redirectDestination: RedirectDestination,
-  ) => Promise<void> = (shortUrl, redirectDestination) => {
-    return new Promise((resolve, reject) => {
-      redirectClient.set(
-        shortUrl,
-        JSON.stringify(redirectDestination),
-        'EX',
-        redirectExpiry,
-        (err) => {
-          if (err) reject(err)
-          else resolve()
-        },
-      )
-    })
+  ) => Promise<void> = async (shortUrl, redirectDestination) => {
+    await redirectClient.setEx(
+      shortUrl,
+      redirectExpiry,
+      JSON.stringify(redirectDestination),
+    )
   }
 
   /**

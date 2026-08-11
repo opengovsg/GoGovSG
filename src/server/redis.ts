@@ -1,4 +1,4 @@
-import redis from 'redis'
+import { createClient } from 'redis'
 import {
   logger,
   redisOtpUri,
@@ -15,63 +15,62 @@ import {
 // With AWS ElastiCache, authentication is provided only
 // with encryption-in-transit, so TLS options must also
 // be provided.
+//
+// redis@6's createClient derives `socket.tls` from a `rediss://` URL
+// scheme automatically, so a `rediss://` value in the REDIS_*_URI env
+// vars still enables TLS with no extra options here.
+
+function createAndConnect(
+  url: string,
+  errorName: string,
+  connectedMessage: string,
+) {
+  const client = createClient({ url })
+    .on('connect', () => {
+      logger.info(connectedMessage)
+    })
+    .on('error', (error) => {
+      logger.error(`${errorName} error:${error}`)
+    })
+  // redis@6 no longer connects implicitly on createClient(); the 'error'
+  // listener above already logs connection failures, so this catch only
+  // exists to prevent an unhandled promise rejection from crashing the
+  // process.
+  client.connect().catch(() => {})
+  return client
+}
 
 // For storing OTPs
-export const otpClient = redis
-  .createClient({
-    url: redisOtpUri,
-  })
-  .on('connect', () => {
-    logger.info('otpClient connected')
-  })
-  .on('error', (error) => {
-    logger.error(`otpClient error:${error}`)
-  })
+export const otpClient = createAndConnect(
+  redisOtpUri,
+  'otpClient',
+  'otpClient connected',
+)
 
 // For user sessions
-export const sessionClient = redis
-  .createClient({
-    url: redisSessionUri,
-  })
-  .on('connect', () => {
-    logger.info('sessionClient client connected')
-  })
-  .on('error', (error) => {
-    logger.error(`sessionClient error:${error}`)
-  })
+export const sessionClient = createAndConnect(
+  redisSessionUri,
+  'sessionClient',
+  'sessionClient client connected',
+)
 
 // For caching short URLs
-export const redirectClient = redis
-  .createClient({
-    url: redisRedirectUri,
-  })
-  .on('connect', () => {
-    logger.info('redirectClient client connected')
-  })
-  .on('error', (error) => {
-    logger.error(`redirectClient error:${error}`)
-  })
+export const redirectClient = createAndConnect(
+  redisRedirectUri,
+  'redirectClient',
+  'redirectClient client connected',
+)
 
 // For storing computed statistics
-export const statClient = redis
-  .createClient({
-    url: redisStatUri,
-  })
-  .on('connect', () => {
-    logger.info('statClient client connected')
-  })
-  .on('error', (error) => {
-    logger.error(`statClient error:${error}`)
-  })
+export const statClient = createAndConnect(
+  redisStatUri,
+  'statClient',
+  'statClient client connected',
+)
 
 // For storing computed statistics
-export const safeBrowsingClient = redis
-  .createClient({
-    url: redisSafeBrowsingUri,
-  })
-  .on('connect', () => {
-    logger.info('safeBrowsingClient client connected')
-  })
-  .on('error', (error) => {
-    logger.error(`safeBrowsingClient error:${error}`)
-  })
+export const safeBrowsingClient = createAndConnect(
+  redisSafeBrowsingUri,
+  'safeBrowsingClient',
+  'safeBrowsingClient client connected',
+)
