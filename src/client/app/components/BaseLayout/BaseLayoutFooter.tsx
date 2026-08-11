@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
 import i18next from 'i18next'
-import Section from '../Section.js'
+import Section from '../Section'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

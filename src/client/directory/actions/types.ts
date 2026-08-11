@@ -1,5 +1,5 @@
-import { UrlTypePublic } from '../reducers/types.js'
-import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types.js'
+import { UrlTypePublic } from '../reducers/types'
+import { ReduxAction, ReduxPayloadAction } from '../../app/actions/types'
 
 export const SET_DIRECTORY_RESULTS = 'SET_DIRECTORY_RESULTS'
 export const SET_DIRECTORY_TABLE_CONFIG = 'SET_DIRECTORY_TABLE_CONFIG'

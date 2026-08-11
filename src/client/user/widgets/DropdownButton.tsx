@@ -6,7 +6,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import TrailingButton from '../components/Drawer/ControlPanel/widgets/TrailingButton.js'
+import TrailingButton from '../components/Drawer/ControlPanel/widgets/TrailingButton'
 import downloadIcon from '../assets/dropdown-icon.svg'
 
 const useStyles = makeStyles(() =>

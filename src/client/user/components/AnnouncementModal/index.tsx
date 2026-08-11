@@ -9,12 +9,12 @@ import {
   makeStyles,
 } from '@material-ui/core'
 
-import { GoGovReduxState } from '../../../app/reducers/types.js'
-import userActions from '../../actions/index.js'
-import useFullScreenDialog from '../../helpers/fullScreenDialog.js'
-import CloseIcon from '../../../app/components/widgets/CloseIcon.js'
-import { GAEvent } from '../../../app/util/ga.js'
-import { htmlSanitizer } from '../../../app/util/format.js'
+import { GoGovReduxState } from '../../../app/reducers/types'
+import userActions from '../../actions'
+import useFullScreenDialog from '../../helpers/fullScreenDialog'
+import CloseIcon from '../../../app/components/widgets/CloseIcon'
+import { GAEvent } from '../../../app/util/ga'
+import { htmlSanitizer } from '../../../app/util/format'
 
 type StyleProps = {
   isFullScreenDialog: boolean

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Table, createStyles, makeStyles } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import EnhancedTableBody from './EnhancedTableBody/index.js'
-import MemoTablePagination from './MemoTablePagination/index.js'
-import userActions from '../../../actions/index.js'
-import { GoGovReduxState } from '../../../../app/reducers/types.js'
-import { UrlTableConfig } from '../../../reducers/types.js'
+import EnhancedTableBody from './EnhancedTableBody'
+import MemoTablePagination from './MemoTablePagination'
+import userActions from '../../../actions'
+import { GoGovReduxState } from '../../../../app/reducers/types'
+import { UrlTableConfig } from '../../../reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

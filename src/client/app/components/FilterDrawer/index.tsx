@@ -9,7 +9,7 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import SortButton from '../widgets/SortPanel/SortButton/index.js'
+import SortButton from '../widgets/SortPanel/SortButton'
 
 type FilterDrawerProps = {
   labels: string[]

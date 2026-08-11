@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 
 import copyIcon from '@assets/widgets/user/copy-icon.svg'
-import OnClickTooltip from './OnClickTooltip.js'
+import OnClickTooltip from './OnClickTooltip'
 
 type StyleProps = {
   iconSize: number
