@@ -2,7 +2,7 @@
  * Request matching for the user page's link-table refetch.
  *
  * Lives in test/shared, not test/end-to-end/util, so jest can reach it --
- * jest.config.js excludes test/end-to-end via modulePathIgnorePatterns. The
+ * jest.config.cjs excludes test/end-to-end via modulePathIgnorePatterns. The
  * Playwright-bound wrapper is `userLinksRefetch` in util/waits.ts.
  */
 

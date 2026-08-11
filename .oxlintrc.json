@@ -297,7 +297,7 @@
     "no-underscore-dangle": [
       "error",
       {
-        "allow": ["__REDUX_DEVTOOLS_EXTENSION_COMPOSE__", "__dirname"],
+        "allow": ["__REDUX_DEVTOOLS_EXTENSION_COMPOSE__"],
         "allowAfterThis": false,
         "allowAfterSuper": false,
         "enforceInMethodNames": true
@@ -927,7 +927,7 @@
               "test.{js,jsx}",
               "test-*.{js,jsx}",
               "**/*{.,_}{test,spec}.{js,jsx}",
-              "**/jest.config.js",
+              "**/jest.config.cjs",
               "**/jest.setup.js",
               "**/vue.config.js",
               "**/webpack.config.js",
