@@ -46,9 +46,7 @@ describe('handleUriError', () => {
 
       handleUriError(req, res)
 
-      expect(res.badRequest).toHaveBeenCalledWith(
-        jsonMessage('Malformed URL'),
-      )
+      expect(res.badRequest).toHaveBeenCalledWith(jsonMessage('Malformed URL'))
       expect(res.status).not.toHaveBeenCalled()
       expect(res.render).not.toHaveBeenCalled()
     })
