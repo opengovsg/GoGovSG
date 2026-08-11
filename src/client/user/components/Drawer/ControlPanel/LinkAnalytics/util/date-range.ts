@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
-import { getLocalDayGroup } from '../../../../../../../server/util/time.js'
-import { DailyClicks } from '../../../../../../../shared/interfaces/link-statistics.js'
+import { getLocalDayGroup } from '../../../../../../../server/util/time'
+import { DailyClicks } from '../../../../../../../shared/interfaces/link-statistics'
 
 export const useDateRange = (days: number): DailyClicks[] => {
   const range: DailyClicks[] = []

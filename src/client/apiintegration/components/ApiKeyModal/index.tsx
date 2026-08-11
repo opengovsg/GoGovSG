@@ -10,12 +10,12 @@ import {
   createStyles,
   makeStyles,
 } from '@material-ui/core'
-import { GoGovReduxState } from '../../../app/reducers/types.js'
-import { GAEvent, GAPageView } from '../../../app/util/ga.js'
-import apiActions from '../../actions/index.js'
-import useFullScreenDialog from '../../../user/helpers/fullScreenDialog.js'
-import CopyIcon from '../../widgets/CopyIcon.js'
-import rootActions from '../../../app/components/pages/RootPage/actions/index.js'
+import { GoGovReduxState } from '../../../app/reducers/types'
+import { GAEvent, GAPageView } from '../../../app/util/ga'
+import apiActions from '../../actions'
+import useFullScreenDialog from '../../../user/helpers/fullScreenDialog'
+import CopyIcon from '../../widgets/CopyIcon'
+import rootActions from '../../../app/components/pages/RootPage/actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

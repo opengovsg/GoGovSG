@@ -3,13 +3,13 @@ import React, { useEffect } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { Timeline } from '@material-ui/lab/'
-import { GoGovReduxState } from '../../../../../app/reducers/types.js'
-import { useDrawerState } from '../../index.js'
+import { GoGovReduxState } from '../../../../../app/reducers/types'
+import { useDrawerState } from '../..'
 
-import userActions from '../../../../actions/index.js'
+import userActions from '../../../../actions'
 
-import LinkHistoryPagination from './LinkHistoryPagination.js'
-import LinkHistoryItem from './LinkHistoryItem.js'
+import LinkHistoryPagination from './LinkHistoryPagination'
+import LinkHistoryItem from './LinkHistoryItem'
 
 const useStyles = makeStyles(() =>
   createStyles({

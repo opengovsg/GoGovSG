@@ -15,17 +15,17 @@ import {
   useTheme,
 } from '@material-ui/core'
 import filterSortIcon from '@assets/components/user/user-link-table/toolbar/filtersort-icon.svg'
-import FilterSortPanel from '../FilterSortPanel/index.js'
-import userActions from '../../../../actions/index.js'
-import getSearchInputHeight from './searchInputHeight.js'
-import LinkIcon from '../../../../widgets/LinkIcon.js'
-import TagIcon from '../../../../widgets/TagIcon.js'
-import ArrowDownIcon from '../../../../../app/components/widgets/ArrowDownIcon.js'
-import SearchIcon from '../../../../../app/components/widgets/SearchIcon.js'
-import FilterDrawer from '../../../../../app/components/FilterDrawer/index.js'
-import { UrlTableConfig } from '../../../../reducers/types.js'
-import { GoGovReduxState } from '../../../../../app/reducers/types.js'
-import { SEARCH_TIMEOUT } from '../../../../constants.js'
+import FilterSortPanel from '../FilterSortPanel'
+import userActions from '../../../../actions'
+import getSearchInputHeight from './searchInputHeight'
+import LinkIcon from '../../../../widgets/LinkIcon'
+import TagIcon from '../../../../widgets/TagIcon'
+import ArrowDownIcon from '../../../../../app/components/widgets/ArrowDownIcon'
+import SearchIcon from '../../../../../app/components/widgets/SearchIcon'
+import FilterDrawer from '../../../../../app/components/FilterDrawer'
+import { UrlTableConfig } from '../../../../reducers/types'
+import { GoGovReduxState } from '../../../../../app/reducers/types'
+import { SEARCH_TIMEOUT } from '../../../../constants'
 
 type StyleProps = {
   searchInputHeight: number

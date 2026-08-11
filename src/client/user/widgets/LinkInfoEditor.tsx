@@ -10,19 +10,19 @@ import {
 } from '@material-ui/core'
 
 import { useSelector } from 'react-redux'
-import { GoGovReduxState } from '../../app/reducers/types.js'
-import { EmailValidatorType } from '../../login/actions/types.js'
-import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../shared/constants.js'
-import { isPrintableAscii } from '../../../shared/util/validation.js'
+import { GoGovReduxState } from '../../app/reducers/types'
+import { EmailValidatorType } from '../../login/actions/types'
+import { LINK_DESCRIPTION_MAX_LENGTH } from '../../../shared/constants'
+import { isPrintableAscii } from '../../../shared/util/validation'
 
-import BetaTag from '../../app/components/widgets/BetaTag/index.js'
-import CollapsibleMessage from '../../app/components/CollapsibleMessage/index.js'
-import ConfigOption, { TrailingPosition } from './ConfigOption.js'
-import PrefixableTextField from './PrefixableTextField.js'
+import BetaTag from '../../app/components/widgets/BetaTag'
+import CollapsibleMessage from '../../app/components/CollapsibleMessage'
+import ConfigOption, { TrailingPosition } from './ConfigOption'
+import PrefixableTextField from './PrefixableTextField'
 import {
   CollapsibleMessagePosition,
   CollapsibleMessageType,
-} from '../../app/components/CollapsibleMessage/types.js'
+} from '../../app/components/CollapsibleMessage/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

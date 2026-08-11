@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 import classNames from 'classnames'
-import userActions from '../../actions/index.js'
+import userActions from '../../actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

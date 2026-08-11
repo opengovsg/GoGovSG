@@ -1,5 +1,5 @@
-import { VariantType } from '../../app/util/types.js'
-import { EmailValidatorType } from '../actions/types.js'
+import { VariantType } from '../../app/util/types'
+import { EmailValidatorType } from '../actions/types'
 
 export type LoginState = {
   email: string

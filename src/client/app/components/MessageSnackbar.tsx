@@ -9,11 +9,11 @@ import {
   useTheme,
 } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
-import CheckCircleIcon from './widgets/CheckCircleIcon.js'
-import CloseIcon from './widgets/CloseIcon.js'
-import rootActions from './pages/RootPage/actions/index.js'
-import { snackbarVariants } from '../util/types.js'
-import { GoGovReduxState } from '../reducers/types.js'
+import CheckCircleIcon from './widgets/CheckCircleIcon'
+import CloseIcon from './widgets/CloseIcon'
+import rootActions from './pages/RootPage/actions'
+import { snackbarVariants } from '../util/types'
+import { GoGovReduxState } from '../reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

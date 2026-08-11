@@ -4,7 +4,7 @@ import i18next from 'i18next'
 import noApiKeyGraphic from '@assets/components/apiintegration/empty-api-key-graphic/empty-api-key-graphic.svg'
 import plusIcon from '@assets/components/app/base-layout/plus-icon.svg'
 import { useDispatch } from 'react-redux'
-import apiActions from '../../actions/index.js'
+import apiActions from '../../actions'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

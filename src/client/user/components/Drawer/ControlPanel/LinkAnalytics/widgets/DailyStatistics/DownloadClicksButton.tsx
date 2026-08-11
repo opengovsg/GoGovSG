@@ -3,12 +3,12 @@ import { useDispatch } from 'react-redux'
 import { saveAs } from 'file-saver'
 import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
-import rootActions from '../../../../../../../app/components/pages/RootPage/actions/index.js'
+import rootActions from '../../../../../../../app/components/pages/RootPage/actions'
 import downloadIcon from '../../assets/download.svg'
-import { get } from '../../../../../../../app/util/requests.js'
-import checkIsIE from '../../../../../../../app/components/BaseLayout/util/ie.js'
-import { useDrawerState } from '../../../../index.js'
-import { GAEvent } from '../../../../../../../app/util/ga.js'
+import { get } from '../../../../../../../app/util/requests'
+import checkIsIE from '../../../../../../../app/components/BaseLayout/util/ie'
+import { useDrawerState } from '../../../../index'
+import { GAEvent } from '../../../../../../../app/util/ga'
 
 async function downloadClicks(shortUrl: string, onError: () => void) {
   const offsetDays = 3650

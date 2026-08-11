@@ -8,8 +8,8 @@ import {
   makeStyles,
   useTheme,
 } from '@material-ui/core'
-import FileIconLarge from './FileIconLarge.js'
-import { formatBytes } from '../../app/util/format.js'
+import FileIconLarge from './FileIconLarge'
+import { formatBytes } from '../../app/util/format'
 
 type FileInputFieldStyleProps = {
   uploadFileError: string | null
