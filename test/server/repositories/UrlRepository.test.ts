@@ -116,7 +116,7 @@ describe('UrlRepository', () => {
     tagStrings: baseTagStrings,
   }
   beforeEach(async () => {
-    redisMockClient.flushall()
+    redisMockClient.flushAll()
     cacheGetSpy.mockClear()
     jest.clearAllMocks()
   })
@@ -627,13 +627,7 @@ describe('UrlRepository', () => {
     })
 
     it('should return from db when cache is down', async () => {
-      cacheGetSpy.mockImplementationOnce((_, callback) => {
-        if (!callback) {
-          return false
-        }
-        callback(new Error('Cache down'), 'Error')
-        return false
-      })
+      cacheGetSpy.mockRejectedValueOnce(new Error('Cache down'))
       await expect(repository.getLongUrl('a')).resolves.toEqual({
         longUrl: 'aa',
         isFile: false,
