@@ -1,15 +1,20 @@
 import { inject, injectable } from 'inversify'
 import bcrypt from 'bcrypt'
 import _crypto from 'crypto'
-import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface'
+import ApiKeyAuthServiceInterface from '../interfaces/ApiKeyAuthServiceInterface.js'
 import dogstatsd, {
   API_KEY_GENERATE,
   API_KEY_GENERATE_TAG_IS_NEW,
-} from '../../../util/dogstatsd'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
-import { API_KEY_SEPARATOR, DependencyIds } from '../../../constants'
-import { StorableUser } from '../../../repositories/types'
-import { apiAdmins, apiEnv, apiKeySalt, apiKeyVersion } from '../../../config'
+} from '../../../util/dogstatsd.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
+import { API_KEY_SEPARATOR, DependencyIds } from '../../../constants.js'
+import { StorableUser } from '../../../repositories/types.js'
+import {
+  apiAdmins,
+  apiEnv,
+  apiKeySalt,
+  apiKeyVersion,
+} from '../../../config.js'
 
 const BASE64_ENCODING = 'base64'
 @injectable()

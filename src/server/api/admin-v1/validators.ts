@@ -1,13 +1,13 @@
 import Joi from 'joi'
-import { isValidGovEmail } from '../../util/email'
+import { isValidGovEmail } from '../../util/email.js'
 import {
   isBlacklisted,
   isCircularRedirects,
   isHttps,
   isValidShortUrl,
   isValidUrl,
-} from '../../../shared/util/validation'
-import { ogHostname } from '../../config'
+} from '../../../shared/util/validation.js'
+import { ogHostname } from '../../config.js'
 
 export const urlSchema = Joi.object({
   userId: Joi.number().required(),

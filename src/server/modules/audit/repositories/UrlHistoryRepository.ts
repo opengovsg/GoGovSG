@@ -1,9 +1,9 @@
 import { injectable } from 'inversify'
 import _ from 'lodash'
 
-import { UrlHistory, UrlHistoryType } from '../../../models/url'
-import { User, UserType } from '../../../models/user'
-import * as interfaces from '../interfaces'
+import { UrlHistory, UrlHistoryType } from '../../../models/url.js'
+import { User, UserType } from '../../../models/user.js'
+import * as interfaces from '../interfaces/index.js'
 
 type UrlAuditHistoryType = UrlHistoryType & {
   user: UserType

@@ -1,3 +1,3 @@
-export { FileTypeFilterService } from './FileTypeFilterService'
-export { CloudmersiveScanService } from './CloudmersiveScanService'
-export { SafeBrowsingService } from './SafeBrowsingService'
+export { FileTypeFilterService } from './FileTypeFilterService.js'
+export { CloudmersiveScanService } from './CloudmersiveScanService.js'
+export { SafeBrowsingService } from './SafeBrowsingService.js'

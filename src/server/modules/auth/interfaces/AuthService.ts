@@ -1,4 +1,4 @@
-import { StorableUser } from '../../../repositories/types'
+import { StorableUser } from '../../../repositories/types.js'
 
 export interface AuthService {
   /**

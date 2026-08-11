@@ -1,4 +1,4 @@
 export {
   LinkAuditController,
   LinkAuditController as default,
-} from './LinkAuditController'
+} from './LinkAuditController.js'

@@ -1,8 +1,8 @@
 import { UAParser } from 'ua-parser-js'
 import { injectable } from 'inversify'
 
-import * as interfaces from '../interfaces'
-import { DeviceType } from '../interfaces'
+import * as interfaces from '../interfaces/index.js'
+import { DeviceType } from '../interfaces/index.js'
 
 const BOTS_USER_AGENTS =
   /bot|facebookexternalhit|Facebot|Slackbot|TelegramBot|WhatsApp|Twitterbot|Pinterest|Postman|url|Google-PageRenderer/

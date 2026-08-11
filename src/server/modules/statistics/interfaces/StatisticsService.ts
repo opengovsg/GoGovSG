@@ -1,4 +1,4 @@
-import { GlobalStatistics } from '..'
+import { GlobalStatistics } from '../index.js'
 
 export interface StatisticsService {
   getGlobalStatistics: () => GlobalStatistics

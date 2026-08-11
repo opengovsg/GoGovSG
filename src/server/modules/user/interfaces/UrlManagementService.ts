@@ -1,11 +1,11 @@
-import { StorableUrlSource } from '../../../repositories/enums'
+import { StorableUrlSource } from '../../../repositories/enums.js'
 import {
   BulkUrlMapping,
   StorableUrl,
   UrlsPaginated,
   UserUrlsQueryConditions,
-} from '../../../repositories/types'
-import { GoUploadedFile, UpdateUrlOptions } from '..'
+} from '../../../repositories/types.js'
+import { GoUploadedFile, UpdateUrlOptions } from '../index.js'
 
 export interface UrlManagementService {
   bulkCreate: (

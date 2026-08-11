@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
-import { LinkAuditService } from './interfaces'
-import { DependencyIds } from '../../constants'
-import { NotFoundError } from '../../util/error'
-import jsonMessage from '../../util/json'
+import { LinkAuditService } from './interfaces/index.js'
+import { DependencyIds } from '../../constants.js'
+import { NotFoundError } from '../../util/error.js'
+import jsonMessage from '../../util/json.js'
 
 @injectable()
 export class LinkAuditController {
