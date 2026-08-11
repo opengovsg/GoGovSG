@@ -1,9 +1,9 @@
 import React from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
-import { DeviceClicks } from '../../../../../../shared/interfaces/link-statistics'
-import FlexibleBar from './widgets/DeviceStatistics/FlexibleBar'
-import DeviceLegend from './widgets/DeviceStatistics/DeviceLegend'
-import BaseStatisticsLayout from './BaseStatisticsLayout'
+import { DeviceClicks } from '../../../../../../shared/interfaces/link-statistics.js'
+import FlexibleBar from './widgets/DeviceStatistics/FlexibleBar.js'
+import DeviceLegend from './widgets/DeviceStatistics/DeviceLegend.js'
+import BaseStatisticsLayout from './BaseStatisticsLayout.js'
 
 export type ProcessedStatistic = {
   label: string

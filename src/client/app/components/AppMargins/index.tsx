@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import { createStyles, makeStyles } from '@material-ui/core'
 
-import useAppMargins from './appMargins'
+import useAppMargins from './appMargins.js'
 
 type styleProps = {
   appMargins: number

@@ -14,14 +14,14 @@ import {
 } from '@material-ui/core'
 import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
 import i18next from 'i18next'
-import { UrlTypePublic } from '../../../../reducers/types'
-import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
-import { SetSuccessMessageAction } from '../../../../../app/components/pages/RootPage/actions/types'
-import rootActions from '../../../../../app/components/pages/RootPage/actions'
-import DirectoryFileIcon from '../../../../widgets/DirectoryFileIcon'
-import DirectoryUrlIcon from '../../../../widgets/DirectoryUrlIcon'
-import { GoGovReduxState } from '../../../../../app/reducers/types'
-import { GAEvent } from '../../../../../app/util/ga'
+import { UrlTypePublic } from '../../../../reducers/types.js'
+import useAppMargins from '../../../../../app/components/AppMargins/appMargins.js'
+import { SetSuccessMessageAction } from '../../../../../app/components/pages/RootPage/actions/types.js'
+import rootActions from '../../../../../app/components/pages/RootPage/actions/index.js'
+import DirectoryFileIcon from '../../../../widgets/DirectoryFileIcon.js'
+import DirectoryUrlIcon from '../../../../widgets/DirectoryUrlIcon.js'
+import { GoGovReduxState } from '../../../../../app/reducers/types.js'
+import { GAEvent } from '../../../../../app/util/ga.js'
 
 type DirectoryTableRowProps = {
   url: UrlTypePublic

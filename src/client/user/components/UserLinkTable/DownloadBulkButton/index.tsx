@@ -1,11 +1,14 @@
 import React from 'react'
 
-import { GAEvent } from '../../../../app/util/ga'
-import { DropdownButton, DropdownOption } from '../../../widgets/DropdownButton'
+import { GAEvent } from '../../../../app/util/ga.js'
+import {
+  DropdownButton,
+  DropdownOption,
+} from '../../../widgets/DropdownButton.js'
 import {
   BULK_QR_DOWNLOAD_FORMATS,
   BULK_QR_DOWNLOAD_MAPPINGS,
-} from '../../../../../shared/constants'
+} from '../../../../../shared/constants.js'
 
 function downloadFileFromS3(
   format: BULK_QR_DOWNLOAD_FORMATS,

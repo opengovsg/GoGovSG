@@ -9,11 +9,11 @@ import {
   useTheme,
 } from '@material-ui/core'
 import arrow from '@assets/components/directory/directory-header/arrow.svg'
-import { ApplyAppMargins } from '../../../app/components/AppMargins'
-import GoDirectoryInput from './DirectoryInput'
-import { SearchResultsSortOrder } from '../../../../shared/search'
-import useAppMargins from '../../../app/components/AppMargins/appMargins'
-import BetaTag from '../../../app/components/widgets/BetaTag'
+import { ApplyAppMargins } from '../../../app/components/AppMargins/index.js'
+import GoDirectoryInput from './DirectoryInput/index.js'
+import { SearchResultsSortOrder } from '../../../../shared/search.js'
+import useAppMargins from '../../../app/components/AppMargins/appMargins.js'
+import BetaTag from '../../../app/components/widgets/BetaTag/index.js'
 
 type DirectoryHeaderProps = {
   onQueryChange: (query: string) => void
