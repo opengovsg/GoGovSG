@@ -1,7 +1,10 @@
 import Sequelize from 'sequelize'
-import { sequelize } from '../util/sequelize'
-import { IdType } from '../../types/server/models'
-import { TAG_KEY_REGEX, TAG_STRING_REGEX } from '../../shared/util/validation'
+import { sequelize } from '../util/sequelize.js'
+import { IdType } from '../../types/server/models/index.js'
+import {
+  TAG_KEY_REGEX,
+  TAG_STRING_REGEX,
+} from '../../shared/util/validation.js'
 
 export interface TagType extends IdType, Sequelize.Model {
   readonly tagString: string

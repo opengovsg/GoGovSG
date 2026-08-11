@@ -2,19 +2,22 @@ import { injectable } from 'inversify'
 import { Op, QueryTypes } from 'sequelize'
 import _ from 'lodash'
 
-import { Url, UrlType } from '../../../models/url'
-import { UrlClicks } from '../../../models/statistics/clicks'
-import { DailyClicks, DailyClicksType } from '../../../models/statistics/daily'
-import { Devices, DevicesType } from '../../../models/statistics/devices'
+import { Url, UrlType } from '../../../models/url.js'
+import { UrlClicks } from '../../../models/statistics/clicks.js'
+import {
+  DailyClicks,
+  DailyClicksType,
+} from '../../../models/statistics/daily.js'
+import { Devices, DevicesType } from '../../../models/statistics/devices.js'
 import {
   WeekdayClicks,
   WeekdayClicksType,
-} from '../../../models/statistics/weekday'
-import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
-import * as interfaces from '../interfaces'
-import { getLocalDayGroup } from '../../../util/time'
-import { sequelize } from '../../../util/sequelize'
-import { DeviceType } from '../interfaces'
+} from '../../../models/statistics/weekday.js'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics.js'
+import * as interfaces from '../interfaces/index.js'
+import { getLocalDayGroup } from '../../../util/time.js'
+import { sequelize } from '../../../util/sequelize.js'
+import { DeviceType } from '../interfaces/index.js'
 
 // Get the relevant table names from their models.
 const urlClicksTable = UrlClicks.getTableName()

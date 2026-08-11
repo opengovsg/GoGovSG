@@ -1,34 +1,34 @@
 import { inject, injectable } from 'inversify'
-import { getSafeBrowsingExpiryDate } from '../../../util/safeBrowsing'
-import { GoUploadedFile, UpdateUrlOptions } from '..'
-import { apiLinkRandomStrLength } from '../../../config'
-import { DependencyIds } from '../../../constants'
-import { BULK } from '../../../models/types'
-import { StorableUrlSource } from '../../../repositories/enums'
-import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
+import { getSafeBrowsingExpiryDate } from '../../../util/safeBrowsing.js'
+import { GoUploadedFile, UpdateUrlOptions } from '../index.js'
+import { apiLinkRandomStrLength } from '../../../config.js'
+import { DependencyIds } from '../../../constants.js'
+import { BULK } from '../../../models/types.js'
+import { StorableUrlSource } from '../../../repositories/enums.js'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
 import {
   BulkUrlMapping,
   StorableFile,
   StorableUrl,
   UrlsPaginated,
   UserUrlsQueryConditions,
-} from '../../../repositories/types'
-import { Mailer } from '../../../services/email'
+} from '../../../repositories/types.js'
+import { Mailer } from '../../../services/email.js'
 import dogstatsd, {
   SHORTLINK_CREATE,
   SHORTLINK_CREATE_TAG_IS_FILE,
   SHORTLINK_CREATE_TAG_SOURCE,
-} from '../../../util/dogstatsd'
+} from '../../../util/dogstatsd.js'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
   InvalidUrlUpdateError,
   NotFoundError,
-} from '../../../util/error'
-import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
-import generateShortUrl from '../../../util/url'
-import * as interfaces from '../interfaces'
+} from '../../../util/error.js'
+import { addFileExtension, getFileExtension } from '../../../util/fileFormat.js'
+import generateShortUrl from '../../../util/url.js'
+import * as interfaces from '../interfaces/index.js'
 
 const API_LINK_RANDOM_STR_LENGTH = apiLinkRandomStrLength
 

@@ -1,9 +1,9 @@
 import Express from 'express'
 import Joi from 'joi'
 import { createValidator } from 'express-joi-validation'
-import { container } from '../util/inversify'
-import { JobController } from '../modules/job'
-import { DependencyIds } from '../constants'
+import { container } from '../util/inversify.js'
+import { JobController } from '../modules/job/index.js'
+import { DependencyIds } from '../constants.js'
 
 const router = Express.Router()
 const validator = createValidator({ passError: true })

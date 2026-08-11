@@ -1,21 +1,21 @@
 import { injectable } from 'inversify'
 import * as Papa from 'papaparse'
 import { UploadedFile } from 'express-fileupload'
-import * as interfaces from '../interfaces/BulkService'
+import * as interfaces from '../interfaces/BulkService.js'
 
 import {
   bulkUploadMaxNum,
   bulkUploadRandomStrLength,
   ogHostname,
-} from '../../../config'
-import { BULK_UPLOAD_HEADER } from '../../../../shared/constants'
-import { BulkUrlMapping } from '../../../repositories/types'
-import * as validators from '../../../../shared/util/validation'
-import generateShortUrl from '../../../util/url'
+} from '../../../config.js'
+import { BULK_UPLOAD_HEADER } from '../../../../shared/constants.js'
+import { BulkUrlMapping } from '../../../repositories/types.js'
+import * as validators from '../../../../shared/util/validation.js'
+import generateShortUrl from '../../../util/url.js'
 import dogstatsd, {
   BULK_VALIDATION_ERROR,
   BULK_VALIDATION_ERROR_TAGS,
-} from '../../../util/dogstatsd'
+} from '../../../util/dogstatsd.js'
 
 const BULK_UPLOAD_RANDOM_STR_LENGTH = bulkUploadRandomStrLength
 const BULK_UPLOAD_MAX_NUM = bulkUploadMaxNum

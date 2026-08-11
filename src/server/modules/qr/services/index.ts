@@ -1,1 +1,1 @@
-export { QrCodeService, QrCodeService as default } from './QrCodeService'
+export { QrCodeService, QrCodeService as default } from './QrCodeService.js'

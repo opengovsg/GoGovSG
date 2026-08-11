@@ -1,13 +1,13 @@
 import { inject, injectable } from 'inversify'
 
-import { DependencyIds } from '../../../constants'
-import * as interfaces from '../interfaces'
-import { LinkStatisticsRepository } from '../interfaces'
-import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
-import { NotFoundError } from '../../../util/error'
-import { logger } from '../../../config'
-import { DeviceCheckService } from './DeviceCheckService'
+import { DependencyIds } from '../../../constants.js'
+import * as interfaces from '../interfaces/index.js'
+import { LinkStatisticsRepository } from '../interfaces/index.js'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
+import { NotFoundError } from '../../../util/error.js'
+import { logger } from '../../../config.js'
+import { DeviceCheckService } from './DeviceCheckService.js'
 
 @injectable()
 export class LinkStatisticsService implements interfaces.LinkStatisticsService {

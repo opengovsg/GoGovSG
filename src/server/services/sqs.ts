@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs'
-import { DependencyIds } from '../constants'
-import { logger, sqsBulkQRCodeStartUrl } from '../config'
+import { DependencyIds } from '../constants.js'
+import { logger, sqsBulkQRCodeStartUrl } from '../config.js'
 
 export interface SQSServiceInterface {
   sendMessage(message: any): Promise<void>

@@ -4,8 +4,8 @@ import winston, { createLogger, format, transports } from 'winston'
 import * as minimatch from 'minimatch'
 import { parse } from 'url'
 import { parse as parseUri } from 'pg-connection-string'
-import assetVariant from '../shared/util/asset-variant'
-import generateOTP, { OtpFunction } from './util/otp'
+import assetVariant from '../shared/util/asset-variant.js'
+import generateOTP, { OtpFunction } from './util/otp.js'
 
 // Check environment
 export const DEV_ENV: boolean = process.env.NODE_ENV === 'development'

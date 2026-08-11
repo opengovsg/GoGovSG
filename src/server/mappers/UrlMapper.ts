@@ -1,9 +1,9 @@
 /* eslint-disable class-methods-use-this, no-dupe-class-members */
 import { injectable } from 'inversify'
-import { StorableUrl } from '../repositories/types'
-import { UrlType } from '../models/url'
-import { Mapper } from './Mapper'
-import { TAG_SEPARATOR } from '../../shared/constants'
+import { StorableUrl } from '../repositories/types.js'
+import { UrlType } from '../models/url.js'
+import { Mapper } from './Mapper.js'
+import { TAG_SEPARATOR } from '../../shared/constants.js'
 
 @injectable()
 export class UrlMapper implements Mapper<StorableUrl, UrlType> {

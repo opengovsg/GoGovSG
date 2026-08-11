@@ -1,7 +1,7 @@
-export { JobItemRepository } from './JobItemRepository'
-export { JobRepository } from './JobRepository'
+export { JobItemRepository } from './JobItemRepository.js'
+export { JobRepository } from './JobRepository.js'
 export {
   JobItemCallbackStatus,
   JobInformation,
   JobManagementService,
-} from './JobManagementService'
+} from './JobManagementService.js'

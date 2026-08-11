@@ -6,10 +6,10 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
 
-import assetVariant from '../../../../shared/util/asset-variant'
-import ImageFormat from '../../../../shared/util/image-format'
+import assetVariant from '../../../../shared/util/asset-variant.js'
+import ImageFormat from '../../../../shared/util/image-format.js'
 
-import * as interfaces from '../interfaces'
+import * as interfaces from '../interfaces/index.js'
 
 // @ts-ignore TS1470 - import.meta is invalid under tsc's current CJS-per-file
 // detection until Task 9 flips package.json to "type": "module"; valid at

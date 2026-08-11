@@ -1,7 +1,7 @@
 import Express from 'express'
-import { container } from '../util/inversify'
-import { LogoutController } from '../modules/auth/LogoutController'
-import { DependencyIds } from '../constants'
+import { container } from '../util/inversify.js'
+import { LogoutController } from '../modules/auth/LogoutController.js'
+import { DependencyIds } from '../constants.js'
 
 const router = Express.Router()
 const logoutController = container.get<LogoutController>(

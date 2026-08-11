@@ -1,2 +1,2 @@
-export { AuthService } from './AuthService'
-export { CryptographyBcrypt } from './CryptographyBcrypt'
+export { AuthService } from './AuthService.js'
+export { CryptographyBcrypt } from './CryptographyBcrypt.js'

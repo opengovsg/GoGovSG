@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
-import * as interfaces from '../interfaces'
-import { NotFoundError } from '../../../util/error'
-import { DependencyIds } from '../../../constants'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
+import * as interfaces from '../interfaces/index.js'
+import { NotFoundError } from '../../../util/error.js'
+import { DependencyIds } from '../../../constants.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
 
 @injectable()
 export class LinkAuditService implements interfaces.LinkAuditService {

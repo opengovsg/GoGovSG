@@ -1,12 +1,12 @@
 import Express from 'express'
 import rateLimit from 'express-rate-limit'
 import { createValidator } from 'express-joi-validation'
-import getIp from '../../util/request'
-import { otpGenerationSchema, otpVerificationSchema } from './validators'
-import { container } from '../../util/inversify'
-import { LoginController } from '../../modules/auth'
-import { DependencyIds } from '../../constants'
-import { logger, otpRateLimit } from '../../config'
+import getIp from '../../util/request.js'
+import { otpGenerationSchema, otpVerificationSchema } from './validators.js'
+import { container } from '../../util/inversify.js'
+import { LoginController } from '../../modules/auth/index.js'
+import { DependencyIds } from '../../constants.js'
+import { logger, otpRateLimit } from '../../config.js'
 
 const router: Express.Router = Express.Router()
 

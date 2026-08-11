@@ -1,12 +1,12 @@
 /* eslint-disable class-methods-use-this */
 
 import { inject, injectable } from 'inversify'
-import { safeBrowsingClient } from '../../../redis'
-import * as interfaces from '../interfaces'
-import { TwoWayMapper } from '../../../mappers/TwoWayMapper'
-import { DependencyIds } from '../../../constants'
-import { NotFoundError } from '../../../util/error'
-import { WebRiskThreat } from '../../../repositories/types'
+import { safeBrowsingClient } from '../../../redis.js'
+import * as interfaces from '../interfaces/index.js'
+import { TwoWayMapper } from '../../../mappers/TwoWayMapper.js'
+import { DependencyIds } from '../../../constants.js'
+import { NotFoundError } from '../../../util/error.js'
+import { WebRiskThreat } from '../../../repositories/types.js'
 
 // set default threat cache
 const DEFAULT_CACHE_DURATION_IN_S = 300

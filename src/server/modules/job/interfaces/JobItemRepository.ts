@@ -1,5 +1,5 @@
-import { JobItemType } from '../../../models/job'
-import { JobItemStatusEnum } from '../../../../shared/util/jobs'
+import { JobItemType } from '../../../models/job.js'
+import { JobItemStatusEnum } from '../../../../shared/util/jobs.js'
 
 export interface JobItemRepository {
   findByJobItemId(jobItemId: string): Promise<JobItemType | null>

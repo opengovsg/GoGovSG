@@ -1,4 +1,4 @@
 export {
   DirectorySearchService,
   DirectorySearchService as default,
-} from './DirectorySearchService'
+} from './DirectorySearchService.js'

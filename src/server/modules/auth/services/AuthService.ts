@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify'
-import { Mailer } from '../../../services/email'
-import { Cryptography, OtpRepository } from '../interfaces'
-import { DependencyIds } from '../../../constants'
-import { getOTP, logger, saltRounds } from '../../../config'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
-import { StorableOtp, StorableUser } from '../../../repositories/types'
-import * as interfaces from '../interfaces'
-import { InvalidOtpError, NotFoundError } from '../../../util/error'
+import { Mailer } from '../../../services/email.js'
+import { Cryptography, OtpRepository } from '../interfaces/index.js'
+import { DependencyIds } from '../../../constants.js'
+import { getOTP, logger, saltRounds } from '../../../config.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
+import { StorableOtp, StorableUser } from '../../../repositories/types.js'
+import * as interfaces from '../interfaces/index.js'
+import { InvalidOtpError, NotFoundError } from '../../../util/error.js'
 
 @injectable()
 export class AuthService implements interfaces.AuthService {

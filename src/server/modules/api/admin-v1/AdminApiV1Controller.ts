@@ -2,18 +2,18 @@ import Express from 'express'
 import { inject, injectable } from 'inversify'
 import Sequelize from 'sequelize'
 
-import { logger } from '../../../config'
-import { DependencyIds } from '../../../constants'
-import jsonMessage from '../../../util/json'
-import { AlreadyExistsError, NotFoundError } from '../../../util/error'
+import { logger } from '../../../config.js'
+import { DependencyIds } from '../../../constants.js'
+import jsonMessage from '../../../util/json.js'
+import { AlreadyExistsError, NotFoundError } from '../../../util/error.js'
 
-import { UrlManagementService } from '../../user/interfaces'
-import { MessageType } from '../../../../shared/util/messages'
-import { StorableUrlSource } from '../../../repositories/enums'
+import { UrlManagementService } from '../../user/interfaces/index.js'
+import { MessageType } from '../../../../shared/util/messages.js'
+import { StorableUrlSource } from '../../../repositories/enums.js'
 
-import { UrlCreationRequest } from '.'
-import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
-import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface'
+import { UrlCreationRequest } from './index.js'
+import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper.js'
+import { UserRepositoryInterface } from '../../../repositories/interfaces/UserRepositoryInterface.js'
 
 @injectable()
 export class AdminApiV1Controller {

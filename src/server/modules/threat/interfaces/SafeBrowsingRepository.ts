@@ -1,4 +1,4 @@
-import { WebRiskThreat } from '../../../repositories/types'
+import { WebRiskThreat } from '../../../repositories/types.js'
 
 export interface SafeBrowsingRepository {
   /**

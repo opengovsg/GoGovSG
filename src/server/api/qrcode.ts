@@ -2,11 +2,11 @@ import Express from 'express'
 import Joi from 'joi'
 import { createValidator } from 'express-joi-validation'
 
-import ImageFormat from '../../shared/util/image-format'
-import { QrCodeController } from '../modules/qr'
-import { isValidShortUrl } from '../../shared/util/validation'
-import { container } from '../util/inversify'
-import { DependencyIds } from '../constants'
+import ImageFormat from '../../shared/util/image-format.js'
+import { QrCodeController } from '../modules/qr/index.js'
+import { isValidShortUrl } from '../../shared/util/validation.js'
+import { container } from '../util/inversify.js'
+import { DependencyIds } from '../constants.js'
 
 const qrCodeController = container.get<QrCodeController>(
   DependencyIds.qrCodeController,

@@ -1,19 +1,19 @@
 import Sequelize from 'sequelize'
-import { UrlClicks, UrlClicksType } from './statistics/clicks'
-import { ACTIVE, API, BULK, CONSOLE, INACTIVE } from './types'
+import { UrlClicks, UrlClicksType } from './statistics/clicks.js'
+import { ACTIVE, API, BULK, CONSOLE, INACTIVE } from './types.js'
 import {
   SHORT_URL_REGEX,
   isBlacklisted,
   isCircularRedirects,
   isHttps,
   isValidUrl,
-} from '../../shared/util/validation'
-import { sequelize } from '../util/sequelize'
-import { IdType } from '../../types/server/models'
-import { DEV_ENV, emailValidator, ogHostname } from '../config'
-import { StorableUrlSource, StorableUrlState } from '../repositories/enums'
-import { urlSearchVector } from './search'
-import { TagType } from './tag'
+} from '../../shared/util/validation.js'
+import { sequelize } from '../util/sequelize.js'
+import { IdType } from '../../types/server/models/index.js'
+import { DEV_ENV, emailValidator, ogHostname } from '../config.js'
+import { StorableUrlSource, StorableUrlState } from '../repositories/enums.js'
+import { urlSearchVector } from './search.js'
+import { TagType } from './tag.js'
 
 export interface UrlBaseType extends IdType {
   readonly shortUrl: string

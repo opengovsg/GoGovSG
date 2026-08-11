@@ -1,8 +1,8 @@
 import { injectable } from 'inversify'
-import { JobItem, JobItemType } from '../../../models/job'
-import * as interfaces from '../interfaces'
-import { JobItemStatusEnum } from '../../../../shared/util/jobs'
-import { NotFoundError } from '../../../util/error'
+import { JobItem, JobItemType } from '../../../models/job.js'
+import * as interfaces from '../interfaces/index.js'
+import { JobItemStatusEnum } from '../../../../shared/util/jobs.js'
+import { NotFoundError } from '../../../util/error.js'
 
 @injectable()
 export class JobItemRepository implements interfaces.JobItemRepository {

@@ -1,2 +1,2 @@
-export { LinkStatisticsService } from './LinkStatisticsService'
-export { DeviceCheckService } from './DeviceCheckService'
+export { LinkStatisticsService } from './LinkStatisticsService.js'
+export { DeviceCheckService } from './DeviceCheckService.js'

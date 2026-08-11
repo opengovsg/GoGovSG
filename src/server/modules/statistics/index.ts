@@ -1,4 +1,4 @@
-import { StatisticsController } from './StatisticsController'
+import { StatisticsController } from './StatisticsController.js'
 
 export type GlobalStatistics = {
   userCount: number
@@ -6,6 +6,6 @@ export type GlobalStatistics = {
   linkCount: number
 }
 
-export { StatisticsController } from './StatisticsController'
+export { StatisticsController } from './StatisticsController.js'
 
 export default StatisticsController

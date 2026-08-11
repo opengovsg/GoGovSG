@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
-import * as interfaces from '../interfaces'
-import { DependencyIds } from '../../../constants'
-import { FileTypeData } from '../interfaces/FileTypeFilterService'
+import * as interfaces from '../interfaces/index.js'
+import { DependencyIds } from '../../../constants.js'
+import { FileTypeData } from '../interfaces/FileTypeFilterService.js'
 
 export const DEFAULT_ALLOWED_FILE_EXTENSIONS = [
   'avi',

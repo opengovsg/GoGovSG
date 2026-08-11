@@ -1,11 +1,15 @@
 import fetch from 'cross-fetch'
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
-import { UrlThreatScanService } from '../interfaces'
-import { logger, safeBrowsingKey, safeBrowsingLogOnly } from '../../../config'
-import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository'
-import { DependencyIds } from '../../../constants'
-import { WebRiskThreat } from '../../../repositories/types'
+import { UrlThreatScanService } from '../interfaces/index.js'
+import {
+  logger,
+  safeBrowsingKey,
+  safeBrowsingLogOnly,
+} from '../../../config.js'
+import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository.js'
+import { DependencyIds } from '../../../constants.js'
+import { WebRiskThreat } from '../../../repositories/types.js'
 
 const ENDPOINT = `https://webrisk.googleapis.com/v1/uris:search?key=${safeBrowsingKey}`
 const WEB_RISK_THREAT_TYPES = [

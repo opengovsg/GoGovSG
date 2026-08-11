@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this, no-dupe-class-members */
 import { injectable } from 'inversify'
-import { StorableOtp } from '../repositories/types'
-import { TwoWayMapper } from './TwoWayMapper'
+import { StorableOtp } from '../repositories/types.js'
+import { TwoWayMapper } from './TwoWayMapper.js'
 
 @injectable()
 export class OtpMapper implements TwoWayMapper<StorableOtp, string> {

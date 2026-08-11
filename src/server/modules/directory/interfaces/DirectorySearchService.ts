@@ -1,5 +1,5 @@
-import { UrlDirectoryPaginated } from '../../../repositories/types'
-import { DirectoryQueryConditions } from '..'
+import { UrlDirectoryPaginated } from '../../../repositories/types.js'
+import { DirectoryQueryConditions } from '../index.js'
 
 /**
  * Access url repository for search base on query parameters.

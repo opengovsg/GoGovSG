@@ -1,4 +1,4 @@
 export {
   QrCodeController,
   QrCodeController as default,
-} from './QrCodeController'
+} from './QrCodeController.js'

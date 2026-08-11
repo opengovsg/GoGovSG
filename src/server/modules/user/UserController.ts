@@ -2,31 +2,38 @@ import Express from 'express'
 import { inject, injectable } from 'inversify'
 
 import Sequelize from 'sequelize'
-import { OwnershipTransferRequest, UrlCreationRequest, UrlEditRequest } from '.'
-import jsonMessage from '../../util/json'
-import { DependencyIds } from '../../constants'
+import {
+  OwnershipTransferRequest,
+  UrlCreationRequest,
+  UrlEditRequest,
+} from './index.js'
+import jsonMessage from '../../util/json.js'
+import { DependencyIds } from '../../constants.js'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
   InvalidUrlUpdateError,
   NotFoundError,
-} from '../../util/error'
-import { MessageType } from '../../../shared/util/messages'
-import { StorableUrlSource, StorableUrlState } from '../../repositories/enums'
+} from '../../util/error.js'
+import { MessageType } from '../../../shared/util/messages.js'
+import {
+  StorableUrlSource,
+  StorableUrlState,
+} from '../../repositories/enums.js'
 
-import { logger } from '../../config'
-import { UrlManagementService } from './interfaces/UrlManagementService'
+import { logger } from '../../config.js'
+import { UrlManagementService } from './interfaces/UrlManagementService.js'
 import {
   userTagsQueryConditions,
   userUrlsQueryConditions,
-} from '../../api/user/validators'
+} from '../../api/user/validators.js'
 import dogstatsd, {
   SEARCH_USER_URL,
   SEARCH_USER_URL_TAG_IS_TAG,
-} from '../../util/dogstatsd'
-import TagManagementServiceInterface from './interfaces/TagManagementService'
-import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
-import { UserUrlsQueryConditions } from '../../repositories/types'
+} from '../../util/dogstatsd.js'
+import TagManagementServiceInterface from './interfaces/TagManagementService.js'
+import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface.js'
+import { UserUrlsQueryConditions } from '../../repositories/types.js'
 
 type AnnouncementResponse = {
   message?: string

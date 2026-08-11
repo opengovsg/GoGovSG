@@ -1,4 +1,4 @@
-import { StorableOtp } from '../../../repositories/types'
+import { StorableOtp } from '../../../repositories/types.js'
 
 export interface OtpRepository {
   /**

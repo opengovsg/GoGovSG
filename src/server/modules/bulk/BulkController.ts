@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { UploadedFile } from 'express-fileupload'
-import jsonMessage from '../../util/json'
-import { DependencyIds } from '../../constants'
-import { BulkService } from './interfaces'
-import { UrlManagementService } from '../user/interfaces'
+import jsonMessage from '../../util/json.js'
+import { DependencyIds } from '../../constants.js'
+import { BulkService } from './interfaces/index.js'
+import { UrlManagementService } from '../user/interfaces/index.js'
 import dogstatsd, {
   BULK_CREATE_FAILURE,
   BULK_CREATE_SUCCESS,
-} from '../../util/dogstatsd'
-import { logger, shouldGenerateQRCodes } from '../../config'
-import { MessageType } from '../../../shared/util/messages'
+} from '../../util/dogstatsd.js'
+import { logger, shouldGenerateQRCodes } from '../../config.js'
+import { MessageType } from '../../../shared/util/messages.js'
 
 @injectable()
 export class BulkController {

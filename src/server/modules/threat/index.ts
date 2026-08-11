@@ -1,2 +1,2 @@
-export { FileCheckController } from './FileCheckController'
-export { UrlCheckController } from './UrlCheckController'
+export { FileCheckController } from './FileCheckController.js'
+export { UrlCheckController } from './UrlCheckController.js'
