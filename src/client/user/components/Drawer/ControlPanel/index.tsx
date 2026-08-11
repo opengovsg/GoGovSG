@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import useAppDispatch from '../../../../app/hooks'
 import {
   Button,
   Divider,
@@ -12,7 +13,6 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import { useDispatch } from 'react-redux'
 
 import BackIcon from './widgets/BackIcon'
 import { DrawerActions } from './util/reducers'
@@ -154,7 +154,7 @@ export default function ControlPanel() {
   const drawerStates = useDrawerState()
   const drawerIsOpen = drawerStates.controlPanelIsOpen
   const modalDispatch = useDrawerDispatch()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   // Fetch short link state and dispatches from redux store through our helper hook.
   const { shortLinkState, shortLinkDispatch } = useShortLink(

@@ -1,5 +1,6 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
 import {
   Grid,
   Hidden,
@@ -203,7 +204,7 @@ export default function EnhancedTableBody() {
   )
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const drawerDispatch = useDrawerDispatch()
   const openControlPanel = (shortlink: string) =>
     drawerDispatch({ type: DrawerActions.openControlPanel, payload: shortlink })

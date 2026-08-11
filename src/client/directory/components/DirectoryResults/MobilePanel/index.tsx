@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react'
+import useAppDispatch from '../../../../app/hooks'
 import copy from 'copy-to-clipboard'
-import { useDispatch } from 'react-redux'
+
 import {
   Button,
   Divider,
@@ -95,7 +96,7 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
 }: MobilePanelProps) => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const onCopyEmail = () => {
     copy(url.email)

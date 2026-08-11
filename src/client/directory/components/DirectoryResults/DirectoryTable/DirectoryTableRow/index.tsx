@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
 import copy from 'copy-to-clipboard'
 import {
   Hidden,
@@ -193,7 +194,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
   const classes = useStyles({ appMargins })
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const query = useSelector(
     (state: GoGovReduxState) => state.directory.queryForResult,
   )
