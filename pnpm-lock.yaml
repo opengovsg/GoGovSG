@@ -318,9 +318,6 @@ importers:
       '@types/react-router-dom':
         specifier: ^5.3.3
         version: 5.3.3
-      '@types/redis-mock':
-        specifier: ^0.17.3
-        version: 0.17.3
       '@types/sanitize-html':
         specifier: ^2.16.1
         version: 2.16.1
@@ -405,9 +402,6 @@ importers:
       querystring-es3:
         specifier: ^0.2.1
         version: 0.2.1
-      redis-mock:
-        specifier: ^0.56.3
-        version: 0.56.3
       sequelize-cli:
         specifier: 6.6.5
         version: 6.6.5
@@ -3121,12 +3115,6 @@ packages:
 
   '@types/react@17.0.93':
     resolution: {integrity: sha512-KM4Ty/ZTLZupiYxZVAlP+InNJS3De6uBMdq0ePa6/04+eG9Y7ftnWfst1xTLQ5rwAhgHwQ4momt/O4KepdGBTw==}
-
-  '@types/redis-mock@0.17.3':
-    resolution: {integrity: sha512-1baXyGxRKEDog8p1ReiypODwiST2n3/0pBbgUKEuv9pBXnY6ttRzKATcW5Xz20ZOl9qkKtPIeq20tHgHSdQBAQ==}
-
-  '@types/redis@2.8.32':
-    resolution: {integrity: sha512-7jkMKxcGq9p242exlbsVzuJb57KqHRhNl4dHoQu2Y5v9bCAbtIXXH0R3HleSQW4CTOqpHIYUW3t6tpUj4BVQ+w==}
 
   '@types/sanitize-html@2.16.1':
     resolution: {integrity: sha512-n9wjs8bCOTyN/ynwD8s/nTcTreIHB1vf31vhLMGqUPNHaweKC4/fAl4Dj+hUlCTKYgm4P3k83fmiFfzkZ6sgMA==}
@@ -6704,10 +6692,6 @@ packages:
   rechoir@0.8.0:
     resolution: {integrity: sha512-/vxpCXddiX8NGfGO/mTafwjq4aFa/71pvamip0++IQk3zG8cbCj0fifNPrjjF1XMXUne91jL9OoxmdykoEtifQ==}
     engines: {node: '>= 10.13.0'}
-
-  redis-mock@0.56.3:
-    resolution: {integrity: sha512-ynaJhqk0Qf3Qajnwvy4aOjS4Mdf9IBkELWtjd+NYhpiqu4QCNq6Vf3Q7c++XRPGiKiwRj9HWr0crcwy7EiPjYQ==}
-    engines: {node: '>=6'}
 
   redis@6.2.0:
     resolution: {integrity: sha512-BShYVyT0Gx67CE80xry5XroSSv6Vxr60yKs0HRiBbUc7kHm+bY7gvSDBBgTjuiV/reWKeZWLyA1ebC5z359wRQ==}
@@ -10601,14 +10585,6 @@ snapshots:
       '@types/prop-types': 15.7.15
       '@types/scheduler': 0.16.8
       csstype: 3.2.3
-
-  '@types/redis-mock@0.17.3':
-    dependencies:
-      '@types/redis': 2.8.32
-
-  '@types/redis@2.8.32':
-    dependencies:
-      '@types/node': 24.13.3
 
   '@types/sanitize-html@2.16.1':
     dependencies:
@@ -14623,8 +14599,6 @@ snapshots:
   rechoir@0.8.0:
     dependencies:
       resolve: 1.22.12
-
-  redis-mock@0.56.3: {}
 
   redis@6.2.0(@opentelemetry/api@1.9.1):
     dependencies:
