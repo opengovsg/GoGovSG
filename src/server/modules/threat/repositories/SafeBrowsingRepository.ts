@@ -24,48 +24,26 @@ export class SafeBrowsingRepository
     this.safeBrowsingMapper = safeBrowsingMapper
   }
 
-  public set: (url: string, threat: WebRiskThreat) => Promise<void> = (
+  public set: (url: string, threat: WebRiskThreat) => Promise<void> = async (
     url,
     threat,
   ) => {
-    return new Promise((resolve, reject) => {
-      if (!threat) {
-        reject(
-          new NotFoundError(`No threat found for ${url}, should not persist`),
-        )
-      }
-      safeBrowsingClient.set(
-        url,
-        this.safeBrowsingMapper.dtoToPersistence(threat),
-        'EX',
-        DEFAULT_CACHE_DURATION_IN_S,
-        (redisSetError) => {
-          if (redisSetError) {
-            reject(redisSetError)
-            return
-          }
-
-          resolve()
-        },
-      )
-    })
+    if (!threat) {
+      throw new NotFoundError(`No threat found for ${url}, should not persist`)
+    }
+    await safeBrowsingClient.setEx(
+      url,
+      DEFAULT_CACHE_DURATION_IN_S,
+      this.safeBrowsingMapper.dtoToPersistence(threat),
+    )
   }
 
-  public get: (url: string) => Promise<WebRiskThreat | null> = (url) => {
-    return new Promise((resolve, reject) => {
-      safeBrowsingClient.get(url, (redisError, string) => {
-        if (redisError) {
-          reject(redisError)
-          return
-        }
-
-        if (!string) {
-          resolve(null)
-        }
-
-        resolve(this.safeBrowsingMapper.persistenceToDto(string))
-      })
-    })
+  public get: (url: string) => Promise<WebRiskThreat | null> = async (url) => {
+    const string = await safeBrowsingClient.get(url)
+    if (!string) {
+      return null
+    }
+    return this.safeBrowsingMapper.persistenceToDto(string)
   }
 }
 
