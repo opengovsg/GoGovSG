@@ -18,6 +18,17 @@ export function shortUrlRouteGuard(
   next: NextFunction,
 ): void {
   const { shortUrl } = req.params
+
+  // A single named `:shortUrl` route param can never actually be an array
+  // — arrays are only produced by wildcard `*` params — but Express 5's
+  // types widen every `req.params` value to `string | string[]` to
+  // account for those. Treat an array the same as any other non-matching
+  // value.
+  if (Array.isArray(shortUrl)) {
+    next('route')
+    return
+  }
+
   const withoutTrailingDot = shortUrl.endsWith('.')
     ? shortUrl.slice(0, -1)
     : shortUrl
