@@ -1,3 +1,3 @@
-export { StatisticsService } from './StatisticsService'
+export { StatisticsService } from './StatisticsService.js'
 
-export { default } from './StatisticsService'
+export { default } from './StatisticsService.js'

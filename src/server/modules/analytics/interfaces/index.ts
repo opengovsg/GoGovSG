@@ -1,3 +1,3 @@
-export { LinkStatisticsRepository } from './LinkStatisticsRepository'
-export { LinkStatisticsService } from './LinkStatisticsService'
-export { DeviceType, DeviceCheckService } from './DeviceCheckService'
+export { LinkStatisticsRepository } from './LinkStatisticsRepository.js'
+export { LinkStatisticsService } from './LinkStatisticsService.js'
+export { DeviceType, DeviceCheckService } from './DeviceCheckService.js'

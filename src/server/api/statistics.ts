@@ -1,7 +1,7 @@
 import Express from 'express'
-import { DependencyIds } from '../constants'
-import { container } from '../util/inversify'
-import { StatisticsController } from '../modules/statistics'
+import { DependencyIds } from '../constants.js'
+import { container } from '../util/inversify.js'
+import { StatisticsController } from '../modules/statistics/index.js'
 
 const router = Express.Router()
 

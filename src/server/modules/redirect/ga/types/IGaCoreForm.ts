@@ -1,4 +1,4 @@
-import { GaHitVariant } from './enum'
+import { GaHitVariant } from './enum.js'
 
 export default interface IGaCoreForm {
   v: number // Version.

@@ -1,7 +1,7 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { DependencyIds } from '../../constants'
-import { StatisticsService } from './interfaces'
+import { DependencyIds } from '../../constants.js'
+import { StatisticsService } from './interfaces/index.js'
 
 @injectable()
 export class StatisticsController {

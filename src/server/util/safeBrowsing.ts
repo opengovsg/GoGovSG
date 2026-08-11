@@ -1,4 +1,4 @@
-import { DEFAULT_URL_SCAN_RESULT_EXPIRY_SECONDS } from '../../shared/constants'
+import { DEFAULT_URL_SCAN_RESULT_EXPIRY_SECONDS } from '../../shared/constants.js'
 
 interface GetSafeBrowsingExpiryDateParams {
   longUrl: string

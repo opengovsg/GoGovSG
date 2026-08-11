@@ -1,5 +1,5 @@
 import { StatsD } from 'hot-shots'
-import { DEV_ENV } from '../config'
+import { DEV_ENV } from '../config.js'
 
 export const API_KEY_GENERATE = 'apikey.generate'
 export const API_KEY_GENERATE_TAG_IS_NEW = 'isnew'

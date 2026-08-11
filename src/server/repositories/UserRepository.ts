@@ -5,16 +5,16 @@ import {
   StorableUser,
   UrlsPaginated,
   UserUrlsQueryConditions,
-} from './types'
-import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface'
-import { User, UserType } from '../models/user'
-import { Mapper } from '../mappers/Mapper'
-import { DependencyIds } from '../constants'
-import { UrlClicks } from '../models/statistics/clicks'
-import { Url, UrlType } from '../models/url'
-import dogstatsd, { USER_NEW } from '../util/dogstatsd'
-import { NotFoundError } from '../util/error'
-import { escapeWildcard, sequelize } from '../util/sequelize'
+} from './types.js'
+import { UserRepositoryInterface } from './interfaces/UserRepositoryInterface.js'
+import { User, UserType } from '../models/user.js'
+import { Mapper } from '../mappers/Mapper.js'
+import { DependencyIds } from '../constants.js'
+import { UrlClicks } from '../models/statistics/clicks.js'
+import { Url, UrlType } from '../models/url.js'
+import dogstatsd, { USER_NEW } from '../util/dogstatsd.js'
+import { NotFoundError } from '../util/error.js'
+import { escapeWildcard, sequelize } from '../util/sequelize.js'
 
 /**
  * A user repository that handles access to the data store of Users.

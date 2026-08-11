@@ -1,16 +1,16 @@
 import Express from 'express'
 import { createValidator } from 'express-joi-validation'
-import { container } from '../../util/inversify'
-import jsonMessage from '../../util/json'
-import { DependencyIds } from '../../constants'
-import { ApiV1Controller } from '../../modules/api/external-v1'
-import { UrlCheckController } from '../../modules/threat'
+import { container } from '../../util/inversify.js'
+import jsonMessage from '../../util/json.js'
+import { DependencyIds } from '../../constants.js'
+import { ApiV1Controller } from '../../modules/api/external-v1/index.js'
+import { UrlCheckController } from '../../modules/threat/index.js'
 import {
   urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
   userUrlsQueryConditions,
-} from './validators'
+} from './validators.js'
 
 const apiV1Controller = container.get<ApiV1Controller>(
   DependencyIds.apiV1Controller,

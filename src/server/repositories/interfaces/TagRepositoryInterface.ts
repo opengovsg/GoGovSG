@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize'
-import { UserTagsQueryConditions } from '../types'
-import { TagType } from '../../models/tag'
+import { UserTagsQueryConditions } from '../types.js'
+import { TagType } from '../../models/tag.js'
 
 export interface TagRepositoryInterface {
   findTagsWithConditions(conditions: UserTagsQueryConditions): Promise<string[]>

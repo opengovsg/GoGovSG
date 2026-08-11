@@ -1,8 +1,8 @@
 /* eslint-disable class-methods-use-this, no-dupe-class-members */
 import { injectable } from 'inversify'
-import { StorableUrl } from '../repositories/types'
-import { UrlV1DTO } from '../modules/api/external-v1'
-import { Mapper } from './Mapper'
+import { StorableUrl } from '../repositories/types.js'
+import { UrlV1DTO } from '../modules/api/external-v1/index.js'
+import { Mapper } from './Mapper.js'
 
 /**
  * UrlV1Mapper maps from the original URL DTO (StorableUrl)
