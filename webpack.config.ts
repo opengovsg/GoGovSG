@@ -8,11 +8,11 @@ import webpack from 'webpack'
 import assetVariant from './src/shared/util/asset-variant.js'
 import { ddEnv, ddService } from './src/shared/util/environment-variables.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 const require = createRequire(import.meta.url)
 
 const outputDirectory = 'dist'
-const srcDirectory = path.join(__dirname, 'src/client/app')
+const srcDirectory = path.join(dirname, 'src/client/app')
 
 const assetResolveDir = `assets/${assetVariant}`
 
@@ -58,7 +58,7 @@ export default () => {
       path.join(srcDirectory, 'index.tsx'),
     ],
     output: {
-      path: path.join(__dirname, outputDirectory),
+      path: path.join(dirname, outputDirectory),
       filename: 'bundle.js',
       publicPath: '/',
       assetModuleFilename: 'assets/[name][ext]',
