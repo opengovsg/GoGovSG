@@ -11,9 +11,6 @@ import ImageFormat from '../../../../shared/util/image-format.js'
 
 import * as interfaces from '../interfaces/index.js'
 
-// @ts-ignore TS1470 - import.meta is invalid under tsc's current CJS-per-file
-// detection until Task 9 flips package.json to "type": "module"; valid at
-// runtime on Node 24 regardless. Remove this ts-ignore in Task 9.
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const IMAGE_WIDTH = 1000

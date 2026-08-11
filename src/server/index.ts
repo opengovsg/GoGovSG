@@ -14,9 +14,6 @@ import connectRedis from 'connect-redis'
 import jsonMessage from './util/json.js'
 import bindInversifyDependencies from './inversify.config.js'
 
-// @ts-ignore TS1470 - import.meta is invalid under tsc's current CJS-per-file
-// detection until Task 9 flips package.json to "type": "module"; valid at
-// runtime on Node 24 regardless. Remove this ts-ignore in Task 9.
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Happens at the top so all imports will have
@@ -28,7 +25,6 @@ bindInversifyDependencies()
 // bindInversifyDependencies() by some compilers, but api/index.ts resolves
 // inversify bindings at module-load time and needs binding registration to
 // have already run.
-// @ts-ignore TS1470 - import.meta is allowed in Node.js and needed for createRequire
 const require = createRequire(import.meta.url)
 const api = require('./api').default
 
