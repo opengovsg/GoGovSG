@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src/server", "src/shared", "src/types/server"],
   "exclude": ["node_modules", "lib", "tests", "**/__tests__"],
   "compileOnSave": true,
   "compilerOptions": {
