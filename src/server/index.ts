@@ -9,7 +9,7 @@ import morgan from 'morgan'
 import session from 'express-session'
 import cookieSession from 'cookie-session'
 import cookieParser from 'cookie-parser'
-import connectRedis from 'connect-redis'
+import { RedisStore } from 'connect-redis'
 import jsonMessage from './util/json.js'
 import bindInversifyDependencies from './inversify.config.js'
 
@@ -45,7 +45,6 @@ import {
 } from './config.js'
 
 // Services
-const SessionStore = connectRedis(session)
 import { sessionClient } from './redis.js'
 import initDb from './models/index.js'
 
@@ -173,9 +172,8 @@ initDb()
     const apiSpecificMiddleware = [
       // Sessions
       session({
-        store: new SessionStore({
+        store: new RedisStore({
           client: sessionClient, // ttl defaults to session.cookie.maxAge
-          logErrors: true,
         }),
         resave: false, // can set to false since touch is implemented by our store
         saveUninitialized: false, // do not save new sessions that have not been modified

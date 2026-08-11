@@ -60,8 +60,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0(supports-color@8.1.1)
       connect-redis:
-        specifier: ^6.1.3
-        version: 6.1.3
+        specifier: ^10.0.0
+        version: 10.0.0(express-session@1.19.0(supports-color@8.1.1))(redis@6.2.0(@opentelemetry/api@1.9.1))
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
@@ -192,8 +192,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@17.0.2)
       redis:
-        specifier: ^3.1.2
-        version: 3.1.2
+        specifier: ^6.2.0
+        version: 6.2.0(@opentelemetry/api@1.9.1)
       redux:
         specifier: ^4.2.1
         version: 4.2.1
@@ -267,9 +267,6 @@ importers:
       '@types/cloudmersive-virus-api-client':
         specifier: ^1.1.4
         version: 1.1.4
-      '@types/connect-redis':
-        specifier: 0.0.17
-        version: 0.0.17
       '@types/cookie-parser':
         specifier: ^1.4.10
         version: 1.4.10(@types/express@5.0.6)
@@ -321,9 +318,6 @@ importers:
       '@types/react-router-dom':
         specifier: ^5.3.3
         version: 5.3.3
-      '@types/redis':
-        specifier: ^2.8.32
-        version: 2.8.32
       '@types/redis-mock':
         specifier: ^0.17.3
         version: 0.17.3
@@ -383,7 +377,7 @@ importers:
         version: 9.1.7
       jest:
         specifier: ^30.4.2
-        version: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))
+        version: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       jsqr:
         specifier: ^1.4.0
         version: 1.4.0
@@ -2644,6 +2638,42 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
+  '@redis/bloom@6.2.0':
+    resolution: {integrity: sha512-ggQvzpeCKnybwUrEiMVVtE1Np4vWnRfpeAaIP2MdZiVw7PHOhJrF4cONVuLRn1TkMi6ehp2OPjTOMK+8XmiQSQ==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.2.0
+
+  '@redis/client@6.2.0':
+    resolution: {integrity: sha512-HHszna68MTBRiDZV3Wo2wANH7Z5v/nuh+ZyCAGBce0PS8tDcg1/yzZ1vqbKbUyTdz1wB54kqZxXrnPwpR8Ivdw==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@node-rs/xxhash': ^1.1.0
+      '@opentelemetry/api': '>=1 <2'
+    peerDependenciesMeta:
+      '@node-rs/xxhash':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+
+  '@redis/json@6.2.0':
+    resolution: {integrity: sha512-oweO7PfHWYXkgVT88K+Fm3Wx98lKYKAEXaH162gVbw1kmBOBVQHxw0Yjh1p6BYBUIQMHqLyWwYe99eK7/hD1VQ==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.2.0
+
+  '@redis/search@6.2.0':
+    resolution: {integrity: sha512-chLEQfalFW3+uCPE99XoIOZhcQ3eF7S3fGxgiiaPf6MMrOZHEiTvgMnXR4xXZX0yDecyoWjGYlQQKTYag/ZExg==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.2.0
+
+  '@redis/time-series@6.2.0':
+    resolution: {integrity: sha512-/H/eE/lnhZLZYpHGpI+ZN7TePb7isEaub8b07oQcTDQptPslVKdUFwNhUm+hQHks781oh+F1Leiip1WHh4HfWw==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      '@redis/client': ^6.2.0
+
   '@redux-devtools/extension@3.3.0':
     resolution: {integrity: sha512-X34S/rC8S/M1BIrkYD1mJ5f8vlH0BDqxXrs96cvxSBo4FhMdbhU+GUGsmNYov1xjSyLMHgo8NYrUG8bNX7525g==}
     peerDependencies:
@@ -2853,9 +2883,6 @@ packages:
   '@types/connect-history-api-fallback@1.5.4':
     resolution: {integrity: sha512-n6Cr2xS1h4uAulPRdlw6Jl6s1oG8KrVilPN2yUITEs+K48EzMJJ3W1xy8K5eWuFvjp3R74AOIGSmp2UfBJ8HFw==}
 
-  '@types/connect-redis@0.0.17':
-    resolution: {integrity: sha512-6apVqZFTMspIWwjGPfip7fKP+6Sl3M589DuYuYtzyc+Fzn2fnZqtQQ2o/UfwDlLh6zxq0RAnFbW3Mx1+2Nuh0w==}
-
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
 
@@ -3009,9 +3036,6 @@ packages:
 
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
-
-  '@types/ioredis@4.28.10':
-    resolution: {integrity: sha512-69LyhUgrXdgcNDv7ogs1qXZomnfOEnSmrmMFqKgt1XMJxmoOSG/u3wYy13yACIfKuMJ8IhKgHafDO3sx19zVQQ==}
 
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
@@ -3968,6 +3992,10 @@ packages:
     resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
 
+  cluster-key-slot@1.1.2:
+    resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
+    engines: {node: '>=0.10.0'}
+
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
     engines: {iojs: '>= 1.0.0', node: '>= 0.12.0'}
@@ -4062,9 +4090,12 @@ packages:
     resolution: {integrity: sha512-U73+6lQFmfiNPrYbXqr6kZ1i1wiRqXnp2nhMsINseWXO8lDau0LGEffJ8kQi4EjLZympVgRdvqjAgiZ1tgzDDA==}
     engines: {node: '>=0.8'}
 
-  connect-redis@6.1.3:
-    resolution: {integrity: sha512-aaNluLlAn/3JPxRwdzw7lhvEoU6Enb+d83xnokUNhC9dktqBoawKWL+WuxinxvBLTz6q9vReTnUDnUslaz74aw==}
-    engines: {node: '>=12'}
+  connect-redis@10.0.0:
+    resolution: {integrity: sha512-x6EotIY20pvocamMtcOsgxFzYufAMfipE+rjWa0cZMeSx+3K0yoHi4Nv4sfMlgF+Z5KnUbMFxyCx9pDZP39p0Q==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      express-session: '>=1'
+      redis: '>=5'
 
   content-disposition@0.5.4:
     resolution: {integrity: sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ==}
@@ -4342,10 +4373,6 @@ packages:
   delayed-stream@1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
-
-  denque@1.5.1:
-    resolution: {integrity: sha512-XwE+iZ4D6ZUB7mfYRMb5wByE8L74HCn30FBN7sWnXksWc1LO1bPDl67pBR9o/kC4z/xSNAwkMYcGgqDV3BE3Hw==}
-    engines: {node: '>=0.10'}
 
   depd@1.1.2:
     resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}
@@ -6678,24 +6705,13 @@ packages:
     resolution: {integrity: sha512-/vxpCXddiX8NGfGO/mTafwjq4aFa/71pvamip0++IQk3zG8cbCj0fifNPrjjF1XMXUne91jL9OoxmdykoEtifQ==}
     engines: {node: '>= 10.13.0'}
 
-  redis-commands@1.7.0:
-    resolution: {integrity: sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ==}
-
-  redis-errors@1.2.0:
-    resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
-    engines: {node: '>=4'}
-
   redis-mock@0.56.3:
     resolution: {integrity: sha512-ynaJhqk0Qf3Qajnwvy4aOjS4Mdf9IBkELWtjd+NYhpiqu4QCNq6Vf3Q7c++XRPGiKiwRj9HWr0crcwy7EiPjYQ==}
     engines: {node: '>=6'}
 
-  redis-parser@3.0.0:
-    resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
-    engines: {node: '>=4'}
-
-  redis@3.1.2:
-    resolution: {integrity: sha512-grn5KoZLr/qrRQVwoSkmzdbw6pwF+/rwODtrOr6vuBRiR/f3rjSTGupbF90Zpqm2oenix8Do6RV7pYEkGwlKkw==}
-    engines: {node: '>=10'}
+  redis@6.2.0:
+    resolution: {integrity: sha512-BShYVyT0Gx67CE80xry5XroSSv6Vxr60yKs0HRiBbUc7kHm+bY7gvSDBBgTjuiV/reWKeZWLyA1ebC5z359wRQ==}
+    engines: {node: '>= 20.0.0'}
 
   redux-thunk@2.4.2:
     resolution: {integrity: sha512-+P3TjtnP0k/FEjcBL5FZpoovtvrTNT/UXd4/sluaSyrURlSlhLSzEdfsTBW7WsKB6yPvgd7q/iZPICFjW4o57Q==}
@@ -8814,7 +8830,7 @@ snapshots:
       '@types/node': 20.5.1
       chalk: 4.1.2
       cosmiconfig: 8.3.6(typescript@5.9.3)
-      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@7.0.2))(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))(typescript@5.9.3)
+      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))(typescript@5.9.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -9324,7 +9340,7 @@ snapshots:
       jest-util: 30.4.1
       slash: 3.0.0
 
-  '@jest/core@30.4.2(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))':
+  '@jest/core@30.4.2(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))':
     dependencies:
       '@jest/console': 30.4.1
       '@jest/pattern': 30.4.0
@@ -9340,7 +9356,7 @@ snapshots:
       fast-json-stable-stringify: 2.1.0
       graceful-fs: 4.2.11
       jest-changed-files: 30.4.1
-      jest-config: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))
+      jest-config: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       jest-haste-map: 30.4.1
       jest-message-util: 30.4.1
       jest-regex-util: 30.4.0
@@ -10082,6 +10098,28 @@ snapshots:
     dependencies:
       playwright: 1.62.1
 
+  '@redis/bloom@6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.2.0(@opentelemetry/api@1.9.1)
+
+  '@redis/client@6.2.0(@opentelemetry/api@1.9.1)':
+    dependencies:
+      cluster-key-slot: 1.1.2
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+
+  '@redis/json@6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.2.0(@opentelemetry/api@1.9.1)
+
+  '@redis/search@6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.2.0(@opentelemetry/api@1.9.1)
+
+  '@redis/time-series@6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))':
+    dependencies:
+      '@redis/client': 6.2.0(@opentelemetry/api@1.9.1)
+
   '@redux-devtools/extension@3.3.0(redux@4.2.1)':
     dependencies:
       '@babel/runtime': 7.29.7
@@ -10290,13 +10328,6 @@ snapshots:
       '@types/express-serve-static-core': 5.1.3
       '@types/node': 24.13.3
 
-  '@types/connect-redis@0.0.17':
-    dependencies:
-      '@types/express': 5.0.6
-      '@types/express-session': 1.19.0
-      '@types/ioredis': 4.28.10
-      '@types/redis': 2.8.32
-
   '@types/connect@3.4.38':
     dependencies:
       '@types/node': 24.13.3
@@ -10480,10 +10511,6 @@ snapshots:
   '@types/html-minifier-terser@6.1.0': {}
 
   '@types/http-errors@2.0.5': {}
-
-  '@types/ioredis@4.28.10':
-    dependencies:
-      '@types/node': 24.13.3
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -11451,6 +11478,8 @@ snapshots:
 
   clsx@1.2.1: {}
 
+  cluster-key-slot@1.1.2: {}
+
   co@4.6.0: {}
 
   collect-v8-coverage@1.0.3: {}
@@ -11563,7 +11592,10 @@ snapshots:
 
   connect-history-api-fallback@2.0.0: {}
 
-  connect-redis@6.1.3: {}
+  connect-redis@10.0.0(express-session@1.19.0(supports-color@8.1.1))(redis@6.2.0(@opentelemetry/api@1.9.1)):
+    dependencies:
+      express-session: 1.19.0(supports-color@8.1.1)
+      redis: 6.2.0(@opentelemetry/api@1.9.1)
 
   content-disposition@0.5.4:
     dependencies:
@@ -11643,11 +11675,11 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@7.0.2))(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))(typescript@5.9.3):
+  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
       '@types/node': 20.5.1
-      cosmiconfig: 8.3.6(typescript@7.0.2)
-      ts-node: 10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2)
+      cosmiconfig: 8.3.6(typescript@5.9.3)
+      ts-node: 10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)
       typescript: 5.9.3
     optional: true
 
@@ -11666,16 +11698,6 @@ snapshots:
       path-type: 4.0.0
     optionalDependencies:
       typescript: 5.9.3
-    optional: true
-
-  cosmiconfig@8.3.6(typescript@7.0.2):
-    dependencies:
-      import-fresh: 3.3.1
-      js-yaml: 4.3.1
-      parse-json: 5.2.0
-      path-type: 4.0.0
-    optionalDependencies:
-      typescript: 7.0.2
     optional: true
 
   cosmiconfig@9.0.2(typescript@7.0.2):
@@ -11868,8 +11890,6 @@ snapshots:
       rimraf: 2.7.1
 
   delayed-stream@1.0.0: {}
-
-  denque@1.5.1: {}
 
   depd@1.1.2: {}
 
@@ -13239,15 +13259,15 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2)):
+  jest-cli@30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
-      '@jest/core': 30.4.2(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))
+      '@jest/core': 30.4.2(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       '@jest/test-result': 30.4.1
       '@jest/types': 30.4.1
       chalk: 4.1.2
       exit-x: 0.2.2
       import-local: 3.2.0
-      jest-config: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))
+      jest-config: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       jest-util: 30.4.1
       jest-validate: 30.4.1
       yargs: 17.7.3
@@ -13258,7 +13278,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-config@30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2)):
+  jest-config@30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@jest/get-type': 30.1.0
@@ -13285,7 +13305,7 @@ snapshots:
       strip-json-comments: 3.1.1
     optionalDependencies:
       '@types/node': 24.13.3
-      ts-node: 10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2)
+      ts-node: 10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -13512,12 +13532,12 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2)):
+  jest@30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3)):
     dependencies:
-      '@jest/core': 30.4.2(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))
+      '@jest/core': 30.4.2(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
       '@jest/types': 30.4.1
       import-local: 3.2.0
-      jest-cli: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2))
+      jest-cli: 30.4.2(@types/node@24.13.3)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@20.5.1)(typescript@5.9.3))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -14604,22 +14624,18 @@ snapshots:
     dependencies:
       resolve: 1.22.12
 
-  redis-commands@1.7.0: {}
-
-  redis-errors@1.2.0: {}
-
   redis-mock@0.56.3: {}
 
-  redis-parser@3.0.0:
+  redis@6.2.0(@opentelemetry/api@1.9.1):
     dependencies:
-      redis-errors: 1.2.0
-
-  redis@3.1.2:
-    dependencies:
-      denque: 1.5.1
-      redis-commands: 1.7.0
-      redis-errors: 1.2.0
-      redis-parser: 3.0.0
+      '@redis/bloom': 6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))
+      '@redis/client': 6.2.0(@opentelemetry/api@1.9.1)
+      '@redis/json': 6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))
+      '@redis/search': 6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))
+      '@redis/time-series': 6.2.0(@redis/client@6.2.0(@opentelemetry/api@1.9.1))
+    transitivePeerDependencies:
+      - '@node-rs/xxhash'
+      - '@opentelemetry/api'
 
   redux-thunk@2.4.2(redux@4.2.1):
     dependencies:
@@ -15349,27 +15365,6 @@ snapshots:
       diff: 4.0.4
       make-error: 1.3.6
       typescript: 5.9.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    optionalDependencies:
-      '@swc/core': 1.15.47
-    optional: true
-
-  ts-node@10.9.2(@swc/core@1.15.47)(@types/node@24.13.3)(typescript@7.0.2):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.12
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 24.13.3
-      acorn: 8.18.0
-      acorn-walk: 8.3.5
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.4
-      make-error: 1.3.6
-      typescript: 7.0.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
