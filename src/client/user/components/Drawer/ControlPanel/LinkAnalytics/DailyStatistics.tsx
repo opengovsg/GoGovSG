@@ -3,11 +3,11 @@ import { Line } from 'react-chartjs-2'
 import moment from 'moment'
 
 import { useTheme } from '@material-ui/core'
-import BaseStatisticsLayout from './BaseStatisticsLayout.js'
-import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics.js'
-import { useDateRangeWith } from './util/date-range.js'
-import { compactNumberFormatter } from '../../../../../app/util/format.js'
-import DownloadClicksButton from './widgets/DailyStatistics/DownloadClicksButton.js'
+import BaseStatisticsLayout from './BaseStatisticsLayout'
+import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics'
+import { useDateRangeWith } from './util/date-range'
+import { compactNumberFormatter } from '../../../../../app/util/format'
+import DownloadClicksButton from './widgets/DailyStatistics/DownloadClicksButton'
 
 export type DailyStatisticsProps = {
   dailyClicks: DailyClicks[]

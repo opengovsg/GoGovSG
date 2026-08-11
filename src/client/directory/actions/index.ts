@@ -8,18 +8,18 @@ import {
   SET_DIRECTORY_RESULTS,
   SET_INITIAL_STATE,
   SetDirectoryResultsAction,
-} from './types.js'
-import { GoGovReduxState } from '../../app/reducers/types.js'
+} from './types'
+import { GoGovReduxState } from '../../app/reducers/types'
 import {
   RootActionType,
   SetErrorMessageAction,
-} from '../../app/components/pages/RootPage/actions/types.js'
-import rootActions from '../../app/components/pages/RootPage/actions/index.js'
-import { SearchResultsSortOrder } from '../../../shared/search.js'
-import { get } from '../../app/util/requests.js'
-import { DIRECTORY_PAGE } from '../../app/util/types.js'
-import { UrlTypePublic } from '../reducers/types.js'
-import { GAEvent } from '../../app/util/ga.js'
+} from '../../app/components/pages/RootPage/actions/types'
+import rootActions from '../../app/components/pages/RootPage/actions'
+import { SearchResultsSortOrder } from '../../../shared/search'
+import { get } from '../../app/util/requests'
+import { DIRECTORY_PAGE } from '../../app/util/types'
+import { UrlTypePublic } from '../reducers/types'
+import { GAEvent } from '../../app/util/ga'
 
 function setDirectoryResults(payload: {
   count: number

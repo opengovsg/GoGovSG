@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Typography } from '@material-ui/core'
-import useStyles from '../../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/styles.js'
-import CheckIcon from '../../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/widgets/CheckIcon.js'
+import useStyles from '../../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/styles'
+import CheckIcon from '../../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/widgets/CheckIcon'
 
 export type SortButtonProps = {
   columnLabel: string

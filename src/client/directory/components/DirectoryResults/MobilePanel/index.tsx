@@ -13,13 +13,13 @@ import {
 import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
 import copyEmailIcon from '@assets/components/directory/directory-results/copy-email-icon.svg'
 import i18next from 'i18next'
-import { SetSuccessMessageAction } from '../../../../app/components/pages/RootPage/actions/types.js'
-import rootActions from '../../../../app/components/pages/RootPage/actions/index.js'
-import useAppMargins from '../../../../app/components/AppMargins/appMargins.js'
-import { UrlTypePublic } from '../../../reducers/types.js'
-import RedirectIcon from '../../../widgets/RedirectIcon.js'
-import DirectoryFileIcon from '../../../widgets/DirectoryFileIcon.js'
-import DirectoryUrlIcon from '../../../widgets/DirectoryUrlIcon.js'
+import { SetSuccessMessageAction } from '../../../../app/components/pages/RootPage/actions/types'
+import rootActions from '../../../../app/components/pages/RootPage/actions'
+import useAppMargins from '../../../../app/components/AppMargins/appMargins'
+import { UrlTypePublic } from '../../../reducers/types'
+import RedirectIcon from '../../../widgets/RedirectIcon'
+import DirectoryFileIcon from '../../../widgets/DirectoryFileIcon'
+import DirectoryUrlIcon from '../../../widgets/DirectoryUrlIcon'
 
 type MobilePanelProps = {
   isOpen: boolean

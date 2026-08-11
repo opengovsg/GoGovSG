@@ -1,11 +1,11 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import Section from '../Section.js'
-import CopyrightWidget from './widgets/CopyrightWidget.js'
-import LinkedinWidget from './widgets/LinkedinWidget.js'
-import BuiltByWidget from './widgets/BuiltByWidget.js'
-import FacebookWidget from './widgets/FacebookWidget.js'
-import OgpWidget from './widgets/OgpWidget.js'
+import Section from '../Section'
+import CopyrightWidget from './widgets/CopyrightWidget'
+import LinkedinWidget from './widgets/LinkedinWidget'
+import BuiltByWidget from './widgets/BuiltByWidget'
+import FacebookWidget from './widgets/FacebookWidget'
+import OgpWidget from './widgets/OgpWidget'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
