@@ -1,5 +1,6 @@
 import './util/tracing' // This is import has to be placed at the top for Tracing to work properly
 import 'reflect-metadata' // This import has to be placed at the top level for Dependency Injection
+import { createRequire } from 'module'
 import path from 'path'
 import bodyParser from 'body-parser'
 import express from 'express'
@@ -21,6 +22,8 @@ bindInversifyDependencies()
 // bindInversifyDependencies() by some compilers, but api/index.ts resolves
 // inversify bindings at module-load time and needs binding registration to
 // have already run.
+// @ts-ignore TS1470 - import.meta is allowed in Node.js and needed for createRequire
+const require = createRequire(import.meta.url)
 const api = require('./api').default
 
 // Logger configuration
