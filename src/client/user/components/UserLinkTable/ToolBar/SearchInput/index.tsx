@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
 import {
   Backdrop,
   Button,
@@ -110,7 +111,7 @@ const textFieldHeight = getSearchInputHeight()
 
 // Search Input field.
 function SearchInput() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,
