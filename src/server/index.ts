@@ -65,6 +65,7 @@ import {
 } from './modules/redirect/index.js'
 import assetVariant from '../shared/util/asset-variant.js'
 import dogstatsd, { ERROR_UNHANDLED_REJECTION } from './util/dogstatsd.js'
+import handleUriError from './util/handleUriError.js'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -259,20 +260,7 @@ initDb()
       }
 
       if (err instanceof URIError) {
-        // Express 5's router decodes the matched `:shortUrl` path segment
-        // (via decodeURIComponent) before any route handler runs, and
-        // throws a URIError straight into this error handler when the
-        // segment is malformed percent-encoding (e.g. `/%`, `/%zz`,
-        // `/%c0%af`). That's not a server error — it just means the
-        // request doesn't resolve to a short URL, same as any other
-        // non-matching path, so render the same 404 the catch-all handler
-        // above renders instead of the generic 500 page.
-        const shortUrl = req.path.slice(1)
-        res.status(404).render(ERROR_404_PATH, {
-          shortUrl,
-          assetVariant,
-          displayHostname,
-        })
+        handleUriError(req, res)
         return
       }
 
