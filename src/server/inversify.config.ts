@@ -1,7 +1,7 @@
 import { S3Client } from '@aws-sdk/client-s3'
 import { SQSClient } from '@aws-sdk/client-sqs'
 
-import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
+import CloudmersiveVirusApiClient from 'cloudmersive-virus-api-client'
 
 import {
   DEV_ENV,
@@ -164,11 +164,11 @@ export default () => {
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
 
   if (cloudmersiveKey) {
-    const client = ApiClient.instance
+    const client = CloudmersiveVirusApiClient.ApiClient.instance
     const ApiKey = client.authentications.Apikey
     ApiKey.apiKey = cloudmersiveKey
   }
-  const api = new ScanApi()
+  const api = new CloudmersiveVirusApiClient.ScanApi()
 
   container.bind(DependencyIds.cloudmersiveKey).toConstantValue(cloudmersiveKey)
   container.bind(DependencyIds.cloudmersiveClient).toConstantValue(api)
