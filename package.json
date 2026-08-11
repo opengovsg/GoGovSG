@@ -15,7 +15,7 @@
     "build": "tsc && NODE_OPTIONS='--import tsx' webpack --mode production",
     "postbuild": "copyfiles -u 1 src/server/views/**/* build && copyfiles -u 4 src/server/modules/qr/assets/**/* build/server/modules/qr",
     "version": "auto-changelog -p && git add CHANGELOG.md",
-    "start": "node -r dotenv/config build/server/index.js",
+    "start": "node -r dotenv/config --import dd-trace/register.js build/server/index.js",
     "client-dev": "NODE_OPTIONS='--import tsx' webpack serve --mode development --host 0.0.0.0 --devtool inline-source-map --hot",
     "server-dev": "tsx watch --inspect=0.0.0.0 -r dotenv/config src/server/index.ts",
     "docker-dev": "concurrently \"pnpm run server-dev\" \"pnpm run client-dev\"",
