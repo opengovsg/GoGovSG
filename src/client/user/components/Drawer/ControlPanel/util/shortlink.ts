@@ -1,4 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
 
 import userActions from '../../../../actions'
 import { isValidLongUrl } from '../../../../../../shared/util/validation'
@@ -26,7 +27,7 @@ export default function useShortLink(shortLink: string) {
   const isUploading = useSelector<GoGovReduxState, boolean>(
     (state) => state.user.isUploading,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const dispatchOptions = {
     toggleStatus: () =>
       dispatch(userActions.toggleUrlState(shortLink, urlState.state)),

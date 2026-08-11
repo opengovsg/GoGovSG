@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../app/hooks'
 import { History } from 'history'
 import {
   Dialog,
@@ -64,7 +65,7 @@ function CreateUrlModal() {
   const fileUploadState = useSelector(
     (state: GoGovReduxState) => state.user.uploadState.fileUpload,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
   const onCreateUrl = (history: History) =>
     dispatch(userActions.createUrlOrRedirect(history))

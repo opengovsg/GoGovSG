@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../app/hooks'
 import { useHistory, useLocation } from 'react-router-dom'
 import querystring from 'querystring'
 import debounce from 'lodash/debounce'
@@ -86,7 +87,7 @@ const updateQueryDebounced = debounce(redirectWithParams, 500)
 const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const history = useHistory()
   const location = useLocation()
   const [pendingQuery, setPendingQuery] = useState('')

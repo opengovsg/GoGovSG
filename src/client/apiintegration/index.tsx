@@ -1,4 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../app/hooks'
 import React, { useEffect } from 'react'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import { GAEvent, GAPageView } from '../app/util/ga'
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme) =>
  * Show the API Integration page.
  */
 function ApiIntegrationPage() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )

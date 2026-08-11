@@ -1,5 +1,6 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import useAppDispatch from '../../../../../../../app/hooks'
+
 import { saveAs } from 'file-saver'
 import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
@@ -58,7 +59,7 @@ const useStyles = makeStyles(() => ({
 export default function DownloadClicksButton() {
   const shortUrl = useDrawerState().relevantShortLink!
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const onError = () =>
     dispatch(rootActions.setErrorMessage('Error downloading urls.'))
   return (
