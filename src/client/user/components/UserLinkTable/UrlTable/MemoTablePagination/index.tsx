@@ -1,10 +1,10 @@
 import React from 'react'
 import { TablePagination } from '@material-ui/core'
 import isMatch from 'lodash/isMatch'
-import useAppMargins from '../../../../../app/components/AppMargins/appMargins.js'
-import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent/index.js'
-import useStyles from './styles.js'
-import { UrlTableConfig } from '../../../../reducers/types.js'
+import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
+import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent'
+import useStyles from './styles'
+import { UrlTableConfig } from '../../../../reducers/types'
 
 type paginationInputIsEqualProps = {
   tableConfig: UrlTableConfig

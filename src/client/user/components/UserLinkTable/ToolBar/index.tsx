@@ -1,9 +1,9 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core'
-import LinkCountHeader from './LinkCountHeader/index.js'
-import SearchInput from './SearchInput/index.js'
-import CreateLinkButton from './Buttons/CreateLinkButton.js'
-import DownloadButton from './Buttons/DownloadButton.js'
+import LinkCountHeader from './LinkCountHeader'
+import SearchInput from './SearchInput'
+import CreateLinkButton from './Buttons/CreateLinkButton'
+import DownloadButton from './Buttons/DownloadButton'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -7,8 +7,8 @@ import {
   useTheme,
 } from '@material-ui/core'
 
-import FilterCheckbox from './FilterCheckbox/index.js'
-import useStyles from '../styles.js'
+import FilterCheckbox from './FilterCheckbox'
+import useStyles from '../styles'
 
 export type FilterPanelProps = {
   isIncludeFiles: boolean

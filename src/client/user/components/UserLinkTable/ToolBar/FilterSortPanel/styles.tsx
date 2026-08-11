@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core'
-import getSearchInputHeight from '../SearchInput/searchInputHeight.js'
+import getSearchInputHeight from '../SearchInput/searchInputHeight'
 
 export default makeStyles((theme) =>
   createStyles({

@@ -10,12 +10,12 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import Section from '../../app/components/Section.js'
+import Section from '../../app/components/Section'
 import {
   ApplyAppMargins,
   IgnoreAppRightMargins,
-} from '../../app/components/AppMargins/index.js'
-import RotatingLinksGraphic from './RotatingLinksGraphic/index.js'
+} from '../../app/components/AppMargins'
+import RotatingLinksGraphic from './RotatingLinksGraphic'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

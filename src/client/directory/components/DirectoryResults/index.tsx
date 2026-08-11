@@ -6,11 +6,11 @@ import {
   useMediaQuery,
   useTheme,
 } from '@material-ui/core'
-import { ApplyAppMargins } from '../../../app/components/AppMargins/index.js'
-import DirectoryTable from './DirectoryTable/index.js'
-import { UrlTypePublic } from '../../reducers/types.js'
-import useAppMargins from '../../../app/components/AppMargins/appMargins.js'
-import MobilePanel from './MobilePanel/index.js'
+import { ApplyAppMargins } from '../../../app/components/AppMargins'
+import DirectoryTable from './DirectoryTable'
+import { UrlTypePublic } from '../../reducers/types'
+import useAppMargins from '../../../app/components/AppMargins/appMargins'
+import MobilePanel from './MobilePanel'
 
 type DirectoryResultsProps = {
   searchResults: Array<UrlTypePublic>

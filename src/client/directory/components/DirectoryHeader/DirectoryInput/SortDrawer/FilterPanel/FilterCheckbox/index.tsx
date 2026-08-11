@@ -1,6 +1,6 @@
 import React from 'react'
 import { IconButton, createStyles, makeStyles } from '@material-ui/core'
-import CheckIcon from '../../widgets/CheckIcon.js'
+import CheckIcon from '../../widgets/CheckIcon'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

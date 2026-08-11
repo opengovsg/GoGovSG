@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
-import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions.js'
-import { downloadUrls } from '../../../../../app/util/download.js'
-import { GoGovReduxState } from '../../../../../app/reducers/types.js'
+import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
+import { downloadUrls } from '../../../../../app/util/download'
+import { GoGovReduxState } from '../../../../../app/reducers/types'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

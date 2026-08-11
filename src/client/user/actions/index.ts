@@ -4,7 +4,7 @@ import querystring, { ParsedUrlQueryInput } from 'querystring'
 import { History } from 'history'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants.js'
+import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   CloseCreateUrlModalAction,
   CloseStatusBarAction,
@@ -38,37 +38,37 @@ import {
   UserAction,
   UserActionType,
   WipeUserStateAction,
-} from './types.js'
+} from './types'
 import {
   RootActionType,
   SetErrorMessageAction,
   SetInfoMessageAction,
   SetSuccessMessageAction,
-} from '../../app/components/pages/RootPage/actions/types.js'
+} from '../../app/components/pages/RootPage/actions/types'
 import {
   get,
   patch,
   patchFormData,
   postFormData,
   postJson,
-} from '../../app/util/requests.js'
-import rootActions from '../../app/components/pages/RootPage/actions/index.js'
-import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url.js'
-import { isValidTags, isValidUrl } from '../../../shared/util/validation.js'
-import { LOGIN_PAGE } from '../../app/util/types.js'
+} from '../../app/util/requests'
+import rootActions from '../../app/components/pages/RootPage/actions'
+import { generateShortUrl, removeHttpsProtocol } from '../../app/util/url'
+import { isValidTags, isValidUrl } from '../../../shared/util/validation'
+import { LOGIN_PAGE } from '../../app/util/types'
 import {
   LinkChangeSet,
   UrlState,
   UrlTableConfig,
   UrlTableFilterConfig,
   UrlType,
-} from '../reducers/types.js'
-import { GetReduxState } from '../../app/actions/types.js'
-import { GoGovReduxState } from '../../app/reducers/types.js'
-import { MessageType } from '../../../shared/util/messages.js'
-import { GAEvent } from '../../app/util/ga.js'
-import { JobStatusEnum } from '../../../shared/util/jobs.js'
-import queryObjFromTableConfig from '../../app/helpers/urlQueryHelper.js'
+} from '../reducers/types'
+import { GetReduxState } from '../../app/actions/types'
+import { GoGovReduxState } from '../../app/reducers/types'
+import { MessageType } from '../../../shared/util/messages'
+import { GAEvent } from '../../app/util/ga'
+import { JobStatusEnum } from '../../../shared/util/jobs'
+import queryObjFromTableConfig from '../../app/helpers/urlQueryHelper'
 
 const setUrlUploadState: (payload: boolean) => SetUrlUploadStateAction = (
   payload,

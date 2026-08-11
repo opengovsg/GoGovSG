@@ -1,9 +1,9 @@
-import { DirectoryState } from './types.js'
+import { DirectoryState } from './types'
 import {
   DirectoryActionType,
   SET_DIRECTORY_RESULTS,
   SET_INITIAL_STATE,
-} from '../actions/types.js'
+} from '../actions/types'
 
 export const initialState: DirectoryState = {
   results: [],
