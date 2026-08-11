@@ -1,3 +1,13 @@
 {
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1103.0",
+    "@aws-sdk/lib-storage": "^3.1103.0",
+    "archiver": "^8.0.0",
+    "cheerio": "^1.2.0",
+    "cross-fetch": "^4.1.0",
+    "pg": "^8.22.0",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.35.3"
+  }
 }
