@@ -57,6 +57,10 @@ allowBuilds:
   '@datadog/native-appsec': false
   '@datadog/native-iast-taint-tracking': false
   '@datadog/native-metrics': false
+  # Transitive dep of jest-haste-map (jest 30's file watcher). Same
+  # download-a-prebuilt-native-binary pattern as unrs-resolver/sharp/esbuild
+  # above, no arbitrary exec.
+  '@parcel/watcher': true
   '@swc/core': true
   aws-sdk: false
   bcrypt: true
@@ -69,6 +73,3 @@ allowBuilds:
   # a prebuilt native binary for the current platform, no arbitrary exec.
   # Maintained by jounqin (unrs org), also widely used by eslint-import-resolver-typescript.
   unrs-resolver: true
-  # jest-haste-map@30.5+ uses @parcel/watcher for file watching (replaces NodeWatcher).
-  # Native addon with prebuilt binaries per platform; same pattern as sharp/esbuild.
-  '@parcel/watcher': true
