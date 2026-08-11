@@ -27,4 +27,4 @@ router.use((_, res) => {
   res.status(404).send(jsonMessage('Resource not found.'))
 })
 
-export = router
+export default router
