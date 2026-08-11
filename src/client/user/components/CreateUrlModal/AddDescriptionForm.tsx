@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../app/hooks'
 import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
 import LinkInfoEditor from '../../widgets/LinkInfoEditor'
 import ModalMargins from './ModalMargins'
@@ -54,7 +55,7 @@ export default function AddDescriptionForm() {
   const shortUrl = useSelector(
     (state: GoGovReduxState) => state.user.lastCreatedLink,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
   const updateLinkInformation = async () => {
     const response = await patch('/api/user/url', {

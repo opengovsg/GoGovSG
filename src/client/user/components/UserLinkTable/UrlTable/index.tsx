@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table, createStyles, makeStyles } from '@material-ui/core'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../app/hooks'
 import EnhancedTableBody from './EnhancedTableBody'
 import MemoTablePagination from './MemoTablePagination'
 import userActions from '../../../actions'
@@ -23,7 +24,7 @@ function UrlTable() {
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const updateUrlTableConfig = (config: UrlTableConfig) => {
     dispatch(userActions.setUrlTableConfig(config))
     dispatch(userActions.getUrlsForUser())

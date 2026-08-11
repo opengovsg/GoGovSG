@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react'
 import { Redirect, Route } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../hooks'
 import { LOGIN_PAGE } from '../util/types'
 import loginActions from '../../login/actions'
 import { GoGovReduxState } from '../reducers/types'
@@ -15,7 +16,7 @@ const PrivateRoute: FunctionComponent<PrivateRouteProps> = (
 ) => {
   const { component: ChildComponent } = props
   const { path } = props
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
