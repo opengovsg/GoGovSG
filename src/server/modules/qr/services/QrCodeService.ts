@@ -1,7 +1,8 @@
 import * as cheerio from 'cheerio'
 import fs from 'fs'
 import QRCode from 'qrcode'
-import { resolve } from 'path'
+import path, { resolve } from 'path'
+import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
 
@@ -9,6 +10,11 @@ import assetVariant from '../../../../shared/util/asset-variant'
 import ImageFormat from '../../../../shared/util/image-format'
 
 import * as interfaces from '../interfaces'
+
+// @ts-ignore TS1470 - import.meta is invalid under tsc's current CJS-per-file
+// detection until Task 9 flips package.json to "type": "module"; valid at
+// runtime on Node 24 regardless. Remove this ts-ignore in Task 9.
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const IMAGE_WIDTH = 1000
 export const QR_CODE_DIMENSIONS = 800
@@ -60,7 +66,7 @@ export class QrCodeService implements interfaces.QrCodeService {
     const dom = cheerio.load('')
 
     // Read the logo as a string.
-    const filePath = resolve(__dirname, `../assets/${logoVariant}`)
+    const filePath = resolve(dirname, `../assets/${logoVariant}`)
     const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
     dom('body').append('<svg></svg>')
