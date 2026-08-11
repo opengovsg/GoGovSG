@@ -24,7 +24,7 @@
     "test:ci": "jest --coverage",
     "test:e2e": "playwright test --headed",
     "test:e2e-headless": "playwright test",
-    "test:integration": "jest --config=./test/integration/jest.config.js",
+    "test:integration": "jest --config=./test/integration/jest.config.cjs",
     "cz": "git-cz",
     "release": "./release.sh",
     "prepare": "husky",
