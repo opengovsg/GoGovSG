@@ -14,4 +14,4 @@ const linksController = container.get<RotatingLinksController>(
  */
 router.get('/', linksController.getRotatingLinks)
 
-module.exports = router
+export default router

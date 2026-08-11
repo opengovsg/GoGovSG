@@ -34,4 +34,4 @@ const linkAuditSchema = Joi.object({
  */
 router.get('/', validator.query(linkAuditSchema), auditController.getLinkAudit)
 
-module.exports = router
+export default router

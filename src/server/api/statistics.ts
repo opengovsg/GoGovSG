@@ -14,4 +14,4 @@ const statisticsController = container.get<StatisticsController>(
  */
 router.get('/', statisticsController.getGlobalStatistics)
 
-export = router
+export default router

@@ -38,4 +38,4 @@ router.get(
   statisticsController.getLinkStatistics,
 )
 
-module.exports = router
+export default router
