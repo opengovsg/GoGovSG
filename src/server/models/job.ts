@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
-import { IdType } from '../../types/server/models'
-import { JobItemStatusEnum, JobStatusEnum } from '../../shared/util/jobs'
-import { sequelize } from '../util/sequelize'
+import { IdType } from '../../types/server/models/index.js'
+import { JobItemStatusEnum, JobStatusEnum } from '../../shared/util/jobs.js'
+import { sequelize } from '../util/sequelize.js'
 
 export interface JobType extends IdType, Sequelize.Model {
   readonly uuid: string

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import _ from 'lodash'
-import { DependencyIds } from '../../constants'
+import { DependencyIds } from '../../constants.js'
 import dogstatsd, {
   JOB_EMAIL_FAILURE,
   JOB_EMAIL_SUCCESS,
@@ -11,13 +11,13 @@ import dogstatsd, {
   JOB_START_SUCCESS,
   JOB_UPDATE_FAILURE,
   JOB_UPDATE_SUCCESS,
-} from '../../util/dogstatsd'
-import { SQSServiceInterface } from '../../services/sqs'
-import { JobManagementService } from './interfaces'
-import { JobStatusEnum } from '../../../shared/util/jobs'
-import { logger, qrCodeJobBatchSize } from '../../config'
-import jsonMessage from '../../util/json'
-import { NotFoundError } from '../../util/error'
+} from '../../util/dogstatsd.js'
+import { SQSServiceInterface } from '../../services/sqs.js'
+import { JobManagementService } from './interfaces/index.js'
+import { JobStatusEnum } from '../../../shared/util/jobs.js'
+import { logger, qrCodeJobBatchSize } from '../../config.js'
+import jsonMessage from '../../util/json.js'
+import { NotFoundError } from '../../util/error.js'
 
 @injectable()
 export class JobController {

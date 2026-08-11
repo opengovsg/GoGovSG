@@ -1,4 +1,4 @@
 export {
   UrlHistoryRepository,
   UrlHistoryRepository as default,
-} from './UrlHistoryRepository'
+} from './UrlHistoryRepository.js'

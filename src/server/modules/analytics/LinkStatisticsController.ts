@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import jsonMessage from '../../util/json'
-import { DependencyIds } from '../../constants'
-import { LinkStatisticsService } from './interfaces'
+import jsonMessage from '../../util/json.js'
+import { DependencyIds } from '../../constants.js'
+import { LinkStatisticsService } from './interfaces/index.js'
 
 @injectable()
 export class LinkStatisticsController {
