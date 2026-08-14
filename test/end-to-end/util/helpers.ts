@@ -11,10 +11,13 @@ export const exactText = (value: string): RegExp =>
   new RegExp(`^${escapeRegExp(value)}$`)
 
 // General
-// Scoped to role="button": the "Are you a public officer? Sign in" caption
-// next to this button is a plain link, not a button, so it won't match.
+// The header CTA renders as an <a href> (MUI gives Button an anchor role of
+// "link", not "button", whenever `href` is passed), so it must be queried by
+// role="link". Scoped to the banner landmark: the "Are you a public officer?
+// Sign in" caption below it is also a "link" named "Sign in" and would
+// otherwise collide under strict mode.
 export const loginButton = (page: Page): Locator =>
-  page.getByRole('button', { name: 'Sign in' })
+  page.getByRole('banner').getByRole('link', { name: 'Sign in' })
 export const signInButton = (page: Page): Locator =>
   page.locator('button[type="submit"]')
 export const loginSuccessAlert = (page: Page): Locator =>
