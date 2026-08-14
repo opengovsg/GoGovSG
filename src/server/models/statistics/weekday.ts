@@ -1,8 +1,8 @@
 import Sequelize from 'sequelize'
 
-import { sequelize } from '../../util/sequelize'
-import { IdType } from '../../../types/server/models'
-import { SHORT_URL_REGEX } from '../../../shared/util/validation'
+import { sequelize } from '../../util/sequelize.js'
+import { IdType } from '../../../types/server/models/index.js'
+import { SHORT_URL_REGEX } from '../../../shared/util/validation.js'
 
 export interface WeekdayClicksType extends IdType, Sequelize.Model {
   readonly shortUrl: string

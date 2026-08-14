@@ -1,10 +1,24 @@
 import Express from 'express'
-import jsonMessage from '../util/json'
-import { DependencyIds, ERROR_404_PATH } from '../constants'
-import { displayHostname, ffExternalApi } from '../config'
-import assetVariant from '../../shared/util/asset-variant'
-import { container } from '../util/inversify'
-import ApiKeyAuthService from '../modules/user/services/ApiKeyAuthService'
+import jsonMessage from '../util/json.js'
+import { DependencyIds, ERROR_404_PATH } from '../constants.js'
+import { displayHostname, ffExternalApi } from '../config.js'
+import assetVariant from '../../shared/util/asset-variant.js'
+import { container } from '../util/inversify.js'
+import ApiKeyAuthService from '../modules/user/services/ApiKeyAuthService.js'
+
+import logoutRouter from './logout.js'
+import loginRouter from './login/index.js'
+import statisticsRouter from './statistics.js'
+import linksRouter from './links.js'
+import gaRouter from './ga.js'
+import userRouter from './user/index.js'
+import qrcodeRouter from './qrcode.js'
+import linkStatisticsRouter from './link-statistics.js'
+import linkAuditRouter from './link-audit.js'
+import directoryRouter from './directory.js'
+import callbackRouter from './callback.js'
+import adminV1Router from './admin-v1/index.js'
+import externalV1Router from './external-v1/index.js'
 
 const BEARER_STRING = 'Bearer'
 const BEARER_SEPARATOR = ' '
@@ -14,11 +28,11 @@ const apiKeyAuthService = container.get<ApiKeyAuthService>(
 const router = Express.Router()
 
 /*  Public routes that do not need to be protected */
-router.use('/logout', require('./logout'))
-router.use('/login', require('./login'))
-router.use('/stats', require('./statistics'))
-router.use('/links', require('./links'))
-router.use('/ga', require('./ga'))
+router.use('/logout', logoutRouter)
+router.use('/login', loginRouter)
+router.use('/stats', statisticsRouter)
+router.use('/links', linksRouter)
+router.use('/ga', gaRouter)
 
 /**
  * To protect private user routes.
@@ -101,17 +115,17 @@ function preprocess(
 }
 
 /* Register protected endpoints */
-router.use('/user', userGuard, preprocess, require('./user'))
-router.use('/qrcode', userGuard, require('./qrcode'))
-router.use('/link-stats', userGuard, require('./link-statistics'))
-router.use('/link-audit', userGuard, require('./link-audit'))
-router.use('/directory', userGuard, require('./directory'))
+router.use('/user', userGuard, preprocess, userRouter)
+router.use('/qrcode', userGuard, qrcodeRouter)
+router.use('/link-stats', userGuard, linkStatisticsRouter)
+router.use('/link-audit', userGuard, linkAuditRouter)
+router.use('/directory', userGuard, directoryRouter)
 
 router.use(
   '/callback',
   apiKeyAuthMiddleware,
   apiKeyAdminAuthMiddleware,
-  require('./callback'),
+  callbackRouter,
 )
 
 /* Register APIKey protected endpoints */
@@ -121,11 +135,9 @@ if (ffExternalApi) {
     apiKeyAuthMiddleware,
     apiKeyAdminAuthMiddleware,
     preprocess,
-    // eslint-disable-next-line node/global-require
-    require('./admin-v1'),
+    adminV1Router,
   )
-  // eslint-disable-next-line node/global-require
-  router.use('/v1', apiKeyAuthMiddleware, preprocess, require('./external-v1'))
+  router.use('/v1', apiKeyAuthMiddleware, preprocess, externalV1Router)
 }
 
 router.use((_, res) => {

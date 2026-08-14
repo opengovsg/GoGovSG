@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify'
-import { UserTagsQueryConditions } from '../../../repositories/types'
-import { DependencyIds } from '../../../constants'
-import { TagRepositoryInterface } from '../../../repositories/interfaces/TagRepositoryInterface'
-import TagManagementServiceInterface from '../interfaces/TagManagementService'
+import { UserTagsQueryConditions } from '../../../repositories/types.js'
+import { DependencyIds } from '../../../constants.js'
+import { TagRepositoryInterface } from '../../../repositories/interfaces/TagRepositoryInterface.js'
+import TagManagementServiceInterface from '../interfaces/TagManagementService.js'
 
 @injectable()
 class TagManagementService implements TagManagementServiceInterface {

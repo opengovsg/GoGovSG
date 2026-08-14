@@ -1,7 +1,7 @@
 import { S3Client } from '@aws-sdk/client-s3'
 import { SQSClient } from '@aws-sdk/client-sqs'
 
-import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
+import CloudmersiveVirusApiClient from 'cloudmersive-virus-api-client'
 
 import {
   DEV_ENV,
@@ -17,78 +17,87 @@ import {
   sqsTimeout,
   userAnnouncement,
   userMessage,
-} from './config'
+} from './config.js'
 
-import { container } from './util/inversify'
-import { DependencyIds } from './constants'
-import { OtpRepository } from './modules/auth/repositories'
-import { MailerNode } from './services/email'
+import { container } from './util/inversify.js'
+import { DependencyIds } from './constants.js'
+import { OtpRepository } from './modules/auth/repositories/index.js'
+import { MailerNode } from './services/email.js'
 
-import { S3ServerSide } from './services/aws'
-import { UrlRepository } from './repositories/UrlRepository'
-import { UserRepository } from './repositories/UserRepository'
-import { TagRepository } from './repositories/TagRepository'
-import { JobRepository } from './modules/job/repositories/JobRepository'
-import { JobItemRepository } from './modules/job/repositories/JobItemRepository'
-import { UrlMapper } from './mappers/UrlMapper'
-import { UrlV1Mapper } from './mappers/UrlV1Mapper'
-import { UserMapper } from './mappers/UserMapper'
-import { OtpMapper } from './mappers/OtpMapper'
-import { TagMapper } from './mappers/TagMapper'
+import { S3ServerSide } from './services/aws.js'
+import { UrlRepository } from './repositories/UrlRepository.js'
+import { UserRepository } from './repositories/UserRepository.js'
+import { TagRepository } from './repositories/TagRepository.js'
+import { JobRepository } from './modules/job/repositories/JobRepository.js'
+import { JobItemRepository } from './modules/job/repositories/JobItemRepository.js'
+import { UrlMapper } from './mappers/UrlMapper.js'
+import { UrlV1Mapper } from './mappers/UrlV1Mapper.js'
+import { UserMapper } from './mappers/UserMapper.js'
+import { OtpMapper } from './mappers/OtpMapper.js'
+import { TagMapper } from './mappers/TagMapper.js'
 import {
   AnalyticsLoggerService,
   CookieArrayReducerService,
   CrawlerCheckService,
   RedirectService,
-} from './modules/redirect/services'
-import { RedirectController } from './modules/redirect'
+} from './modules/redirect/services/index.js'
+import { RedirectController } from './modules/redirect/index.js'
 
-import { StatisticsService } from './modules/statistics/services'
-import { StatisticsController } from './modules/statistics'
+import { StatisticsService } from './modules/statistics/services/index.js'
+import { StatisticsController } from './modules/statistics/index.js'
 
-import { RotatingLinksController } from './modules/display/RotatingLinksController'
+import { RotatingLinksController } from './modules/display/RotatingLinksController.js'
 
-import { AuthService, CryptographyBcrypt } from './modules/auth/services'
-import { LoginController, LogoutController } from './modules/auth'
-import { UrlManagementService } from './modules/user/services'
-import { UserController } from './modules/user'
-import { DirectoryController } from './modules/directory'
-import { DirectorySearchService } from './modules/directory/services'
-import { GaController, LinkStatisticsController } from './modules/analytics'
+import {
+  AuthService,
+  CryptographyBcrypt,
+} from './modules/auth/services/index.js'
+import { LoginController, LogoutController } from './modules/auth/index.js'
+import { UrlManagementService } from './modules/user/services/index.js'
+import { UserController } from './modules/user/index.js'
+import { DirectoryController } from './modules/directory/index.js'
+import { DirectorySearchService } from './modules/directory/services/index.js'
+import {
+  GaController,
+  LinkStatisticsController,
+} from './modules/analytics/index.js'
 import {
   DeviceCheckService,
   LinkStatisticsService,
-} from './modules/analytics/services'
-import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository'
-import { ApiV1Controller } from './modules/api/external-v1'
-import { AdminApiV1Controller } from './modules/api/admin-v1'
-import { LinkAuditController } from './modules/audit'
-import { LinkAuditService } from './modules/audit/services'
-import { UrlHistoryRepository } from './modules/audit/repositories'
+} from './modules/analytics/services/index.js'
+import { LinkStatisticsRepository } from './modules/analytics/repositories/LinkStatisticsRepository.js'
+import { ApiV1Controller } from './modules/api/external-v1/index.js'
+import { AdminApiV1Controller } from './modules/api/admin-v1/index.js'
+import { LinkAuditController } from './modules/audit/index.js'
+import { LinkAuditService } from './modules/audit/services/index.js'
+import { UrlHistoryRepository } from './modules/audit/repositories/index.js'
 
-import { SafeBrowsingMapper } from './modules/threat/mappers'
-import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository'
+import { SafeBrowsingMapper } from './modules/threat/mappers/index.js'
+import { SafeBrowsingRepository } from './modules/threat/repositories/SafeBrowsingRepository.js'
 import {
   DEFAULT_ALLOWED_FILE_EXTENSIONS,
   FILE_EXTENSION_MIME_TYPE_MAP,
-} from './modules/threat/services/FileTypeFilterService'
+} from './modules/threat/services/FileTypeFilterService.js'
 import {
   CloudmersiveScanService,
   FileTypeFilterService,
   SafeBrowsingService,
-} from './modules/threat/services'
-import { FileCheckController, UrlCheckController } from './modules/threat'
+} from './modules/threat/services/index.js'
+import {
+  FileCheckController,
+  UrlCheckController,
+} from './modules/threat/index.js'
 
-import { QrCodeService } from './modules/qr/services'
-import { QrCodeController } from './modules/qr'
-import TagManagementService from './modules/user/services/TagManagementService'
-import { JobManagementService } from './modules/job/services'
-import ApiKeyAuthService from './modules/user/services/ApiKeyAuthService'
+import { QrCodeService } from './modules/qr/services/index.js'
+import { QrCodeController } from './modules/qr/index.js'
+import TagManagementService from './modules/user/services/TagManagementService.js'
+import { JobManagementService } from './modules/job/services/index.js'
+import ApiKeyAuthService from './modules/user/services/ApiKeyAuthService.js'
 
-import { BulkService } from './modules/bulk/services'
-import { BulkController } from './modules/bulk'
-import { SQSService } from './services/sqs'
-import { JobController } from './modules/job'
+import { BulkService } from './modules/bulk/services/index.js'
+import { BulkController } from './modules/bulk/index.js'
+import { SQSService } from './services/sqs.js'
+import { JobController } from './modules/job/index.js'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -155,11 +164,11 @@ export default () => {
   bindIfUnbound(DependencyIds.fileTypeFilterService, FileTypeFilterService)
 
   if (cloudmersiveKey) {
-    const client = ApiClient.instance
+    const client = CloudmersiveVirusApiClient.ApiClient.instance
     const ApiKey = client.authentications.Apikey
     ApiKey.apiKey = cloudmersiveKey
   }
-  const api = new ScanApi()
+  const api = new CloudmersiveVirusApiClient.ScanApi()
 
   container.bind(DependencyIds.cloudmersiveKey).toConstantValue(cloudmersiveKey)
   container.bind(DependencyIds.cloudmersiveClient).toConstantValue(api)

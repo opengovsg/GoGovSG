@@ -4,15 +4,15 @@ import { inject, injectable } from 'inversify'
 import { QueryTypes } from 'sequelize'
 import _ from 'lodash'
 import validator from 'validator'
-import { Url, UrlType } from '../models/url'
-import { UrlClicks } from '../models/statistics/clicks'
-import { NotFoundError } from '../util/error'
-import { redirectClient } from '../redis'
-import { ffUseReplicaForRedirects, logger, redirectExpiry } from '../config'
-import { sequelize } from '../util/sequelize'
-import { DependencyIds } from '../constants'
-import { FileVisibility, S3Interface } from '../services/aws'
-import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface'
+import { Url, UrlType } from '../models/url.js'
+import { UrlClicks } from '../models/statistics/clicks.js'
+import { NotFoundError } from '../util/error.js'
+import { redirectClient } from '../redis.js'
+import { ffUseReplicaForRedirects, logger, redirectExpiry } from '../config.js'
+import { sequelize } from '../util/sequelize.js'
+import { DependencyIds } from '../constants.js'
+import { FileVisibility, S3Interface } from '../services/aws.js'
+import { UrlRepositoryInterface } from './interfaces/UrlRepositoryInterface.js'
 import {
   BulkUrlMapping,
   RedirectDestination,
@@ -20,21 +20,21 @@ import {
   StorableUrl,
   UrlDirectory,
   UrlDirectoryPaginated,
-} from './types'
-import { StorableUrlSource, StorableUrlState } from './enums'
-import { Mapper } from '../mappers/Mapper'
-import { SearchResultsSortOrder } from '../../shared/search'
-import { urlSearchVector } from '../models/search'
-import { DirectoryQueryConditions } from '../modules/directory'
-import { extractShortUrl, sanitiseQuery } from '../util/parse'
-import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
-import { TAG_SEPARATOR } from '../../shared/constants'
-import { getSafeBrowsingExpiryDate } from '../util/safeBrowsing'
+} from './types.js'
+import { StorableUrlSource, StorableUrlState } from './enums.js'
+import { Mapper } from '../mappers/Mapper.js'
+import { SearchResultsSortOrder } from '../../shared/search.js'
+import { urlSearchVector } from '../models/search.js'
+import { DirectoryQueryConditions } from '../modules/directory/index.js'
+import { extractShortUrl, sanitiseQuery } from '../util/parse.js'
+import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface.js'
+import { TAG_SEPARATOR } from '../../shared/constants.js'
+import { getSafeBrowsingExpiryDate } from '../util/safeBrowsing.js'
 import dogstatsd, {
   DIRECTORY_SEARCH_DOMAIN,
   DIRECTORY_SEARCH_EMAIL,
   DIRECTORY_SEARCH_UNIQUE_DOMAINS,
-} from '../util/dogstatsd'
+} from '../util/dogstatsd.js'
 
 const { Public, Private } = FileVisibility
 

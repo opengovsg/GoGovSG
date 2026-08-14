@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this, no-dupe-class-members */
 
 import { inject, injectable } from 'inversify'
-import { Mapper } from './Mapper'
-import { StorableUrl, StorableUser } from '../repositories/types'
-import { UrlType } from '../models/url'
-import { UserType } from '../models/user'
-import { DependencyIds } from '../constants'
+import { Mapper } from './Mapper.js'
+import { StorableUrl, StorableUser } from '../repositories/types.js'
+import { UrlType } from '../models/url.js'
+import { UserType } from '../models/user.js'
+import { DependencyIds } from '../constants.js'
 
 @injectable()
 export class UserMapper implements Mapper<StorableUser, UserType> {

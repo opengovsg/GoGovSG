@@ -1,13 +1,13 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import {
   isBlacklisted,
   isCircularRedirects,
   isHttps,
   isValidShortUrl,
   isValidUrl,
-} from '../../../shared/util/validation'
-import { ogHostname } from '../../config'
-import { ACTIVE, INACTIVE } from '../../models/types'
+} from '../../../shared/util/validation.js'
+import { ogHostname } from '../../config.js'
+import { ACTIVE, INACTIVE } from '../../models/types.js'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),

@@ -4,7 +4,7 @@ import {
   logger,
   masterDatabaseCredentials,
   replicaDatabaseCredentials,
-} from '../config'
+} from '../config.js'
 
 export const sequelize = new Sequelize.Sequelize({
   dialect: 'postgres',

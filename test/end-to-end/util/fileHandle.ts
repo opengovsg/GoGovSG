@@ -1,6 +1,6 @@
-import { dummyMaliciousFilePath } from './config'
+import fs from 'fs'
 
-const fs = require('fs')
+import { dummyMaliciousFilePath } from './config'
 
 /**
  * Create bulk creation csv

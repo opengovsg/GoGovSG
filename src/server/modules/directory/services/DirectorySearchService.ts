@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
-import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface'
-import { DependencyIds } from '../../../constants'
-import { UrlDirectoryPaginated } from '../../../repositories/types'
-import * as interfaces from '../interfaces'
-import { DirectoryQueryConditions } from '..'
+import { UrlRepositoryInterface } from '../../../repositories/interfaces/UrlRepositoryInterface.js'
+import { DependencyIds } from '../../../constants.js'
+import { UrlDirectoryPaginated } from '../../../repositories/types.js'
+import * as interfaces from '../interfaces/index.js'
+import { DirectoryQueryConditions } from '../index.js'
 
 @injectable()
 export class DirectorySearchService
