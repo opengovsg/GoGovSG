@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../app/hooks'
 import { useHistory, useLocation } from 'react-router-dom'

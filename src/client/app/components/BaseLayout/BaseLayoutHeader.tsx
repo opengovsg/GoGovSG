@@ -6,11 +6,11 @@ import {
   Button,
   Hidden,
   Toolbar,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import i18next from 'i18next'
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import GoLogoLight from '@assets/go-logo-graphics/go-main-logo-light.svg'
@@ -89,7 +89,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       width: '100%',
       height: '100%',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: 'auto',
       },
     },
@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme) =>
       filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
       // this class is not mobile first by default as padding should not be set
       // when it is not mobile.
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.down('md')]: {
         paddingLeft: 0,
         paddingRight: 0,
         minWidth: theme.spacing(6),
@@ -133,7 +133,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   const logout = () => dispatch(loginActions.logout())
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()
-  const isMobileVariant = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileVariant = useMediaQuery(theme.breakpoints.down('lg'))
   const classes = useStyles({ isLoggedIn, isLightItems, isSticky, toStick })
   const headers = [
     {
@@ -205,7 +205,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
       variant="text"
       className={classes.appBarSignOutBtn}
     >
-      <Hidden xsDown>
+      <Hidden mdDown>
         <strong>Sign out&nbsp;</strong>
       </Hidden>
       {isLightItems ? (
@@ -220,12 +220,12 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
     </Button>
   ) : (
     <>
-      <Hidden smDown>
+      <Hidden lgDown>
         <Button
           href="/#/login"
           size="large"
           variant="contained"
-          color={isLightItems ? 'default' : 'primary'}
+          color={isLightItems ? 'inherit' : 'primary'}
           className={classes.appBarSignInBtn}
         >
           Sign in

@@ -1,7 +1,9 @@
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../app/hooks'
 import React, { useEffect } from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
 import BaseLayout from '../app/components/BaseLayout'
@@ -20,7 +22,7 @@ const useStyles = makeStyles((theme) =>
       marginRight: 20,
       marginTop: theme.spacing(4),
       whiteSpace: 'nowrap',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         order: 10,
         flexBasis: '100%',
         marginTop: theme.spacing(3),

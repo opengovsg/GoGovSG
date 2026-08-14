@@ -3,11 +3,11 @@ import {
   Button,
   Hidden,
   Typography,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import arrow from '@assets/components/directory/directory-header/arrow.svg'
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import GoDirectoryInput from './DirectoryInput'
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) =>
       top: '22px',
       margin: '0 auto',
       maxWidth: (props: DirectoryHeaderStyleProps) =>
-        theme.spacing(180) - 2 * props.appMargins,
+        parseFloat(theme.spacing(180)) - 2 * props.appMargins,
       [theme.breakpoints.up('md')]: {
         top: '35px',
       },
@@ -100,7 +100,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   // smaller then 730px height will cause the filter modal to be inaccessible
   const isIdealHeight = useMediaQuery('(min-height: 730px)')
 
@@ -123,7 +123,7 @@ const DirectoryHeader: FunctionComponent<DirectoryHeaderProps> = ({
               <BetaTag />
             </div>
 
-            <Hidden xsDown>
+            <Hidden mdDown>
               <div className={classes.rightWrapper}>
                 <Button
                   href="/#/user"
