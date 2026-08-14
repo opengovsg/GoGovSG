@@ -2,8 +2,11 @@ name: ci
 on:
   workflow_dispatch:
   push:
+    branches:
+      - develop
+      - staging
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened]
 
 jobs:
   lint:
