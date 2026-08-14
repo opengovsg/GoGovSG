@@ -254,10 +254,11 @@ export const tagsSaveButton = (page: Page): Locator =>
   page.getByRole('button', { name: 'Save' }).nth(1)
 export const successSnackBar = (page: Page): Locator =>
   page.locator('.MuiSnackbar-root')
+// MUI v5's internal components style via emotion, which appends its own
+// hashed class alongside the "Mui*" utility class, so an exact `[class="..."]`
+// attribute match no longer matches; use a class selector instead.
 export const closeButtonSnackBar = (page: Page): Locator =>
-  page
-    .locator('div[class="MuiSnackbarContent-action"]')
-    .locator('xpath=./button')
+  page.locator('div.MuiSnackbarContent-action').locator('xpath=./button')
 export const linkErrorSnackBar = (page: Page): Locator =>
   page
     .locator('div[role="alert"]')
@@ -311,10 +312,13 @@ export const filterDrawer = (page: Page): Locator =>
   page.locator('.MuiCollapse-root').nth(0)
 export const filterSortPanel = (page: Page): Locator =>
   page.locator('.MuiCollapse-root').filter({ hasText: 'Date of creation' })
+// Despite the name, also used on the Directory page's sort/filter panel,
+// which has no "Date of creation" text, so this cannot be scoped to
+// filterSortPanel.
 export const userApplyButton = (page: Page): Locator =>
-  filterSortPanel(page).getByRole('button', { name: 'Apply' })
+  page.getByRole('button', { name: 'Apply' })
 export const userResetButton = (page: Page): Locator =>
-  filterSortPanel(page).getByRole('button', { name: 'Reset' })
+  page.getByRole('button', { name: 'Reset' })
 export const dateOfCreationButton = (page: Page): Locator =>
   page.locator('p', { hasText: 'Date of creation' })
 export const mostNumberOfVisitsButton = (page: Page): Locator =>
@@ -471,12 +475,9 @@ export const linkHistoryTagsH6 = (page: Page): Locator =>
 
 // API Integration
 export const generateApiKeyButton = (page: Page): Locator =>
-  page
-    .locator('img[alt="generate api key"]')
-    .locator('xpath=..')
-    .locator('xpath=..')
+  page.getByRole('button', { name: 'Generate API Key' })
 export const regenerateApiKeyButton = (page: Page): Locator =>
-  page.locator('img[alt="Regenerate"]').locator('xpath=..').locator('xpath=..')
+  page.getByRole('button', { name: 'Regenerate' })
 export const apiKeyModal = (page: Page): Locator =>
   page.locator('div[aria-labelledby="apiKeyModal"]')
 export const iHaveCopiedButton = (page: Page): Locator =>
