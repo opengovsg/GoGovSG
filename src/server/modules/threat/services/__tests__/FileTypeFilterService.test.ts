@@ -1,5 +1,17 @@
 import { FileTypeFilterService } from '..'
 
+// file-type is pure ESM; Jest's CommonJS transform can't resolve it via
+// dynamic import (see FileTypeFilterService's runtime import), so its
+// detection behaviour is stubbed here rather than exercised for real.
+const fileTypeFromBuffer = jest.fn()
+jest.mock(
+  'file-type',
+  () => ({
+    fileTypeFromBuffer: (...args: unknown[]) => fileTypeFromBuffer(...args),
+  }),
+  { virtual: true },
+)
+
 describe('FileTypeFilterService', () => {
   const service = new FileTypeFilterService(
     ['csv', 'xml'],
@@ -9,6 +21,10 @@ describe('FileTypeFilterService', () => {
       ['dxf', 'application/dxf'],
     ]),
   )
+
+  beforeEach(() => {
+    fileTypeFromBuffer.mockReset()
+  })
 
   it('get extension and mime type from csv file not detected by file-type', async () => {
     const fileTypeData = await service.getExtensionAndMimeType({
@@ -51,6 +67,10 @@ describe('FileTypeFilterService', () => {
   })
 
   it('get extension and mime type from file detected by file', async () => {
+    fileTypeFromBuffer.mockResolvedValueOnce({
+      ext: 'xml',
+      mime: 'application/xml',
+    })
     const fileTypeData = await service.getExtensionAndMimeType({
       data: Buffer.from('<?xml version="1.0" encoding="ISO-8859-1" ?>'),
       name: 'file.notreallyxml',
