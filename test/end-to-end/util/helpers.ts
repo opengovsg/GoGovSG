@@ -50,12 +50,14 @@ export const tagsAutocompleteTags = (page: Page): Locator =>
   tagsAutocompleteInput(page)
     .locator('xpath=ancestor::div[contains(@class,"MuiInputBase-root")][1]')
     .locator('xpath=./div')
+// The header nav Button renders with href, so MUI gives it role="link"
+// (see loginButton above) rather than wrapping its text in a span.
 export const directoryPageButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Directory' }).locator('xpath=..')
+  page.getByRole('banner').getByRole('link', { name: 'Directory' })
 export const mobileDirectoryPageButton = (page: Page): Locator =>
   page.locator('img[alt="Directory"]').locator('xpath=..').locator('xpath=..')
 export const apiIntegrationPageButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'API Integration' }).locator('xpath=..')
+  page.getByRole('banner').getByRole('link', { name: 'API Integration' })
 export const signOutButton = (page: Page): Locator =>
   page.locator('strong', { hasText: 'Sign out' }).locator('xpath=..')
 
@@ -63,7 +65,7 @@ export const signOutButton = (page: Page): Locator =>
 export const emailHelperText = (page: Page): Locator =>
   page.locator('#email-helper-text')
 export const resendOtpButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Resend OTP' }).locator('xpath=..')
+  page.getByRole('button', { name: 'Resend OTP' })
 
 // Search Page
 export const searchTextField = (page: Page): Locator =>
@@ -223,10 +225,7 @@ export const searchBarTagButton = (page: Page): Locator =>
 export const searchBarSearchByTag = (page: Page): Locator =>
   page.locator('p', { hasText: exactText('Search by Tag') })
 export const downloadLinkButton = (page: Page): Locator =>
-  page
-    .locator('p', { hasText: 'Download links' })
-    .locator('xpath=..')
-    .locator('xpath=..')
+  page.getByRole('button', { name: 'Download links' })
 export const closeDrawerButton = (page: Page): Locator =>
   drawer(page)
     .locator('xpath=./*')
@@ -238,7 +237,7 @@ export const longUrl = (page: Page): Locator =>
 export const inactiveWord = (page: Page): Locator =>
   page.locator('span', { hasText: exactText('inactive') })
 export const urlSaveButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Save' }).nth(0)
+  page.getByRole('button', { name: 'Save' }).nth(0)
 export const urlUpdatedSnackbar = (page: Page): Locator =>
   page.locator('.MuiSnackbar-root', { hasText: exactText('URL is updated.') })
 export const tagsUpdatedSnackbar = (page: Page): Locator =>
@@ -250,9 +249,9 @@ export const helperText = (page: Page): Locator =>
 export const linkTransferField = (page: Page): Locator =>
   page.locator('input[placeholder="Email of link recipient"]')
 export const transferButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Transfer' })
+  page.getByRole('button', { name: 'Transfer' })
 export const tagsSaveButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Save' }).nth(1)
+  page.getByRole('button', { name: 'Save' }).nth(1)
 export const successSnackBar = (page: Page): Locator =>
   page.locator('.MuiSnackbar-root')
 export const closeButtonSnackBar = (page: Page): Locator =>
@@ -313,9 +312,9 @@ export const filterDrawer = (page: Page): Locator =>
 export const filterSortPanel = (page: Page): Locator =>
   page.locator('.MuiCollapse-root').filter({ hasText: 'Date of creation' })
 export const userApplyButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Apply' })
+  filterSortPanel(page).getByRole('button', { name: 'Apply' })
 export const userResetButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Reset' })
+  filterSortPanel(page).getByRole('button', { name: 'Reset' })
 export const dateOfCreationButton = (page: Page): Locator =>
   page.locator('p', { hasText: 'Date of creation' })
 export const mostNumberOfVisitsButton = (page: Page): Locator =>
@@ -400,19 +399,13 @@ export const sortOptionSelected = (sortOption: Locator): Locator =>
 export const filterOptionSelected = (filterOption: Locator): Locator =>
   filterOption.locator('svg')
 export const mostRecentFilter = (page: Page): Locator =>
-  page
-    .locator('p', { hasText: 'Most recent' })
-    .locator('xpath=..')
-    .locator('xpath=..')
+  directoryFilterPanel(page).getByRole('button', { name: 'Most recent' })
 export const mostPopularFilter = (page: Page): Locator =>
-  page
-    .locator('p', { hasText: 'Most popular' })
-    .locator('xpath=..')
-    .locator('xpath=..')
+  directoryFilterPanel(page).getByRole('button', { name: 'Most popular' })
 export const applyButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Apply' }).locator('xpath=..')
+  directoryFilterPanel(page).getByRole('button', { name: 'Apply' })
 export const resetButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Reset' }).locator('xpath=..')
+  directoryFilterPanel(page).getByRole('button', { name: 'Reset' })
 export const uncheckedButtonBackground = 'rgba(0, 0, 0, 0)'
 
 export const linkButton = (page: Page): Locator =>
@@ -484,19 +477,14 @@ export const generateApiKeyButton = (page: Page): Locator =>
     .locator('xpath=..')
 export const regenerateApiKeyButton = (page: Page): Locator =>
   page.locator('img[alt="Regenerate"]').locator('xpath=..').locator('xpath=..')
+export const apiKeyModal = (page: Page): Locator =>
+  page.locator('div[aria-labelledby="apiKeyModal"]')
 export const iHaveCopiedButton = (page: Page): Locator =>
-  page.locator('span', { hasText: 'Yes, I have copied' }).locator('xpath=..')
+  apiKeyModal(page).getByRole('button', { name: 'Yes, I have copied' })
+// The clipboard-copy icon button: an unlabelled IconButton that renders
+// before the "Yes, I have copied" button in DOM order.
 export const copyButton = (page: Page): Locator =>
-  page
-    .locator('span', { hasText: 'Yes, I have copied' })
-    .locator('xpath=..')
-    .locator('xpath=..')
-    .locator('xpath=./div')
-    .nth(0)
-    .locator('xpath=./div')
-    .nth(0)
-    .locator('xpath=./button')
-    .nth(0)
+  apiKeyModal(page).locator('button').first()
 
 // Helper Functions
 export function generateRandomString(length: number): string {
