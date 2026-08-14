@@ -9,8 +9,9 @@ import {
   TableRow,
   Tooltip,
   Typography,
-} from '@material-ui/core'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import linkIcon from '@assets/components/user/user-link-table/link-icon.svg'
 import fileIcon from '@assets/components/user/user-link-table/file-icon.svg'
 import clickCountIcon from '@assets/components/user/user-link-table/click-count-icon.svg'
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => {
         paddingRight: theme.spacing(1.5),
         paddingLeft: (props: StyleProps) => props.appMargins,
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme) => {
         paddingBottom: '61px',
         paddingLeft: (props: StyleProps) => props.appMargins,
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.up('md')]: {
         width: '61%',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'inline-flex',
         width: '100%',
         padding: theme.spacing(2, 2, 0, 3),
@@ -83,7 +84,7 @@ const useStyles = makeStyles((theme) => {
       },
     },
     shortUrlGrid: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: '100%',
       },
     },
@@ -94,7 +95,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.up('md')]: {
         minWidth: '100px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'inline-flex',
         padding: theme.spacing(1, 2, 2, 3),
         width: '30%',
@@ -106,7 +107,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.up('md')]: {
         minWidth: '125px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'inline-flex',
         padding: theme.spacing(1, 1, 2, 1),
         width: '25%',
@@ -118,7 +119,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.up('md')]: {
         minWidth: '210px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'inline-flex',
         padding: theme.spacing(1, 0, 2, 2),
         width: '40%',
@@ -140,7 +141,7 @@ const useStyles = makeStyles((theme) => {
     },
     icon: {
       marginTop: theme.spacing(-0.5),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
@@ -156,7 +157,7 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.up('md')]: {
         maxWidth: '400px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 32px)',
       },
       whiteSpace: 'nowrap',
@@ -177,7 +178,7 @@ const useStyles = makeStyles((theme) => {
       paddingRight: '4px',
     },
     hoverRow: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         height: 'auto',
         borderBottom: 'none',
         borderRight: 'none',
@@ -255,7 +256,7 @@ export default function EnhancedTableBody() {
                     </Typography>
                   </Tooltip>
                 </Grid>
-                <Hidden smDown>
+                <Hidden lgDown>
                   <Grid item className={classes.longUrlGrid}>
                     <Typography variant="caption" className={classes.longUrl}>
                       {row.longUrl}
@@ -263,7 +264,7 @@ export default function EnhancedTableBody() {
                   </Grid>
                 </Hidden>
                 {row.tags.length > 0 && (
-                  <Hidden smDown>
+                  <Hidden lgDown>
                     <Grid item className={classes.longUrlGrid}>
                       {row.tags.map((tag: string) => (
                         <TableTag
@@ -277,7 +278,7 @@ export default function EnhancedTableBody() {
                 )}
               </Grid>
             </TableCell>
-            <Hidden smDown>
+            <Hidden lgDown>
               <TableCell className={classes.stateCell}>
                 <CopyButton
                   shortUrl={row.shortUrl}

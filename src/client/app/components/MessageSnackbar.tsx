@@ -4,12 +4,12 @@ import useAppDispatch from '../hooks'
 import {
   Snackbar,
   SnackbarContent,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
-import IconButton from '@material-ui/core/IconButton'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
+import IconButton from '@mui/material/IconButton'
 import CheckCircleIcon from './widgets/CheckCircleIcon'
 import CloseIcon from './widgets/CloseIcon'
 import rootActions from './pages/RootPage/actions'
@@ -88,7 +88,7 @@ function MessageSnackbar() {
     }
   }
 
-  const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('md'))
   let colorClass = ''
   switch (variant) {
     case snackbarVariants.ERROR:

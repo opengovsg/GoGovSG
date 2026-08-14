@@ -1,6 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import useMinifiedActions from '../../../CreateUrlModal/helpers/minifiedActions'
 import useIsFiltered from '../../../EmptyState/isFiltered'
@@ -24,7 +27,7 @@ const useStyles = makeStyles((theme) =>
       alignSelf: 'center',
       marginRight: 20,
       whiteSpace: 'nowrap',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         order: 10,
         flexBasis: '100%',
         marginTop: theme.spacing(3),

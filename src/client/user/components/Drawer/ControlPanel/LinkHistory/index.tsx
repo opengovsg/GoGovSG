@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../../../app/hooks'
-import { Timeline } from '@material-ui/lab/'
+import { Timeline } from '@mui/lab/'
 import { GoGovReduxState } from '../../../../../app/reducers/types'
 import { useDrawerState } from '../..'
 

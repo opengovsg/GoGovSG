@@ -1,4 +1,6 @@
-import { Button, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Button, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import useAppDispatch from '../../../app/hooks'
 import React, { FunctionComponent } from 'react'
 import i18next from 'i18next'

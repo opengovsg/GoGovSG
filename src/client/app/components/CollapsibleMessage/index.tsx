@@ -1,5 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
-import { Collapse } from '@material-ui/core'
+import { Collapse } from '@mui/material'
 import useStyles from './styles'
 import { CollapsibleMessagePosition, CollapsibleMessageProps } from './types'
 

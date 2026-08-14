@@ -1,12 +1,8 @@
 import React, { FunctionComponent } from 'react'
 import useAppDispatch from '../../../app/hooks'
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { Typography, useMediaQuery, useTheme } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import i18next from 'i18next'
 import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
 
@@ -59,7 +55,7 @@ const useStyles = makeStyles((theme) =>
 const ApiKeyGraphic: FunctionComponent = () => {
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const dispatch = useAppDispatch()
   return (
     <div className={classes.root}>

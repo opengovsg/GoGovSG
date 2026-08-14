@@ -1,11 +1,7 @@
 import React from 'react'
-import {
-  InputAdornment,
-  TextField,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { InputAdornment, TextField, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { TEXT_FIELD_HEIGHT } from '../constants'
 
 const usePrefixAdornmentStyles = makeStyles(() =>
@@ -130,7 +126,7 @@ export default function PrefixableTextField({
       helperText={helperText}
       multiline={multiline}
       rows={rows}
-      rowsMax={rowsMax}
+      maxRows={rowsMax}
       FormHelperTextProps={
         FormHelperTextProps || { className: classes.helperText }
       }

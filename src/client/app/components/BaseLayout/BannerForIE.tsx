@@ -1,5 +1,6 @@
 import React from 'react'
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import cautionLogo from '@assets/components/app/base-layout/ie-banner-caution.svg'
 import Banner from './widgets/Banner'

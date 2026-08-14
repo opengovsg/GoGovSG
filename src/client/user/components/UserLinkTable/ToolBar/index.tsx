@@ -1,5 +1,6 @@
 import React from 'react'
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import LinkCountHeader from './LinkCountHeader'
 import SearchInput from './SearchInput'
 import CreateLinkButton from './Buttons/CreateLinkButton'
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme) =>
       marginTop: theme.spacing(3),
       marginBottom: theme.spacing(2),
       width: '100%',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         flexWrap: 'wrap',
         marginBottom: theme.spacing(1),
       },

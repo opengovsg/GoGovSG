@@ -10,11 +10,11 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import filterSortIcon from '@assets/components/user/user-link-table/toolbar/filtersort-icon.svg'
 import FilterSortPanel from '../FilterSortPanel'
 import userActions from '../../../../actions'
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) =>
     filterIcon: {
       paddingLeft: theme.spacing(0.5),
       verticalAlign: 'middle',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         paddingLeft: theme.spacing(0.0),
       },
     },
@@ -152,7 +152,7 @@ function SearchInput() {
   const [isSortFilterOpen, setIsSortFilterOpen] = useState(false)
   const [isSearchFilterOpen, setIsSearchFilterOpen] = useState(false)
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
   const getSearchLabel = () => {
     if (isMobileView && isTag) {
@@ -227,6 +227,7 @@ function SearchInput() {
                   <IconButton
                     className={classes.filterSortButton}
                     onClick={() => setIsSortFilterOpen(!isSortFilterOpen)}
+                    size="large"
                   >
                     <img src={filterSortIcon} alt="Filter and sort icon" />
                   </IconButton>

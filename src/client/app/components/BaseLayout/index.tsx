@@ -6,7 +6,10 @@ import React, {
   useState,
 } from 'react'
 import { useLocation } from 'react-router-dom'
-import { CssBaseline, createStyles, makeStyles } from '@material-ui/core'
+import { CssBaseline } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { useSelector } from 'react-redux'
 import Masthead from './Masthead'

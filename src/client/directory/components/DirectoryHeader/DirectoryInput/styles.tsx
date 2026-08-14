@@ -1,4 +1,5 @@
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 const getSearchInputHeight = () => 48
 
@@ -10,14 +11,14 @@ export default makeStyles((theme) =>
       left: 0,
       top: getSearchInputHeight() + 10,
       zIndex: 1000,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         top: 0,
         height: '100% !important', // Bypass Material UI uses element style
         minHeight: '800px !important',
       },
     },
     collapseWrapper: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         height: '100%',
       },
     },
@@ -26,7 +27,7 @@ export default makeStyles((theme) =>
       top: 0,
       right: 0,
       margin: theme.spacing(1),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         margin: theme.spacing(3),
       },
     },
@@ -46,7 +47,7 @@ export default makeStyles((theme) =>
     filterHeaderGrid: {
       marginTop: theme.spacing(0.5),
       marginBottom: theme.spacing(1),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         marginTop: theme.spacing(5.75),
       },
     },
@@ -70,7 +71,7 @@ export default makeStyles((theme) =>
     },
     dividerGrid: {
       marginBottom: theme.spacing(0.5),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         marginBottom: theme.spacing(4),
       },
     },
@@ -114,7 +115,7 @@ export default makeStyles((theme) =>
     applyButton: {
       width: '121px',
       height: '45px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: '100%',
         height: '55px',
         marginRight: theme.spacing(4),
@@ -123,20 +124,20 @@ export default makeStyles((theme) =>
     footer: {
       padding: theme.spacing(2),
       marginRight: theme.spacing(4),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         marginTop: theme.spacing(11),
         flexDirection: 'column-reverse',
       },
     },
     resetButton: {
       marginRight: theme.spacing(1.5),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: '100%',
         height: '55px',
       },
     },
     buttonGrid: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: '100%',
       },
     },

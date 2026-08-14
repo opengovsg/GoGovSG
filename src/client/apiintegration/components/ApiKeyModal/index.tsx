@@ -8,9 +8,9 @@ import {
   IconButton,
   TextField,
   Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { GoGovReduxState } from '../../../app/reducers/types'
 import { GAEvent, GAPageView } from '../../../app/util/ga'
 import apiActions from '../../actions'
@@ -121,6 +121,7 @@ const ApiKeyModal: FunctionComponent = () => {
                       ),
                     )
                 }}
+                size="large"
               >
                 <CopyIcon size={24} color="#BBBBBB" />
               </IconButton>

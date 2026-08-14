@@ -1,5 +1,7 @@
 import React from 'react'
-import { Link, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Link, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import i18next from 'i18next'
 import Section from '../Section'
 
@@ -8,7 +10,7 @@ const useStyles = makeStyles((theme) =>
     footer: {
       display: 'flex',
       justifyContent: 'space-between',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'grid',
       },
     },
@@ -41,7 +43,7 @@ const useStyles = makeStyles((theme) =>
         marginBottom: theme.spacing(0),
         alignItems: 'center',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'grid',
         gridRow: 2,
         gridColumn: 1,
@@ -53,7 +55,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(3),
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         marginLeft: 0,
       },
       [theme.breakpoints.up('md')]: {

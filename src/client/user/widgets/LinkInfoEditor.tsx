@@ -1,13 +1,10 @@
 import React, { useEffect } from 'react'
 import i18next from 'i18next'
 
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { Typography, useMediaQuery, useTheme } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { useSelector } from 'react-redux'
 import { GoGovReduxState } from '../../app/reducers/types'
@@ -90,7 +87,7 @@ export default function LinkInfoEditor({
   // Styles used in this component.
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
   const emailValidator = useSelector<GoGovReduxState, EmailValidatorType>(
     (state) => state.login.emailValidator,

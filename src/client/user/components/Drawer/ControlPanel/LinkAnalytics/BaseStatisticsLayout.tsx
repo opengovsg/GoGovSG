@@ -1,8 +1,8 @@
 import React from 'react'
-import makeStyles from '@material-ui/core/styles/makeStyles'
-import Typography from '@material-ui/core/Typography'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
-import { useTheme } from '@material-ui/core'
+import makeStyles from '@mui/styles/makeStyles'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,7 +48,7 @@ export default function BaseStatisticsLayout({
 }: BaseStatisticsLayoutProps) {
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('md'))
   return (
     <div className={classes.root}>
       <Typography

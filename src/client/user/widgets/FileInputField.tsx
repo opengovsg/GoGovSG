@@ -4,10 +4,10 @@ import {
   CircularProgress,
   Hidden,
   Typography,
-  createStyles,
-  makeStyles,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import FileIconLarge from './FileIconLarge'
 import { formatBytes } from '../../app/util/format'
 
@@ -111,7 +111,7 @@ export const FileInputField: FunctionComponent<FileInputFieldProps> = ({
   const classes = useStyles({ textFieldHeight, uploadFileError })
   return (
     <div className={`${classes.fileInputWrapper} ${className}`}>
-      <Hidden smDown>
+      <Hidden lgDown>
         <div className={classes.leftFileIcon}>
           <FileIconLarge color={theme.palette.background.default} />
         </div>
