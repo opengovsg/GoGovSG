@@ -1,5 +1,7 @@
 import React from 'react'
-import { Grid, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Grid, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import i18next from 'i18next'
 
 import trustedBy1 from '@assets/components/home/trusted-by-sliver/1.png'

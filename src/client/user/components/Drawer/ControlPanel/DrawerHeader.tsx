@@ -1,11 +1,8 @@
 import React from 'react'
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { Typography, useMediaQuery, useTheme } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { useDrawerState } from '..'
 import CopyButton from '../../../widgets/CopyButton'
@@ -41,7 +38,7 @@ export default function DrawerHeader({ title }: DrawerHeaderProps) {
   const classes = useStyles()
   const shortUrl = useDrawerState().relevantShortLink || ''
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
   return (
     <div className={classes.drawerTitleDiv}>

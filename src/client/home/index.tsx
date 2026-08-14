@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import useAppDispatch from '../app/hooks'
 import { Redirect } from 'react-router-dom'
 
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
 import homeActions from './actions'
 import loginActions from '../login/actions'
 import { USER_PAGE } from '../app/util/types'
@@ -20,7 +20,7 @@ import initMonitoring from '../app/helpers/monitoring'
 initMonitoring()
 const HomePage: FunctionComponent = () => {
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const dispatch = useAppDispatch()
   const getLinksToRotate = () => dispatch(homeActions.getLinksToRotate())
   const getIsLoggedIn = () => dispatch(loginActions.isLoggedIn())

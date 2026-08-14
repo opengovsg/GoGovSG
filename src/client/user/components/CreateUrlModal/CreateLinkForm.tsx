@@ -13,7 +13,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from '@material-ui/core'
+} from '@mui/material'
 import useCreateLinkFormStyles from './styles/createLinkForm'
 import {
   isValidLongUrl,

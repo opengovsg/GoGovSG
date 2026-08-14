@@ -1,6 +1,7 @@
 import React from 'react'
-import { Button } from '@material-ui/core'
-import { createStyles, makeStyles } from '@material-ui/core/styles'
+import { Button } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 type TableTagProps = {
   tag: string

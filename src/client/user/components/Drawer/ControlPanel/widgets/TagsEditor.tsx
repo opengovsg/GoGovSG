@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
-import {
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import _ from 'lodash'
 
 import useShortLink from '../util/shortlink'
@@ -32,7 +29,7 @@ const useStyles = makeStyles((theme) =>
 export default function TagsEditor() {
   const theme = useTheme()
   const classes = useStyles()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
   const drawerStates = useDrawerState()
   const { shortLinkState, shortLinkDispatch } = useShortLink(
