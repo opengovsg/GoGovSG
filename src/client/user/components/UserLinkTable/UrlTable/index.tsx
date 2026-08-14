@@ -1,5 +1,7 @@
 import React from 'react'
-import { Table, createStyles, makeStyles } from '@material-ui/core'
+import { Table } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../../app/hooks'
 import EnhancedTableBody from './EnhancedTableBody'

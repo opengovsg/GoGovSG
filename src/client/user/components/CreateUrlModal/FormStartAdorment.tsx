@@ -1,10 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
-import {
-  InputAdornment,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { InputAdornment, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { TEXT_FIELD_HEIGHT } from '../../constants'
 
 type StyleProps = {

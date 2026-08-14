@@ -2,13 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../app/hooks'
 import { History } from 'history'
-import {
-  Dialog,
-  IconButton,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Dialog, IconButton, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import CloseIcon from '../../../app/components/widgets/CloseIcon'
 import CreateLinkForm from './CreateLinkForm'
 import useFullScreenDialog from '../../helpers/fullScreenDialog'
