@@ -1,4 +1,13 @@
 import React from 'react'
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Filler,
+} from 'chart.js'
 import { Line } from 'react-chartjs-2'
 import moment from 'moment'
 
@@ -8,6 +17,15 @@ import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics
 import { useDateRangeWith } from './util/date-range'
 import { compactNumberFormatter } from '../../../../../app/util/format'
 import DownloadClicksButton from './widgets/DailyStatistics/DownloadClicksButton'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Filler,
+)
 
 export type DailyStatisticsProps = {
   dailyClicks: DailyClicks[]
@@ -21,12 +39,10 @@ export function processData(data: DailyClicks[], primaryColor: string) {
   const datasets = [
     {
       fill: false,
-      lineTension: 0,
+      tension: 0,
       backgroundColor: primaryColor,
       borderColor: primaryColor,
-      pointColor: primaryColor,
       pointHitRadius: 20,
-      pointStrokeColor: primaryColor,
       pointRadius: 0,
       pointHoverRadius: 5,
       data: points,
@@ -49,73 +65,80 @@ export default function DailyStatistics({ dailyClicks }: DailyStatisticsProps) {
     >
       <Line
         data={data}
-        legend={{ display: false }}
         options={{
           scales: {
-            xAxes: [
-              {
-                gridLines: {
-                  display: false,
-                },
-                ticks: {
-                  fontFamily: "'IBM Plex Sans', sans-serif",
-                  fontSize: 12,
-                  fontColor: primaryColor,
-                  padding: 8,
-                  callback: (label: string): string | undefined => {
-                    return moment(label, 'D MMM').format('ddd')
-                  },
-                },
+            x: {
+              grid: {
+                display: false,
               },
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  fontFamily: "'IBM Plex Sans', sans-serif",
-                  fontSize: 12,
-                  fontColor: primaryColor,
-                  autoSkip: true,
-                  maxTicksLimit: 5,
-                  padding: 5,
-                  min: 0,
-                  callback: (label: number): string | undefined => {
-                    // Prevents decimals on the y-axis.
-                    if (Math.floor(label) === label) {
-                      return compactNumberFormatter(label)
-                    }
-                    return undefined
-                  },
+              ticks: {
+                font: {
+                  family: "'IBM Plex Sans', sans-serif",
+                  size: 12,
                 },
-              },
-            ],
-          },
-          tooltips: {
-            callbacks: {
-              title: (tooltipItems: any, data: any) => {
-                const index = tooltipItems[0].index ?? 0
-                const label = data.labels?.[index].toString() ?? ''
-                const fullDate = moment(label, 'D MMM').format('DD MMMM yyyy')
-                return fullDate.toString()
-              },
-              label: (tooltipItem: any) => {
-                const label = tooltipItem.yLabel
-                return `${label} total clicks`
+                color: primaryColor,
+                padding: 8,
+                callback: (_value, index): string | undefined => {
+                  const label = data.labels?.[index]
+                  return moment(label, 'D MMM').format('ddd')
+                },
               },
             },
-            xPadding: 20,
-            yPadding: 20,
-            titleFontFamily: "'IBM Plex Sans', sans-serif",
-            bodyFontFamily: "'IBM Plex Sans', sans-serif",
-            titleFontSize: 10,
-            bodyFontSize: 14,
-            titleFontColor: primaryColor,
-            bodyFontColor: primaryColor,
-            titleFontStyle: 'normal',
-            bodyFontStyle: 'bold',
-            backgroundColor: '#FFFFFF',
-            borderColor: theme.palette.secondary.dark,
-            borderWidth: 0.2,
-            displayColors: false,
+            y: {
+              ticks: {
+                font: {
+                  family: "'IBM Plex Sans', sans-serif",
+                  size: 12,
+                },
+                color: primaryColor,
+                autoSkip: true,
+                maxTicksLimit: 5,
+                padding: 5,
+                callback: (label): string | undefined => {
+                  const numericLabel = Number(label)
+                  // Prevents decimals on the y-axis.
+                  if (Math.floor(numericLabel) === numericLabel) {
+                    return compactNumberFormatter(numericLabel)
+                  }
+                  return undefined
+                },
+              },
+              min: 0,
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              callbacks: {
+                title: (tooltipItems) => {
+                  const label = tooltipItems[0]?.label ?? ''
+                  const fullDate = moment(label, 'D MMM').format('DD MMMM yyyy')
+                  return fullDate.toString()
+                },
+                label: (tooltipItem) => {
+                  return `${tooltipItem.parsed.y} total clicks`
+                },
+              },
+              padding: 20,
+              titleFont: {
+                family: "'IBM Plex Sans', sans-serif",
+                size: 10,
+                weight: 'normal',
+              },
+              bodyFont: {
+                family: "'IBM Plex Sans', sans-serif",
+                size: 14,
+                weight: 'bold',
+              },
+              titleColor: primaryColor,
+              bodyColor: primaryColor,
+              backgroundColor: '#FFFFFF',
+              borderColor: theme.palette.secondary.dark,
+              borderWidth: 0.2,
+              displayColors: false,
+            },
           },
         }}
       />
