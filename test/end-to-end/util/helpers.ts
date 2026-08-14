@@ -54,8 +54,10 @@ export const tagsAutocompleteTags = (page: Page): Locator =>
 // (see loginButton above) rather than wrapping its text in a span.
 export const directoryPageButton = (page: Page): Locator =>
   page.getByRole('banner').getByRole('link', { name: 'Directory' })
+// At mobile widths only the icon renders (no text), but the <img alt="Directory">
+// still gives the link an accessible name of "Directory", same as desktop.
 export const mobileDirectoryPageButton = (page: Page): Locator =>
-  page.locator('img[alt="Directory"]').locator('xpath=..').locator('xpath=..')
+  directoryPageButton(page)
 export const apiIntegrationPageButton = (page: Page): Locator =>
   page.getByRole('banner').getByRole('link', { name: 'API Integration' })
 export const signOutButton = (page: Page): Locator =>
@@ -474,10 +476,15 @@ export const linkHistoryTagsH6 = (page: Page): Locator =>
   page.locator('h6', { hasText: 'Tags' })
 
 // API Integration
+// getByRole is unusable here: 'API Key view' checks this button's visibility
+// while the ApiKeyModal dialog is still open, and MUI's Modal sets
+// aria-hidden on the rest of the page while open, which getByRole (built on
+// the accessibility tree) treats as absent. A plain tag+text locator doesn't
+// consult the accessibility tree, so it still finds the button underneath.
 export const generateApiKeyButton = (page: Page): Locator =>
-  page.getByRole('button', { name: 'Generate API Key' })
+  page.locator('button', { hasText: 'Generate API Key' })
 export const regenerateApiKeyButton = (page: Page): Locator =>
-  page.getByRole('button', { name: 'Regenerate' })
+  page.locator('button', { hasText: 'Regenerate' })
 export const apiKeyModal = (page: Page): Locator =>
   page.locator('div[aria-labelledby="apiKeyModal"]')
 export const iHaveCopiedButton = (page: Page): Locator =>
