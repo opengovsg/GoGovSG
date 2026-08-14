@@ -1,4 +1,4 @@
-import { CollapseProps } from '@material-ui/core'
+import { CollapseProps } from '@mui/material'
 
 export enum CollapsibleMessageType {
   Error,

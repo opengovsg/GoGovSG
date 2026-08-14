@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react'
-import { Grid, IconButton, createStyles, makeStyles } from '@material-ui/core'
+import { Grid, IconButton } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import arrowLeftIcon from '@assets/widgets/app/arrow-left-icon.svg'
 import arrowRightIcon from '@assets/widgets/app/arrow-right-icon.svg'
 
@@ -74,6 +76,7 @@ const PaginationActionComponent: FunctionComponent<
         <IconButton
           onClick={(event) => onChangePage(event, page - 1)}
           disabled={page <= 0}
+          size="large"
         >
           <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
         </IconButton>
@@ -85,6 +88,7 @@ const PaginationActionComponent: FunctionComponent<
         <IconButton
           onClick={(event) => onChangePage(event, page + 1)}
           disabled={pageCount <= page + 1}
+          size="large"
         >
           <img src={arrowRightIcon} alt="Next page" draggable={false} />
         </IconButton>

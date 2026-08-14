@@ -1,11 +1,7 @@
 import React, { FunctionComponent, useState } from 'react'
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { Typography, useMediaQuery, useTheme } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { ApplyAppMargins } from '../../../app/components/AppMargins'
 import DirectoryTable from './DirectoryTable'
 import { UrlTypePublic } from '../../reducers/types'
@@ -70,7 +66,7 @@ const DirectoryResults: FunctionComponent<DirectoryResultsProps> = ({
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState<boolean>(false)
   const [urlInfo, setUrlInfo] = useState<UrlTypePublic>()
 

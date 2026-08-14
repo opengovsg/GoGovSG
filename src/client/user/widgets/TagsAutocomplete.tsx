@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {
+  Autocomplete,
   Button,
   ClickAwayListener,
   Paper,
   Popper,
   TextField,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
-import { Autocomplete } from '@material-ui/lab'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import {
   MAX_NUM_TAGS_PER_LINK,
   MIN_TAG_SEARCH_LENGTH,

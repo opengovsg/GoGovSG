@@ -1,6 +1,8 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
 
-import { Button, TextField, createStyles, makeStyles } from '@material-ui/core'
+import { Button, TextField } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { VariantType, loginFormVariants } from '../../app/util/types'
 
 type LoginFormProps = {

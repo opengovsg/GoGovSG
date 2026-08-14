@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../app/hooks'
-import {
-  Button,
-  Dialog,
-  IconButton,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Button, Dialog, IconButton, Typography } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { GoGovReduxState } from '../../../app/reducers/types'
 import userActions from '../../actions'
@@ -47,7 +43,7 @@ const useStyles = makeStyles((theme) =>
       paddingRight: '80px',
       marginTop: theme.spacing(-6),
       marginBottom: theme.spacing(4),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         paddingLeft: '0px',
         paddingRight: '0px',
       },
@@ -64,7 +60,7 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       justifyContent: 'center',
       maxWidth: '600px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         maxWidth: '100%',
       },
     },
@@ -100,7 +96,7 @@ const useStyles = makeStyles((theme) =>
       filter: (props) => (props.isLightItems ? 'brightness(10)' : ''),
       // this class is not mobile first by default as padding should not be set
       // when it is not mobile.
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.down('md')]: {
         paddingLeft: 0,
         paddingRight: 0,
         minWidth: theme.spacing(6),
