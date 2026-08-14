@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../app/hooks'
 
 import {
   Button,
@@ -63,7 +64,7 @@ const ApiKeyModal: FunctionComponent = () => {
   const { apiKeyModal, apiKey } = useSelector(
     (state: GoGovReduxState) => state.api,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const closeApiKeyModal = () => dispatch(apiActions.closeApiKeyModal())
   useEffect(() => {
     if (apiKeyModal) {
