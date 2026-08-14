@@ -1,7 +1,7 @@
 import { ThunkAction } from 'redux-thunk'
 import { Dispatch } from 'react'
 import querystring from 'querystring'
-import { History } from 'history'
+import { NavigateFunction } from 'react-router-dom'
 import {
   DirectoryActionType,
   ResetDirectoryResultsAction,
@@ -113,7 +113,7 @@ const getDirectoryResults =
 
 const redirectToDirectoryPage =
   (
-    history: History,
+    navigate: NavigateFunction,
     query: string,
   ): ThunkAction<
     void,
@@ -122,7 +122,7 @@ const redirectToDirectoryPage =
     DirectoryActionType | RootActionType
   > =>
   () => {
-    history.push({
+    navigate({
       pathname: DIRECTORY_PAGE,
       search: querystring.stringify({ query }),
     })
