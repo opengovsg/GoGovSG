@@ -3,7 +3,9 @@ import { Collapse } from '@mui/material'
 import useStyles from './styles'
 import { CollapsibleMessagePosition, CollapsibleMessageProps } from './types'
 
-const CollapsibleMessage: FunctionComponent<CollapsibleMessageProps> = ({
+const CollapsibleMessage: FunctionComponent<
+  PropsWithChildren<CollapsibleMessageProps>
+> = ({
   type,
   visible,
   children,
