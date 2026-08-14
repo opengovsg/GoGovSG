@@ -1,4 +1,4 @@
-FROM --platform=amd64 node:24-alpine3.24@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43
+FROM node:24-alpine3.24@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -15,8 +15,23 @@ RUN apk update && apk add --no-cache font-freefont python3 make g++ && rm -rf /v
 # Installs IBMPlexSans-Regular.otf for QRCodeService. Pinned to a commit (not
 # the mutable `master` branch) with a checksum check IBM doesn't publish one
 # of its own, so this hardcodes the hash of that exact commit's file.
-RUN wget "https://github.com/IBM/plex/blob/bf260093582f04622aacc1e9f9ca604d7ccd0c42/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true" -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf && \
-  echo "6b17a35a31ded2e81b3ed19e5eb532d22b9a0b5a76833b0d757a5c71ab5e0f6c  /usr/share/fonts/freefont/IBMPlexSans-Regular.otf" | sha256sum -c -
+# Retried because this download sits in the critical path of every e2e and
+# integration job: a single GitHub hiccup here fails the image build, which
+# surfaces as "Process from config.webServer was not able to start" and reads
+# like a test failure. That is exactly how the firefox job died on 881ad2ad.
+#
+# The retry is a shell loop rather than wget flags: this is BusyBox wget, which
+# supports -T but has no --tries or --waitretry. The checksum below is the gate
+# -- if every attempt fails the file is absent or partial and the build stops
+# there, so the retry cannot mask a genuine failure.
+RUN for attempt in 1 2 3 4 5; do \
+      wget -T 30 -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf \
+        "https://github.com/IBM/plex/blob/bf260093582f04622aacc1e9f9ca604d7ccd0c42/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true" \
+        && break; \
+      echo "font download attempt $attempt failed; retrying in 5s"; \
+      sleep 5; \
+    done; \
+    echo "6b17a35a31ded2e81b3ed19e5eb532d22b9a0b5a76833b0d757a5c71ab5e0f6c  /usr/share/fonts/freefont/IBMPlexSans-Regular.otf" | sha256sum -c -
 RUN fc-cache -f
 
 # Install libraries

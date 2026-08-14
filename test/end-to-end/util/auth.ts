@@ -1,6 +1,13 @@
 import fs from 'fs'
 import path from 'path'
-import type { Page, StorageState } from '@playwright/test'
+import type { BrowserContext, Page } from '@playwright/test'
+
+/**
+ * `@playwright/test` exports no `StorageState` type, so derive it from the
+ * method that produces it. Importing a non-existent name silently widened every
+ * use of it below to `any`.
+ */
+type StorageState = Awaited<ReturnType<BrowserContext['storageState']>>
 import { rootLocation } from './config'
 import { gotoPage } from './navigation'
 
