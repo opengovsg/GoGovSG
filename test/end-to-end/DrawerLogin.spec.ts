@@ -111,13 +111,13 @@ test('Drawer functionality test for url.', async ({ page }) => {
   ).not.toBeVisible()
   await expect(linkTableRow.locator('span', { hasText: subUrl })).toBeVisible()
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText1) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText1) }),
   ).not.toBeVisible()
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText2) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText2) }),
   ).toBeVisible()
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText3) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText3) }),
   ).toBeVisible()
 
   await linkRow.click()
@@ -213,7 +213,7 @@ test('Link transfer test.', async ({ page, browserName }) => {
 
   // Verify the tag is transferred along with the link
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText1) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText1) }),
   ).toBeVisible()
 })
 
