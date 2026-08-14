@@ -16,11 +16,11 @@ export const i18nInit = i18next
     },
     lng: 'en',
     fallbackLng: 'en',
-    whitelist: ['en'],
+    supportedLngs: ['en'],
     interpolation: {
       escapeValue: false, // React already safes from xss.
     },
-    initImmediate: false,
+    initAsync: false,
   })
 
 export default i18next
