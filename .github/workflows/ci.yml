@@ -8,12 +8,15 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: pnpm run lint
 
@@ -21,7 +24,7 @@ jobs:
     name: Format
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: pnpm run format:check
 
@@ -29,7 +32,7 @@ jobs:
     name: Typecheck
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: pnpm run typecheck
 
@@ -37,30 +40,37 @@ jobs:
     name: Build
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: pnpm run build
         env:
           ASSET_VARIANT: gov
 
-  audit-signatures:
-    name: Audit Signatures
+  supply-chain:
+    name: Supply Chain Verification
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       # lockfile-lint doesn't understand pnpm-lock.yaml's format (only npm/yarn) --
       # pnpm's own signature verification is the native equivalent.
       - uses: ./.github/actions/setup
-      - run: pnpm audit signatures
+      - name: Verify registry signatures
+        run: pnpm audit signatures
+      - name: Generate SBOM
+        run: pnpm sbom --sbom-format cyclonedx --prod --out sbom.cdx.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sbom
+          path: sbom.cdx.json
 
   test:
     name: Test
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - name: Configure Datadog Test Visibility
-        uses: datadog/test-visibility-github-action@v2
+        uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
           languages: js
           service: gogovsg
@@ -73,11 +83,11 @@ jobs:
     name: End To End Tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
       - name: Configure Datadog Test Visibility
-        uses: datadog/test-visibility-github-action@v2
+        uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
           languages: js
           service: gogovsg
@@ -90,12 +100,12 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
       - run: pnpm run dev &
       - run: sleep 270
       - name: Configure Datadog Test Visibility
-        uses: datadog/test-visibility-github-action@v2
+        uses: datadog/test-visibility-github-action@cdf298ef8277c8c3bec321499084ce5d9e4ff1e8 # v2.10.0
         with:
           languages: js
           service: gogovsg

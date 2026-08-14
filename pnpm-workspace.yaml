@@ -5,6 +5,54 @@
 # default, so the migration doesn't need to hunt down every such case.
 nodeLinker: hoisted
 
+# State the registry explicitly so a developer's global config or a
+# pnpm_config_registry env var can't silently redirect resolution.
+registries:
+  default: https://registry.npmjs.org/
+
+# No version installs (direct or transitive) until it has been public for
+# this long, in minutes. 1440 = 24h covers most disclosed incidents (the
+# chalk/debug attack was pulled in ~2.5h, Shai-Hulud 2.0 in ~12h). Also turns
+# on minimumReleaseAgeStrict, so install fails outright on a too-new version
+# instead of silently falling back to an older one.
+minimumReleaseAge: 1440
+# Default (true) skips the cooldown check entirely for any registry whose
+# metadata omits a `time` field. No-op against registry.npmjs.org today, but
+# closes the bypass the moment a private registry/mirror/proxy is added.
+minimumReleaseAgeIgnoreMissingTime: false
+
+# Blocks transitive deps from resolving via git/tarball URL; only direct deps
+# may use exotic sources. Explicit even though it's the v10.26+ default, so
+# it survives a future default flip.
+blockExoticSubdeps: true
+
+# Fails install when a package's publishing-trust level drops versus its own
+# prior releases (Trusted Publisher > provenance > none) -- the signal a
+# stolen maintainer credential produces, since the attacker publishes from
+# their own machine and can't reach the victim's CI. Would have blocked the
+# August 2025 s1ngularity attack.
+trustPolicy: no-downgrade
+# 1 year, in minutes: packages published before provenance was common
+# shouldn't retroactively need trust evidence.
+trustPolicyIgnoreAfter: 525600
+# ua-parser-js@0.7.41 flags as a trust downgrade vs. the package's 2.x line,
+# which publishes with SLSA provenance via CI. Investigated: same maintainer
+# (faisalman) and the same npm signing keyid across 0.7.41/1.0.41/2.0.10 --
+# the legacy 0.7.x/1.0.x compat lines are just published manually rather than
+# through the provenance-enabled pipeline the 2.x rewrite uses. Not a
+# takeover signal (that was 0.7.29/0.8.0/1.0.0 in Oct 2021, which this
+# maintainer's account recovered from same-day). Version-pinned, not a bare
+# name, so a future 0.7.x publish gets re-checked on its own merits.
+trustPolicyExclude:
+  - ua-parser-js@0.7.41
+
+# Vulnerable transitive pinned by a parent we don't control:
+# aws-sdk@2.x and sequelize@6.x both hard-pin old, vulnerable uuid releases
+# (GHSA-w5hq-g745-h8pq) in their own package.json. Both only use uuid's
+# named v1/v4 exports, which are stable across this bump.
+overrides:
+  uuid: ^11.1.1
+
 allowBuilds:
   '@datadog/native-appsec': false
   '@datadog/native-iast-taint-tracking': false
