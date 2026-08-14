@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { ConnectionOptions } from 'sequelize'
 import winston, { createLogger, format, transports } from 'winston'
-import minimatch from 'minimatch'
+import * as minimatch from 'minimatch'
 import { parse } from 'url'
 import { parse as parseUri } from 'pg-connection-string'
 import assetVariant from '../shared/util/asset-variant'

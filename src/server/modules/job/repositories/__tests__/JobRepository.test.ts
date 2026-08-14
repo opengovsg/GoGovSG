@@ -36,7 +36,7 @@ describe('JobRepository', () => {
     it('findById calls Job.findByPk and returns if it exists', async () => {
       findByPk.mockImplementationOnce(() => ({ id: 1 }))
       await expect(repository.findById(1)).resolves.toEqual({ id: 1 })
-      expect(findByPk).toBeCalledWith(1)
+      expect(findByPk).toHaveBeenCalledWith(1)
     })
   })
 
@@ -87,7 +87,7 @@ describe('JobRepository', () => {
       await expect(repository.findLatestJobForUser(userId)).resolves.toEqual(
         mockJob,
       )
-      expect(findOne).toBeCalledWith({
+      expect(findOne).toHaveBeenCalledWith({
         where: {
           userId,
         },
@@ -109,7 +109,7 @@ describe('JobRepository', () => {
       await expect(repository.findJobForUser(userId, 1)).resolves.toEqual(
         mockJob,
       )
-      expect(findOne).toBeCalledWith({
+      expect(findOne).toHaveBeenCalledWith({
         where: {
           userId,
           id: 1,
