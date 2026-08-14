@@ -1,36 +1,35 @@
 import { fetch } from 'cross-fetch'
-import {
-  apiLocation,
-  dummyFilePath,
-  dummyRelativePath,
-  shortUrl,
-  smallFileSize,
-} from './config'
+import { expect, Page } from '@playwright/test'
+import { apiLocation, dummyFilePath, shortUrl, smallFileSize } from './config'
 import { createEmptyFileOfSize, deleteFile } from './fileHandle'
-import firstLinkHandle from './FirstLinkHandle'
+import { firstLinkHandle } from './FirstLinkHandle'
 import {
   activeSwitch,
   closeDrawerButton,
-  createLinkButton,
   fileTab,
   generateRandomString,
   generateUrlImage,
   linkRowByShortUrl,
   longUrl,
   longUrlTextField,
-  mobileCreateLinkButton,
+  openCreateLinkModal,
   shortUrlTextField,
   uploadFile,
 } from './helpers'
+import { waitForRecordedClicks } from './waits'
 
 /**
  * Fetch link multiple times to increase usage of link.
  * Hits the Express server directly and waits for all requests to finish
  * so directory popularity sort sees the updated click counts.
  */
-const fetchLink = async (shortUrlSlug, numberOfFetches) => {
+const fetchLink = async (
+  page: Page,
+  shortUrlSlug: string,
+  numberOfFetches: number,
+): Promise<void> => {
   const url = `${apiLocation}/${shortUrlSlug}`
-  const get = async (targetUrl) => {
+  const get = async (targetUrl: string): Promise<boolean> => {
     // Do not follow the outbound redirect; the click is recorded on the
     // first response from the short-link server.
     const res = await fetch(targetUrl, { redirect: 'manual' })
@@ -42,15 +41,19 @@ const fetchLink = async (shortUrlSlug, numberOfFetches) => {
     fetchArray.push(get(url))
   }
   const values = await Promise.all(fetchArray)
-  console.log(`Url: ${url} was fetched ${values.filter(Boolean).length} times`)
-  // Server updates click stats without awaiting; give writes a moment to land.
-  await new Promise((resolve) => {
-    setTimeout(resolve, 1500)
-  })
+  const recordedClicks = values.filter(Boolean).length
+  console.log(`Url: ${url} was fetched ${recordedClicks} times`)
+  // Server updates click stats without awaiting, so poll until the recorded
+  // count catches up rather than sleeping past the write.
+  await waitForRecordedClicks(page, shortUrlSlug, recordedClicks)
 }
 
-const seedLinkClicks = async (generatedUrl, numberOfFetches) => {
-  await fetchLink(generatedUrl, numberOfFetches)
+const seedLinkClicks = async (
+  page: Page,
+  generatedUrl: string,
+  numberOfFetches: number,
+): Promise<void> => {
+  await fetchLink(page, generatedUrl, numberOfFetches)
 }
 
 const generateSearchKey = () => {
@@ -61,98 +64,98 @@ const generateSearchKey = () => {
   return { searchKey, searchKeyWithDash }
 }
 
-const clickCreateLinkButton = async (t) => {
-  if (await createLinkButton.nth(0).exists) {
-    await t.click(createLinkButton.nth(0))
-  } else {
-    await t.click(mobileCreateLinkButton)
-  }
-  await t.click(generateUrlImage)
+const clickCreateLinkButton = async (page: Page): Promise<void> => {
+  await openCreateLinkModal(page)
+  await generateUrlImage(page).click()
 }
 
-export const singleLinkCreationProcedure = async (t) => {
+export const singleLinkCreationProcedure = async (page: Page) => {
   const { searchKey, searchKeyWithDash } = generateSearchKey()
 
   // Save url - active link + 3rd most recent link
-  await clickCreateLinkButton(t)
-  const generatedUrlActive = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  await clickCreateLinkButton(page)
+  const generatedUrlActive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
-  await t
-    .typeText(shortUrlTextField, searchKeyWithDash)
-    .typeText(longUrlTextField, `${shortUrl}`)
+  await shortUrlTextField(page).fill(generatedUrlActive)
+  await longUrlTextField(page).fill(shortUrl)
 
-  await firstLinkHandle(t)
+  await firstLinkHandle(page)
 
   return { searchKey, generatedUrlActive }
 }
 /**
  * Process of creating various types of links into test account.
  */
-export const linkCreationProcedure = async (t) => {
+export const linkCreationProcedure = async (page: Page) => {
   // create key to searchBy
   const { searchKey, searchKeyWithDash } = generateSearchKey()
 
-  // Save url - most popularlink
-  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
-  const generatedUrlMostPopular = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  // Save url - most popular link
+  await openCreateLinkModal(page)
+  await generateUrlImage(page).click()
+  const generatedUrlMostPopular = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
-  await t
-    .typeText(shortUrlTextField, searchKeyWithDash)
-    .typeText(longUrlTextField, `${shortUrl}`)
+  await shortUrlTextField(page).fill(generatedUrlMostPopular)
+  await longUrlTextField(page).fill(shortUrl)
 
-  await firstLinkHandle(t)
+  await firstLinkHandle(page)
 
-  await seedLinkClicks(generatedUrlMostPopular, 10)
+  await seedLinkClicks(page, generatedUrlMostPopular, 10)
 
   // Save url - 2nd most popular link
-  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
-  const generatedUrlSecondMostPopular = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  await openCreateLinkModal(page)
+  await generateUrlImage(page).click()
+  const generatedUrlSecondMostPopular = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
-  await t
-    .typeText(shortUrlTextField, searchKeyWithDash)
-    .typeText(longUrlTextField, `${shortUrl}`)
-    .click(createLinkButton.nth(2))
+  await shortUrlTextField(page).fill(generatedUrlSecondMostPopular)
+  await longUrlTextField(page).fill(shortUrl)
+  await firstLinkHandle(page)
 
-  await seedLinkClicks(generatedUrlSecondMostPopular, 8)
+  await seedLinkClicks(page, generatedUrlSecondMostPopular, 8)
 
   // Save url - active link + 3rd most recent link
-  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
-  const generatedUrlActive = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  await openCreateLinkModal(page)
+  await generateUrlImage(page).click()
+  const generatedUrlActive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
-  await t
-    .typeText(shortUrlTextField, searchKeyWithDash)
-    .typeText(longUrlTextField, `${shortUrl}`)
-    .click(createLinkButton.nth(2))
+  await shortUrlTextField(page).fill(generatedUrlActive)
+  await longUrlTextField(page).fill(shortUrl)
+  await firstLinkHandle(page)
 
   // Save url - inactive link + 2nd most recent link
-  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+  await openCreateLinkModal(page)
+  await generateUrlImage(page).click()
 
-  const generatedUrlInactive = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  const generatedUrlInactive = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
-  const linkRowInactive = linkRowByShortUrl(generatedUrlInactive)
+  const linkRowInactive = linkRowByShortUrl(page, generatedUrlInactive)
 
-  await t
-    .typeText(shortUrlTextField, searchKeyWithDash) // concat generated searchKey
-    .typeText(longUrlTextField, `${shortUrl}`)
-    .click(createLinkButton.nth(2))
-    .click(linkRowInactive)
-    .expect(longUrl.value)
-    .eql(`${shortUrl}`)
+  await shortUrlTextField(page).fill(generatedUrlInactive)
+  await longUrlTextField(page).fill(shortUrl)
+  await firstLinkHandle(page)
+  await linkRowInactive.click()
+  await expect(longUrl(page)).toHaveValue(shortUrl)
 
-  await t.click(activeSwitch).click(closeDrawerButton)
+  await activeSwitch(page).click()
+  // Wait for the PATCH to land before closing the drawer. This link is the
+  // "inactive" fixture for every directory and user-page filter assertion
+  // downstream, so letting the drawer close early leaves those tests filtering
+  // against a link that is still active.
+  await expect(activeSwitch(page)).not.toBeChecked()
+  await closeDrawerButton(page).click()
 
   // Save url - file link + most recent link
-  await t.click(createLinkButton.nth(0)).click(generateUrlImage)
+  await openCreateLinkModal(page)
+  await generateUrlImage(page).click()
 
-  const generatedUrlFile = `${await shortUrlTextField.value}${searchKeyWithDash}`
+  const generatedUrlFile = `${await shortUrlTextField(page).inputValue()}${searchKeyWithDash}`
 
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
 
-  await t
-    .typeText(shortUrlTextField, searchKeyWithDash) // concat generated searchKey
-    .click(fileTab)
-    .setFilesToUpload(uploadFile, dummyRelativePath)
-    .click(createLinkButton.nth(2))
+  await shortUrlTextField(page).fill(generatedUrlFile)
+  await fileTab(page).click()
+  await uploadFile(page).setInputFiles(dummyFilePath)
+  await firstLinkHandle(page)
 
   await deleteFile(dummyFilePath)
 
