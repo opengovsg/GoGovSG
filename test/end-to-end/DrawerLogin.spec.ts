@@ -132,7 +132,7 @@ test('Drawer functionality test for url.', async ({ page }) => {
   await expect(helperText(page)).toBeVisible()
 
   // "Save" button is disabled (grey and unclickable) when value in edit long url textfield is invalid
-  await expect(urlSaveButton(page).locator('xpath=..')).toBeDisabled()
+  await expect(urlSaveButton(page)).toBeDisabled()
 
   // Url is updated/saved when user enters a new url, then clicks "save" - check redirect with port 8080
   await activeSwitch(page).nth(0).click()
