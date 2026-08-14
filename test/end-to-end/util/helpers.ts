@@ -11,10 +11,10 @@ export const exactText = (value: string): RegExp =>
   new RegExp(`^${escapeRegExp(value)}$`)
 
 // General
-// Scoped to .MuiButton-label: a bare `span` with text 'Sign in' also matches
-// the "Are you a public officer? Sign in" caption link next to this button.
+// Scoped to role="button": the "Are you a public officer? Sign in" caption
+// next to this button is a plain link, not a button, so it won't match.
 export const loginButton = (page: Page): Locator =>
-  page.locator('.MuiButton-label', { hasText: 'Sign in' })
+  page.getByRole('button', { name: 'Sign in' })
 export const signInButton = (page: Page): Locator =>
   page.locator('button[type="submit"]')
 export const loginSuccessAlert = (page: Page): Locator =>
