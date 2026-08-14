@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../app/hooks'
-import { History } from 'history'
+import { NavigateFunction } from 'react-router-dom'
 import { Dialog, IconButton, Typography } from '@mui/material'
 import createStyles from '@mui/styles/createStyles'
 import makeStyles from '@mui/styles/makeStyles'
@@ -63,8 +63,8 @@ function CreateUrlModal() {
   )
   const dispatch = useAppDispatch()
   const closeCreateUrlModal = () => dispatch(userActions.closeCreateUrlModal())
-  const onCreateUrl = (history: History) =>
-    dispatch(userActions.createUrlOrRedirect(history))
+  const onCreateUrl = (navigate: NavigateFunction) =>
+    dispatch(userActions.createUrlOrRedirect(navigate))
   const onUploadFile = (file: File | null) =>
     dispatch(userActions.uploadFile(file))
   const onBulkCreateUrl = (file: File | null) =>

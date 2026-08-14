@@ -3,10 +3,9 @@ import createStyles from '@mui/styles/createStyles'
 import makeStyles from '@mui/styles/makeStyles'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../app/hooks'
-import { useHistory, useLocation } from 'react-router-dom'
+import { NavigateFunction, useLocation, useNavigate } from 'react-router-dom'
 import querystring from 'querystring'
 import debounce from 'lodash/debounce'
-import { History } from 'history'
 import BaseLayout from '../app/components/BaseLayout'
 import { GoGovReduxState } from '../app/reducers/types'
 import useAppMargins from '../app/components/AppMargins/appMargins'
@@ -65,7 +64,10 @@ const defaultParams: GoSearchParams = {
 /**
  * Redirect back to directory page with parameters that are different from default parameters.
  */
-const redirectWithParams = (newParams: GoSearchParams, history: History) => {
+const redirectWithParams = (
+  newParams: GoSearchParams,
+  navigate: NavigateFunction,
+) => {
   const queryObject: any = { query: newParams.query }
   Object.entries(newParams).map(([key, value], _) => {
     if (value && value !== (defaultParams as any)[key]) {
@@ -77,7 +79,7 @@ const redirectWithParams = (newParams: GoSearchParams, history: History) => {
     pathname: DIRECTORY_PAGE,
     search: `${querystring.stringify(queryObject)}`,
   }
-  history.push(newPath)
+  navigate(newPath)
 }
 
 const updateQueryDebounced = debounce(redirectWithParams, 500)
@@ -89,7 +91,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const dispatch = useAppDispatch()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const [pendingQuery, setPendingQuery] = useState('')
   const [queryFile, setQueryFile] = useState<string>(defaultParams.isFile)
@@ -155,7 +157,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
             ? params.currentPage
             : defaultParams.currentPage,
       },
-      history,
+      navigate,
     )
   }
 
@@ -175,7 +177,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
           isEmail: queryEmail,
           currentPage: defaultParams.currentPage,
         },
-        history,
+        navigate,
       )
     }
   }
@@ -194,7 +196,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
           query,
           isEmail: queryEmail,
         },
-        history,
+        navigate,
       )
     }
   }
@@ -216,7 +218,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
         sortOrder: queryOrder,
         isEmail: queryEmail,
       },
-      history,
+      navigate,
     )
   }, [queryEmail])
 
@@ -238,7 +240,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
         isEmail: queryEmail,
         currentPage: pageNumber,
       },
-      history,
+      navigate,
     )
   }
 
@@ -256,7 +258,7 @@ const SearchPage: FunctionComponent<SearchPageProps> = () => {
         currentPage: 0,
         rowsPerPage: parseInt(event.target.value, 10),
       },
-      history,
+      navigate,
     )
   }
 
