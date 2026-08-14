@@ -161,8 +161,8 @@ importers:
         specifier: ^1.20.6
         version: 1.20.6(supports-color@10.2.2)
       chart.js:
-        specifier: ^2.9.4
-        version: 2.9.4
+        specifier: ^4.5.1
+        version: 4.5.1
       cheerio:
         specifier: ^1.2.0
         version: 1.2.0
@@ -284,8 +284,8 @@ importers:
         specifier: ^17.0.2
         version: 17.0.2
       react-chartjs-2:
-        specifier: ^2.11.2
-        version: 2.11.2(chart.js@2.9.4)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+        specifier: ^5.3.1
+        version: 5.3.1(chart.js@4.5.1)(react@17.0.2)
       react-dom:
         specifier: ^17.0.2
         version: 17.0.2(react@17.0.2)
@@ -377,9 +377,6 @@ importers:
       '@types/body-parser':
         specifier: ^1.19.6
         version: 1.19.6
-      '@types/chart.js':
-        specifier: ^2.9.41
-        version: 2.9.41
       '@types/cloudmersive-virus-api-client':
         specifier: ^1.1.4
         version: 1.1.4
@@ -2208,6 +2205,9 @@ packages:
     peerDependencies:
       tslib: '2'
 
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
+
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
 
@@ -3146,9 +3146,6 @@ packages:
 
   '@types/busboy@1.5.4':
     resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
-
-  '@types/chart.js@2.9.41':
-    resolution: {integrity: sha512-3dvkDvueckY83UyUXtJMalYoH6faOLkWQoaTlJgB4Djde3oORmNP0Jw85HtzTuXyliUHcdp704s0mZFQKio/KQ==}
 
   '@types/cloudmersive-virus-api-client@1.1.4':
     resolution: {integrity: sha512-G8BnUCii4Gf5VZiAVr0QrpXxC1PkvcC4xe8I7IbcdlUqpHsyxhGFRucABMPkMw7+/WmnMEsIqyMnUqlSZwIeqw==}
@@ -4176,14 +4173,9 @@ packages:
   chardet@2.2.0:
     resolution: {integrity: sha512-rddelWYNPRrXq6PtNEN2S3f6t9ILzvqaN5pVgi4kqt9jHQaXIial9PznB5iSPVlQSLNaaH22ItWz3EJtQ10+OA==}
 
-  chart.js@2.9.4:
-    resolution: {integrity: sha512-B07aAzxcrikjAPyV+01j7BmOpxtQETxTSlQ26BEYJ+3iUkbNKaOJ/nDbT6JjyqYxseM0ON12COHYdU2cTIjC7A==}
-
-  chartjs-color-string@0.6.0:
-    resolution: {integrity: sha512-TIB5OKn1hPJvO7JcteW4WY/63v6KwEdt6udfnDE9iCAZgy+V4SrbSxoIbTw/xkUIapjEI4ExGtD0+6D3KyFd7A==}
-
-  chartjs-color@2.4.1:
-    resolution: {integrity: sha512-haqOg1+Yebys/Ts/9bLo/BqUcONQOdr/hoEr2LLTRl6C5LXctUdHxsCYfvQVg5JIxITrfCNUDr4ntqmQk9+/0w==}
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
+    engines: {pnpm: '>=8'}
 
   cheerio-select@2.1.0:
     resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
@@ -6818,12 +6810,11 @@ packages:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
 
-  react-chartjs-2@2.11.2:
-    resolution: {integrity: sha512-hcPS9vmRJeAALPPf0uo02BiD8BDm0HNmneJYTZVR74UKprXOpql+Jy1rVuj93rKw0Jfx77mkcRfXPxTe5K83uw==}
+  react-chartjs-2@5.3.1:
+    resolution: {integrity: sha512-h5IPXKg9EXpjoBzUfyWJvllMjG2mQ4EiuHQFhms/AjUm0XSZHhyRy2xVmLXHKrtcdrPO4mnGqRtYoD0vp95A0A==}
     peerDependencies:
-      chart.js: ^2.3
-      react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-      react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+      chart.js: ^4.1.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-dom@17.0.2:
     resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
@@ -9924,6 +9915,8 @@ snapshots:
       '@jsonjoy.com/codegen': 17.67.0(tslib@2.8.1)
       tslib: 2.8.1
 
+  '@kurkle/color@0.3.4': {}
+
   '@leichtgewicht/ip-codec@2.0.5': {}
 
   '@mui/base@5.0.0-beta.40-1(@types/react@17.0.93)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
@@ -10661,10 +10654,6 @@ snapshots:
   '@types/busboy@1.5.4':
     dependencies:
       '@types/node': 24.13.3
-
-  '@types/chart.js@2.9.41':
-    dependencies:
-      moment: 2.30.1
 
   '@types/cloudmersive-virus-api-client@1.1.4':
     dependencies:
@@ -11707,19 +11696,9 @@ snapshots:
 
   chardet@2.2.0: {}
 
-  chart.js@2.9.4:
+  chart.js@4.5.1:
     dependencies:
-      chartjs-color: 2.4.1
-      moment: 2.30.1
-
-  chartjs-color-string@0.6.0:
-    dependencies:
-      color-name: 1.1.4
-
-  chartjs-color@2.4.1:
-    dependencies:
-      chartjs-color-string: 0.6.0
-      color-convert: 1.9.3
+      '@kurkle/color': 0.3.4
 
   cheerio-select@2.1.0:
     dependencies:
@@ -14770,13 +14749,10 @@ snapshots:
       iconv-lite: 0.7.3
       unpipe: 1.0.0
 
-  react-chartjs-2@2.11.2(chart.js@2.9.4)(react-dom@17.0.2(react@17.0.2))(react@17.0.2):
+  react-chartjs-2@5.3.1(chart.js@4.5.1)(react@17.0.2):
     dependencies:
-      chart.js: 2.9.4
-      lodash: 4.18.1
-      prop-types: 15.8.1
+      chart.js: 4.5.1
       react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
 
   react-dom@17.0.2(react@17.0.2):
     dependencies:
