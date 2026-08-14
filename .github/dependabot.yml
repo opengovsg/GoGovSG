@@ -25,14 +25,13 @@ updates:
       typescript:
         patterns:
           - typescript
-          - "@typescript-eslint/*"
           - ts-loader
           - ts-node
           - ts-node-dev
 
       babel:
         patterns:
-          - "@babel/*"
+          - '@babel/*'
 
       inversify:
         # reflect-metadata major must match inversify peer (e.g. v6 needs ~0.2.x)
@@ -44,28 +43,22 @@ updates:
         patterns:
           - jest
           - ts-jest
-          - "@types/jest"
-          - eslint-plugin-jest
+          - '@types/jest'
           - testcafe
           - supertest
-          - "@types/supertest"
+          - '@types/supertest'
           - node-mocks-http
 
-      prettier:
+      # oxlint-tsgolint's version encodes the TypeScript version it embeds and
+      # must stay paired with oxlint; oxlint-plugin-eslint tracks oxlint's release
+      # cadence. eslint-plugin-import is a jsPlugin loaded by oxlint at lint time.
+      oxc:
         patterns:
-          - prettier
-          - eslint-config-prettier
-          - eslint-plugin-prettier
-
-      eslint:
-        patterns:
-          - eslint
-          - eslint-config-*
-          - eslint-plugin-*
-          - eslint-import-resolver-*
-        exclude-patterns:
-          - "@typescript-eslint/*"
-          - eslint-plugin-jest
+          - oxlint
+          - oxlint-tsgolint
+          - oxlint-plugin-eslint
+          - oxfmt
+          - eslint-plugin-import
 
       # --- UI / client ---
 
@@ -74,19 +67,19 @@ updates:
           - react
           - react-dom
           - react-*
-          - "@types/react*"
+          - '@types/react*'
           - redux
           - redux-*
           - history
 
       material-ui:
         patterns:
-          - "@material-ui/*"
+          - '@material-ui/*'
 
       chartjs:
         patterns:
           - chart.js
-          - "@types/chart.js"
+          - '@types/chart.js'
           - react-chartjs-2
 
       i18next:
@@ -106,10 +99,10 @@ updates:
           - morgan
           - cookie-parser
           - cookie-session
-          - "@types/express*"
-          - "@types/cookie*"
-          - "@types/morgan"
-          - "@types/body-parser"
+          - '@types/express*'
+          - '@types/cookie*'
+          - '@types/morgan'
+          - '@types/body-parser'
 
       sequelize-pg:
         patterns:
@@ -123,18 +116,18 @@ updates:
           - redis
           - redis-*
           - connect-redis
-          - "@types/redis*"
-          - "@types/connect-redis"
+          - '@types/redis*'
+          - '@types/connect-redis'
 
       bcrypt:
         patterns:
           - bcrypt
-          - "@types/bcrypt"
+          - '@types/bcrypt'
 
       datadog:
         patterns:
           - dd-trace
-          - "@datadog/*"
+          - '@datadog/*'
 
       date-fns:
         patterns:
@@ -145,7 +138,7 @@ updates:
 
       commitlint:
         patterns:
-          - "@commitlint/*"
+          - '@commitlint/*'
           - commitizen
           - cz-conventional-changelog
 
@@ -167,7 +160,6 @@ updates:
         applies-to: security-updates
         patterns:
           - typescript
-          - "@typescript-eslint/*"
           - ts-jest
 
       jest-security:

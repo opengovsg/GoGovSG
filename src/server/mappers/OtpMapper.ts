@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this, lines-between-class-members, no-dupe-class-members */
+/* eslint-disable class-methods-use-this, no-dupe-class-members */
 import { injectable } from 'inversify'
 import { StorableOtp } from '../repositories/types'
 import { TwoWayMapper } from './TwoWayMapper'

@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import-js/no-extraneous-dependencies */
 
 import { Request } from 'express'
 import httpMocks from 'node-mocks-http'

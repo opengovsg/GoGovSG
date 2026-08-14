@@ -517,9 +517,8 @@ export class UrlRepository implements UrlRepositoryInterface {
   private getLongUrlFromDatabase: (
     shortUrl: string,
   ) => Promise<RedirectDestination> = async (shortUrl) => {
-    const url = await (ffUseReplicaForRedirects
-      ? Url.scope('useReplica')
-      : Url
+    const url = await (
+      ffUseReplicaForRedirects ? Url.scope('useReplica') : Url
     ).findOne({
       where: { shortUrl, state: StorableUrlState.Active },
     })

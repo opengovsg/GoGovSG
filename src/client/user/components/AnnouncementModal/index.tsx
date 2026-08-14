@@ -140,11 +140,11 @@ function AnnouncementModal() {
         localStorage.setItem('announcement', announcementString)
         const hasAnnouncement = Boolean(
           announcement.message ||
-            announcement.title ||
-            announcement.subtitle ||
-            announcement.url ||
-            announcement.image ||
-            announcement.buttonText,
+          announcement.title ||
+          announcement.subtitle ||
+          announcement.url ||
+          announcement.image ||
+          announcement.buttonText,
         )
         setShowModal(hasAnnouncement)
       }

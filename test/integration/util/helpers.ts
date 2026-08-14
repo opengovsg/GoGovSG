@@ -56,10 +56,11 @@ export const createIntegrationTestAdminUser: () => Promise<{
   return { email: testAdminEmail, apiKey }
 }
 
-export const deleteIntegrationTestUser: (email: string) => Promise<void> =
-  async (email) => {
-    await deleteDbUser(email)
-  }
+export const deleteIntegrationTestUser: (
+  email: string,
+) => Promise<void> = async (email) => {
+  await deleteDbUser(email)
+}
 
 export const getAuthCookie: (email: string) => Promise<string> = async (
   email,

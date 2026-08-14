@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 import {
   JobItemStatusEnum,
   JobStatusEnum,
@@ -570,7 +570,7 @@ describe('JobManagementService tests', () => {
           ({
             job: { status: JobStatusEnum.Success },
             jobItemUrls: ['a', 'b'],
-          } as JobInformation),
+          }) as JobInformation,
       )
       mockUserRepository.findById.mockReturnValueOnce(null)
 
@@ -585,7 +585,7 @@ describe('JobManagementService tests', () => {
           ({
             job: { status: JobStatusEnum.Success },
             jobItemUrls: ['a', 'b'],
-          } as JobInformation),
+          }) as JobInformation,
       )
       mockUserRepository.findById.mockReturnValueOnce({
         email: 'test@email.com',
@@ -605,7 +605,7 @@ describe('JobManagementService tests', () => {
           ({
             job: { status: JobStatusEnum.Success },
             jobItemUrls: ['a', 'b'],
-          } as JobInformation),
+          }) as JobInformation,
       )
       mockUserRepository.findById.mockReturnValueOnce({
         email: 'test@email.com',
@@ -624,7 +624,7 @@ describe('JobManagementService tests', () => {
           ({
             job: { status: JobStatusEnum.Failure },
             jobItemUrls: ['a', 'b'],
-          } as JobInformation),
+          }) as JobInformation,
       )
       mockUserRepository.findById.mockReturnValueOnce({
         email: 'test@email.com',

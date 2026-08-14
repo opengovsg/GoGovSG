@@ -2,52 +2,73 @@ name: ci
 on:
   workflow_dispatch:
   push:
+    branches:
+      - develop
+      - staging
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
 
 jobs:
-  ci:
-    name: CI
+  lint:
+    name: Lint
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
+      # oxlint (and oxlint-plugin-eslint) require Node ^20.19.0 || >=22.12.0,
+      # newer than this app's own Node 18 target -- CI-tooling-only override.
+      - uses: ./.github/actions/setup
         with:
-          node-version: '18.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - run: npm ci
+          node-version: '22'
       - run: npm run lint
-      - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
+
+  format:
+    name: Format
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      # oxfmt requires Node ^20.19.0 || >=22.12.0, newer than this app's own
+      # Node 18 target -- CI-tooling-only override.
+      - uses: ./.github/actions/setup
+        with:
+          node-version: '22'
+      - run: npm run format:check
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup
+      - run: npm run typecheck
+
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/setup
       - run: npm run build
         env:
           ASSET_VARIANT: gov
+
+  lockfile-lint:
+    name: Lockfile Lint
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+      # Only needs package-lock.json on disk, not node_modules -- skip the
+      # full setup action's npm ci.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: 'package.json'
+      - run: npx lockfile-lint --type npm --path package-lock.json --validate-https --allowed-hosts npm
 
   test:
     name: Test
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - run: npm ci
+      - uses: ./.github/actions/setup
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
         with:
@@ -63,19 +84,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - run: npm ci
+      - uses: ./.github/actions/setup
       - run: echo CLOUDMERSIVE_KEY=${{secrets.CLOUDMERSIVE_KEY}} >> .env
       - name: Configure Datadog Test Visibility
         uses: datadog/test-visibility-github-action@v2
@@ -92,19 +101,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
-      - name: Cache Node.js modules
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
-            ${{ runner.OS }}-
-      - run: npm ci
+      - uses: ./.github/actions/setup
       - run: npm run dev &
       - run: sleep 270
       - name: Configure Datadog Test Visibility
