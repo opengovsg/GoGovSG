@@ -5,11 +5,11 @@ import {
   Divider,
   IconButton,
   TextField,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import FilterDrawer from '../../../../app/components/FilterDrawer'
 import ArrowDownIcon from '../../../../app/components/widgets/ArrowDownIcon'
 import CloseIcon from '../../../../app/components/widgets/CloseIcon'
@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) =>
     filterIcon: {
       paddingLeft: theme.spacing(0.5),
       verticalAlign: 'middle',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         paddingLeft: theme.spacing(0.0),
       },
     },
@@ -147,7 +147,7 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
   const [isEmail, setIsEmail] = useState<boolean>(false)
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
   // Checks and assign email variable
   useEffect(() => {
@@ -262,12 +262,14 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
                   <IconButton
                     onClick={onClearQuery}
                     className={classes.closeButton}
+                    size="large"
                   >
                     <CloseIcon size={isMobileView ? 20 : 24} color="#BBBBBB" />
                   </IconButton>
                   <IconButton
                     className={classes.searchOptionsButton}
                     onClick={() => setIsSortPanelOpen(true)}
+                    size="large"
                   >
                     <SearchSortIcon size={isMobileView ? 20 : 30} />
                   </IconButton>
@@ -276,6 +278,7 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
                 <IconButton
                   className={classes.searchOptionsButton}
                   onClick={() => setIsSortPanelOpen(true)}
+                  size="large"
                 >
                   <SearchSortIcon size={isMobileView ? 20 : 30} />
                 </IconButton>

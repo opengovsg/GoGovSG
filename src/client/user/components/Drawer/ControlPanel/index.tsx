@@ -8,11 +8,12 @@ import {
   IconButton,
   Link,
   Typography,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import BackIcon from './widgets/BackIcon'
 import { DrawerActions } from './util/reducers'
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) =>
       '&:hover': {
         backgroundColor: 'transparent',
       },
-      [theme.breakpoints.down('md')]: {
+      [theme.breakpoints.down('xl')]: {
         marginLeft: theme.spacing(4),
         marginRight: theme.spacing(4),
       },
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) =>
     drawerPaper: {
       width: '100%',
       height: '100%',
-      maxWidth: theme.breakpoints.width('md'),
+      maxWidth: theme.breakpoints.values.md,
     },
     dialogContents: {
       marginTop: theme.spacing(9),
@@ -148,7 +149,7 @@ export default function ControlPanel() {
   // Styles used in this component.
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
   // Modal controller.
   const drawerStates = useDrawerState()
@@ -203,7 +204,11 @@ export default function ControlPanel() {
 
         {!isLinkHistoryActive && (
           <>
-            <IconButton className={classes.closeIcon} onClick={handleClose}>
+            <IconButton
+              className={classes.closeIcon}
+              onClick={handleClose}
+              size="large"
+            >
               <CloseIcon />
             </IconButton>
             <DrawerMargin>
@@ -211,7 +216,7 @@ export default function ControlPanel() {
               <DrawerHeader title="Edit Link" />
               <LinkStateText />
               <DownloadButton />
-              <Hidden smDown>
+              <Hidden lgDown>
                 <div className={classes.textFieldsTopSpacer} />
               </Hidden>
               <Hidden mdUp>

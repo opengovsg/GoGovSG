@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react'
 import useAppDispatch from '../../../../../app/hooks'
 
-import { Grid } from '@material-ui/core'
+import { Grid } from '@mui/material'
 import SortPanel from '../../../../../app/components/widgets/SortPanel'
 import userActions from '../../../../actions'
 import FilterPanel from './FilterPanel'

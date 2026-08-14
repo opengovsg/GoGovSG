@@ -1,4 +1,4 @@
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 const useAppMargins = () => {
   const theme = useTheme()
@@ -7,15 +7,15 @@ const useAppMargins = () => {
   const mdWidth = useMediaQuery(theme.breakpoints.only('md'))
 
   if (xsWidth) {
-    return theme.spacing(4)
+    return parseFloat(theme.spacing(4))
   }
   if (smWidth) {
-    return theme.spacing(8)
+    return parseFloat(theme.spacing(8))
   }
   if (mdWidth) {
-    return theme.spacing(12)
+    return parseFloat(theme.spacing(12))
   }
-  return theme.spacing(16)
+  return parseFloat(theme.spacing(16))
 }
 
 export default useAppMargins

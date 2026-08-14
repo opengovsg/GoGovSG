@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import i18next from 'i18next'
 import mainImage from '@assets/components/home/rotating-links-graphic/landing-main.svg'
 import RotatingLinks from './RotatingLinks'

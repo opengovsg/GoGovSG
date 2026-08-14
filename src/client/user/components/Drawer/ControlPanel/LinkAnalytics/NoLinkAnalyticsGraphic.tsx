@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import emptyGraphic from '@assets/components/user/drawer/empty-link-analytics-graphic.svg'
 
 const useStyles = makeStyles(() =>

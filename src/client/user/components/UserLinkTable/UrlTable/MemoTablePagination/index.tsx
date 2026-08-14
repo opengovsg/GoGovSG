@@ -1,5 +1,5 @@
 import React from 'react'
-import { TablePagination } from '@material-ui/core'
+import { TablePagination } from '@mui/material'
 import isMatch from 'lodash/isMatch'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent'
@@ -78,11 +78,12 @@ const MemoTablePagination = React.memo(
           'aria-label': 'next page',
         }}
         onPageChange={changePageHandler}
-        onChangeRowsPerPage={changeRowsPerPageHandler}
+        onRowsPerPageChange={changeRowsPerPageHandler}
         classes={{
           spacer: classes.spacer,
           toolbar: classes.toolbar,
-          caption: classes.caption,
+          selectLabel: classes.caption,
+          displayedRows: classes.caption,
           select: classes.select,
           selectIcon: classes.selectIcon,
         }}

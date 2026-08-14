@@ -1,10 +1,7 @@
 import React from 'react'
-import {
-  IconButton,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { IconButton, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import CloseIcon from '../../app/components/widgets/CloseIcon'
 import { TEXT_FIELD_HEIGHT } from '../constants'
 
@@ -15,7 +12,7 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       backgroundColor: theme.palette.secondary.main,
       borderRadius: 5,
-      minHeight: TEXT_FIELD_HEIGHT - theme.spacing(2),
+      minHeight: TEXT_FIELD_HEIGHT - parseFloat(theme.spacing(2)),
       margin: theme.spacing(1, 0, 1, 1),
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(0.75),

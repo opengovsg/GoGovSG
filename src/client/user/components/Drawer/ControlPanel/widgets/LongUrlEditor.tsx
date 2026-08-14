@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 import useShortLink from '../util/shortlink'
 import { removeHttpsProtocol } from '../../../../../app/util/url'
@@ -13,7 +13,7 @@ import TrailingButton from './TrailingButton'
 
 export default function LongUrlEditor() {
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const drawerStates = useDrawerState()
   const { shortLinkState, shortLinkDispatch } = useShortLink(
     drawerStates.relevantShortLink!,

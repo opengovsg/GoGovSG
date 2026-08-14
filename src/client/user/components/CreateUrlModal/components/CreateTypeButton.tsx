@@ -1,5 +1,5 @@
 import React, { ComponentType, FunctionComponent } from 'react'
-import { Button, Typography, useTheme } from '@material-ui/core'
+import { Button, Typography, useTheme } from '@mui/material'
 
 type IconProps = any
 type CreateTypeButtonProps = {

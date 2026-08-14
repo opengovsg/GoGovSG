@@ -8,11 +8,11 @@ import {
   TableCell,
   TableRow,
   Typography,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
 import i18next from 'i18next'
 import { UrlTypePublic } from '../../../../reducers/types'
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       maxWidth: '400px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         maxWidth: '200px',
       },
     },
@@ -81,7 +81,7 @@ const useStyles = makeStyles((theme) =>
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       maxWidth: '400px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         maxWidth: '200px',
       },
       textDecoration: 'none',
@@ -97,7 +97,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         maxWidth: '400px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 32px)',
       },
     },
@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         maxWidth: '400px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 32px)',
       },
     },
@@ -171,7 +171,7 @@ const useStyles = makeStyles((theme) =>
         paddingTop: theme.spacing(7.5),
         minWidth: '75px',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'inline-flex',
         width: '30%',
         minWidth: '110px',
@@ -193,7 +193,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const dispatch = useAppDispatch()
   const query = useSelector(
     (state: GoGovReduxState) => state.directory.queryForResult,
@@ -291,7 +291,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
         </Typography>
       </TableCell>
 
-      <Hidden smDown>
+      <Hidden lgDown>
         <TableCell className={classes.stateCell}>
           <Typography
             variant="caption"
@@ -324,7 +324,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
         </Typography>
       </TableCell>
 
-      <Hidden smDown>
+      <Hidden lgDown>
         <TableCell
           className={classes.requestOwnershipCell}
           key="requestOwnershipCell"
@@ -333,7 +333,7 @@ const DirectoryTableRow: FunctionComponent<DirectoryTableRowProps> = ({
             variant="body2"
             className={classes.requestOwnershipText}
             onClick={(e) => onClickRequestOwnership(e)}
-            href={i18next.t('general.links.contact')}
+            href={i18next.t('general.links.contact') as string}
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react'
-import { Table, TableBody, createStyles, makeStyles } from '@material-ui/core'
+import { Table, TableBody } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { UrlTypePublic } from '../../../reducers/types'
 import DirectoryTableRow from './DirectoryTableRow'
 import DirectoryTablePagination from './DirectoryTablePagination'

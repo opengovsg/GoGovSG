@@ -1,13 +1,9 @@
 import React, { FunctionComponent } from 'react'
 import i18next from 'i18next'
 
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { Typography, useMediaQuery, useTheme } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import emptyGraphic from '@assets/components/directory/empty-search-graphic/empty-graphic.svg'
 
 const useStyles = makeStyles((theme) =>
@@ -41,7 +37,7 @@ const useStyles = makeStyles((theme) =>
 const EmptyStateGraphic: FunctionComponent = () => {
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   return (
     <div className={classes.root}>
       <Typography variant={isMobileView ? 'h5' : 'h3'}>

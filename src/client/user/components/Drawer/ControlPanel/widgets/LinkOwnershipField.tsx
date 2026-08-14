@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react'
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
 import i18next from 'i18next'
 
 import ConfigOption, {
@@ -19,7 +19,7 @@ const LinkOwnershipField: FunctionComponent<LinkOwnershipFieldProps> = ({
   closeModal,
 }: LinkOwnershipFieldProps) => {
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const drawerStates = useDrawerState()
   const { shortLinkDispatch } = useShortLink(drawerStates.relevantShortLink!)
   const [pendingOwner, setPendingOwner] = useState<string>('')
