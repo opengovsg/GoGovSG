@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: npm run docker-dev
+    command: pnpm run docker-dev
     depends_on:
       - postgres
       - redis
@@ -70,7 +70,6 @@ services:
     volumes:
       - ./public:/usr/src/gogovsg/public
       - ./src:/usr/src/gogovsg/src
-      - ./.logs:/root/.npm/_logs
 
   postgres:
     image: postgres:11.1-alpine

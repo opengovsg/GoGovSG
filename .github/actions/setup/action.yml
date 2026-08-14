@@ -1,31 +1,15 @@
 name: 'Setup and install'
-description: 'Common setup steps for CI jobs (Node.js + npm install)'
-
-inputs:
-  node-version:
-    description: >-
-      Node version to use, overriding package.json's engines.node. Only
-      needed for tooling (e.g. oxlint/oxfmt) that requires a newer Node
-      than the app itself targets.
-    required: false
-    default: ''
+description: 'Common setup steps for CI jobs (Node.js + pnpm install)'
 
 runs:
   using: composite
   steps:
+    - uses: pnpm/action-setup@v4
+
     - uses: actions/setup-node@v4
       with:
-        node-version: ${{ inputs.node-version }}
         node-version-file: 'package.json'
-
-    - name: Cache Node.js modules
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.OS }}-node-
-          ${{ runner.OS }}-
+        cache: 'pnpm'
 
     - shell: bash
-      run: npm ci
+      run: pnpm install --frozen-lockfile
