@@ -72,9 +72,11 @@ updates:
           - redux-*
           - history
 
-      material-ui:
+      mui:
+        # @emotion/* are @mui/material's styling-engine peer deps; bump together.
         patterns:
-          - '@material-ui/*'
+          - '@mui/*'
+          - '@emotion/*'
 
       chartjs:
         patterns:
