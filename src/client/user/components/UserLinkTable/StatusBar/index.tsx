@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../../app/hooks'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab'
+import { Alert, AlertTitle, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import StatusBarCompletedIcon from '../../../widgets/StatusBarCompletedIcon'
 import StatusBarFailedIcon from '../../../widgets/StatusBarFailedIcon'
 import StatusBarInProgressIcon from '../../../widgets/StatusBarInProgressIcon'
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) =>
         paddingRight: (props: StyleProps) => props.appMargins,
         paddingLeft: (props: StyleProps) => props.appMargins,
       },
-      [theme.breakpoints.down('sm')]: {},
+      [theme.breakpoints.down('lg')]: {},
     },
     message: {},
     messageBody: {

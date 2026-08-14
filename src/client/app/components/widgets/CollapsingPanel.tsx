@@ -1,11 +1,7 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
-import {
-  Collapse,
-  IconButton,
-  Paper,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Collapse, IconButton, Paper } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import CloseIcon from './CloseIcon'
 
 type CollapsingPanelProps = {
@@ -21,14 +17,14 @@ const useStyles = makeStyles((theme) =>
       left: 0,
       top: 'calc(100% + 10px)',
       zIndex: 1000,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         top: 0,
         height: '100% !important', // Bypass Material UI uses element style
         minHeight: '800px !important',
       },
     },
     collapseWrapper: {
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         height: '100%',
       },
     },
@@ -37,7 +33,7 @@ const useStyles = makeStyles((theme) =>
       top: 0,
       right: 0,
       margin: theme.spacing(1),
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         margin: theme.spacing(3),
       },
     },
@@ -66,7 +62,11 @@ const CollapsingPanel: FunctionComponent<CollapsingPanelProps> = ({
     >
       <Paper className={classes.root}>
         {onClose && (
-          <IconButton className={classes.closeIcon} onClick={onClose}>
+          <IconButton
+            className={classes.closeIcon}
+            onClick={onClose}
+            size="large"
+          >
             <CloseIcon size={20} />
           </IconButton>
         )}
