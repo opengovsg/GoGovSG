@@ -1,4 +1,5 @@
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 type StyleProps = {
   appMargins: number
@@ -16,20 +17,20 @@ export default makeStyles((theme) =>
     caption: {
       fontWeight: 400,
       marginRight: '4px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
     select: {
       border: 'solid 1px #d8d8d8',
       zIndex: 2,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
     selectIcon: {
       zIndex: 2,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },

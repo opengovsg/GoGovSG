@@ -1,12 +1,9 @@
 import React from 'react'
 import copy from 'copy-to-clipboard'
-import {
-  Button,
-  Typography,
-  TypographyVariant,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Button, Typography, TypographyVariant } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import copyIcon from '@assets/widgets/user/copy-icon.svg'
 import OnClickTooltip from './OnClickTooltip'

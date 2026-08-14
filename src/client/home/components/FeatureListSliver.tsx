@@ -6,11 +6,11 @@ import {
   Grid,
   Hidden,
   Typography,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import antiPhishingIcon from '@assets/components/home/feature-list-sliver/home-page-anti-phishing-icon.svg'
 import customisedIcon from '@assets/components/home/feature-list-sliver/home-page-customised-icon.svg'
 import analyticsIcon from '@assets/components/home/feature-list-sliver/home-page-analytics-icon.svg'

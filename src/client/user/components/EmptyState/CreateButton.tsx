@@ -1,7 +1,9 @@
 import React from 'react'
 import useAppDispatch from '../../../app/hooks'
 
-import { Button, createStyles, makeStyles } from '@material-ui/core'
+import { Button } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import classNames from 'classnames'
 import userActions from '../../actions'
 

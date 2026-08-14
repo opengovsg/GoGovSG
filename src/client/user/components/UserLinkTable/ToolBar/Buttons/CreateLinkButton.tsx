@@ -1,7 +1,8 @@
 import React from 'react'
 import useAppDispatch from '../../../../../app/hooks'
 
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import addIcon from '@assets/components/user/user-link-table/toolbar/add-icon.svg'
 import userActions from '../../../../actions'
