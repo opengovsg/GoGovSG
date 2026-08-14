@@ -30,7 +30,9 @@ type TrailingButtonProps = {
   component?: any
 }
 
-const TrailingButton: FunctionComponent<TrailingButtonProps> = ({
+const TrailingButton: FunctionComponent<
+  PropsWithChildren<TrailingButtonProps>
+> = ({
   className,
   onClick,
   disabled,
