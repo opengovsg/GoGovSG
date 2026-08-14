@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react'
+import { useParams } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import createStyles from '@mui/styles/createStyles'
 import makeStyles from '@mui/styles/makeStyles'
@@ -13,20 +14,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-type NotFoundPageProps = {
-  match: {
-    params: {
-      shortUrl: boolean
-    }
-  }
-}
-
-const NotFoundPage: FunctionComponent<NotFoundPageProps> = ({
-  match,
-}: NotFoundPageProps) => {
+const NotFoundPage: FunctionComponent = () => {
   const classes = useStyles()
-  const { params } = match
-  const { shortUrl } = params
+  const { shortUrl } = useParams<{ shortUrl: string }>()
   const message = shortUrl ? (
     <>
       Are you sure{' '}
