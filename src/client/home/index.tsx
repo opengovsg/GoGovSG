@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../app/hooks'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { useMediaQuery, useTheme } from '@mui/material'
 import homeActions from './actions'
@@ -38,13 +38,7 @@ const HomePage: FunctionComponent = () => {
   }, [])
 
   if (isLoggedIn) {
-    return (
-      <Redirect
-        to={{
-          pathname: USER_PAGE,
-        }}
-      />
-    )
+    return <Navigate to={USER_PAGE} />
   }
 
   return (
