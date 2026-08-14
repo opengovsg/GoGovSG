@@ -149,14 +149,15 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
 
-  // Checks and assign email variable
-  useEffect(() => {
-    if (isEmail) {
-      getEmail('true')
-    } else {
-      getEmail('false')
-    }
-  }, [isEmail])
+  // Toggle email mode and notify the parent in the same update, rather than
+  // via a useEffect keyed on isEmail — that extra render/effect hop let the
+  // placeholder switch to "email" before the parent had cleared the query,
+  // which showed up as a stale input value under React 18's less synchronous
+  // effect scheduling (most visibly in WebKit E2E runs).
+  const handleEmailToggle = (nextIsEmail: boolean) => {
+    setIsEmail(nextIsEmail)
+    getEmail(nextIsEmail ? 'true' : 'false')
+  }
 
   // If sort panel is open, set pagination z-index to -1, else reset z-index to 1
   // this prevent pagination from intersecting with sort panel
@@ -296,7 +297,7 @@ const DirectoryInput: FunctionComponent<DirectoryInputProps> = ({
           labels={['Keyword', 'Email']}
           selectedLabel={isEmail ? 'Email' : 'Keyword'}
           onClick={(label) => {
-            setIsEmail(label === 'Email')
+            handleEmailToggle(label === 'Email')
           }}
           isFilterOpen={isFilterOpen}
           isMobileView={isMobileView}
