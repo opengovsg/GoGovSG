@@ -389,6 +389,9 @@ importers:
       '@types/d3':
         specifier: ^6.7.8
         version: 6.7.8
+      '@types/ejs':
+        specifier: 3.1.5
+        version: 3.1.5
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
@@ -3497,6 +3500,9 @@ packages:
 
   '@types/doctrine@0.0.9':
     resolution: {integrity: sha512-eOIHzCUSH7SMfonMG1LsC2f8vxBFtho6NGBznK41R84YzPuvSBzrhEps33IsQiOW9+VL6NQ9DbjQJznk/S4uRA==}
+
+  '@types/ejs@3.1.5':
+    resolution: {integrity: sha512-nv+GSx77ZtXiJzwKdsASqi+YQ5Z7vwHsTP0JY2SiQgjGckkBRKZnk8nIM+7oUZ1VCtuTz0+By4qVR7fqzp/Dfg==}
 
   '@types/esrecurse@4.3.1':
     resolution: {integrity: sha512-xJBAbDifo5hpffDBuHl0Y8ywswbiAp/Wi7Y/GtAgSlZyIABppyurxVueOPE8LUQOxdlgi6Zqce7uoEpqNTeiUw==}
@@ -11798,6 +11804,8 @@ snapshots:
   '@types/deep-eql@4.0.2': {}
 
   '@types/doctrine@0.0.9': {}
+
+  '@types/ejs@3.1.5': {}
 
   '@types/esrecurse@4.3.1': {}
 
