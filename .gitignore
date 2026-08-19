@@ -17,3 +17,4 @@ test-results
 test/end-to-end/.auth
 blob-report
 .env.*
+storybook-static
