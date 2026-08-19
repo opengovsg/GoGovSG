@@ -21,26 +21,39 @@ export type ReduxStoryParameters = {
   routerEntries?: string[]
 }
 
-// Real Provider + real reducers, seeded with each story's own preloadedState.
-// Thunks dispatched on mount still fire (see storybook/mocks/cross-fetch.ts)
-// but their network call never resolves, so this preloadedState remains the
-// only source of truth for what's rendered.
+// Real Provider, seeded with each story's own preloadedState. Thunks
+// dispatched on mount still fire (see storybook/mocks/cross-fetch.ts) and
+// their network call never resolves -- but that alone isn't enough: several
+// thunks dispatch a synchronous "pending" action BEFORE awaiting that fetch
+// (e.g. getUrlsForUser dispatches isFetchingUrls(true) first), which reaches
+// the reducer regardless of whether the fetch ever settles. UserPage's
+// `!fetchingUrls && urlCount === 0` branch depended on isFetchingUrls staying
+// false, so the EmptyState story silently rendered UserLinkTable's own empty
+// view instead once that flag flipped -- a wrong-but-not-crashing render a
+// plain smoke test wouldn't catch. Rather than special-case every such
+// thunk, the store here uses an identity reducer: dispatch (and thunk
+// middleware) still work so thunks don't crash, but no action -- pending
+// flags, optimistic updates, anything -- is ever allowed to mutate state
+// after creation. A story's preloadedState is the ONLY source of truth for
+// what's rendered, for its entire lifetime, not just at mount.
 //
 // combineReducers does NOT merge a partial slice with that slice's own
 // default state -- a story's `reduxState.user = { urlCount: 0 }` becomes the
 // ENTIRE user slice, so any field a component reads that the story didn't
 // set (e.g. urlUpload, statusBarMessage) is undefined and crashes. Deep-merge
 // each story's overrides onto the real default state tree (produced by
-// calling the reducer with undefined state) so every field is always
-// populated; arrays are replaced wholesale rather than merged by index, so a
-// story's `urls: [...]` fully replaces the default `urls: []` instead of
-// merging element-by-element.
+// calling the real reducer once with undefined state) so every field is
+// always populated; arrays are replaced wholesale rather than merged by
+// index, so a story's `urls: [...]` fully replaces the default `urls: []`
+// instead of merging element-by-element.
 const defaultState = rootReducer(
   undefined,
   // Any unrecognised action makes combineReducers fall through to each
   // slice's own default state -- the action type itself is arbitrary.
   { type: '@@STORYBOOK_INIT' } as unknown as Parameters<typeof rootReducer>[1],
 )
+
+const identityReducer = (state: GoGovReduxState = defaultState) => state
 
 export const withRedux: Decorator = (Story, context) => {
   const { reduxState = {} } = context.parameters as ReduxStoryParameters
@@ -49,10 +62,10 @@ export const withRedux: Decorator = (Story, context) => {
     defaultState,
     reduxState,
     (_objValue, srcValue) => (Array.isArray(srcValue) ? srcValue : undefined),
-  )
+  ) as GoGovReduxState
   const store = createStore(
-    rootReducer,
-    preloadedState as GoGovReduxState,
+    identityReducer,
+    preloadedState,
     applyMiddleware(thunk),
   )
   return (
@@ -80,15 +93,19 @@ export const withTheme: Decorator = (Story) => (
 
 // Theme breakpoints (src/client/app/theme/index.ts): sm=600, md=960, xl=1440.
 // Desktop is pinned to 1280 (lg) per the agreed viewport policy rather than xl.
+//
+// "Public" means reachable without being logged in (a plain <Route> in
+// RootPage/index.tsx); "Authenticated" means gated behind <PrivateRoute>,
+// which redirects to /login when state.login.isLoggedIn is false.
 export const PUBLIC_CHROMATIC_VIEWPORTS = [375, 960, 1280]
-export const ADMIN_CHROMATIC_VIEWPORTS = [1280]
+export const AUTHENTICATED_CHROMATIC_VIEWPORTS = [1280]
 
 export const publicViewportParameters = {
   chromatic: { viewports: PUBLIC_CHROMATIC_VIEWPORTS },
   viewport: { value: 'desktop' },
 }
 
-export const adminViewportParameters = {
-  chromatic: { viewports: ADMIN_CHROMATIC_VIEWPORTS },
+export const authenticatedViewportParameters = {
+  chromatic: { viewports: AUTHENTICATED_CHROMATIC_VIEWPORTS },
   viewport: { value: 'desktop' },
 }

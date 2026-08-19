@@ -1,14 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { publicViewportParameters } from '../storybook/decorators'
+import { authenticatedViewportParameters } from '../storybook/decorators'
 import { SearchResultsSortOrder } from '../../shared/search'
 import { UrlState } from './reducers/types'
 import DirectoryPage from './index'
 
+// DirectoryPage itself never reads state.login, but DIRECTORY_PAGE is
+// wrapped in <PrivateRoute> in RootPage/index.tsx -- a logged-out visitor is
+// redirected to /login before ever reaching this component, so it belongs
+// in the authenticated bucket despite the component-level code looking
+// login-agnostic.
 const meta: Meta<typeof DirectoryPage> = {
-  title: 'Public/Directory',
+  title: 'Authenticated/Directory',
   component: DirectoryPage,
-  parameters: publicViewportParameters,
+  parameters: authenticatedViewportParameters,
 }
 
 export default meta
@@ -70,7 +75,7 @@ const mockResults = [
 
 export const EmptyResults: Story = {
   parameters: {
-    ...publicViewportParameters,
+    ...authenticatedViewportParameters,
     routerEntries: ['/directory?query=asdkjhaskjdh'],
     reduxState: {
       directory: {
@@ -84,7 +89,7 @@ export const EmptyResults: Story = {
 
 export const PopulatedResults: Story = {
   parameters: {
-    ...publicViewportParameters,
+    ...authenticatedViewportParameters,
     routerEntries: ['/directory?query=gov'],
     reduxState: {
       directory: {
@@ -103,7 +108,7 @@ export const PopulatedResults: Story = {
 // a specific term" story instead, per the established fallback.
 export const SearchQueryPopulated: Story = {
   parameters: {
-    ...publicViewportParameters,
+    ...authenticatedViewportParameters,
     routerEntries: [
       `/directory?query=passport&sortOrder=${SearchResultsSortOrder.Popularity}`,
     ],

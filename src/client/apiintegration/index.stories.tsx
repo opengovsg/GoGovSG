@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { adminViewportParameters } from '../storybook/decorators'
+import { authenticatedViewportParameters } from '../storybook/decorators'
 import ApiIntegrationPage from './index'
 
 const meta: Meta<typeof ApiIntegrationPage> = {
-  title: 'Admin/API Integration',
+  title: 'Authenticated/API Integration',
   component: ApiIntegrationPage,
-  parameters: adminViewportParameters,
+  parameters: authenticatedViewportParameters,
 }
 
 export default meta
@@ -14,7 +14,7 @@ type Story = StoryObj<typeof ApiIntegrationPage>
 
 export const NoApiKey: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
@@ -28,7 +28,7 @@ export const NoApiKey: Story = {
 
 export const ApiKeyGenerated: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
