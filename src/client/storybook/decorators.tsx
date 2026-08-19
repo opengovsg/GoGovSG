@@ -6,6 +6,7 @@ import { applyMiddleware, legacy_createStore as createStore } from 'redux'
 import { thunk } from 'redux-thunk'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import mergeWith from 'lodash/mergeWith'
 
 import rootReducer from '../app/reducers'
 import theme from '../app/theme'
@@ -24,11 +25,34 @@ export type ReduxStoryParameters = {
 // Thunks dispatched on mount still fire (see storybook/mocks/cross-fetch.ts)
 // but their network call never resolves, so this preloadedState remains the
 // only source of truth for what's rendered.
+//
+// combineReducers does NOT merge a partial slice with that slice's own
+// default state -- a story's `reduxState.user = { urlCount: 0 }` becomes the
+// ENTIRE user slice, so any field a component reads that the story didn't
+// set (e.g. urlUpload, statusBarMessage) is undefined and crashes. Deep-merge
+// each story's overrides onto the real default state tree (produced by
+// calling the reducer with undefined state) so every field is always
+// populated; arrays are replaced wholesale rather than merged by index, so a
+// story's `urls: [...]` fully replaces the default `urls: []` instead of
+// merging element-by-element.
+const defaultState = rootReducer(
+  undefined,
+  // Any unrecognised action makes combineReducers fall through to each
+  // slice's own default state -- the action type itself is arbitrary.
+  { type: '@@STORYBOOK_INIT' } as unknown as Parameters<typeof rootReducer>[1],
+)
+
 export const withRedux: Decorator = (Story, context) => {
   const { reduxState = {} } = context.parameters as ReduxStoryParameters
+  const preloadedState = mergeWith(
+    {},
+    defaultState,
+    reduxState,
+    (_objValue, srcValue) => (Array.isArray(srcValue) ? srcValue : undefined),
+  )
   const store = createStore(
     rootReducer,
-    reduxState as GoGovReduxState,
+    preloadedState as GoGovReduxState,
     applyMiddleware(thunk),
   )
   return (
