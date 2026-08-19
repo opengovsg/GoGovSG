@@ -1,4 +1,3 @@
-import FileType from 'file-type'
 import { inject, injectable } from 'inversify'
 import * as interfaces from '../interfaces'
 import { DependencyIds } from '../../../constants'
@@ -55,7 +54,10 @@ export class FileTypeFilterService implements interfaces.FileTypeFilterService {
     name: string
     data: Buffer
   }) => Promise<FileTypeData> = async ({ name, data }) => {
-    const fileType = await FileType.fromBuffer(data)
+    // file-type is pure ESM; dynamic import is the interop path from this
+    // CommonJS-compiled codebase.
+    const { fileTypeFromBuffer } = await import('file-type')
+    const fileType = await fileTypeFromBuffer(data)
     let ext: string | undefined = fileType?.ext
     let mimeType: string | undefined = fileType?.mime
     if (!ext || !mimeType) {

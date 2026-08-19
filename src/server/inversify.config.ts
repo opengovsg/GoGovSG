@@ -1,4 +1,5 @@
-import AWS from 'aws-sdk'
+import { S3Client } from '@aws-sdk/client-s3'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { ApiClient, ScanApi } from 'cloudmersive-virus-api-client'
 
@@ -11,6 +12,7 @@ import {
   linksToRotate,
   ogUrl,
   s3Bucket,
+  s3Region,
   sqsRegion,
   sqsTimeout,
   userAnnouncement,
@@ -191,13 +193,20 @@ export default () => {
   bindIfUnbound(DependencyIds.mailer, MailerNode)
 
   if (DEV_ENV) {
-    const s3Client = new AWS.S3({
+    const s3Client = new S3Client({
+      region: s3Region,
       credentials: {
         accessKeyId: 'foobar',
         secretAccessKey: 'foobar',
       },
       endpoint: bucketEndpoint,
-      s3ForcePathStyle: true,
+      forcePathStyle: true,
+      // LocalStack's S3 responses don't always carry a `Date` header the SDK
+      // can parse. aws-sdk v3's clock-skew "correction" mutates this client's
+      // shared systemClockOffset to NaN the first time that happens, which
+      // then poisons every later request's signing (throws "Invalid time
+      // value") for the lifetime of this client instance.
+      disableClockSkewCorrection: true,
     })
     container
       .bind(DependencyIds.fileURLPrefix)
@@ -205,22 +214,20 @@ export default () => {
     container.bind(DependencyIds.s3Client).toConstantValue(s3Client)
 
     container.bind(DependencyIds.sqsClient).toConstantValue(
-      new AWS.SQS({
+      new SQSClient({
         region: sqsRegion,
-        httpOptions: {
-          timeout: sqsTimeout,
-        },
+        requestHandler: { requestTimeout: sqsTimeout },
       }),
     )
   } else {
     container.bind(DependencyIds.fileURLPrefix).toConstantValue('https://')
-    container.bind(DependencyIds.s3Client).toConstantValue(new AWS.S3())
+    container
+      .bind(DependencyIds.s3Client)
+      .toConstantValue(new S3Client({ region: s3Region }))
     container.bind(DependencyIds.sqsClient).toConstantValue(
-      new AWS.SQS({
+      new SQSClient({
         region: sqsRegion,
-        httpOptions: {
-          timeout: sqsTimeout,
-        },
+        requestHandler: { requestTimeout: sqsTimeout },
       }),
     )
   }
