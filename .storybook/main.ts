@@ -46,6 +46,15 @@ const config: StorybookConfig = {
           dirname,
           '../src/client/storybook/mocks/cross-fetch.ts',
         ),
+        // src/client/home/index.tsx calls initMonitoring() at module
+        // top-level, which calls datadogRum.init(...) with real production
+        // credentials and sessionReplaySampleRate: 100 -- without this,
+        // every story render would attempt to send real session-replay
+        // telemetry to production Datadog.
+        '@datadog/browser-rum': path.resolve(
+          dirname,
+          '../src/client/storybook/mocks/datadog-browser-rum.ts',
+        ),
       },
       fallback: {
         ...config.resolve?.fallback,
