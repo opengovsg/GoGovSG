@@ -58,7 +58,7 @@ describe('JobManagementService tests', () => {
       await expect(service.createJob(2)).rejects.toThrow(
         new NotFoundError('User not found'),
       )
-      expect(mockJobRepository.create).not.toBeCalled()
+      expect(mockJobRepository.create).not.toHaveBeenCalled()
     })
 
     it('should create job and return created job if success', async () => {
@@ -76,7 +76,7 @@ describe('JobManagementService tests', () => {
       mockJobRepository.create.mockResolvedValue(mockJob)
 
       expect(await service.createJob(mockUserId)).toStrictEqual(mockJob)
-      expect(mockJobRepository.create).toBeCalled()
+      expect(mockJobRepository.create).toHaveBeenCalled()
     })
   })
 
@@ -91,7 +91,7 @@ describe('JobManagementService tests', () => {
       await expect(service.createJobItem(mockJobItemParams)).rejects.toThrow(
         new NotFoundError('Job not found'),
       )
-      expect(mockJobItemRepository.create).not.toBeCalled()
+      expect(mockJobItemRepository.create).not.toHaveBeenCalled()
     })
 
     it('should create job item and return created job item if success', async () => {
@@ -118,7 +118,7 @@ describe('JobManagementService tests', () => {
       expect(await service.createJobItem(mockJobItemParams)).toStrictEqual(
         mockCreatedJobItem,
       )
-      expect(mockJobItemRepository.create).toBeCalled()
+      expect(mockJobItemRepository.create).toHaveBeenCalled()
     })
   })
 
@@ -139,8 +139,10 @@ describe('JobManagementService tests', () => {
         service.updateJobItemStatus(jobItemId, updateJobItemStatus),
       ).rejects.toThrow(new NotFoundError('Job item not found'))
 
-      expect(mockJobItemRepository.findByJobItemId).toBeCalledWith(jobItemId)
-      expect(mockJobItemRepository.update).not.toBeCalled()
+      expect(mockJobItemRepository.findByJobItemId).toHaveBeenCalledWith(
+        jobItemId,
+      )
+      expect(mockJobItemRepository.update).not.toHaveBeenCalled()
     })
 
     it('if jobItem exists and job item failed, update job item and return updated job item', async () => {
@@ -172,8 +174,10 @@ describe('JobManagementService tests', () => {
       await expect(
         service.updateJobItemStatus(jobItemId, updateStatus),
       ).resolves.toEqual(updatedJobItem)
-      expect(mockJobItemRepository.findByJobItemId).toBeCalledWith(jobItemId)
-      expect(mockJobItemRepository.update).toBeCalledWith(
+      expect(mockJobItemRepository.findByJobItemId).toHaveBeenCalledWith(
+        jobItemId,
+      )
+      expect(mockJobItemRepository.update).toHaveBeenCalledWith(
         currJobItem,
         updateChanges,
       )
@@ -207,8 +211,10 @@ describe('JobManagementService tests', () => {
       await expect(
         service.updateJobItemStatus(jobItemId, updateStatus),
       ).resolves.toEqual(updatedJobItem)
-      expect(mockJobItemRepository.findByJobItemId).toBeCalledWith(jobItemId)
-      expect(mockJobItemRepository.update).toBeCalledWith(
+      expect(mockJobItemRepository.findByJobItemId).toHaveBeenCalledWith(
+        jobItemId,
+      )
+      expect(mockJobItemRepository.update).toHaveBeenCalledWith(
         currJobItem,
         updateChanges,
       )
@@ -331,8 +337,8 @@ describe('JobManagementService tests', () => {
       await expect(service.updateJobStatus(2)).rejects.toThrow(
         new NotFoundError('Job not found'),
       )
-      expect(mockJobItemRepository.findJobItemsByJobId).not.toBeCalled()
-      expect(spy).not.toBeCalled()
+      expect(mockJobItemRepository.findJobItemsByJobId).not.toHaveBeenCalled()
+      expect(spy).not.toHaveBeenCalled()
     })
 
     it('should throw error if job has no job items', async () => {
@@ -349,7 +355,7 @@ describe('JobManagementService tests', () => {
       await expect(service.updateJobStatus(2)).rejects.toThrow(
         new Error('Job does not have any job items'),
       )
-      expect(spy).not.toBeCalled()
+      expect(spy).not.toHaveBeenCalled()
     })
 
     it('should call computeJobStatus and update job status if job status has changed', async () => {
@@ -384,8 +390,8 @@ describe('JobManagementService tests', () => {
         updatedMockJob,
       )
 
-      expect(spy).toBeCalledTimes(1)
-      expect(mockJobRepository.update).toBeCalledWith(mockJob, {
+      expect(spy).toHaveBeenCalledTimes(1)
+      expect(mockJobRepository.update).toHaveBeenCalledWith(mockJob, {
         status: JobStatusEnum.Success,
       })
     })
@@ -402,7 +408,7 @@ describe('JobManagementService tests', () => {
       await expect(service.getJobInformation(2)).rejects.toThrow(
         new NotFoundError('Job not found'),
       )
-      expect(mockJobItemRepository.findJobItemsByJobId).not.toBeCalled()
+      expect(mockJobItemRepository.findJobItemsByJobId).not.toHaveBeenCalled()
     })
 
     it('should throw error if job has no job items', async () => {
@@ -472,7 +478,7 @@ describe('JobManagementService tests', () => {
       await expect(service.getLatestJobForUser(2)).rejects.toThrow(
         new NotFoundError('No jobs found'),
       )
-      expect(spy).not.toBeCalled()
+      expect(spy).not.toHaveBeenCalled()
     })
 
     it('should retrieve job information and return successfully', async () => {
@@ -492,7 +498,7 @@ describe('JobManagementService tests', () => {
       await expect(service.getLatestJobForUser(2)).resolves.toStrictEqual(
         mockJobInformation,
       )
-      expect(spy).toBeCalledWith(4)
+      expect(spy).toHaveBeenCalledWith(4)
     })
   })
 
@@ -527,7 +533,7 @@ describe('JobManagementService tests', () => {
           jobItemUrls: ['a', 'b'],
         }))
 
-      await expect(service.pollJobStatusUpdate(1, 1)).rejects.toThrowError(
+      await expect(service.pollJobStatusUpdate(1, 1)).rejects.toThrow(
         'Exceeded max attempts',
       )
       expect(getJobInformationSpy).toHaveBeenCalledTimes(2)
@@ -574,7 +580,7 @@ describe('JobManagementService tests', () => {
       )
       mockUserRepository.findById.mockReturnValueOnce(null)
 
-      await expect(service.sendJobCompletionEmail(1)).rejects.toThrowError(
+      await expect(service.sendJobCompletionEmail(1)).rejects.toThrow(
         `user not found for jobId 1`,
       )
     })
@@ -594,7 +600,7 @@ describe('JobManagementService tests', () => {
         throw new Error('Test error')
       })
 
-      await expect(service.sendJobCompletionEmail(1)).rejects.toThrowError(
+      await expect(service.sendJobCompletionEmail(1)).rejects.toThrow(
         'Error mailing job completion email',
       )
     })

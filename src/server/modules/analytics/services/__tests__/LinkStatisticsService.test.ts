@@ -107,7 +107,7 @@ describe('LinkStatisticService tests', () => {
     it('should update relevant tables with same transaction', async () => {
       const shortUrl = 'a'
       await service.updateLinkStatistics(shortUrl, '')
-      expect(updateLinkStatistics).toBeCalledWith(shortUrl, deviceType)
+      expect(updateLinkStatistics).toHaveBeenCalledWith(shortUrl, deviceType)
     })
   })
 })

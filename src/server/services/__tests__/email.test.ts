@@ -35,7 +35,7 @@ describe('Mailer tests', () => {
       const { MailerNode } = require('../email')
       const service = new MailerNode()
 
-      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrowError()
+      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrow()
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
@@ -48,7 +48,7 @@ describe('Mailer tests', () => {
       const { MailerNode } = require('../email')
       const service = new MailerNode()
 
-      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrowError()
+      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrow()
       expect(mockFetch).not.toHaveBeenCalled()
     })
 
@@ -64,7 +64,7 @@ describe('Mailer tests', () => {
 
       mockFetch.mockResolvedValue({ ok: false })
 
-      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrowError()
+      await expect(service.sendPostmanMail(testMailBody)).rejects.toThrow()
       expect(mockFetch).toHaveBeenCalled()
     })
   })
@@ -84,9 +84,7 @@ describe('Mailer tests', () => {
       const { MailerNode } = require('../email')
       const service = new MailerNode()
       service.initMailer()
-      await expect(
-        service.sendTransporterMail(testMailBody),
-      ).rejects.toThrowError()
+      await expect(service.sendTransporterMail(testMailBody)).rejects.toThrow()
       expect(sendMailMock).toHaveBeenCalled()
     })
   })
@@ -197,13 +195,13 @@ describe('Mailer tests', () => {
     it('should not send mail if email is undefined', async () => {
       // Email not specified
       await service.mailJobSuccess(null, ['downloadLink1', 'downloadLink2'])
-      expect(sendMailSpy).not.toBeCalled()
+      expect(sendMailSpy).not.toHaveBeenCalled()
     })
 
     it('should not send mail if download links is undefined', async () => {
       // Download links not specified
       await service.mailJobSuccess('test@email.com', null)
-      expect(sendMailSpy).not.toBeCalled()
+      expect(sendMailSpy).not.toHaveBeenCalled()
     })
 
     it('should call sendMail with the correct email body if email and downloadLinks are specified', async () => {
@@ -248,7 +246,7 @@ describe('Mailer tests', () => {
     it('should not send mail if email is undefined', async () => {
       // Email not specified
       await service.mailJobFailure(null)
-      expect(sendMailSpy).not.toBeCalled()
+      expect(sendMailSpy).not.toHaveBeenCalled()
     })
 
     it('should call sendMail with the correct email body if email is specified', async () => {
@@ -285,7 +283,7 @@ describe('Mailer tests', () => {
       await service.mailDeactivatedMaliciousShortUrl(email, shortUrl)
 
       // Assert
-      expect(sendMailSpy).not.toBeCalled()
+      expect(sendMailSpy).not.toHaveBeenCalled()
     })
 
     it('should call sendMail with the correct email body if email and shortUrl are specified', async () => {

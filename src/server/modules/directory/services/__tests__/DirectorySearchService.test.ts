@@ -34,7 +34,7 @@ describe('DirectorySearchService tests', () => {
         ],
         count: 0,
       })
-      expect(repository.rawDirectorySearch).toBeCalledWith(conditions)
+      expect(repository.rawDirectorySearch).toHaveBeenCalledWith(conditions)
       spy.mockClear()
     })
   })
