@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { adminViewportParameters } from '../storybook/decorators'
+import { authenticatedViewportParameters } from '../storybook/decorators'
 import { SortDirection, UrlState } from './reducers/types'
 import UserPage from './index'
 
 const meta: Meta<typeof UserPage> = {
-  title: 'Admin/User Dashboard',
+  title: 'Authenticated/User Dashboard',
   component: UserPage,
-  parameters: adminViewportParameters,
+  parameters: authenticatedViewportParameters,
 }
 
 export default meta
@@ -84,7 +84,7 @@ const sampleLinks = [
 
 export const EmptyState: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
@@ -103,7 +103,7 @@ export const EmptyState: Story = {
 
 export const PopulatedTable: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
@@ -122,7 +122,7 @@ export const PopulatedTable: Story = {
 
 export const CreateLinkModalOpen: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
@@ -150,7 +150,7 @@ export const CreateLinkModalOpen: Story = {
 // redux state -- please double check this renders as expected.
 export const AnnouncementModalOpen: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
@@ -178,7 +178,7 @@ export const AnnouncementModalOpen: Story = {
 
 export const SearchFilterActive: Story = {
   parameters: {
-    ...adminViewportParameters,
+    ...authenticatedViewportParameters,
     reduxState: {
       login: {
         isLoggedIn: true,
