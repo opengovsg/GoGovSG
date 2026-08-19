@@ -10,11 +10,26 @@ const srcDirectory = path.join(dirname, '../src/client/app')
 
 const config: StorybookConfig = {
   stories: ['../src/client/**/*.stories.@(ts|tsx)'],
-  // Mirrors production's app.use(express.static('public')) -- the server-
-  // rendered EJS pages (transition/error pages) reference /assets/... and
-  // /locales/... paths that only resolve if Storybook serves the same
-  // public/ directory at the same paths.
-  staticDirs: ['../public'],
+  staticDirs: [
+    // Mirrors production's app.use(express.static('public')) -- the
+    // server-rendered EJS pages (transition/error pages) reference
+    // /assets/... and /locales/... paths that only resolve if Storybook
+    // serves the same public/ directory at the same paths.
+    '../public',
+    // partial-masthead.ejs (included by 404.error.ejs and
+    // transition-page.ejs) references /assets/lion-head-symbol.svg, which
+    // isn't in public/ -- production only serves it because the CLIENT
+    // webpack build bundles it from here and flattens it to
+    // dist/assets/lion-head-symbol.svg (assetModuleFilename:
+    // 'assets/[name][ext]'), a build Storybook never runs. The other icons
+    // in this directory are unused by anything Storybook serves, but
+    // staticDirs only maps whole directories, and none of their filenames
+    // collide with anything under public/assets/.
+    {
+      from: '../src/client/app/assets/gov/components/app/base-layout',
+      to: '/assets',
+    },
+  ],
   framework: {
     name: '@storybook/react-webpack5',
     options: {},
