@@ -19,9 +19,6 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-// /assets/lion-head-symbol.svg 404s here too, same pre-existing gap noted
-// in TransitionPage.stories.tsx (bundled by the client production webpack
-// build, which Storybook doesn't run).
 export const Default: Story = {
   render: () => (
     <EjsPage
