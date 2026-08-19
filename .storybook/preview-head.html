@@ -1,0 +1,15 @@
+<!--
+  Mirrors public/index-gov.html's font <link> tags. The app's real HTML
+  template (injected by HtmlWebpackPlugin) is never used for the Storybook
+  preview iframe, so without this the theme's `IBM Plex Sans` font family
+  falls back to the browser default and every screen renders with the
+  wrong typeface.
+-->
+<link
+  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
+  rel="stylesheet"
+/>
