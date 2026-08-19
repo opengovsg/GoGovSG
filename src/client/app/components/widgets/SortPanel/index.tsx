@@ -5,7 +5,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
 import useStyles from '../../../../user/components/UserLinkTable/ToolBar/FilterSortPanel/styles'
 import SortButton from './SortButton'
 
@@ -20,7 +20,7 @@ export default React.memo(
   ({ onChoose, currentlyChosen, options, noHeader }: SortPanelProps) => {
     const classes = useStyles()
     const theme = useTheme()
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+    const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
     return (
       <Grid container item direction="column">
         {!noHeader && (

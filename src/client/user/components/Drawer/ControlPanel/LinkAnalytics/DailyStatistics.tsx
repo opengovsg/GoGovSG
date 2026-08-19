@@ -2,7 +2,7 @@ import React from 'react'
 import { Line } from 'react-chartjs-2'
 import moment from 'moment'
 
-import { useTheme } from '@material-ui/core'
+import { useTheme } from '@mui/material'
 import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { DailyClicks } from '../../../../../../shared/interfaces/link-statistics'
 import { useDateRangeWith } from './util/date-range'

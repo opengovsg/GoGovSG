@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Grid } from '@material-ui/core'
+import { Button, Grid } from '@mui/material'
 
 import useStyles from '../styles'
 
@@ -14,7 +14,7 @@ export default function ({ onApply, onReset }: FilterSortPanelFooterProps) {
     <Grid
       container
       item
-      justify="flex-end"
+      justifyContent="flex-end"
       alignItems="center"
       className={classes.footer}
     >

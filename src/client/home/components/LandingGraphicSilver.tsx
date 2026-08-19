@@ -5,11 +5,11 @@ import {
   Hidden,
   Link,
   Typography,
-  createStyles,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import Section from '../../app/components/Section'
 import {
   ApplyAppMargins,
@@ -23,10 +23,10 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       flexDirection: 'column',
       [theme.breakpoints.up('md')]: {
-        minHeight: `calc(100vh - ${theme.spacing(4) + 108}px)`,
+        minHeight: `calc(100vh - calc(${theme.spacing(4)} + 108px))`,
       },
       [theme.breakpoints.up('lg')]: {
-        minHeight: `calc(100vh - ${theme.spacing(6) + 108}px)`,
+        minHeight: `calc(100vh - calc(${theme.spacing(6)} + 108px))`,
       },
     },
     container: {
@@ -158,7 +158,7 @@ function LandingGraphicSliver() {
         </div>
       </Section>
       <div className={classes.fillColor}>
-        <Hidden mdDown>
+        <Hidden xlDown>
           <ApplyAppMargins>
             <Button
               className={classes.ctaButton}
