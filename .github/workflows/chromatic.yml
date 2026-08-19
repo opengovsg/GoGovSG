@@ -1,0 +1,51 @@
+name: chromatic
+on:
+  push:
+    branches:
+      - develop
+      - staging
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Detect storybook-relevant changes
+    runs-on: ubuntu-22.04
+    outputs:
+      storybook: ${{ steps.filter.outputs.storybook }}
+    steps:
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            storybook:
+              - 'src/client/**'
+              - 'src/shared/**'
+              - '.storybook/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - '.github/workflows/chromatic.yml'
+
+  chromatic:
+    name: Chromatic
+    needs: changes
+    if: needs.changes.outputs.storybook == 'true'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
+        with:
+          # Chromatic diffs against baselines from prior commits, which
+          # requires the full git history rather than the default shallow clone.
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: Publish to Chromatic
+        # Informational only: reports visual diffs on the PR without blocking
+        # merge (see package.json's chromatic script for --exit-zero-on-changes).
+        uses: chromaui/action@c93e0bc3a63aa176e14a75b61a31847cbfdd341c # v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          exitZeroOnChanges: true
