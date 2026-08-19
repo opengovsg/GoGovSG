@@ -10,6 +10,11 @@ const srcDirectory = path.join(dirname, '../src/client/app')
 
 const config: StorybookConfig = {
   stories: ['../src/client/**/*.stories.@(ts|tsx)'],
+  // Mirrors production's app.use(express.static('public')) -- the server-
+  // rendered EJS pages (transition/error pages) reference /assets/... and
+  // /locales/... paths that only resolve if Storybook serves the same
+  // public/ directory at the same paths.
+  staticDirs: ['../public'],
   framework: {
     name: '@storybook/react-webpack5',
     options: {},
@@ -55,6 +60,14 @@ const config: StorybookConfig = {
           dirname,
           '../src/client/storybook/mocks/datadog-browser-rum.ts',
         ),
+        // ejs's package.json "exports" map only has import/require
+        // conditions (no "browser" condition), so webpack resolves `import
+        // ejs from 'ejs'` to the Node-targeted build, which requires the
+        // `fs` module and fails to bundle. Its browser field points at
+        // ejs.min.js, but that subpath isn't itself listed in "exports"
+        // either, so require.resolve() would reject it the same way --
+        // a plain filesystem path sidesteps package export resolution.
+        ejs: path.resolve(dirname, '../node_modules/ejs/ejs.min.js'),
       },
       fallback: {
         ...config.resolve?.fallback,
@@ -103,6 +116,19 @@ const config: StorybookConfig = {
               },
             },
           },
+        },
+        // Raw source of the server's EJS view templates (transition/error
+        // pages), rendered client-side at story time via ejs.render() with a
+        // custom includer (see src/client/storybook/EjsPage.tsx) -- these
+        // pages are not React and have no other build pipeline in Storybook.
+        // Scoped to src/server/views only: Storybook's own build uses a
+        // .ejs template internally (builder-webpack5/templates/preview.ejs,
+        // processed by html-webpack-plugin), which a global `test: /\.ejs$/`
+        // would hijack into a raw string instead of a rendered HTML shell.
+        {
+          test: /\.ejs$/,
+          include: path.resolve(dirname, '../src/server/views'),
+          type: 'asset/source',
         },
       ],
     },
