@@ -4,6 +4,7 @@ import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import {
   dummyFilePath,
+  rootLocation,
   shortUrl,
   smallFileSize,
   tagText1,
@@ -11,19 +12,13 @@ import {
   tagText3,
 } from './util/config'
 import {
-  activeSwitch,
   clickAway,
-  closeDrawerButton,
   dateOfCreationButton,
   downloadLinkButton,
-  drawer,
   exactText,
-  fileTab,
   filterSortPanel,
   generateRandomString,
-  generateUrlImage,
   linkRowByShortUrl,
-  longUrl,
   longUrlTextField,
   mostNumberOfVisitsButton,
   noResultsFoundText,
@@ -33,8 +28,6 @@ import {
   searchBarTagButton,
   searchBarTagsInput,
   shortUrlTextField,
-  tagsAutocompleteInput,
-  uploadFile,
   urlTable,
   urlTableOriginalUrlText,
   urlTableRow,
@@ -51,50 +44,38 @@ import {
 } from './util/helpers'
 import { firstLinkHandle } from './util/FirstLinkHandle'
 import { createEmptyFileOfSize, deleteFile } from './util/fileHandle'
+import { gotoPage } from './util/navigation'
+import { seedFileLink, seedUrlLink } from './util/seed'
 import { userLinksRefetch } from './util/waits'
 import { TAG_SEPARATOR } from '../../src/shared/constants'
 
 test('User page test on filter search by link', async ({ page }) => {
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
+  // Create links for filter and search. Seeded, not created through the modal:
+  // this test asserts on the filter and sort panel, and seeding in sequence
+  // gives the created-time order the assertions below depend on.
+  const generatedUrlActive = generateRandomString(6)
+  const generatedUrlInactive = generateRandomString(6)
+  const generatedUrlFile = generateRandomString(6)
 
-  // Create links for filter and search
   // Save short url 1 - active link
-  const generatedUrlActive = await shortUrlTextField(page).inputValue()
-
-  await longUrlTextField(page).fill(`${shortUrl}`)
-
-  await firstLinkHandle(page)
-
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-
+  await seedUrlLink(page, { shortUrl: generatedUrlActive, longUrl: shortUrl })
   // Save short url 2 - inactive link
-  const generatedUrlInactive = await shortUrlTextField(page).inputValue()
-  const linkRowInactive = linkRowByShortUrl(page, generatedUrlInactive)
-
-  await longUrlTextField(page).fill(`${shortUrl}`)
-  await firstLinkHandle(page)
-  await linkRowInactive.click()
-  await expect(longUrl(page)).toHaveValue(`${shortUrl}`)
-
-  await activeSwitch(page).nth(0).click()
-  await closeDrawerButton(page).click()
-  await expect(drawer(page)).toBeHidden()
-
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-
+  await seedUrlLink(page, {
+    shortUrl: generatedUrlInactive,
+    longUrl: shortUrl,
+    active: false,
+  })
   // Save short url 3 - file link
-  const generatedUrlFile = await shortUrlTextField(page).inputValue()
-
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
-
-  await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyFilePath)
-  await firstLinkHandle(page)
-
+  await seedFileLink(page, {
+    shortUrl: generatedUrlFile,
+    filePath: dummyFilePath,
+  })
   await deleteFile(dummyFilePath)
+
+  // The table was fetched before these links existed.
+  await gotoPage(page, rootLocation)
+  await expect(linkRowByShortUrl(page, generatedUrlFile)).toBeVisible()
 
   // Clicking on the button at the end of the search input should open the sort and filter panel
   await userFilterSortPanelButton(page).click()
@@ -169,53 +150,43 @@ test('User page test on filter search by link', async ({ page }) => {
 })
 
 test('User page test on filter search by tags', async ({ page }) => {
-  // Create links for filter and search by tags
+  // Create links for filter and search by tags. Seeded, not typed into the tags
+  // autocomplete: this test asserts on tag search and sort. Creating tags
+  // through the autocomplete is covered by UrlCreation.spec.ts and
+  // DrawerLogin.spec.ts, both of which assert the tag lands on the row.
+  const generatedUrl1 = generateRandomString(6)
+  const generatedUrl2 = generateRandomString(6)
+  const generatedUrl3 = generateRandomString(6)
+  const tableRow = (short: string) =>
+    linkRowByShortUrl(page, short).locator('xpath=ancestor::tr')
+  const linkTableRow1 = tableRow(generatedUrl1)
+  const linkTableRow2 = tableRow(generatedUrl2)
+  const linkTableRow3 = tableRow(generatedUrl3)
+
   // Save short url 1: link with tag 1
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-  const generatedUrl1 = await shortUrlTextField(page).inputValue()
-  const linkTableRow1 = linkRowByShortUrl(page, generatedUrl1).locator(
-    'xpath=ancestor::tr',
-  )
-  await longUrlTextField(page).fill(shortUrl)
-  await tagsAutocompleteInput(page).click()
-  await tagsAutocompleteInput(page).fill(tagText1)
-  await tagsAutocompleteInput(page).press('Enter')
-
-  await firstLinkHandle(page)
-
+  await seedUrlLink(page, {
+    shortUrl: generatedUrl1,
+    longUrl: shortUrl,
+    tags: [tagText1],
+  })
   // Save short url 2: link with tags 1 and 2
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-  const generatedUrl2 = await shortUrlTextField(page).inputValue()
-  const linkTableRow2 = linkRowByShortUrl(page, generatedUrl2).locator(
-    'xpath=ancestor::tr',
-  )
-  await longUrlTextField(page).fill(shortUrl)
-  await tagsAutocompleteInput(page).click()
-  await tagsAutocompleteInput(page).fill(tagText1)
-  await tagsAutocompleteInput(page).press('Enter')
-  await tagsAutocompleteInput(page).fill(tagText2)
-  await tagsAutocompleteInput(page).press('Enter')
-  await firstLinkHandle(page)
-
+  await seedUrlLink(page, {
+    shortUrl: generatedUrl2,
+    longUrl: shortUrl,
+    tags: [tagText1, tagText2],
+  })
   // Save short url 3: file with tags 2 and 3
-  await openCreateLinkModal(page)
-  await generateUrlImage(page).click()
-  const generatedUrl3 = await shortUrlTextField(page).inputValue()
-  const linkTableRow3 = linkRowByShortUrl(page, generatedUrl3).locator(
-    'xpath=ancestor::tr',
-  )
   await createEmptyFileOfSize(dummyFilePath, smallFileSize)
-  await fileTab(page).click()
-  await uploadFile(page).setInputFiles(dummyFilePath)
-  await tagsAutocompleteInput(page).click()
-  await tagsAutocompleteInput(page).fill(tagText2)
-  await tagsAutocompleteInput(page).press('Enter')
-  await tagsAutocompleteInput(page).fill(tagText3)
-  await tagsAutocompleteInput(page).press('Enter')
-  await firstLinkHandle(page)
+  await seedFileLink(page, {
+    shortUrl: generatedUrl3,
+    filePath: dummyFilePath,
+    tags: [tagText2, tagText3],
+  })
   await deleteFile(dummyFilePath)
+
+  // The table was fetched before these links existed.
+  await gotoPage(page, rootLocation)
+  await expect(linkTableRow3).toBeVisible()
 
   // Click on tag 1 from url 1. Bound to this query: creating url 3 above
   // dispatches a refetch that may still be in flight.
@@ -329,7 +300,7 @@ test('Download csv should match links on page', async ({ page }) => {
     })
 
     readStream.on('error', (err) => {
-      console.log('Error found')
+      console.log(`Error reading the downloaded csv: ${err}`)
     })
 
     readStream.on('end', () => {
