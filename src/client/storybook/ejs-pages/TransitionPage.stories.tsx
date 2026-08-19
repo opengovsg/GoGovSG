@@ -19,15 +19,14 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-// Two known, pre-existing 404s in this render, unrelated to Storybook setup:
-// - /assets/lion-head-symbol.svg -- bundled by the CLIENT production
-//   webpack build (assetModuleFilename: 'assets/[name][ext]'), which
-//   Storybook doesn't run. Cosmetic-only masthead icon, low regression risk.
-// - /assets/transition-page/js/redirect.js -- referenced by the real
-//   template but does not exist anywhere in this repo. Not introduced by
-//   this change; worth a separate look at whether it's served from outside
-//   this repo or the page's countdown/skip-ahead behaviour is actually
-//   broken in production.
+// One known, pre-existing 404 in this render, unrelated to Storybook setup:
+// /assets/transition-page/js/redirect.js is referenced by the real template
+// but does not exist anywhere in this repo. Not introduced by this change;
+// worth a separate look at whether it's served from outside this repo or
+// the page's countdown/skip-ahead behaviour is actually broken in
+// production. (The masthead's lion-head-symbol.svg icon, previously also
+// missing here, is now served via the staticDirs mapping in
+// .storybook/main.ts.)
 export const Default: Story = {
   render: () => (
     <EjsPage
