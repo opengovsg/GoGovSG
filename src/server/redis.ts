@@ -6,7 +6,7 @@ import {
   redisSafeBrowsingUri,
   redisSessionUri,
   redisStatUri,
-} from './config'
+} from './config.js'
 
 // Note: It is insufficient for authentication to
 // set the password in the url string - this must be

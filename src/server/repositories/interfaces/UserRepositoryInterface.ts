@@ -3,7 +3,7 @@ import {
   StorableUser,
   UrlsPaginated,
   UserUrlsQueryConditions,
-} from '../types'
+} from '../types.js'
 
 /**
  * A url repository that handles access to the data store of Users.

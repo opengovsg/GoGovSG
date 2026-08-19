@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
-import { UrlRepositoryInterface } from '../../repositories/interfaces/UrlRepositoryInterface'
+import { UrlRepositoryInterface } from '../../repositories/interfaces/UrlRepositoryInterface.js'
 
-import ImageFormat from '../../../shared/util/image-format'
-import { DependencyIds } from '../../constants'
+import ImageFormat from '../../../shared/util/image-format.js'
+import { DependencyIds } from '../../constants.js'
 
-import { QrCodeService } from './interfaces'
+import { QrCodeService } from './interfaces/index.js'
 
 @injectable()
 export class QrCodeController {

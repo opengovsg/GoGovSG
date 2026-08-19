@@ -1,5 +1,5 @@
-import { StorableUrl } from '../../repositories/types'
-import { UserController } from './UserController'
+import { StorableUrl } from '../../repositories/types.js'
+import { UserController } from './UserController.js'
 
 type OptionalLongUrlProperty = {
   longUrl?: string
@@ -63,6 +63,6 @@ export type UpdateUrlOptions = Partial<
   }
 >
 
-export { UserController } from './UserController'
+export { UserController } from './UserController.js'
 
 export default UserController

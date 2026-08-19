@@ -4,19 +4,19 @@ import {
   logger,
   loginMessage,
   validEmailDomainGlobExpression,
-} from '../../config'
-import { DependencyIds } from '../../constants'
-import jsonMessage from '../../util/json'
-import { AuthService } from './interfaces'
-import { InvalidOtpError, NotFoundError } from '../../util/error'
-import { EmailProperty, VerifyOtpRequest } from '.'
-import getIp from '../../util/request'
+} from '../../config.js'
+import { DependencyIds } from '../../constants.js'
+import jsonMessage from '../../util/json.js'
+import { AuthService } from './interfaces/index.js'
+import { InvalidOtpError, NotFoundError } from '../../util/error.js'
+import { EmailProperty, VerifyOtpRequest } from './index.js'
+import getIp from '../../util/request.js'
 import dogstatsd, {
   OTP_GENERATE_FAILURE,
   OTP_GENERATE_SUCCESS,
   OTP_VERIFY_FAILURE,
   OTP_VERIFY_SUCCESS,
-} from '../../util/dogstatsd'
+} from '../../util/dogstatsd.js'
 
 @injectable()
 export class LoginController {

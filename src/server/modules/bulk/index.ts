@@ -1,1 +1,1 @@
-export { BulkController, BulkController as default } from './BulkController'
+export { BulkController, BulkController as default } from './BulkController.js'

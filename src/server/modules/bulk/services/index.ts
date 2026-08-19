@@ -1,1 +1,1 @@
-export { BulkService, BulkService as default } from './BulkService'
+export { BulkService, BulkService as default } from './BulkService.js'

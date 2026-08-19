@@ -5,11 +5,11 @@ import fileUpload from 'express-fileupload'
 import dogstatsd, {
   MALICIOUS_ACTIVITY_FILE,
   SCAN_FAILED_FILE,
-} from '../../util/dogstatsd'
-import jsonMessage from '../../util/json'
-import { DependencyIds } from '../../constants'
-import { FileTypeFilterService, VirusScanService } from './interfaces'
-import { logger } from '../../config'
+} from '../../util/dogstatsd.js'
+import jsonMessage from '../../util/json.js'
+import { DependencyIds } from '../../constants.js'
+import { FileTypeFilterService, VirusScanService } from './interfaces/index.js'
+import { logger } from '../../config.js'
 
 @injectable()
 export class FileCheckController {

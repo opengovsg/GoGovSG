@@ -1,5 +1,5 @@
-import { SafeBrowsingMapper } from './SafeBrowsingMapper'
+import { SafeBrowsingMapper } from './SafeBrowsingMapper.js'
 
-export { SafeBrowsingMapper } from './SafeBrowsingMapper'
+export { SafeBrowsingMapper } from './SafeBrowsingMapper.js'
 
 export default SafeBrowsingMapper

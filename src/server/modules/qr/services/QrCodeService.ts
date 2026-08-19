@@ -1,14 +1,17 @@
 import * as cheerio from 'cheerio'
 import fs from 'fs'
 import QRCode from 'qrcode'
-import { resolve } from 'path'
+import path, { resolve } from 'path'
+import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 import { injectable } from 'inversify'
 
-import assetVariant from '../../../../shared/util/asset-variant'
-import ImageFormat from '../../../../shared/util/image-format'
+import assetVariant from '../../../../shared/util/asset-variant.js'
+import ImageFormat from '../../../../shared/util/image-format.js'
 
-import * as interfaces from '../interfaces'
+import * as interfaces from '../interfaces/index.js'
+
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const IMAGE_WIDTH = 1000
 export const QR_CODE_DIMENSIONS = 800
@@ -60,7 +63,7 @@ export class QrCodeService implements interfaces.QrCodeService {
     const dom = cheerio.load('')
 
     // Read the logo as a string.
-    const filePath = resolve(__dirname, `../assets/${logoVariant}`)
+    const filePath = resolve(dirname, `../assets/${logoVariant}`)
     const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
     dom('body').append('<svg></svg>')

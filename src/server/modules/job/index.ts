@@ -1,1 +1,1 @@
-export { JobController, JobController as default } from './JobController'
+export { JobController, JobController as default } from './JobController.js'

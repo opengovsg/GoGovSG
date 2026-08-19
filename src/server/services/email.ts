@@ -4,7 +4,7 @@
 import { injectable } from 'inversify'
 import nodemailer from 'nodemailer'
 import fetch from 'cross-fetch'
-import assetVariant from '../../shared/util/asset-variant'
+import assetVariant from '../../shared/util/asset-variant.js'
 import {
   activatePostmanFallback,
   logger,
@@ -13,11 +13,11 @@ import {
   postmanApiKey,
   postmanApiUrl,
   transporterOptions,
-} from '../config'
+} from '../config.js'
 import {
   BULK_QR_DOWNLOAD_FORMATS,
   BULK_QR_DOWNLOAD_MAPPINGS,
-} from '../../shared/constants'
+} from '../../shared/constants.js'
 
 const domainVariantMap = {
   gov: 'go.gov.sg',

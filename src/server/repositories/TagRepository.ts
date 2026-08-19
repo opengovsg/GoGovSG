@@ -1,11 +1,11 @@
 import { inject, injectable } from 'inversify'
 import { Op, Transaction } from 'sequelize'
-import { Tag, TagType } from '../models/tag'
-import { Url } from '../models/url'
-import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface'
-import { UserTagsQueryConditions } from './types'
-import { Mapper } from '../mappers/Mapper'
-import { DependencyIds } from '../constants'
+import { Tag, TagType } from '../models/tag.js'
+import { Url } from '../models/url.js'
+import { TagRepositoryInterface } from './interfaces/TagRepositoryInterface.js'
+import { UserTagsQueryConditions } from './types.js'
+import { Mapper } from '../mappers/Mapper.js'
+import { DependencyIds } from '../constants.js'
 
 @injectable()
 export class TagRepository implements TagRepositoryInterface {

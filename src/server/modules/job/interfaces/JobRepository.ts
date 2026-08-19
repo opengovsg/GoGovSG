@@ -1,4 +1,4 @@
-import { JobType } from '../../../models/job'
+import { JobType } from '../../../models/job.js'
 
 export interface JobRepository {
   findById(id: number): Promise<JobType | null>

@@ -1,11 +1,11 @@
 import Express from 'express'
 import { createValidator } from 'express-joi-validation'
 import Joi from 'joi'
-import { container } from '../util/inversify'
-import { DependencyIds } from '../constants'
-import { ACTIVE, INACTIVE } from '../models/types'
-import { DirectoryController } from '../modules/directory'
-import { SearchResultsSortOrder } from '../../shared/search'
+import { container } from '../util/inversify.js'
+import { DependencyIds } from '../constants.js'
+import { ACTIVE, INACTIVE } from '../models/types.js'
+import { DirectoryController } from '../modules/directory/index.js'
+import { SearchResultsSortOrder } from '../../shared/search.js'
 
 const urlSearchRequestSchema = Joi.object({
   query: Joi.string().required(),
@@ -32,4 +32,4 @@ router.get(
   directoryController.getDirectoryWithConditions,
 )
 
-module.exports = router
+export default router
