@@ -68,7 +68,7 @@ export const getAuthCookie: (email: string) => Promise<string> = async (
   if (!emailRes.ok) throw new Error('Failed to check email for OTP')
   const emailJson = await emailRes.json()
   const emailBody = emailJson[emailJson.length - 1].html
-  const emailOTP = JSON.stringify(emailBody).match(/\d{6}/)![0]
+  const emailOTP = JSON.stringify(emailBody).match(/<b>([A-Z0-9]{6})<\/b>/)![1]
   const verifyRes = await postJson(API_LOGIN_VERIFY, {
     email,
     otp: emailOTP,

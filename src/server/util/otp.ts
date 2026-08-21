@@ -5,7 +5,7 @@ export type OtpFunction = () => string
 
 const generateOTP: OtpFunction = () => {
   const length: number = 6
-  const chars: string = '0123456789'
+  const chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   // Generates cryptographically strong pseudo-random data.
   // The size argument is a number indicating the number of bytes to generate.
   const rnd: Buffer = crypto.randomBytes(length)
