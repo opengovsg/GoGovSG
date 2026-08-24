@@ -57,6 +57,9 @@
       ],
       "@assets/*": [
         "./src/client/app/assets/gov/*"
+      ],
+      "@opengovsg/validators/email": [
+        "./src/types/opengovsg-validators-email"
       ]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
@@ -68,6 +71,8 @@
     ] /* Type declaration files to be included in compilation. */,
     // "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+    // Required: @opengovsg/validators pulls zod/v4 .d.cts that use TS 5+ syntax (const type params).
+    "skipLibCheck": true,
     // "preserveSymlinks": true,              /* Do not resolve the real path of symlinks. */
     /* Source Map Options */
     // "sourceRoot": "",                      /* Specify the location where debugger should locate TypeScript files instead of source locations. */
