@@ -74,7 +74,7 @@
     "dd-trace": "^5.98.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.7",
-    "express": "^4.17.3",
+    "express": "^4.22.2",
     "express-fileupload": "^1.4.0",
     "express-joi-validation": "^5.0.1",
     "express-rate-limit": "^5.3.0",
