@@ -6,6 +6,7 @@ import { DependencyIds } from '../../constants'
 import { ApiV1Controller } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
 import {
+  urlBulkSchema,
   urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
@@ -42,6 +43,12 @@ router.get(
   validator.body(urlRetrievalSchema),
   validator.query(userUrlsQueryConditions),
   apiV1Controller.getUrlsWithConditions,
+)
+
+router.post(
+  '/urls/bulk',
+  validator.body(urlBulkSchema),
+  apiV1Controller.bulkCreateUrls,
 )
 
 router.post(

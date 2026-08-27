@@ -1,4 +1,5 @@
 import Express from 'express'
+import * as Joi from 'joi'
 import { inject, injectable } from 'inversify'
 import Sequelize from 'sequelize'
 
@@ -19,8 +20,10 @@ import {
 } from '../../../repositories/enums'
 import { UserUrlsQueryConditions } from '../../../repositories/types'
 
-import { UrlCreationRequest, UrlEditRequest } from '.'
+import { UrlBulkCreationRequest, UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
+import { UrlThreatScanService } from '../../threat/interfaces'
+import { urlBulkRowSchema } from '../../../api/external-v1/validators'
 
 @injectable()
 export class ApiV1Controller {
@@ -28,14 +31,19 @@ export class ApiV1Controller {
 
   private urlV1Mapper: UrlV1Mapper
 
+  private urlThreatScanService: UrlThreatScanService
+
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
     @inject(DependencyIds.urlV1Mapper)
     urlV1Mapper: UrlV1Mapper,
+    @inject(DependencyIds.urlThreatScanService)
+    urlThreatScanService: UrlThreatScanService,
   ) {
     this.urlManagementService = urlManagementService
     this.urlV1Mapper = urlV1Mapper
+    this.urlThreatScanService = urlThreatScanService
   }
 
   public createUrl: (
@@ -71,6 +79,126 @@ export class ApiV1Controller {
       res.serverError(jsonMessage('Server error.'))
       return
     }
+  }
+
+  public bulkCreateUrls: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const { userId, urls }: UrlBulkCreationRequest = req.body
+    const created = []
+    const errors = []
+    const usedShortUrls = new Set<string>()
+
+    for (let index = 0; index < urls.length; index += 1) {
+      const row = urls[index]
+      const { error, value } = urlBulkRowSchema.validate(row, {
+        abortEarly: true,
+      })
+      if (error) {
+        errors.push({
+          index,
+          ...ApiV1Controller.extractRowValidationError(error),
+        })
+      } else {
+        const { longUrl, shortUrl } = value
+        let rowError: { message: string; type?: MessageType } | undefined
+
+        if (shortUrl && usedShortUrls.has(shortUrl)) {
+          rowError = {
+            message: `Short link "${shortUrl}" is already used.`,
+            type: MessageType.ShortUrlError,
+          }
+        } else {
+          try {
+            // Rows are processed sequentially to preserve order and batch slug tracking.
+            // eslint-disable-next-line no-await-in-loop
+            const isThreat = await this.urlThreatScanService.isThreat(longUrl)
+            if (isThreat) {
+              rowError = {
+                message:
+                  'Link is likely to be malicious, please contact us for further assistance',
+              }
+            }
+          } catch (scanError) {
+            rowError = {
+              message: (scanError as Error).message,
+            }
+          }
+
+          if (!rowError) {
+            try {
+              // eslint-disable-next-line no-await-in-loop
+              const url = await this.urlManagementService.createUrl(
+                userId,
+                StorableUrlSource.Api,
+                shortUrl,
+                longUrl,
+              )
+              usedShortUrls.add(url.shortUrl)
+              created.push(this.urlV1Mapper.persistenceToDto(url))
+            } catch (createError) {
+              if (createError instanceof AlreadyExistsError) {
+                rowError = {
+                  message: createError.message,
+                  type: MessageType.ShortUrlError,
+                }
+              } else if (createError instanceof NotFoundError) {
+                rowError = {
+                  message: createError.message,
+                }
+              } else if (createError instanceof Sequelize.ValidationError) {
+                rowError = {
+                  message: createError.message,
+                }
+              } else {
+                logger.error(
+                  `Error creating short URL in bulk:\t${createError}`,
+                )
+                rowError = {
+                  message: 'Server error.',
+                }
+              }
+            }
+          }
+        }
+
+        if (rowError) {
+          errors.push({
+            index,
+            ...rowError,
+          })
+        }
+      }
+    }
+
+    const response = { created, errors }
+    if (created.length > 0) {
+      res.ok(response)
+      return
+    }
+    res.badRequest(response)
+  }
+
+  private static extractRowValidationError(error: Joi.ValidationError): {
+    message: string
+    type?: MessageType
+  } {
+    const detail = error.details[0]
+    const field = detail.path[0]
+    let { message } = detail
+    const customMatch = message.match(/because (.+)$/)
+    if (customMatch) {
+      ;[, message] = customMatch
+    }
+
+    if (field === 'shortUrl') {
+      return { message, type: MessageType.ShortUrlError }
+    }
+    if (field === 'longUrl') {
+      return { message, type: MessageType.LongUrlError }
+    }
+    return { message }
   }
 
   public getUrlsWithConditions: (
