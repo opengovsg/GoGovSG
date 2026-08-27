@@ -33,32 +33,4 @@ describe('url v1 mapper', () => {
       updatedAt: storableUrl.updatedAt,
     })
   })
-
-  it('should map isFile when mapping list urls', () => {
-    const storableUrl: StorableUrl = {
-      shortUrl: 'test-short-url',
-      longUrl: 'https://example.com/file.txt',
-      state: StorableUrlState.Active,
-      source: StorableUrlSource.Api,
-      clicks: 10,
-      createdAt: '2022-01-02T01:23:45.678Z',
-      updatedAt: '2022-01-02T01:23:45.678Z',
-      isFile: true,
-      tags: [],
-      tagStrings: '',
-      contactEmail: null,
-      description: '',
-      safeBrowsingExpiry: null,
-    }
-    const urlV1ListDTO = urlV1Mapper.persistenceToListDto(storableUrl)
-    expect(urlV1ListDTO).toEqual({
-      shortUrl: storableUrl.shortUrl,
-      longUrl: storableUrl.longUrl,
-      state: storableUrl.state,
-      clicks: storableUrl.clicks,
-      createdAt: storableUrl.createdAt,
-      updatedAt: storableUrl.updatedAt,
-      isFile: true,
-    })
-  })
 })

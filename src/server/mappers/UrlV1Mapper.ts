@@ -1,7 +1,7 @@
 /* eslint-disable class-methods-use-this, lines-between-class-members, no-dupe-class-members */
 import { injectable } from 'inversify'
 import { StorableUrl } from '../repositories/types'
-import { UrlV1DTO, UrlV1ListDTO } from '../modules/api/external-v1'
+import { UrlV1DTO } from '../modules/api/external-v1'
 import { Mapper } from './Mapper'
 
 /**
@@ -24,17 +24,6 @@ export class UrlV1Mapper implements Mapper<UrlV1DTO, StorableUrl> {
       clicks: url.clicks,
       createdAt: url.createdAt,
       updatedAt: url.updatedAt,
-    }
-  }
-
-  persistenceToListDto(url: StorableUrl): UrlV1ListDTO
-  persistenceToListDto(url: StorableUrl | null): UrlV1ListDTO | null {
-    if (!url) {
-      return null
-    }
-    return {
-      ...this.persistenceToDto(url),
-      isFile: url.isFile,
     }
   }
 }

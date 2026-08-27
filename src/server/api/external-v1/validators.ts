@@ -44,6 +44,10 @@ const longUrlSchema = Joi.string().custom((url: string, helpers) => {
   return url
 })
 
+const filesSchema = Joi.object({
+  file: Joi.object().keys().required(),
+})
+
 export const urlSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string()
@@ -55,17 +59,13 @@ export const urlSchema = Joi.object({
     })
     .optional(),
   longUrl: longUrlSchema,
-  files: Joi.object({
-    file: Joi.object().keys().required(),
-  }),
+  files: filesSchema,
 }).xor('longUrl', 'files')
 
 export const urlEditSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
-  longUrl: longUrlSchema.optional(),
-  files: Joi.object({
-    file: Joi.object().keys().required(),
-  }),
+  longUrl: longUrlSchema,
+  files: filesSchema,
   state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
 }).oxor('longUrl', 'files')

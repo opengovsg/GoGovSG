@@ -91,9 +91,10 @@ export class ApiV1Controller {
     try {
       const { urls, count } =
         await this.urlManagementService.getUrlsWithConditions(queryConditions)
-      const apiUrls = urls.map((url) =>
-        this.urlV1Mapper.persistenceToListDto(url),
-      )
+      const apiUrls = urls.map((url) => ({
+        ...this.urlV1Mapper.persistenceToDto(url)!,
+        isFile: url.isFile,
+      }))
       res.ok({ urls: apiUrls, count })
       return
     } catch (error) {

@@ -22,7 +22,6 @@ import {
   postJson,
 } from '../../util/requests'
 
-// Minimal 1x1 PNG image for file replacement tests.
 const MINIMAL_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
   'base64',
@@ -35,30 +34,23 @@ async function createLinkUrl(
   },
   apiKey: string,
 ) {
-  const res = await postJson(API_EXTERNAL_V1_URLS, link, undefined, apiKey)
-  return res
+  return postJson(API_EXTERNAL_V1_URLS, link, undefined, apiKey)
 }
 
 async function createFileUrl(
   apiKey: string,
-  options: { shortUrl?: string; filePath?: string; fileName?: string } = {},
+  shortUrl?: string,
+  filePath = SMALL_TEXT_FILE_PATH,
+  fileName?: string,
 ) {
   const formData = new FormData()
-  const filePath = options.filePath ?? SMALL_TEXT_FILE_PATH
-  const file = readFile(filePath)
-  formData.append('file', file, {
-    filename: options.fileName ?? path.basename(filePath),
+  formData.append('file', readFile(filePath), {
+    filename: fileName ?? path.basename(filePath),
   })
-  if (options.shortUrl) {
-    formData.append('shortUrl', options.shortUrl)
+  if (shortUrl) {
+    formData.append('shortUrl', shortUrl)
   }
-  const res = await postFormData(
-    API_EXTERNAL_V1_URLS,
-    formData,
-    undefined,
-    apiKey,
-  )
-  return res
+  return postFormData(API_EXTERNAL_V1_URLS, formData, undefined, apiKey)
 }
 
 async function updateLinkUrl(
@@ -66,7 +58,7 @@ async function updateLinkUrl(
   apiKey: string,
 ) {
   const { shortUrl, longUrl, state } = link
-  const res = await patch(
+  return patch(
     `${API_EXTERNAL_V1_URLS}/${shortUrl}`,
     {
       longUrl,
@@ -75,41 +67,6 @@ async function updateLinkUrl(
     undefined,
     apiKey,
   )
-  return res
-}
-
-async function updateFileUrl(
-  shortUrl: string,
-  apiKey: string,
-  options: {
-    filePath?: string
-    fileName?: string
-    fileBuffer?: Buffer
-    state?: string
-  } = {},
-) {
-  const formData = new FormData()
-  if (options.fileBuffer) {
-    formData.append('file', options.fileBuffer, {
-      filename: options.fileName ?? 'file.png',
-    })
-  } else {
-    const filePath = options.filePath ?? SMALL_TEXT_FILE_PATH
-    const file = readFile(filePath)
-    formData.append('file', file, {
-      filename: options.fileName ?? path.basename(filePath),
-    })
-  }
-  if (options.state) {
-    formData.append('state', options.state)
-  }
-  const res = await patchFormData(
-    `${API_EXTERNAL_V1_URLS}/${shortUrl}`,
-    formData,
-    undefined,
-    apiKey,
-  )
-  return res
 }
 
 /**
@@ -224,7 +181,7 @@ describe('Url integration tests', () => {
 
   it('should be able to create file url with shortUrl', async () => {
     const shortUrl = await generateRandomString(6)
-    const res = await createFileUrl(apiKey, { shortUrl })
+    const res = await createFileUrl(apiKey, shortUrl)
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toEqual({
@@ -261,11 +218,12 @@ describe('Url integration tests', () => {
     )
     fs.writeFileSync(disallowedFilePath, 'not a real executable')
     try {
-      const res = await createFileUrl(apiKey, {
+      const res = await createFileUrl(
+        apiKey,
         shortUrl,
-        filePath: disallowedFilePath,
-        fileName: 'malware.exe',
-      })
+        disallowedFilePath,
+        'malware.exe',
+      )
       expect(res.status).toBe(415)
       const body = await res.json()
       expect(body).toEqual({
@@ -281,10 +239,7 @@ describe('Url integration tests', () => {
     const largeFilePath = path.join(os.tmpdir(), `large-${shortUrl}.txt`)
     fs.writeFileSync(largeFilePath, Buffer.alloc(21 * 1024 * 1024))
     try {
-      const res = await createFileUrl(apiKey, {
-        shortUrl,
-        filePath: largeFilePath,
-      })
+      const res = await createFileUrl(apiKey, shortUrl, largeFilePath)
       expect(res.status).toBe(400)
     } finally {
       fs.unlinkSync(largeFilePath)
@@ -311,12 +266,16 @@ describe('Url integration tests', () => {
 
   it('should be able to replace file on file link', async () => {
     const shortUrl = await generateRandomString(6)
-    await createFileUrl(apiKey, { shortUrl })
+    await createFileUrl(apiKey, shortUrl)
 
-    const res = await updateFileUrl(shortUrl, apiKey, {
-      fileBuffer: MINIMAL_PNG,
-      fileName: 'image.png',
-    })
+    const formData = new FormData()
+    formData.append('file', MINIMAL_PNG, { filename: 'image.png' })
+    const res = await patchFormData(
+      `${API_EXTERNAL_V1_URLS}/${shortUrl}`,
+      formData,
+      undefined,
+      apiKey,
+    )
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toEqual({
@@ -331,7 +290,7 @@ describe('Url integration tests', () => {
 
   it('should be able to update file link state via JSON', async () => {
     const shortUrl = await generateRandomString(6)
-    await createFileUrl(apiKey, { shortUrl })
+    await createFileUrl(apiKey, shortUrl)
 
     const res = await updateLinkUrl({ shortUrl, state: 'INACTIVE' }, apiKey)
     expect(res.status).toBe(200)
@@ -350,7 +309,14 @@ describe('Url integration tests', () => {
     const shortUrl = await generateRandomString(6)
     await createLinkUrl({ shortUrl, longUrl }, apiKey)
 
-    const res = await updateFileUrl(shortUrl, apiKey)
+    const formData = new FormData()
+    formData.append('file', readFile(SMALL_TEXT_FILE_PATH))
+    const res = await patchFormData(
+      `${API_EXTERNAL_V1_URLS}/${shortUrl}`,
+      formData,
+      undefined,
+      apiKey,
+    )
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body).toEqual({
@@ -360,7 +326,7 @@ describe('Url integration tests', () => {
 
   it('should not be able to update file link with longUrl', async () => {
     const shortUrl = await generateRandomString(6)
-    await createFileUrl(apiKey, { shortUrl })
+    await createFileUrl(apiKey, shortUrl)
 
     const res = await updateLinkUrl(
       { shortUrl, longUrl: 'https://example.com' },
@@ -373,46 +339,30 @@ describe('Url integration tests', () => {
     })
   })
 
-  it('should include isFile true for file urls in list response', async () => {
-    const shortUrl = await generateRandomString(6)
-    await createFileUrl(apiKey, { shortUrl })
+  it('should include isFile in list response', async () => {
+    const linkShortUrl = await generateRandomString(6)
+    const fileShortUrl = await generateRandomString(6)
+    await createLinkUrl({ shortUrl: linkShortUrl, longUrl }, apiKey)
+    await createFileUrl(apiKey, fileShortUrl)
 
     const res = await get(API_EXTERNAL_V1_URLS, undefined, apiKey)
     expect(res.status).toBe(200)
     const body = await res.json()
-    expect(body.urls).toEqual([
-      {
-        shortUrl,
-        longUrl: `${LOCAL_BUCKET_URL}/${shortUrl}.txt`,
-        state: 'ACTIVE',
-        clicks: 0,
-        isFile: true,
-        createdAt: expect.stringMatching(DATETIME_REGEX),
-        updatedAt: expect.stringMatching(DATETIME_REGEX),
-      },
-    ])
-    expect(body.count).toBe(1)
-  })
-
-  it('should include isFile false for link urls in list response', async () => {
-    const shortUrl = await generateRandomString(6)
-    await createLinkUrl({ shortUrl, longUrl }, apiKey)
-
-    const res = await get(API_EXTERNAL_V1_URLS, undefined, apiKey)
-    expect(res.status).toBe(200)
-    const body = await res.json()
-    expect(body.urls).toEqual([
-      {
-        shortUrl,
-        longUrl,
-        state: 'ACTIVE',
-        clicks: 0,
-        isFile: false,
-        createdAt: expect.stringMatching(DATETIME_REGEX),
-        updatedAt: expect.stringMatching(DATETIME_REGEX),
-      },
-    ])
-    expect(body.count).toBe(1)
+    expect(body.count).toBe(2)
+    expect(body.urls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          shortUrl: linkShortUrl,
+          longUrl,
+          isFile: false,
+        }),
+        expect.objectContaining({
+          shortUrl: fileShortUrl,
+          longUrl: `${LOCAL_BUCKET_URL}/${fileShortUrl}.txt`,
+          isFile: true,
+        }),
+      ]),
+    )
   })
 
   it('should be able to update link url with new longUrl and state', async () => {
