@@ -30,3 +30,5 @@ export type UrlV1DTO = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'state' | 'clicks' | 'createdAt' | 'updatedAt'
 >
+
+export type UrlV1ListDTO = UrlV1DTO & Pick<StorableUrl, 'isFile'>

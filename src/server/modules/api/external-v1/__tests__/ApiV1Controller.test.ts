@@ -27,7 +27,76 @@ const controller = new ApiV1Controller(urlManagementService, urlV1Mapper)
  * Unit tests for API v1 controller.
  */
 describe('ApiV1Controller', () => {
+  beforeEach(() => {
+    urlManagementService.createUrl.mockReset()
+    urlManagementService.updateUrl.mockReset()
+    urlManagementService.getUrlsWithConditions.mockReset()
+  })
+
   describe('createUrl', () => {
+    it('creates file url and sanitizes link for API', async () => {
+      const userId = 1
+      const shortUrl = 'abcdef'
+      const longUrl = 'https://file.go.gov.sg/abcdef.txt'
+      const state = 'ACTIVE'
+      const source = 'API'
+      const clicks = 0
+      const contactEmail = 'person@open.gov.sg'
+      const description = 'test description'
+      const tags: string[] = []
+      const tagStrings = ''
+      const createdAt = moment().toISOString()
+      const updatedAt = moment().toISOString()
+      const file = {
+        name: 'test.txt',
+        data: Buffer.from('test'),
+        mimetype: 'text/plain',
+      }
+
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+        },
+        files: { file } as any,
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = {
+        shortUrl,
+        longUrl,
+        state,
+        source,
+        clicks,
+        contactEmail,
+        description,
+        tags,
+        tagStrings,
+        createdAt,
+        updatedAt,
+        isFile: true,
+      }
+      urlManagementService.createUrl.mockResolvedValue(result)
+
+      await controller.createUrl(req, res)
+      expect(urlManagementService.createUrl).toHaveBeenCalledWith(
+        userId,
+        source,
+        shortUrl,
+        undefined,
+        file,
+      )
+      expect(res.ok).toHaveBeenCalledWith({
+        shortUrl,
+        longUrl,
+        state,
+        clicks,
+        createdAt,
+        updatedAt,
+      })
+    })
+
     it('creates link and sanitizes link for API', async () => {
       const userId = 1
       const shortUrl = 'abcdef'
@@ -73,6 +142,7 @@ describe('ApiV1Controller', () => {
         source,
         shortUrl,
         longUrl,
+        undefined,
       )
       expect(res.ok).toHaveBeenCalledWith({
         shortUrl,
@@ -143,9 +213,6 @@ describe('ApiV1Controller', () => {
   })
 
   describe('getUrlsWithConditions', () => {
-    beforeEach(() => {
-      urlManagementService.getUrlsWithConditions.mockReset()
-    })
     it('processes query with defaults', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
@@ -244,6 +311,7 @@ describe('ApiV1Controller', () => {
             clicks,
             createdAt,
             updatedAt,
+            isFile: true,
           },
           {
             shortUrl: 'def',
@@ -252,6 +320,7 @@ describe('ApiV1Controller', () => {
             clicks,
             createdAt,
             updatedAt,
+            isFile: false,
           },
         ],
         count: 2,
@@ -321,6 +390,39 @@ describe('ApiV1Controller', () => {
     const shortUrl = 'abcdef'
     const longUrl = 'https://www.agency.gov.sg'
 
+    it('processes file updates with state', async () => {
+      const file = {
+        name: 'test.txt',
+        data: Buffer.from('test'),
+        mimetype: 'text/plain',
+      }
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          state: 'INACTIVE',
+        },
+        files: { file } as any,
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = { shortUrl }
+      urlManagementService.updateUrl.mockResolvedValue(result)
+
+      await controller.updateUrl(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        {
+          longUrl: undefined,
+          state: 'INACTIVE',
+          file,
+        },
+      )
+    })
+
     it('processes link updates with no state', async () => {
       const req = httpMocks.createRequest({
         body: {
@@ -343,6 +445,7 @@ describe('ApiV1Controller', () => {
         {
           longUrl,
           state: undefined,
+          file: undefined,
         },
       )
     })
@@ -370,6 +473,7 @@ describe('ApiV1Controller', () => {
         {
           longUrl,
           state: 'ACTIVE',
+          file: undefined,
         },
       )
     })
@@ -397,6 +501,7 @@ describe('ApiV1Controller', () => {
         {
           longUrl,
           state: 'INACTIVE',
+          file: undefined,
         },
       )
     })

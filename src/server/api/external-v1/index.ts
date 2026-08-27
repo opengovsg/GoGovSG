@@ -1,10 +1,12 @@
 import Express from 'express'
+import fileUpload from 'express-fileupload'
 import { createValidator } from 'express-joi-validation'
 import { container } from '../../util/inversify'
 import jsonMessage from '../../util/json'
 import { DependencyIds } from '../../constants'
 import { ApiV1Controller } from '../../modules/api/external-v1'
-import { UrlCheckController } from '../../modules/threat'
+import { FileCheckController, UrlCheckController } from '../../modules/threat'
+import { MAX_FILE_UPLOAD_SIZE } from '../../../shared/constants'
 import {
   urlEditSchema,
   urlRetrievalSchema,
@@ -18,8 +20,33 @@ const apiV1Controller = container.get<ApiV1Controller>(
 const urlCheckController = container.get<UrlCheckController>(
   DependencyIds.urlCheckController,
 )
+const fileCheckController = container.get<FileCheckController>(
+  DependencyIds.fileCheckController,
+)
 const validator = createValidator({ passError: true })
 const router = Express.Router()
+
+const fileUploadMiddleware = fileUpload({
+  limits: {
+    fileSize: MAX_FILE_UPLOAD_SIZE, // 20MB
+    files: 1,
+  },
+})
+
+/**
+ * Place incoming file into the request body so that it can be
+ * validated together with the other fields by Joi.
+ */
+function preprocessFormData(
+  req: Express.Request,
+  _: Express.Response,
+  next: Express.NextFunction,
+) {
+  if (req.files) {
+    req.body.files = req.files
+  }
+  next()
+}
 
 /**
  * Place short URL into the request body so that it can be
@@ -46,18 +73,25 @@ router.get(
 
 router.post(
   '/urls',
+  fileUploadMiddleware,
+  preprocessFormData,
   validator.body(urlSchema),
+  fileCheckController.singleFileCheck,
+  fileCheckController.fileExtensionAndMimeTypeCheck(),
+  fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
   apiV1Controller.createUrl,
 )
 
-/**
- * Endpoint for user to edit a URL. File editing is not allowed.
- */
 router.patch(
   '/urls/:shortUrl',
   preprocessShortUrl,
+  fileUploadMiddleware,
+  preprocessFormData,
   validator.body(urlEditSchema),
+  fileCheckController.singleFileCheck,
+  fileCheckController.fileExtensionAndMimeTypeCheck(),
+  fileCheckController.fileVirusCheck,
   urlCheckController.singleUrlCheck,
   apiV1Controller.updateUrl,
 )

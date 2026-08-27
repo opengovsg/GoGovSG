@@ -24,6 +24,26 @@ export const userUrlsQueryConditions = Joi.object({
   isFile: Joi.boolean().optional(),
 })
 
+const longUrlSchema = Joi.string().custom((url: string, helpers) => {
+  if (!isHttps(url)) {
+    return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
+  }
+  if (!isValidUrl(url)) {
+    return helpers.message({ custom: 'Long URL format is invalid.' })
+  }
+  if (isCircularRedirects(url, ogHostname)) {
+    return helpers.message({
+      custom: 'Circular redirects are not allowed.',
+    })
+  }
+  if (isBlacklisted(url)) {
+    return helpers.message({
+      custom: 'Creation of URLs to link shortener sites are not allowed.',
+    })
+  }
+  return url
+})
+
 export const urlSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string()
@@ -34,52 +54,18 @@ export const urlSchema = Joi.object({
       return url
     })
     .optional(),
-  longUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isHttps(url)) {
-        return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-      }
-      if (!isValidUrl(url)) {
-        return helpers.message({ custom: 'Long URL format is invalid.' })
-      }
-      if (isCircularRedirects(url, ogHostname)) {
-        return helpers.message({
-          custom: 'Circular redirects are not allowed.',
-        })
-      }
-      if (isBlacklisted(url)) {
-        return helpers.message({
-          custom: 'Creation of URLs to link shortener sites are not allowed.',
-        })
-      }
-      return url
-    })
-    .required(),
-})
+  longUrl: longUrlSchema,
+  files: Joi.object({
+    file: Joi.object().keys().required(),
+  }),
+}).xor('longUrl', 'files')
 
 export const urlEditSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
-  longUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isHttps(url)) {
-        return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-      }
-      if (!isValidUrl(url)) {
-        return helpers.message({ custom: 'Long URL format is invalid.' })
-      }
-      if (isCircularRedirects(url, ogHostname)) {
-        return helpers.message({
-          custom: 'Circular redirects are not allowed.',
-        })
-      }
-      if (isBlacklisted(url)) {
-        return helpers.message({
-          custom: 'Creation of URLs to link shortener sites are not allowed.',
-        })
-      }
-      return url
-    })
-    .optional(),
+  longUrl: longUrlSchema.optional(),
+  files: Joi.object({
+    file: Joi.object().keys().required(),
+  }),
   state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
-})
+}).oxor('longUrl', 'files')
