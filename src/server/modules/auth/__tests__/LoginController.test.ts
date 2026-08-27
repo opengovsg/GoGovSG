@@ -13,9 +13,14 @@ import { UrlMapper } from '../../../mappers/UrlMapper'
 import { AuthService } from '../services'
 
 import { LoginController } from '..'
-import StubOperatorCopyService from '../../../services/StubOperatorCopyService'
+import { OperatorCopyService } from '../../../services/GrowthBookOperatorCopyService'
 
-const operatorCopyService = new StubOperatorCopyService('login message')
+const operatorCopyService: OperatorCopyService = {
+  init: async () => {},
+  getLoginMessage: () => 'login message',
+  getUserMessage: () => '',
+  getUserAnnouncement: () => null,
+}
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 

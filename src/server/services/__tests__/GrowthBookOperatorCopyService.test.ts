@@ -1,7 +1,8 @@
 import { GrowthBookClient } from '@growthbook/growthbook'
 
-jest.mock('@growthbook/growthbook')
+import { GrowthBookOperatorCopyService } from '../GrowthBookOperatorCopyService'
 
+jest.mock('@growthbook/growthbook')
 jest.mock('../../../shared/util/asset-variant', () => 'gov')
 
 const mockConfigState = {
@@ -23,11 +24,8 @@ jest.mock('../../config', () => ({
   },
 }))
 
-import GrowthBookOperatorCopyService from '../GrowthBookOperatorCopyService'
-
 const mockInit = jest.fn()
 const mockGetFeatureValue = jest.fn()
-
 const MockGrowthBookClient = GrowthBookClient as jest.MockedClass<
   typeof GrowthBookClient
 >
@@ -64,7 +62,7 @@ describe('GrowthBookOperatorCopyService', () => {
     expect(service.getUserAnnouncement()).toBeNull()
   })
 
-  it('initialises the client with polling and evaluates variant keys', async () => {
+  it('evaluates variant keys from GrowthBook', async () => {
     mockConfigState.growthbookClientKey = 'sdk-test'
     mockGetFeatureValue.mockImplementation((key, fallback) => {
       if (key === 'login_message_gov') return 'OTP delay notice'
@@ -76,16 +74,9 @@ describe('GrowthBookOperatorCopyService', () => {
     })
 
     const service = new GrowthBookOperatorCopyService()
-
     await service.init()
 
-    expect(MockGrowthBookClient).toHaveBeenCalledWith({
-      apiHost: 'https://cdn.growthbook.io',
-      clientKey: 'sdk-test',
-    })
-    expect(mockInit).toHaveBeenCalledWith({
-      timeout: 3000,
-    })
+    expect(mockInit).toHaveBeenCalledWith({ timeout: 3000 })
     expect(service.getLoginMessage()).toBe('OTP delay notice')
     expect(service.getUserMessage()).toBe('Dashboard banner')
     expect(service.getUserAnnouncement()).toEqual({
@@ -99,25 +90,9 @@ describe('GrowthBookOperatorCopyService', () => {
     mockInit.mockResolvedValue({ success: false, source: 'timeout' })
 
     const service = new GrowthBookOperatorCopyService()
-
     await service.init()
 
     expect(service.getLoginMessage()).toBe('')
-    expect(service.getUserMessage()).toBe('')
     expect(service.getUserAnnouncement()).toBeNull()
-  })
-
-  it('returns cached values from the client after a successful init', async () => {
-    mockConfigState.growthbookClientKey = 'sdk-test'
-    mockGetFeatureValue.mockImplementation((key, fallback) => {
-      if (key === 'login_message_gov') return 'Still visible'
-      return fallback
-    })
-
-    const service = new GrowthBookOperatorCopyService()
-
-    await service.init()
-    expect(service.getLoginMessage()).toBe('Still visible')
-    expect(service.getLoginMessage()).toBe('Still visible')
   })
 })

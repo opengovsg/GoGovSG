@@ -9,11 +9,15 @@ import {
   getUserMessageKey,
 } from '../lib/growthbook'
 import { growthbookApiHost, growthbookClientKey, logger } from '../config'
-import { OperatorCopyService } from './OperatorCopyService'
 
 const EMPTY_USER_CONTEXT = { attributes: {} }
-const INIT_TIMEOUT_MS = 3000
-const POLLING_INTERVAL_MS = 60_000
+
+export interface OperatorCopyService {
+  init(): Promise<void>
+  getLoginMessage(): string
+  getUserMessage(): string
+  getUserAnnouncement(): AnnouncementPayload | null
+}
 
 @injectable()
 export class GrowthBookOperatorCopyService implements OperatorCopyService {
@@ -21,9 +25,7 @@ export class GrowthBookOperatorCopyService implements OperatorCopyService {
 
   public async init(): Promise<void> {
     if (!growthbookClientKey) {
-      logger.warn(
-        'GROWTHBOOK_CLIENT_KEY is not set; login snackbar, banner, and announcement will be empty.',
-      )
+      logger.warn('GROWTHBOOK_CLIENT_KEY is not set; operator copy disabled.')
       return
     }
 
@@ -32,56 +34,36 @@ export class GrowthBookOperatorCopyService implements OperatorCopyService {
       clientKey: growthbookClientKey,
     })
 
-    const result = await this.client.init({
-      timeout: INIT_TIMEOUT_MS,
-    })
+    const result = await this.client.init({ timeout: 3000 })
 
     if (!result.success) {
       logger.warn(
-        `GrowthBook init did not succeed (source=${result.source}); operator copy will be empty until a poll succeeds.`,
+        `GrowthBook init failed (source=${result.source}); operator copy empty until refresh succeeds.`,
       )
     }
 
     setInterval(() => {
       void this.client?.refreshFeatures({ skipCache: true })
-    }, POLLING_INTERVAL_MS)
+    }, 60_000)
   }
 
   public getLoginMessage(): string {
-    if (!this.client) {
-      return ''
-    }
-
-    return this.client.getFeatureValue(
-      getLoginMessageKey(assetVariant),
-      '',
-      EMPTY_USER_CONTEXT,
-    )
+    return this.getFeatureValue(getLoginMessageKey(assetVariant), '')
   }
 
   public getUserMessage(): string {
-    if (!this.client) {
-      return ''
-    }
-
-    return this.client.getFeatureValue(
-      getUserMessageKey(assetVariant),
-      '',
-      EMPTY_USER_CONTEXT,
-    )
+    return this.getFeatureValue(getUserMessageKey(assetVariant), '')
   }
 
   public getUserAnnouncement(): AnnouncementPayload | null {
+    return this.getFeatureValue(getAnnouncementKey(assetVariant), null)
+  }
+
+  private getFeatureValue<T>(key: string, fallback: T): T {
     if (!this.client) {
-      return null
+      return fallback
     }
 
-    return this.client.getFeatureValue(
-      getAnnouncementKey(assetVariant),
-      null,
-      EMPTY_USER_CONTEXT,
-    )
+    return this.client.getFeatureValue(key, fallback, EMPTY_USER_CONTEXT) as T
   }
 }
-
-export default GrowthBookOperatorCopyService

@@ -1,16 +1,22 @@
 import assetVariant from '../../shared/util/asset-variant'
 
-export const LOGIN_MESSAGE_GOV = 'login_message_gov'
-export const LOGIN_MESSAGE_EDU = 'login_message_edu'
-export const LOGIN_MESSAGE_HEALTH = 'login_message_health'
+export const LOGIN_MESSAGE_KEYS = {
+  gov: 'login_message_gov',
+  edu: 'login_message_edu',
+  health: 'login_message_health',
+} as const
 
-export const USER_MESSAGE_GOV = 'user_message_gov'
-export const USER_MESSAGE_EDU = 'user_message_edu'
-export const USER_MESSAGE_HEALTH = 'user_message_health'
+export const USER_MESSAGE_KEYS = {
+  gov: 'user_message_gov',
+  edu: 'user_message_edu',
+  health: 'user_message_health',
+} as const
 
-export const ANNOUNCEMENT_GOV = 'announcement_gov'
-export const ANNOUNCEMENT_EDU = 'announcement_edu'
-export const ANNOUNCEMENT_HEALTH = 'announcement_health'
+export const ANNOUNCEMENT_KEYS = {
+  gov: 'announcement_gov',
+  edu: 'announcement_edu',
+  health: 'announcement_health',
+} as const
 
 export type AnnouncementPayload = {
   title?: string
@@ -23,29 +29,11 @@ export type AnnouncementPayload = {
 
 type AssetVariant = typeof assetVariant
 
-const loginMessageKeys: Record<AssetVariant, string> = {
-  gov: LOGIN_MESSAGE_GOV,
-  edu: LOGIN_MESSAGE_EDU,
-  health: LOGIN_MESSAGE_HEALTH,
-}
-
-const userMessageKeys: Record<AssetVariant, string> = {
-  gov: USER_MESSAGE_GOV,
-  edu: USER_MESSAGE_EDU,
-  health: USER_MESSAGE_HEALTH,
-}
-
-const announcementKeys: Record<AssetVariant, string> = {
-  gov: ANNOUNCEMENT_GOV,
-  edu: ANNOUNCEMENT_EDU,
-  health: ANNOUNCEMENT_HEALTH,
-}
-
 export const getLoginMessageKey = (variant: AssetVariant = assetVariant) =>
-  loginMessageKeys[variant]
+  LOGIN_MESSAGE_KEYS[variant]
 
 export const getUserMessageKey = (variant: AssetVariant = assetVariant) =>
-  userMessageKeys[variant]
+  USER_MESSAGE_KEYS[variant]
 
 export const getAnnouncementKey = (variant: AssetVariant = assetVariant) =>
-  announcementKeys[variant]
+  ANNOUNCEMENT_KEYS[variant]

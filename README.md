@@ -111,8 +111,8 @@ After these have been set up, set the environment variables according to the tab
 |           SESSION_SECRET           |   Yes    | For hashing browser sessions, e.g. `change-this`                                                                                                                                               |
 |    VALID_EMAIL_GLOB_EXPRESSION     |   Yes    | The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com` |
 |           GA_TRACKING_ID           |    No    | The Google Analytics tracking ID, e.g. `UA-12345678-9`                                                                                                                                         |
-|       GROWTHBOOK_CLIENT_KEY        |    No    | GrowthBook Node SDK connection key (`sdk-…`) for operator copy (login snackbar, dashboard banner, announcement modal). When unset, those surfaces are empty.                                   |
-|        GROWTHBOOK_API_HOST         |    No    | GrowthBook CDN host for feature payloads. Defaults to `https://cdn.growthbook.io`.                                                                                                             |
+|       GROWTHBOOK_CLIENT_KEY        |    No    | GrowthBook Node SDK key (`sdk-…`) for server-side operator copy. Empty when unset.                                                                                                             |
+|        GROWTHBOOK_API_HOST         |    No    | GrowthBook CDN host. Defaults to `https://cdn.growthbook.io`.                                                                                                                                  |
 |           ROTATED_LINKS            |    No    | List of comma separated path of links to rotate on the landing page                                                                                                                            |
 |           CSP_REPORT_URI           |    No    | A URI to report CSP violations to.                                                                                                                                                             |
 |     CSP_ONLY_REPORT_VIOLATIONS     |    No    | Only report CSP violations, do not enforce.                                                                                                                                                    |
@@ -220,20 +220,7 @@ This repository serves as the codebase to serve three link shortener environment
 
 ### GrowthBook operator copy
 
-Login snackbar, dashboard banner, and post-login announcement modal copy are served from GrowthBook on the server. Operators edit values in the GrowthBook dashboard; each Node process polls at most once per minute. Set `GROWTHBOOK_CLIENT_KEY` to the Node SDK connection key for that deploy's environment (`dev`, `staging`, or `production`). When the key is unset or GrowthBook is unreachable before the first successful fetch, those surfaces are empty and the site still returns HTTP 200.
-
-After deploying this integration, provision the GrowthBook project as follows:
-
-1. Create nine feature flags with these exact keys (same names in every environment):
-   - Login snackbar (string): `login_message_gov`, `login_message_edu`, `login_message_health`
-   - Dashboard banner (string): `user_message_gov`, `user_message_edu`, `user_message_health`
-   - Announcement modal (JSON): `announcement_gov`, `announcement_edu`, `announcement_health`
-2. Enable all nine flags in the `dev`, `staging`, and `production` environments.
-3. Create one **Node.js SDK connection** per environment and copy each `clientKey` (`sdk-…`) into that environment's server `GROWTHBOOK_CLIENT_KEY`.
-4. Optionally set `GROWTHBOOK_API_HOST` if not using GrowthBook Cloud (`https://cdn.growthbook.io`).
-5. Populate copy per variant before traffic hits a build that no longer reads the removed `LOGIN_MESSAGE`, `USER_MESSAGE`, and `ANNOUNCEMENT_*` env vars.
-
-Announcement JSON fields: `title`, `subtitle`, `message`, `url`, `image`, `buttonText` (all optional). Empty string or unset value hides the UI for that surface.
+Login snackbar, dashboard banner, and announcement modal are read from GrowthBook on the server via `GROWTHBOOK_CLIENT_KEY`. Feature keys: `login_message_{gov,edu,health}`, `user_message_{gov,edu,health}`, `announcement_{gov,edu,health}`. Create one Node SDK connection per environment and populate the nine flags before deploying a build that no longer reads `LOGIN_MESSAGE`, `USER_MESSAGE`, or `ANNOUNCEMENT_*`.
 
 ### Babel
 

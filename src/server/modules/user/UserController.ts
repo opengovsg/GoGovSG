@@ -27,7 +27,7 @@ import dogstatsd, {
 import TagManagementServiceInterface from './interfaces/TagManagementService'
 import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
 import { UserUrlsQueryConditions } from '../../repositories/types'
-import { OperatorCopyService } from '../../services/OperatorCopyService'
+import { OperatorCopyService } from '../../services/GrowthBookOperatorCopyService'
 
 @injectable()
 export class UserController {

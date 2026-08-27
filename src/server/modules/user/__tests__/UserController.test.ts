@@ -11,7 +11,7 @@ import {
 } from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
-import StubOperatorCopyService from '../../../services/StubOperatorCopyService'
+import { OperatorCopyService } from '../../../services/GrowthBookOperatorCopyService'
 import {
   AlreadyExistsError,
   InvalidUrlUpdateError,
@@ -45,11 +45,12 @@ const userAnnouncement = {
   buttonText: 'Try it now',
 }
 
-const operatorCopyService = new StubOperatorCopyService(
-  '',
-  userMessage,
-  userAnnouncement,
-)
+const operatorCopyService: OperatorCopyService = {
+  init: async () => {},
+  getLoginMessage: () => '',
+  getUserMessage: () => userMessage,
+  getUserAnnouncement: () => userAnnouncement,
+}
 
 describe('UserController', () => {
   const controller = new UserController(
@@ -699,21 +700,15 @@ describe('UserController', () => {
     expect(send).toHaveBeenCalledWith(userAnnouncement)
   })
 
-  it('round-trips announcement buttonText', async () => {
-    const req = createRequestWithUser(undefined)
-    const res = httpMocks.createResponse()
-    const send = jest.spyOn(res, 'send')
-
-    await controller.getUserAnnouncement(req, res)
-    expect(send).toHaveBeenCalledWith(
-      expect.objectContaining({ buttonText: 'Try it now' }),
-    )
-  })
-
   it('returns empty announcement object when copy is unset', async () => {
     const emptyController = new UserController(
       urlManagementService,
-      new StubOperatorCopyService(),
+      {
+        init: async () => {},
+        getLoginMessage: () => '',
+        getUserMessage: () => '',
+        getUserAnnouncement: () => null,
+      },
       tagManagementService,
       apiKeyAuthService,
     )

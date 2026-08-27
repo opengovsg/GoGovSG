@@ -85,7 +85,7 @@ import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
 import { SQSService } from './services/sqs'
 import { JobController } from './modules/job'
-import GrowthBookOperatorCopyService from './services/GrowthBookOperatorCopyService'
+import { GrowthBookOperatorCopyService } from './services/GrowthBookOperatorCopyService'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,

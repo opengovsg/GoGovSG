@@ -18,12 +18,19 @@ import {
 import bindInversifyDependencies from '../../../src/server/inversify.config'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import StubOperatorCopyService from '../../../src/server/services/StubOperatorCopyService'
+import { OperatorCopyService } from '../../../src/server/services/GrowthBookOperatorCopyService'
+
+const operatorCopyService: OperatorCopyService = {
+  init: async () => {},
+  getLoginMessage: () => 'login message',
+  getUserMessage: () => '',
+  getUserAnnouncement: () => null,
+}
 
 if (!container.isBound(DependencyIds.operatorCopyService)) {
   container
     .bind(DependencyIds.operatorCopyService)
-    .toConstantValue(new StubOperatorCopyService('login message'))
+    .toConstantValue(operatorCopyService)
 }
 
 // Bind all defaults (after the mocks have been binded)
