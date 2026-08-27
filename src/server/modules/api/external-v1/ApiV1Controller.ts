@@ -90,6 +90,7 @@ export class ApiV1Controller {
     const errors = []
     const usedShortUrls = new Set<string>()
 
+    /* eslint-disable no-await-in-loop, no-continue */
     for (let index = 0; index < urls.length; index += 1) {
       const row = urls[index]
       const { error, value } = urlBulkRowSchema.validate(row, {
@@ -100,77 +101,74 @@ export class ApiV1Controller {
           index,
           ...ApiV1Controller.extractRowValidationError(error),
         })
-      } else {
-        const { longUrl, shortUrl } = value
-        let rowError: { message: string; type?: MessageType } | undefined
+        continue
+      }
 
-        if (shortUrl && usedShortUrls.has(shortUrl)) {
-          rowError = {
-            message: `Short link "${shortUrl}" is already used.`,
-            type: MessageType.ShortUrlError,
-          }
-        } else {
-          try {
-            // Rows are processed sequentially to preserve order and batch slug tracking.
-            // eslint-disable-next-line no-await-in-loop
-            const isThreat = await this.urlThreatScanService.isThreat(longUrl)
-            if (isThreat) {
-              rowError = {
-                message:
-                  'Link is likely to be malicious, please contact us for further assistance',
-              }
-            }
-          } catch (scanError) {
-            rowError = {
-              message: (scanError as Error).message,
-            }
-          }
+      const { longUrl, shortUrl } = value
 
-          if (!rowError) {
-            try {
-              // eslint-disable-next-line no-await-in-loop
-              const url = await this.urlManagementService.createUrl(
-                userId,
-                StorableUrlSource.Api,
-                shortUrl,
-                longUrl,
-              )
-              usedShortUrls.add(url.shortUrl)
-              created.push(this.urlV1Mapper.persistenceToDto(url))
-            } catch (createError) {
-              if (createError instanceof AlreadyExistsError) {
-                rowError = {
-                  message: createError.message,
-                  type: MessageType.ShortUrlError,
-                }
-              } else if (createError instanceof NotFoundError) {
-                rowError = {
-                  message: createError.message,
-                }
-              } else if (createError instanceof Sequelize.ValidationError) {
-                rowError = {
-                  message: createError.message,
-                }
-              } else {
-                logger.error(
-                  `Error creating short URL in bulk:\t${createError}`,
-                )
-                rowError = {
-                  message: 'Server error.',
-                }
-              }
-            }
-          }
-        }
+      if (shortUrl && usedShortUrls.has(shortUrl)) {
+        errors.push({
+          index,
+          message: `Short link "${shortUrl}" is already used.`,
+          type: MessageType.ShortUrlError,
+        })
+        continue
+      }
 
-        if (rowError) {
+      try {
+        const isThreat = await this.urlThreatScanService.isThreat(longUrl)
+        if (isThreat) {
           errors.push({
             index,
-            ...rowError,
+            message:
+              'Link is likely to be malicious, please contact us for further assistance',
+          })
+          continue
+        }
+      } catch (scanError) {
+        errors.push({
+          index,
+          message: (scanError as Error).message,
+        })
+        continue
+      }
+
+      try {
+        const url = await this.urlManagementService.createUrl(
+          userId,
+          StorableUrlSource.Api,
+          shortUrl,
+          longUrl,
+        )
+        usedShortUrls.add(url.shortUrl)
+        created.push(this.urlV1Mapper.persistenceToDto(url))
+      } catch (createError) {
+        if (createError instanceof AlreadyExistsError) {
+          errors.push({
+            index,
+            message: createError.message,
+            type: MessageType.ShortUrlError,
+          })
+        } else if (createError instanceof NotFoundError) {
+          errors.push({
+            index,
+            message: createError.message,
+          })
+        } else if (createError instanceof Sequelize.ValidationError) {
+          errors.push({
+            index,
+            message: createError.message,
+          })
+        } else {
+          logger.error(`Error creating short URL in bulk:\t${createError}`)
+          errors.push({
+            index,
+            message: 'Server error.',
           })
         }
       }
     }
+    /* eslint-enable no-await-in-loop, no-continue */
 
     const response = { created, errors }
     if (created.length > 0) {

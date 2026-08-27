@@ -9,27 +9,28 @@ import {
 import { bulkUploadMaxNum, ogHostname } from '../../config'
 import { ACTIVE, INACTIVE } from '../../models/types'
 
-const longUrlValidator = Joi.string()
-  .custom((url: string, helpers) => {
-    if (!isHttps(url)) {
-      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-    }
-    if (!isValidUrl(url)) {
-      return helpers.message({ custom: 'Long URL format is invalid.' })
-    }
-    if (isCircularRedirects(url, ogHostname)) {
-      return helpers.message({
-        custom: 'Circular redirects are not allowed.',
-      })
-    }
-    if (isBlacklisted(url)) {
-      return helpers.message({
-        custom: 'Creation of URLs to link shortener sites are not allowed.',
-      })
-    }
-    return url
-  })
-  .required()
+const longUrlRules = (url: string, helpers: Joi.CustomHelpers) => {
+  if (!isHttps(url)) {
+    return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
+  }
+  if (!isValidUrl(url)) {
+    return helpers.message({ custom: 'Long URL format is invalid.' })
+  }
+  if (isCircularRedirects(url, ogHostname)) {
+    return helpers.message({
+      custom: 'Circular redirects are not allowed.',
+    })
+  }
+  if (isBlacklisted(url)) {
+    return helpers.message({
+      custom: 'Creation of URLs to link shortener sites are not allowed.',
+    })
+  }
+  return url
+}
+
+const longUrlValidator = Joi.string().custom(longUrlRules).required()
+const optionalLongUrlValidator = Joi.string().custom(longUrlRules).optional()
 
 const shortUrlValidator = Joi.string()
   .custom((url: string, helpers) => {
@@ -78,26 +79,6 @@ export const urlBulkSchema = Joi.object({
 export const urlEditSchema = Joi.object({
   userId: Joi.number().required(),
   shortUrl: Joi.string().required(),
-  longUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isHttps(url)) {
-        return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-      }
-      if (!isValidUrl(url)) {
-        return helpers.message({ custom: 'Long URL format is invalid.' })
-      }
-      if (isCircularRedirects(url, ogHostname)) {
-        return helpers.message({
-          custom: 'Circular redirects are not allowed.',
-        })
-      }
-      if (isBlacklisted(url)) {
-        return helpers.message({
-          custom: 'Creation of URLs to link shortener sites are not allowed.',
-        })
-      }
-      return url
-    })
-    .optional(),
+  longUrl: optionalLongUrlValidator,
   state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
 })

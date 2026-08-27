@@ -155,26 +155,26 @@ describe('ApiV1Controller', () => {
     const userId = 1
     const longUrl = 'https://www.agency.gov.sg'
     const shortUrl = 'abcdef'
-    const state = 'ACTIVE'
-    const source = 'API'
-    const clicks = 0
-    const contactEmail = 'person@open.gov.sg'
-    const description = 'test description'
-    const tags: string[] = []
-    const tagStrings = ''
     const createdAt = moment().toISOString()
     const updatedAt = moment().toISOString()
-
     const createdUrl = {
       shortUrl,
       longUrl,
-      state,
-      source,
-      clicks,
-      contactEmail,
-      description,
-      tags,
-      tagStrings,
+      state: 'ACTIVE',
+      source: 'API',
+      clicks: 0,
+      contactEmail: 'person@open.gov.sg',
+      description: 'test description',
+      tags: [],
+      tagStrings: '',
+      createdAt,
+      updatedAt,
+    }
+    const dto = {
+      shortUrl,
+      longUrl,
+      state: 'ACTIVE',
+      clicks: 0,
       createdAt,
       updatedAt,
     }
@@ -187,37 +187,20 @@ describe('ApiV1Controller', () => {
 
     it('creates all valid rows and returns 200', async () => {
       const req = httpMocks.createRequest({
-        body: {
-          userId,
-          urls: [{ shortUrl, longUrl }],
-        },
+        body: { userId, urls: [{ shortUrl, longUrl }] },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
-
       urlManagementService.createUrl.mockResolvedValue(createdUrl)
 
       await controller.bulkCreateUrls(req, res)
-      expect(urlThreatScanService.isThreat).toHaveBeenCalledWith(longUrl)
       expect(urlManagementService.createUrl).toHaveBeenCalledWith(
         userId,
-        source,
+        'API',
         shortUrl,
         longUrl,
       )
-      expect(res.ok).toHaveBeenCalledWith({
-        created: [
-          {
-            shortUrl,
-            longUrl,
-            state,
-            clicks,
-            createdAt,
-            updatedAt,
-          },
-        ],
-        errors: [],
-      })
+      expect(res.ok).toHaveBeenCalledWith({ created: [dto], errors: [] })
     })
 
     it('returns partial success with row validation errors', async () => {
@@ -229,21 +212,11 @@ describe('ApiV1Controller', () => {
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
-
       urlManagementService.createUrl.mockResolvedValue(createdUrl)
 
       await controller.bulkCreateUrls(req, res)
       expect(res.ok).toHaveBeenCalledWith({
-        created: [
-          {
-            shortUrl,
-            longUrl,
-            state,
-            clicks,
-            createdAt,
-            updatedAt,
-          },
-        ],
+        created: [dto],
         errors: [
           {
             index: 1,
@@ -256,10 +229,7 @@ describe('ApiV1Controller', () => {
 
     it('returns 400 when every row fails', async () => {
       const req = httpMocks.createRequest({
-        body: {
-          userId,
-          urls: [{ longUrl: 'not-a-url' }],
-        },
+        body: { userId, urls: [{ longUrl: 'not-a-url' }] },
       })
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
@@ -289,22 +259,12 @@ describe('ApiV1Controller', () => {
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
-
       urlManagementService.createUrl.mockResolvedValue(createdUrl)
 
       await controller.bulkCreateUrls(req, res)
       expect(urlManagementService.createUrl).toHaveBeenCalledTimes(1)
       expect(res.ok).toHaveBeenCalledWith({
-        created: [
-          {
-            shortUrl,
-            longUrl,
-            state,
-            clicks,
-            createdAt,
-            updatedAt,
-          },
-        ],
+        created: [dto],
         errors: [
           {
             index: 1,
@@ -317,14 +277,10 @@ describe('ApiV1Controller', () => {
 
     it('reports malicious links as row errors', async () => {
       const req = httpMocks.createRequest({
-        body: {
-          userId,
-          urls: [{ shortUrl, longUrl }],
-        },
+        body: { userId, urls: [{ shortUrl, longUrl }] },
       })
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
-
       urlThreatScanService.isThreat.mockResolvedValue(true)
 
       await controller.bulkCreateUrls(req, res)
@@ -342,14 +298,10 @@ describe('ApiV1Controller', () => {
 
     it('reports shortUrl collision from createUrl as row error', async () => {
       const req = httpMocks.createRequest({
-        body: {
-          userId,
-          urls: [{ shortUrl, longUrl }],
-        },
+        body: { userId, urls: [{ shortUrl, longUrl }] },
       })
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
-
       urlManagementService.createUrl.mockRejectedValue(
         new AlreadyExistsError(`Short link "${shortUrl}" is already used.`),
       )

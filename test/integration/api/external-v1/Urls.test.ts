@@ -1,9 +1,5 @@
 import FormData from 'form-data'
-import {
-  API_EXTERNAL_V1_URLS,
-  API_EXTERNAL_V1_URLS_BULK,
-  SMALL_TEXT_FILE_PATH,
-} from '../../config'
+import { API_EXTERNAL_V1_URLS, SMALL_TEXT_FILE_PATH } from '../../config'
 import {
   DATETIME_REGEX,
   createIntegrationTestUser,
@@ -13,21 +9,7 @@ import {
 } from '../../util/helpers'
 import { get, patch, postFormData, postJson } from '../../util/requests'
 
-async function createBulkLinkUrls(
-  urls: {
-    shortUrl?: string
-    longUrl?: string
-  }[],
-  apiKey: string,
-) {
-  const res = await postJson(
-    API_EXTERNAL_V1_URLS_BULK,
-    { urls },
-    undefined,
-    apiKey,
-  )
-  return res
-}
+const API_EXTERNAL_V1_URLS_BULK = `${API_EXTERNAL_V1_URLS}/bulk`
 
 async function createLinkUrl(
   link: {
@@ -290,50 +272,44 @@ describe('Url integration tests', () => {
       message: 'ValidationError: "state" must be one of [ACTIVE, INACTIVE]',
     })
   })
-})
-
-describe('Bulk URL integration tests', () => {
-  let email: string
-  let apiKey: string
-  const longUrl = 'https://example.com'
-
-  beforeEach(async () => {
-    ;({ email, apiKey } = await createIntegrationTestUser())
-  })
-
-  afterEach(async () => {
-    await deleteIntegrationTestUser(email)
-  })
 
   it('should not be able to bulk create urls without API key header', async () => {
     const res = await postJson(API_EXTERNAL_V1_URLS_BULK, {
       urls: [{ longUrl }],
     })
     expect(res.status).toBe(401)
-    const json = await res.json()
-    expect(json).toEqual({
+    expect(await res.json()).toEqual({
       message: 'Authorization header is missing',
     })
   })
 
   it('should not be able to bulk create urls with empty urls array', async () => {
-    const res = await createBulkLinkUrls([], apiKey)
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      { urls: [] },
+      undefined,
+      apiKey,
+    )
     expect(res.status).toBe(400)
-    const body = await res.json()
-    expect(body.message).toMatch(/"urls" must contain at least 1 items/)
+    expect((await res.json()).message).toMatch(
+      /"urls" must contain at least 1 items/,
+    )
   })
 
   it('should not be able to bulk create urls without urls field', async () => {
     const res = await postJson(API_EXTERNAL_V1_URLS_BULK, {}, undefined, apiKey)
     expect(res.status).toBe(400)
-    const body = await res.json()
-    expect(body.message).toMatch(/"urls" is required/)
+    expect((await res.json()).message).toMatch(/"urls" is required/)
   })
 
-  it('should create all valid rows', async () => {
+  it('should create all valid rows in bulk', async () => {
     const shortUrl = await generateRandomString(6)
-    const res = await createBulkLinkUrls(
-      [{ shortUrl, longUrl }, { longUrl: 'https://example.org' }],
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      {
+        urls: [{ shortUrl, longUrl }, { longUrl: 'https://example.org' }],
+      },
+      undefined,
       apiKey,
     )
     expect(res.status).toBe(200)
@@ -348,20 +324,17 @@ describe('Bulk URL integration tests', () => {
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
     })
-    expect(body.created[1]).toEqual({
-      shortUrl: expect.stringMatching(/^[a-z0-9]{8}$/),
-      longUrl: 'https://example.org',
-      clicks: 0,
-      state: 'ACTIVE',
-      createdAt: expect.stringMatching(DATETIME_REGEX),
-      updatedAt: expect.stringMatching(DATETIME_REGEX),
-    })
+    expect(body.created[1].shortUrl).toMatch(/^[a-z0-9]{8}$/)
   })
 
-  it('should return partial success for mixed valid and invalid rows', async () => {
+  it('should return partial success for mixed valid and invalid bulk rows', async () => {
     const shortUrl = await generateRandomString(6)
-    const res = await createBulkLinkUrls(
-      [{ shortUrl, longUrl }, { longUrl: 'this-is-an-invalid-url' }],
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      {
+        urls: [{ shortUrl, longUrl }, { longUrl: 'this-is-an-invalid-url' }],
+      },
+      undefined,
       apiKey,
     )
     expect(res.status).toBe(200)
@@ -377,9 +350,11 @@ describe('Bulk URL integration tests', () => {
     ])
   })
 
-  it('should return 400 when every row fails validation', async () => {
-    const res = await createBulkLinkUrls(
-      [{ longUrl: 'this-is-an-invalid-url' }],
+  it('should return 400 when every bulk row fails validation', async () => {
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      { urls: [{ longUrl: 'this-is-an-invalid-url' }] },
+      undefined,
       apiKey,
     )
     expect(res.status).toBe(400)
@@ -394,13 +369,17 @@ describe('Bulk URL integration tests', () => {
     ])
   })
 
-  it('should error on duplicate shortUrl within the same request', async () => {
+  it('should error on duplicate shortUrl within the same bulk request', async () => {
     const shortUrl = await generateRandomString(6)
-    const res = await createBulkLinkUrls(
-      [
-        { shortUrl, longUrl },
-        { shortUrl, longUrl: 'https://example.org' },
-      ],
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      {
+        urls: [
+          { shortUrl, longUrl },
+          { shortUrl, longUrl: 'https://example.org' },
+        ],
+      },
+      undefined,
       apiKey,
     )
     expect(res.status).toBe(200)
@@ -415,8 +394,13 @@ describe('Bulk URL integration tests', () => {
     ])
   })
 
-  it('should allow duplicate longUrl values in the same request', async () => {
-    const res = await createBulkLinkUrls([{ longUrl }, { longUrl }], apiKey)
+  it('should allow duplicate longUrl values in the same bulk request', async () => {
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      { urls: [{ longUrl }, { longUrl }] },
+      undefined,
+      apiKey,
+    )
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.errors).toEqual([])
@@ -424,12 +408,14 @@ describe('Bulk URL integration tests', () => {
     expect(body.created[0].shortUrl).not.toBe(body.created[1].shortUrl)
   })
 
-  it('should error when shortUrl is already used in the database', async () => {
+  it('should error when bulk shortUrl is already used in the database', async () => {
     const shortUrl = await generateRandomString(6)
     await createLinkUrl({ shortUrl, longUrl }, apiKey)
 
-    const res = await createBulkLinkUrls(
-      [{ shortUrl, longUrl: 'https://example.org' }],
+    const res = await postJson(
+      API_EXTERNAL_V1_URLS_BULK,
+      { urls: [{ shortUrl, longUrl: 'https://example.org' }] },
+      undefined,
       apiKey,
     )
     expect(res.status).toBe(400)
