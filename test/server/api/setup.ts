@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
+import '../../../src/server/util/response'
 import { MailerMock } from '../mocks/services/email'
 import {
   clicksModelMock,
@@ -15,6 +16,15 @@ import {
   userModelMock,
 } from './util'
 import bindInversifyDependencies from '../../../src/server/inversify.config'
+import { container } from '../../../src/server/util/inversify'
+import { DependencyIds } from '../../../src/server/constants'
+import StubOperatorCopyService from '../../../src/server/services/StubOperatorCopyService'
+
+if (!container.isBound(DependencyIds.operatorCopyService)) {
+  container
+    .bind(DependencyIds.operatorCopyService)
+    .toConstantValue(new StubOperatorCopyService('login message'))
+}
 
 // Bind all defaults (after the mocks have been binded)
 bindInversifyDependencies()

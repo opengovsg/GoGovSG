@@ -111,14 +111,8 @@ After these have been set up, set the environment variables according to the tab
 |           SESSION_SECRET           |   Yes    | For hashing browser sessions, e.g. `change-this`                                                                                                                                               |
 |    VALID_EMAIL_GLOB_EXPRESSION     |   Yes    | The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com` |
 |           GA_TRACKING_ID           |    No    | The Google Analytics tracking ID, e.g. `UA-12345678-9`                                                                                                                                         |
-|           LOGIN_MESSAGE            |    No    | A text message that will be displayed on the login page as a snackbar                                                                                                                          |
-|            USER_MESSAGE            |    No    | A text message that will be displayed as a banner, once the user has logged in                                                                                                                 |
-|        ANNOUNCEMENT_MESSAGE        |    No    | The message in the announcement displayed as a modal to users on login                                                                                                                         |
-|         ANNOUNCEMENT_TITLE         |    No    | The title in the announcement displayed as a modal to users on login                                                                                                                           |
-|       ANNOUNCEMENT_SUBTITLE        |    No    | The subtitle in the announcement displayed as a modal to users on login                                                                                                                        |
-|          ANNOUNCEMENT_URL          |    No    | The hyperlink for the button in the announcement displayed as a modal to users on login                                                                                                        |
-|         ANNOUNCEMENT_IMAGE         |    No    | The image in the announcement displayed as a modal to users on login                                                                                                                           |
-|      ANNOUNCEMENT_BUTTON_TEXT      |    No    | The text on the button in the announcement displayed as a modal to users on login                                                                                                              |
+|       GROWTHBOOK_CLIENT_KEY        |    No    | GrowthBook Node SDK connection key (`sdk-…`) for operator copy (login snackbar, dashboard banner, announcement modal). When unset, those surfaces are empty.                                   |
+|        GROWTHBOOK_API_HOST         |    No    | GrowthBook CDN host for feature payloads. Defaults to `https://cdn.growthbook.io`.                                                                                                             |
 |           ROTATED_LINKS            |    No    | List of comma separated path of links to rotate on the landing page                                                                                                                            |
 |           CSP_REPORT_URI           |    No    | A URI to report CSP violations to.                                                                                                                                                             |
 |     CSP_ONLY_REPORT_VIOLATIONS     |    No    | Only report CSP violations, do not enforce.                                                                                                                                                    |
@@ -223,6 +217,23 @@ All source code resides in the `src` directory. Inside `src`, there is `client` 
 ### Asset variants
 
 This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg). These environments are run on separate infrastructure, and the deployment pipeline is set up to deploy any code changes in this codebase across all infrastructure environments. The environments are identical apart from the assets, copy and list of authorized users.
+
+### GrowthBook operator copy
+
+Login snackbar, dashboard banner, and post-login announcement modal copy are served from GrowthBook on the server. Operators edit values in the GrowthBook dashboard; each Node process polls at most once per minute. Set `GROWTHBOOK_CLIENT_KEY` to the Node SDK connection key for that deploy's environment (`dev`, `staging`, or `production`). When the key is unset or GrowthBook is unreachable before the first successful fetch, those surfaces are empty and the site still returns HTTP 200.
+
+After deploying this integration, provision the GrowthBook project as follows:
+
+1. Create nine feature flags with these exact keys (same names in every environment):
+   - Login snackbar (string): `login_message_gov`, `login_message_edu`, `login_message_health`
+   - Dashboard banner (string): `user_message_gov`, `user_message_edu`, `user_message_health`
+   - Announcement modal (JSON): `announcement_gov`, `announcement_edu`, `announcement_health`
+2. Enable all nine flags in the `dev`, `staging`, and `production` environments.
+3. Create one **Node.js SDK connection** per environment and copy each `clientKey` (`sdk-…`) into that environment's server `GROWTHBOOK_CLIENT_KEY`.
+4. Optionally set `GROWTHBOOK_API_HOST` if not using GrowthBook Cloud (`https://cdn.growthbook.io`).
+5. Populate copy per variant before traffic hits a build that no longer reads the removed `LOGIN_MESSAGE`, `USER_MESSAGE`, and `ANNOUNCEMENT_*` env vars.
+
+Announcement JSON fields: `title`, `subtitle`, `message`, `url`, `image`, `buttonText` (all optional). Empty string or unset value hides the UI for that surface.
 
 ### Babel
 

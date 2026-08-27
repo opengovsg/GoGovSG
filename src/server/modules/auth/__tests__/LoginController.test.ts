@@ -13,6 +13,9 @@ import { UrlMapper } from '../../../mappers/UrlMapper'
 import { AuthService } from '../services'
 
 import { LoginController } from '..'
+import StubOperatorCopyService from '../../../services/StubOperatorCopyService'
+
+const operatorCopyService = new StubOperatorCopyService('login message')
 
 const loggerErrorSpy = jest.spyOn(logger, 'error')
 
@@ -44,7 +47,7 @@ describe('LoginController', () => {
       verifyOtp: jest.fn(),
       genDBUserWithOfficerEmail: jest.fn(),
     }
-    const controller = new LoginController(authService)
+    const controller = new LoginController(authService, operatorCopyService)
 
     test('session contains user', () => {
       const req = createRequestWithUser('fakeUser')
@@ -73,7 +76,7 @@ describe('LoginController', () => {
       verifyOtp: jest.fn(),
       genDBUserWithOfficerEmail: jest.fn(),
     }
-    const controller = new LoginController(authService)
+    const controller = new LoginController(authService, operatorCopyService)
 
     test('returns login message', () => {
       const req = httpMocks.createRequest()
@@ -91,7 +94,7 @@ describe('LoginController', () => {
       verifyOtp: jest.fn(),
       genDBUserWithOfficerEmail: jest.fn(),
     }
-    const controller = new LoginController(authService)
+    const controller = new LoginController(authService, operatorCopyService)
 
     test('returns domains', () => {
       const req = httpMocks.createRequest()
@@ -134,7 +137,7 @@ describe('LoginController', () => {
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       new UserRepository(new UserMapper(urlMapper), urlMapper),
     )
-    const controller = new LoginController(authService)
+    const controller = new LoginController(authService, operatorCopyService)
     beforeEach(() => {
       hash.mockClear()
       compare.mockClear()
@@ -237,7 +240,7 @@ describe('LoginController', () => {
       userRepository,
     )
 
-    const controller = new LoginController(authService)
+    const controller = new LoginController(authService, operatorCopyService)
 
     beforeEach(() => {
       hash.mockClear()
@@ -446,7 +449,7 @@ describe('LoginController', () => {
       { deleteOtpByEmail, setOtpForEmail, getOtpForEmail },
       userRepository,
     )
-    const controller = new LoginController(authService)
+    const controller = new LoginController(authService, operatorCopyService)
 
     beforeEach(() => {
       hash.mockClear()

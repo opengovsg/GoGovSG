@@ -1,12 +1,9 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import {
-  logger,
-  loginMessage,
-  validEmailDomainGlobExpression,
-} from '../../config'
+import { logger, validEmailDomainGlobExpression } from '../../config'
 import { DependencyIds } from '../../constants'
 import jsonMessage from '../../util/json'
+import { OperatorCopyService } from '../../services/OperatorCopyService'
 import { AuthService } from './interfaces'
 import { InvalidOtpError, NotFoundError } from '../../util/error'
 import { EmailProperty, VerifyOtpRequest } from '.'
@@ -22,15 +19,22 @@ import dogstatsd, {
 export class LoginController {
   private authService: AuthService
 
-  constructor(@inject(DependencyIds.authService) authService: AuthService) {
+  private operatorCopyService: OperatorCopyService
+
+  constructor(
+    @inject(DependencyIds.authService) authService: AuthService,
+    @inject(DependencyIds.operatorCopyService)
+    operatorCopyService: OperatorCopyService,
+  ) {
     this.authService = authService
+    this.operatorCopyService = operatorCopyService
   }
 
   public getLoginMessage: (
     req: Express.Request,
     res: Express.Response,
   ) => void = (_, res) => {
-    res.send(loginMessage)
+    res.send(this.operatorCopyService.getLoginMessage())
     return
   }
 
