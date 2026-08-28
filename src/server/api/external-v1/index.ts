@@ -31,6 +31,7 @@ const fileUploadMiddleware = fileUpload({
     fileSize: MAX_FILE_UPLOAD_SIZE, // 20MB
     files: 1,
   },
+  abortOnLimit: true,
 })
 
 /**

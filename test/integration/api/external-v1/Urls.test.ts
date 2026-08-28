@@ -240,7 +240,7 @@ describe('Url integration tests', () => {
     fs.writeFileSync(largeFilePath, Buffer.alloc(21 * 1024 * 1024))
     try {
       const res = await createFileUrl(apiKey, shortUrl, largeFilePath)
-      expect(res.status).toBe(400)
+      expect(res.status).toBe(413)
     } finally {
       fs.unlinkSync(largeFilePath)
     }
