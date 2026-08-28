@@ -166,4 +166,79 @@ describe('UrlCheckController test', () => {
       expect(next).toHaveBeenCalled()
     })
   })
+
+  describe('externalBulkUrlCheck tests', () => {
+    const urls = ['https://example.com', 'https://example1.com']
+    const controller = new UrlCheckController(mockUrlThreatScanService)
+    const badRequest = jest.fn()
+
+    beforeEach(() => {
+      mockUrlThreatScanService.isThreatBulk.mockClear()
+      badRequest.mockClear()
+    })
+
+    it('does not invoke checks if no urls', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.userId = 1
+      const res = httpMocks.createResponse()
+      const next = jest.fn()
+
+      await controller.externalBulkUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreatBulk).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
+
+    it('reports on server error', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.userId = 1
+      req.body.bulkLongUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreatBulk.mockRejectedValue(false)
+      res.serverError = badRequest
+
+      await controller.externalBulkUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
+      expect(badRequest).toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
+    })
+
+    it('rejects on bad URLs', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.userId = 1
+      req.body.bulkLongUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreatBulk.mockResolvedValue(true)
+      res.badRequest = badRequest
+
+      await controller.externalBulkUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
+      expect(badRequest).toHaveBeenCalled()
+      expect(next).not.toHaveBeenCalled()
+    })
+
+    it('passes through on good URLs', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.userId = 1
+      req.body.bulkLongUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreatBulk.mockResolvedValue(false)
+      res.badRequest = badRequest
+      res.serverError = badRequest
+
+      await controller.externalBulkUrlCheck(req, res, next)
+
+      expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
+      expect(badRequest).not.toHaveBeenCalled()
+      expect(next).toHaveBeenCalled()
+    })
+  })
 })

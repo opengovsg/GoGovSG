@@ -19,18 +19,9 @@ const urlManagementService = {
   deactivateMaliciousShortUrl: jest.fn(),
 }
 
-const urlThreatScanService = {
-  isThreat: jest.fn(),
-  isThreatBulk: jest.fn(),
-}
-
 const urlV1Mapper = new UrlV1Mapper()
 
-const controller = new ApiV1Controller(
-  urlManagementService,
-  urlV1Mapper,
-  urlThreatScanService,
-)
+const controller = new ApiV1Controller(urlManagementService, urlV1Mapper)
 
 /**
  * Unit tests for API v1 controller.
@@ -181,13 +172,15 @@ describe('ApiV1Controller', () => {
 
     beforeEach(() => {
       urlManagementService.createUrl.mockReset()
-      urlThreatScanService.isThreat.mockReset()
-      urlThreatScanService.isThreat.mockResolvedValue(false)
     })
 
     it('creates all valid rows and returns 200', async () => {
       const req = httpMocks.createRequest({
-        body: { userId, urls: [{ shortUrl, longUrl }] },
+        body: {
+          userId,
+          validatedBulkRows: [{ index: 0, shortUrl, longUrl }],
+          bulkValidationErrors: [],
+        },
       })
       const res: any = httpMocks.createResponse()
       res.ok = jest.fn()
@@ -207,7 +200,14 @@ describe('ApiV1Controller', () => {
       const req = httpMocks.createRequest({
         body: {
           userId,
-          urls: [{ shortUrl, longUrl }, { longUrl: 'not-a-url' }],
+          validatedBulkRows: [{ index: 0, shortUrl, longUrl }],
+          bulkValidationErrors: [
+            {
+              index: 1,
+              message: 'Only HTTPS URLs are allowed.',
+              type: 'LongUrlError',
+            },
+          ],
         },
       })
       const res: any = httpMocks.createResponse()
@@ -229,7 +229,17 @@ describe('ApiV1Controller', () => {
 
     it('returns 400 when every row fails', async () => {
       const req = httpMocks.createRequest({
-        body: { userId, urls: [{ longUrl: 'not-a-url' }] },
+        body: {
+          userId,
+          validatedBulkRows: [],
+          bulkValidationErrors: [
+            {
+              index: 0,
+              message: 'Only HTTPS URLs are allowed.',
+              type: 'LongUrlError',
+            },
+          ],
+        },
       })
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()
@@ -251,10 +261,11 @@ describe('ApiV1Controller', () => {
       const req = httpMocks.createRequest({
         body: {
           userId,
-          urls: [
-            { shortUrl, longUrl },
-            { shortUrl, longUrl: 'https://www.agency2.gov.sg' },
+          validatedBulkRows: [
+            { index: 0, shortUrl, longUrl },
+            { index: 1, shortUrl, longUrl: 'https://www.agency2.gov.sg' },
           ],
+          bulkValidationErrors: [],
         },
       })
       const res: any = httpMocks.createResponse()
@@ -275,30 +286,13 @@ describe('ApiV1Controller', () => {
       })
     })
 
-    it('reports malicious links as row errors', async () => {
-      const req = httpMocks.createRequest({
-        body: { userId, urls: [{ shortUrl, longUrl }] },
-      })
-      const res: any = httpMocks.createResponse()
-      res.badRequest = jest.fn()
-      urlThreatScanService.isThreat.mockResolvedValue(true)
-
-      await controller.bulkCreateUrls(req, res)
-      expect(res.badRequest).toHaveBeenCalledWith({
-        created: [],
-        errors: [
-          {
-            index: 0,
-            message:
-              'Link is likely to be malicious, please contact us for further assistance',
-          },
-        ],
-      })
-    })
-
     it('reports shortUrl collision from createUrl as row error', async () => {
       const req = httpMocks.createRequest({
-        body: { userId, urls: [{ shortUrl, longUrl }] },
+        body: {
+          userId,
+          validatedBulkRows: [{ index: 0, shortUrl, longUrl }],
+          bulkValidationErrors: [],
+        },
       })
       const res: any = httpMocks.createResponse()
       res.badRequest = jest.fn()

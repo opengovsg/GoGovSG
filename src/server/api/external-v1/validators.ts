@@ -6,6 +6,7 @@ import {
   isValidShortUrl,
   isValidUrl,
 } from '../../../shared/util/validation'
+import { MessageType } from '../../../shared/util/messages'
 import { bulkUploadMaxNum, ogHostname } from '../../config'
 import { ACTIVE, INACTIVE } from '../../models/types'
 
@@ -67,14 +68,39 @@ export const urlBulkRowSchema = Joi.object({
   shortUrl: shortUrlValidator,
 })
 
+export const urlBulkRowEnvelopeSchema = Joi.object({
+  longUrl: Joi.string().optional(),
+  shortUrl: Joi.string().optional(),
+}).unknown(false)
+
 export const urlBulkSchema = Joi.object({
   userId: Joi.number().required(),
   urls: Joi.array()
-    .items(Joi.object().unknown(false))
+    .items(urlBulkRowEnvelopeSchema)
     .min(1)
     .max(bulkUploadMaxNum)
     .required(),
 })
+
+export const extractBulkRowValidationError = (
+  error: Joi.ValidationError,
+): { message: string; type?: MessageType } => {
+  const detail = error.details[0]
+  const field = detail.path[0]
+  let { message } = detail
+  const customMatch = message.match(/because (.+)$/)
+  if (customMatch) {
+    ;[, message] = customMatch
+  }
+
+  if (field === 'shortUrl') {
+    return { message, type: MessageType.ShortUrlError }
+  }
+  if (field === 'longUrl') {
+    return { message, type: MessageType.LongUrlError }
+  }
+  return { message }
+}
 
 export const urlEditSchema = Joi.object({
   userId: Joi.number().required(),

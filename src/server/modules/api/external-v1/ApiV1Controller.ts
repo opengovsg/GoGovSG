@@ -1,5 +1,4 @@
 import Express from 'express'
-import * as Joi from 'joi'
 import { inject, injectable } from 'inversify'
 import Sequelize from 'sequelize'
 
@@ -22,8 +21,18 @@ import { UserUrlsQueryConditions } from '../../../repositories/types'
 
 import { UrlBulkCreationRequest, UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
-import { UrlThreatScanService } from '../../threat/interfaces'
-import { urlBulkRowSchema } from '../../../api/external-v1/validators'
+
+type ValidatedBulkRow = {
+  index: number
+  longUrl: string
+  shortUrl?: string
+}
+
+type BulkValidationError = {
+  index: number
+  message: string
+  type?: MessageType
+}
 
 @injectable()
 export class ApiV1Controller {
@@ -31,19 +40,14 @@ export class ApiV1Controller {
 
   private urlV1Mapper: UrlV1Mapper
 
-  private urlThreatScanService: UrlThreatScanService
-
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
     @inject(DependencyIds.urlV1Mapper)
     urlV1Mapper: UrlV1Mapper,
-    @inject(DependencyIds.urlThreatScanService)
-    urlThreatScanService: UrlThreatScanService,
   ) {
     this.urlManagementService = urlManagementService
     this.urlV1Mapper = urlV1Mapper
-    this.urlThreatScanService = urlThreatScanService
   }
 
   public createUrl: (
@@ -85,50 +89,26 @@ export class ApiV1Controller {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, urls }: UrlBulkCreationRequest = req.body
+    const {
+      userId,
+      validatedBulkRows = [],
+      bulkValidationErrors = [],
+    }: UrlBulkCreationRequest & {
+      validatedBulkRows?: ValidatedBulkRow[]
+      bulkValidationErrors?: BulkValidationError[]
+    } = req.body
     const created = []
-    const errors = []
+    const errors = [...bulkValidationErrors]
     const usedShortUrls = new Set<string>()
 
     /* eslint-disable no-await-in-loop, no-continue */
-    for (let index = 0; index < urls.length; index += 1) {
-      const row = urls[index]
-      const { error, value } = urlBulkRowSchema.validate(row, {
-        abortEarly: true,
-      })
-      if (error) {
-        errors.push({
-          index,
-          ...ApiV1Controller.extractRowValidationError(error),
-        })
-        continue
-      }
-
-      const { longUrl, shortUrl } = value
-
+    for (let i = 0; i < validatedBulkRows.length; i += 1) {
+      const { index, longUrl, shortUrl } = validatedBulkRows[i]
       if (shortUrl && usedShortUrls.has(shortUrl)) {
         errors.push({
           index,
           message: `Short link "${shortUrl}" is already used.`,
           type: MessageType.ShortUrlError,
-        })
-        continue
-      }
-
-      try {
-        const isThreat = await this.urlThreatScanService.isThreat(longUrl)
-        if (isThreat) {
-          errors.push({
-            index,
-            message:
-              'Link is likely to be malicious, please contact us for further assistance',
-          })
-          continue
-        }
-      } catch (scanError) {
-        errors.push({
-          index,
-          message: (scanError as Error).message,
         })
         continue
       }
@@ -176,27 +156,6 @@ export class ApiV1Controller {
       return
     }
     res.badRequest(response)
-  }
-
-  private static extractRowValidationError(error: Joi.ValidationError): {
-    message: string
-    type?: MessageType
-  } {
-    const detail = error.details[0]
-    const field = detail.path[0]
-    let { message } = detail
-    const customMatch = message.match(/because (.+)$/)
-    if (customMatch) {
-      ;[, message] = customMatch
-    }
-
-    if (field === 'shortUrl') {
-      return { message, type: MessageType.ShortUrlError }
-    }
-    if (field === 'longUrl') {
-      return { message, type: MessageType.LongUrlError }
-    }
-    return { message }
   }
 
   public getUrlsWithConditions: (

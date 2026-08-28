@@ -89,6 +89,46 @@ export class UrlCheckController {
     }
     next()
   }
+
+  externalBulkUrlCheck: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void> = async (req, res, next) => {
+    const {
+      bulkLongUrls,
+      userId,
+    }: { bulkLongUrls?: string[]; userId: number } = req.body
+
+    if (!bulkLongUrls?.length) {
+      next()
+      return
+    }
+
+    try {
+      const isThreat = await this.urlThreatScanService.isThreatBulk(
+        bulkLongUrls,
+      )
+      if (isThreat) {
+        logger.warn(
+          `Malicious link attempt: User ${userId} tried to create malicious urls via external bulk API`,
+        )
+        dogstatsd.increment(MALICIOUS_ACTIVITY_LINK, 1, 1)
+        res.badRequest(
+          jsonMessage(
+            'Link is likely to be malicious, please contact us for further assistance',
+          ),
+        )
+        return
+      }
+    } catch (error) {
+      dogstatsd.increment(SCAN_FAILED_LINK, 1, 1)
+      logger.error(error)
+      res.serverError(jsonMessage((error as Error).message))
+      return
+    }
+    next()
+  }
 }
 
 export default UrlCheckController
