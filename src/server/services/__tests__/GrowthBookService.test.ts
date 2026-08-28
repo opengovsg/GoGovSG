@@ -1,6 +1,6 @@
 import { GrowthBookClient } from '@growthbook/growthbook'
 
-import { GrowthBookService } from '../GrowthBookService'
+import GrowthBookService from '../GrowthBookService'
 
 jest.mock('@growthbook/growthbook')
 jest.mock('../../../shared/util/asset-variant', () => 'gov')
@@ -39,7 +39,7 @@ describe('GrowthBookService', () => {
           init: mockInit,
           getFeatureValue: mockGetFeatureValue,
           refreshFeatures: jest.fn().mockResolvedValue(undefined),
-        }) as unknown as GrowthBookClient,
+        } as unknown as GrowthBookClient),
     )
   })
 

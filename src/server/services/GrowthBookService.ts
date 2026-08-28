@@ -15,7 +15,7 @@ const GROWTHBOOK_API_HOST = 'https://cdn.growthbook.io'
 const EMPTY_USER_CONTEXT = { attributes: {} }
 
 @injectable()
-export class GrowthBookService implements OperatorCopyService {
+class GrowthBookService implements OperatorCopyService {
   private client: GrowthBookClient | null = null
 
   public async init(): Promise<void> {
@@ -38,7 +38,7 @@ export class GrowthBookService implements OperatorCopyService {
     }
 
     setInterval(() => {
-      void this.client?.refreshFeatures({ skipCache: true })
+      this.client?.refreshFeatures({ skipCache: true }).catch(() => {})
     }, 60_000)
   }
 
@@ -62,3 +62,5 @@ export class GrowthBookService implements OperatorCopyService {
     return this.client.getFeatureValue(key, fallback, EMPTY_USER_CONTEXT) as T
   }
 }
+
+export default GrowthBookService

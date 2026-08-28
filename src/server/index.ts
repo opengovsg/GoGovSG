@@ -138,7 +138,9 @@ initDb()
     // Initialise nodemailer
     container.get<Mailer>(DependencyIds.mailer).initMailer()
 
-    await container.get<OperatorCopyService>(DependencyIds.growthBookService).init()
+    await container
+      .get<OperatorCopyService>(DependencyIds.growthBookService)
+      .init()
 
     // Site-wide cache control
     app.use((_, res, next) => {
