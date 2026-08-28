@@ -1,6 +1,6 @@
 import Express from 'express'
 import fileUpload from 'express-fileupload'
-import { createValidator } from 'express-joi-validation'
+import { createValidator } from '../../util/zodValidator.js'
 import { DependencyIds } from '../../constants.js'
 import { container } from '../../util/inversify.js'
 import jsonMessage from '../../util/json.js'
@@ -65,7 +65,7 @@ const validator = createValidator({ passError: true })
 /**
  * Place incoming file into the request body and
  * deserialize tags in FormData so that they can be
- * validated together with the other fields by Joi.
+ * validated together with the other fields by Zod.
  */
 function preprocessFormData(
   req: Express.Request,
