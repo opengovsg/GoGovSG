@@ -1,12 +1,12 @@
 import Express from 'express'
-import Joi from 'joi'
-import { createValidator } from 'express-joi-validation'
+import { z } from 'zod'
 
 import ImageFormat from '../../shared/util/image-format.js'
 import { QrCodeController } from '../modules/qr/index.js'
 import { isValidShortUrl } from '../../shared/util/validation.js'
 import { container } from '../util/inversify.js'
 import { DependencyIds } from '../constants.js'
+import { createValidator } from '../util/zodValidator.js'
 
 const qrCodeController = container.get<QrCodeController>(
   DependencyIds.qrCodeController,
@@ -17,24 +17,20 @@ function isValidFormat(format: string): boolean {
   return validFormats.includes(format)
 }
 
-const qrCodeRequestSchema = Joi.object({
-  url: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Not a valid short link' })
-      }
-      return url
-    })
-    .required(),
-  format: Joi.string()
-    .custom((format: string, helpers) => {
-      const decodedFormat = decodeURIComponent(format)
+const qrCodeRequestSchema = z.object({
+  url: z.string().superRefine((url, ctx) => {
+    if (!isValidShortUrl(url)) {
+      ctx.addIssue({ code: 'custom', message: 'Not a valid short link' })
+    }
+  }),
+  format: z
+    .string()
+    .transform((format) => decodeURIComponent(format))
+    .superRefine((decodedFormat, ctx) => {
       if (!isValidFormat(decodedFormat)) {
-        return helpers.message({ custom: 'Not a valid format' })
+        ctx.addIssue({ code: 'custom', message: 'Not a valid format' })
       }
-      return decodedFormat
-    })
-    .required(),
+    }),
 })
 
 const router = Express.Router()

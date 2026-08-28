@@ -1,24 +1,23 @@
 import Express from 'express'
-import Joi from 'joi'
-import { createValidator } from 'express-joi-validation'
+import { z } from 'zod'
+
 import { container } from '../util/inversify.js'
 import { JobController } from '../modules/job/index.js'
 import { DependencyIds } from '../constants.js'
+import { createValidator } from '../util/zodValidator.js'
 
 const router = Express.Router()
 const validator = createValidator({ passError: true })
 
 const jobController = container.get<JobController>(DependencyIds.jobController)
 
-const jobItemCallbackSchema = Joi.object({
-  userId: Joi.number(),
-  jobItemId: Joi.string().required(),
-  status: Joi.object()
-    .keys({
-      isSuccess: Joi.boolean().required(),
-      errorMessage: Joi.string().allow(null, ''),
-    })
-    .required(),
+const jobItemCallbackSchema = z.object({
+  userId: z.number().optional(),
+  jobItemId: z.string(),
+  status: z.object({
+    isSuccess: z.boolean(),
+    errorMessage: z.union([z.string(), z.null()]).optional(),
+  }),
 })
 /**
  * Update job status based on callback.
