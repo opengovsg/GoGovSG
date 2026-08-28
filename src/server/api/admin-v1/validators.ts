@@ -1,55 +1,19 @@
-import Joi from 'joi'
-import { isValidGovEmail } from '../../util/email.js'
-import {
-  isBlacklisted,
-  isCircularRedirects,
-  isHttps,
-  isValidShortUrl,
-  isValidUrl,
-} from '../../../shared/util/validation.js'
-import { ogHostname } from '../../config.js'
+import { z } from 'zod'
 
-export const urlSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Short URL format is invalid.' })
-      }
-      return url
-    })
-    .optional(),
-  longUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isHttps(url)) {
-        return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-      }
-      if (!isValidUrl(url)) {
-        return helpers.message({ custom: 'Long URL format is invalid.' })
-      }
-      if (isCircularRedirects(url, ogHostname)) {
-        return helpers.message({
-          custom: 'Circular redirects are not allowed.',
-        })
-      }
-      if (isBlacklisted(url)) {
-        return helpers.message({
-          custom: 'Creation of URLs to link shortener sites are not allowed.',
-        })
-      }
-      return url
-    })
-    .required(),
-  email: Joi.string()
-    .custom((email: string, helpers) => {
-      if (!isValidGovEmail(email)) {
-        return helpers.message({
-          custom: 'Invalid email provided. Email domain is not whitelisted.',
-        })
-      }
-      return email
-    })
-    .required(),
+import {
+  govEmailSchema,
+  longUrlSchema,
+  optionalShortUrlSchema,
+  userIdSchema,
+} from '../shared/schemas.js'
+
+export const urlSchema = z.object({
+  userId: userIdSchema,
+  shortUrl: optionalShortUrlSchema,
+  longUrl: longUrlSchema,
+  email: govEmailSchema(
+    'Invalid email provided. Email domain is not whitelisted.',
+  ),
 })
 
 export default urlSchema
