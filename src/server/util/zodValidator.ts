@@ -11,6 +11,12 @@ export type ZodValidatorOptions = {
 }
 
 function formatIssueMessage(issue: ZodError['issues'][number]): string {
+  if (issue.code === 'invalid_value' && 'values' in issue) {
+    const field = issue.path.map(String).join('.') || 'value'
+    const values = issue.values.map((value) => String(value)).join(', ')
+    return `"${field}" must be one of [${values}]`
+  }
+
   if (issue.message && !issue.message.startsWith('Invalid input')) {
     return issue.message
   }
@@ -20,12 +26,6 @@ function formatIssueMessage(issue: ZodError['issues'][number]): string {
     if (issue.input === undefined) {
       return `"${field}" is required`
     }
-  }
-
-  if (issue.code === 'invalid_value') {
-    const field = issue.path.map(String).join('.') || 'value'
-    const values = issue.values.map((value) => JSON.stringify(value)).join(', ')
-    return `"${field}" must be one of [${values.replace(/"/g, '')}]`
   }
 
   return issue.message

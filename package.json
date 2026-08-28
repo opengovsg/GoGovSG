@@ -84,7 +84,6 @@
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "express-fileupload": "^1.5.2",
-    "express-joi-validation": "^6.1.0",
     "express-rate-limit": "^8.6.2",
     "express-session": "^1.19.0",
     "file-saver": "^2.0.5",
@@ -95,7 +94,6 @@
     "i18next": "^26.3.6",
     "i18next-http-backend": "^4.0.1",
     "inversify": "^8.2.3",
-    "joi": "^18.2.3",
     "lodash": "^4.18.1",
     "minimatch": "^10.2.6",
     "moment": "^2.30.1",
@@ -126,7 +124,7 @@
     "ua-parser-js": "^2.0.10",
     "validator": "^13.15.35",
     "winston": "^3.19.0",
-    "zod": "^3.25.76"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
