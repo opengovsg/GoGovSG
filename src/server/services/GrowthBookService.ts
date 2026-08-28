@@ -9,24 +9,18 @@ import {
   getUserMessageKey,
 } from '../lib/growthbook'
 import { growthbookClientKey, logger } from '../config'
+import { OperatorCopyService } from './OperatorCopyService'
 
 const GROWTHBOOK_API_HOST = 'https://cdn.growthbook.io'
 const EMPTY_USER_CONTEXT = { attributes: {} }
 
-export interface OperatorCopyService {
-  init(): Promise<void>
-  getLoginMessage(): string
-  getUserMessage(): string
-  getUserAnnouncement(): AnnouncementPayload | null
-}
-
 @injectable()
-export class GrowthBookOperatorCopyService implements OperatorCopyService {
+export class GrowthBookService implements OperatorCopyService {
   private client: GrowthBookClient | null = null
 
   public async init(): Promise<void> {
     if (!growthbookClientKey) {
-      logger.warn('GROWTHBOOK_CLIENT_KEY is not set; operator copy disabled.')
+      logger.warn('GROWTHBOOK_CLIENT_KEY is not set; GrowthBook disabled.')
       return
     }
 
@@ -39,7 +33,7 @@ export class GrowthBookOperatorCopyService implements OperatorCopyService {
 
     if (!result.success) {
       logger.warn(
-        `GrowthBook init failed (source=${result.source}); operator copy empty until refresh succeeds.`,
+        `GrowthBook init failed (source=${result.source}); features empty until refresh succeeds.`,
       )
     }
 

@@ -1,6 +1,6 @@
 import { GrowthBookClient } from '@growthbook/growthbook'
 
-import { GrowthBookOperatorCopyService } from '../GrowthBookOperatorCopyService'
+import { GrowthBookService } from '../GrowthBookService'
 
 jest.mock('@growthbook/growthbook')
 jest.mock('../../../shared/util/asset-variant', () => 'gov')
@@ -26,7 +26,7 @@ const MockGrowthBookClient = GrowthBookClient as jest.MockedClass<
   typeof GrowthBookClient
 >
 
-describe('GrowthBookOperatorCopyService', () => {
+describe('GrowthBookService', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     jest.clearAllMocks()
@@ -48,7 +48,7 @@ describe('GrowthBookOperatorCopyService', () => {
   })
 
   it('returns empty copy when GROWTHBOOK_CLIENT_KEY is unset', async () => {
-    const service = new GrowthBookOperatorCopyService()
+    const service = new GrowthBookService()
 
     await service.init()
 
@@ -69,7 +69,7 @@ describe('GrowthBookOperatorCopyService', () => {
       return fallback
     })
 
-    const service = new GrowthBookOperatorCopyService()
+    const service = new GrowthBookService()
     await service.init()
 
     expect(mockInit).toHaveBeenCalledWith({ timeout: 3000 })
@@ -85,7 +85,7 @@ describe('GrowthBookOperatorCopyService', () => {
     mockConfigState.growthbookClientKey = 'sdk-test'
     mockInit.mockResolvedValue({ success: false, source: 'timeout' })
 
-    const service = new GrowthBookOperatorCopyService()
+    const service = new GrowthBookService()
     await service.init()
 
     expect(service.getLoginMessage()).toBe('')

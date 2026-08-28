@@ -57,7 +57,7 @@ export const DependencyIds = {
   safeBrowsingRepository: Symbol.for('safeBrowsingRepository'),
   urlThreatScanService: Symbol.for('urlThreatScanService'),
   urlCheckController: Symbol.for('urlCheckController'),
-  operatorCopyService: Symbol.for('operatorCopyService'),
+  growthBookService: Symbol.for('growthBookService'),
   linksToRotate: Symbol.for('linksToRotate'),
   ogUrl: Symbol.for('ogUrl'),
   gaTrackingId: Symbol.for('gaTrackingId'),

@@ -27,7 +27,7 @@ import dogstatsd, {
 import TagManagementServiceInterface from './interfaces/TagManagementService'
 import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface'
 import { UserUrlsQueryConditions } from '../../repositories/types'
-import { OperatorCopyService } from '../../services/GrowthBookOperatorCopyService'
+import { OperatorCopyService } from '../../services/OperatorCopyService'
 
 @injectable()
 export class UserController {
@@ -42,7 +42,7 @@ export class UserController {
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
-    @inject(DependencyIds.operatorCopyService)
+    @inject(DependencyIds.growthBookService)
     operatorCopyService: OperatorCopyService,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,

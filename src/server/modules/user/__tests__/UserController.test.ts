@@ -11,7 +11,7 @@ import {
 } from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
-import { OperatorCopyService } from '../../../services/GrowthBookOperatorCopyService'
+import { OperatorCopyService } from '../../../services/OperatorCopyService'
 import {
   AlreadyExistsError,
   InvalidUrlUpdateError,

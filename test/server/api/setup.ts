@@ -18,7 +18,7 @@ import {
 import bindInversifyDependencies from '../../../src/server/inversify.config'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
-import { OperatorCopyService } from '../../../src/server/services/GrowthBookOperatorCopyService'
+import { OperatorCopyService } from '../../../src/server/services/OperatorCopyService'
 
 const operatorCopyService: OperatorCopyService = {
   init: async () => {},
@@ -27,9 +27,9 @@ const operatorCopyService: OperatorCopyService = {
   getUserAnnouncement: () => null,
 }
 
-if (!container.isBound(DependencyIds.operatorCopyService)) {
+if (!container.isBound(DependencyIds.growthBookService)) {
   container
-    .bind(DependencyIds.operatorCopyService)
+    .bind(DependencyIds.growthBookService)
     .toConstantValue(operatorCopyService)
 }
 

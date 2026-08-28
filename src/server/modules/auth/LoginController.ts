@@ -3,7 +3,7 @@ import { inject, injectable } from 'inversify'
 import { logger, validEmailDomainGlobExpression } from '../../config'
 import { DependencyIds } from '../../constants'
 import jsonMessage from '../../util/json'
-import { OperatorCopyService } from '../../services/GrowthBookOperatorCopyService'
+import { OperatorCopyService } from '../../services/OperatorCopyService'
 import { AuthService } from './interfaces'
 import { InvalidOtpError, NotFoundError } from '../../util/error'
 import { EmailProperty, VerifyOtpRequest } from '.'
@@ -23,7 +23,7 @@ export class LoginController {
 
   constructor(
     @inject(DependencyIds.authService) authService: AuthService,
-    @inject(DependencyIds.operatorCopyService)
+    @inject(DependencyIds.growthBookService)
     operatorCopyService: OperatorCopyService,
   ) {
     this.authService = authService

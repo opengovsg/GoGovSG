@@ -13,7 +13,7 @@ import { UrlMapper } from '../../../mappers/UrlMapper'
 import { AuthService } from '../services'
 
 import { LoginController } from '..'
-import { OperatorCopyService } from '../../../services/GrowthBookOperatorCopyService'
+import { OperatorCopyService } from '../../../services/OperatorCopyService'
 
 const operatorCopyService: OperatorCopyService = {
   init: async () => {},

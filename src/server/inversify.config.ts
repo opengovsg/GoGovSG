@@ -85,7 +85,7 @@ import { BulkService } from './modules/bulk/services'
 import { BulkController } from './modules/bulk'
 import { SQSService } from './services/sqs'
 import { JobController } from './modules/job'
-import { GrowthBookOperatorCopyService } from './services/GrowthBookOperatorCopyService'
+import { GrowthBookService } from './services/GrowthBookService'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -97,10 +97,7 @@ function bindIfUnbound<T>(
 }
 
 export default () => {
-  bindIfUnbound(
-    DependencyIds.operatorCopyService,
-    GrowthBookOperatorCopyService,
-  )
+  bindIfUnbound(DependencyIds.growthBookService, GrowthBookService)
   container.bind(DependencyIds.linksToRotate).toConstantValue(linksToRotate)
   container.bind(DependencyIds.ogUrl).toConstantValue(ogUrl)
   container.bind(DependencyIds.gaTrackingId).toConstantValue(gaTrackingId)
