@@ -8,6 +8,7 @@ import {
   UrlEditRequest,
 } from './index.js'
 import jsonMessage from '../../util/json.js'
+import { formatZodValidationMessage } from '../../util/zodValidator.js'
 import { DependencyIds } from '../../constants.js'
 import {
   AlreadyExistsError,
@@ -214,9 +215,11 @@ export class UserController {
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
     const queryConditions = UserController.extractUrlQueryConditions(req)
-    const validationResult = userUrlsQueryConditions.validate(queryConditions)
-    if (validationResult.error) {
-      res.badRequest(jsonMessage(validationResult.error.message))
+    const validationResult = userUrlsQueryConditions.safeParse(queryConditions)
+    if (!validationResult.success) {
+      res.badRequest(
+        jsonMessage(formatZodValidationMessage(validationResult.error)),
+      )
       return
     }
     // Find user and paginated urls
@@ -281,9 +284,11 @@ export class UserController {
     const limit = 5
     searchText = searchText.toString().toLowerCase()
     const queryConditions = { searchText, userId, limit }
-    const validationResult = userTagsQueryConditions.validate(queryConditions)
-    if (validationResult.error) {
-      res.badRequest(jsonMessage(validationResult.error.message))
+    const validationResult = userTagsQueryConditions.safeParse(queryConditions)
+    if (!validationResult.success) {
+      res.badRequest(
+        jsonMessage(formatZodValidationMessage(validationResult.error)),
+      )
       return
     }
     try {
