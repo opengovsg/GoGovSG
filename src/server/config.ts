@@ -149,8 +149,6 @@ export const emailValidator = new minimatch.Minimatch(
 )
 export const growthbookClientKey: string | undefined =
   process.env.GROWTHBOOK_CLIENT_KEY
-export const growthbookApiHost =
-  process.env.GROWTHBOOK_API_HOST || 'https://cdn.growthbook.io'
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS

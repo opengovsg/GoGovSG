@@ -7,15 +7,11 @@ jest.mock('../../../shared/util/asset-variant', () => 'gov')
 
 const mockConfigState = {
   growthbookClientKey: undefined as string | undefined,
-  growthbookApiHost: 'https://cdn.growthbook.io',
 }
 
 jest.mock('../../config', () => ({
   get growthbookClientKey() {
     return mockConfigState.growthbookClientKey
-  },
-  get growthbookApiHost() {
-    return mockConfigState.growthbookApiHost
   },
   logger: {
     warn: jest.fn(),

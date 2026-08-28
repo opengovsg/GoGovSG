@@ -8,8 +8,9 @@ import {
   getLoginMessageKey,
   getUserMessageKey,
 } from '../lib/growthbook'
-import { growthbookApiHost, growthbookClientKey, logger } from '../config'
+import { growthbookClientKey, logger } from '../config'
 
+const GROWTHBOOK_API_HOST = 'https://cdn.growthbook.io'
 const EMPTY_USER_CONTEXT = { attributes: {} }
 
 export interface OperatorCopyService {
@@ -30,7 +31,7 @@ export class GrowthBookOperatorCopyService implements OperatorCopyService {
     }
 
     this.client = new GrowthBookClient({
-      apiHost: growthbookApiHost,
+      apiHost: GROWTHBOOK_API_HOST,
       clientKey: growthbookClientKey,
     })
 
