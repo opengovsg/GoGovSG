@@ -68,15 +68,15 @@ export const urlBulkRowSchema = Joi.object({
   shortUrl: shortUrlValidator,
 })
 
-export const urlBulkRowEnvelopeSchema = Joi.object({
-  longUrl: Joi.string().optional(),
-  shortUrl: Joi.string().optional(),
-}).unknown(false)
-
 export const urlBulkSchema = Joi.object({
   userId: Joi.number().required(),
   urls: Joi.array()
-    .items(urlBulkRowEnvelopeSchema)
+    .items(
+      Joi.object({
+        longUrl: Joi.string().optional(),
+        shortUrl: Joi.string().optional(),
+      }).unknown(false),
+    )
     .min(1)
     .max(bulkUploadMaxNum)
     .required(),

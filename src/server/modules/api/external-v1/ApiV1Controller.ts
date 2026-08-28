@@ -19,20 +19,8 @@ import {
 } from '../../../repositories/enums'
 import { UserUrlsQueryConditions } from '../../../repositories/types'
 
-import { UrlBulkCreationRequest, UrlCreationRequest, UrlEditRequest } from '.'
+import { UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
-
-type ValidatedBulkRow = {
-  index: number
-  longUrl: string
-  shortUrl?: string
-}
-
-type BulkValidationError = {
-  index: number
-  message: string
-  type?: MessageType
-}
 
 @injectable()
 export class ApiV1Controller {
@@ -93,9 +81,6 @@ export class ApiV1Controller {
       userId,
       validatedBulkRows = [],
       bulkValidationErrors = [],
-    }: UrlBulkCreationRequest & {
-      validatedBulkRows?: ValidatedBulkRow[]
-      bulkValidationErrors?: BulkValidationError[]
     } = req.body
     const created = []
     const errors = [...bulkValidationErrors]

@@ -62,61 +62,29 @@ export class UrlCheckController {
     res: Response,
     next: NextFunction,
   ) => Promise<void> = async (req, res, next) => {
-    const { longUrls }: { longUrls: string[] } = req.body
+    const { longUrls, userId }: { longUrls?: string[]; userId?: number } =
+      req.body
 
-    if (longUrls) {
-      try {
-        const isThreat = await this.urlThreatScanService.isThreatBulk(longUrls)
-        if (isThreat) {
-          const user = req.session?.user
-          logger.warn(
-            `Malicious link attempt: User ${
-              user?.email || user?.id
-            } tried to create a malicious url via bulk upload`,
-          )
-          res.badRequest(
-            jsonMessage(
-              'Csv contains a link that is likely to be malicious, please contact us for further assistance',
-            ),
-          )
-          return
-        }
-      } catch (error) {
-        logger.error(error)
-        res.serverError(jsonMessage((error as Error).message))
-        return
-      }
-    }
-    next()
-  }
-
-  externalBulkUrlCheck: (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => Promise<void> = async (req, res, next) => {
-    const {
-      bulkLongUrls,
-      userId,
-    }: { bulkLongUrls?: string[]; userId: number } = req.body
-
-    if (!bulkLongUrls?.length) {
+    if (!longUrls?.length) {
       next()
       return
     }
 
     try {
-      const isThreat = await this.urlThreatScanService.isThreatBulk(
-        bulkLongUrls,
-      )
+      const isThreat = await this.urlThreatScanService.isThreatBulk(longUrls)
       if (isThreat) {
+        const user = req.session?.user
         logger.warn(
-          `Malicious link attempt: User ${userId} tried to create malicious urls via external bulk API`,
+          `Malicious link attempt: User ${
+            user?.email || user?.id || userId
+          } tried to create a malicious url via bulk upload`,
         )
         dogstatsd.increment(MALICIOUS_ACTIVITY_LINK, 1, 1)
         res.badRequest(
           jsonMessage(
-            'Link is likely to be malicious, please contact us for further assistance',
+            req.body.urls
+              ? 'Link is likely to be malicious, please contact us for further assistance'
+              : 'Csv contains a link that is likely to be malicious, please contact us for further assistance',
           ),
         )
         return

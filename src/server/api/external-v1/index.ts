@@ -57,9 +57,8 @@ function preprocessExternalBulkRows(
     type?: string
   }[] = []
 
-  /* eslint-disable no-restricted-syntax */
-  for (let index = 0; index < urls.length; index += 1) {
-    const { error, value } = urlBulkRowSchema.validate(urls[index], {
+  urls.forEach((row: unknown, index: number) => {
+    const { error, value } = urlBulkRowSchema.validate(row, {
       abortEarly: true,
     })
     if (error) {
@@ -67,19 +66,18 @@ function preprocessExternalBulkRows(
         index,
         ...extractBulkRowValidationError(error),
       })
-    } else {
-      validatedBulkRows.push({
-        index,
-        longUrl: value.longUrl,
-        shortUrl: value.shortUrl,
-      })
+      return
     }
-  }
-  /* eslint-enable no-restricted-syntax */
+    validatedBulkRows.push({
+      index,
+      longUrl: value.longUrl,
+      shortUrl: value.shortUrl,
+    })
+  })
 
   req.body.validatedBulkRows = validatedBulkRows
   req.body.bulkValidationErrors = bulkValidationErrors
-  req.body.bulkLongUrls = validatedBulkRows.map((row) => row.longUrl)
+  req.body.longUrls = validatedBulkRows.map((row) => row.longUrl)
   next()
 }
 
@@ -94,7 +92,7 @@ router.post(
   '/urls/bulk',
   validator.body(urlBulkSchema),
   preprocessExternalBulkRows,
-  urlCheckController.externalBulkUrlCheck,
+  urlCheckController.bulkUrlCheck,
   apiV1Controller.bulkCreateUrls,
 )
 
