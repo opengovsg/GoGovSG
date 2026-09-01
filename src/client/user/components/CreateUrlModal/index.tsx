@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const CreateUrlModal = () => {
+function CreateUrlModal() {
   const createUrlModal = useSelector(
     (state: GoGovReduxState) => state.user.createUrlModal,
   )

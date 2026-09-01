@@ -3,6 +3,10 @@ import crypto from 'crypto'
 import fs from 'fs'
 import { customAlphabet } from 'nanoid/async'
 import {
+  getMaildevMessageIds,
+  waitForOtpFromMaildev,
+} from '../../shared/maildev'
+import {
   API_KEY_SALT,
   API_LOGIN_OTP,
   API_LOGIN_VERIFY,
@@ -10,7 +14,7 @@ import {
   LOCAL_EMAIL_URL,
 } from '../config'
 import { createDbUser, deleteDbUser } from './db'
-import { get, postJson } from './requests'
+import { postJson } from './requests'
 
 export const DATETIME_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
 
@@ -60,15 +64,16 @@ export const deleteIntegrationTestUser: (email: string) => Promise<void> =
 export const getAuthCookie: (email: string) => Promise<string> = async (
   email,
 ) => {
+  const afterMessageIds = await getMaildevMessageIds(LOCAL_EMAIL_URL)
   const otpRes = await postJson(API_LOGIN_OTP, {
     email,
   })
   if (!otpRes.ok) throw new Error('Failed to generate OTP')
-  const emailRes = await get(LOCAL_EMAIL_URL)
-  if (!emailRes.ok) throw new Error('Failed to check email for OTP')
-  const emailJson = await emailRes.json()
-  const emailBody = emailJson[emailJson.length - 1].html
-  const emailOTP = JSON.stringify(emailBody).match(/<b>([A-Z0-9]{6})<\/b>/)![1]
+  const emailOTP = await waitForOtpFromMaildev({
+    to: email,
+    afterMessageIds,
+    maildevUrl: LOCAL_EMAIL_URL,
+  })
   const verifyRes = await postJson(API_LOGIN_VERIFY, {
     email,
     otp: emailOTP,

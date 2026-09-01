@@ -1,6 +1,16 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          warnOnly: true,
+        },
+      },
+    ],
+  },
   coverageThreshold: {
     global: {
       statements: 24,

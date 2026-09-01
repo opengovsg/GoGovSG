@@ -1,5 +1,9 @@
-import { fetch } from 'cross-fetch'
 import { testEmail } from './config'
+import {
+  clearMaildevInbox,
+  getMaildevMessageIds,
+  waitForOtpFromMaildev,
+} from '../../shared/maildev'
 import {
   loginButton,
   loginSuccessAlert,
@@ -13,35 +17,20 @@ import {
  */
 const loginProcedure = async (t, loginEmail = testEmail) => {
   await t.maximizeWindow()
-  await t
-    .click(loginButton)
-    .typeText('#email', `${loginEmail}`)
-    .click(signInButton)
+  await t.click(loginButton).typeText('#email', `${loginEmail}`)
 
-  await fetch('http://localhost:1080/email/', {
-    method: 'GET',
+  const afterMessageIds = await getMaildevMessageIds()
+  await t.click(signInButton)
+
+  const mailOTP = await waitForOtpFromMaildev({
+    to: loginEmail,
+    afterMessageIds,
   })
-    .then((res) => {
-      if (!res.ok) {
-        console.log(res.status)
-      }
-      return res.json()
-    })
-    .then((json) => {
-      const mailIndex = json.length - 1
-      const mailBody = json[mailIndex].html
-      const mailOTP = JSON.stringify(mailBody).match(/<b>([A-Z0-9]{6})<\/b>/)[1]
-      return mailOTP
-    })
-    .then(async (mailOTP) => {
-      await t.typeText('#otp', mailOTP)
-    })
+  await t.typeText('#otp', mailOTP)
 
   await t.click(signInButton).click(loginSuccessAlert)
 
-  await fetch('http://localhost:1080/email/all', {
-    method: 'DELETE',
-  })
+  await clearMaildevInbox()
 
   if (await userModal.exists) {
     await t.click(userModalCloseButton)

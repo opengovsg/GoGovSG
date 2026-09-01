@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const UrlTable = () => {
+function UrlTable() {
   const classes = useStyles()
   const urlCount = useSelector((state: GoGovReduxState) => state.user.urlCount)
   const tableConfig = useSelector(

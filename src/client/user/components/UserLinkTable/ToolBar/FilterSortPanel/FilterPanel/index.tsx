@@ -21,7 +21,7 @@ export type FilterPanelProps = {
   setIsIncludeInactive: (checked: boolean) => void
 }
 
-export default ({
+export default function ({
   isIncludeFiles,
   isIncludeLinks,
   isIncludeActive,
@@ -30,7 +30,7 @@ export default ({
   setIsIncludeLinks,
   setIsIncludeActive,
   setIsIncludeInactive,
-}: FilterPanelProps) => {
+}: FilterPanelProps) {
   const classes = useStyles()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
