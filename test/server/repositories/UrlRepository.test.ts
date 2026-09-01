@@ -682,6 +682,58 @@ describe('UrlRepository', () => {
         expect.anything(),
       )
     })
+
+    it('should convert an inactive URL link to a file link with private S3 ACL', async () => {
+      const newKey = `${baseShortUrl}.csv`
+      const newLongUrl = fileBucket.buildFileLongUrl(newKey)
+      const file = {
+        key: newKey,
+        data: Buffer.from(''),
+        mimetype: 'text/csv',
+      }
+      const update = jest.fn()
+      const setTags = jest.fn()
+      const url = {
+        ...baseUrl,
+        isFile: false,
+        state: StorableUrlState.Inactive,
+        update: update.mockImplementationOnce((params) => {
+          Object.assign(url, params)
+        }),
+        setTags,
+      }
+      const expectedUrl = {
+        ...baseStorableUrl,
+        isFile: true,
+        longUrl: newLongUrl,
+        state: StorableUrlState.Inactive,
+        tags: [],
+      }
+
+      scope.mockImplementation(() => urlModelMock)
+      findOne.mockResolvedValue(url)
+
+      await expect(
+        repository.update({ shortUrl: baseShortUrl }, { isFile: true }, file),
+      ).resolves.toEqual(expectedUrl)
+      expect(putObject).toHaveBeenCalledWith({
+        ContentType: file.mimetype,
+        Bucket: s3Bucket,
+        Body: file.data,
+        Key: file.key,
+        ACL: FileVisibility.Public,
+        CacheControl: 'no-cache',
+      })
+      expect(putObjectAcl).toHaveBeenCalledWith({
+        Bucket: s3Bucket,
+        Key: newKey,
+        ACL: FileVisibility.Private,
+      })
+      expect(update).toHaveBeenCalledWith(
+        { isFile: true, longUrl: newLongUrl },
+        expect.anything(),
+      )
+    })
   })
 
   describe('getLongUrl', () => {

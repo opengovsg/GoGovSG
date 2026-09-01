@@ -157,6 +157,10 @@ export class UrlRepository implements UrlRepositoryInterface {
       } else if (isConvertingToFile) {
         const newKey = file.key
         await this.fileBucket.uploadFileToS3(file.data, newKey, file.mimetype)
+        const resultingState = updateParams.state ?? url.state
+        if (resultingState === StorableUrlState.Inactive) {
+          await this.fileBucket.setS3ObjectACL(newKey, Private)
+        }
         await url.update(
           {
             ...updateParams,
