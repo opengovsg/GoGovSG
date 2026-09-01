@@ -59,9 +59,13 @@ import { container } from './util/inversify.js'
 import { DependencyIds, ERROR_404_PATH } from './constants.js'
 import { Mailer } from './services/email.js'
 import parseDomain from './util/domain.js'
-import { RedirectController } from './modules/redirect/index.js'
+import {
+  RedirectController,
+  shortUrlRouteGuard,
+} from './modules/redirect/index.js'
 import assetVariant from '../shared/util/asset-variant.js'
 import dogstatsd, { ERROR_UNHANDLED_REJECTION } from './util/dogstatsd.js'
+import handleUriError from './util/handleUriError.js'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -184,6 +188,13 @@ initDb()
         ...sessionSettings,
       } as session.SessionOptions),
       // application/json
+      // Deliberately body-parser@1.x, not Express 5's own bundled
+      // express.json() (body-parser@2.x): body-parser@1.x sets
+      // `req.body = req.body || {}` even on a bodyless GET request, while
+      // express.json() would leave req.body as `undefined`. Several /api
+      // middlewares (userGuard, apiKeyAuthMiddleware, preprocess) do
+      // `req.body.xyz = ...` and would throw on GET requests if this were
+      // swapped for express.json().
       bodyParser.json(),
     ]
 
@@ -209,7 +220,8 @@ initDb()
       redirectController.gtagForTransitionPage,
     )
     app.get(
-      '/:shortUrl([a-zA-Z0-9-]+).?',
+      '/:shortUrl',
+      shortUrlRouteGuard,
       ...redirectSpecificMiddleware,
       redirectController.redirect,
     ) // The Redirect Endpoint
@@ -225,7 +237,7 @@ initDb()
 
     const errorHandler: express.ErrorRequestHandler = (
       err,
-      _req,
+      req,
       res,
       _next,
     ) => {
@@ -244,6 +256,11 @@ initDb()
         // This catches body-parser errors and returns a 400 error message
         console.error(err)
         res.badRequest(jsonMessage('Bad Request. JSON is malformed'))
+        return
+      }
+
+      if (err instanceof URIError) {
+        handleUriError(req, res)
         return
       }
 

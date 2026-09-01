@@ -61,8 +61,12 @@ export class RedirectController {
   ) => Promise<void> = async (req, res) => {
     const { shortUrl } = req.params
 
-    // Short link must not be null
-    if (!shortUrl) {
+    // Short link must not be null, and must be a single path segment. A
+    // single named `:shortUrl` route param can never actually be an array
+    // — arrays are only produced by wildcard `*` params — but Express 5's
+    // types widen every `req.params` value to `string | string[]` to
+    // account for those.
+    if (!shortUrl || Array.isArray(shortUrl)) {
       res.status(404).render(ERROR_404_PATH, {
         shortUrl,
         assetVariant,
