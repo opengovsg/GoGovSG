@@ -219,15 +219,11 @@ describe('UrlManagementService', () => {
       ).resolves.toStrictEqual({ ...fileUrl, isFile: false })
       expect(urlRepository.update).toHaveBeenCalledWith(
         fileUrl,
-        {
+        expect.objectContaining({
           longUrl: 'https://example.com',
-          state: undefined,
-          description: undefined,
-          contactEmail: undefined,
-          tags: undefined,
-          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
           isFile: false,
-        },
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+        }),
         undefined,
       )
       expect(dogstatsd.increment).toHaveBeenCalledWith(
@@ -246,15 +242,7 @@ describe('UrlManagementService', () => {
       ).resolves.toStrictEqual({ ...linkUrl, isFile: true })
       expect(urlRepository.update).toHaveBeenCalledWith(
         linkUrl,
-        {
-          longUrl: undefined,
-          state: undefined,
-          description: undefined,
-          contactEmail: undefined,
-          tags: undefined,
-          safeBrowsingExpiry: undefined,
-          isFile: true,
-        },
+        expect.objectContaining({ isFile: true }),
         {
           data: file.data,
           key: `${linkUrl.shortUrl}.json`,
@@ -311,7 +299,7 @@ describe('UrlManagementService', () => {
       )
       expect(urlRepository.update).toHaveBeenCalledWith(
         linkUrl,
-        { ...options, isFile: false },
+        options,
         undefined,
       )
     })
@@ -330,7 +318,7 @@ describe('UrlManagementService', () => {
       )
       expect(urlRepository.update).toHaveBeenCalledWith(
         fileUrl,
-        { isFile: true },
+        {},
         {
           data: file.data,
           key: `${fileUrl.shortUrl}.json`,

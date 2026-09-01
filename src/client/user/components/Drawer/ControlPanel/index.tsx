@@ -206,12 +206,6 @@ export default function ControlPanel() {
     setPendingSave(null)
   }
 
-  const handleCancelTypeConversion = () => {
-    setConfirmDialogOpen(false)
-    setPendingSave(null)
-  }
-
-  // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
     shortLinkDispatch?.setEditDescription(originalDescription)
     shortLinkDispatch?.setEditContactEmail(originalContactEmail)
@@ -264,7 +258,10 @@ export default function ControlPanel() {
               <TypeConversionConfirmDialog
                 open={confirmDialogOpen}
                 convertingToFile={editIsFile}
-                onCancel={handleCancelTypeConversion}
+                onClose={() => {
+                  setConfirmDialogOpen(false)
+                  setPendingSave(null)
+                }}
                 onConfirm={handleConfirmTypeConversion}
               />
               <Hidden mdUp>

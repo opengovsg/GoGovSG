@@ -12,12 +12,12 @@ import PrefixableTextField from '../../../../widgets/PrefixableTextField'
 import TrailingButton from './TrailingButton'
 
 type LongUrlEditorProps = {
-  isTypeConversion?: boolean
-  requestSaveWithConfirmation?: (saveAction: () => void) => void
+  isTypeConversion: boolean
+  requestSaveWithConfirmation: (saveAction: () => void) => void
 }
 
 export default function LongUrlEditor({
-  isTypeConversion = false,
+  isTypeConversion,
   requestSaveWithConfirmation,
 }: LongUrlEditorProps) {
   const theme = useTheme()
@@ -27,7 +27,7 @@ export default function LongUrlEditor({
     drawerStates.relevantShortLink!,
   )
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
-  const [editedLongUrl, setEditedLongUrl] = useState<string>(
+  const [editedLongUrl, setEditedLongUrl] = useState(
     isTypeConversion ? '' : originalLongUrl,
   )
 
@@ -35,18 +35,9 @@ export default function LongUrlEditor({
     setEditedLongUrl(isTypeConversion ? '' : originalLongUrl)
   }, [isTypeConversion, originalLongUrl])
 
-  const handleSave = () => {
-    const saveAction = () => shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
-    if (requestSaveWithConfirmation) {
-      requestSaveWithConfirmation(saveAction)
-    } else {
-      saveAction()
-    }
-  }
-
-  const isSaveDisabled = isTypeConversion
-    ? !isValidLongUrl(editedLongUrl, false)
-    : !isValidLongUrl(editedLongUrl, false) || editedLongUrl === originalLongUrl
+  const isSaveDisabled =
+    !isValidLongUrl(editedLongUrl, false) ||
+    (!isTypeConversion && editedLongUrl === originalLongUrl)
 
   return (
     <ConfigOption
@@ -70,7 +61,11 @@ export default function LongUrlEditor({
       trailing={
         <TrailingButton
           disabled={isSaveDisabled}
-          onClick={handleSave}
+          onClick={() =>
+            requestSaveWithConfirmation(() =>
+              shortLinkDispatch?.applyEditLongUrl(editedLongUrl),
+            )
+          }
           fullWidth={isMobileView}
           variant={isMobileView ? 'contained' : 'outlined'}
         >

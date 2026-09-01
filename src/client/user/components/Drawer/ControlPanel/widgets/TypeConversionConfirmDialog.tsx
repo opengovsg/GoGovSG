@@ -11,18 +11,18 @@ import {
 type TypeConversionConfirmDialogProps = {
   open: boolean
   convertingToFile: boolean
-  onCancel: () => void
+  onClose: () => void
   onConfirm: () => void
 }
 
 export default function TypeConversionConfirmDialog({
   open,
   convertingToFile,
-  onCancel,
+  onClose,
   onConfirm,
 }: TypeConversionConfirmDialogProps) {
   return (
-    <Dialog open={open} onClose={onCancel}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Change link type?</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -32,7 +32,7 @@ export default function TypeConversionConfirmDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel} color="primary">
+        <Button onClick={onClose} color="primary">
           Cancel
         </Button>
         <Button onClick={onConfirm} color="primary" variant="contained">

@@ -170,7 +170,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         contactEmail,
         tags,
         safeBrowsingExpiry,
-        ...(isFile !== undefined ? { isFile } : {}),
+        ...(typeChanged && isFile !== undefined ? { isFile } : {}),
       },
       storableFile,
     )
