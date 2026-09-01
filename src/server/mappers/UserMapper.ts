@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this, lines-between-class-members, no-dupe-class-members */
+/* eslint-disable class-methods-use-this, no-dupe-class-members */
 
 import { inject, injectable } from 'inversify'
 import { Mapper } from './Mapper'

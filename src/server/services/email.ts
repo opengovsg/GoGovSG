@@ -26,7 +26,7 @@ const domainVariantMap = {
 } as const
 const domainVariant = domainVariantMap[assetVariant]
 
-type SenderDomain = typeof domainVariantMap[keyof typeof domainVariantMap]
+type SenderDomain = (typeof domainVariantMap)[keyof typeof domainVariantMap]
 export interface MailBody {
   to: string
   body: string

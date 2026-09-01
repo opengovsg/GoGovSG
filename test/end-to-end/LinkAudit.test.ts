@@ -16,6 +16,7 @@ import {
   linkHistoryOriginalLinkH6,
   linkHistoryTagsH6,
   linkHistoryViewButton,
+  linkRowByShortUrl,
   linkTransferField,
   longUrl,
   signOutButton,
@@ -39,7 +40,7 @@ fixture(`URL Creation`)
 test('Creating a new url updates the link history with create change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
-  const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
+  const linkRow = linkRowByShortUrl(generatedShortLink)
   // Click the url in the table to open the drawer
   await t.click(linkRow)
   // Go to link history
@@ -51,7 +52,7 @@ test('Creating a new url updates the link history with create change set', async
 test('Disabling the link should update the link history with Link Status update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
-  const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
+  const linkRow = linkRowByShortUrl(generatedShortLink)
   // Click the url in the table to open the drawer
   await t.click(linkRow)
   // Disable the link
@@ -65,7 +66,7 @@ test('Disabling the link should update the link history with Link Status update 
 test('Changing the original link should update the link history with Original Link update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
-  const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
+  const linkRow = linkRowByShortUrl(generatedShortLink)
   // Click the url in the table to open the drawer
   await t.click(linkRow)
 
@@ -84,7 +85,7 @@ test('Changing the original link should update the link history with Original Li
 test('Changing the link owner should update the link history with Link Owner update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
-  const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
+  const linkRow = linkRowByShortUrl(generatedShortLink)
   // Click the url in the table to open the drawer
   await t.click(linkRow)
   // Transfer ownership of the link
@@ -108,7 +109,7 @@ test('Changing the link owner should update the link history with Link Owner upd
 test('Changing the tags should update the link history with Tags update change set', async (t) => {
   // Create new link
   const generatedShortLink = await CreateNewLink(t)
-  const linkRow = Selector(`h6[title="${generatedShortLink}"]`)
+  const linkRow = linkRowByShortUrl(generatedShortLink)
   // Click the url in the table to open the drawer
   await t.click(linkRow)
   // Remove one existing tag and add two new tags

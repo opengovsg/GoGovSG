@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 import { UploadedFile } from 'express-fileupload'
 import { BULK_UPLOAD_HEADER } from '../../../../../shared/constants'
 import blackListedSites from '../../../../resources/blacklist'

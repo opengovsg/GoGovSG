@@ -1,0 +1,31 @@
+name: 'Setup and install'
+description: 'Common setup steps for CI jobs (Node.js + npm install)'
+
+inputs:
+  node-version:
+    description: >-
+      Node version to use, overriding package.json's engines.node. Only
+      needed for tooling (e.g. oxlint/oxfmt) that requires a newer Node
+      than the app itself targets.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        node-version-file: 'package.json'
+
+    - name: Cache Node.js modules
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+          ${{ runner.OS }}-
+
+    - shell: bash
+      run: npm ci

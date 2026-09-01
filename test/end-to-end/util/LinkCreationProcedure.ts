@@ -1,4 +1,3 @@
-import { Selector } from 'testcafe'
 import { fetch } from 'cross-fetch'
 import {
   apiLocation,
@@ -16,6 +15,7 @@ import {
   fileTab,
   generateRandomString,
   generateUrlImage,
+  linkRowByShortUrl,
   longUrl,
   longUrlTextField,
   mobileCreateLinkButton,
@@ -129,7 +129,7 @@ export const linkCreationProcedure = async (t) => {
 
   const generatedUrlInactive = `${await shortUrlTextField.value}${searchKeyWithDash}`
 
-  const linkRowInactive = Selector(`h6[title="${generatedUrlInactive}"]`)
+  const linkRowInactive = linkRowByShortUrl(generatedUrlInactive)
 
   await t
     .typeText(shortUrlTextField, searchKeyWithDash) // concat generated searchKey
