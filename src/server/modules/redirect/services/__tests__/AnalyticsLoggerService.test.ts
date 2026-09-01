@@ -1,6 +1,18 @@
 /* eslint-disable node/global-require */
 import * as analytics from '../../ga'
 
+// jest.spyOn cannot redefine `generateCookie` directly: it's a named export
+// compiled to a non-configurable property (true ESM namespace semantics).
+// Wrapping it in jest.fn(actual) via jest.mock keeps the real
+// implementation while staying spy-trackable.
+jest.mock('../../ga', () => {
+  const actual = jest.requireActual('../../ga')
+  return {
+    ...actual,
+    generateCookie: jest.fn(actual.generateCookie),
+  }
+})
+
 describe('AnalyticsLoggerService', () => {
   const gaTrackingId = 'UA-000000-2'
 
@@ -8,7 +20,7 @@ describe('AnalyticsLoggerService', () => {
 
   describe('with no gaTrackingId', () => {
     const fetch = jest.fn()
-    const generateCookie = jest.spyOn(analytics, 'generateCookie')
+    const generateCookie = analytics.generateCookie as jest.Mock
 
     jest.resetModules()
     jest.mock('../../../../config', () => ({
