@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react'
-import Typed from 'react-typed'
+import { ReactTyped } from 'react-typed'
 
 type RotatingLinksType = {
   className?: string
@@ -16,7 +16,7 @@ const RotatingLinks: FunctionComponent<RotatingLinksType> = ({
     <main className={className}>
       {prefix}
       {strings && strings.length > 0 ? (
-        <Typed
+        <ReactTyped
           strings={strings}
           typeSpeed={80}
           backDelay={2500}
