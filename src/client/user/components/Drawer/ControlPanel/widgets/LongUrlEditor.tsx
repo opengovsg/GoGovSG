@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
 import useShortLink from '../util/shortlink'
@@ -11,7 +11,15 @@ import ConfigOption, {
 import PrefixableTextField from '../../../../widgets/PrefixableTextField'
 import TrailingButton from './TrailingButton'
 
-export default function LongUrlEditor() {
+type LongUrlEditorProps = {
+  isTypeConversion?: boolean
+  requestSaveWithConfirmation?: (saveAction: () => void) => void
+}
+
+export default function LongUrlEditor({
+  isTypeConversion = false,
+  requestSaveWithConfirmation,
+}: LongUrlEditorProps) {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
   const drawerStates = useDrawerState()
@@ -19,7 +27,26 @@ export default function LongUrlEditor() {
     drawerStates.relevantShortLink!,
   )
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
-  const [editedLongUrl, setEditedLongUrl] = useState<string>(originalLongUrl)
+  const [editedLongUrl, setEditedLongUrl] = useState<string>(
+    isTypeConversion ? '' : originalLongUrl,
+  )
+
+  useEffect(() => {
+    setEditedLongUrl(isTypeConversion ? '' : originalLongUrl)
+  }, [isTypeConversion, originalLongUrl])
+
+  const handleSave = () => {
+    const saveAction = () => shortLinkDispatch?.applyEditLongUrl(editedLongUrl)
+    if (requestSaveWithConfirmation) {
+      requestSaveWithConfirmation(saveAction)
+    } else {
+      saveAction()
+    }
+  }
+
+  const isSaveDisabled = isTypeConversion
+    ? !isValidLongUrl(editedLongUrl, false)
+    : !isValidLongUrl(editedLongUrl, false) || editedLongUrl === originalLongUrl
 
   return (
     <ConfigOption
@@ -42,11 +69,8 @@ export default function LongUrlEditor() {
       }
       trailing={
         <TrailingButton
-          disabled={
-            !isValidLongUrl(editedLongUrl, false) ||
-            editedLongUrl === originalLongUrl
-          }
-          onClick={() => shortLinkDispatch?.applyEditLongUrl(editedLongUrl)}
+          disabled={isSaveDisabled}
+          onClick={handleSave}
           fullWidth={isMobileView}
           variant={isMobileView ? 'contained' : 'outlined'}
         >

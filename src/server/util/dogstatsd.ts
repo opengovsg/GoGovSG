@@ -21,6 +21,7 @@ export const SHORTLINK_CLICKS = 'shortlink.clicks'
 export const SHORTLINK_CREATE = 'shortlink.create'
 export const SHORTLINK_CREATE_TAG_IS_FILE = 'isfile'
 export const SHORTLINK_CREATE_TAG_SOURCE = 'source'
+export const SHORTLINK_TYPE_CONVERTED = 'shortlink.type_converted'
 export const USER_NEW = 'user.new'
 
 export const BULK_VALIDATION_ERROR = 'bulk.validation.error'

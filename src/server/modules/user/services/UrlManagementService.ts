@@ -19,11 +19,11 @@ import dogstatsd, {
   SHORTLINK_CREATE,
   SHORTLINK_CREATE_TAG_IS_FILE,
   SHORTLINK_CREATE_TAG_SOURCE,
+  SHORTLINK_TYPE_CONVERTED,
 } from '../../../util/dogstatsd'
 import {
   AlreadyExistsError,
   AlreadyOwnLinkError,
-  InvalidUrlUpdateError,
   NotFoundError,
 } from '../../../util/error'
 import { addFileExtension, getFileExtension } from '../../../util/fileFormat'
@@ -132,11 +132,16 @@ export class UrlManagementService implements interfaces.UrlManagementService {
 
     if (!url) {
       throw new NotFoundError(`Short link "${shortUrl}" not found for user.`)
-    } else if (url.isFile && options.longUrl) {
-      throw new InvalidUrlUpdateError(`Cannot update longUrl for file.`)
-    } else if (!url.isFile && options.file) {
-      throw new InvalidUrlUpdateError(`Cannot update file for link.`)
     }
+
+    const wasFile = url.isFile
+    let isFile: boolean | undefined
+    if (file) {
+      isFile = true
+    } else if (longUrl !== undefined) {
+      isFile = false
+    }
+    const typeChanged = isFile !== undefined && isFile !== wasFile
 
     const storableFile: StorableFile | undefined = file
       ? {
@@ -156,7 +161,7 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         }).toISOString()
       : undefined
 
-    return this.urlRepository.update(
+    const result = await this.urlRepository.update(
       url,
       {
         longUrl,
@@ -165,9 +170,18 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         contactEmail,
         tags,
         safeBrowsingExpiry,
+        ...(isFile !== undefined ? { isFile } : {}),
       },
       storableFile,
     )
+
+    if (typeChanged) {
+      dogstatsd.increment(SHORTLINK_TYPE_CONVERTED, 1, 1, [
+        `direction:${wasFile ? 'file_to_link' : 'link_to_file'}`,
+      ])
+    }
+
+    return result
   }
 
   changeOwnership: (

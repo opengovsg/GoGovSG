@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Button,
   Divider,
@@ -32,6 +32,8 @@ import DownloadButton from './widgets/DownloadButton'
 import LinkStateText from './widgets/LinkStateText'
 import LongUrlEditor from './widgets/LongUrlEditor'
 import TagsEditor from './widgets/TagsEditor'
+import LinkTypeToggle from './widgets/LinkTypeToggle'
+import TypeConversionConfirmDialog from './widgets/TypeConversionConfirmDialog'
 import { SEARCH_PAGE } from '../../../../app/util/types'
 import userActions from '../../../actions'
 
@@ -179,6 +181,36 @@ export default function ControlPanel() {
     Boolean(originalDescription),
   )
 
+  const [editIsFile, setEditIsFile] = useState(Boolean(shortLinkState?.isFile))
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
+  const [pendingSave, setPendingSave] = useState<(() => void) | null>(null)
+
+  useEffect(() => {
+    setEditIsFile(Boolean(shortLinkState?.isFile))
+  }, [shortLinkState?.shortUrl, shortLinkState?.isFile])
+
+  const isTypeConversion = Boolean(shortLinkState?.isFile) !== editIsFile
+
+  const requestSaveWithConfirmation = (saveAction: () => void) => {
+    if (isTypeConversion) {
+      setPendingSave(() => saveAction)
+      setConfirmDialogOpen(true)
+    } else {
+      saveAction()
+    }
+  }
+
+  const handleConfirmTypeConversion = () => {
+    pendingSave?.()
+    setConfirmDialogOpen(false)
+    setPendingSave(null)
+  }
+
+  const handleCancelTypeConversion = () => {
+    setConfirmDialogOpen(false)
+    setPendingSave(null)
+  }
+
   // Disposes any current unsaved changes and closes the modal.
   const handleClose = () => {
     shortLinkDispatch?.setEditDescription(originalDescription)
@@ -217,7 +249,24 @@ export default function ControlPanel() {
               <Hidden mdUp>
                 <Divider className={classes.divider} />
               </Hidden>
-              {shortLinkState?.isFile ? <FileEditor /> : <LongUrlEditor />}
+              <LinkTypeToggle isFile={editIsFile} onChange={setEditIsFile} />
+              {editIsFile ? (
+                <FileEditor
+                  isTypeConversion={isTypeConversion}
+                  requestSaveWithConfirmation={requestSaveWithConfirmation}
+                />
+              ) : (
+                <LongUrlEditor
+                  isTypeConversion={isTypeConversion}
+                  requestSaveWithConfirmation={requestSaveWithConfirmation}
+                />
+              )}
+              <TypeConversionConfirmDialog
+                open={confirmDialogOpen}
+                convertingToFile={editIsFile}
+                onCancel={handleCancelTypeConversion}
+                onConfirm={handleConfirmTypeConversion}
+              />
               <Hidden mdUp>
                 <Divider className={classes.divider} />
               </Hidden>

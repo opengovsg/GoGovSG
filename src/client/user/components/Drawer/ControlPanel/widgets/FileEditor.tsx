@@ -33,22 +33,69 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-export default function FileEditor() {
+import TrailingButton from './TrailingButton'
+
+type FileEditorProps = {
+  isTypeConversion?: boolean
+  requestSaveWithConfirmation?: (saveAction: () => void) => void
+}
+
+export default function FileEditor({
+  isTypeConversion = false,
+  requestSaveWithConfirmation,
+}: FileEditorProps) {
   const classes = useStyles()
   const drawerStates = useDrawerState()
   const { shortLinkDispatch, shortLinkState, isUploading } = useShortLink(
     drawerStates.relevantShortLink!,
   )
   const [uploadFileError, setUploadFileError] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const originalLongUrl = removeHttpsProtocol(shortLinkState?.longUrl || '')
+
+  const handleFileSelect = (newFile: File | null) => {
+    if (!newFile) {
+      return
+    }
+    if (isTypeConversion) {
+      setSelectedFile(newFile)
+      setUploadFileError(null)
+      return
+    }
+    shortLinkDispatch?.replaceFile(newFile, setUploadFileError)
+  }
+
+  const handleSave = () => {
+    if (!selectedFile) {
+      return
+    }
+    const saveAction = () =>
+      shortLinkDispatch?.replaceFile(selectedFile, setUploadFileError)
+    if (requestSaveWithConfirmation) {
+      requestSaveWithConfirmation(saveAction)
+    } else {
+      saveAction()
+    }
+  }
+
+  const fileNameText = isTypeConversion
+    ? selectedFile?.name || ''
+    : originalLongUrl
+  const buttonText = isTypeConversion ? 'Select file' : 'Replace file'
 
   const replaceFileHelp = (
     <div className={classes.originalFileLabel}>
-      Original file{' '}
+      {isTypeConversion ? 'Upload file' : 'Original file'}{' '}
       <Tooltip
-        title={`Original file will be replaced after you select file. Maximum file size is ${formatBytes(
-          MAX_FILE_UPLOAD_SIZE,
-        )}.`}
+        title={
+          isTypeConversion
+            ? `Select a file to serve through this short link. Maximum file size is ${formatBytes(
+                MAX_FILE_UPLOAD_SIZE,
+              )}.`
+            : `Original file will be replaced after you select file. Maximum file size is ${formatBytes(
+                MAX_FILE_UPLOAD_SIZE,
+              )}.`
+        }
         imageAltText="Replace file help"
       />
     </div>
@@ -63,12 +110,10 @@ export default function FileEditor() {
             className={classes.fileInputField}
             uploadFileError={uploadFileError}
             textFieldHeight="44px"
-            fileNameText={originalLongUrl}
-            buttonText="Replace file"
+            fileNameText={fileNameText}
+            buttonText={buttonText}
             isUploading={isUploading}
-            setFile={(newFile) => {
-              shortLinkDispatch?.replaceFile(newFile, setUploadFileError)
-            }}
+            setFile={handleFileSelect}
             setUploadFileError={setUploadFileError}
             maxSize={MAX_FILE_UPLOAD_SIZE}
           />
@@ -81,7 +126,21 @@ export default function FileEditor() {
           </CollapsibleMessage>
         </>
       }
-      trailingPosition={TrailingPosition.none}
+      trailing={
+        isTypeConversion ? (
+          <TrailingButton
+            disabled={!selectedFile || isUploading}
+            onClick={handleSave}
+            fullWidth={false}
+            variant="outlined"
+          >
+            Save
+          </TrailingButton>
+        ) : undefined
+      }
+      trailingPosition={
+        isTypeConversion ? TrailingPosition.end : TrailingPosition.none
+      }
     />
   )
 }
