@@ -310,10 +310,7 @@ describe('Url integration tests', () => {
 
   it('should fully replace tags on update', async () => {
     const shortUrl = await generateRandomString(6)
-    await createLinkUrl(
-      { shortUrl, longUrl, tags: ['tag-a', 'tag-b'] },
-      apiKey,
-    )
+    await createLinkUrl({ shortUrl, longUrl, tags: ['tag-a', 'tag-b'] }, apiKey)
 
     const tags = ['tag-c']
     const res = await updateLinkUrl({ shortUrl, tags }, apiKey)

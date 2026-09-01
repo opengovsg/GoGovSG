@@ -1,4 +1,7 @@
-import { urlEditSchema, urlSchema } from '../../../../src/server/api/external-v1/validators'
+import {
+  urlEditSchema,
+  urlSchema,
+} from '../../../../src/server/api/external-v1/validators'
 
 describe('external-v1 validators', () => {
   const baseUserId = { userId: 1 }

@@ -1,8 +1,5 @@
 import * as Joi from 'joi'
-import {
-  isPrintableAscii,
-  isValidTag,
-} from '../../../shared/util/validation'
+import { isPrintableAscii, isValidTag } from '../../../shared/util/validation'
 import {
   LINK_DESCRIPTION_MAX_LENGTH,
   MAX_NUM_TAGS_PER_LINK,
