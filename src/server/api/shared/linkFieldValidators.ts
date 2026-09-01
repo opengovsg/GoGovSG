@@ -6,7 +6,7 @@ import {
 } from '../../../shared/constants'
 import { isValidGovEmail } from '../../util/email'
 
-export const singleTagSchema = Joi.string()
+const singleTagSchema = Joi.string()
   .pattern(/^[A-Za-z0-9-_]+$/)
   .max(25)
 

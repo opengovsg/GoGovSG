@@ -22,6 +22,18 @@ import { UserUrlsQueryConditions } from '../../../repositories/types'
 import { UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
 
+function normalizeContactEmail(
+  contactEmail: string | null | undefined,
+): string | null | undefined {
+  if (contactEmail) {
+    return contactEmail.trim().toLowerCase()
+  }
+  if (contactEmail === null) {
+    return null
+  }
+  return undefined
+}
+
 @injectable()
 export class ApiV1Controller {
   private urlManagementService: UrlManagementService
@@ -51,12 +63,7 @@ export class ApiV1Controller {
       contactEmail,
     }: UrlCreationRequest = req.body
 
-    let newContactEmail: string | undefined | null
-    if (contactEmail) {
-      newContactEmail = contactEmail.trim().toLowerCase()
-    } else if (contactEmail === null) {
-      newContactEmail = null
-    }
+    const newContactEmail = normalizeContactEmail(contactEmail)
 
     try {
       const url = await this.urlManagementService.createUrl(
@@ -159,12 +166,7 @@ export class ApiV1Controller {
         state === 'ACTIVE' ? StorableUrlState.Active : StorableUrlState.Inactive
     }
 
-    let newContactEmail: string | undefined | null
-    if (contactEmail) {
-      newContactEmail = contactEmail.trim().toLowerCase()
-    } else if (contactEmail === null) {
-      newContactEmail = null
-    }
+    const newContactEmail = normalizeContactEmail(contactEmail)
 
     try {
       const url = await this.urlManagementService.updateUrl(userId, shortUrl, {
