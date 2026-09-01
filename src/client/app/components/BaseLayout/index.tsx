@@ -61,7 +61,7 @@ type BaseLayoutProps = {
   hideNavButtons?: boolean
 }
 
-const BaseLayout: FunctionComponent<BaseLayoutProps> = ({
+const BaseLayout: FunctionComponent<PropsWithChildren<BaseLayoutProps>> = ({
   withHeader = true,
   headerBackgroundType = 'dark',
   withFooter = true,

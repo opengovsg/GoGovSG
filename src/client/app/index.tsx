@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 // top level application entrypoint polyfill imports
 import 'core-js/stable'
@@ -13,9 +13,6 @@ import store from './store'
 
 const history = createHashHistory()
 
-i18nInit.then(() =>
-  render(
-    <Root store={store} history={history} />,
-    document.getElementById('root'),
-  ),
-)
+const root = createRoot(document.getElementById('root')!)
+
+i18nInit.then(() => root.render(<Root store={store} history={history} />))
