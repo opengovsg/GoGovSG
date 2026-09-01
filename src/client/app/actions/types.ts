@@ -5,6 +5,7 @@ import { RootActionType } from '../components/pages/RootPage/actions/types'
 import { UserActionType } from '../../user/actions/types'
 import { LoginActionType } from '../../login/actions/types'
 import { DirectoryActionType } from '../../directory/actions/types'
+import { ApiKeyActionType } from '../../apiintegration/actions/types'
 
 export type GetReduxState = () => GoGovReduxState
 
@@ -14,9 +15,11 @@ export type AllActions =
   | LoginActionType
   | HomeActionType
   | DirectoryActionType
+  | ApiKeyActionType
 
 export interface ReduxAction<T extends string> {
   type: T
+  [extraProps: string]: unknown
 }
 
 export interface HasPayload<P> {

@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../app/hooks'
 import { useHistory } from 'react-router-dom'
 import { History } from 'history'
 import i18next from 'i18next'
@@ -75,7 +76,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     (state: GoGovReduxState) => state.user.uploadFileError,
   )
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const setShortUrl = (shortUrl: string) =>
     dispatch(userActions.setShortUrl(shortUrl))
   const setLongUrl = (longUrl: string) =>
