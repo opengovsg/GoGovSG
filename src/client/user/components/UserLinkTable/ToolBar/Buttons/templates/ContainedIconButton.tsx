@@ -26,7 +26,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
+const ContainedIconButton: FunctionComponent<
+  PropsWithChildren<ContainedIconButtonProps>
+> = ({
   children,
   href = undefined,
   onClick = undefined,

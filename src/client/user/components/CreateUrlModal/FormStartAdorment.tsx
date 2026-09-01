@@ -26,9 +26,9 @@ const useStyles = makeStyles((theme) =>
 
 type FormStartAdormentProps = {}
 
-const FormStartAdorment: FunctionComponent = ({
-  children,
-}: PropsWithChildren<FormStartAdormentProps>) => {
+const FormStartAdorment: FunctionComponent<
+  PropsWithChildren<FormStartAdormentProps>
+> = ({ children }) => {
   const classes = useStyles({
     textFieldHeight: TEXT_FIELD_HEIGHT,
   })
