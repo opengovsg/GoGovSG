@@ -64,3 +64,8 @@ allowBuilds:
   esbuild: true
   sharp: true
   unix-dgram: true
+  # New transitive dep of jest-resolve@30 (jest 30's default module resolver).
+  # Same napi-postinstall pattern as @swc/core/esbuild/sharp above: downloads
+  # a prebuilt native binary for the current platform, no arbitrary exec.
+  # Maintained by jounqin (unrs org), also widely used by eslint-import-resolver-typescript.
+  unrs-resolver: true

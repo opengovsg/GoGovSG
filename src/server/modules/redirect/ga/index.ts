@@ -1,5 +1,5 @@
+import { randomUUID } from 'crypto'
 import express from 'express'
-import { v4 as uuidv4 } from 'uuid'
 import { gaTrackingId, ogUrl } from '../../../config'
 import getIp from '../../../util/request'
 import IGaPageViewForm from './types/IGaPageViewForm'
@@ -36,7 +36,7 @@ export function generateCookie(
   if (!gaClientId) {
     return [
       'gaClientId',
-      uuidv4(),
+      randomUUID(),
       {
         maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year expiry
       },
