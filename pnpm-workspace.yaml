@@ -57,6 +57,10 @@ allowBuilds:
   '@datadog/native-appsec': false
   '@datadog/native-iast-taint-tracking': false
   '@datadog/native-metrics': false
+  # Transitive dep of jest-haste-map (jest 30's file watcher). Same
+  # download-a-prebuilt-native-binary pattern as unrs-resolver/sharp/esbuild
+  # above, no arbitrary exec.
+  '@parcel/watcher': true
   '@swc/core': true
   aws-sdk: false
   bcrypt: true

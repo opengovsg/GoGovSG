@@ -5,7 +5,7 @@ jest.mock('../../../../redis', () => ({
   otpClient: redisMockClient,
 }))
 
-const setSpy = jest.spyOn(redisMockClient, 'set')
+const setSpy = jest.spyOn(redisMockClient, 'setEx')
 const getSpy = jest.spyOn(redisMockClient, 'get')
 const delSpy = jest.spyOn(redisMockClient, 'del')
 
@@ -21,9 +21,7 @@ const ip = '1.1.1.1'
 
 describe('otp cache redis test', () => {
   beforeEach(async () => {
-    await new Promise<void>((resolve) => {
-      redisMockClient.flushall(() => resolve())
-    })
+    await redisMockClient.flushAll()
   })
 
   afterEach(() => {
@@ -35,26 +33,26 @@ describe('otp cache redis test', () => {
   test('deleteOtpByEmail test', async () => {
     // Arrange
     const key = `${email}:${ip}`
-    redisMockClient.set(key, 'aa')
+    await redisMockClient.set(key, 'aa')
 
     // Act
     await cache.deleteOtpByEmail(email, ip)
 
     // Assert
     expect(redisMockClient.del).toHaveBeenCalledTimes(1)
-    expect(redisMockClient.del).toHaveBeenCalledWith(key, expect.any(Function))
+    expect(redisMockClient.del).toHaveBeenCalledWith(key)
   })
 
   test('getOtpByEmail test', async () => {
     // Arrange
     const key = `${email}:${ip}`
-    redisMockClient.set(key, JSON.stringify(otp))
+    await redisMockClient.set(key, JSON.stringify(otp))
 
     // Act
     await expect(cache.getOtpForEmail(email, ip)).resolves.toStrictEqual(otp)
 
     // Assert
-    expect(redisMockClient.get).toHaveBeenCalledWith(key, expect.any(Function))
+    expect(redisMockClient.get).toHaveBeenCalledWith(key)
   })
 
   test('getOtpByEmail null test', async () => {
@@ -62,30 +60,17 @@ describe('otp cache redis test', () => {
     await expect(cache.getOtpForEmail(email, ip)).resolves.toStrictEqual(null)
 
     // Assert
-    expect(redisMockClient.get).toHaveBeenCalledWith(
-      `${email}:${ip}`,
-      expect.any(Function),
-    )
+    expect(redisMockClient.get).toHaveBeenCalledWith(`${email}:${ip}`)
   })
 
   test('getOtpByEmail throws test', async () => {
     // Arrange
-    const originalGet = redisMockClient.get
-    redisMockClient.get = (_, callback) => {
-      if (callback == null) {
-        return false
-      }
-      callback(Error(), '')
-      return true
-    }
+    getSpy.mockRejectedValueOnce(new Error('redis down'))
     const key = `${email}:${ip}`
-    redisMockClient.set(key, JSON.stringify(otp))
+    await redisMockClient.set(key, JSON.stringify(otp))
 
     // Act
     await expect(cache.getOtpForEmail(email, ip)).rejects.toThrow()
-
-    // Assert
-    redisMockClient.get = originalGet
   })
 
   test('setOtpByEmail test', async () => {
@@ -93,26 +78,18 @@ describe('otp cache redis test', () => {
     await cache.setOtpForEmail(email, ip, otp)
 
     // Assert
-    expect(redisMockClient.set).toHaveBeenCalledWith(
+    expect(redisMockClient.setEx).toHaveBeenCalledWith(
       `${email}:${ip}`,
-      JSON.stringify(otp),
-      'EX',
       10,
-      expect.any(Function),
+      JSON.stringify(otp),
     )
   })
 
   test('setOtpByEmail throws test', async () => {
     // Arrange
-    const originalSet = redisMockClient.set
-    redisMockClient.set = () => {
-      throw Error()
-    }
+    setSpy.mockRejectedValueOnce(new Error('redis down'))
 
     // Act
     await expect(cache.setOtpForEmail(email, ip, otp)).rejects.toThrow()
-
-    // Assert
-    redisMockClient.set = originalSet
   })
 })
