@@ -13,6 +13,8 @@ RUN sudo chown gitpod /docker-entrypoint-initaws.d
 RUN sudo wget https://github.com/IBM/plex/blob/master/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true -O /usr/share/fonts/truetype/IBMPlexSans-Regular.otf
 RUN sudo fc-cache -f
 
+RUN sudo corepack enable && sudo corepack prepare pnpm@12.0.0 --activate
+
 USER gitpod
 
 ENV NODE_ENV=development
