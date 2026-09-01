@@ -1,6 +1,7 @@
-import { RedirectController } from './RedirectController'
+import { RedirectController } from './RedirectController.js'
 
-export { RedirectType, RedirectResult } from './types'
-export { RedirectController } from './RedirectController'
+export type { RedirectResult } from './types.js'
+export { RedirectType } from './types.js'
+export { RedirectController } from './RedirectController.js'
 
 export default RedirectController

@@ -2,10 +2,10 @@ import Express from 'express'
 import Joi from 'joi'
 import { createValidator } from 'express-joi-validation'
 
-import { DependencyIds } from '../constants'
-import { container } from '../util/inversify'
-import { LinkStatisticsController } from '../modules/analytics'
-import { isValidShortUrl } from '../../shared/util/validation'
+import { DependencyIds } from '../constants.js'
+import { container } from '../util/inversify.js'
+import { LinkStatisticsController } from '../modules/analytics/index.js'
+import { isValidShortUrl } from '../../shared/util/validation.js'
 
 const router = Express.Router()
 const validator = createValidator()
@@ -38,4 +38,4 @@ router.get(
   statisticsController.getLinkStatistics,
 )
 
-module.exports = router
+export default router

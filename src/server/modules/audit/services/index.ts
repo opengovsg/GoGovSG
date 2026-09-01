@@ -1,4 +1,4 @@
 export {
   LinkAuditService,
   LinkAuditService as default,
-} from './LinkAuditService'
+} from './LinkAuditService.js'

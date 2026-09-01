@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { injectable } from 'inversify'
-import { cookieSessionMaxSizeBytes } from '../../../config'
+import { cookieSessionMaxSizeBytes } from '../../../config.js'
 
 /**
  * Array implementation of a cookie reducer which tracks an

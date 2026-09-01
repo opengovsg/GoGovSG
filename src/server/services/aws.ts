@@ -6,7 +6,7 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3'
 import { inject, injectable } from 'inversify'
-import { DependencyIds } from '../constants'
+import { DependencyIds } from '../constants.js'
 
 // Enums for S3 object ACL toggling. Do not change string representations.
 export enum FileVisibility {

@@ -1,2 +1,2 @@
-export { GaController } from './GaController'
-export { LinkStatisticsController } from './LinkStatisticsController'
+export { GaController } from './GaController.js'
+export { LinkStatisticsController } from './LinkStatisticsController.js'

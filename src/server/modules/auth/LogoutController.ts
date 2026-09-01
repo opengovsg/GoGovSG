@@ -1,6 +1,6 @@
 import Express from 'express'
 import { injectable } from 'inversify'
-import jsonMessage from '../../util/json'
+import jsonMessage from '../../util/json.js'
 
 @injectable()
 export class LogoutController {

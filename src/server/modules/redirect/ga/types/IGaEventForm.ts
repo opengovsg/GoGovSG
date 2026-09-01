@@ -1,5 +1,5 @@
-import { EventAction, EventCategory } from './enum'
-import IGaCoreForm from './IGaCoreForm'
+import { EventAction, EventCategory } from './enum.js'
+import IGaCoreForm from './IGaCoreForm.js'
 
 export default interface IGaEventForm extends IGaCoreForm {
   ec: EventCategory // Event Category. Required.

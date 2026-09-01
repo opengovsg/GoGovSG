@@ -1,4 +1,4 @@
-import { LinkStatistics } from '../../../../shared/interfaces/link-statistics'
+import { LinkStatistics } from '../../../../shared/interfaces/link-statistics.js'
 
 export interface LinkStatisticsService {
   /**

@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
-import { Job, JobType } from '../../../models/job'
-import * as interfaces from '../interfaces'
-import { NotFoundError } from '../../../util/error'
+import { Job, JobType } from '../../../models/job.js'
+import * as interfaces from '../interfaces/index.js'
+import { NotFoundError } from '../../../util/error.js'
 
 @injectable()
 export class JobRepository implements interfaces.JobRepository {

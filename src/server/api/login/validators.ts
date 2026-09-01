@@ -1,6 +1,6 @@
-import * as Joi from 'joi'
-import { logger } from '../../config'
-import { isValidGovEmail } from '../../util/email'
+import Joi from 'joi'
+import { logger } from '../../config.js'
+import { isValidGovEmail } from '../../util/email.js'
 
 export const otpVerificationSchema = Joi.object({
   email: Joi.string()
