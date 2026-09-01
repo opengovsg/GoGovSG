@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react'
 import { Provider } from 'react-redux'
-import { Route, Router, Switch } from 'react-router-dom'
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import {
   ThemeProvider,
   Theme,
@@ -8,8 +8,6 @@ import {
 } from '@mui/material/styles'
 
 import { Store } from 'redux'
-
-import { History } from 'history'
 
 import PrivateRoute from '../../PrivateRoute'
 import HomePage from '../../../../home'
@@ -50,29 +48,46 @@ declare module '@mui/styles/defaultTheme' {
 
 type RootProps = {
   store: Store
-  history: History
 }
 
-const Root: FunctionComponent<RootProps> = ({ store, history }: RootProps) => (
+const Root: FunctionComponent<RootProps> = ({ store }: RootProps) => (
   <Provider store={store}>
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <Router history={history}>
+        <HashRouter>
           <ScrollToTop>
-            <Switch>
-              <Route exact path={HOME_PAGE} component={HomePage} />
-              <Route path={LOGIN_PAGE} component={LoginPage} />
-              <PrivateRoute path={USER_PAGE} component={UserPage} />
-              <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
-              <PrivateRoute path={DIRECTORY_PAGE} component={DirectoryPage} />
-              <PrivateRoute
-                path={API_INTEGRATION_PAGE}
-                component={ApiIntegrationPage}
+            <Routes>
+              <Route path={HOME_PAGE} element={<HomePage />} />
+              <Route path={LOGIN_PAGE} element={<LoginPage />} />
+              <Route
+                path={USER_PAGE}
+                element={
+                  <PrivateRoute>
+                    <UserPage />
+                  </PrivateRoute>
+                }
               />
-              <Route component={NotFoundPage} />
-            </Switch>
+              <Route path={NOT_FOUND_PAGE} element={<NotFoundPage />} />
+              <Route
+                path={DIRECTORY_PAGE}
+                element={
+                  <PrivateRoute>
+                    <DirectoryPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path={API_INTEGRATION_PAGE}
+                element={
+                  <PrivateRoute>
+                    <ApiIntegrationPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
           </ScrollToTop>
-        </Router>
+        </HashRouter>
         <MessageSnackbar />
       </ThemeProvider>
     </StyledEngineProvider>
