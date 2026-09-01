@@ -31,6 +31,9 @@ describe('url v1 mapper', () => {
       clicks: storableUrl.clicks,
       createdAt: storableUrl.createdAt,
       updatedAt: storableUrl.updatedAt,
+      tags: storableUrl.tags,
+      description: storableUrl.description,
+      contactEmail: storableUrl.contactEmail,
     })
   })
 })
