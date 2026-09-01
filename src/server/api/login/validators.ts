@@ -1,39 +1,38 @@
-import Joi from 'joi'
+import { z } from 'zod'
+
 import { logger } from '../../config.js'
 import { isValidGovEmail } from '../../util/email.js'
+import { govEmailSchema } from '../shared/schemas.js'
 
-export const otpVerificationSchema = Joi.object({
-  email: Joi.string()
-    .custom((email: string, helpers) => {
+export const otpVerificationSchema = z.object({
+  email: z
+    .string()
+    .superRefine((email) => {
       if (!isValidGovEmail(email)) {
         logger.error(
           `OTP verification request rejected due to invalid email:\t${email}`,
         )
-        return helpers.message({ custom: 'Not a valid gov email' })
       }
-      return email
     })
-    .required(),
-  otp: Joi.string()
-    .pattern(/^[A-Za-z0-9]{6}$/)
-    .required()
-    .messages({
-      'string.pattern.base': 'OTP must be 6 alphanumeric characters.',
-    }),
+    .pipe(govEmailSchema('Not a valid gov email')),
+  otp: z
+    .string()
+    .regex(/^[A-Za-z0-9]{6}$/, 'OTP must be 6 alphanumeric characters.'),
 })
 
-export const otpGenerationSchema = Joi.object({
-  email: Joi.string()
-    .custom((email: string, helpers) => {
+export const otpGenerationSchema = z.object({
+  email: z
+    .string()
+    .superRefine((email) => {
       if (!isValidGovEmail(email)) {
         logger.error(
           `OTP generation request rejected due to invalid email:\t${email}`,
         )
-        return helpers.message({
-          custom: 'Invalid email provided. Email domain is not whitelisted.',
-        })
       }
-      return email
     })
-    .required(),
+    .pipe(
+      govEmailSchema(
+        'Invalid email provided. Email domain is not whitelisted.',
+      ),
+    ),
 })

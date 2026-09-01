@@ -1,85 +1,48 @@
-import Joi from 'joi'
-import {
-  isBlacklisted,
-  isCircularRedirects,
-  isHttps,
-  isValidShortUrl,
-  isValidUrl,
-} from '../../../shared/util/validation.js'
-import { ogHostname } from '../../config.js'
+import { z } from 'zod'
+
 import { ACTIVE, INACTIVE } from '../../models/types.js'
+import {
+  longUrlSchema,
+  optionalLongUrlSchema,
+  optionalShortUrlSchema,
+  optionalUrlStateSchema,
+  userIdSchema,
+} from '../shared/schemas.js'
 
-export const urlRetrievalSchema = Joi.object({
-  userId: Joi.number().required(),
+export const urlRetrievalSchema = z.object({
+  userId: userIdSchema,
 })
 
-export const userUrlsQueryConditions = Joi.object({
+const booleanQueryParam = z.preprocess((value) => {
+  if (value === 'true') {
+    return true
+  }
+  if (value === 'false') {
+    return false
+  }
+  return value
+}, z.boolean().optional())
+
+export const userUrlsQueryConditions = z.object({
   // eslint-disable-next-line eslint-js/newline-per-chained-call
-  limit: Joi.number().integer().min(0).max(1000).optional(),
-  offset: Joi.number().integer().min(0).optional(),
-  orderBy: Joi.string().valid('createdAt', 'clicks').optional(),
-  sortDirection: Joi.string().valid('desc', 'asc').optional(),
-  searchText: Joi.string().lowercase().allow('').optional(),
-  state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
-  isFile: Joi.boolean().optional(),
+  limit: z.coerce.number().int().min(0).max(1000).optional(),
+  offset: z.coerce.number().int().min(0).optional(),
+  orderBy: z.enum(['createdAt', 'clicks']).optional(),
+  sortDirection: z.enum(['desc', 'asc']).optional(),
+  searchText: z.string().toLowerCase().optional(),
+  state: z.enum([ACTIVE, INACTIVE]).optional(),
+  isFile: booleanQueryParam,
 })
 
-export const urlSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Short URL format is invalid.' })
-      }
-      return url
-    })
-    .optional(),
-  longUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isHttps(url)) {
-        return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-      }
-      if (!isValidUrl(url)) {
-        return helpers.message({ custom: 'Long URL format is invalid.' })
-      }
-      if (isCircularRedirects(url, ogHostname)) {
-        return helpers.message({
-          custom: 'Circular redirects are not allowed.',
-        })
-      }
-      if (isBlacklisted(url)) {
-        return helpers.message({
-          custom: 'Creation of URLs to link shortener sites are not allowed.',
-        })
-      }
-      return url
-    })
-    .required(),
+export const urlSchema = z.object({
+  userId: userIdSchema,
+  shortUrl: optionalShortUrlSchema,
+  longUrl: longUrlSchema,
 })
 
-export const urlEditSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string().required(),
-  longUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isHttps(url)) {
-        return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-      }
-      if (!isValidUrl(url)) {
-        return helpers.message({ custom: 'Long URL format is invalid.' })
-      }
-      if (isCircularRedirects(url, ogHostname)) {
-        return helpers.message({
-          custom: 'Circular redirects are not allowed.',
-        })
-      }
-      if (isBlacklisted(url)) {
-        return helpers.message({
-          custom: 'Creation of URLs to link shortener sites are not allowed.',
-        })
-      }
-      return url
-    })
-    .optional(),
-  state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
+export const urlEditSchema = z.object({
+  userId: userIdSchema,
+  shortUrl: z.string(),
+  longUrl: optionalLongUrlSchema,
+  state: optionalUrlStateSchema,
 })

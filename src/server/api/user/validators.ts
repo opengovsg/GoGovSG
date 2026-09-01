@@ -1,175 +1,129 @@
-import Joi from 'joi'
+import { z } from 'zod'
+
 import { ACTIVE, INACTIVE } from '../../models/types.js'
+import { isValidTag } from '../../../shared/util/validation.js'
 import {
-  isBlacklisted,
-  isCircularRedirects,
-  isHttps,
-  isPrintableAscii,
-  isValidShortUrl,
-  isValidTag,
-  isValidUrl,
-} from '../../../shared/util/validation.js'
-import {
-  LINK_DESCRIPTION_MAX_LENGTH,
-  MAX_NUM_TAGS_PER_LINK,
-} from '../../../shared/constants.js'
-import { ogHostname } from '../../config.js'
-import { isValidGovEmail } from '../../util/email.js'
+  contactEmailSchema,
+  descriptionSchema,
+  editLongUrlSchema,
+  fileUploadSchema,
+  longUrlSchema,
+  optionalUrlStateSchema,
+  shortUrlSchema,
+  tagSchema,
+  userIdSchema,
+} from '../shared/schemas.js'
 
-export const urlRetrievalSchema = Joi.object({
-  userId: Joi.number().required(),
-})
-
-export const tagRetrievalSchema = Joi.object({
-  userId: Joi.number().required(),
-})
-
-export const hasApiKeySchema = Joi.object({
-  userId: Joi.number().required(),
-})
-
-const singleTagSchema = Joi.string()
-  .pattern(/^[A-Za-z0-9-_]+$/)
-  .max(25)
-
-const tagSchema = Joi.array()
-  .max(MAX_NUM_TAGS_PER_LINK)
-  .optional()
-  // letters, numbers, hyphens, underscores, 25 digits
-  .items(
-    singleTagSchema
-      .custom((tag: string, helpers) => {
+const userUrlsTagsSchema = z
+  .array(
+    z
+      .string()
+      .regex(/^[A-Za-z0-9-_]+$/)
+      .max(25)
+      .superRefine((tag, ctx) => {
         if (!isValidTag(tag)) {
-          return helpers.error('tag:invalid')
+          ctx.addIssue({ code: 'custom', message: 'Tag format is invalid.' })
         }
-        return tag
-      })
-      .messages({ 'tag:invalid': 'Tag format is invalid.' }),
+      }),
   )
-  .unique((a, b) => a === b)
+  .max(5)
+  .refine((tags) => new Set(tags).size === tags.length, {
+    message: 'Tag format is invalid.',
+  })
+  .optional()
 
-export const userUrlsQueryConditions = Joi.object({
-  userId: Joi.number().required(),
-  // eslint-disable-next-line eslint-js/newline-per-chained-call
-  limit: Joi.number().integer().min(0).max(1000).required(),
-  offset: Joi.number().integer().min(0).optional(),
-  orderBy: Joi.string().valid('createdAt', 'clicks').optional(),
-  sortDirection: Joi.string().valid('desc', 'asc').optional(),
-  searchText: Joi.string().lowercase().allow('').optional(),
-  state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
-  isFile: Joi.boolean().optional(),
-  tags: tagSchema.max(5),
-}).oxor('searchText', 'tags')
+const optionalExclusivePeersMessage =
+  'contains a conflict between optional exclusive peers'
 
-export const userTagsQueryConditions = Joi.object({
-  userId: Joi.number().required(),
-  searchText: Joi.string()
+const exclusivePeersMessage = 'contains a conflict between exclusive peers'
+
+export const urlRetrievalSchema = z.object({
+  userId: userIdSchema,
+})
+
+export const tagRetrievalSchema = z.object({
+  userId: userIdSchema,
+})
+
+export const hasApiKeySchema = z.object({
+  userId: userIdSchema,
+})
+
+export const userUrlsQueryConditions = z
+  .object({
+    userId: userIdSchema,
+    limit: z.number().int().min(0).max(1000),
+    offset: z.number().int().min(0).optional(),
+    orderBy: z.enum(['createdAt', 'clicks']).optional(),
+    sortDirection: z.enum(['desc', 'asc']).optional(),
+    searchText: z.string().optional(),
+    state: z.enum([ACTIVE, INACTIVE]).optional(),
+    isFile: z.boolean().optional(),
+    tags: userUrlsTagsSchema,
+  })
+  .refine((data) => !(data.searchText && data.tags?.length), {
+    message: `${optionalExclusivePeersMessage} [searchText, tags]`,
+  })
+
+export const userTagsQueryConditions = z.object({
+  userId: userIdSchema,
+  searchText: z
+    .string()
     .min(3)
-    .custom((tag: string, helpers) => {
+    .superRefine((tag, ctx) => {
       if (!isValidTag(tag)) {
-        return helpers.error('tag:invalid')
+        ctx.addIssue({ code: 'custom', message: 'Tag format is invalid.' })
       }
-      return tag
-    })
-    .messages({ 'tag:invalid': 'Tag format is invalid.' })
-    .required(),
-
-  limit: Joi.number().required(),
-})
-
-export const urlSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Short URL format is invalid.' })
-      }
-      return url
-    })
-    .required(),
-  longUrl: Joi.string().custom((url: string, helpers) => {
-    if (!isHttps(url)) {
-      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-    }
-    if (!isValidUrl(url)) {
-      return helpers.message({ custom: 'Long URL format is invalid.' })
-    }
-    if (isCircularRedirects(url, ogHostname)) {
-      return helpers.message({ custom: 'Circular redirects are not allowed.' })
-    }
-    if (isBlacklisted(url)) {
-      return helpers.message({
-        custom: 'Creation of URLs to link shortener sites are not allowed.',
-      })
-    }
-    return url
-  }),
-  tags: tagSchema,
-  files: Joi.object({
-    file: Joi.object().keys().required(),
-  }),
-}).xor('longUrl', 'files')
-
-export const urlBulkSchema = Joi.object({
-  userId: Joi.number().required(),
-  tags: tagSchema,
-  files: Joi.object({
-    file: Joi.object().keys().required(),
-  }),
-})
-
-export const urlEditSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string().required(),
-  longUrl: Joi.string().custom((url: string, helpers) => {
-    if (!isHttps(url)) {
-      return helpers.message({ custom: 'Only HTTPS URLs are allowed.' })
-    }
-    if (!isValidUrl(url)) {
-      return helpers.message({ custom: 'Invalid URLs are not allowed.' })
-    }
-    if (isCircularRedirects(url, ogHostname)) {
-      return helpers.message({ custom: 'Circular redirects are not allowed.' })
-    }
-    if (isBlacklisted(url)) {
-      return helpers.message({
-        custom: 'Creation of URLs to link shortener sites are not allowed.',
-      })
-    }
-    return url
-  }),
-  tags: tagSchema,
-  files: Joi.object({
-    file: Joi.object().keys().required(),
-  }),
-  state: Joi.string().allow(ACTIVE, INACTIVE).only(),
-  description: Joi.string()
-    .allow('')
-    .max(LINK_DESCRIPTION_MAX_LENGTH)
-    .custom((description: string, helpers) => {
-      if (!isPrintableAscii(description)) {
-        return helpers.message({
-          custom: 'Description must only contain ASCII characters.',
-        })
-      }
-      return description
     }),
-  contactEmail: Joi.string()
-    .allow(null)
-    .custom((email: string, helpers) => {
-      if (!isValidGovEmail(email)) {
-        return helpers.message({ custom: 'Not a valid gov email or null' })
-      }
-      return email
-    }),
-}).oxor('longUrl', 'files')
-
-export const ownershipTransferSchema = Joi.object({
-  userId: Joi.number().required(),
-  shortUrl: Joi.string().required(),
-  newUserEmail: Joi.string().required(),
+  limit: z.number(),
 })
 
-export const pollJobInformationSchema = Joi.object({
-  jobId: Joi.number().required(),
+export const urlSchema = z
+  .object({
+    userId: userIdSchema,
+    shortUrl: shortUrlSchema,
+    longUrl: longUrlSchema.optional(),
+    tags: tagSchema,
+    files: fileUploadSchema.optional(),
+  })
+  .refine((data) => Boolean(data.longUrl) !== Boolean(data.files), {
+    message: `${exclusivePeersMessage} [longUrl, files]`,
+  })
+
+export const urlBulkSchema = z.object({
+  userId: userIdSchema,
+  tags: tagSchema,
+  files: fileUploadSchema,
 })
+
+export const urlEditSchema = z
+  .object({
+    userId: userIdSchema,
+    shortUrl: z.string(),
+    longUrl: editLongUrlSchema.optional(),
+    tags: tagSchema,
+    files: fileUploadSchema.optional(),
+    state: optionalUrlStateSchema,
+    description: descriptionSchema.optional(),
+    contactEmail: contactEmailSchema.optional(),
+  })
+  .refine((data) => !(data.longUrl && data.files), {
+    message: `${optionalExclusivePeersMessage} [longUrl, files]`,
+  })
+
+export const ownershipTransferSchema = z.object({
+  userId: userIdSchema,
+  shortUrl: z.string(),
+  newUserEmail: z.string(),
+})
+
+export const pollJobInformationSchema = z.object({
+  jobId: z.coerce.number(),
+})
+
+export type UserUrlsQueryConditionsInput = z.infer<
+  typeof userUrlsQueryConditions
+>
+export type UserTagsQueryConditionsInput = z.infer<
+  typeof userTagsQueryConditions
+>
