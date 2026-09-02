@@ -8,6 +8,11 @@ import {
 } from '../../../shared/util/validation'
 import { ogHostname } from '../../config'
 import { ACTIVE, INACTIVE } from '../../models/types'
+import {
+  contactEmailSchema,
+  descriptionSchema,
+  tagSchema,
+} from '../shared/linkFieldValidators'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
@@ -55,6 +60,9 @@ export const urlSchema = Joi.object({
       return url
     })
     .required(),
+  tags: tagSchema,
+  description: descriptionSchema.optional(),
+  contactEmail: contactEmailSchema.optional(),
 })
 
 export const urlEditSchema = Joi.object({
@@ -82,4 +90,7 @@ export const urlEditSchema = Joi.object({
     })
     .optional(),
   state: Joi.string().valid(ACTIVE, INACTIVE).optional(),
+  tags: tagSchema,
+  description: descriptionSchema.optional(),
+  contactEmail: contactEmailSchema.optional(),
 })

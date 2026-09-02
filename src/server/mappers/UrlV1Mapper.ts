@@ -24,6 +24,9 @@ export class UrlV1Mapper implements Mapper<UrlV1DTO, StorableUrl> {
       clicks: url.clicks,
       createdAt: url.createdAt,
       updatedAt: url.updatedAt,
+      tags: url.tags,
+      description: url.description,
+      contactEmail: url.contactEmail,
     }
   }
 }

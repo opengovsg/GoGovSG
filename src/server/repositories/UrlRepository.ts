@@ -77,6 +77,8 @@ export class UrlRepository implements UrlRepositoryInterface {
       longUrl?: string
       tags?: string[]
       safeBrowsingExpiry?: string
+      description?: string
+      contactEmail?: string | null
     },
     file?: StorableFile,
   ) => Promise<StorableUrl> = async (properties, file) => {

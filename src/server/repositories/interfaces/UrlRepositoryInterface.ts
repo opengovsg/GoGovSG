@@ -41,6 +41,8 @@ export interface UrlRepositoryInterface {
       longUrl?: string
       tags?: string[]
       safeBrowsingExpiry?: string
+      description?: string
+      contactEmail?: string | null
     },
     file?: StorableFile,
   ): Promise<StorableUrl>

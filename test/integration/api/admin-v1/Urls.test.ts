@@ -8,6 +8,12 @@ import {
 } from '../../util/helpers'
 import { postJson } from '../../util/requests'
 
+const defaultLinkFields = {
+  tags: [],
+  description: '',
+  contactEmail: null,
+}
+
 async function createLinkUrl(
   link: {
     shortUrl?: string
@@ -99,6 +105,7 @@ describe('Admin API v1 Integration Tests', () => {
       state: 'ACTIVE',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
     })
   })
 
@@ -140,6 +147,7 @@ describe('Admin API v1 Integration Tests', () => {
       state: 'ACTIVE',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
     })
   })
 

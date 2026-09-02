@@ -21,6 +21,8 @@ export interface UrlManagementService {
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
+    description?: string,
+    contactEmail?: string | null,
   ) => Promise<StorableUrl>
 
   updateUrl: (

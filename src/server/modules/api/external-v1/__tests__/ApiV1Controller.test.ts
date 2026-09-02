@@ -28,6 +28,10 @@ const controller = new ApiV1Controller(urlManagementService, urlV1Mapper)
  */
 describe('ApiV1Controller', () => {
   describe('createUrl', () => {
+    beforeEach(() => {
+      urlManagementService.createUrl.mockReset()
+    })
+
     it('creates link and sanitizes link for API', async () => {
       const userId = 1
       const shortUrl = 'abcdef'
@@ -68,12 +72,16 @@ describe('ApiV1Controller', () => {
       urlManagementService.createUrl.mockResolvedValue(result)
 
       await controller.createUrl(req, res)
-      expect(urlManagementService.createUrl).toHaveBeenCalledWith(
+      expect(urlManagementService.createUrl.mock.calls[0]).toEqual([
         userId,
         source,
         shortUrl,
         longUrl,
-      )
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ])
       expect(res.ok).toHaveBeenCalledWith({
         shortUrl,
         longUrl,
@@ -81,7 +89,56 @@ describe('ApiV1Controller', () => {
         clicks,
         createdAt,
         updatedAt,
+        tags,
+        description,
+        contactEmail,
       })
+    })
+
+    it('passes tags, description, and contactEmail to createUrl', async () => {
+      const userId = 1
+      const shortUrl = 'abcdef'
+      const longUrl = 'https://www.agency.gov.sg'
+      const tags = ['campaign-a', '2026']
+      const description = 'test description'
+      const contactEmail = 'person@open.gov.sg'
+
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          longUrl,
+          tags,
+          description,
+          contactEmail,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      urlManagementService.createUrl.mockResolvedValue({
+        shortUrl,
+        longUrl,
+        state: 'ACTIVE',
+        clicks: 0,
+        tags,
+        description,
+        contactEmail,
+        createdAt: moment().toISOString(),
+        updatedAt: moment().toISOString(),
+      })
+
+      await controller.createUrl(req, res)
+      expect(urlManagementService.createUrl.mock.calls[0]).toEqual([
+        userId,
+        'API',
+        shortUrl,
+        longUrl,
+        undefined,
+        tags,
+        description,
+        contactEmail,
+      ])
     })
 
     it('reports not found on NotFoundError', async () => {
@@ -244,6 +301,9 @@ describe('ApiV1Controller', () => {
             clicks,
             createdAt,
             updatedAt,
+            tags,
+            description,
+            contactEmail,
           },
           {
             shortUrl: 'def',
@@ -252,6 +312,9 @@ describe('ApiV1Controller', () => {
             clicks,
             createdAt,
             updatedAt,
+            tags,
+            description,
+            contactEmail,
           },
         ],
         count: 2,
@@ -321,6 +384,10 @@ describe('ApiV1Controller', () => {
     const shortUrl = 'abcdef'
     const longUrl = 'https://www.agency.gov.sg'
 
+    beforeEach(() => {
+      urlManagementService.updateUrl.mockReset()
+    })
+
     it('processes link updates with no state', async () => {
       const req = httpMocks.createRequest({
         body: {
@@ -340,10 +407,69 @@ describe('ApiV1Controller', () => {
       expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
         userId,
         shortUrl,
-        {
+        expect.objectContaining({
           longUrl,
-          state: undefined,
+        }),
+      )
+    })
+
+    it('processes link updates with tags, description, and contactEmail', async () => {
+      const tags = ['campaign-a']
+      const description = 'updated description'
+      const contactEmail = 'person@open.gov.sg'
+
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          tags,
+          description,
+          contactEmail,
         },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = { shortUrl }
+      urlManagementService.updateUrl.mockResolvedValue(result)
+
+      await controller.updateUrl(req, res)
+      expect(res.ok).toHaveBeenCalledWith(result)
+      expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        expect.objectContaining({
+          longUrl: undefined,
+          contactEmail,
+          description,
+          tags,
+        }),
+      )
+    })
+
+    it('clears description and contactEmail when explicitly set', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          shortUrl,
+          description: '',
+          contactEmail: null,
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = { shortUrl }
+      urlManagementService.updateUrl.mockResolvedValue(result)
+
+      await controller.updateUrl(req, res)
+      expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
+        userId,
+        shortUrl,
+        expect.objectContaining({
+          contactEmail: null,
+          description: '',
+        }),
       )
     })
 
@@ -367,10 +493,10 @@ describe('ApiV1Controller', () => {
       expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
         userId,
         shortUrl,
-        {
+        expect.objectContaining({
           longUrl,
           state: 'ACTIVE',
-        },
+        }),
       )
     })
 
@@ -394,10 +520,10 @@ describe('ApiV1Controller', () => {
       expect(urlManagementService.updateUrl).toHaveBeenCalledWith(
         userId,
         shortUrl,
-        {
+        expect.objectContaining({
           longUrl,
           state: 'INACTIVE',
-        },
+        }),
       )
     })
 
