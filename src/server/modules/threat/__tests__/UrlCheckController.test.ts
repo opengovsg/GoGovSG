@@ -149,6 +149,26 @@ describe('UrlCheckController test', () => {
       expect(next).not.toHaveBeenCalled()
     })
 
+    it('rejects external bulk requests on bad URLs', async () => {
+      const req = createRequestWithUser(undefined)
+      req.body.userId = 1
+      req.body.urls = urls
+      req.body.longUrls = urls
+      const res = httpMocks.createResponse() as any
+      const next = jest.fn()
+
+      mockUrlThreatScanService.isThreatBulk.mockResolvedValue(true)
+      res.badRequest = badRequest
+
+      await controller.bulkUrlCheck(req, res, next)
+
+      expect(badRequest).toHaveBeenCalledWith({
+        message:
+          'Link is likely to be malicious, please contact us for further assistance',
+      })
+      expect(next).not.toHaveBeenCalled()
+    })
+
     it('passes through on good URLs', async () => {
       const req = createRequestWithUser(undefined)
       req.body.longUrls = urls

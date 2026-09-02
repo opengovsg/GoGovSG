@@ -142,6 +142,178 @@ describe('ApiV1Controller', () => {
     })
   })
 
+  describe('bulkCreateUrls', () => {
+    const userId = 1
+    const longUrl = 'https://www.agency.gov.sg'
+    const shortUrl = 'abcdef'
+    const createdAt = moment().toISOString()
+    const updatedAt = moment().toISOString()
+    const createdUrl = {
+      shortUrl,
+      longUrl,
+      state: 'ACTIVE',
+      source: 'API',
+      clicks: 0,
+      contactEmail: 'person@open.gov.sg',
+      description: 'test description',
+      tags: [],
+      tagStrings: '',
+      createdAt,
+      updatedAt,
+    }
+    const dto = {
+      shortUrl,
+      longUrl,
+      state: 'ACTIVE',
+      clicks: 0,
+      createdAt,
+      updatedAt,
+    }
+
+    beforeEach(() => {
+      urlManagementService.createUrl.mockReset()
+    })
+
+    it('creates all valid rows and returns 200', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          validatedBulkRows: [{ index: 0, shortUrl, longUrl }],
+          bulkValidationErrors: [],
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      urlManagementService.createUrl.mockResolvedValue(createdUrl)
+
+      await controller.bulkCreateUrls(req, res)
+      expect(urlManagementService.createUrl).toHaveBeenCalledWith(
+        userId,
+        'API',
+        shortUrl,
+        longUrl,
+      )
+      expect(res.ok).toHaveBeenCalledWith({ created: [dto], errors: [] })
+    })
+
+    it('returns partial success with row validation errors', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          validatedBulkRows: [{ index: 0, shortUrl, longUrl }],
+          bulkValidationErrors: [
+            {
+              index: 1,
+              message: 'Only HTTPS URLs are allowed.',
+              type: 'LongUrlError',
+            },
+          ],
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      urlManagementService.createUrl.mockResolvedValue(createdUrl)
+
+      await controller.bulkCreateUrls(req, res)
+      expect(res.ok).toHaveBeenCalledWith({
+        created: [dto],
+        errors: [
+          {
+            index: 1,
+            message: 'Only HTTPS URLs are allowed.',
+            type: 'LongUrlError',
+          },
+        ],
+      })
+    })
+
+    it('returns 400 when every row fails', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          validatedBulkRows: [],
+          bulkValidationErrors: [
+            {
+              index: 0,
+              message: 'Only HTTPS URLs are allowed.',
+              type: 'LongUrlError',
+            },
+          ],
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+
+      await controller.bulkCreateUrls(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        created: [],
+        errors: [
+          {
+            index: 0,
+            message: 'Only HTTPS URLs are allowed.',
+            type: 'LongUrlError',
+          },
+        ],
+      })
+    })
+
+    it('reports duplicate shortUrl within the same request', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          validatedBulkRows: [
+            { index: 0, shortUrl, longUrl },
+            { index: 1, shortUrl, longUrl: 'https://www.agency2.gov.sg' },
+          ],
+          bulkValidationErrors: [],
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+      urlManagementService.createUrl.mockResolvedValue(createdUrl)
+
+      await controller.bulkCreateUrls(req, res)
+      expect(urlManagementService.createUrl).toHaveBeenCalledTimes(1)
+      expect(res.ok).toHaveBeenCalledWith({
+        created: [dto],
+        errors: [
+          {
+            index: 1,
+            message: `Short link "${shortUrl}" is already used.`,
+            type: 'ShortUrlError',
+          },
+        ],
+      })
+    })
+
+    it('reports shortUrl collision from createUrl as row error', async () => {
+      const req = httpMocks.createRequest({
+        body: {
+          userId,
+          validatedBulkRows: [{ index: 0, shortUrl, longUrl }],
+          bulkValidationErrors: [],
+        },
+      })
+      const res: any = httpMocks.createResponse()
+      res.badRequest = jest.fn()
+      urlManagementService.createUrl.mockRejectedValue(
+        new AlreadyExistsError(`Short link "${shortUrl}" is already used.`),
+      )
+
+      await controller.bulkCreateUrls(req, res)
+      expect(res.badRequest).toHaveBeenCalledWith({
+        created: [],
+        errors: [
+          {
+            index: 0,
+            message: `Short link "${shortUrl}" is already used.`,
+            type: 'ShortUrlError',
+          },
+        ],
+      })
+    })
+  })
+
   describe('getUrlsWithConditions', () => {
     beforeEach(() => {
       urlManagementService.getUrlsWithConditions.mockReset()

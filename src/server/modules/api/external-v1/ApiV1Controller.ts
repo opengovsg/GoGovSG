@@ -73,6 +73,76 @@ export class ApiV1Controller {
     }
   }
 
+  public bulkCreateUrls: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (req, res) => {
+    const {
+      userId,
+      validatedBulkRows = [],
+      bulkValidationErrors = [],
+    } = req.body
+    const created = []
+    const errors = [...bulkValidationErrors]
+    const usedShortUrls = new Set<string>()
+
+    /* eslint-disable no-await-in-loop, no-continue */
+    for (let i = 0; i < validatedBulkRows.length; i += 1) {
+      const { index, longUrl, shortUrl } = validatedBulkRows[i]
+      if (shortUrl && usedShortUrls.has(shortUrl)) {
+        errors.push({
+          index,
+          message: `Short link "${shortUrl}" is already used.`,
+          type: MessageType.ShortUrlError,
+        })
+        continue
+      }
+
+      try {
+        const url = await this.urlManagementService.createUrl(
+          userId,
+          StorableUrlSource.Api,
+          shortUrl,
+          longUrl,
+        )
+        usedShortUrls.add(url.shortUrl)
+        created.push(this.urlV1Mapper.persistenceToDto(url))
+      } catch (createError) {
+        if (createError instanceof AlreadyExistsError) {
+          errors.push({
+            index,
+            message: createError.message,
+            type: MessageType.ShortUrlError,
+          })
+        } else if (createError instanceof NotFoundError) {
+          errors.push({
+            index,
+            message: createError.message,
+          })
+        } else if (createError instanceof Sequelize.ValidationError) {
+          errors.push({
+            index,
+            message: createError.message,
+          })
+        } else {
+          logger.error(`Error creating short URL in bulk:\t${createError}`)
+          errors.push({
+            index,
+            message: 'Server error.',
+          })
+        }
+      }
+    }
+    /* eslint-enable no-await-in-loop, no-continue */
+
+    const response = { created, errors }
+    if (created.length > 0) {
+      res.ok(response)
+      return
+    }
+    res.badRequest(response)
+  }
+
   public getUrlsWithConditions: (
     req: Express.Request,
     res: Express.Response,
