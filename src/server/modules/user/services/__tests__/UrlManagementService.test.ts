@@ -6,6 +6,7 @@ import {
   NotFoundError,
 } from '../../../../util/error'
 import { DATETIME_REGEX } from '../../../../../../test/integration/util/helpers'
+import dogstatsd, { SHORTLINK_TYPE_CONVERTED } from '../../../../util/dogstatsd'
 
 describe('UrlManagementService', () => {
   const userRepository = {
@@ -189,6 +190,11 @@ describe('UrlManagementService', () => {
     beforeEach(() => {
       userRepository.findOneUrlForUser.mockReset()
       urlRepository.update.mockReset()
+      jest.spyOn(dogstatsd, 'increment').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks()
     })
 
     it('throws NotFoundError on no url', async () => {
@@ -203,30 +209,79 @@ describe('UrlManagementService', () => {
       expect(urlRepository.update).not.toHaveBeenCalled()
     })
 
-    it('throws Error when updating file with longUrl', async () => {
+    it('converts a file to a link with longUrl', async () => {
       userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      urlRepository.update.mockResolvedValue({ ...fileUrl, isFile: false })
       await expect(
         service.updateUrl(userId, fileUrl.shortUrl, {
           longUrl: 'https://example.com',
         }),
-      ).rejects.toBeInstanceOf(Error)
-      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
-        userId,
-        fileUrl.shortUrl,
+      ).resolves.toStrictEqual({ ...fileUrl, isFile: false })
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        fileUrl,
+        expect.objectContaining({
+          longUrl: 'https://example.com',
+          isFile: false,
+          safeBrowsingExpiry: expect.stringMatching(DATETIME_REGEX),
+        }),
+        undefined,
       )
-      expect(urlRepository.update).not.toHaveBeenCalled()
+      expect(dogstatsd.increment).toHaveBeenCalledWith(
+        SHORTLINK_TYPE_CONVERTED,
+        1,
+        1,
+        ['direction:file_to_link'],
+      )
     })
 
-    it('throws Error when updating link with file', async () => {
+    it('converts a link to a file', async () => {
       userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      urlRepository.update.mockResolvedValue({ ...linkUrl, isFile: true })
       await expect(
         service.updateUrl(userId, linkUrl.shortUrl, { file }),
-      ).rejects.toBeInstanceOf(Error)
-      expect(userRepository.findOneUrlForUser).toHaveBeenCalledWith(
-        userId,
-        linkUrl.shortUrl,
+      ).resolves.toStrictEqual({ ...linkUrl, isFile: true })
+      expect(urlRepository.update).toHaveBeenCalledWith(
+        linkUrl,
+        expect.objectContaining({ isFile: true }),
+        {
+          data: file.data,
+          key: `${linkUrl.shortUrl}.json`,
+          mimetype: file.mimetype,
+        },
       )
-      expect(urlRepository.update).not.toHaveBeenCalled()
+      expect(dogstatsd.increment).toHaveBeenCalledWith(
+        SHORTLINK_TYPE_CONVERTED,
+        1,
+        1,
+        ['direction:link_to_file'],
+      )
+    })
+
+    it('does not fire conversion metric on same-type link edit', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(linkUrl)
+      urlRepository.update.mockResolvedValue(linkUrl)
+      await service.updateUrl(userId, linkUrl.shortUrl, {
+        ...options,
+        file: undefined,
+      })
+      expect(dogstatsd.increment).not.toHaveBeenCalledWith(
+        SHORTLINK_TYPE_CONVERTED,
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      )
+    })
+
+    it('does not fire conversion metric on same-type file replace', async () => {
+      userRepository.findOneUrlForUser.mockResolvedValue(fileUrl)
+      urlRepository.update.mockResolvedValue(fileUrl)
+      await service.updateUrl(userId, fileUrl.shortUrl, { file })
+      expect(dogstatsd.increment).not.toHaveBeenCalledWith(
+        SHORTLINK_TYPE_CONVERTED,
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+      )
     })
 
     it('updates a non-file url', async () => {
