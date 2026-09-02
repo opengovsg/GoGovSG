@@ -41,6 +41,24 @@ describe('GET /api/login/message', () => {
   })
 })
 
+describe('GET /api/user/message', () => {
+  test('returns 401 when unauthenticated', async (done) => {
+    const res = await request(app).get('/api/user/message')
+
+    expect(res.status).toBe(401)
+    done()
+  })
+})
+
+describe('GET /api/user/announcement', () => {
+  test('returns 401 when unauthenticated', async (done) => {
+    const res = await request(app).get('/api/user/announcement')
+
+    expect(res.status).toBe(401)
+    done()
+  })
+})
+
 describe('POST /api/login/otp', () => {
   test('notify the generation of an OTP', async (done) => {
     const res = await request(app)

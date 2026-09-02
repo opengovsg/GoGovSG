@@ -111,14 +111,7 @@ After these have been set up, set the environment variables according to the tab
 |           SESSION_SECRET           |   Yes    | For hashing browser sessions, e.g. `change-this`                                                                                                                                               |
 |    VALID_EMAIL_GLOB_EXPRESSION     |   Yes    | The glob expression used to test if a provided email address is valid. For safety, we have disabled the use of negations, ext-glob, glob stars (`**`) and braces, e.g. `*@youremaildomain.com` |
 |           GA_TRACKING_ID           |    No    | The Google Analytics tracking ID, e.g. `UA-12345678-9`                                                                                                                                         |
-|           LOGIN_MESSAGE            |    No    | A text message that will be displayed on the login page as a snackbar                                                                                                                          |
-|            USER_MESSAGE            |    No    | A text message that will be displayed as a banner, once the user has logged in                                                                                                                 |
-|        ANNOUNCEMENT_MESSAGE        |    No    | The message in the announcement displayed as a modal to users on login                                                                                                                         |
-|         ANNOUNCEMENT_TITLE         |    No    | The title in the announcement displayed as a modal to users on login                                                                                                                           |
-|       ANNOUNCEMENT_SUBTITLE        |    No    | The subtitle in the announcement displayed as a modal to users on login                                                                                                                        |
-|          ANNOUNCEMENT_URL          |    No    | The hyperlink for the button in the announcement displayed as a modal to users on login                                                                                                        |
-|         ANNOUNCEMENT_IMAGE         |    No    | The image in the announcement displayed as a modal to users on login                                                                                                                           |
-|      ANNOUNCEMENT_BUTTON_TEXT      |    No    | The text on the button in the announcement displayed as a modal to users on login                                                                                                              |
+|       GROWTHBOOK_CLIENT_KEY        |    No    | GrowthBook Node SDK key (`sdk-…`) for server-side operator copy. Empty when unset.                                                                                                             |
 |           ROTATED_LINKS            |    No    | List of comma separated path of links to rotate on the landing page                                                                                                                            |
 |           CSP_REPORT_URI           |    No    | A URI to report CSP violations to.                                                                                                                                                             |
 |     CSP_ONLY_REPORT_VIOLATIONS     |    No    | Only report CSP violations, do not enforce.                                                                                                                                                    |
@@ -223,6 +216,10 @@ All source code resides in the `src` directory. Inside `src`, there is `client` 
 ### Asset variants
 
 This repository serves as the codebase to serve three link shortener environments: [Go.gov.sg](https://www.go.gov.sg), [for.edu.sg](https://www.for.edu.sg), and [for.sg](https://www.for.sg). These environments are run on separate infrastructure, and the deployment pipeline is set up to deploy any code changes in this codebase across all infrastructure environments. The environments are identical apart from the assets, copy and list of authorized users.
+
+### GrowthBook operator copy
+
+Login snackbar, dashboard banner, and announcement modal are read from GrowthBook on the server via `GROWTHBOOK_CLIENT_KEY`. Feature keys: `login_message_{gov,edu,health}`, `user_message_{gov,edu,health}`, `announcement_{gov,edu,health}`. Create one Node SDK connection per environment and populate the nine flags before deploying a build that no longer reads `LOGIN_MESSAGE`, `USER_MESSAGE`, or `ANNOUNCEMENT_*`.
 
 ### Babel
 
