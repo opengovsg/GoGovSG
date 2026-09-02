@@ -43,6 +43,14 @@ export class ApiV1Controller {
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
     const { userId, longUrl, shortUrl }: UrlCreationRequest = req.body
+    const file = req.files?.file
+
+    if (Array.isArray(file)) {
+      res.unprocessableEntity(
+        jsonMessage('Only single file uploads are supported.'),
+      )
+      return
+    }
 
     try {
       const url = await this.urlManagementService.createUrl(
@@ -50,6 +58,7 @@ export class ApiV1Controller {
         StorableUrlSource.Api,
         shortUrl,
         longUrl,
+        file,
       )
       const apiUrl = this.urlV1Mapper.persistenceToDto(url)
       res.ok(apiUrl)
@@ -82,7 +91,10 @@ export class ApiV1Controller {
     try {
       const { urls, count } =
         await this.urlManagementService.getUrlsWithConditions(queryConditions)
-      const apiUrls = urls.map((url) => this.urlV1Mapper.persistenceToDto(url))
+      const apiUrls = urls.map((url) => ({
+        ...this.urlV1Mapper.persistenceToDto(url)!,
+        isFile: url.isFile,
+      }))
       res.ok({ urls: apiUrls, count })
       return
     } catch (error) {
@@ -126,6 +138,14 @@ export class ApiV1Controller {
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
     const { userId, longUrl, shortUrl, state }: UrlEditRequest = req.body
+    const file = req.files?.file
+
+    if (Array.isArray(file)) {
+      res.unprocessableEntity(
+        jsonMessage('Only single file uploads are supported.'),
+      )
+      return
+    }
 
     let urlState
     if (state) {
@@ -137,6 +157,7 @@ export class ApiV1Controller {
       const url = await this.urlManagementService.updateUrl(userId, shortUrl, {
         longUrl,
         state: urlState,
+        file,
       })
       const apiUrl = this.urlV1Mapper.persistenceToDto(url)
       res.ok(apiUrl)
