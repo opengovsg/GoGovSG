@@ -58,7 +58,7 @@
     "aws-sdk": "^2.1354.0",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^5.1.0",
-    "body-parser": "^1.19.2",
+    "body-parser": "^2.3.0",
     "chart.js": "^2.9.4",
     "cheerio": "^1.0.0-rc.10",
     "classnames": "^2.3.1",
@@ -74,7 +74,7 @@
     "dd-trace": "^5.98.0",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.7",
-    "express": "^4.22.2",
+    "express": "^5.2.1",
     "express-fileupload": "^1.4.0",
     "express-joi-validation": "^5.0.1",
     "express-rate-limit": "^5.3.0",
@@ -212,7 +212,7 @@
     "typescript": "^4.3.5",
     "upng-js": "^2.1.0",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^6.0.0"
   },
   "lint-staged": {
     "**/*.(js|jsx)": [
