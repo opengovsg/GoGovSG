@@ -36,6 +36,26 @@ export class BulkService implements interfaces.BulkService {
     this.urlRepository = urlRepository
   }
 
+  private validateShortUrlAvailability = async (
+    rows: interfaces.BulkCsvRow[],
+  ): Promise<void> => {
+    for (let i = 0; i < rows.length; i += 1) {
+      const { shortUrl } = rows[i]
+      if (shortUrl) {
+        // eslint-disable-next-line no-await-in-loop
+        const isAvailable = await this.urlRepository.isShortUrlAvailable(
+          shortUrl,
+        )
+        if (!isAvailable) {
+          dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
+            `${BULK_VALIDATION_ERROR_TAGS.isShortUrlAvailable}`,
+          ])
+          throw new Error(`Row ${i + 2}: ${shortUrl} is already taken`)
+        }
+      }
+    }
+  }
+
   parseCsv: (file: UploadedFile) => Promise<interfaces.BulkCsvRow[]> = async (
     file,
   ) => {
@@ -55,7 +75,7 @@ export class BulkService implements interfaces.BulkService {
       Papa.parse(dataString, {
         skipEmptyLines: 'greedy',
         delimiter: ',',
-        complete: () => {
+        complete: async () => {
           // check for empty file
           if (rows.length === 0) {
             dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
@@ -64,29 +84,12 @@ export class BulkService implements interfaces.BulkService {
             reject(new Error('csv file is empty'))
             return
           }
-
-          // Validate custom short URL availability against the DB after
-          // format/within-file checks. Fail fast on the first taken slug.
-          ;(async () => {
-            for (let i = 0; i < rows.length; i += 1) {
-              const { shortUrl } = rows[i]
-              if (!shortUrl) {
-                // eslint-disable-next-line no-continue
-                continue
-              }
-              // eslint-disable-next-line no-await-in-loop
-              const isAvailable = await this.urlRepository.isShortUrlAvailable(
-                shortUrl,
-              )
-              if (!isAvailable) {
-                dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
-                  `${BULK_VALIDATION_ERROR_TAGS.isShortUrlAvailable}`,
-                ])
-                throw new Error(`Row ${i + 2}: ${shortUrl} is already taken`)
-              }
-            }
+          try {
+            await this.validateShortUrlAvailability(rows)
             resolve(rows)
-          })().catch(reject)
+          } catch (error) {
+            reject(error)
+          }
         },
         error: (error: Error) => {
           reject(error)
@@ -95,10 +98,8 @@ export class BulkService implements interfaces.BulkService {
           const rowData = step.data as string[]
 
           if (counter === 0) {
-            const firstHeader = (rowData[0] || '').trim()
-            const secondHeader =
-              rowData.length > 1 ? (rowData[1] || '').trim() : undefined
-
+            const firstHeader = rowData[0]?.trim()
+            const secondHeader = rowData[1]?.trim()
             const isValidOneColumnHeader =
               rowData.length === 1 && firstHeader === BULK_UPLOAD_HEADER
             const isValidTwoColumnHeader =
@@ -116,12 +117,10 @@ export class BulkService implements interfaces.BulkService {
             }
             hasShortUrlColumn = isValidTwoColumnHeader
           } else {
-            const longUrl = (rowData[0] || '').trim()
-            const rawShortUrl =
-              hasShortUrlColumn && rowData.length > 1
-                ? (rowData[1] || '').trim()
-                : ''
-            const shortUrl = rawShortUrl.length > 0 ? rawShortUrl : undefined
+            const longUrl = rowData[0].trim()
+            const shortUrl = hasShortUrlColumn
+              ? rowData[1]?.trim() || undefined
+              : undefined
 
             const acceptableLinkCount = counter <= BULK_UPLOAD_MAX_NUM // rows include header
             const acceptableColumnCount = hasShortUrlColumn
@@ -136,9 +135,9 @@ export class BulkService implements interfaces.BulkService {
             )
             const noParsingError = step.errors.length === 0
             const isValidShortUrl =
-              shortUrl === undefined || validators.isValidShortUrl(shortUrl)
-            const isShortUrlNotClaimed =
-              shortUrl === undefined || !claimedShortUrls.has(shortUrl)
+              !shortUrl || validators.isValidShortUrl(shortUrl)
+            const isDuplicateShortUrl =
+              !!shortUrl && claimedShortUrls.has(shortUrl)
 
             switch (true) {
               case !acceptableLinkCount:
@@ -188,7 +187,7 @@ export class BulkService implements interfaces.BulkService {
                 throw new Error(
                   `Row ${counter + 1}: ${shortUrl} is not a valid short link`,
                 )
-              case !isShortUrlNotClaimed:
+              case isDuplicateShortUrl:
                 dogstatsd.increment(BULK_VALIDATION_ERROR, 1, 1, [
                   `${BULK_VALIDATION_ERROR_TAGS.isShortUrlAvailable}`,
                 ])
@@ -205,10 +204,8 @@ export class BulkService implements interfaces.BulkService {
             }
             if (shortUrl) {
               claimedShortUrls.add(shortUrl)
-              rows.push({ longUrl, shortUrl })
-            } else {
-              rows.push({ longUrl })
             }
+            rows.push(shortUrl ? { longUrl, shortUrl } : { longUrl })
           }
           counter += 1
         },

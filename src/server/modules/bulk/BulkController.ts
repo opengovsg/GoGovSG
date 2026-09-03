@@ -41,7 +41,6 @@ export class BulkController {
 
     try {
       const urlRows = await this.bulkService.parseCsv(file)
-      // longUrls kept as string[] for UrlCheckController.bulkUrlCheck
       req.body.urlRows = urlRows
       req.body.longUrls = urlRows.map((row) => row.longUrl)
       next()
