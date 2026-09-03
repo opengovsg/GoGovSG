@@ -1,8 +1,13 @@
 import { UploadedFile } from 'express-fileupload'
 import { BulkUrlMapping } from '../../../repositories/types'
 
-export interface BulkService {
-  parseCsv(file: UploadedFile): Promise<string[]>
+export type BulkCsvRow = {
+  longUrl: string
+  shortUrl?: string
+}
 
-  generateUrlMappings(longUrls: string[]): Promise<BulkUrlMapping[]>
+export interface BulkService {
+  parseCsv(file: UploadedFile): Promise<BulkCsvRow[]>
+
+  generateUrlMappings(rows: BulkCsvRow[]): Promise<BulkUrlMapping[]>
 }
