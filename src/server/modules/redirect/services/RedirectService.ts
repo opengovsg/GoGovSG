@@ -4,7 +4,7 @@ import { DependencyIds } from '../../../constants.js'
 import { NotFoundError } from '../../../util/error.js'
 import { RedirectResult, RedirectType } from '../types.js'
 import { LinkStatisticsService } from '../../analytics/interfaces/index.js'
-import { logger, ogUrl } from '../../../config.js'
+import { logger, ogUrl, safeBrowsingKey } from '../../../config.js'
 import { CookieArrayReducerService } from './CookieArrayReducerService.js'
 import { CrawlerCheckService } from './CrawlerCheckService.js'
 import { UrlThreatScanService } from '../../threat/interfaces/index.js'
@@ -84,8 +84,13 @@ export class RedirectService {
         isThreat = await this.urlThreatScanService.isThreat(longUrl)
       } catch (error) {
         scanFailed = true
+        // The Web Risk API key is embedded in the scan request URL, so a
+        // network-level failure (e.g. a FetchError on DNS/connection errors)
+        // can carry it in error.message. Redact it before logging.
         logger.error(
-          `Safe Browsing check failed for shortUrl ${shortUrl}, allowing redirect: ${error}`,
+          RedirectService.redactApiKey(
+            `Safe Browsing check failed for shortUrl ${shortUrl}, allowing redirect: ${error}`,
+          ),
         )
       }
 
@@ -172,6 +177,17 @@ export class RedirectService {
    */
   private static isValidShortUrl(shortUrl: string): boolean {
     return !shortUrl || !/^[a-zA-Z0-9-]+$/.test(shortUrl)
+  }
+
+  /**
+   * Strips the Safe Browsing API key out of a string before it is logged.
+   * @param {string} value
+   * @returns {string}
+   */
+  private static redactApiKey(value: string): string {
+    return safeBrowsingKey
+      ? value.split(safeBrowsingKey).join('[REDACTED]')
+      : value
   }
 }
 
