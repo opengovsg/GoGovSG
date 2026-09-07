@@ -74,7 +74,20 @@ export class RedirectService {
         new Date(safeBrowsingExpiry).getTime() < Date.now())
 
     if (isSafeBrowsingResultExpired) {
-      const isThreat = await this.urlThreatScanService.isThreat(longUrl)
+      // Only the scan call itself is allowed to fail open: a Web Risk outage
+      // should not block the redirect, but a real detected threat (below)
+      // must still be handled exactly as before, uninterrupted by a try/catch.
+      let isThreat = false
+      let scanFailed = false
+      try {
+        isThreat = await this.urlThreatScanService.isThreat(longUrl)
+      } catch (error) {
+        scanFailed = true
+        logger.error(
+          `Safe Browsing check failed for shortUrl ${shortUrl}, allowing redirect: ${error}`,
+        )
+      }
+
       if (isThreat) {
         logger.warn(
           `Malicious link attempt: ${longUrl} was detected as malicious for shortUrl ${shortUrl}`,
@@ -88,9 +101,13 @@ export class RedirectService {
         // avoid inducing user panic.
         throw new NotFoundError('Malicious link detected')
       }
-      // Store the result of the threat scan in the database
-      const expiry = getSafeBrowsingExpiryDate({ longUrl })
-      await this.urlRepository.updateSafeBrowsingExpiry(shortUrl, expiry)
+
+      // Leave the expiry unset on a failed scan so it's retried on the next
+      // visit, instead of caching an inconclusive result as "safe".
+      if (!scanFailed) {
+        const expiry = getSafeBrowsingExpiryDate({ longUrl })
+        await this.urlRepository.updateSafeBrowsingExpiry(shortUrl, expiry)
+      }
     }
 
     // Update clicks and click statistics in database.

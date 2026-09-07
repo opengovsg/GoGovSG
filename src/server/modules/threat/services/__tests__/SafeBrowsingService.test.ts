@@ -88,6 +88,32 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
+    it('does not throw when response is not ok and the error body has no error field (e.g. a gateway 502)', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch.mockResolvedValue({
+        ok: false,
+        statusText: 'Bad Gateway',
+        json,
+      })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
+    it('does not throw when the response body is not valid JSON', async () => {
+      const json = jest.fn()
+      json.mockRejectedValue(new SyntaxError('Unexpected token < in JSON'))
+      mockFetch.mockResolvedValue({
+        ok: false,
+        statusText: 'Bad Gateway',
+        json,
+      })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
     it('returns false even when fetchWebRiskData returns threat', async () => {
       const result = {
         threat: {
@@ -164,6 +190,19 @@ describe('SafeBrowsingService', () => {
       await expect(service.isThreat(url)).rejects.toBeDefined()
       expect(get).toHaveBeenCalledWith(url)
       expect(set).not.toHaveBeenCalled()
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
+    it('still throws (fails closed) when response is not ok and the error body is malformed', async () => {
+      const json = jest.fn()
+      json.mockRejectedValue(new SyntaxError('Unexpected token < in JSON'))
+      mockFetch.mockResolvedValue({
+        ok: false,
+        statusText: 'Bad Gateway',
+        json,
+      })
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
       expect(mockFetch).toHaveBeenCalled()
     })
 

@@ -9,6 +9,7 @@ jest.mock('../../../../config', () => {
   return {
     logger: {
       warn: jest.fn(),
+      error: jest.fn(),
     },
     ogUrl: 'https://go.gov.sg',
   }
@@ -247,6 +248,60 @@ describe('RedirectService', () => {
         await expect(
           service.redirectFor('shortUrl', undefined, '', ''),
         ).resolves.not.toThrowError(NotFoundError)
+      })
+
+      it('should still propagate the error and not allow the redirect if deactivating a confirmed-malicious link fails', async () => {
+        // Arrange: a real threat IS detected (isThreat resolves, doesn't throw),
+        // but deactivating the link afterwards fails. This must not be treated
+        // as a mere "scan failure" that fails open.
+        mockUrlRepository.getLongUrl.mockResolvedValue({
+          longUrl: 'https://malicious.com',
+          isFile: false,
+          safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
+        })
+        mockUrlThreatScanService.isThreat.mockResolvedValue(true)
+        mockUrlManagementService.deactivateMaliciousShortUrl.mockRejectedValue(
+          new Error('database unavailable'),
+        )
+
+        // Act & Assert
+        await expect(
+          service.redirectFor('shortUrl', undefined, '', ''),
+        ).rejects.toThrow('database unavailable')
+        expect(
+          mockUrlRepository.updateSafeBrowsingExpiry,
+        ).not.toHaveBeenCalled()
+      })
+
+      it('should allow the redirect and not update the safe browsing expiry when the threat scan itself fails (e.g. Web Risk API outage)', async () => {
+        // Arrange
+        const mockShortUrl = 'short'
+        const mockLongUrl = 'https://example.com'
+        mockUrlRepository.getLongUrl.mockResolvedValue({
+          longUrl: mockLongUrl,
+          isFile: false,
+          safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
+        })
+        mockUrlThreatScanService.isThreat.mockRejectedValue(
+          new Error('Safe Browsing failure: Bad Gateway'),
+        )
+
+        // Act
+        const result = await service.redirectFor(
+          mockShortUrl,
+          undefined,
+          'Mozilla/5.0',
+          '',
+        )
+
+        // Assert: redirect still succeeds instead of surfacing the scan error
+        expect(result.longUrl).toBe(mockLongUrl)
+        expect(
+          mockUrlRepository.updateSafeBrowsingExpiry,
+        ).not.toHaveBeenCalled()
+        expect(
+          mockUrlManagementService.deactivateMaliciousShortUrl,
+        ).not.toHaveBeenCalled()
       })
 
       it('should update the safe browsing expiry if the longUrl is not malicious', async () => {
