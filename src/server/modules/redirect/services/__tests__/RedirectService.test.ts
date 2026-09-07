@@ -12,8 +12,12 @@ jest.mock('../../../../config', () => {
       error: jest.fn(),
     },
     ogUrl: 'https://go.gov.sg',
+    safeBrowsingKey: 'test-safe-browsing-api-key',
   }
 })
+
+// eslint-disable-next-line global-require
+const { logger: mockLogger } = require('../../../../config')
 
 // Mock dependencies
 const mockUrlRepository = {
@@ -271,6 +275,35 @@ describe('RedirectService', () => {
         expect(
           mockUrlRepository.updateSafeBrowsingExpiry,
         ).not.toHaveBeenCalled()
+      })
+
+      it('should not leak the Safe Browsing API key into logs when the scan fails with a network error', async () => {
+        // Arrange: simulate the FetchError node-fetch/cross-fetch throws on a
+        // network-level failure, which embeds the full request URL --
+        // including the API key query param -- in its message.
+        mockUrlRepository.getLongUrl.mockResolvedValue({
+          longUrl: 'https://example.com',
+          isFile: false,
+          safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
+        })
+        const apiKey = 'test-safe-browsing-api-key'
+        mockUrlThreatScanService.isThreat.mockRejectedValue(
+          new Error(
+            `request to https://webrisk.googleapis.com/v1/uris:search?key=${apiKey}&threatTypes=MALWARE failed, reason: getaddrinfo ENOTFOUND webrisk.googleapis.com`,
+          ),
+        )
+
+        // Act
+        await service.redirectFor('shortUrl', undefined, '', '')
+
+        // Assert: the API key must never appear in any logged message
+        const loggedMessages: string[] = [
+          ...mockLogger.error.mock.calls,
+          ...mockLogger.warn.mock.calls,
+        ].reduce((acc, call) => acc.concat(call), [])
+        expect(
+          loggedMessages.some((message: string) => message.includes(apiKey)),
+        ).toBe(false)
       })
 
       it('should allow the redirect and not update the safe browsing expiry when the threat scan itself fails (e.g. Web Risk API outage)', async () => {
