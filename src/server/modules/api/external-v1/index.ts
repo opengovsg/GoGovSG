@@ -19,14 +19,35 @@ type OptionalStateProperty = {
   state?: 'ACTIVE' | 'INACTIVE'
 }
 
+type OptionalTagsProperty = {
+  tags?: string[]
+}
+
+type LinkInformationProperties = {
+  contactEmail: string | null
+  description: string
+}
+
 export type UrlCreationRequest = ShortUrlOperationProperty &
-  OptionalLongUrlProperty
+  OptionalLongUrlProperty &
+  OptionalTagsProperty &
+  Partial<LinkInformationProperties>
 
 export type UrlEditRequest = ShortUrlOperationProperty &
   OptionalStateProperty &
-  OptionalLongUrlProperty
+  OptionalLongUrlProperty &
+  Partial<LinkInformationProperties> &
+  OptionalTagsProperty
 
 export type UrlV1DTO = Pick<
   StorableUrl,
-  'shortUrl' | 'longUrl' | 'state' | 'clicks' | 'createdAt' | 'updatedAt'
+  | 'shortUrl'
+  | 'longUrl'
+  | 'state'
+  | 'clicks'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'tags'
+  | 'description'
+  | 'contactEmail'
 >

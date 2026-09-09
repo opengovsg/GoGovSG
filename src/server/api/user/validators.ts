@@ -4,17 +4,16 @@ import {
   isBlacklisted,
   isCircularRedirects,
   isHttps,
-  isPrintableAscii,
   isValidShortUrl,
   isValidTag,
   isValidUrl,
 } from '../../../shared/util/validation'
-import {
-  LINK_DESCRIPTION_MAX_LENGTH,
-  MAX_NUM_TAGS_PER_LINK,
-} from '../../../shared/constants'
 import { ogHostname } from '../../config'
-import { isValidGovEmail } from '../../util/email'
+import {
+  contactEmailSchema,
+  descriptionSchema,
+  tagSchema,
+} from '../shared/linkFieldValidators'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
@@ -27,26 +26,6 @@ export const tagRetrievalSchema = Joi.object({
 export const hasApiKeySchema = Joi.object({
   userId: Joi.number().required(),
 })
-
-const singleTagSchema = Joi.string()
-  .pattern(/^[A-Za-z0-9-_]+$/)
-  .max(25)
-
-const tagSchema = Joi.array()
-  .max(MAX_NUM_TAGS_PER_LINK)
-  .optional()
-  // letters, numbers, hyphens, underscores, 25 digits
-  .items(
-    singleTagSchema
-      .custom((tag: string, helpers) => {
-        if (!isValidTag(tag)) {
-          return helpers.error('tag:invalid')
-        }
-        return tag
-      })
-      .messages({ 'tag:invalid': 'Tag format is invalid.' }),
-  )
-  .unique((a, b) => a === b)
 
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
@@ -143,25 +122,8 @@ export const urlEditSchema = Joi.object({
     file: Joi.object().keys().required(),
   }),
   state: Joi.string().allow(ACTIVE, INACTIVE).only(),
-  description: Joi.string()
-    .allow('')
-    .max(LINK_DESCRIPTION_MAX_LENGTH)
-    .custom((description: string, helpers) => {
-      if (!isPrintableAscii(description)) {
-        return helpers.message({
-          custom: 'Description must only contain ASCII characters.',
-        })
-      }
-      return description
-    }),
-  contactEmail: Joi.string()
-    .allow(null)
-    .custom((email: string, helpers) => {
-      if (!isValidGovEmail(email)) {
-        return helpers.message({ custom: 'Not a valid gov email or null' })
-      }
-      return email
-    }),
+  description: descriptionSchema,
+  contactEmail: contactEmailSchema,
 }).oxor('longUrl', 'files')
 
 export const ownershipTransferSchema = Joi.object({

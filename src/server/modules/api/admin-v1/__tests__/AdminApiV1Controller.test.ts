@@ -101,6 +101,9 @@ describe('AdminApiV1Controller', () => {
         clicks,
         createdAt,
         updatedAt,
+        tags,
+        description,
+        contactEmail,
       })
     })
 
@@ -171,6 +174,9 @@ describe('AdminApiV1Controller', () => {
         clicks,
         createdAt,
         updatedAt,
+        tags,
+        description,
+        contactEmail,
       })
     })
 

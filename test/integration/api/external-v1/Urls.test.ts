@@ -9,10 +9,19 @@ import {
 } from '../../util/helpers'
 import { get, patch, postFormData, postJson } from '../../util/requests'
 
+const defaultLinkFields = {
+  tags: [],
+  description: '',
+  contactEmail: null,
+}
+
 async function createLinkUrl(
   link: {
     shortUrl?: string
     longUrl?: string
+    tags?: string[]
+    description?: string
+    contactEmail?: string | null
   },
   apiKey: string,
 ) {
@@ -35,15 +44,25 @@ async function createFileUrl(shortUrl: string, apiKey: string) {
 }
 
 async function updateLinkUrl(
-  link: { shortUrl: string; longUrl?: string; state?: string },
+  link: {
+    shortUrl: string
+    longUrl?: string
+    state?: string
+    tags?: string[]
+    description?: string
+    contactEmail?: string | null
+  },
   apiKey: string,
 ) {
-  const { shortUrl, longUrl, state } = link
+  const { shortUrl, longUrl, state, tags, description, contactEmail } = link
   const res = await patch(
     `${API_EXTERNAL_V1_URLS}/${shortUrl}`,
     {
       longUrl,
       state,
+      tags,
+      description,
+      contactEmail,
     },
     undefined,
     apiKey,
@@ -114,6 +133,31 @@ describe('Url integration tests', () => {
       state: 'ACTIVE',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
+    })
+  })
+
+  it('should be able to create link url with tags, description, and contactEmail', async () => {
+    const shortUrl = await generateRandomString(6)
+    const tags = ['campaign-a', '2026']
+    const description = 'Landing page for campaign A'
+    const contactEmail = 'person@open.gov.sg'
+    const res = await createLinkUrl(
+      { shortUrl, longUrl, tags, description, contactEmail },
+      apiKey,
+    )
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toEqual({
+      shortUrl,
+      longUrl,
+      clicks: 0,
+      state: 'ACTIVE',
+      createdAt: expect.stringMatching(DATETIME_REGEX),
+      updatedAt: expect.stringMatching(DATETIME_REGEX),
+      tags,
+      description,
+      contactEmail,
     })
   })
 
@@ -128,6 +172,7 @@ describe('Url integration tests', () => {
       state: 'ACTIVE',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
     })
   })
 
@@ -163,6 +208,32 @@ describe('Url integration tests', () => {
     })
   })
 
+  it('should not be able to create link url with invalid tag', async () => {
+    const shortUrl = await generateRandomString(6)
+    const res = await createLinkUrl(
+      { shortUrl, longUrl, tags: ['tag-a', 'tag-a'] },
+      apiKey,
+    )
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body).toEqual({
+      message: 'ValidationError: "tags[1]" contains a duplicate value',
+    })
+  })
+
+  it('should not be able to create link url with invalid contactEmail', async () => {
+    const shortUrl = await generateRandomString(6)
+    const res = await createLinkUrl(
+      { shortUrl, longUrl, contactEmail: 'not-a-gov-email@example.com' },
+      apiKey,
+    )
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body).toEqual({
+      message: 'ValidationError: Not a valid gov email or null',
+    })
+  })
+
   it('should not be able to create file url', async () => {
     const shortUrl = await generateRandomString(6)
     const res = await createFileUrl(shortUrl, apiKey)
@@ -188,6 +259,7 @@ describe('Url integration tests', () => {
       state: newState,
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
     })
 
     // Should be able to get updated link URL
@@ -203,10 +275,88 @@ describe('Url integration tests', () => {
           clicks: 0,
           createdAt: expect.stringMatching(DATETIME_REGEX),
           updatedAt: expect.stringMatching(DATETIME_REGEX),
+          ...defaultLinkFields,
         },
       ],
       count: 1,
     })
+  })
+
+  it('should be able to update link url with tags, description, and contactEmail', async () => {
+    const shortUrl = await generateRandomString(6)
+    await createLinkUrl({ shortUrl, longUrl }, apiKey)
+
+    const tags = ['campaign-a']
+    const description = 'Updated description'
+    const contactEmail = 'person@open.gov.sg'
+    const res = await updateLinkUrl(
+      { shortUrl, tags, description, contactEmail },
+      apiKey,
+    )
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toEqual({
+      shortUrl,
+      longUrl,
+      clicks: 0,
+      state: 'ACTIVE',
+      createdAt: expect.stringMatching(DATETIME_REGEX),
+      updatedAt: expect.stringMatching(DATETIME_REGEX),
+      tags,
+      description,
+      contactEmail,
+    })
+  })
+
+  it('should fully replace tags on update', async () => {
+    const shortUrl = await generateRandomString(6)
+    await createLinkUrl({ shortUrl, longUrl, tags: ['tag-a', 'tag-b'] }, apiKey)
+
+    const tags = ['tag-c']
+    const res = await updateLinkUrl({ shortUrl, tags }, apiKey)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.tags).toEqual(tags)
+
+    const getRes = await get(API_EXTERNAL_V1_URLS, undefined, apiKey)
+    const getBody = await getRes.json()
+    expect(getBody.urls[0].tags).toEqual(tags)
+  })
+
+  it('should leave tags unchanged when omitted on update', async () => {
+    const shortUrl = await generateRandomString(6)
+    const originalTags = ['tag-a', 'tag-b']
+    await createLinkUrl({ shortUrl, longUrl, tags: originalTags }, apiKey)
+
+    const res = await updateLinkUrl(
+      { shortUrl, description: 'only description changed' },
+      apiKey,
+    )
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.tags).toEqual(originalTags)
+  })
+
+  it('should clear description and contactEmail on update', async () => {
+    const shortUrl = await generateRandomString(6)
+    await createLinkUrl(
+      {
+        shortUrl,
+        longUrl,
+        description: 'to be cleared',
+        contactEmail: 'person@open.gov.sg',
+      },
+      apiKey,
+    )
+
+    const res = await updateLinkUrl(
+      { shortUrl, description: '', contactEmail: null },
+      apiKey,
+    )
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.description).toBe('')
+    expect(body.contactEmail).toBeNull()
   })
 
   it('should be able to update link url with new longUrl', async () => {
@@ -224,6 +374,7 @@ describe('Url integration tests', () => {
       state: 'ACTIVE',
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
     })
   })
 
@@ -242,6 +393,7 @@ describe('Url integration tests', () => {
       state: newState,
       createdAt: expect.stringMatching(DATETIME_REGEX),
       updatedAt: expect.stringMatching(DATETIME_REGEX),
+      ...defaultLinkFields,
     })
   })
 

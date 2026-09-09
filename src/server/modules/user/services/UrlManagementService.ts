@@ -59,6 +59,8 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     longUrl?: string,
     file?: GoUploadedFile,
     tags?: string[],
+    description?: string,
+    contactEmail?: string | null,
   ) => Promise<StorableUrl> = async (
     userId,
     source,
@@ -66,6 +68,8 @@ export class UrlManagementService implements interfaces.UrlManagementService {
     longUrl,
     file,
     tags,
+    description,
+    contactEmail,
   ) => {
     const user = await this.userRepository.findById(userId)
     if (!user) {
@@ -110,6 +114,8 @@ export class UrlManagementService implements interfaces.UrlManagementService {
         tags,
         source,
         safeBrowsingExpiry: safeBrowsingExpiry.toISOString(),
+        description,
+        contactEmail,
       },
       storableFile,
     )

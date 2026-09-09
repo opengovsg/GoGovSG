@@ -22,6 +22,18 @@ import { UserUrlsQueryConditions } from '../../../repositories/types'
 import { UrlCreationRequest, UrlEditRequest } from '.'
 import { UrlV1Mapper } from '../../../mappers/UrlV1Mapper'
 
+function normalizeContactEmail(
+  contactEmail: string | null | undefined,
+): string | null | undefined {
+  if (contactEmail) {
+    return contactEmail.trim().toLowerCase()
+  }
+  if (contactEmail === null) {
+    return null
+  }
+  return undefined
+}
+
 @injectable()
 export class ApiV1Controller {
   private urlManagementService: UrlManagementService
@@ -42,7 +54,16 @@ export class ApiV1Controller {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, longUrl, shortUrl }: UrlCreationRequest = req.body
+    const {
+      userId,
+      longUrl,
+      shortUrl,
+      tags,
+      description,
+      contactEmail,
+    }: UrlCreationRequest = req.body
+
+    const newContactEmail = normalizeContactEmail(contactEmail)
 
     try {
       const url = await this.urlManagementService.createUrl(
@@ -50,6 +71,10 @@ export class ApiV1Controller {
         StorableUrlSource.Api,
         shortUrl,
         longUrl,
+        undefined,
+        tags,
+        description?.trim(),
+        newContactEmail,
       )
       const apiUrl = this.urlV1Mapper.persistenceToDto(url)
       res.ok(apiUrl)
@@ -125,7 +150,15 @@ export class ApiV1Controller {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (req, res) => {
-    const { userId, longUrl, shortUrl, state }: UrlEditRequest = req.body
+    const {
+      userId,
+      longUrl,
+      shortUrl,
+      state,
+      description,
+      contactEmail,
+      tags,
+    }: UrlEditRequest = req.body
 
     let urlState
     if (state) {
@@ -133,10 +166,15 @@ export class ApiV1Controller {
         state === 'ACTIVE' ? StorableUrlState.Active : StorableUrlState.Inactive
     }
 
+    const newContactEmail = normalizeContactEmail(contactEmail)
+
     try {
       const url = await this.urlManagementService.updateUrl(userId, shortUrl, {
         longUrl,
         state: urlState,
+        contactEmail: newContactEmail,
+        description: description?.trim(),
+        tags,
       })
       const apiUrl = this.urlV1Mapper.persistenceToDto(url)
       res.ok(apiUrl)
