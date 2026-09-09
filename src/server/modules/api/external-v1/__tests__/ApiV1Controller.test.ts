@@ -27,7 +27,51 @@ const controller = new ApiV1Controller(urlManagementService, urlV1Mapper)
  * Unit tests for API v1 controller.
  */
 describe('ApiV1Controller', () => {
+  beforeEach(() => {
+    urlManagementService.createUrl.mockReset()
+    urlManagementService.updateUrl.mockReset()
+    urlManagementService.getUrlsWithConditions.mockReset()
+  })
+
   describe('createUrl', () => {
+    it('creates file url for API', async () => {
+      const userId = 1
+      const shortUrl = 'abcdef'
+      const longUrl = 'https://file.go.gov.sg/abcdef.txt'
+      const file = {
+        name: 'test.txt',
+        data: Buffer.from('test'),
+        mimetype: 'text/plain',
+      }
+
+      const req = httpMocks.createRequest({
+        body: { userId, shortUrl },
+        files: { file } as any,
+      })
+      const res: any = httpMocks.createResponse()
+      res.ok = jest.fn()
+
+      const result = {
+        shortUrl,
+        longUrl,
+        state: 'ACTIVE',
+        clicks: 0,
+        createdAt: moment().toISOString(),
+        updatedAt: moment().toISOString(),
+      }
+      urlManagementService.createUrl.mockResolvedValue(result)
+
+      await controller.createUrl(req, res)
+      expect(urlManagementService.createUrl).toHaveBeenCalledWith(
+        userId,
+        'API',
+        shortUrl,
+        undefined,
+        file,
+      )
+      expect(res.ok).toHaveBeenCalledWith(result)
+    })
+
     it('creates link and sanitizes link for API', async () => {
       const userId = 1
       const shortUrl = 'abcdef'
@@ -73,6 +117,7 @@ describe('ApiV1Controller', () => {
         source,
         shortUrl,
         longUrl,
+        undefined,
       )
       expect(res.ok).toHaveBeenCalledWith({
         shortUrl,
@@ -143,9 +188,6 @@ describe('ApiV1Controller', () => {
   })
 
   describe('getUrlsWithConditions', () => {
-    beforeEach(() => {
-      urlManagementService.getUrlsWithConditions.mockReset()
-    })
     it('processes query with defaults', async () => {
       const req = createRequestWithUser(undefined)
       const res: any = httpMocks.createResponse()
@@ -244,6 +286,7 @@ describe('ApiV1Controller', () => {
             clicks,
             createdAt,
             updatedAt,
+            isFile: true,
           },
           {
             shortUrl: 'def',
@@ -252,6 +295,7 @@ describe('ApiV1Controller', () => {
             clicks,
             createdAt,
             updatedAt,
+            isFile: false,
           },
         ],
         count: 2,
