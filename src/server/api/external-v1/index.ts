@@ -6,6 +6,9 @@ import { DependencyIds } from '../../constants'
 import { ApiV1Controller } from '../../modules/api/external-v1'
 import { UrlCheckController } from '../../modules/threat'
 import {
+  extractBulkRowValidationError,
+  urlBulkRowSchema,
+  urlBulkSchema,
   urlEditSchema,
   urlRetrievalSchema,
   urlSchema,
@@ -37,11 +40,60 @@ function preprocessShortUrl(
   next()
 }
 
+function preprocessExternalBulkRows(
+  req: Express.Request,
+  _: Express.Response,
+  next: Express.NextFunction,
+) {
+  const { urls } = req.body
+  const validatedBulkRows: {
+    index: number
+    longUrl: string
+    shortUrl?: string
+  }[] = []
+  const bulkValidationErrors: {
+    index: number
+    message: string
+    type?: string
+  }[] = []
+
+  urls.forEach((row: unknown, index: number) => {
+    const { error, value } = urlBulkRowSchema.validate(row, {
+      abortEarly: true,
+    })
+    if (error) {
+      bulkValidationErrors.push({
+        index,
+        ...extractBulkRowValidationError(error),
+      })
+      return
+    }
+    validatedBulkRows.push({
+      index,
+      longUrl: value.longUrl,
+      shortUrl: value.shortUrl,
+    })
+  })
+
+  req.body.validatedBulkRows = validatedBulkRows
+  req.body.bulkValidationErrors = bulkValidationErrors
+  req.body.longUrls = validatedBulkRows.map((row) => row.longUrl)
+  next()
+}
+
 router.get(
   '/urls',
   validator.body(urlRetrievalSchema),
   validator.query(userUrlsQueryConditions),
   apiV1Controller.getUrlsWithConditions,
+)
+
+router.post(
+  '/urls/bulk',
+  validator.body(urlBulkSchema),
+  preprocessExternalBulkRows,
+  urlCheckController.bulkUrlCheck,
+  apiV1Controller.bulkCreateUrls,
 )
 
 router.post(

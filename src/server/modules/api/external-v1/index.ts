@@ -30,3 +30,10 @@ export type UrlV1DTO = Pick<
   StorableUrl,
   'shortUrl' | 'longUrl' | 'state' | 'clicks' | 'createdAt' | 'updatedAt'
 >
+
+export type UrlBulkCreationRequest = UserIdProperty & {
+  urls: {
+    longUrl?: string
+    shortUrl?: string
+  }[]
+}
