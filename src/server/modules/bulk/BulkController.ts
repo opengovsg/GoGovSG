@@ -40,8 +40,9 @@ export class BulkController {
     }
 
     try {
-      const longUrls = await this.bulkService.parseCsv(file)
-      req.body.longUrls = longUrls
+      const urlRows = await this.bulkService.parseCsv(file)
+      req.body.urlRows = urlRows
+      req.body.longUrls = urlRows.map((row) => row.longUrl)
       next()
     } catch (error) {
       res.badRequest(
@@ -56,9 +57,9 @@ export class BulkController {
     res: Response,
     next: NextFunction,
   ) => Promise<void> = async (req, res, next) => {
-    const { userId, longUrls, tags } = req.body
+    const { userId, urlRows, tags } = req.body
     // generate url mappings
-    const urlMappings = await this.bulkService.generateUrlMappings(longUrls)
+    const urlMappings = await this.bulkService.generateUrlMappings(urlRows)
 
     // bulk create
     try {

@@ -60,20 +60,21 @@ describe('BulkController unit test', () => {
       expect(next).not.toHaveBeenCalled()
     })
 
-    it('validateAndParseCsv should add longUrls to request body if csv is valid', async () => {
+    it('validateAndParseCsv should add urlRows and longUrls to request body if csv is valid', async () => {
       const file = { data: Buffer.from('data'), name: 'file.csv' }
       const req = createRequestWithFile(file) as any
       const res = httpMocks.createResponse() as any
       const next = jest.fn() as unknown as express.NextFunction
-      const longUrls = ['https://google.com']
+      const urlRows = [{ longUrl: 'https://google.com' }]
 
       res.badRequest = badRequest
-      mockBulkService.parseCsv.mockReturnValue(longUrls)
+      mockBulkService.parseCsv.mockReturnValue(urlRows)
 
       await controller.validateAndParseCsv(req, res, next)
 
       expect(mockBulkService.parseCsv).toHaveBeenCalled()
-      expect(req.body.longUrls).toEqual(longUrls)
+      expect(req.body.urlRows).toEqual(urlRows)
+      expect(req.body.longUrls).toEqual(['https://google.com'])
       expect(res.badRequest).not.toHaveBeenCalled()
       expect(next).toHaveBeenCalled()
     })
@@ -105,6 +106,7 @@ describe('BulkController unit test', () => {
 
       const userId = 1
       const longUrl = 'https://google.com'
+      const urlRows = [{ longUrl }]
       const urlMappings = [
         {
           shortUrl: 'n2io3n12',
@@ -113,7 +115,7 @@ describe('BulkController unit test', () => {
       ]
 
       const req = httpMocks.createRequest({
-        body: { userId, longUrls: [longUrl] },
+        body: { userId, urlRows },
       })
       const res = httpMocks.createResponse() as any
       res.ok = ok
@@ -148,6 +150,7 @@ describe('BulkController unit test', () => {
 
       const userId = 1
       const longUrl = 'https://google.com'
+      const urlRows = [{ longUrl }]
       const urlMappings = [
         {
           shortUrl: 'n2io3n12',
@@ -156,7 +159,7 @@ describe('BulkController unit test', () => {
       ]
 
       const req = httpMocks.createRequest({
-        body: { userId, longUrls: [longUrl] },
+        body: { userId, urlRows },
       })
       const res = httpMocks.createResponse() as any
       res.ok = ok
@@ -185,6 +188,7 @@ describe('BulkController unit test', () => {
     it('bulkCreate without tags should return success if urls are created', async () => {
       const userId = 1
       const longUrl = 'https://google.com'
+      const urlRows = [{ longUrl }]
       const urlMappings = [
         {
           shortUrl: 'n2io3n12',
@@ -193,7 +197,7 @@ describe('BulkController unit test', () => {
       ]
 
       const req = httpMocks.createRequest({
-        body: { userId, longUrls: [longUrl] },
+        body: { userId, urlRows },
       })
       const res = httpMocks.createResponse() as any
       const next = jest.fn() as unknown as express.NextFunction
@@ -205,7 +209,7 @@ describe('BulkController unit test', () => {
 
       await controller.bulkCreate(req, res, next)
 
-      expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
+      expect(mockBulkService.generateUrlMappings).toHaveBeenCalledWith(urlRows)
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
         userId,
         urlMappings,
@@ -222,9 +226,9 @@ describe('BulkController unit test', () => {
         longUrl,
       }
       const urlMappings = [urlMapping, urlMapping]
-      const longUrls = [longUrl, longUrl]
+      const urlRows = [{ longUrl }, { longUrl }]
 
-      const req = httpMocks.createRequest({ body: { userId, longUrls } })
+      const req = httpMocks.createRequest({ body: { userId, urlRows } })
       const res = httpMocks.createResponse() as any
       const next = jest.fn() as unknown as express.NextFunction
 
@@ -235,7 +239,7 @@ describe('BulkController unit test', () => {
 
       await controller.bulkCreate(req, res, next)
 
-      expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
+      expect(mockBulkService.generateUrlMappings).toHaveBeenCalledWith(urlRows)
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
         userId,
         urlMappings,
@@ -247,6 +251,7 @@ describe('BulkController unit test', () => {
     it('bulkCreate with tags should return success if urls are created', async () => {
       const userId = 1
       const longUrl = 'https://google.com'
+      const urlRows = [{ longUrl }]
       const urlMappings = [
         {
           shortUrl: 'n2io3n12',
@@ -256,7 +261,7 @@ describe('BulkController unit test', () => {
       const tags = ['a', 'b']
 
       const req = httpMocks.createRequest({
-        body: { userId, longUrls: [longUrl], tags },
+        body: { userId, urlRows, tags },
       })
       const res = httpMocks.createResponse() as any
       const next = jest.fn() as unknown as express.NextFunction
@@ -268,7 +273,7 @@ describe('BulkController unit test', () => {
 
       await controller.bulkCreate(req, res, next)
 
-      expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
+      expect(mockBulkService.generateUrlMappings).toHaveBeenCalledWith(urlRows)
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
         userId,
         urlMappings,
@@ -285,10 +290,10 @@ describe('BulkController unit test', () => {
         longUrl,
       }
       const urlMappings = [urlMapping, urlMapping]
-      const longUrls = [longUrl, longUrl]
+      const urlRows = [{ longUrl }, { longUrl }]
       const tags = ['a', 'b']
 
-      const req = httpMocks.createRequest({ body: { userId, longUrls, tags } })
+      const req = httpMocks.createRequest({ body: { userId, urlRows, tags } })
       const res = httpMocks.createResponse() as any
       const next = jest.fn() as unknown as express.NextFunction
 
@@ -299,7 +304,7 @@ describe('BulkController unit test', () => {
 
       await controller.bulkCreate(req, res, next)
 
-      expect(mockBulkService.generateUrlMappings).toHaveBeenCalled()
+      expect(mockBulkService.generateUrlMappings).toHaveBeenCalledWith(urlRows)
       expect(mockUrlManagementService.bulkCreate).toHaveBeenCalledWith(
         userId,
         urlMappings,

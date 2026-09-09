@@ -33,6 +33,8 @@ export const BULK_VALIDATION_ERROR_TAGS = {
   isValidUrl: 'error_type:is_valid_url',
   isNotBlacklisted: 'error_type:is_not_blacklisted',
   isNotCircularRedirect: 'error_type:is_not_circular_redirect',
+  isValidShortUrl: 'error_type:is_valid_short_url',
+  isShortUrlAvailable: 'error_type:is_short_url_available',
   noParsingError: 'error_type:no_parsing_error',
 }
 export const BULK_CREATE_SUCCESS = 'bulk.hash.success'
