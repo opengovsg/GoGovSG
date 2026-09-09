@@ -147,7 +147,29 @@ export class UrlRepository implements UrlRepositoryInterface {
           tagStrings: updateParams.tags.join(TAG_SEPARATOR),
         }
       }
-      if (!url.isFile) {
+      const isConvertingToLink = url.isFile && updateParams.isFile === false
+      const isConvertingToFile = !url.isFile && file
+
+      if (isConvertingToLink) {
+        const currentKey = this.fileBucket.getKeyFromLongUrl(url.longUrl)
+        await this.fileBucket.setS3ObjectACL(currentKey, Private)
+        await url.update(updateParams, { transaction: t })
+      } else if (isConvertingToFile) {
+        const newKey = file.key
+        await this.fileBucket.uploadFileToS3(file.data, newKey, file.mimetype)
+        const resultingState = updateParams.state ?? url.state
+        if (resultingState === StorableUrlState.Inactive) {
+          await this.fileBucket.setS3ObjectACL(newKey, Private)
+        }
+        await url.update(
+          {
+            ...updateParams,
+            longUrl: this.fileBucket.buildFileLongUrl(newKey),
+            isFile: true,
+          },
+          { transaction: t },
+        )
+      } else if (!url.isFile) {
         await url.update(updateParams, { transaction: t })
       } else {
         let currentKey = this.fileBucket.getKeyFromLongUrl(url.longUrl)

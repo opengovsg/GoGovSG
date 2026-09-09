@@ -134,9 +134,10 @@ router.patch(
 /**
  * Endpoint for user to edit a file or a longUrl.
  *
- * If editing a file link, only the file can be changed and not
- * the long URL. This is to ensure a one-to-one mapping between
- * the short URL and S3 object key.
+ * The link type (file vs URL redirect) can be changed by supplying
+ * the new content: a destination URL (`longUrl`) or an uploaded file.
+ * Type is inferred from which field is present, same as creation.
+ * The S3 object key remains derived from `shortUrl`.
  */
 router.patch(
   '/url',
