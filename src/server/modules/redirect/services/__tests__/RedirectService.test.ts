@@ -9,10 +9,15 @@ jest.mock('../../../../config', () => {
   return {
     logger: {
       warn: jest.fn(),
+      error: jest.fn(),
     },
     ogUrl: 'https://go.gov.sg',
+    safeBrowsingKey: 'test-safe-browsing-api-key',
   }
 })
+
+// eslint-disable-next-line global-require
+const { logger: mockLogger } = require('../../../../config')
 
 // Mock dependencies
 const mockUrlRepository = {
@@ -247,6 +252,89 @@ describe('RedirectService', () => {
         await expect(
           service.redirectFor('shortUrl', undefined, '', ''),
         ).resolves.not.toThrowError(NotFoundError)
+      })
+
+      it('should still propagate the error and not allow the redirect if deactivating a confirmed-malicious link fails', async () => {
+        // Arrange: a real threat IS detected (isThreat resolves, doesn't throw),
+        // but deactivating the link afterwards fails. This must not be treated
+        // as a mere "scan failure" that fails open.
+        mockUrlRepository.getLongUrl.mockResolvedValue({
+          longUrl: 'https://malicious.com',
+          isFile: false,
+          safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
+        })
+        mockUrlThreatScanService.isThreat.mockResolvedValue(true)
+        mockUrlManagementService.deactivateMaliciousShortUrl.mockRejectedValue(
+          new Error('database unavailable'),
+        )
+
+        // Act & Assert
+        await expect(
+          service.redirectFor('shortUrl', undefined, '', ''),
+        ).rejects.toThrow('database unavailable')
+        expect(
+          mockUrlRepository.updateSafeBrowsingExpiry,
+        ).not.toHaveBeenCalled()
+      })
+
+      it('should not leak the Safe Browsing API key into logs when the scan fails with a network error', async () => {
+        // Arrange: simulate the FetchError node-fetch/cross-fetch throws on a
+        // network-level failure, which embeds the full request URL --
+        // including the API key query param -- in its message.
+        mockUrlRepository.getLongUrl.mockResolvedValue({
+          longUrl: 'https://example.com',
+          isFile: false,
+          safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
+        })
+        const apiKey = 'test-safe-browsing-api-key'
+        mockUrlThreatScanService.isThreat.mockRejectedValue(
+          new Error(
+            `request to https://webrisk.googleapis.com/v1/uris:search?key=${apiKey}&threatTypes=MALWARE failed, reason: getaddrinfo ENOTFOUND webrisk.googleapis.com`,
+          ),
+        )
+
+        // Act
+        await service.redirectFor('shortUrl', undefined, '', '')
+
+        // Assert: the API key must never appear in any logged message
+        const loggedMessages: string[] = [
+          ...mockLogger.error.mock.calls,
+          ...mockLogger.warn.mock.calls,
+        ].reduce((acc, call) => acc.concat(call), [])
+        expect(
+          loggedMessages.some((message: string) => message.includes(apiKey)),
+        ).toBe(false)
+      })
+
+      it('should allow the redirect and not update the safe browsing expiry when the threat scan itself fails (e.g. Web Risk API outage)', async () => {
+        // Arrange
+        const mockShortUrl = 'short'
+        const mockLongUrl = 'https://example.com'
+        mockUrlRepository.getLongUrl.mockResolvedValue({
+          longUrl: mockLongUrl,
+          isFile: false,
+          safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
+        })
+        mockUrlThreatScanService.isThreat.mockRejectedValue(
+          new Error('Safe Browsing failure: Bad Gateway'),
+        )
+
+        // Act
+        const result = await service.redirectFor(
+          mockShortUrl,
+          undefined,
+          'Mozilla/5.0',
+          '',
+        )
+
+        // Assert: redirect still succeeds instead of surfacing the scan error
+        expect(result.longUrl).toBe(mockLongUrl)
+        expect(
+          mockUrlRepository.updateSafeBrowsingExpiry,
+        ).not.toHaveBeenCalled()
+        expect(
+          mockUrlManagementService.deactivateMaliciousShortUrl,
+        ).not.toHaveBeenCalled()
       })
 
       it('should update the safe browsing expiry if the longUrl is not malicious', async () => {
