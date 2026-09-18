@@ -1,10 +1,11 @@
 import Express from 'express'
-import Joi from 'joi'
-import { createValidator } from 'express-joi-validation'
+import { z } from 'zod'
+
 import { DependencyIds } from '../constants.js'
 import { LinkAuditController } from '../modules/audit/index.js'
 import { container } from '../util/inversify.js'
 import { isValidShortUrl } from '../../shared/util/validation.js'
+import { createValidator } from '../util/zodValidator.js'
 
 const router = Express.Router()
 const validator = createValidator()
@@ -16,17 +17,14 @@ const auditController = container.get<LinkAuditController>(
 /**
  * Determines whether the link audit request is valid.
  */
-const linkAuditSchema = Joi.object({
-  url: Joi.string()
-    .custom((url: string, helpers) => {
-      if (!isValidShortUrl(url)) {
-        return helpers.message({ custom: 'Not a valid short link' })
-      }
-      return url
-    })
-    .required(),
-  limit: Joi.number().min(0),
-  offset: Joi.number().min(0),
+const linkAuditSchema = z.object({
+  url: z.string().superRefine((url, ctx) => {
+    if (!isValidShortUrl(url)) {
+      ctx.addIssue({ code: 'custom', message: 'Not a valid short link' })
+    }
+  }),
+  limit: z.coerce.number().min(0).optional(),
+  offset: z.coerce.number().min(0).optional(),
 })
 
 /**

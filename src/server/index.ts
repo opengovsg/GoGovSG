@@ -239,9 +239,9 @@ initDb()
       res,
       _next,
     ) => {
-      // Catch Joi validation errors and pass them as properly-formatted
+      // Catch schema validation errors and pass them as properly-formatted
       // messages.
-      if (err?.error?.isJoi) {
+      if (err?.error?.isZod) {
         res.badRequest(jsonMessage(err.error.toString()))
         return
       }

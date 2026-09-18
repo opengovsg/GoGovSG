@@ -1,6 +1,6 @@
 import Express from 'express'
 import rateLimit from 'express-rate-limit'
-import { createValidator } from 'express-joi-validation'
+import { createValidator } from '../../util/zodValidator.js'
 import getIp from '../../util/request.js'
 import { otpGenerationSchema, otpVerificationSchema } from './validators.js'
 import { container } from '../../util/inversify.js'

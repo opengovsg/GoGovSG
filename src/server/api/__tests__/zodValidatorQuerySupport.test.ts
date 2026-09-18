@@ -1,13 +1,14 @@
 import express from 'express'
 import request from 'supertest'
-import Joi from 'joi'
-import { createValidator } from 'express-joi-validation'
+import { z } from 'zod'
+
+import { createValidator } from '../../util/zodValidator.js'
 
 function buildTestApp() {
   const app = express()
   const validator = createValidator()
-  const schema = Joi.object({
-    offset: Joi.number().min(0),
+  const schema = z.object({
+    offset: z.coerce.number().min(0).optional(),
   })
 
   app.get('/search', validator.query(schema), (req, res) => {
@@ -28,7 +29,7 @@ function buildTestApp() {
   return app
 }
 
-describe('express-joi-validation query support under the installed Express version', () => {
+describe('zod query validation under Express 5', () => {
   it('validates the query string without crashing the request', async () => {
     const app = buildTestApp()
     const res = await request(app).get('/search?offset=10')
