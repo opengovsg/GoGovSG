@@ -6,7 +6,7 @@ import useAppDispatch from '../app/hooks'
 import { Hidden, LinearProgress, Link, Typography } from '@mui/material'
 import createStyles from '@mui/styles/createStyles'
 import makeStyles from '@mui/styles/makeStyles'
-import { Redirect } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import assetVariant from '../../shared/util/asset-variant'
@@ -22,12 +22,8 @@ import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
 
-type LoginPageProps = {
-  location?: {
-    state?: {
-      previous: string
-    }
-  }
+type LoginPageLocationState = {
+  previous?: string
 }
 
 const useStyles = makeStyles((theme) =>
@@ -110,10 +106,10 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const LoginPage: FunctionComponent<LoginPageProps> = ({
-  location = undefined,
-}: LoginPageProps) => {
+const LoginPage: FunctionComponent = () => {
   const classes = useStyles()
+  const location = useLocation()
+  const locationState = location.state as LoginPageLocationState | null
   const dispatch = useAppDispatch()
   const getEmailValidator = dispatch(
     loginActions.getEmailValidationGlobExpression(),
@@ -134,11 +130,11 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   // Google Analytics
   useEffect(() => {
     // Filter out redirects from private routes
-    if (!location?.state?.previous) {
+    if (!locationState?.previous) {
       GAPageView('EMAIL LOGIN PAGE')
       GAEvent('login page', 'email')
     }
-  }, [location?.state?.previous])
+  }, [locationState?.previous])
 
   // Display a login message from the server
   useEffect(() => {
@@ -305,14 +301,11 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     )
   }
 
-  if (location) {
-    // ensure page re-directed back to intended private route and reset the state
-    if (location?.state?.previous) {
-      return <Redirect to={{ pathname: location.state.previous, state: {} }} />
-    }
-    return <Redirect to={{ pathname: USER_PAGE, state: { from: location } }} />
+  // ensure page re-directed back to intended private route and reset the state
+  if (locationState?.previous) {
+    return <Navigate to={locationState.previous} state={{}} />
   }
-  return <Redirect to={{ pathname: USER_PAGE }} />
+  return <Navigate to={USER_PAGE} state={{ from: location }} />
 }
 
 export default LoginPage

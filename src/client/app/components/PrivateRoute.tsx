@@ -1,22 +1,14 @@
-import React, { FunctionComponent, useEffect } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import React, { FunctionComponent, PropsWithChildren, useEffect } from 'react'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../hooks'
 import { LOGIN_PAGE } from '../util/types'
 import loginActions from '../../login/actions'
 import { GoGovReduxState } from '../reducers/types'
 
-type PrivateRouteProps = {
-  component: React.ComponentType<any>
-  path: string
-}
-
-const PrivateRoute: FunctionComponent<PrivateRouteProps> = (
-  props: PrivateRouteProps,
-) => {
-  const { component: ChildComponent } = props
-  const { path } = props
+const PrivateRoute: FunctionComponent<PropsWithChildren> = ({ children }) => {
   const dispatch = useAppDispatch()
+  const location = useLocation()
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
@@ -24,24 +16,11 @@ const PrivateRoute: FunctionComponent<PrivateRouteProps> = (
     dispatch(loginActions.isLoggedIn())
   }, [dispatch])
 
-  return (
-    <Route
-      path={path}
-      render={(routeProps) =>
-        isLoggedIn ? (
-          /* eslint-disable react/jsx-props-no-spreading */
-          <ChildComponent {...routeProps} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: LOGIN_PAGE,
-              state: { previous: path },
-            }}
-          />
-        )
-      }
-    />
-  )
+  if (!isLoggedIn) {
+    return <Navigate to={LOGIN_PAGE} state={{ previous: location.pathname }} />
+  }
+
+  return children
 }
 
 export default PrivateRoute

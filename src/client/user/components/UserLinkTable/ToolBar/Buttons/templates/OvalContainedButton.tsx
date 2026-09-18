@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const OvalContainedButton: FunctionComponent<OvalContainedButtonProps> = ({
+const OvalContainedButton: FunctionComponent<
+  PropsWithChildren<OvalContainedButtonProps>
+> = ({
   children,
   href = undefined,
   onClick = undefined,

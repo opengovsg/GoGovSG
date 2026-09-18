@@ -53,7 +53,7 @@ type SectionProps = {
   shadow?: boolean
 }
 
-const Section: FunctionComponent<SectionProps> = ({
+const Section: FunctionComponent<PropsWithChildren<SectionProps>> = ({
   children,
   backgroundType = '',
   verticalMultiplier = 1,

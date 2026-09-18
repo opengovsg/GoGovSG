@@ -17,7 +17,7 @@ type BottomDrawerProps = {
   onClose: () => void
 }
 
-const BottomDrawer: FunctionComponent<BottomDrawerProps> = ({
+const BottomDrawer: FunctionComponent<PropsWithChildren<BottomDrawerProps>> = ({
   open,
   children,
   onClose,
