@@ -34,22 +34,13 @@ import dogstatsd, {
 import TagManagementServiceInterface from './interfaces/TagManagementService.js'
 import ApiKeyAuthServiceInterface from './interfaces/ApiKeyAuthServiceInterface.js'
 import { UserUrlsQueryConditions } from '../../repositories/types.js'
-
-type AnnouncementResponse = {
-  message?: string
-  title?: string
-  subtitle?: string
-  url?: string
-  image?: string
-}
+import { OperatorCopyService } from '../../services/OperatorCopyService.js'
 
 @injectable()
 export class UserController {
   private urlManagementService: UrlManagementService
 
-  private readonly userMessage: string
-
-  private readonly userAnnouncement: AnnouncementResponse
+  private operatorCopyService: OperatorCopyService
 
   private tagManagementService: TagManagementServiceInterface
 
@@ -58,18 +49,15 @@ export class UserController {
   public constructor(
     @inject(DependencyIds.urlManagementService)
     urlManagementService: UrlManagementService,
-    @inject(DependencyIds.userMessage)
-    userMessage: string,
-    @inject(DependencyIds.userAnnouncement)
-    userAnnouncement: AnnouncementResponse,
+    @inject(DependencyIds.growthBookService)
+    operatorCopyService: OperatorCopyService,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,
     @inject(DependencyIds.apiKeyAuthService)
     apiKeyAuthService: ApiKeyAuthServiceInterface,
   ) {
     this.urlManagementService = urlManagementService
-    this.userMessage = userMessage
-    this.userAnnouncement = userAnnouncement
+    this.operatorCopyService = operatorCopyService
     this.tagManagementService = tagManagementService
     this.apiKeyAuthService = apiKeyAuthService
   }
@@ -337,7 +325,7 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
-    res.send(this.userMessage)
+    res.send(this.operatorCopyService.getUserMessage())
     return
   }
 
@@ -345,7 +333,8 @@ export class UserController {
     req: Express.Request,
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
-    res.send(this.userAnnouncement)
+    const announcement = this.operatorCopyService.getUserAnnouncement()
+    res.send(announcement ?? {})
     return
   }
 }
