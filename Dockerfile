@@ -47,7 +47,7 @@ RUN { \
   echo "Building..."; \
   pnpm run build; \
   echo "Removing devDependencies for production..."; \
-  pnpm prune --prod; \
+  pnpm prune --prod --ignore-scripts; \
   }
 
 # Builds and starts Node server for production
