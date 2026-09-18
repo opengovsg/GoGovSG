@@ -3,7 +3,7 @@ import { MaildevMessage, findOtpForRecipient, isAddressedTo } from './maildev'
 const message = (
   overrides: Partial<MaildevMessage> & Pick<MaildevMessage, 'id'>,
 ): MaildevMessage => ({
-  html: '<p>Your OTP is 123456</p>',
+  html: '<p>Your OTP is <b>123456</b></p>',
   to: [{ address: 'user@open.gov.sg' }],
   ...overrides,
 })
@@ -56,11 +56,25 @@ describe('maildev OTP helpers', () => {
     ).toBe(false)
   })
 
+  it('extracts alphanumeric OTPs from the mailer HTML, not only digits', () => {
+    const inbox = [
+      message({
+        id: 'alpha',
+        html: '<p>Your OTP is <b>A1B2C3</b>. It will expire in 5 minutes.</p>',
+        to: [{ address: 'testcafe@open.gov.sg' }],
+      }),
+    ]
+
+    expect(findOtpForRecipient(inbox, 'testcafe@open.gov.sg', [])).toBe(
+      'A1B2C3',
+    )
+  })
+
   it('finds OTP when envelope.to is Address objects (maildev 1.1.0)', () => {
     const inbox = [
       message({
         id: 'otp',
-        html: '<p>Your OTP is 654321</p>',
+        html: '<p>Your OTP is <b>654321</b></p>',
         to: [{ address: 'testcafe@open.gov.sg' }],
         envelope: {
           to: [{ address: 'testcafe@open.gov.sg' }],
@@ -87,7 +101,7 @@ describe('maildev OTP helpers', () => {
       }),
       message({
         id: 'fresh',
-        html: '<p>333333</p>',
+        html: '<p><b>333333</b></p>',
         to: [{ address: 'user@open.gov.sg' }],
       }),
     ]

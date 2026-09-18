@@ -77,8 +77,11 @@ export const extractOtpFromBody = (body: unknown): string | null => {
   if (body == null) {
     return null
   }
-  const match = JSON.stringify(body).match(/\d{6}/)
-  return match ? match[0] : null
+  // OTPs are 6 chars from A-Z0-9 (see generateOTP). Matching \d{6} dropped
+  // almost every real code, so the poller timed out even when maildev had the
+  // message. Anchor on the <b> wrapper the mailer actually emits.
+  const match = JSON.stringify(body).match(/<b>([A-Z0-9]{6})<\/b>/)
+  return match ? match[1] : null
 }
 
 /**
