@@ -1,4 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
+import {
+  Chart as ChartJS,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  ScatterController,
+} from 'chart.js'
 import { Scatter } from 'react-chartjs-2'
 import makeStyles from '@mui/styles/makeStyles'
 import { useMediaQuery, useTheme } from '@mui/material'
@@ -13,6 +20,8 @@ import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { useWindowSize } from './util/window-size'
 import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
 import { WeekdayClicks } from '../../../../../../shared/interfaces/link-statistics'
+
+ChartJS.register(LinearScale, PointElement, Tooltip, ScatterController)
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -156,46 +165,48 @@ export default function HeatMapStatistics({
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    legend: { display: false },
-    tooltips: { enabled: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false },
+    },
     scales: {
-      xAxes: [
-        {
-          type: 'linear',
-          position: 'top',
-          offset: true,
-          ticks: {
-            min: 0,
-            max: xDomain.length - 1,
-            stepSize: 1,
-            fontColor: theme.palette.primary.main,
-            fontSize: theme.typography.caption.fontSize,
-            callback: categoryTick(xDomain, (label) =>
-              isMobileView || HOUR_TICKS_TO_SHOW.includes(label) ? label : '',
-            ),
+      x: {
+        type: 'linear' as const,
+        position: 'top' as const,
+        offset: true,
+        min: 0,
+        max: xDomain.length - 1,
+        ticks: {
+          stepSize: 1,
+          color: theme.palette.primary.main,
+          font: {
+            size: theme.typography.caption.fontSize,
           },
-          gridLines: {
-            offsetGridLines: true,
-          },
+          callback: categoryTick(xDomain, (label) =>
+            isMobileView || HOUR_TICKS_TO_SHOW.includes(label) ? label : '',
+          ),
         },
-      ],
-      yAxes: [
-        {
-          type: 'linear',
+        grid: {
           offset: true,
-          ticks: {
-            min: 0,
-            max: yDomain.length - 1,
-            stepSize: 1,
-            fontColor: theme.palette.primary.main,
-            fontSize: theme.typography.caption.fontSize,
-            callback: categoryTick(yDomain, (label) => label),
-          },
-          gridLines: {
-            offsetGridLines: true,
-          },
         },
-      ],
+      },
+      y: {
+        type: 'linear' as const,
+        offset: true,
+        min: 0,
+        max: yDomain.length - 1,
+        ticks: {
+          stepSize: 1,
+          color: theme.palette.primary.main,
+          font: {
+            size: theme.typography.caption.fontSize,
+          },
+          callback: categoryTick(yDomain, (label) => label),
+        },
+        grid: {
+          offset: true,
+        },
+      },
     },
   }
 
