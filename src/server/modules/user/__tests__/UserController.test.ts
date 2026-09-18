@@ -11,6 +11,7 @@ import {
 } from '../../../../../test/server/api/util'
 
 import { UserController } from '../UserController'
+import { OperatorCopyService } from '../../../services/OperatorCopyService'
 import {
   AlreadyExistsError,
   InvalidUrlUpdateError,
@@ -41,13 +42,20 @@ const userAnnouncement = {
   message: 'message',
   url: 'https://go.gov.sg',
   image: '/favicon.ico',
+  buttonText: 'Try it now',
+}
+
+const operatorCopyService: OperatorCopyService = {
+  init: async () => {},
+  getLoginMessage: () => '',
+  getUserMessage: () => userMessage,
+  getUserAnnouncement: () => userAnnouncement,
 }
 
 describe('UserController', () => {
   const controller = new UserController(
     urlManagementService,
-    userMessage,
-    userAnnouncement,
+    operatorCopyService,
     tagManagementService,
     apiKeyAuthService,
   )
@@ -690,5 +698,25 @@ describe('UserController', () => {
 
     await controller.getUserAnnouncement(req, res)
     expect(send).toHaveBeenCalledWith(userAnnouncement)
+  })
+
+  it('returns empty announcement object when copy is unset', async () => {
+    const emptyController = new UserController(
+      urlManagementService,
+      {
+        init: async () => {},
+        getLoginMessage: () => '',
+        getUserMessage: () => '',
+        getUserAnnouncement: () => null,
+      },
+      tagManagementService,
+      apiKeyAuthService,
+    )
+    const req = createRequestWithUser(undefined)
+    const res = httpMocks.createResponse()
+    const send = jest.spyOn(res, 'send')
+
+    await emptyController.getUserAnnouncement(req, res)
+    expect(send).toHaveBeenCalledWith({})
   })
 })
