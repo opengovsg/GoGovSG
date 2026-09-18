@@ -54,7 +54,7 @@ jobs:
     outputs:
       tag: ${{ steps.extract_tag.outputs.tag }}
     steps:
-      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Extract branch name
         id: extract_branch
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [build]
     steps:
-      - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
 
