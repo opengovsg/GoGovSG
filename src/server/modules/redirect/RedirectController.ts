@@ -1,15 +1,15 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { displayHostname, gaTrackingId, logger } from '../../config'
-import dogstatsd, { SHORTLINK_CLICKS } from '../../util/dogstatsd'
-import { NotFoundError } from '../../util/error'
-import parseDomain from '../../util/domain'
-import { DependencyIds, ERROR_404_PATH } from '../../constants'
-import { AnalyticsLoggerService, RedirectService } from './services'
-import { RedirectType } from '.'
-import { EventAction, EventCategory } from './ga/types/enum'
-import { createPageViewHit } from './ga'
-import assetVariant from '../../../shared/util/asset-variant'
+import { displayHostname, gaTrackingId, logger } from '../../config.js'
+import dogstatsd, { SHORTLINK_CLICKS } from '../../util/dogstatsd.js'
+import { NotFoundError } from '../../util/error.js'
+import parseDomain from '../../util/domain.js'
+import { DependencyIds, ERROR_404_PATH } from '../../constants.js'
+import { AnalyticsLoggerService, RedirectService } from './services/index.js'
+import { RedirectType } from './types.js'
+import { EventAction, EventCategory } from './ga/types/enum.js'
+import { createPageViewHit } from './ga/index.js'
+import assetVariant from '../../../shared/util/asset-variant.js'
 
 const TRANSITION_PATH = 'transition-page.ejs'
 const GTAG_PATH = 'redirect.ejs'
@@ -61,8 +61,12 @@ export class RedirectController {
   ) => Promise<void> = async (req, res) => {
     const { shortUrl } = req.params
 
-    // Short link must not be null
-    if (!shortUrl) {
+    // Short link must not be null, and must be a single path segment. A
+    // single named `:shortUrl` route param can never actually be an array
+    // — arrays are only produced by wildcard `*` params — but Express 5's
+    // types widen every `req.params` value to `string | string[]` to
+    // account for those.
+    if (!shortUrl || Array.isArray(shortUrl)) {
       res.status(404).render(ERROR_404_PATH, {
         shortUrl,
         assetVariant,

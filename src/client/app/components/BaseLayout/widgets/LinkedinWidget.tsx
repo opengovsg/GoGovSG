@@ -21,7 +21,7 @@ type BuiltByWidgetProps = {
   className?: string
 }
 
-const LinkedinWidget = ({ className }: BuiltByWidgetProps) => {
+function LinkedinWidget({ className }: BuiltByWidgetProps) {
   const classes = useStyles()
   return (
     <div className={classNames(className, classes.builtByLinkGroup)}>

@@ -20,27 +20,27 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const DownloadButton = () => {
+function DownloadButton(): JSX.Element | null {
   const classes = useStyles()
   const tableConfig = useSelector(
     (state: GoGovReduxState) => state.user.tableConfig,
   )
+
+  if (useMinifiedActions()) {
+    return null
+  }
+
   return (
-    // Only shown when actions are not minified.
-    <>
-      {!useMinifiedActions() && (
-        <span className={classes.downloadButtonContainer}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => downloadUrls(tableConfig)}
-            className={classes.downloadButton}
-          >
-            <Typography variant="body2">Download links</Typography>
-          </Button>
-        </span>
-      )}
-    </>
+    <span className={classes.downloadButtonContainer}>
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={() => downloadUrls(tableConfig)}
+        className={classes.downloadButton}
+      >
+        <Typography variant="body2">Download links</Typography>
+      </Button>
+    </span>
   )
 }
 

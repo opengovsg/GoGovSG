@@ -1,4 +1,4 @@
-export {
+export type {
   DirectorySearchService,
   DirectorySearchService as default,
-} from './DirectorySearchService'
+} from './DirectorySearchService.js'

@@ -1,3 +1,3 @@
-FROM maildev/maildev:1.1.0
+FROM maildev/maildev:1.1.0@sha256:9ae76db9e72ad3c41a34ffcc327bbd3525849a161d257888f41a8dc4262ec73f
 WORKDIR /usr/src/app
 RUN echo "maildev.on('new', ({ html }) => { if(html.includes('OTP')) { console.log('Login OTP: ' + html.match(/<b>([A-Z0-9]{6})<\\/b>/)[1]) } else { console.log(html) } } )" >> bin/maildev

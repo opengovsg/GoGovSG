@@ -1,4 +1,4 @@
-FROM node:18-alpine3.18
+FROM node:24-alpine3.24@sha256:d32cdf619f63fe0471182d08996dd516c6275bb5fd31ae06e55a570bd9e1ad43
 
 LABEL maintainer="Open Government Products" email="go@open.gov.sg"
 
@@ -28,23 +28,27 @@ EXPOSE 3000
 
 RUN apk update && apk add font-freefont && rm -rf /var/cache/apk/*
 
-# Installs IBMPlexSans-Regular.otf for QRCodeService.
-RUN wget https://github.com/IBM/plex/blob/master/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf
+# Installs IBMPlexSans-Regular.otf for QRCodeService. Pinned to a commit (not
+# the mutable `master` branch) with a checksum check IBM doesn't publish one
+# of its own, so this hardcodes the hash of that exact commit's file.
+RUN wget "https://github.com/IBM/plex/blob/bf260093582f04622aacc1e9f9ca604d7ccd0c42/packages/plex-sans/fonts/complete/otf/IBMPlexSans-Regular.otf?raw=true" -O /usr/share/fonts/freefont/IBMPlexSans-Regular.otf && \
+  echo "6b17a35a31ded2e81b3ed19e5eb532d22b9a0b5a76833b0d757a5c71ab5e0f6c  /usr/share/fonts/freefont/IBMPlexSans-Regular.otf" | sha256sum -c -
 RUN fc-cache -f
 
 # Install libraries
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN npm ci --legacy-peer-deps
+RUN corepack enable && corepack prepare pnpm@12.0.0 --activate
+RUN pnpm install --frozen-lockfile
 
 COPY . ./
 
 RUN { \
   echo "Building..."; \
-  npm run build; \
+  pnpm run build; \
   echo "Removing devDependencies for production..."; \
-  npm prune --production --legacy-peer-deps; \
+  pnpm prune --prod --ignore-scripts; \
   }
 
 # Builds and starts Node server for production
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "run", "start"]

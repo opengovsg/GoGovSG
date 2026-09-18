@@ -1,16 +1,8 @@
-import { RedirectController } from './RedirectController'
+import { RedirectController } from './RedirectController.js'
 
-export enum RedirectType {
-  Direct,
-  TransitionPage,
-}
-
-export type RedirectResult = {
-  visitedUrls: string[]
-  longUrl: string
-  redirectType: RedirectType
-}
-
-export { RedirectController } from './RedirectController'
+export type { RedirectResult } from './types.js'
+export { RedirectType } from './types.js'
+export { RedirectController } from './RedirectController.js'
+export { shortUrlRouteGuard } from './shortUrlRouteGuard.js'
 
 export default RedirectController

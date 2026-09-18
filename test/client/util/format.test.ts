@@ -1,3 +1,5 @@
+jest.mock('sanitize-html', () => (html: string) => html)
+
 import {
   THRESHOLD_VAL,
   numberUnitFormatter,

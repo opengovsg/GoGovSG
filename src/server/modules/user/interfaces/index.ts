@@ -1,3 +1,3 @@
-export { UrlManagementService } from './UrlManagementService'
+export type { UrlManagementService } from './UrlManagementService.js'
 
 export default {}

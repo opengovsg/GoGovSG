@@ -1,6 +1,6 @@
 import { createEmailSchema } from '@opengovsg/validators/email'
 import validator from 'validator'
-import { emailValidator } from '../config'
+import { emailValidator } from '../config.js'
 
 // Validates well-formedness only (no domain restriction).
 // Domain checking is handled separately by emailValidator.

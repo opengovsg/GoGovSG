@@ -3,7 +3,7 @@ const assetVariants = ['gov', 'edu', 'health'] as const
 
 // converts the assetVariants const context into a type
 // "number" tells TS to interpret the array as a union of its values rather than the literal array type
-type AssetVariants = typeof assetVariants[number]
+type AssetVariants = (typeof assetVariants)[number]
 
 const envVariant = process.env.ASSET_VARIANT
 const foundVariant: AssetVariants | undefined = assetVariants.find(

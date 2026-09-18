@@ -1,5 +1,5 @@
-import { UrlHistoryRecord } from './UrlHistoryRepository'
-import { UrlBaseType } from '../../../models/url'
+import { UrlHistoryRecord } from './UrlHistoryRepository.js'
+import { UrlBaseType } from '../../../models/url.js'
 
 export type LinkChangeKey =
   | keyof Pick<

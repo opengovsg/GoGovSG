@@ -1,20 +1,20 @@
-import * as Joi from 'joi'
+import Joi from 'joi'
 import {
   isBlacklisted,
   isCircularRedirects,
   isHttps,
   isValidShortUrl,
   isValidUrl,
-} from '../../../shared/util/validation'
-import { ogHostname } from '../../config'
-import { ACTIVE, INACTIVE } from '../../models/types'
+} from '../../../shared/util/validation.js'
+import { ogHostname } from '../../config.js'
+import { ACTIVE, INACTIVE } from '../../models/types.js'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
 })
 
 export const userUrlsQueryConditions = Joi.object({
-  // eslint-disable-next-line newline-per-chained-call
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
   limit: Joi.number().integer().min(0).max(1000).optional(),
   offset: Joi.number().integer().min(0).optional(),
   orderBy: Joi.string().valid('createdAt', 'clicks').optional(),

@@ -1,6 +1,6 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { DependencyIds } from '../../constants'
+import { DependencyIds } from '../../constants.js'
 
 @injectable()
 export class RotatingLinksController {

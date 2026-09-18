@@ -1,4 +1,4 @@
-import { SearchResultsSortOrder } from '../../../shared/search'
+import { SearchResultsSortOrder } from '../../../shared/search.js'
 
 /**
  * A type that represents query parameters required for search.
@@ -13,4 +13,4 @@ export type DirectoryQueryConditions = {
   isEmail: boolean
 }
 
-export { DirectoryController } from './DirectoryController'
+export { DirectoryController } from './DirectoryController.js'

@@ -1,5 +1,5 @@
-import { UrlType } from '../models/url'
-import { UrlClicksType } from '../models/statistics/clicks'
+import { UrlType } from '../models/url.js'
+import { UrlClicksType } from '../models/statistics/clicks.js'
 
 /**
  * A type that represents Urls stored in the data store.

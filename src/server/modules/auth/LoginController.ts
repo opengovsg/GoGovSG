@@ -4,19 +4,19 @@ import {
   logger,
   loginMessage,
   validEmailDomainGlobExpression,
-} from '../../config'
-import { DependencyIds } from '../../constants'
-import jsonMessage from '../../util/json'
-import { AuthService } from './interfaces'
-import { InvalidOtpError, NotFoundError } from '../../util/error'
-import { EmailProperty, VerifyOtpRequest } from '.'
-import getIp from '../../util/request'
+} from '../../config.js'
+import { DependencyIds } from '../../constants.js'
+import jsonMessage from '../../util/json.js'
+import { AuthService } from './interfaces/index.js'
+import { InvalidOtpError, NotFoundError } from '../../util/error.js'
+import { EmailProperty, VerifyOtpRequest } from './index.js'
+import getIp from '../../util/request.js'
 import dogstatsd, {
   OTP_GENERATE_FAILURE,
   OTP_GENERATE_SUCCESS,
   OTP_VERIFY_FAILURE,
   OTP_VERIFY_SUCCESS,
-} from '../../util/dogstatsd'
+} from '../../util/dogstatsd.js'
 
 @injectable()
 export class LoginController {
@@ -49,7 +49,7 @@ export class LoginController {
     const { email }: EmailProperty = req.body
 
     try {
-      await this.authService.generateOtp(email, getIp(req))
+      await this.authService.generateOtp(email, getIp(req) ?? '')
     } catch (error) {
       dogstatsd.increment(OTP_GENERATE_FAILURE, 1, 1)
       res.serverError(jsonMessage((error as Error).message))
@@ -68,7 +68,11 @@ export class LoginController {
     const { email, otp }: VerifyOtpRequest = req.body
 
     try {
-      const user = await this.authService.verifyOtp(email, otp, getIp(req))
+      const user = await this.authService.verifyOtp(
+        email,
+        otp,
+        getIp(req) ?? '',
+      )
       req.session!.user = user
       res.ok(jsonMessage('OTP hash verification ok.'))
       dogstatsd.increment(OTP_VERIFY_SUCCESS, 1, 1)

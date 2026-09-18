@@ -1,5 +1,5 @@
-import * as Joi from 'joi'
-import { ACTIVE, INACTIVE } from '../../models/types'
+import Joi from 'joi'
+import { ACTIVE, INACTIVE } from '../../models/types.js'
 import {
   isBlacklisted,
   isCircularRedirects,
@@ -8,13 +8,13 @@ import {
   isValidShortUrl,
   isValidTag,
   isValidUrl,
-} from '../../../shared/util/validation'
+} from '../../../shared/util/validation.js'
 import {
   LINK_DESCRIPTION_MAX_LENGTH,
   MAX_NUM_TAGS_PER_LINK,
-} from '../../../shared/constants'
-import { ogHostname } from '../../config'
-import { isValidGovEmail } from '../../util/email'
+} from '../../../shared/constants.js'
+import { ogHostname } from '../../config.js'
+import { isValidGovEmail } from '../../util/email.js'
 
 export const urlRetrievalSchema = Joi.object({
   userId: Joi.number().required(),
@@ -50,7 +50,7 @@ const tagSchema = Joi.array()
 
 export const userUrlsQueryConditions = Joi.object({
   userId: Joi.number().required(),
-  // eslint-disable-next-line newline-per-chained-call
+  // eslint-disable-next-line eslint-js/newline-per-chained-call
   limit: Joi.number().integer().min(0).max(1000).required(),
   offset: Joi.number().integer().min(0).optional(),
   orderBy: Joi.string().valid('createdAt', 'clicks').optional(),

@@ -1,10 +1,10 @@
 import validator from 'validator'
 import { parse } from 'url'
 
-import blacklist from '../../server/resources/blacklist'
-import { MAX_NUM_TAGS_PER_LINK } from '../constants'
+import blacklist from '../../server/resources/blacklist.js'
+import { MAX_NUM_TAGS_PER_LINK } from '../constants.js'
 
-export const WHITELIST = [new RegExp('^http://localhost:4566')]
+export const WHITELIST = [/^http:\/\/localhost:4566/]
 
 export const SHORT_URL_REGEX = /^[a-z0-9-]+$/
 

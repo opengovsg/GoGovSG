@@ -4,7 +4,7 @@ type FileIconProps = {
   color?: string
 }
 
-export default ({ color = '#384A51' }: FileIconProps) => {
+export default function ({ color = '#384A51' }: FileIconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

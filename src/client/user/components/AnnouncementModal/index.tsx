@@ -118,7 +118,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const AnnouncementModal = () => {
+function AnnouncementModal() {
   const dispatch = useDispatch()
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
@@ -140,11 +140,11 @@ const AnnouncementModal = () => {
         localStorage.setItem('announcement', announcementString)
         const hasAnnouncement = Boolean(
           announcement.message ||
-            announcement.title ||
-            announcement.subtitle ||
-            announcement.url ||
-            announcement.image ||
-            announcement.buttonText,
+          announcement.title ||
+          announcement.subtitle ||
+          announcement.url ||
+          announcement.image ||
+          announcement.buttonText,
         )
         setShowModal(hasAnnouncement)
       }

@@ -4,7 +4,7 @@ type InfoIconProps = {
   color: string
 }
 
-export default ({ color = '#384A51' }: InfoIconProps) => {
+export default function ({ color = '#384A51' }: InfoIconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

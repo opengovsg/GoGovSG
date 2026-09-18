@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { sequelizeMock, urlModelMock, userModelMock } from '../api/util'
 import { UserRepository } from '../../../src/server/repositories/UserRepository'
 import { UrlMapper } from '../../../src/server/mappers/UrlMapper'
@@ -341,9 +342,9 @@ describe('UserRepository', () => {
       expect(findAndCountAll).toHaveBeenCalled()
       expect(findAndCountAll.mock.calls[0][0].where).toMatchObject({
         userId: 2,
-        [Symbol('or')]: [
-          { tagStrings: { [Symbol('iLike')]: '%tag%' } },
-          { tagStrings: { [Symbol('iLike')]: '%tag\\_foo\\_bar%' } },
+        [Op.or]: [
+          { tagStrings: { [Op.iLike]: '%tag%' } },
+          { tagStrings: { [Op.iLike]: '%tag\\_foo\\_bar%' } },
         ],
       })
     })
@@ -360,8 +361,8 @@ describe('UserRepository', () => {
     it("user's apiKeyHash is updated correctly", async () => {
       findOne.mockResolvedValue(baseUser)
       await userRepo.saveApiKeyHash(baseUser.id, apiKeyHash)
-      expect(findOne).toBeCalledTimes(1)
-      expect(update).toBeCalledTimes(1)
+      expect(findOne).toHaveBeenCalledTimes(1)
+      expect(update).toHaveBeenCalledTimes(1)
       expect(update).toHaveBeenCalledWith({ apiKeyHash })
     })
     it('user not found, error is thrown', async () => {
@@ -369,8 +370,8 @@ describe('UserRepository', () => {
       await expect(
         userRepo.saveApiKeyHash(baseUser.id, apiKeyHash),
       ).rejects.toBeInstanceOf(NotFoundError)
-      expect(findOne).toBeCalledTimes(1)
-      expect(update).toBeCalledTimes(0)
+      expect(findOne).toHaveBeenCalledTimes(1)
+      expect(update).toHaveBeenCalledTimes(0)
     })
   })
 
@@ -394,11 +395,11 @@ describe('UserRepository', () => {
       await expect(userRepo.hasApiKey(baseUser.id)).rejects.toBeInstanceOf(
         NotFoundError,
       )
-      expect(findOne).toBeCalledTimes(1)
+      expect(findOne).toHaveBeenCalledTimes(1)
     })
   })
 
-  describe('findUserByApiKey', async () => {
+  describe('findUserByApiKey', () => {
     const apiKeyHash = 'apiKeyHash'
     const findOne = jest.spyOn(userModelMock, 'findOne')
     beforeEach(() => {

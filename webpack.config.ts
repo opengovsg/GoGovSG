@@ -1,13 +1,18 @@
 import path from 'path'
+import { fileURLToPath } from 'url'
+import { createRequire } from 'module'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import webpack from 'webpack'
 
-import assetVariant from './src/shared/util/asset-variant'
-import { ddEnv, ddService } from './src/shared/util/environment-variables'
+import assetVariant from './src/shared/util/asset-variant.js'
+import { ddEnv, ddService } from './src/shared/util/environment-variables.js'
+
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url)
 
 const outputDirectory = 'dist'
-const srcDirectory = path.join(__dirname, 'src/client/app')
+const srcDirectory = path.join(dirname, 'src/client/app')
 
 const assetResolveDir = `assets/${assetVariant}`
 
@@ -42,7 +47,7 @@ const metaVariantMap = {
 }
 const metaVariant = metaVariantMap[assetVariant] || govMetaTags
 
-module.exports = () => {
+export default () => {
   const jsBundle = {
     target: ['web', 'es5'],
     entry: [
@@ -53,13 +58,16 @@ module.exports = () => {
       path.join(srcDirectory, 'index.tsx'),
     ],
     output: {
-      path: path.join(__dirname, outputDirectory),
+      path: path.join(dirname, outputDirectory),
       filename: 'bundle.js',
       publicPath: '/',
       assetModuleFilename: 'assets/[name][ext]',
     },
     resolve: {
       extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', '.png', '.svg'],
+      extensionAlias: {
+        '.js': ['.js', '.ts', '.tsx'],
+      },
       alias: {
         '~': srcDirectory,
         // this aliases all "@assets" imports to read from the correct assetVariant asset directory
@@ -67,6 +75,11 @@ module.exports = () => {
       },
       fallback: {
         path: require.resolve('path-browserify'),
+        url: require.resolve('url/'),
+        // Directly imported by client actions (src/client/*/actions) for
+        // query-string building; previously satisfied only incidentally by
+        // aws-sdk v2's own transitive dependency of the same package name.
+        querystring: require.resolve('querystring-es3'),
         zlib: false,
         http: false,
         https: false,
@@ -79,7 +92,25 @@ module.exports = () => {
         {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
-          use: 'ts-loader',
+          use: {
+            loader: 'swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                  tsx: true,
+                },
+                transform: {
+                  react: {
+                    runtime: 'classic',
+                  },
+                },
+                // Matches @babel/preset-env's IE11 target for .js files
+                // (babel.config.json) -- this app has real IE11 support code.
+                target: 'es5',
+              },
+            },
+          },
         },
         {
           test: /\.(js|jsx)$/,
@@ -96,10 +127,16 @@ module.exports = () => {
     },
     devServer: {
       port: 3000,
-      proxy: {
-        '/api': 'http://localhost:8080',
-        '!/(assets/**|bundle.js|favicon*)': 'http://localhost:8080',
-      },
+      proxy: [
+        {
+          context: ['/api'],
+          target: 'http://localhost:8080',
+        },
+        {
+          context: ['!/(assets/**|bundle.js|favicon*)'],
+          target: 'http://localhost:8080',
+        },
+      ],
       historyApiFallback: true,
       allowedHosts: 'all',
     },

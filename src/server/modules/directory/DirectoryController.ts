@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify'
 import Express from 'express'
-import { DirectorySearchService } from './interfaces'
-import { DependencyIds } from '../../constants'
-import { logger } from '../../config'
-import jsonMessage from '../../util/json'
-import { SearchResultsSortOrder } from '../../../shared/search'
+import { DirectorySearchService } from './interfaces/index.js'
+import { DependencyIds } from '../../constants.js'
+import { logger } from '../../config.js'
+import jsonMessage from '../../util/json.js'
+import { SearchResultsSortOrder } from '../../../shared/search.js'
 
 @injectable()
 export class DirectoryController {
@@ -47,9 +47,8 @@ export class DirectoryController {
     }
 
     try {
-      const { urls, count } = await this.directorySearchService.plainTextSearch(
-        queryConditions,
-      )
+      const { urls, count } =
+        await this.directorySearchService.plainTextSearch(queryConditions)
 
       res.ok({
         urls,

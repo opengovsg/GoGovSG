@@ -1,4 +1,3 @@
-.localstack
 .vscode
 .env
 .logs
@@ -12,4 +11,8 @@ coverage
 .dccache
 .idea
 .pgdata
+playwright-report
+test-results
+test/end-to-end/.auth
+blob-report
 .env.*

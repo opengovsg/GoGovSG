@@ -1,6 +1,5 @@
-import { EventCategory } from 'aws-sdk/clients/cloudtrail'
-import IGaCoreForm from './IGaCoreForm'
-import { EventAction } from './enum'
+import { EventAction, EventCategory } from './enum.js'
+import IGaCoreForm from './IGaCoreForm.js'
 
 export default interface IGaEventForm extends IGaCoreForm {
   ec: EventCategory // Event Category. Required.

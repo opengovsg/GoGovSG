@@ -2,8 +2,8 @@ import React from 'react'
 import { render } from 'react-dom'
 
 // top level application entrypoint polyfill imports
-require('core-js/stable')
-require('regenerator-runtime/runtime')
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
 import { createHashHistory } from 'history'
 

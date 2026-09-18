@@ -1,3 +1,3 @@
-export { UrlManagementService } from './UrlManagementService'
+export { UrlManagementService } from './UrlManagementService.js'
 
-export { default } from './UrlManagementService'
+export { default } from './UrlManagementService.js'

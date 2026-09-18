@@ -41,8 +41,8 @@ describe('otp cache redis test', () => {
     await cache.deleteOtpByEmail(email, ip)
 
     // Assert
-    expect(redisMockClient.del).toBeCalledTimes(1)
-    expect(redisMockClient.del).toBeCalledWith(key, expect.any(Function))
+    expect(redisMockClient.del).toHaveBeenCalledTimes(1)
+    expect(redisMockClient.del).toHaveBeenCalledWith(key, expect.any(Function))
   })
 
   test('getOtpByEmail test', async () => {
@@ -54,7 +54,7 @@ describe('otp cache redis test', () => {
     await expect(cache.getOtpForEmail(email, ip)).resolves.toStrictEqual(otp)
 
     // Assert
-    expect(redisMockClient.get).toBeCalledWith(key, expect.any(Function))
+    expect(redisMockClient.get).toHaveBeenCalledWith(key, expect.any(Function))
   })
 
   test('getOtpByEmail null test', async () => {
@@ -62,7 +62,7 @@ describe('otp cache redis test', () => {
     await expect(cache.getOtpForEmail(email, ip)).resolves.toStrictEqual(null)
 
     // Assert
-    expect(redisMockClient.get).toBeCalledWith(
+    expect(redisMockClient.get).toHaveBeenCalledWith(
       `${email}:${ip}`,
       expect.any(Function),
     )
@@ -82,7 +82,7 @@ describe('otp cache redis test', () => {
     redisMockClient.set(key, JSON.stringify(otp))
 
     // Act
-    await expect(cache.getOtpForEmail(email, ip)).rejects.toThrowError()
+    await expect(cache.getOtpForEmail(email, ip)).rejects.toThrow()
 
     // Assert
     redisMockClient.get = originalGet
@@ -93,7 +93,7 @@ describe('otp cache redis test', () => {
     await cache.setOtpForEmail(email, ip, otp)
 
     // Assert
-    expect(redisMockClient.set).toBeCalledWith(
+    expect(redisMockClient.set).toHaveBeenCalledWith(
       `${email}:${ip}`,
       JSON.stringify(otp),
       'EX',
@@ -110,7 +110,7 @@ describe('otp cache redis test', () => {
     }
 
     // Act
-    await expect(cache.setOtpForEmail(email, ip, otp)).rejects.toThrowError()
+    await expect(cache.setOtpForEmail(email, ip, otp)).rejects.toThrow()
 
     // Assert
     redisMockClient.set = originalSet

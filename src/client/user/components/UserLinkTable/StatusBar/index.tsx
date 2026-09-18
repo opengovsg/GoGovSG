@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const StatusBar = () => {
+function StatusBar() {
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const [showStatusBar, setShowStatusBar] = useState<boolean>(true)
@@ -68,7 +68,7 @@ const StatusBar = () => {
   const dispatch = useDispatch()
 
   let colorClass = ''
-  let icon: JSX.Element = <></>
+  let icon: JSX.Element | null = null
   switch (variant) {
     case StatusBarVariant.Error:
       colorClass = classes.error
@@ -112,31 +112,30 @@ const StatusBar = () => {
     }
   }, [header, body])
 
+  if (!showStatusBar || !hasStatusBarAlert) {
+    return null
+  }
+
   return (
-    <>
-      {showStatusBar && hasStatusBarAlert && (
-        <Alert
-          icon={icon}
-          className={`${colorClass} ${classes.content}`}
-          action={
-            <>
-              {variant === StatusBarVariant.Success &&
-                callbacks.length >= 0 && (
-                  <DownloadBulkButton bulkCsvIds={callbacks} />
-                )}
-              {variant !== StatusBarVariant.Info && (
-                <CloseButton onClick={dispatchCloseStatusBar} />
-              )}
-            </>
-          }
-        >
-          <AlertTitle>{header}</AlertTitle>
-          <Typography variant="caption" className={classes.messageBody}>
-            {body}
-          </Typography>
-        </Alert>
-      )}
-    </>
+    <Alert
+      icon={icon}
+      className={`${colorClass} ${classes.content}`}
+      action={
+        <>
+          {variant === StatusBarVariant.Success && callbacks.length >= 0 && (
+            <DownloadBulkButton bulkCsvIds={callbacks} />
+          )}
+          {variant !== StatusBarVariant.Info && (
+            <CloseButton onClick={dispatchCloseStatusBar} />
+          )}
+        </>
+      }
+    >
+      <AlertTitle>{header}</AlertTitle>
+      <Typography variant="caption" className={classes.messageBody}>
+        {body}
+      </Typography>
+    </Alert>
   )
 }
 

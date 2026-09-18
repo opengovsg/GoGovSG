@@ -1,4 +1,4 @@
-import ImageFormat from '../../../../shared/util/image-format'
+import ImageFormat from '../../../../shared/util/image-format.js'
 
 export interface QrCodeService {
   createGoQrCode: (url: string, format: ImageFormat) => Promise<Buffer>

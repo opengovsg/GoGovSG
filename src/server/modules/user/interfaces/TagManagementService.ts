@@ -1,4 +1,4 @@
-import { UserTagsQueryConditions } from '../../../repositories/types'
+import { UserTagsQueryConditions } from '../../../repositories/types.js'
 
 interface TagManagementServiceInterface {
   getTagsWithConditions: (

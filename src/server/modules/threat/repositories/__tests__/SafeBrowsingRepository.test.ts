@@ -33,17 +33,17 @@ describe('safe browsing repository redis test', () => {
   it('returns a value if present', async () => {
     redisMockClient.set(url, JSON.stringify(threat))
     await expect(repository.get(url)).resolves.toStrictEqual(threat)
-    expect(redisMockClient.get).toBeCalledWith(url, expect.any(Function))
+    expect(redisMockClient.get).toHaveBeenCalledWith(url, expect.any(Function))
   })
 
   it('returns null if absent', async () => {
     await expect(repository.get(url)).resolves.toBeNull()
-    expect(redisMockClient.get).toBeCalledWith(url, expect.any(Function))
+    expect(redisMockClient.get).toHaveBeenCalledWith(url, expect.any(Function))
   })
 
   it('sets a value if specified', async () => {
     await repository.set(url, threat)
-    expect(redisMockClient.set).toBeCalledWith(
+    expect(redisMockClient.set).toHaveBeenCalledWith(
       url,
       JSON.stringify(threat),
       'EX',
@@ -57,7 +57,7 @@ describe('safe browsing repository redis test', () => {
     redisMockClient.set = () => {
       throw Error()
     }
-    await expect(repository.set(url, [])).rejects.toThrowError()
+    await expect(repository.set(url, [])).rejects.toThrow()
     redisMockClient.set = originalSet
   })
 })

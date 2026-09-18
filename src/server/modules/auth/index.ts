@@ -1,5 +1,5 @@
-export { LoginController } from './LoginController'
-export { LogoutController } from './LogoutController'
+export { LoginController } from './LoginController.js'
+export { LogoutController } from './LogoutController.js'
 
 export type EmailProperty = {
   email: string

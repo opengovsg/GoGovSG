@@ -1,4 +1,4 @@
-import { MessageType } from '../../shared/util/messages'
+import { MessageType } from '../../shared/util/messages.js'
 
 /**
  * Wraps a string in an object with 'message' field.

@@ -1,4 +1,4 @@
 export {
   RotatingLinksController,
   RotatingLinksController as default,
-} from './RotatingLinksController'
+} from './RotatingLinksController.js'

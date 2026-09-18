@@ -45,7 +45,7 @@ describe('LinkStatisticsRepository', () => {
   it('returns null on no url', async () => {
     findOne.mockResolvedValue(null)
     await expect(repository.findByShortUrl(shortUrl)).resolves.toBeFalsy()
-    expect(findOne).toBeCalledWith(
+    expect(findOne).toHaveBeenCalledWith(
       expect.objectContaining({ where: { shortUrl } }),
     )
   })
@@ -53,7 +53,7 @@ describe('LinkStatisticsRepository', () => {
   it('returns null on no device click stats', async () => {
     findOne.mockResolvedValue({ DailyClicks: [], WeekdayClicks: [] })
     await expect(repository.findByShortUrl(shortUrl)).resolves.toBeFalsy()
-    expect(findOne).toBeCalledWith(
+    expect(findOne).toHaveBeenCalledWith(
       expect.objectContaining({ where: { shortUrl } }),
     )
   })
@@ -77,10 +77,10 @@ describe('LinkStatisticsRepository', () => {
       dailyClicks: url.DailyClicks,
       weekdayClicks: url.WeekdayClicks,
     })
-    expect(findOne).toBeCalledWith(
+    expect(findOne).toHaveBeenCalledWith(
       expect.objectContaining({ where: { shortUrl } }),
     )
-    expect(scope).toBeCalledWith(['useReplica', 'getClicks'])
+    expect(scope).toHaveBeenCalledWith(['useReplica', 'getClicks'])
   })
 
   it('correctly queries daily click stats', async () => {
@@ -102,7 +102,7 @@ describe('LinkStatisticsRepository', () => {
       dailyClicks: url.DailyClicks,
       weekdayClicks: url.WeekdayClicks,
     })
-    expect(findOne).toBeCalledWith(
+    expect(findOne).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { shortUrl },
         include: expect.arrayContaining([
@@ -136,7 +136,7 @@ describe('LinkStatisticsRepository', () => {
         ]),
       }),
     )
-    expect(scope).toBeCalledWith(['useReplica', 'getClicks'])
+    expect(scope).toHaveBeenCalledWith(['useReplica', 'getClicks'])
   })
 
   it('correctly interpolates table names into update_link_statistics', () => {

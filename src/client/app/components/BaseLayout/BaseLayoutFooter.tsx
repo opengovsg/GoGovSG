@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const BaseLayoutFooter = () => {
+function BaseLayoutFooter() {
   const classes = useStyles()
 
   const footers = [

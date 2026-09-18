@@ -1,7 +1,7 @@
 import Express from 'express'
-import { container } from '../util/inversify'
-import { GaController } from '../modules/analytics'
-import { DependencyIds } from '../constants'
+import { container } from '../util/inversify.js'
+import { GaController } from '../modules/analytics/index.js'
+import { DependencyIds } from '../constants.js'
 
 const router = Express.Router()
 
@@ -12,4 +12,4 @@ const gaController = container.get<GaController>(DependencyIds.gaController)
  */
 router.get('/', gaController.getGaId)
 
-module.exports = router
+export default router

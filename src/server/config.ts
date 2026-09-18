@@ -1,11 +1,11 @@
 import nodemailer from 'nodemailer'
 import { ConnectionOptions } from 'sequelize'
 import winston, { createLogger, format, transports } from 'winston'
-import minimatch from 'minimatch'
+import * as minimatch from 'minimatch'
 import { parse } from 'url'
 import { parse as parseUri } from 'pg-connection-string'
-import assetVariant from '../shared/util/asset-variant'
-import generateOTP, { OtpFunction } from './util/otp'
+import assetVariant from '../shared/util/asset-variant.js'
+import generateOTP, { OtpFunction } from './util/otp.js'
 
 // Check environment
 export const DEV_ENV: boolean = process.env.NODE_ENV === 'development'
@@ -90,7 +90,7 @@ let otpLimit: number = 5
 // All session variables will now be casted to non-nullable strings
 transporterOpts = {
   host: process.env.SES_HOST as string,
-  port: process.env.SES_PORT as string,
+  port: Number(process.env.SES_PORT),
   pool: true,
   maxMessages: 100,
   maxConnections: 20,
@@ -161,7 +161,15 @@ export const userAnnouncement = {
 
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
-export const sqsRegion = (process.env.SQS_REGION as string) || ''
+// aws-sdk v3's SQSClient throws synchronously at construction if region
+// resolves to an empty string (v2 tolerated it), so fall back to a valid
+// region instead of ''.
+export const sqsRegion = (process.env.SQS_REGION as string) || 'ap-southeast-1'
+// aws-sdk v3's S3Client has no region set here, and unlike v2 it doesn't
+// tolerate a missing region: it throws when a command is sent, since there's
+// no env var/IMDS fallback available in CI or in the docker-dev container.
+export const s3Region =
+  (process.env.AWS_S3_REGION as string) || 'ap-southeast-1'
 export const sqsBulkQRCodeStartUrl =
   (process.env.SQS_BULK_QRCODE_GENERATE_START_URL as string) || ''
 export const sqsTimeout = Number(process.env.SQS_TIMEOUT) || 10000
@@ -214,9 +222,8 @@ export const safeBrowsingLogOnly = process.env.SAFE_BROWSING_LOG_ONLY === 'true'
 export const cloudmersiveKey: string | undefined = process.env.CLOUDMERSIVE_KEY
 export const safeBrowsingKey: string | undefined = process.env.SAFE_BROWSING_KEY
 
-// LocalStack variables.
-export const bucketEndpoint =
-  process.env.BUCKET_ENDPOINT || 'http://localstack:4566'
+// S3 emulator (floci) variables.
+export const bucketEndpoint = process.env.BUCKET_ENDPOINT || 'http://floci:4566'
 export const accessEndpoint =
   process.env.ACCESS_ENDPOINT || 'http://localhost:4566'
 

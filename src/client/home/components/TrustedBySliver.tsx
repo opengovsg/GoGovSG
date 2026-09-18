@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const TrustedBySliver = () => {
+function TrustedBySliver() {
   const trustedLogos = [
     { name: i18next.t('homePage.trustedBy.1'), icon: trustedBy1 },
     { name: i18next.t('homePage.trustedBy.2'), icon: trustedBy2 },
@@ -70,25 +70,23 @@ const TrustedBySliver = () => {
       >
         Trusted by these agencies and more
       </Typography>
-      <>
-        <Grid className={classes.trustedLogosGroup} container spacing={10}>
-          {trustedLogos.map((trustedLogo) => (
-            <Grid
-              item
-              className={classes.trustedLogoGrid}
-              key={trustedLogo.name}
-              xs={4}
-              md={2}
-            >
-              <img
-                className={classes.trustedLogo}
-                src={trustedLogo.icon}
-                alt={trustedLogo.name}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </>
+      <Grid className={classes.trustedLogosGroup} container spacing={10}>
+        {trustedLogos.map((trustedLogo) => (
+          <Grid
+            item
+            className={classes.trustedLogoGrid}
+            key={trustedLogo.name}
+            xs={4}
+            md={2}
+          >
+            <img
+              className={classes.trustedLogo}
+              src={trustedLogo.icon}
+              alt={trustedLogo.name}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </>
   )
 }

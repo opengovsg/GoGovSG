@@ -1,1 +1,1 @@
-export { OtpRepository, OtpRepository as default } from './OtpRepository'
+export { OtpRepository, OtpRepository as default } from './OtpRepository.js'

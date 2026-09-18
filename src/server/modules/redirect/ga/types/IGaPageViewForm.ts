@@ -1,4 +1,4 @@
-import IGaCoreForm from './IGaCoreForm'
+import IGaCoreForm from './IGaCoreForm.js'
 
 export default interface IGaPageViewForm extends IGaCoreForm {
   ds: string // Data source.

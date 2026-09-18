@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
-import * as interfaces from '../interfaces'
-import { GlobalStatistics } from '..'
-import { clickCount, linkCount, userCount } from '../../../config'
+import * as interfaces from '../interfaces/index.js'
+import { GlobalStatistics } from '../index.js'
+import { clickCount, linkCount, userCount } from '../../../config.js'
 
 @injectable()
 export class StatisticsService implements interfaces.StatisticsService {

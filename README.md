@@ -1,7 +1,6 @@
 # GoGovSG
 
 [![Build Status](https://travis-ci.com/opengovsg/GoGovSG.svg?branch=develop)](https://travis-ci.com/opengovsg/GoGovSG)
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/opengovsg/GoGovSG)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/opengovsg/GoGovSG)
 
 The official Singapore government link shortener.
@@ -24,13 +23,13 @@ The official Singapore government link shortener.
     - [Folder Structure](#folder-structure)
     - [Asset variants](#asset-variants)
     - [Babel](#babel)
-    - [ESLint](#eslint)
+    - [Oxlint](#oxlint)
     - [Webpack](#webpack)
     - [Webpack dev server](#webpack-dev-server)
     - [ts-node-dev](#ts-node-dev)
     - [Express](#express)
     - [Concurrently](#concurrently)
-    - [VSCode + ESLint](#vscode--eslint)
+    - [VSCode + Oxc](#vscode--oxc)
     - [Redux Devtools](#redux-devtools)
     - [Infrastructure](#infrastructure)
 
@@ -62,13 +61,13 @@ git clone git@github.com:opengovsg/GoGovSG.git gogovsg
 cd gogovsg
 
 # Install dependencies
-npm install --legacy-peer-deps
+pnpm install
 ```
 
 ### Running Locally
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Docker-compose will spin up a postgresql database and redis container to be connected to the backend server.
@@ -164,9 +163,9 @@ After these have been set up, set the environment variables according to the tab
 |      GCS_BUCKET       |   Yes    |       Name of bucket in GCS to write to       | No                         |
 | CRONITOR_MONITOR_CODE |    No    | ID for Cronitor monitor to monitor batch jobs | No                         |
 
-Trigger the typescript compilation and webpack bundling process by calling `npm run build`.
+Trigger the typescript compilation and webpack bundling process by calling `pnpm run build`.
 
-Finally, start the production server by running `npm start`.
+Finally, start the production server by running `pnpm start`.
 
 ### Deploying
 
@@ -231,13 +230,13 @@ This repository serves as the codebase to serve three link shortener environment
 
 Babel requires plugins to do the transformation. Presets are the set of plugins defined by Babel. Preset **env** allows to use babel-preset-es2015, babel-preset-es2016, and babel-preset-es2017 and it will transform them to ES5. Preset **react** allows us to use JSX syntax and it will transform JSX to Javascript.
 
-### ESLint
+### Oxlint
 
-[ESLint](https://eslint.org/) is a pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript.
+[Oxlint](https://oxc.rs/docs/guide/usage/linter.html) is a Rust-based linter used for identifying and reporting on patterns in JavaScript and TypeScript. Formatting is handled separately by [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), a Prettier-compatible formatter.
 
-[.eslintrc.json file](<(https://eslint.org/docs/user-guide/configuring)>) (alternatively configurations can we written in Javascript or YAML as well) is used describe the configurations required for ESLint.
+[.oxlintrc.json file](https://oxc.rs/docs/guide/usage/linter/config.html) describes the lint rules enforced across the codebase, migrated from this project's original Airbnb-derived ESLint configuration. `.oxfmtrc.json` describes formatting options (2-space indentation, no semicolons, single quotes), migrated from the original Prettier configuration.
 
-[I am using Airbnb's Javascript Style Guide](https://github.com/airbnb/javascript) which is used by many JavaScript developers worldwide. Since we are going to write both client (browser) and server side (Node.js) code, I am setting the **env** to browser and node. Optionally, we can override the Airbnb's configurations to suit our needs. I have turned off [**no-console**](https://eslint.org/docs/rules/no-console), [**comma-dangle**](https://eslint.org/docs/rules/comma-dangle) and [**react/jsx-filename-extension**](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md) rules.
+Run `pnpm run lint` / `pnpm run lint:fix` to lint, and `pnpm run format` / `pnpm run format:check` to format.
 
 ### Webpack
 
@@ -297,17 +296,17 @@ Express is a web application framework for Node.js. It is used to build our back
 
 ### Concurrently
 
-[Concurrently](https://github.com/kimmobrunfeldt/concurrently) is used to run multiple commands concurrently. I am using it to run the webpack dev server and the backend node server concurrently in the development environment. Below are the npm/yarn script commands used.
+[Concurrently](https://github.com/kimmobrunfeldt/concurrently) is used to run multiple commands concurrently. I am using it to run the webpack dev server and the backend node server concurrently in the development environment. Below are the package.json script commands used.
 
 ```javascript
 "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
 "server": "nodemon src/server/index.js",
-"dev": "concurrently \"npm run server\" \"npm run client\""
+"dev": "concurrently \"pnpm run server\" \"pnpm run client\""
 ```
 
-### VSCode + ESLint
+### VSCode + Oxc
 
-[VSCode](https://code.visualstudio.com/) is a lightweight but powerful source code editor. [ESLint](https://eslint.org/) takes care of the code-quality.
+[VSCode](https://code.visualstudio.com/) is a lightweight but powerful source code editor. The [Oxc VSCode extension](https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode) provides Oxlint and Oxfmt integration for code-quality and formatting.
 
 ### Redux Devtools
 

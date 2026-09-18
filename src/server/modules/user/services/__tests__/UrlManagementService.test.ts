@@ -141,7 +141,7 @@ describe('UrlManagementService', () => {
       jest.mock('../../../../config', () => ({
         apiLinkRandomStrLength: 4,
       }))
-      // eslint-disable-next-line global-require
+      // eslint-disable-next-line node/global-require
       const { UrlManagementService } = require('..')
       const service = new UrlManagementService(userRepository, urlRepository)
 
@@ -398,7 +398,7 @@ describe('UrlManagementService', () => {
       // Act & Assert
       await expect(
         service.deactivateMaliciousShortUrl(shortUrl),
-      ).rejects.toThrowError(NotFoundError)
+      ).rejects.toThrow(NotFoundError)
       expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
     })
 
@@ -412,7 +412,7 @@ describe('UrlManagementService', () => {
       // Act & Assert
       await expect(
         service.deactivateMaliciousShortUrl(shortUrl),
-      ).rejects.toThrowError(NotFoundError)
+      ).rejects.toThrow(NotFoundError)
       expect(urlRepository.deactivateShortUrl).toHaveBeenCalledWith(shortUrl)
     })
 

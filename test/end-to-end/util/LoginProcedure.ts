@@ -1,5 +1,10 @@
-import { fetch } from 'cross-fetch'
+import { expect, Page } from '@playwright/test'
 import { testEmail } from './config'
+import {
+  clearMaildevInbox,
+  getMaildevMessageIds,
+  waitForOtpFromMaildev,
+} from '../../shared/maildev'
 import {
   loginButton,
   loginSuccessAlert,
@@ -8,44 +13,54 @@ import {
   userModalCloseButton,
 } from './helpers'
 
-/**
- * Process of login into test account.
- */
-const loginProcedure = async (t, loginEmail = testEmail) => {
-  await t.maximizeWindow()
-  await t
-    .click(loginButton)
-    .typeText('#email', `${loginEmail}`)
-    .click(signInButton)
+const hasAnnouncementContent = (announcement: unknown): boolean =>
+  typeof announcement === 'object' &&
+  announcement !== null &&
+  ['message', 'title', 'subtitle', 'url', 'image', 'buttonText'].some(
+    (field) =>
+      field in announcement && Boolean(Reflect.get(announcement, field)),
+  )
 
-  await fetch('http://localhost:1080/email/', {
-    method: 'GET',
+export async function loginProcedure(
+  page: Page,
+  loginEmail: string = testEmail,
+): Promise<void> {
+  await loginButton(page).click()
+  await page.locator('#email').fill(loginEmail)
+
+  const afterMessageIds = await getMaildevMessageIds()
+  await signInButton(page).click()
+
+  const mailOTP = await waitForOtpFromMaildev({
+    to: loginEmail,
+    afterMessageIds,
   })
-    .then((res) => {
-      if (!res.ok) {
-        console.log(res.status)
-      }
-      return res.json()
-    })
-    .then((json) => {
-      const mailIndex = json.length - 1
-      const mailBody = json[mailIndex].html
-      const mailOTP = JSON.stringify(mailBody).match(/<b>([A-Z0-9]{6})<\/b>/)[1]
-      return mailOTP
-    })
-    .then(async (mailOTP) => {
-      await t.typeText('#otp', mailOTP)
-    })
+  await page.locator('#otp').fill(mailOTP)
 
-  await t.click(signInButton).click(loginSuccessAlert)
+  const previousAnnouncement = await page.evaluate(() =>
+    localStorage.getItem('announcement'),
+  )
+  const announcementResponse = page.waitForResponse(
+    (response) => new URL(response.url()).pathname === '/api/user/announcement',
+  )
 
-  await fetch('http://localhost:1080/email/all', {
-    method: 'DELETE',
-  })
+  await signInButton(page).click()
+  await loginSuccessAlert(page).click()
 
-  if (await userModal.exists) {
-    await t.click(userModalCloseButton)
+  const announcement = await (await announcementResponse).json()
+  const shouldShowAnnouncement =
+    previousAnnouncement !== JSON.stringify(announcement) &&
+    hasAnnouncementContent(announcement)
+
+  if (shouldShowAnnouncement) {
+    await expect(userModal(page)).toBeVisible()
+    await userModalCloseButton(page).click()
+    await expect(userModal(page)).toBeHidden()
+  } else {
+    await expect(userModal(page)).toBeHidden()
   }
+
+  await clearMaildevInbox()
 }
 
 export default loginProcedure

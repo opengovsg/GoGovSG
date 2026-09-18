@@ -4,6 +4,9 @@ concurrency:
   group: deploy-production-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 on:
   release:
     types:

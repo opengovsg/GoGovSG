@@ -10,7 +10,7 @@ const useStyles = makeStyles(() =>
   }),
 )
 
-const StatisticsGraphic = () => {
+function StatisticsGraphic() {
   const classes = useStyles()
 
   return (

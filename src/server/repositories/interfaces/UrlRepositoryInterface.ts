@@ -4,9 +4,9 @@ import {
   StorableFile,
   StorableUrl,
   UrlDirectoryPaginated,
-} from '../types'
-import { DirectoryQueryConditions } from '../../modules/directory'
-import { StorableUrlSource } from '../enums'
+} from '../types.js'
+import { DirectoryQueryConditions } from '../../modules/directory/index.js'
+import { StorableUrlSource } from '../enums.js'
 
 /**
  * A url repository that handles access to the data store of Urls.

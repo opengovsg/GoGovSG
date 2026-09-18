@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const ToolBar = () => {
+function ToolBar() {
   const classes = useStyles()
   return (
     <div className={classes.toolBar}>

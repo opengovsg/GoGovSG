@@ -23,7 +23,7 @@ function downloadFileFromS3(
   })
 }
 
-const DownloadBulkButton = ({ bulkCsvIds }: { bulkCsvIds: string[] }) => {
+function DownloadBulkButton({ bulkCsvIds }: { bulkCsvIds: string[] }) {
   const options: DropdownOption[] = [
     {
       name: 'Download all',

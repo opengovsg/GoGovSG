@@ -8,7 +8,7 @@ export type FilterSortPanelFooterProps = {
   onReset: () => void
 }
 
-export default ({ onApply, onReset }: FilterSortPanelFooterProps) => {
+export default function ({ onApply, onReset }: FilterSortPanelFooterProps) {
   const classes = useStyles()
   return (
     <Grid

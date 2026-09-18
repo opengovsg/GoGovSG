@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const BetaTag = () => {
+function BetaTag() {
   const classes = useStyles()
   return (
     <div className={classes.root}>

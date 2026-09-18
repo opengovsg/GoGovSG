@@ -1,5 +1,5 @@
 import { createLogger, format, transports } from 'winston'
-import minimatch from 'minimatch'
+import * as minimatch from 'minimatch'
 
 // define assetVariant env for testing
 jest.mock('../../src/shared/util/asset-variant', () => 'gov')

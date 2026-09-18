@@ -1,6 +1,7 @@
-import './util/tracing' // This is import has to be placed at the top for Tracing to work properly
+import './util/tracing.js' // This is import has to be placed at the top for Tracing to work properly
 import 'reflect-metadata' // This import has to be placed at the top level for Dependency Injection
 import path from 'path'
+import { fileURLToPath } from 'url'
 import bodyParser from 'body-parser'
 import express from 'express'
 import helmet from 'helmet'
@@ -9,15 +10,27 @@ import session from 'express-session'
 import cookieSession from 'cookie-session'
 import cookieParser from 'cookie-parser'
 import connectRedis from 'connect-redis'
-import jsonMessage from './util/json'
-import bindInversifyDependencies from './inversify.config'
+import jsonMessage from './util/json.js'
+import bindInversifyDependencies from './inversify.config.js'
+
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Happens at the top so all imports will have
 // properly-bound containers
 bindInversifyDependencies()
 
-// Routes
-import api from './api'
+// Routes.
+// A dynamic import, not a static one: ES imports are hoisted above
+// bindInversifyDependencies() by some compilers, but api/index.ts resolves
+// inversify bindings at module-load time and needs binding registration to
+// have already run. `import()` (not `require()` via createRequire) is used
+// so this shares Node's real module registry under every loader — tsx's
+// dev-mode watcher does not honor shared module identity between
+// createRequire()'d and natively-imported modules, which previously caused
+// a second, unbound `container` singleton to be instantiated under
+// `server-dev` specifically (production, via `tsc`-built output + plain
+// `node`, was unaffected).
+const api = (await import('./api/index.js')).default
 
 // Logger configuration
 import {
@@ -29,26 +42,30 @@ import {
   s3Bucket,
   sessionSettings,
   trustProxy,
-} from './config'
+} from './config.js'
 
 // Services
 const SessionStore = connectRedis(session)
-import { sessionClient } from './redis'
-import initDb from './models'
+import { sessionClient } from './redis.js'
+import initDb from './models/index.js'
 
 // Helper static methods attached to http.ServerResponse class
 // to return appropriate status codes in readable manner
-import './util/response'
+import './util/response.js'
 
 // Morgan configuration for logging HTTP requests
-import getIp from './util/request'
-import { container } from './util/inversify'
-import { DependencyIds, ERROR_404_PATH } from './constants'
-import { Mailer } from './services/email'
-import parseDomain from './util/domain'
-import { RedirectController } from './modules/redirect'
-import assetVariant from '../shared/util/asset-variant'
-import dogstatsd, { ERROR_UNHANDLED_REJECTION } from './util/dogstatsd'
+import getIp from './util/request.js'
+import { container } from './util/inversify.js'
+import { DependencyIds, ERROR_404_PATH } from './constants.js'
+import { Mailer } from './services/email.js'
+import parseDomain from './util/domain.js'
+import {
+  RedirectController,
+  shortUrlRouteGuard,
+} from './modules/redirect/index.js'
+import assetVariant from '../shared/util/asset-variant.js'
+import dogstatsd, { ERROR_UNHANDLED_REJECTION } from './util/dogstatsd.js'
+import handleUriError from './util/handleUriError.js'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -151,7 +168,7 @@ initDb()
       app.set('trust proxy', trustProxy)
     }
 
-    app.set('views', path.resolve(__dirname, './views'))
+    app.set('views', path.resolve(dirname, './views'))
     app.set('view engine', 'ejs')
 
     const apiSpecificMiddleware = [
@@ -171,6 +188,13 @@ initDb()
         ...sessionSettings,
       } as session.SessionOptions),
       // application/json
+      // Deliberately body-parser@1.x, not Express 5's own bundled
+      // express.json() (body-parser@2.x): body-parser@1.x sets
+      // `req.body = req.body || {}` even on a bodyless GET request, while
+      // express.json() would leave req.body as `undefined`. Several /api
+      // middlewares (userGuard, apiKeyAuthMiddleware, preprocess) do
+      // `req.body.xyz = ...` and would throw on GET requests if this were
+      // swapped for express.json().
       bodyParser.json(),
     ]
 
@@ -196,7 +220,8 @@ initDb()
       redirectController.gtagForTransitionPage,
     )
     app.get(
-      '/:shortUrl([a-zA-Z0-9-]+).?',
+      '/:shortUrl',
+      shortUrlRouteGuard,
       ...redirectSpecificMiddleware,
       redirectController.redirect,
     ) // The Redirect Endpoint
@@ -212,7 +237,7 @@ initDb()
 
     const errorHandler: express.ErrorRequestHandler = (
       err,
-      _req,
+      req,
       res,
       _next,
     ) => {
@@ -231,6 +256,11 @@ initDb()
         // This catches body-parser errors and returns a 400 error message
         console.error(err)
         res.badRequest(jsonMessage('Bad Request. JSON is malformed'))
+        return
+      }
+
+      if (err instanceof URIError) {
+        handleUriError(req, res)
         return
       }
 

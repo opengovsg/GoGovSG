@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 import SequelizeMock from 'sequelize-mock'
 import { JobItemStatusEnum } from '../../../../../shared/util/jobs'
 
@@ -39,7 +39,7 @@ describe('JobItemRepository', () => {
       scope.mockImplementationOnce(() => ({ findOne }))
       findOne.mockResolvedValueOnce(mockJobItem)
       await expect(repository.findByJobItemId(1)).resolves.toEqual(mockJobItem)
-      expect(scope).toBeCalledWith(['defaultScope'])
+      expect(scope).toHaveBeenCalledWith(['defaultScope'])
     })
   })
 

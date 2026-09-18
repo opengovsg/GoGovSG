@@ -129,52 +129,48 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
     onReset()
   }
 
-  return (
-    <>
-      {isMobile ? (
-        <BottomDrawer open={open} onClose={onClose}>
-          <div className={classes.content}>
-            <SortPanel
-              onChoose={setOrderBy}
-              currentlyChosen={orderBy}
-              options={options}
-            />
-            <FilterPanel
-              isIncludeFiles={isIncludeFiles}
-              isIncludeLinks={isIncludeLinks}
-              isIncludeActive={isIncludeActive}
-              isIncludeInactive={isIncludeInactive}
-              setIsIncludeFiles={setIsIncludeFiles}
-              setIsIncludeLinks={setIsIncludeLinks}
-              setIsIncludeActive={setIsIncludeActive}
-              setIsIncludeInactive={setIsIncludeInactive}
-            />
-            <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
-          </div>
-        </BottomDrawer>
-      ) : (
-        <CollapsingPanel isOpen={open} className={classes.sortPanel}>
-          <div className={classes.content}>
-            <SortPanel
-              onChoose={setOrderBy}
-              currentlyChosen={orderBy}
-              options={options}
-            />
-            <FilterPanel
-              isIncludeFiles={isIncludeFiles}
-              isIncludeLinks={isIncludeLinks}
-              isIncludeActive={isIncludeActive}
-              isIncludeInactive={isIncludeInactive}
-              setIsIncludeFiles={setIsIncludeFiles}
-              setIsIncludeLinks={setIsIncludeLinks}
-              setIsIncludeActive={setIsIncludeActive}
-              setIsIncludeInactive={setIsIncludeInactive}
-            />
-            <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
-          </div>
-        </CollapsingPanel>
-      )}
-    </>
+  return isMobile ? (
+    <BottomDrawer open={open} onClose={onClose}>
+      <div className={classes.content}>
+        <SortPanel
+          onChoose={setOrderBy}
+          currentlyChosen={orderBy}
+          options={options}
+        />
+        <FilterPanel
+          isIncludeFiles={isIncludeFiles}
+          isIncludeLinks={isIncludeLinks}
+          isIncludeActive={isIncludeActive}
+          isIncludeInactive={isIncludeInactive}
+          setIsIncludeFiles={setIsIncludeFiles}
+          setIsIncludeLinks={setIsIncludeLinks}
+          setIsIncludeActive={setIsIncludeActive}
+          setIsIncludeInactive={setIsIncludeInactive}
+        />
+        <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
+      </div>
+    </BottomDrawer>
+  ) : (
+    <CollapsingPanel isOpen={open} className={classes.sortPanel}>
+      <div className={classes.content}>
+        <SortPanel
+          onChoose={setOrderBy}
+          currentlyChosen={orderBy}
+          options={options}
+        />
+        <FilterPanel
+          isIncludeFiles={isIncludeFiles}
+          isIncludeLinks={isIncludeLinks}
+          isIncludeActive={isIncludeActive}
+          isIncludeInactive={isIncludeInactive}
+          setIsIncludeFiles={setIsIncludeFiles}
+          setIsIncludeLinks={setIsIncludeLinks}
+          setIsIncludeActive={setIsIncludeActive}
+          setIsIncludeInactive={setIsIncludeInactive}
+        />
+        <FilterSortPanelFooter onApply={applyChange} onReset={reset} />
+      </div>
+    </CollapsingPanel>
   )
 }
 

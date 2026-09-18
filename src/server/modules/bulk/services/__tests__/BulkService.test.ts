@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable node/global-require */
 import { UploadedFile } from 'express-fileupload'
 import { BULK_UPLOAD_HEADER } from '../../../../../shared/constants'
 import blackListedSites from '../../../../resources/blacklist'
@@ -76,7 +76,7 @@ describe('BulkService tests', () => {
     const service = new BulkService()
 
     it('fails if file data string is empty', async () => {
-      await expect(service.parseCsv({})).rejects.toThrowError()
+      await expect(service.parseCsv({})).rejects.toThrow()
     })
 
     it('fails if header does not match BULK_UPLOAD_HEADER', async () => {
@@ -85,7 +85,7 @@ describe('BulkService tests', () => {
         name: 'file.csv',
       } as UploadedFile
 
-      await expect(service.parseCsv(file)).rejects.toThrowError()
+      await expect(service.parseCsv(file)).rejects.toThrow()
     })
 
     validUrlTests.forEach((validUrlTest) => {
@@ -105,7 +105,7 @@ describe('BulkService tests', () => {
           name: 'file.csv',
         } as UploadedFile
 
-        await expect(service.parseCsv(file)).rejects.toThrowError()
+        await expect(service.parseCsv(file)).rejects.toThrow()
       })
     })
   })

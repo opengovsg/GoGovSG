@@ -326,8 +326,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
-    expect(updateStatisticsSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toHaveBeenCalledWith('aaa', userAgent)
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(1)
     expect(res.statusCode).toBe(200)
     expect(res._getRedirectUrl()).toBe('')
     expect(
@@ -355,8 +355,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
-    expect(updateStatisticsSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toHaveBeenCalledWith('aaa', userAgent)
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
     expect(
@@ -381,8 +381,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa', userAgent)
-    expect(updateStatisticsSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toHaveBeenCalledWith('aaa', userAgent)
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res.cookies.gaClientId).toBeTruthy()
     expect(res._getRedirectUrl()).toBe('aa')
@@ -404,8 +404,8 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
-    expect(updateStatisticsSpy).toBeCalledTimes(1)
+    expect(updateStatisticsSpy).toHaveBeenCalledWith('aaa', '')
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(1)
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
   })
@@ -420,8 +420,8 @@ describe('redirect API tests', () => {
 
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
-    expect(updateStatisticsSpy).toBeCalledTimes(1)
-    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(1)
+    expect(updateStatisticsSpy).toHaveBeenCalledWith('aaa', '')
   })
 
   test('url does not exist in neither cache nor db', async () => {
@@ -434,7 +434,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
 
-    expect(updateStatisticsSpy).toBeCalledTimes(0)
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
   })
@@ -451,8 +451,8 @@ describe('redirect API tests', () => {
 
     expect(res.statusCode).toBe(302)
     expect(res._getRedirectUrl()).toBe('aa')
-    expect(updateStatisticsSpy).toBeCalledTimes(1)
-    expect(updateStatisticsSpy).toBeCalledWith('aaa', '')
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(1)
+    expect(updateStatisticsSpy).toHaveBeenCalledWith('aaa', '')
   })
 
   test('both db and cache down', async () => {
@@ -465,10 +465,10 @@ describe('redirect API tests', () => {
     await container
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
-    expect(updateStatisticsSpy).toBeCalledTimes(0)
+    expect(updateStatisticsSpy).toHaveBeenCalledTimes(0)
     expect(res.statusCode).toBe(404)
     expect(res._getRedirectUrl()).toBe('')
-    expect(logger.error).toBeCalled()
+    expect(logger.error).toHaveBeenCalled()
   })
 
   test('url not in db and cache is down', async () => {
@@ -494,7 +494,7 @@ describe('redirect API tests', () => {
       .get<RedirectController>(DependencyIds.redirectController)
       .redirect(req, res)
     expect(res.statusCode).toBe(404)
-    expect(logger.error).toBeCalled()
+    expect(logger.error).toHaveBeenCalled()
   })
 
   test('invalid url', async () => {
