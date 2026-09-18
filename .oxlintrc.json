@@ -822,7 +822,9 @@
               "**/test/integration/**",
               "**/*.test.ts",
               "webpack.config.ts",
-              "playwright.config.ts"
+              "playwright.config.ts",
+              ".storybook/**",
+              "**/*.stories.tsx"
             ]
           }
         ]
