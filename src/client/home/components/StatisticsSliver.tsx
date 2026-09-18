@@ -2,15 +2,10 @@ import React, { FunctionComponent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../app/hooks'
 import i18next from 'i18next'
-import {
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Button, Card, CardContent, Grid, Typography } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import homeActions from '../actions'
 import numberFormatter from '../../app/util/format'

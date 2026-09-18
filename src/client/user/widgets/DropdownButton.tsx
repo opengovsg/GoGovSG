@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
-import {
-  Menu,
-  MenuItem,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Menu, MenuItem, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import TrailingButton from '../components/Drawer/ControlPanel/widgets/TrailingButton'
 import downloadIcon from '../assets/dropdown-icon.svg'
 
@@ -86,7 +82,6 @@ export function DropdownButton({
         }}
         MenuListProps={{ style: { padding: '5 0', height: '100%' } }}
         anchorEl={anchorEl}
-        getContentAnchorEl={null}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         keepMounted

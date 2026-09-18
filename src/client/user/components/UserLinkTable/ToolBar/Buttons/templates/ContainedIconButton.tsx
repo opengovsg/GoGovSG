@@ -1,5 +1,8 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
-import { IconButton, createStyles, makeStyles } from '@material-ui/core'
+import { IconButton } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 type ContainedIconButtonProps = {
   href?: string
@@ -31,7 +34,9 @@ const ContainedIconButton: FunctionComponent<ContainedIconButtonProps> = ({
   const classes = useStyles()
   return (
     <a href={href} onClick={onClick}>
-      <IconButton className={classes.roundIconButton}>{children}</IconButton>
+      <IconButton className={classes.roundIconButton} size="large">
+        {children}
+      </IconButton>
     </a>
   )
 }

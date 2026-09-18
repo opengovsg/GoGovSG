@@ -111,13 +111,13 @@ test('Drawer functionality test for url.', async ({ page }) => {
   ).not.toBeVisible()
   await expect(linkTableRow.locator('span', { hasText: subUrl })).toBeVisible()
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText1) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText1) }),
   ).not.toBeVisible()
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText2) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText2) }),
   ).toBeVisible()
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText3) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText3) }),
   ).toBeVisible()
 
   await linkRow.click()
@@ -132,7 +132,7 @@ test('Drawer functionality test for url.', async ({ page }) => {
   await expect(helperText(page)).toBeVisible()
 
   // "Save" button is disabled (grey and unclickable) when value in edit long url textfield is invalid
-  await expect(urlSaveButton(page).locator('xpath=..')).toBeDisabled()
+  await expect(urlSaveButton(page)).toBeDisabled()
 
   // Url is updated/saved when user enters a new url, then clicks "save" - check redirect with port 8080
   await activeSwitch(page).nth(0).click()
@@ -213,7 +213,7 @@ test('Link transfer test.', async ({ page, browserName }) => {
 
   // Verify the tag is transferred along with the link
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText1) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText1) }),
   ).toBeVisible()
 })
 

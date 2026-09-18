@@ -2,15 +2,9 @@ import React, { FunctionComponent } from 'react'
 import useAppDispatch from '../../../../app/hooks'
 import copy from 'copy-to-clipboard'
 
-import {
-  Button,
-  Divider,
-  Drawer,
-  Paper,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Button, Divider, Drawer, Paper, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import personIcon from '@assets/components/directory/directory-results/person-icon.svg'
 import copyEmailIcon from '@assets/components/directory/directory-results/copy-email-icon.svg'
 import i18next from 'i18next'
@@ -157,12 +151,7 @@ const MobilePanel: FunctionComponent<MobilePanelProps> = ({
   }
 
   return (
-    <Drawer
-      anchor="bottom"
-      open={isOpen}
-      onBackdropClick={() => setOpen(false)}
-      onEscapeKeyDown={() => setOpen(false)}
-    >
+    <Drawer anchor="bottom" open={isOpen} onClose={() => setOpen(false)}>
       <Paper className={classes.mobilePanel}>
         <Typography className={classes.row} variant="body2">
           <div className={classes.shortUrlRow}>

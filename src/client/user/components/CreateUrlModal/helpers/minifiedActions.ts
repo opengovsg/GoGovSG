@@ -1,4 +1,4 @@
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 export default function useMinifiedActions() {
   const theme = useTheme()

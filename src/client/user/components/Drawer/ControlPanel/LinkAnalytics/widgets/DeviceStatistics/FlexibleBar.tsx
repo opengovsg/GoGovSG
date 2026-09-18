@@ -1,6 +1,6 @@
 import React from 'react'
-import makeStyles from '@material-ui/core/styles/makeStyles'
-import Tooltip from '@material-ui/core/Tooltip'
+import makeStyles from '@mui/styles/makeStyles'
+import Tooltip from '@mui/material/Tooltip'
 
 type StylesProps = {
   count: number

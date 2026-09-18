@@ -6,9 +6,9 @@ import {
   Grid,
   Paper,
   Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+} from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import SortButton from '../widgets/SortPanel/SortButton'
 
 type FilterDrawerProps = {
@@ -52,12 +52,7 @@ const FilterDrawer: FunctionComponent<FilterDrawerProps> = ({
   }
 
   return isMobileView ? (
-    <Drawer
-      anchor="bottom"
-      open={isFilterOpen}
-      onBackdropClick={handleDrawerClose}
-      onEscapeKeyDown={handleDrawerClose}
-    >
+    <Drawer anchor="bottom" open={isFilterOpen} onClose={handleDrawerClose}>
       <Collapse in={isFilterOpen}>
         <Paper className={classes.filterPanel}>
           <Typography variant="h4" className={classes.headerText}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Scatter } from 'react-chartjs-2'
-import makeStyles from '@material-ui/core/styles/makeStyles'
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import makeStyles from '@mui/styles/makeStyles'
+import { useMediaQuery, useTheme } from '@mui/material'
 
 import {
   HeatMapDataPoint,
@@ -80,7 +80,7 @@ export default function HeatMapStatistics({
 }: HeatMapStatisticsProps) {
   const classes = useStyles()
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('xs'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('md'))
 
   const [width, setWidth] = useState<number>(0)
   const containerEl = useRef<HTMLDivElement>(null)

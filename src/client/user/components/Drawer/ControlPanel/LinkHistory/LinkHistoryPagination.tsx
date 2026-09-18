@@ -1,5 +1,7 @@
 import React from 'react'
-import { Grid, IconButton, createStyles, makeStyles } from '@material-ui/core'
+import { Grid, IconButton } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import arrowLeftIcon from '../assets/arrow-left-icon.svg'
 import arrowRightIcon from '../assets/arrow-right-icon.svg'
 
@@ -48,7 +50,11 @@ export default function LinkHistoryPagination({
   return (
     <Grid className={classes.pageSelectGrid}>
       <Grid item className={classes.gridItemHorizontalPadding}>
-        <IconButton onClick={() => onChangePage(page - 1)} disabled={page <= 0}>
+        <IconButton
+          onClick={() => onChangePage(page - 1)}
+          disabled={page <= 0}
+          size="large"
+        >
           <img src={arrowLeftIcon} alt="Previous page" draggable={false} />
         </IconButton>
       </Grid>
@@ -59,6 +65,7 @@ export default function LinkHistoryPagination({
         <IconButton
           onClick={() => onChangePage(page + 1)}
           disabled={pageCount <= page + 1}
+          size="large"
         >
           <img src={arrowRightIcon} alt="Next page" draggable={false} />
         </IconButton>

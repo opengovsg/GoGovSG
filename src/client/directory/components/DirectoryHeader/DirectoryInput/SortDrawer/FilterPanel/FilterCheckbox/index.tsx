@@ -1,5 +1,7 @@
 import React from 'react'
-import { IconButton, createStyles, makeStyles } from '@material-ui/core'
+import { IconButton } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import CheckIcon from '../../widgets/CheckIcon'
 
 const useStyles = makeStyles((theme) =>
@@ -34,7 +36,7 @@ export type FilterCheckboxProps = {
 export default function ({ checked, className, onClick }: FilterCheckboxProps) {
   const classes = useStyles()
   return (
-    <IconButton className={className} onClick={onClick}>
+    <IconButton className={className} onClick={onClick} size="large">
       {checked ? (
         <div className={`${classes.uncheckedIcon} ${classes.filled}`}>
           <CheckIcon color="#fff" />

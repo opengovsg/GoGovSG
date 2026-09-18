@@ -1,10 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
-import {
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { useMediaQuery, useTheme } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import BottomDrawer from '../../../../../app/components/widgets/BottomDrawer'
 import SortPanel from '../../../../../app/components/widgets/SortPanel'
@@ -34,7 +31,7 @@ const useStyles = makeStyles((theme) =>
       [theme.breakpoints.up('md')]: {
         color: '#767676',
       },
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         paddingTop: theme.spacing(2),
       },
     },
@@ -73,7 +70,7 @@ const SortDrawer: FunctionComponent<SortDrawerProps> = ({
   const appMargins = useAppMargins()
   const classes = useStyles({ appMargins })
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const [orderBy, setOrderBy] = useState(defaultSortOption as string)
   const [isIncludeFiles, setIsIncludeFiles] = useState(false)

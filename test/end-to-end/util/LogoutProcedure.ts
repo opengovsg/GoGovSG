@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test'
-import { loginButton, signOutButton } from './helpers'
+import { signOutButton } from './helpers'
 
 export async function logoutProcedure(page: Page): Promise<void> {
   const logoutResponse = page.waitForResponse(
@@ -8,7 +8,10 @@ export async function logoutProcedure(page: Page): Promise<void> {
 
   await signOutButton(page).click()
   expect((await logoutResponse).ok()).toBeTruthy()
-  await expect(loginButton(page)).toBeVisible()
+  // Signing out redirects to the standalone /login page, which has no
+  // `banner` landmark, so `loginButton` (scoped to the home page's header)
+  // cannot be reused here.
+  await expect(page).toHaveURL(/login/)
 }
 
 export default logoutProcedure
