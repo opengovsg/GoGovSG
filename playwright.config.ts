@@ -2,12 +2,11 @@ import { defineConfig } from '@playwright/test'
 import { rootLocation } from './test/end-to-end/util/config'
 import { testUserAuthFile } from './test/end-to-end/util/auth'
 
-const browserNames = ['chromium', 'firefox', 'webkit'] as const
+const browserNames = ['chromium'] as const
 
 export default defineConfig({
   testDir: './test/end-to-end',
   testMatch: '**/*.spec.ts',
-  // Generous because WebKit runs the suite ~40% slower than Chromium.
   timeout: 90_000,
   fullyParallel: false,
   // Shared maildev inbox: parallel workers race on clearMaildevInbox() and

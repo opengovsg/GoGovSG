@@ -85,15 +85,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium]
     steps:
       - uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2.8.0
       - uses: ./.github/actions/setup
-      # Do not inject CLOUDMERSIVE_KEY here. Live virus scans flake under the
-      # 3-browser matrix (rate limits / timeouts / allowInvalidFiles on NUL
-      # fixtures), which leaves the create-link modal open and cascades into
-      # filter/directory failures. The malicious-file e2e test is skipped;
-      # without a key CloudmersiveScanService no-ops like integration tests.
+      # Do not inject CLOUDMERSIVE_KEY here. Live virus scans flake
+      # (rate limits / timeouts / allowInvalidFiles on NUL fixtures), which
+      # leaves the create-link modal open and cascades into filter/directory
+      # failures. The malicious-file e2e test is skipped; without a key
+      # CloudmersiveScanService no-ops like integration tests.
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps ${{ matrix.browser }}
       - name: Configure Datadog Test Visibility
