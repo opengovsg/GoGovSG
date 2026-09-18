@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../app/hooks'
 import i18next from 'i18next'
 import {
   Button,
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme) =>
 
 const StatisticsSliver: FunctionComponent = () => {
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const loadStats = () => dispatch(homeActions.loadStats())
   const statistics = useSelector(
     (state: GoGovReduxState) => state.home.statistics,

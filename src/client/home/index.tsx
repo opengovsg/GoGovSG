@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../app/hooks'
 import { Redirect } from 'react-router-dom'
 
 import { useMediaQuery, useTheme } from '@material-ui/core'
@@ -20,7 +21,7 @@ initMonitoring()
 const HomePage: FunctionComponent = () => {
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const getLinksToRotate = () => dispatch(homeActions.getLinksToRotate())
   const getIsLoggedIn = () => dispatch(loginActions.isLoggedIn())
   const isLoggedIn = useSelector(

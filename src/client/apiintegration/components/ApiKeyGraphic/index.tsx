@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react'
+import useAppDispatch from '../../../app/hooks'
 import {
   Typography,
   createStyles,
@@ -8,7 +9,7 @@ import {
 } from '@material-ui/core'
 import i18next from 'i18next'
 import retryIcon from '@assets/components/app/base-layout/retry-icon.svg'
-import { useDispatch } from 'react-redux'
+
 import PrefixableTextField from '../../../user/widgets/PrefixableTextField'
 import TrailingButton from '../../../user/components/Drawer/ControlPanel/widgets/TrailingButton'
 import ConfigOption, {
@@ -59,7 +60,7 @@ const ApiKeyGraphic: FunctionComponent = () => {
   const classes = useStyles()
   const theme = useTheme()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   return (
     <div className={classes.root}>
       <Typography variant="body1" className={classes.apiKeyInfoText}>

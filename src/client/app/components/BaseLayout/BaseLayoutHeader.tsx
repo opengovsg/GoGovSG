@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../hooks'
 import {
   AppBar,
   Button,
@@ -128,7 +129,7 @@ const BaseLayoutHeader: FunctionComponent<BaseLayoutHeaderProps> = ({
   const isLoggedIn = useSelector(
     (state: GoGovReduxState) => state.login.isLoggedIn,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const logout = () => dispatch(loginActions.logout())
   const isLightItems = backgroundType === 'darkest'
   const theme = useTheme()

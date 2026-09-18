@@ -1,5 +1,6 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import useAppDispatch from '../../../app/hooks'
+
 import { Button, createStyles, makeStyles } from '@material-ui/core'
 import classNames from 'classnames'
 import userActions from '../../actions'
@@ -20,7 +21,7 @@ type CreateButtonProps = {
 
 export default function CreateButton({ className }: CreateButtonProps) {
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const openCreateUrlModal = () => dispatch(userActions.openCreateUrlModal())
 
   return (
