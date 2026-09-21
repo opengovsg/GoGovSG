@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../app/hooks'
 import { Typography, createStyles, makeStyles } from '@material-ui/core'
 import { Alert, AlertTitle } from '@material-ui/lab'
 import StatusBarCompletedIcon from '../../../widgets/StatusBarCompletedIcon'
@@ -65,7 +66,7 @@ function StatusBar() {
   const { header, body, callbacks, variant } = statusBarMessage
 
   const hasStatusBarAlert = !!(header || body)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   let colorClass = ''
   let icon: JSX.Element | null = null

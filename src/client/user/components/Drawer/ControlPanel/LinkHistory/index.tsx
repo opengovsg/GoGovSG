@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 
 import { createStyles, makeStyles } from '@material-ui/core'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
 import { Timeline } from '@material-ui/lab/'
 import { GoGovReduxState } from '../../../../../app/reducers/types'
 import { useDrawerState } from '../..'
@@ -27,7 +28,7 @@ export default function LinkHistory() {
   const [currentPage, setCurrentPage] = React.useState(0)
 
   // Handles redux state for link history
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const shortUrl = useDrawerState().relevantShortLink || ''
   const { linkHistory, linkHistoryCount } = useSelector(
     (state: GoGovReduxState) => state.user,

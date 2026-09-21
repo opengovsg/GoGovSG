@@ -1,5 +1,6 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
+
 import { createStyles, makeStyles } from '@material-ui/core'
 
 import addIcon from '@assets/components/user/user-link-table/toolbar/add-icon.svg'
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 function CreateLinkButton() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const openCreateUrlModal = () => dispatch(userActions.openCreateUrlModal())
   const classes = useStyles()
   return (

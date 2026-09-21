@@ -1,5 +1,6 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../hooks'
 import {
   Snackbar,
   SnackbarContent,
@@ -80,7 +81,7 @@ function MessageSnackbar() {
   const variant = useSelector(
     (state: GoGovReduxState) => state.root.snackbarMessage.variant,
   )
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const closeSnackbar = (_: object, reason: string) => {
     if (reason !== 'clickaway') {
       dispatch(rootActions.closeSnackbar())
