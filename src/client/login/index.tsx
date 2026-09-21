@@ -191,13 +191,12 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   // Check whether one.gov.sg login should be shown
   useEffect(() => {
     let cancelled = false
-    get('/api/sso/enabled').then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          if (!cancelled) setSsoEnabled(!!data.enabled)
-        })
-      }
-    })
+    get('/api/sso/enabled')
+      .then((response) => (response.ok ? response.json() : { enabled: false }))
+      .then((data) => {
+        if (!cancelled) setSsoEnabled(!!data.enabled)
+      })
+      .catch(() => {}) // optional feature: stay hidden if discovery fails
     return () => {
       cancelled = true
     }
