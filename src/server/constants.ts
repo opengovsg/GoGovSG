@@ -33,6 +33,8 @@ export const DependencyIds = {
   linksController: Symbol.for('linksController'),
   authService: Symbol.for('authService'),
   loginController: Symbol.for('loginController'),
+  oneGovSgService: Symbol.for('oneGovSgService'),
+  oneGovSgController: Symbol.for('oneGovSgController'),
   logoutController: Symbol.for('logoutController'),
   urlManagementService: Symbol.for('urlManagementService'),
   userController: Symbol.for('userController'),

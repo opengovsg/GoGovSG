@@ -45,6 +45,12 @@ services:
       - AWS_ACCESS_KEY_ID=foobar
       - AWS_SECRET_ACCESS_KEY=foobar
       - CSP_ONLY_REPORT_VIOLATIONS=true
+      # one.gov.sg login, values come from the host .env
+      - FF_ONE_GOV_SG_LOGIN
+      - ONE_GOV_SG_ISSUER
+      - ONE_GOV_SG_CLIENT_ID
+      - ONE_GOV_SG_REDIRECT_URI
+      - ONE_GOV_SG_PRIVATE_KEY
       - SAFE_BROWSING_KEY
       - CLOUDMERSIVE_KEY
       - ASSET_VARIANT=gov

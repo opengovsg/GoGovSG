@@ -38,6 +38,7 @@ import {
   cspOnlyReportViolations,
   cspReportUri,
   displayHostname,
+  ffOneGovSgLogin,
   logger,
   s3Bucket,
   sessionSettings,
@@ -48,6 +49,7 @@ import {
 const SessionStore = connectRedis(session)
 import { sessionClient } from './redis.js'
 import initDb from './models/index.js'
+import getOneGovSgClient from './modules/auth/services/OneGovSgClient.js'
 
 // Helper static methods attached to http.ServerResponse class
 // to return appropriate status codes in readable manner
@@ -108,7 +110,9 @@ if (cspReportUri) {
 }
 
 const app = express()
-app.use(cookieParser())
+// Secret enables signed cookies (req.signedCookies), used by the one.gov.sg
+// login flow's own short-lived, SameSite=Lax transaction cookie.
+app.use(cookieParser(sessionSettings.secret))
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -147,7 +151,12 @@ app.use(
   }),
 )
 
-initDb()
+Promise.all([
+  initDb(),
+  // Surface a bad private key or unreachable issuer at boot, not on the
+  // first officer's login.
+  ffOneGovSgLogin ? getOneGovSgClient() : null,
+])
   .then(() => {
     logger.info('Database initialised.')
 

@@ -37,6 +37,16 @@ const requiredVars: string[] = [
 // AWS Simple Email Service
 const sesVars: string[] = ['SES_HOST', 'SES_USER', 'SES_PASS', 'SES_PORT']
 
+// one.gov.sg OIDC login (officer-only), only required when the feature is enabled
+export const ffOneGovSgLogin: boolean =
+  process.env.FF_ONE_GOV_SG_LOGIN === 'true'
+const oneGovSgVars: string[] = [
+  'ONE_GOV_SG_ISSUER', // e.g. https://one.gov.sg/api/auth
+  'ONE_GOV_SG_CLIENT_ID',
+  'ONE_GOV_SG_REDIRECT_URI',
+  'ONE_GOV_SG_PRIVATE_KEY', // Private key, PKCS#8 PEM
+]
+
 // Winston for generic logging
 export const logger: winston.Logger = createLogger({
   // change level if in dev environment versus production
@@ -77,6 +87,9 @@ const exitIfAnyMissing = (vars: string[]) => {
 
 // Exit if any required env var are missing
 exitIfAnyMissing(requiredVars)
+if (ffOneGovSgLogin) {
+  exitIfAnyMissing(oneGovSgVars)
+}
 
 // From here, all required env variables will be casted to non-nullable strings.
 
@@ -263,6 +276,14 @@ export const ffExternalApi: boolean = process.env.FF_EXTERNAL_API === 'true'
 export const apiAdmins: string[] = process.env.ADMIN_API_EMAILS
   ? process.env.ADMIN_API_EMAILS.split(',')
   : []
+
+export const oneGovSgIssuer = process.env.ONE_GOV_SG_ISSUER as string
+export const oneGovSgClientId = process.env.ONE_GOV_SG_CLIENT_ID as string
+export const oneGovSgRedirectUri = process.env.ONE_GOV_SG_REDIRECT_URI as string
+// Unescape literal '\n' in case the PEM was stored as a single-line env value.
+export const oneGovSgPrivateKeyPem = (
+  process.env.ONE_GOV_SG_PRIVATE_KEY as string
+)?.replace(/\\n/g, '\n')
 
 export const userCount = Number(process.env.USER_COUNT) || 77288
 export const clickCount = Number(process.env.CLICK_COUNT) || 666820545
