@@ -2,7 +2,7 @@
 
 import { Request } from 'express'
 import httpMocks from 'node-mocks-http'
-import redisMock from 'redis-mock'
+import { createRedisClientMock } from '../mocks/services/RedisClient'
 import SequelizeMock from 'sequelize-mock'
 import { container } from '../../../src/server/util/inversify'
 import { DependencyIds } from '../../../src/server/constants'
@@ -284,4 +284,4 @@ export const sanitiseMock = (i: string) => {
   return i
 }
 
-export const redisMockClient = redisMock.createClient()
+export const redisMockClient = createRedisClientMock()
