@@ -1,5 +1,5 @@
 import express from 'express'
-import rateLimit from 'express-rate-limit'
+import { rateLimit } from 'express-rate-limit'
 import { logger, otpRateLimit } from '../config.js'
 
 function getIp(req: express.Request) {
@@ -43,7 +43,7 @@ export const ipRateLimiter = (label: string) =>
     // (dev/test) must skip the limiter explicitly to keep that behaviour.
     skip: () => otpRateLimit <= 0,
     windowMs: 60000, // 1 minute
-    max: otpRateLimit,
+    limit: otpRateLimit,
   })
 
 export default getIp
