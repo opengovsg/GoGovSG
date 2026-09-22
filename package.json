@@ -126,9 +126,9 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.5",
+    "@babel/core": "^8.0.6",
     "@babel/plugin-transform-class-properties": "^8.0.0",
-    "@babel/preset-env": "^8.0.5",
+    "@babel/preset-env": "^8.0.6",
     "@babel/preset-react": "^8.0.1",
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
