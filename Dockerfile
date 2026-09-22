@@ -50,5 +50,6 @@ RUN { \
   pnpm prune --prod --ignore-scripts; \
   }
 
-# Builds and starts Node server for production
-CMD ["pnpm", "run", "start"]
+# pnpm 11+ may auto-install before `run` when node_modules != lockfile (true after
+# prune --prod). Disable that in the image only; `start` stays defined in package.json.
+CMD ["pnpm", "--config.verify-deps-before-run=false", "run", "start"]
