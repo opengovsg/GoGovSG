@@ -185,7 +185,7 @@
     "oxfmt": "0.68.0",
     "oxlint": "1.83.0",
     "oxlint-plugin-eslint": "1.83.0",
-    "oxlint-tsgolint": "7.0.2001",
+    "oxlint-tsgolint": "7.0.2002",
     "path-browserify": "^1.0.1",
     "querystring-es3": "^0.2.1",
     "redis-mock": "^0.56.3",
