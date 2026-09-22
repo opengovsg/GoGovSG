@@ -66,7 +66,9 @@ export const resendOtpButton = (page: Page): Locator =>
 export const rotatingLinksGraphic = (page: Page): Locator =>
   page.locator('main')
 export const headerSignInButton = (page: Page): Locator =>
-  page.locator('header').getByRole('button', { name: 'Sign in', exact: true })
+  page
+    .locator('.MuiAppBar-root')
+    .getByRole('link', { name: 'Sign in', exact: true })
 export const publicOfficerSignInLink = (page: Page): Locator =>
   page
     .getByText('Are you a public officer?')
