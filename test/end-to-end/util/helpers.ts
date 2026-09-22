@@ -108,8 +108,9 @@ export const bulkTab = (page: Page): Locator =>
   page.locator('p', { hasText: 'From a .csv' })
 export const uploadFile = (page: Page): Locator =>
   page.locator('input[type="file"]')
+// Only the drawer hosts a link active/inactive switch on the user page.
 export const activeSwitch = (page: Page): Locator =>
-  page.locator('input[type="checkbox"]')
+  drawer(page).locator('input[type="checkbox"]')
 export const createUrlModal = (page: Page): Locator =>
   page.locator('div[aria-labelledby="createUrlModal"]')
 export const createSubmitButton = (page: Page): Locator =>
