@@ -62,6 +62,30 @@ export const emailHelperText = (page: Page): Locator =>
 export const resendOtpButton = (page: Page): Locator =>
   page.locator('span', { hasText: 'Resend OTP' }).locator('xpath=..')
 
+// Home page (logged-out)
+export const rotatingLinksGraphic = (page: Page): Locator =>
+  page.locator('main')
+export const headerSignInButton = (page: Page): Locator =>
+  page.locator('header').getByRole('button', { name: 'Sign in', exact: true })
+export const publicOfficerSignInLink = (page: Page): Locator =>
+  page
+    .getByText('Are you a public officer?')
+    .getByRole('link', { name: 'Sign in' })
+export const shortenLinksNowLink = (page: Page): Locator =>
+  page.getByRole('link', { name: 'Shorten your links now', exact: true })
+export const getStartedLink = (page: Page): Locator =>
+  page.getByRole('link', { name: 'Get started', exact: true })
+export const homeStatValueByLabel = (page: Page, label: string): Locator =>
+  page
+    .getByText(label, { exact: true })
+    .locator('xpath=ancestor::div[contains(@class,"MuiCardContent-root")][1]')
+    .locator('h4 strong')
+
+export const expectOnLoginPage = async (page: Page): Promise<void> => {
+  await expect(page).toHaveURL(/login/)
+  await expect(page.locator('#email')).toBeVisible()
+}
+
 // Search Page
 export const searchTextField = (page: Page): Locator =>
   page.locator('input[placeholder="Search all go.gov.sg links"]')
