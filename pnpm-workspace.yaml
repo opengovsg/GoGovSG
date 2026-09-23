@@ -69,3 +69,6 @@ allowBuilds:
   # a prebuilt native binary for the current platform, no arbitrary exec.
   # Maintained by jounqin (unrs org), also widely used by eslint-import-resolver-typescript.
   unrs-resolver: true
+  # jest-haste-map@30.5+ uses @parcel/watcher for file watching (replaces NodeWatcher).
+  # Native addon with prebuilt binaries per platform; same pattern as sharp/esbuild.
+  '@parcel/watcher': true
