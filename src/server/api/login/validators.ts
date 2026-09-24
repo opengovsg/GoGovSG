@@ -1,6 +1,10 @@
 import Joi from 'joi'
 import { logger } from '../../config.js'
 import { isValidGovEmail } from '../../util/email.js'
+import {
+  OTP_FORMAT_ERROR_MESSAGE,
+  OTP_REGEX,
+} from '../../../shared/util/validation.js'
 
 export const otpVerificationSchema = Joi.object({
   email: Joi.string()
@@ -14,12 +18,9 @@ export const otpVerificationSchema = Joi.object({
       return email
     })
     .required(),
-  otp: Joi.string()
-    .pattern(/^[A-Za-z0-9]{6}$/)
-    .required()
-    .messages({
-      'string.pattern.base': 'OTP must be 6 alphanumeric characters.',
-    }),
+  otp: Joi.string().pattern(OTP_REGEX).required().messages({
+    'string.pattern.base': OTP_FORMAT_ERROR_MESSAGE,
+  }),
 })
 
 export const otpGenerationSchema = Joi.object({

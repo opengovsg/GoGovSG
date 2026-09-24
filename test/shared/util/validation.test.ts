@@ -198,6 +198,23 @@ describe('Test valid tag check', () => {
   })
 })
 
+describe('Test OTP format check', () => {
+  test('check passes with six alphanumeric characters', () => {
+    expect(validation.isValidOtp('A1B2C3')).toBe(true)
+    expect(validation.isValidOtp('abcdef')).toBe(true)
+  })
+
+  test('check fails with special characters or wrong length', () => {
+    expect(validation.isValidOtp('@@####')).toBe(false)
+    expect(validation.isValidOtp('12345')).toBe(false)
+    expect(validation.isValidOtp('1234567')).toBe(false)
+  })
+
+  test('empty otp fails by default', () => {
+    expect(validation.isValidOtp('')).toBe(false)
+  })
+})
+
 describe('Test valid tags check', () => {
   test('check passes with at most 3 unique and valid tags', () => {
     expect(validation.isValidTags(['tag', '2tag', 'OnE-2_ThrEe'])).toBe(true)
