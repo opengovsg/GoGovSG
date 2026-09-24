@@ -1,0 +1,22 @@
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{apiKey}}
+}
+
+docs {
+  GoGovSG public API collection, generated from
+  https://guide.go.gov.sg/developer-guide/api-documentation
+
+  All requests use `Authorization: Bearer {API_KEY}`.
+  - Production keys are prefixed `live_v1_`
+  - Staging keys are prefixed `test_v1_`
+
+  Select the Production or Staging environment and set the `apiKey`
+  variable there before sending requests.
+
+  Rate limit: 5 requests/second/user. Exceeding this triggers a
+  10-second blocking period.
+}

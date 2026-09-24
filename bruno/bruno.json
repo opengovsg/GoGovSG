@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "GoGovSG API",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

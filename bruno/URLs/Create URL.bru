@@ -1,0 +1,51 @@
+meta {
+  name: Create URL
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/v1/urls
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "longUrl": "https://link.com",
+    "shortUrl": "197abc"
+  }
+}
+
+docs {
+  Create a new short URL.
+
+  Body:
+  - `longUrl` (string, required): must begin with `https://`
+  - `shortUrl` (string, optional): if omitted, a random 8-character
+    code is generated
+
+  Success response (200):
+  ```json
+  {
+    "shortUrl": "197abc",
+    "longUrl": "https://link.com",
+    "state": "ACTIVE",
+    "clicks": 0,
+    "createdAt": "2022-09-19T03:31:00.131Z",
+    "updatedAt": "2022-09-19T03:31:00.131Z"
+  }
+  ```
+
+  Error response:
+  ```json
+  {
+    "message": "Short link \"asd\" is already used.",
+    "type": "ShortUrlError"
+  }
+  ```
+}
