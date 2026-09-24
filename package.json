@@ -101,7 +101,7 @@
     "nanoid": "^6.0.1",
     "nodemailer": "^9.0.4",
     "papaparse": "^5.5.4",
-    "pg": "^8.22.0",
+    "pg": "^8.23.0",
     "pg-connection-string": "^2.14.0",
     "qrcode": "^1.5.4",
     "react": "^17.0.2",
