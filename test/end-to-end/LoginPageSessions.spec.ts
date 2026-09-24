@@ -57,11 +57,16 @@ test('Invalid OTP format from server clears loading and shows error', async ({
 }) => {
   await openOtpEntry(page)
   await page.locator('#otp').fill(invalidFormatOtp)
-  // Bypass client-side submit guard to assert the API validation path recovers UI state.
-  await signInButton(page).evaluate((button) => {
-    button.removeAttribute('disabled')
+  // Submit via the form so we hit the API even when the submit button stays disabled.
+  const verifyResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/login/verify') &&
+      response.request().method() === 'POST',
+  )
+  await page.locator('form').evaluate((form: HTMLFormElement) => {
+    form.requestSubmit()
   })
-  await signInButton(page).click()
+  await verifyResponse
   await expect(page.locator('div[role="alert"]')).toContainText(
     OTP_FORMAT_ERROR_MESSAGE,
   )
