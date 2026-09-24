@@ -1,0 +1,49 @@
+meta {
+  name: Get URLs
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/v1/urls?limit=1000&offset=0&~searchText=&~state=&orderBy=createdAt&sortDirection=desc&~isFile=
+  body: none
+  auth: inherit
+}
+
+params:query {
+  limit: 1000
+  offset: 0
+  ~searchText:
+  ~state: ACTIVE
+  orderBy: createdAt
+  sortDirection: desc
+  ~isFile: true
+}
+
+docs {
+  Get a paginated list of short URLs.
+
+  Query params:
+  - `limit` (number, default 1000)
+  - `offset` (number, default 0)
+  - `searchText` (string, optional)
+  - `state` (enum: ACTIVE, INACTIVE, optional)
+  - `orderBy` (enum: createdAt, clicks; default createdAt)
+  - `sortDirection` (enum: desc, asc; default desc)
+  - `isFile` (boolean, optional)
+
+  Response:
+  ```json
+  {
+    "urls": [{
+      "shortUrl": "197abc",
+      "longUrl": "https://link.com",
+      "state": "ACTIVE",
+      "clicks": 0,
+      "createdAt": "2022-09-19T03:31:00.131Z",
+      "updatedAt": "2022-09-19T03:31:00.131Z"
+    }],
+    "count": 1
+  }
+  ```
+}
