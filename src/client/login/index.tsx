@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  Button,
   Hidden,
   LinearProgress,
   Link,
@@ -111,6 +112,27 @@ const useStyles = makeStyles((theme) =>
         opacity: 0.5,
       },
     },
+    ssoButton: {
+      marginTop: theme.spacing(2),
+    },
+    divider: {
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(1),
+      color: '#767676',
+      '&::before, &::after': {
+        content: '""',
+        flex: 1,
+        borderBottom: '1px solid #d8d8d8',
+      },
+      '&::before': {
+        marginRight: theme.spacing(1),
+      },
+      '&::after': {
+        marginLeft: theme.spacing(1),
+      },
+    },
   }),
 )
 
@@ -132,6 +154,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   )
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
+  const [ssoEnabled, setSsoEnabled] = useState(false)
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant,
   )
@@ -164,6 +187,20 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     dispatch(loginActions.getEmailValidationGlobExpression())
     return
   }, [getEmailValidator])
+
+  // Check whether one.gov.sg login should be shown
+  useEffect(() => {
+    let cancelled = false
+    get('/api/sso/enabled')
+      .then((response) => (response.ok ? response.json() : { enabled: false }))
+      .then((data) => {
+        if (!cancelled) setSsoEnabled(!!data.enabled)
+      })
+      .catch(() => {}) // optional feature: stay hidden if discovery fails
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
@@ -298,6 +335,29 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                         </TextButton>
                       )}
                     </LoginForm>
+                    {isEmailView && ssoEnabled ? (
+                      <>
+                        <Typography className={classes.divider} variant="body2">
+                          OR
+                        </Typography>
+                        <Button
+                          className={classes.ssoButton}
+                          variant="outlined"
+                          color="primary"
+                          size="large"
+                          fullWidth
+                          href={`/api/sso/login${
+                            location?.state?.previous
+                              ? `?next=${encodeURIComponent(
+                                  location.state.previous,
+                                )}`
+                              : ''
+                          }`}
+                        >
+                          Login with one.gov.sg
+                        </Button>
+                      </>
+                    ) : null}
                     {variantMap.progressBarShown ? <LinearProgress /> : null}
                   </span>
                 </section>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta charset="UTF-8">
+    <title><%= displayHostname %>: <%= heading %></title>
+    <base href="~/" />
+    <link href="/assets/styles/shared/shared-styles.css" rel="stylesheet">
+    <link href="/assets/<%= assetVariant %>/styles/colours.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="/assets/styles/not-found-page/not-found-page.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <% if(assetVariant === 'gov') { %>
+        <%- include('partial-masthead') %>
+    <% } %>
+    <main id="main-container">
+        <div id="main-message-container">
+            <div id="main-message">
+                <h3><%= heading %></h3>
+                <p><%= body %></p>
+                <p><a href="/#/login">Return to login</a></p>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

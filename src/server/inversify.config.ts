@@ -51,8 +51,13 @@ import { RotatingLinksController } from './modules/display/RotatingLinksControll
 import {
   AuthService,
   CryptographyBcrypt,
+  OneGovSgService,
 } from './modules/auth/services/index.js'
-import { LoginController, LogoutController } from './modules/auth/index.js'
+import {
+  LoginController,
+  LogoutController,
+  OneGovSgController,
+} from './modules/auth/index.js'
 import { UrlManagementService } from './modules/user/services/index.js'
 import { UserController } from './modules/user/index.js'
 import { DirectoryController } from './modules/directory/index.js'
@@ -142,6 +147,8 @@ export default () => {
   bindIfUnbound(DependencyIds.loginController, LoginController)
   bindIfUnbound(DependencyIds.authService, AuthService)
   bindIfUnbound(DependencyIds.logoutController, LogoutController)
+  bindIfUnbound(DependencyIds.oneGovSgService, OneGovSgService)
+  bindIfUnbound(DependencyIds.oneGovSgController, OneGovSgController)
   bindIfUnbound(DependencyIds.urlManagementService, UrlManagementService)
   bindIfUnbound(DependencyIds.tagManagementService, TagManagementService)
   bindIfUnbound(DependencyIds.jobManagementService, JobManagementService)
