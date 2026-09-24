@@ -5,24 +5,24 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/v1/urls?limit=1000&offset=0&~searchText=&~state=&orderBy=createdAt&sortDirection=desc&~isFile=
+  url: {{baseUrl}}/v1/urls
   body: none
   auth: inherit
 }
 
 params:query {
-  limit: 1000
-  offset: 0
-  ~searchText:
+  ~searchText: 
   ~state: ACTIVE
-  orderBy: createdAt
-  sortDirection: desc
   ~isFile: true
+}
+
+vars:pre-request {
+  baseUrl: https://staging.go.gov.sg/api
 }
 
 docs {
   Get a paginated list of short URLs.
-
+  
   Query params:
   - `limit` (number, default 1000)
   - `offset` (number, default 0)
@@ -31,7 +31,7 @@ docs {
   - `orderBy` (enum: createdAt, clicks; default createdAt)
   - `sortDirection` (enum: desc, asc; default desc)
   - `isFile` (boolean, optional)
-
+  
   Response:
   ```json
   {

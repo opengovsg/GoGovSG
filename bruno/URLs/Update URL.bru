@@ -11,7 +11,7 @@ patch {
 }
 
 params:path {
-  shortUrl: 197abc
+  shortUrl: link
 }
 
 headers {
@@ -28,11 +28,11 @@ body:json {
 docs {
   Update an existing short URL. Substitute the `shortUrl` path
   param with the actual short link code.
-
+  
   Body:
   - `longUrl` (string, optional): must begin with `https://`
   - `state` (enum: ACTIVE, INACTIVE, optional)
-
+  
   Response:
   ```json
   {
