@@ -55,6 +55,14 @@ describe('POST /api/login/otp', () => {
 })
 
 describe('POST /api/login/verify', () => {
+  test('rejects OTP with invalid characters as JSON', async () => {
+    const res = await request(app)
+      .post('/api/login/verify')
+      .send({ email: 'otpgo.gov@open.test.sg', otp: '@@####' })
+    expect(res.status).toBe(400)
+    expect(res.body.message).toContain('OTP must be 6 alphanumeric characters.')
+  })
+
   test('verify the OTP', async () => {
     // Prime cache
     getOtpCache().setOtpForEmail('otpgo.gov@open.test.sg', '::ffff:127.0.0.1', {

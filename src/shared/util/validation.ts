@@ -12,6 +12,10 @@ export const TAG_KEY_REGEX = /^[a-z0-9-_]+$/
 
 export const TAG_STRING_REGEX = /^[A-Za-z0-9-_]+$/
 
+export const OTP_REGEX = /^[A-Za-z0-9]{6}$/
+
+export const OTP_FORMAT_ERROR_MESSAGE = 'OTP must be 6 alphanumeric characters.'
+
 export const MAX_TAG_LENGTH = 25
 
 export const URL_OPTS: validator.IsURLOptions = {
@@ -102,4 +106,8 @@ export function isCircularRedirects(
 export function isPrintableAscii(string: string): boolean {
   // Only accepts characters from 0x20 to 0x7F
   return /^[\x20-\x7F]*$/.test(string)
+}
+
+export function isValidOtp(otp: string, allowBlank = false): boolean {
+  return (allowBlank && otp === '') || OTP_REGEX.test(otp)
 }

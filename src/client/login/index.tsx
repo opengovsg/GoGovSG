@@ -14,6 +14,10 @@ import { Redirect } from 'react-router-dom'
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import assetVariant from '../../shared/util/asset-variant'
+import {
+  OTP_FORMAT_ERROR_MESSAGE,
+  isValidOtp,
+} from '../../shared/util/validation'
 import { GoGovReduxState } from '../app/reducers/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
@@ -169,6 +173,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     const variantMap = loginFormVariants.map[variant]
     const isEmailView = loginFormVariants.isEmailView(variant)
     const emailError = () => !!email && !emailValidator(email)
+    const otpError = () => !!otp && !isValidOtp(otp)
 
     const formAttr = isEmailView
       ? {
@@ -202,8 +207,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
           titleMessage: 'One time password',
           placeholder: 'e.g. A1B2C3',
           buttonMessage: 'Submit',
-          textError: () => false,
-          textErrorMessage: () => '',
+          textError: otpError,
+          textErrorMessage: () => (otpError() ? OTP_FORMAT_ERROR_MESSAGE : ''),
           onChange: (otp: string) => setOtp(otp),
           variant,
           autoComplete: 'off',

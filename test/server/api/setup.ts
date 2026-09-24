@@ -15,6 +15,8 @@ import {
   userModelMock,
 } from './util'
 import bindInversifyDependencies from '../../../src/server/inversify.config'
+import jsonMessage from '../../../src/server/util/json'
+import '../../../src/server/util/response'
 
 // Bind all defaults (after the mocks have been binded)
 bindInversifyDependencies()
@@ -73,6 +75,21 @@ app.use(primeMock)
 
 // attach -  Routes to be tested
 app.use('/api', api)
+
+app.use(
+  (
+    err: { error?: { isJoi?: boolean; toString: () => string } },
+    _req: Request,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    if (err?.error?.isJoi) {
+      res.badRequest(jsonMessage(err.error.toString()))
+      return
+    }
+    res.serverError(jsonMessage((err as Error).message))
+  },
+)
 
 // Redis Mock
 jest.mock('../../../src/server/redis', () => ({
