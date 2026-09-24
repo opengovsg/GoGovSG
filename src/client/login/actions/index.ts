@@ -224,16 +224,24 @@ const isLoggedIn =
       })
     })
 
+const OTP_VERIFY_FALLBACK_ERROR_MESSAGE =
+  'OTP verification failed. Please try again.'
+
 async function getErrorMessageFromResponse(
   response: Response,
 ): Promise<string> {
-  const responseType = response.headers.get('content-type')
+  const responseType = response.headers.get('content-type') ?? ''
   let message: string
-  if (responseType?.includes('json')) {
+  if (responseType.includes('json')) {
     const json = await response.json()
-    message = json.message
+    message = json.message ?? OTP_VERIFY_FALLBACK_ERROR_MESSAGE
   } else {
-    message = await response.text()
+    const text = await response.text()
+    if (responseType.includes('html') || text.trimStart().startsWith('<')) {
+      message = OTP_VERIFY_FALLBACK_ERROR_MESSAGE
+    } else {
+      message = text
+    }
   }
   return message.replace('Error validating request body. ', '')
 }
