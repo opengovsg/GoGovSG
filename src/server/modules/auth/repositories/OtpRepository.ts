@@ -23,66 +23,34 @@ export class OtpRepository implements interfaces.OtpRepository {
     return `${email}:${ip}`
   }
 
-  public deleteOtpByEmail: (email: string, ip: string) => Promise<void> = (
-    email,
-    ip,
-  ) => {
-    return new Promise((resolve, reject) => {
+  public deleteOtpByEmail: (email: string, ip: string) => Promise<void> =
+    async (email, ip) => {
       const key = this.getRedisKey(email, ip)
-      otpClient.del(key, (redisDelError, resdisDelResponse) => {
-        if (redisDelError || resdisDelResponse !== 1) {
-          reject(redisDelError)
-          return
-        }
-
-        resolve()
-      })
-    })
-  }
+      const deletedCount = await otpClient.del(key)
+      if (deletedCount !== 1) {
+        throw new Error(`Failed to delete OTP for key:\t${key}`)
+      }
+    }
 
   public setOtpForEmail: (
     email: string,
     ip: string,
     otp: StorableOtp,
-  ) => Promise<void> = (email, ip, otp) => {
-    return new Promise((resolve, reject) => {
-      const key = this.getRedisKey(email, ip)
-      otpClient.set(
-        key,
-        this.otpMapper.dtoToPersistence(otp),
-        'EX',
-        otpExpiry,
-        (redisSetError) => {
-          if (redisSetError) {
-            reject(redisSetError)
-            return
-          }
-
-          resolve()
-        },
-      )
-    })
+  ) => Promise<void> = async (email, ip, otp) => {
+    const key = this.getRedisKey(email, ip)
+    await otpClient.setEx(key, otpExpiry, this.otpMapper.dtoToPersistence(otp))
   }
 
   public getOtpForEmail: (
     email: string,
     ip: string,
-  ) => Promise<StorableOtp | null> = (email, ip) => {
-    return new Promise((resolve, reject) => {
-      const key = this.getRedisKey(email, ip)
-      otpClient.get(key, (redisError, string) => {
-        if (redisError) {
-          reject(redisError)
-          return
-        }
-
-        if (!string) {
-          resolve(null)
-        }
-
-        resolve(this.otpMapper.persistenceToDto(string))
-      })
-    })
+  ) => Promise<StorableOtp | null> = async (email, ip) => {
+    const key = this.getRedisKey(email, ip)
+    const string = await otpClient.get(key)
+    if (!string) {
+      return null
+    }
+    return this.otpMapper.persistenceToDto(string)
   }
 }
 

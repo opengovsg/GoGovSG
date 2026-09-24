@@ -1,13 +1,13 @@
-import redisMock from 'redis-mock'
+import { createRedisClientMock } from '../../../../../../test/server/mocks/services/RedisClient'
 import { SafeBrowsingMapper } from '../../mappers/SafeBrowsingMapper'
 
-const redisMockClient = redisMock.createClient()
+const redisMockClient = createRedisClientMock()
 
 jest.mock('../../../../redis', () => ({
   safeBrowsingClient: redisMockClient,
 }))
 
-const setSpy = jest.spyOn(redisMockClient, 'set')
+const setSpy = jest.spyOn(redisMockClient, 'setEx')
 const getSpy = jest.spyOn(redisMockClient, 'get')
 
 const { SafeBrowsingRepository } = require('..')
@@ -23,41 +23,33 @@ const threat = {
 
 describe('safe browsing repository redis test', () => {
   beforeEach(async () => {
-    await new Promise<void>((resolve) => {
-      redisMockClient.flushall(() => resolve())
-    })
+    await redisMockClient.flushAll()
     setSpy.mockClear()
     getSpy.mockClear()
   })
 
   it('returns a value if present', async () => {
-    redisMockClient.set(url, JSON.stringify(threat))
+    await redisMockClient.set(url, JSON.stringify(threat))
     await expect(repository.get(url)).resolves.toStrictEqual(threat)
-    expect(redisMockClient.get).toHaveBeenCalledWith(url, expect.any(Function))
+    expect(redisMockClient.get).toHaveBeenCalledWith(url)
   })
 
   it('returns null if absent', async () => {
     await expect(repository.get(url)).resolves.toBeNull()
-    expect(redisMockClient.get).toHaveBeenCalledWith(url, expect.any(Function))
+    expect(redisMockClient.get).toHaveBeenCalledWith(url)
   })
 
   it('sets a value if specified', async () => {
     await repository.set(url, threat)
-    expect(redisMockClient.set).toHaveBeenCalledWith(
+    expect(redisMockClient.setEx).toHaveBeenCalledWith(
       url,
-      JSON.stringify(threat),
-      'EX',
       durationInSeconds,
-      expect.any(Function),
+      JSON.stringify(threat),
     )
   })
 
   it('throws if no matches', async () => {
-    const originalSet = redisMockClient.set
-    redisMockClient.set = () => {
-      throw Error()
-    }
+    setSpy.mockRejectedValueOnce(new Error())
     await expect(repository.set(url, [])).rejects.toThrow()
-    redisMockClient.set = originalSet
   })
 })
