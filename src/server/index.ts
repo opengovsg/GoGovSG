@@ -58,6 +58,7 @@ import getIp from './util/request.js'
 import { container } from './util/inversify.js'
 import { DependencyIds, ERROR_404_PATH } from './constants.js'
 import { Mailer } from './services/email.js'
+import { OperatorCopyService } from './services/OperatorCopyService.js'
 import parseDomain from './util/domain.js'
 import {
   RedirectController,
@@ -148,11 +149,15 @@ app.use(
 )
 
 initDb()
-  .then(() => {
+  .then(async () => {
     logger.info('Database initialised.')
 
     // Initialise nodemailer
     container.get<Mailer>(DependencyIds.mailer).initMailer()
+
+    await container
+      .get<OperatorCopyService>(DependencyIds.growthBookService)
+      .init()
 
     // Site-wide cache control
     app.use((_, res, next) => {

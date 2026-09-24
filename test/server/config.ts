@@ -41,7 +41,6 @@ jest.mock('../../src/server/config', () => ({
   }),
   getOTP: () => '1',
   logger,
-  loginMessage: 'login message',
   saltRounds,
   validEmailDomainGlobExpression: '*.test.sg',
   redirectExpiry,
