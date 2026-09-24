@@ -10,7 +10,7 @@ import { logger, otpRateLimit } from '../../config.js'
 
 const router: Express.Router = Express.Router()
 
-const authValidator = createValidator({ passError: false, statusCode: 401 })
+const authValidator = createValidator({ passError: true })
 
 const loginController = container.get<LoginController>(
   DependencyIds.loginController,

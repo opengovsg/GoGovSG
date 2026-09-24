@@ -224,12 +224,26 @@ const isLoggedIn =
       })
     })
 
+async function getErrorMessageFromResponse(
+  response: Response,
+): Promise<string> {
+  const responseType = response.headers.get('content-type')
+  let message: string
+  if (responseType?.includes('json')) {
+    const json = await response.json()
+    message = json.message
+  } else {
+    message = await response.text()
+  }
+  return message.replace('Error validating request body. ', '')
+}
+
 /**
  * Called when user enters OTP and submits for verification.
  */
 const verifyOTP =
   (otp: string) =>
-  (
+  async (
     dispatch: ThunkDispatch<
       GoGovReduxState,
       void,
@@ -247,23 +261,28 @@ const verifyOTP =
     const { email } = login
 
     dispatch<VerifyOtpPendingAction>(isVerifyOTPPending())
-    return postJson('/api/login/verify', { email, otp }).then((response) => {
-      const isOk = !!response.ok
-      return response.json().then((json) => {
-        if (isOk) {
-          dispatch<SetSuccessMessageAction>(
-            rootActions.setSuccessMessage('OTP Verified'),
-          )
-          dispatch<void>(isLoggedIn())
-        } else {
-          GAEvent('login page', 'otp', 'unsuccessful')
+    try {
+      const response = await postJson('/api/login/verify', { email, otp })
+      if (response.ok) {
+        await response.json()
+        dispatch<SetSuccessMessageAction>(
+          rootActions.setSuccessMessage('OTP Verified'),
+        )
+        dispatch<void>(isLoggedIn())
+        return
+      }
 
-          const { message } = json
-          dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
-          dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
-        }
-      })
-    })
+      GAEvent('login page', 'otp', 'unsuccessful')
+
+      const message = await getErrorMessageFromResponse(response)
+      dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
+      dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
+    } catch {
+      dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
+      dispatch<SetErrorMessageAction>(
+        rootActions.setErrorMessage('Network connectivity failed.'),
+      )
+    }
   }
 
 const logout =
