@@ -1,17 +1,33 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, Page } from '@playwright/test'
+import { OTP_FORMAT_ERROR_MESSAGE } from '../../src/shared/util/validation'
 import {
   incorrectEmail,
   incorrectOtp,
+  invalidFormatOtp,
   rootLocation,
   testEmail,
 } from './util/config'
 import { emptyStorageState } from './util/auth'
-import { emailHelperText, loginButton, signInButton } from './util/helpers'
+import {
+  emailHelperText,
+  loginButton,
+  loginProgressBar,
+  otpHelperText,
+  signInButton,
+} from './util/helpers'
 import { loginProcedure } from './util/LoginProcedure'
 import { logoutProcedure } from './util/LogoutProcedure'
 import { gotoPage } from './util/navigation'
 
 test.use({ storageState: emptyStorageState })
+
+async function openOtpEntry(page: Page) {
+  await gotoPage(page, rootLocation)
+  await loginButton(page).click()
+  await page.locator('#email').fill(testEmail)
+  await signInButton(page).click()
+  await expect(page.locator('#otp')).toBeVisible()
+}
 
 test('Invalid Email that does not end with .gov.sg and should not allow submission', async ({
   page,
@@ -27,11 +43,48 @@ test('Invalid Email that does not end with .gov.sg and should not allow submissi
   await expect(signInButton(page)).toBeDisabled()
 })
 
-test('Invalid OTP should not log the user in', async ({ page }) => {
-  await gotoPage(page, rootLocation)
-  await loginButton(page).click()
-  await page.locator('#email').fill(`${testEmail}`)
+test('Invalid OTP format shows client validation for special characters', async ({
+  page,
+}) => {
+  await openOtpEntry(page)
+  await page.locator('#otp').fill(invalidFormatOtp)
+  await expect(otpHelperText(page)).toHaveText(OTP_FORMAT_ERROR_MESSAGE)
+  await expect(signInButton(page)).toBeDisabled()
+})
+
+test('Invalid OTP format from server clears loading and shows error', async ({
+  page,
+}) => {
+  await openOtpEntry(page)
+  await page.locator('#otp').fill(invalidFormatOtp)
+  // Bypass client-side submit guard to assert the API validation path recovers UI state.
+  await signInButton(page).evaluate((button) => {
+    button.removeAttribute('disabled')
+  })
   await signInButton(page).click()
+  await expect(page.locator('div[role="alert"]')).toContainText(
+    OTP_FORMAT_ERROR_MESSAGE,
+  )
+  await expect(loginProgressBar(page)).toHaveCount(0)
+  await expect(page.locator('#otp')).toBeEnabled()
+})
+
+test('Network failure during OTP verify clears loading and shows error', async ({
+  page,
+}) => {
+  await openOtpEntry(page)
+  await page.locator('#otp').fill(incorrectOtp)
+  await page.route('**/api/login/verify', (route) => route.abort('failed'))
+  await signInButton(page).click()
+  await expect(page.locator('div[role="alert"]')).toContainText(
+    'Network connectivity failed.',
+  )
+  await expect(loginProgressBar(page)).toHaveCount(0)
+  await expect(page.locator('#otp')).toBeEnabled()
+})
+
+test('Invalid OTP should not log the user in', async ({ page }) => {
+  await openOtpEntry(page)
   await page.locator('#otp').fill(`${incorrectOtp}`)
   await signInButton(page).click()
   // Invalid OTP should not log the user in
@@ -41,10 +94,7 @@ test('Invalid OTP should not log the user in', async ({ page }) => {
 test('After trying to enter wrong OTP 3 times, it should respond with OTP not found/expired (a new OTP must be requested)', async ({
   page,
 }) => {
-  await gotoPage(page, rootLocation)
-  await loginButton(page).click()
-  await page.locator('#email').fill(`${testEmail}`)
-  await signInButton(page).click()
+  await openOtpEntry(page)
   await page.locator('#otp').fill(`${incorrectOtp}`)
   await signInButton(page).click()
   await signInButton(page).click()

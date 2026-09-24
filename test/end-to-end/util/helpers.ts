@@ -59,6 +59,10 @@ export const signOutButton = (page: Page): Locator =>
 // Login Page
 export const emailHelperText = (page: Page): Locator =>
   page.locator('#email-helper-text')
+export const otpHelperText = (page: Page): Locator =>
+  page.locator('#otp-helper-text')
+export const loginProgressBar = (page: Page): Locator =>
+  page.locator('.MuiLinearProgress-root')
 export const resendOtpButton = (page: Page): Locator =>
   page.locator('span', { hasText: 'Resend OTP' }).locator('xpath=..')
 
