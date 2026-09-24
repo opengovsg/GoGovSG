@@ -121,8 +121,6 @@ export default function HeatMapStatistics({
     ? getDayRange().reverse()
     : getWeekRange().reverse()
 
-  const columns = xDomain.length
-  const rows = yDomain.length
   // Chart.js's built-in point styles (including 'rect') take a single
   // `radius` and always draw a square. To get an actual rectangle whose
   // width and height can differ, points are drawn invisibly (radius 0)
@@ -130,12 +128,19 @@ export default function HeatMapStatistics({
   const drawRectPointsPlugin = {
     afterDatasetsDraw: (chart: any) => {
       const meta = chart.getDatasetMeta(0)
-      const { ctx, chartArea } = chart
-      // The x/y scales are linear over [0, columns - 1] / [0, rows - 1], so
-      // Chart.js spaces ticks (columns - 1) / (rows - 1) pixel-gaps apart
-      // across the real, measured plot area -- not chart.js's own guess.
-      const cellWidth = (chartArea.right - chartArea.left) / (columns - 1)
-      const cellHeight = (chartArea.bottom - chartArea.top) / (rows - 1)
+      const { ctx } = chart
+      const xScale = chart.scales['x-axis-1']
+      const yScale = chart.scales['y-axis-1']
+      if (!xScale || !yScale) return
+      // Read spacing from the live scales (not chartArea / tick count) so
+      // offset padding and breakpoint-driven axis changes stay in sync even
+      // though react-chartjs-2 only registers plugins at chart construction.
+      const cellWidth = Math.abs(
+        xScale.getPixelForValue(1) - xScale.getPixelForValue(0),
+      )
+      const cellHeight = Math.abs(
+        yScale.getPixelForValue(1) - yScale.getPixelForValue(0),
+      )
       meta.data.forEach((point: any) => {
         const model = point._model
         if (!model) return
