@@ -108,7 +108,7 @@
     "react-chartjs-2": "^2.11.2",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.1",
-    "react-i18next": "^17.0.14",
+    "react-i18next": "^17.0.15",
     "react-redux": "^7.2.9",
     "react-router-dom": "^5.3.4",
     "react-typed": "^2.0.12",
