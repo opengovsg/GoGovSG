@@ -165,8 +165,8 @@ Analogous `EDU_*` and `HEALTH_*` secrets exist for edu and health variants; prod
 | Lambda env var | Set from |
 | :------------- | :------- |
 | `ASSET_VARIANT` | Deploy matrix (`gov` / `edu` / `health`) |
-| `DOMAIN` | Deploy matrix (e.g. `staging.go.gov.sg`) |
-| `EB_CALLBACK_ENDPOINT` | Deploy matrix (e.g. `https://staging.go.gov.sg/api/callback/qr`) |
+| `DOMAIN` | Deploy matrix (e.g. `go.gov.sg`) |
+| `EB_CALLBACK_ENDPOINT` | Deploy matrix (e.g. `https://go.gov.sg/api/callback/qr`) |
 | `BULK_GENERATION_BUCKET` | GitHub secret above |
 | `EB_CALLBACK_SECRET` | GitHub secret above |
 
