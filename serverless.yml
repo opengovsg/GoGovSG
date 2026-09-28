@@ -5,7 +5,7 @@ configValidationMode: error
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs20.x
   region: ap-southeast-1
   memorySize: 256
 
