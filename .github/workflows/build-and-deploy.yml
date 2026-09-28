@@ -140,8 +140,6 @@ jobs:
           echo "ASSET_VARIANT=${{ inputs.asset_variant }}" >> $GITHUB_ENV
           echo "DOMAIN=${{ inputs.short_link_domain }}" >> $GITHUB_ENV
           echo "EB_CALLBACK_ENDPOINT=${{ inputs.eb_callback_endpoint }}" >> $GITHUB_ENV
-          echo "BULK_GENERATION_BUCKET=${{ secrets.LAMBDA_BULK_GENERATION_BUCKET }}" >> $GITHUB_ENV
-          echo "EB_CALLBACK_SECRET=${{ secrets.LAMBDA_EB_CALLBACK_SECRET }}" >> $GITHUB_ENV
 
       - name: Package Dockerrun.aws.json
         run: |
