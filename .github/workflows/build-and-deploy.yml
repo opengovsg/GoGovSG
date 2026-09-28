@@ -33,11 +33,11 @@ on:
         type: boolean
         default: false
       short_link_domain:
-        description: 'Short link hostname for QR codes (e.g. staging.go.gov.sg)'
+        description: 'Short link hostname for QR codes (e.g. go.gov.sg)'
         required: true
         type: string
       eb_callback_endpoint:
-        description: 'Bulk QR job status callback URL (e.g. https://staging.go.gov.sg/api/callback/qr)'
+        description: 'Bulk QR job status callback URL (e.g. https://go.gov.sg/api/callback/qr)'
         required: true
         type: string
     secrets:
