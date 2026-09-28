@@ -32,12 +32,24 @@ on:
         required: false
         type: boolean
         default: false
+      short_link_domain:
+        description: 'Short link hostname for QR codes (e.g. staging.go.gov.sg)'
+        required: true
+        type: string
+      eb_callback_endpoint:
+        description: 'Bulk QR job status callback URL (e.g. https://staging.go.gov.sg/api/callback/qr)'
+        required: true
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
       DD_API_KEY:
+        required: true
+      LAMBDA_BULK_GENERATION_BUCKET:
+        required: true
+      LAMBDA_EB_CALLBACK_SECRET:
         required: true
 
 env:
@@ -125,6 +137,11 @@ jobs:
           echo "EB_APP=${{ inputs.eb_app }}" >> $GITHUB_ENV
           echo "EB_ENV=${{ inputs.eb_env }}" >> $GITHUB_ENV
           echo "BRANCH_ENV=${{ inputs.branch_env }}" >> $GITHUB_ENV
+          echo "ASSET_VARIANT=${{ inputs.asset_variant }}" >> $GITHUB_ENV
+          echo "DOMAIN=${{ inputs.short_link_domain }}" >> $GITHUB_ENV
+          echo "EB_CALLBACK_ENDPOINT=${{ inputs.eb_callback_endpoint }}" >> $GITHUB_ENV
+          echo "BULK_GENERATION_BUCKET=${{ secrets.LAMBDA_BULK_GENERATION_BUCKET }}" >> $GITHUB_ENV
+          echo "EB_CALLBACK_SECRET=${{ secrets.LAMBDA_EB_CALLBACK_SECRET }}" >> $GITHUB_ENV
 
       - name: Package Dockerrun.aws.json
         run: |
@@ -179,3 +196,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
+          ASSET_VARIANT: ${{ env.ASSET_VARIANT }}
+          DOMAIN: ${{ env.DOMAIN }}
+          BULK_GENERATION_BUCKET: ${{ env.BULK_GENERATION_BUCKET }}
+          EB_CALLBACK_ENDPOINT: ${{ env.EB_CALLBACK_ENDPOINT }}
+          EB_CALLBACK_SECRET: ${{ env.EB_CALLBACK_SECRET }}

@@ -55,6 +55,12 @@ functions:
     ephemeralStorageSize: 512 # 512 MB
     timeout: 120 # 120 seconds
     description: Bulk generates QR codes in svg and png from shortUrl-longUrl mappings
+    environment:
+      ASSET_VARIANT: ${env:ASSET_VARIANT}
+      DOMAIN: ${env:DOMAIN}
+      BULK_GENERATION_BUCKET: ${env:BULK_GENERATION_BUCKET}
+      EB_CALLBACK_ENDPOINT: ${env:EB_CALLBACK_ENDPOINT}
+      EB_CALLBACK_SECRET: ${env:EB_CALLBACK_SECRET}
     package:
       patterns:
         - '!./**'
