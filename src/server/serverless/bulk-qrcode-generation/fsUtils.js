@@ -1,4 +1,4 @@
-const fs = require('fs')
+import fs from 'fs'
 
 // remove existing directory before creating new directory
 async function fsMkdirOverwriteSync(dirPath, overwrite = true) {
@@ -21,5 +21,4 @@ async function fsRmdirRecursiveSync(dirPath) {
   }
 }
 
-module.exports.fsMkdirOverwriteSync = fsMkdirOverwriteSync
-module.exports.fsRmdirRecursiveSync = fsRmdirRecursiveSync
+export { fsMkdirOverwriteSync, fsRmdirRecursiveSync }

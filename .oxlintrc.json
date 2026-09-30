@@ -946,6 +946,18 @@
           }
         ]
       }
+    },
+    {
+      "files": ["src/server/serverless/**/*.js"],
+      "rules": {
+        "import/extensions": [
+          "error",
+          "ignorePackages",
+          {
+            "js": "always"
+          }
+        ]
+      }
     }
   ]
 }

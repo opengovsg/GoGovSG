@@ -1,6 +1,8 @@
-const { Client } = require('pg')
+import { Client } from 'pg'
 
-async function handler(event) {
+// Lambda invokes the named export from index.handler, not the default export.
+// eslint-disable-next-line import/prefer-default-export
+export async function handler(event) {
   const dbConfig = process.env.DATABASE_URL
   const pgClient = new Client(dbConfig)
   let statusMsg
@@ -32,5 +34,3 @@ async function handler(event) {
 
   return { Status: statusMsg }
 }
-
-module.exports.handler = handler

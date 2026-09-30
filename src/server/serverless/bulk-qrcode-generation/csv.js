@@ -1,4 +1,4 @@
-async function createCsv(urlMappings) {
+export default async function createCsv(urlMappings) {
   const rowList = []
   rowList.push('Short URL,Original URL')
   urlMappings.forEach((urlMapping) =>
@@ -7,5 +7,3 @@ async function createCsv(urlMappings) {
   const data = rowList.join(`\r\n`)
   return data
 }
-
-module.exports.createCsv = createCsv

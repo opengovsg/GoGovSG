@@ -1,7 +1,7 @@
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
-const { Upload } = require('@aws-sdk/lib-storage')
-const stream = require('stream')
-const { ZipArchive } = require('archiver')
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
+import { ZipArchive } from 'archiver'
+import { PassThrough } from 'stream'
 
 const s3 = new S3Client()
 const { BULK_GENERATION_BUCKET } = process.env
@@ -26,7 +26,7 @@ async function uploadToS3(fileBuffer, fileType, fileKey) {
 
 // https://stackoverflow.com/questions/37336050/pipe-a-stream-to-s3-upload
 const streamToS3 = (key) => {
-  const writeStream = new stream.PassThrough()
+  const writeStream = new PassThrough()
   const upload = new Upload({
     client: s3,
     params: {
@@ -85,5 +85,4 @@ async function archiverZipStreamToS3(systemPath, s3Path) {
   })
 }
 
-module.exports.uploadToS3 = uploadToS3
-module.exports.archiverZipStreamToS3 = archiverZipStreamToS3
+export { uploadToS3, archiverZipStreamToS3 }

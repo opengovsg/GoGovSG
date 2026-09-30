@@ -1,4 +1,4 @@
-const fetch = require('cross-fetch')
+import fetch from 'cross-fetch'
 
 const { EB_CALLBACK_ENDPOINT, EB_CALLBACK_SECRET } = process.env
 if (!EB_CALLBACK_ENDPOINT)
@@ -6,7 +6,11 @@ if (!EB_CALLBACK_ENDPOINT)
 if (!EB_CALLBACK_SECRET)
   throw Error('Environment variable for EB_CALLBACK_SECRET is missing')
 
-async function sendHttpMessage(isSuccess, jobItemId, errorMessage) {
+export default async function sendHttpMessage(
+  isSuccess,
+  jobItemId,
+  errorMessage,
+) {
   const params = {
     jobItemId,
     status: {
@@ -32,5 +36,3 @@ async function sendHttpMessage(isSuccess, jobItemId, errorMessage) {
     `Successfully sent message ${jobItemId} to ${EB_CALLBACK_ENDPOINT}`,
   )
 }
-
-module.exports.sendHttpMessage = sendHttpMessage

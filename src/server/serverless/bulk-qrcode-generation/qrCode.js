@@ -1,9 +1,11 @@
-const cheerio = require('cheerio')
-const fs = require('fs')
-const QRCode = require('qrcode')
+import * as cheerio from 'cheerio'
+import fs from 'fs'
+import QRCode from 'qrcode'
+import path, { resolve } from 'path'
+import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
-const { resolve } = require('path')
-const sharp = require('sharp')
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const IMAGE_WIDTH = 1000
 const QR_CODE_DIMENSIONS = 800
@@ -74,7 +76,7 @@ async function makeGoQrCode(shortUrl, format, domain = DOMAIN) {
   const dom = cheerio.load('')
 
   // Read the logo as a string.
-  const filePath = resolve(__dirname, `./assets/${logoVariant}`)
+  const filePath = resolve(dirname, `./assets/${logoVariant}`)
   const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
   dom('body').append('<svg></svg>')
@@ -192,5 +194,4 @@ async function shortUrlsToQRCodeFiles(shortUrls, format, saveDir) {
   )
 }
 
-module.exports.shortUrlsToQRCodeFiles = shortUrlsToQRCodeFiles
-module.exports.ImageFormat = ImageFormat
+export { shortUrlsToQRCodeFiles, ImageFormat }
