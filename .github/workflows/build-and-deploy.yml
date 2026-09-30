@@ -70,7 +70,7 @@ jobs:
           SHA: ${{ github.sha }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -111,13 +111,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1.4.6
-        with:
-          node-version: '24.x'
-          cache: 'pnpm'
+      - uses: ./.github/actions/setup
 
       - name: Set environment variables
         run: |
@@ -152,7 +146,7 @@ jobs:
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
 
       - name: Deploy to EB
-        uses: opengovsg/beanstalk-deploy@097422c0fe0670b6a71713188ed51de637f29976 # v11
+        uses: einaregilsson/beanstalk-deploy@a67044fa332b06e68985b06d361934c28ab09007 # v23
         if: env.EB_ENV != ''
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -165,11 +159,6 @@ jobs:
           use_existing_version_if_available: ${{ inputs.use_existing_version }}
           wait_for_deployment: false
           wait_for_environment_recovery: false
-
-      - name: Install dependencies
-        # serverless-plugin-include-dependencies is already a pinned devDependency;
-        # a frozen-lockfile install replaces the old ad-hoc unpinned `npm install -f`.
-        run: pnpm install --frozen-lockfile
 
       - name: Serverless deploy
         uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca # v3.2.0
