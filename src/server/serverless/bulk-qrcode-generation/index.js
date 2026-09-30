@@ -1,11 +1,12 @@
-const qrCodeService = require('./qrCode')
-const csvService = require('./csv')
-const s3Service = require('./s3')
-const httpService = require('./http')
-const fsUtils = require('./fsUtils')
-const { ImageFormat } = require('./qrCode')
+import createCsv from './csv.js'
+import { fsMkdirOverwriteSync, fsRmdirRecursiveSync } from './fsUtils.js'
+import sendHttpMessage from './http.js'
+import { ImageFormat, shortUrlsToQRCodeFiles } from './qrCode.js'
+import { archiverZipStreamToS3, uploadToS3 } from './s3.js'
 
-async function handler(event) {
+// Lambda invokes the named export from index.handler, not the default export.
+// eslint-disable-next-line import/prefer-default-export
+export async function handler(event) {
   const { body } = event.Records[0]
   const bodyJSON = JSON.parse(body)
   const { mappings, jobItemId } = bodyJSON
@@ -15,55 +16,49 @@ async function handler(event) {
   }
 
   try {
-    const csvBuffer = await csvService.createCsv(mappings)
-    await s3Service.uploadToS3(
-      csvBuffer,
-      'text/csv',
-      `${jobItemId}/generated.csv`,
-    )
+    const csvBuffer = await createCsv(mappings)
+    await uploadToS3(csvBuffer, 'text/csv', `${jobItemId}/generated.csv`)
     console.log(`uploaded csv to ${jobItemId}/generated.csv`)
 
     const svgTmpDirPath = `/tmp/${jobItemId}/svg`
     const svgS3ZipPath = `${jobItemId}/generated_svg.zip`
-    await fsUtils.fsMkdirOverwriteSync(svgTmpDirPath)
+    await fsMkdirOverwriteSync(svgTmpDirPath)
 
     // generate QR code svg file and saves in svgTmpDirPath
-    await qrCodeService.shortUrlsToQRCodeFiles(
+    await shortUrlsToQRCodeFiles(
       mappings.map((mapping) => mapping.shortUrl),
       ImageFormat.SVG,
       svgTmpDirPath,
     )
     // upload svgTmpDirPath in zip stream to svgS3ZipPath
-    await s3Service.archiverZipStreamToS3(svgTmpDirPath, svgS3ZipPath)
+    await archiverZipStreamToS3(svgTmpDirPath, svgS3ZipPath)
     console.log(`uploaded svg zip to ${svgS3ZipPath}`)
 
     const pngTmpDirPath = `/tmp/${jobItemId}/png`
     const pngS3ZipPath = `${jobItemId}/generated_png.zip`
-    await fsUtils.fsMkdirOverwriteSync(pngTmpDirPath)
+    await fsMkdirOverwriteSync(pngTmpDirPath)
 
     // generate QR code png file and saves in pngTmpDirPath
-    await qrCodeService.shortUrlsToQRCodeFiles(
+    await shortUrlsToQRCodeFiles(
       mappings.map((mapping) => mapping.shortUrl),
       ImageFormat.PNG,
       pngTmpDirPath,
     )
     // upload pngTmpDirPath in zip stream to pngS3ZipPath
-    await s3Service.archiverZipStreamToS3(pngTmpDirPath, pngS3ZipPath)
+    await archiverZipStreamToS3(pngTmpDirPath, pngS3ZipPath)
     console.log(`uploaded png zip to ${pngS3ZipPath}`)
 
     // cleanup
-    await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
+    await fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
     console.log(`cleaned up /tmp/${jobItemId}`)
   } catch (error) {
     // cleanup
-    await fsUtils.fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
+    await fsRmdirRecursiveSync(`/tmp/${jobItemId}`)
 
-    await httpService.sendHttpMessage(false, jobItemId, error.message)
+    await sendHttpMessage(false, jobItemId, error.message)
     throw new Error(`Failed to generate files, Error: ${error} `)
   }
 
-  await httpService.sendHttpMessage(true, jobItemId, '')
+  await sendHttpMessage(true, jobItemId, '')
   return { Status: `Send success message for ${jobItemId}` }
 }
-
-module.exports.handler = handler

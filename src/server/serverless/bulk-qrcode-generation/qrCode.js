@@ -1,9 +1,12 @@
-const cheerio = require('cheerio')
-const fs = require('fs')
-const QRCode = require('qrcode')
+import './fontconfig.js'
+import * as cheerio from 'cheerio'
+import fs from 'fs'
+import QRCode from 'qrcode'
+import path, { resolve } from 'path'
+import sharp from 'sharp'
+import { fileURLToPath } from 'url'
 
-const { resolve } = require('path')
-const sharp = require('sharp')
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const IMAGE_WIDTH = 1000
 const QR_CODE_DIMENSIONS = 800
@@ -41,6 +44,11 @@ const darkColorMap = {
 }
 const dark = darkColorMap[ASSET_VARIANT]
 
+const plexSans = fs
+  .readFileSync(resolve(dirname, './assets/fonts/IBMPlexSans-Regular.otf'))
+  .toString('base64')
+const fontFaceCss = `@font-face { font-family: "IBM Plex Sans"; src: url("data:font/otf;base64,${plexSans}") format("opentype"); }`
+
 // Build base QR code string without logo.
 function makeQrCode(url) {
   return QRCode.toString(url, {
@@ -74,7 +82,7 @@ async function makeGoQrCode(shortUrl, format, domain = DOMAIN) {
   const dom = cheerio.load('')
 
   // Read the logo as a string.
-  const filePath = resolve(__dirname, `./assets/${logoVariant}`)
+  const filePath = resolve(dirname, `./assets/${logoVariant}`)
   const logoSvg = fs.readFileSync(filePath, 'utf-8')
 
   dom('body').append('<svg></svg>')
@@ -83,14 +91,10 @@ async function makeGoQrCode(shortUrl, format, domain = DOMAIN) {
     .attr('height', `${imageHeight}`)
     .attr('xmlns', 'http://www.w3.org/2000/svg')
 
-  // Sources IBM Plex Sans font from Google Fonts and defines the text style.
-  // This only affects QRCodes that are exported to SVGs.
-  // Note that sharp sources the font file from the Docker container that the
-  // instance is run on. Refer to Dockerfile for the installation.
   svg.append(
     `<defs>
         <style type="text/css">
-          @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&amp;display=swap");
+          ${fontFaceCss}
         </style>
       </defs>`,
   )
@@ -192,5 +196,4 @@ async function shortUrlsToQRCodeFiles(shortUrls, format, saveDir) {
   )
 }
 
-module.exports.shortUrlsToQRCodeFiles = shortUrlsToQRCodeFiles
-module.exports.ImageFormat = ImageFormat
+export { shortUrlsToQRCodeFiles, ImageFormat }

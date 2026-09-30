@@ -1,5 +1,5 @@
 {
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "pg": "^8.22.0"
   }
