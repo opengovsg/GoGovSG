@@ -2,7 +2,7 @@
   ["mailOTP", "initMailer", "sendPostmanMail", "sendTransporterMail"] }] */
 
 import { injectable } from 'inversify'
-import nodemailer from 'nodemailer'
+import nodemailer, { type SendMailOptions, type Transporter } from 'nodemailer'
 import fetch from 'cross-fetch'
 import assetVariant from '../../shared/util/asset-variant.js'
 import {
@@ -34,7 +34,7 @@ export interface MailBody {
   senderDomain?: SenderDomain
 }
 
-let transporter: nodemailer.Transport
+let transporter: Transporter
 export interface Mailer {
   initMailer(): void
 
@@ -93,7 +93,7 @@ export class MailerNode implements Mailer {
 
   sendTransporterMail(mailBody: MailBody): Promise<void> {
     const { to, subject, body, senderDomain } = mailBody
-    const mail: nodemailer.MailOptions = {
+    const mail: SendMailOptions = {
       to,
       from: `${senderDomain} <donotreply@mail.${senderDomain}>`,
       subject,

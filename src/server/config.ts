@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import type { SMTPPoolOptions } from 'nodemailer'
 import { ConnectionOptions } from 'sequelize'
 import winston, { createLogger, format, transports } from 'winston'
 import * as minimatch from 'minimatch'
@@ -81,7 +81,7 @@ exitIfAnyMissing(requiredVars)
 // From here, all required env variables will be casted to non-nullable strings.
 
 const otpFunction: OtpFunction | null = generateOTP
-let transporterOpts: nodemailer.TransporterOptions | null = null
+let transporterOpts: SMTPPoolOptions | null = null
 let proxy: boolean = true
 let cookieConfig = null
 let otpLimit: number = 5
@@ -196,7 +196,7 @@ export const redisStatUri = process.env.REDIS_STAT_URI as string
 export const redisSafeBrowsingUri = process.env
   .REDIS_SAFE_BROWSING_URI as string
 export const getOTP: OtpFunction = otpFunction
-export const transporterOptions: nodemailer.TransporterOptions = transporterOpts
+export const transporterOptions: SMTPPoolOptions = transporterOpts
 export const trustProxy: boolean = proxy
 export const otpRateLimit: number = otpLimit
 export const cookieSettings: CookieSettings = cookieConfig
