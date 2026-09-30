@@ -155,20 +155,20 @@ After these have been set up, set the environment variables according to the tab
 
 Configured via `serverless.yml` at deploy time (see `build-and-deploy.yml`). GitHub Actions secrets (per variant and environment):
 
-| Secret | Example name (staging / gov) |
-| :----- | :--------------------------- |
-| S3 bucket for generated files | `GOGOV_STAGING_BULK_GENERATION_BUCKET` |
+| Secret                                   | Example name (staging / gov)              |
+| :--------------------------------------- | :---------------------------------------- |
+| S3 bucket for generated files            | `GOGOV_STAGING_BULK_GENERATION_BUCKET`    |
 | Bearer token for `POST /api/callback/qr` | `GOGOV_STAGING_LAMBDA_EB_CALLBACK_SECRET` |
 
 Analogous `EDU_*` and `HEALTH_*` secrets exist for edu and health variants; production uses `*_PRODUCTION_*` names.
 
-| Lambda env var | Set from |
-| :------------- | :------- |
-| `ASSET_VARIANT` | Deploy matrix (`gov` / `edu` / `health`) |
-| `DOMAIN` | Deploy matrix (e.g. `go.gov.sg`) |
-| `EB_CALLBACK_ENDPOINT` | Deploy matrix (e.g. `https://go.gov.sg/api/callback/qr`) |
-| `BULK_GENERATION_BUCKET` | GitHub secret above |
-| `EB_CALLBACK_SECRET` | GitHub secret above |
+| Lambda env var           | Set from                                                 |
+| :----------------------- | :------------------------------------------------------- |
+| `ASSET_VARIANT`          | Deploy matrix (`gov` / `edu` / `health`)                 |
+| `DOMAIN`                 | Deploy matrix (e.g. `go.gov.sg`)                         |
+| `EB_CALLBACK_ENDPOINT`   | Deploy matrix (e.g. `https://go.gov.sg/api/callback/qr`) |
+| `BULK_GENERATION_BUCKET` | GitHub secret above                                      |
+| `EB_CALLBACK_SECRET`     | GitHub secret above                                      |
 
 #### Batch functions for backups
 
