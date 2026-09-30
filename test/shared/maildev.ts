@@ -140,7 +140,7 @@ export const getMaildevMessageIds = async (
 
 /**
  * Poll maildev until a new OTP email for `to` arrives (or timeout).
- * Required with nodemailer v9, which delivers asynchronously via the SMTP pool.
+ * Required when mail is sent via nodemailer's SMTP pool, which delivers asynchronously.
  */
 export const waitForOtpFromMaildev = async ({
   to,

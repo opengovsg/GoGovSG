@@ -257,8 +257,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       nodemailer:
-        specifier: ^10.0.9
-        version: 10.0.12
+        specifier: ^10.0.11
+        version: 10.0.11
       papaparse:
         specifier: ^5.5.4
         version: 5.5.4
@@ -6426,8 +6426,8 @@ packages:
     resolution: {integrity: sha512-jn9vOIK/nfqoFCcpK89/VCVaLg1IHE6UVfDOzvqmANaJ/rWCTEdH8RZ1V278nv2jr36BJdyQXIAavBLXpzdlag==}
     engines: {node: '>=14'}
 
-  nodemailer@10.0.12:
-    resolution: {integrity: sha512-PQ46oNbNMuH/Sno7B5IWIU9etytwrO0xdTFvWXpIQFRXhBAXtzD48243AS+BCbQQTPD8y3fqUrgLn0tSo77gvg==}
+  nodemailer@10.0.11:
+    resolution: {integrity: sha512-/c4P7U7aGpiNu2Rl08q525q2zECkUpSaf2zQPgIStCcAjHAkkQQKwD4sTyi3l91mGcLQrKzL1syXPHymo+Ogtw==}
     engines: {node: '>=20.0.0'}
 
   noms@0.0.0:
@@ -14497,7 +14497,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.8
 
-  nodemailer@10.0.12: {}
+  nodemailer@10.0.11: {}
 
   noms@0.0.0:
     dependencies:
