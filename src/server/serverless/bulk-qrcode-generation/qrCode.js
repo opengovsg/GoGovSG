@@ -1,3 +1,4 @@
+import './fontconfig.js'
 import * as cheerio from 'cheerio'
 import fs from 'fs'
 import QRCode from 'qrcode'
@@ -43,6 +44,11 @@ const darkColorMap = {
 }
 const dark = darkColorMap[ASSET_VARIANT]
 
+const plexSans = fs
+  .readFileSync(resolve(dirname, './assets/fonts/IBMPlexSans-Regular.otf'))
+  .toString('base64')
+const fontFaceCss = `@font-face { font-family: "IBM Plex Sans"; src: url("data:font/otf;base64,${plexSans}") format("opentype"); }`
+
 // Build base QR code string without logo.
 function makeQrCode(url) {
   return QRCode.toString(url, {
@@ -85,14 +91,10 @@ async function makeGoQrCode(shortUrl, format, domain = DOMAIN) {
     .attr('height', `${imageHeight}`)
     .attr('xmlns', 'http://www.w3.org/2000/svg')
 
-  // Sources IBM Plex Sans font from Google Fonts and defines the text style.
-  // This only affects QRCodes that are exported to SVGs.
-  // Note that sharp sources the font file from the Docker container that the
-  // instance is run on. Refer to Dockerfile for the installation.
   svg.append(
     `<defs>
         <style type="text/css">
-          @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&amp;display=swap");
+          ${fontFaceCss}
         </style>
       </defs>`,
   )
