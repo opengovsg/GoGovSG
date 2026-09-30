@@ -97,8 +97,11 @@ const morganOutputStream = {
   },
 }
 
+const confettiOrigin = 'https://confetti.gov.sg'
+
 const connectSrc = [
   "'self'",
+  confettiOrigin,
   'https://www.google-analytics.com/',
   'https://stats.g.doubleclick.net/',
   'https://*.browser-intake-datadoghq.com/',
@@ -118,6 +121,7 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           'https://fonts.googleapis.com/',
+          confettiOrigin,
         ],
         fontSrc: ["'self'", 'https://fonts.gstatic.com/'],
         imgSrc: [
@@ -135,6 +139,7 @@ app.use(
           'https://www.googletagmanager.com/',
           'https://*.browser-intake-datadoghq.com/',
           'https://www.datadoghq-browser-agent.com/',
+          confettiOrigin,
         ],
         workerSrc: ['blob:'],
         connectSrc,

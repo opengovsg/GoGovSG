@@ -59,6 +59,7 @@ export const DependencyIds = {
   urlCheckController: Symbol.for('urlCheckController'),
   userMessage: Symbol.for('userMessage'),
   userAnnouncement: Symbol.for('userAnnouncement'),
+  confettiSurvey: Symbol.for('confettiSurvey'),
   linksToRotate: Symbol.for('linksToRotate'),
   ogUrl: Symbol.for('ogUrl'),
   gaTrackingId: Symbol.for('gaTrackingId'),

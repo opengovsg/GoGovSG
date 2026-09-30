@@ -159,6 +159,11 @@ export const userAnnouncement = {
   buttonText: process.env.ANNOUNCEMENT_BUTTON_TEXT,
 }
 
+export const confettiSurvey = {
+  surveyId: process.env.CONFETTI_SURVEY_ID,
+  publishableKey: process.env.CONFETTI_PUBLISHABLE_KEY,
+}
+
 export const s3Bucket = process.env.AWS_S3_BUCKET as string
 export const linksToRotate = process.env.ROTATED_LINKS
 // aws-sdk v3's SQSClient throws synchronously at construction if region
