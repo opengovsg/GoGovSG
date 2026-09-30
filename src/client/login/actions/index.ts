@@ -247,23 +247,36 @@ const verifyOTP =
     const { email } = login
 
     dispatch<VerifyOtpPendingAction>(isVerifyOTPPending())
-    return postJson('/api/login/verify', { email, otp }).then((response) => {
-      const isOk = !!response.ok
-      return response.json().then((json) => {
-        if (isOk) {
-          dispatch<SetSuccessMessageAction>(
-            rootActions.setSuccessMessage('OTP Verified'),
-          )
-          dispatch<void>(isLoggedIn())
-        } else {
-          GAEvent('login page', 'otp', 'unsuccessful')
+    return postJson('/api/login/verify', { email, otp })
+      .then((response) => {
+        const isOk = !!response.ok
+        return response.json().then((json) => {
+          if (isOk) {
+            dispatch<SetSuccessMessageAction>(
+              rootActions.setSuccessMessage('OTP Verified'),
+            )
+            dispatch<void>(isLoggedIn())
+          } else {
+            GAEvent('login page', 'otp', 'unsuccessful')
 
-          const { message } = json
-          dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
-          dispatch<SetErrorMessageAction>(rootActions.setErrorMessage(message))
-        }
+            const { message } = json
+            dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
+            dispatch<SetErrorMessageAction>(
+              rootActions.setErrorMessage(message),
+            )
+          }
+        })
       })
-    })
+      .catch(() => {
+        // A non-JSON error response (e.g. the OTP failing request validation
+        // before it reaches the controller) makes response.json() throw.
+        // Without this catch, the promise chain rejects silently: the form
+        // stays stuck in the pending/disabled state with no error toast.
+        dispatch<VerifyOtpErrorAction>(isVerifyOTPError())
+        dispatch<SetErrorMessageAction>(
+          rootActions.setErrorMessage('Invalid input. Please try again.'),
+        )
+      })
   }
 
 const logout =
