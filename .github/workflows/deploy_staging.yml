@@ -20,24 +20,18 @@ jobs:
             serverless_service: gogovsg
             eb_env: go-staging
             use_existing_version: false
-            short_link_domain: staging.go.gov.sg
-            eb_callback_endpoint: https://staging.go.gov.sg/api/callback/qr
           - name: edu
             asset_variant: edu
             dd_service: go-edu
             serverless_service: edu
             eb_env: edu-staging
             use_existing_version: true
-            short_link_domain: staging.for.edu.sg
-            eb_callback_endpoint: https://staging.for.edu.sg/api/callback/qr
           - name: health
             asset_variant: health
             dd_service: go-health
             serverless_service: health
             eb_env: health-staging
             use_existing_version: true
-            short_link_domain: staging.for.sg
-            eb_callback_endpoint: https://staging.for.sg/api/callback/qr
     uses: ./.github/workflows/build-and-deploy.yml
     with:
       asset_variant: ${{ matrix.variant.asset_variant }}
@@ -47,11 +41,7 @@ jobs:
       eb_env: ${{ matrix.variant.eb_env }}
       branch_env: staging
       use_existing_version: ${{ matrix.variant.use_existing_version }}
-      short_link_domain: ${{ matrix.variant.short_link_domain }}
-      eb_callback_endpoint: ${{ matrix.variant.eb_callback_endpoint }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      LAMBDA_BULK_GENERATION_BUCKET: ${{ matrix.variant.name == 'gogov' && secrets.GOGOV_STAGING_BULK_GENERATION_BUCKET || matrix.variant.name == 'edu' && secrets.EDU_STAGING_BULK_GENERATION_BUCKET || secrets.HEALTH_STAGING_BULK_GENERATION_BUCKET }}
-      LAMBDA_EB_CALLBACK_SECRET: ${{ matrix.variant.name == 'gogov' && secrets.GOGOV_STAGING_LAMBDA_EB_CALLBACK_SECRET || matrix.variant.name == 'edu' && secrets.EDU_STAGING_LAMBDA_EB_CALLBACK_SECRET || secrets.HEALTH_STAGING_LAMBDA_EB_CALLBACK_SECRET }}
