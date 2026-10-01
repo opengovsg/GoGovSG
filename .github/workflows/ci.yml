@@ -74,7 +74,7 @@ jobs:
         # a registry hiccup fails it for reasons unrelated to the code under test
         # Telemetry failure is not worth blocking the suite.
         continue-on-error: true
-        uses: datadog/test-visibility-github-action@4e7afb05b464fd349275e41e65a7f4de83e7f46b # v2.10.0
+        uses: datadog/test-visibility-github-action@1abae93083b69778facd7ee11f89184306c999e6 # v3.2.0
         with:
           languages: js
           service: gogovsg
@@ -105,7 +105,7 @@ jobs:
         # a registry hiccup fails it for reasons unrelated to the code under test
         # Telemetry failure is not worth blocking the suite.
         continue-on-error: true
-        uses: datadog/test-visibility-github-action@4e7afb05b464fd349275e41e65a7f4de83e7f46b # v2.10.0
+        uses: datadog/test-visibility-github-action@1abae93083b69778facd7ee11f89184306c999e6 # v3.2.0
         with:
           languages: js
           service: gogovsg
@@ -169,7 +169,7 @@ jobs:
         # a registry hiccup fails it for reasons unrelated to the code under test
         # Telemetry failure is not worth blocking the suite.
         continue-on-error: true
-        uses: datadog/test-visibility-github-action@4e7afb05b464fd349275e41e65a7f4de83e7f46b # v2.10.0
+        uses: datadog/test-visibility-github-action@1abae93083b69778facd7ee11f89184306c999e6 # v3.2.0
         with:
           languages: js
           service: gogovsg
