@@ -15,8 +15,6 @@ import {
   s3Region,
   sqsRegion,
   sqsTimeout,
-  userAnnouncement,
-  userMessage,
 } from './config.js'
 
 import { container } from './util/inversify.js'
@@ -98,6 +96,7 @@ import { BulkService } from './modules/bulk/services/index.js'
 import { BulkController } from './modules/bulk/index.js'
 import { SQSService } from './services/sqs.js'
 import { JobController } from './modules/job/index.js'
+import GrowthBookService from './services/GrowthBookService.js'
 
 function bindIfUnbound<T>(
   dependencyId: symbol,
@@ -109,10 +108,7 @@ function bindIfUnbound<T>(
 }
 
 export default () => {
-  container.bind(DependencyIds.userMessage).toConstantValue(userMessage)
-  container
-    .bind(DependencyIds.userAnnouncement)
-    .toConstantValue(userAnnouncement)
+  bindIfUnbound(DependencyIds.growthBookService, GrowthBookService)
   container.bind(DependencyIds.linksToRotate).toConstantValue(linksToRotate)
   container.bind(DependencyIds.ogUrl).toConstantValue(ogUrl)
   container.bind(DependencyIds.gaTrackingId).toConstantValue(gaTrackingId)
