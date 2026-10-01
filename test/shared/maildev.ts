@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch'
 
-const DEFAULT_MAILDEV_URL = 'http://localhost:1080/email/'
-const DEFAULT_CLEAR_URL = 'http://localhost:1080/email/all'
+const DEFAULT_MAILDEV_URL = 'http://localhost:1080/api/email'
+const DEFAULT_CLEAR_URL = 'http://localhost:1080/api/email/all'
 
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => {

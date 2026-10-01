@@ -155,7 +155,7 @@ jobs:
           }
           deadline=$((SECONDS + 300))
           until listening http://localhost:8080/api/user/message \
-            && listening http://localhost:1080/email \
+            && listening http://localhost:1080/api/email \
             && listening http://localhost:4566/local-bucket; do
             if [ "$SECONDS" -ge "$deadline" ]; then
               echo "::error::stack was still not serving after 300s"
