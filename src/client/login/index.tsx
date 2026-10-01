@@ -4,6 +4,7 @@ import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Button,
+  CircularProgress,
   Hidden,
   LinearProgress,
   Link,
@@ -117,6 +118,16 @@ const useStyles = makeStyles((theme) =>
     ssoButton: {
       marginTop: theme.spacing(2),
     },
+    handingOff: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexGrow: 1,
+    },
+    handingOffText: {
+      marginTop: theme.spacing(2),
+    },
     divider: {
       display: 'flex',
       alignItems: 'center',
@@ -157,6 +168,12 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
   const [ssoEnabled, setSsoEnabled] = useState(false)
+  const iss = initiatedLoginIssuer(
+    location?.search ?? '',
+    window.location.search,
+  )
+  // Hide the form while a one.gov.sg-initiated login is being handed off.
+  const [handingOff, setHandingOff] = useState(iss !== null)
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant,
   )
@@ -194,10 +211,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   // us (initiate_login_uri), start the login from this, the local, browser.
   useEffect(() => {
     let cancelled = false
-    const iss = initiatedLoginIssuer(
-      location?.search ?? '',
-      window.location.search,
-    )
     get('/api/sso/enabled')
       .then((response) => (response.ok ? response.json() : { enabled: false }))
       .then((data) => {
@@ -207,12 +220,29 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
           return
         }
         setSsoEnabled(!!data.enabled)
+        setHandingOff(false)
       })
-      .catch(() => {}) // optional feature: stay hidden if discovery fails
+      // optional feature: stay hidden if discovery fails
+      .catch(() => {
+        if (!cancelled) setHandingOff(false)
+      })
     return () => {
       cancelled = true
     }
   }, [])
+
+  if (handingOff) {
+    return (
+      <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
+        <div className={classes.handingOff}>
+          <CircularProgress />
+          <Typography className={classes.handingOffText} variant="body1">
+            Logging in with one.gov.sg
+          </Typography>
+        </div>
+      </BaseLayout>
+    )
+  }
 
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
