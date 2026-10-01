@@ -26,9 +26,11 @@ import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
+import { initiatedLoginHref, initiatedLoginIssuer } from './sso'
 
 type LoginPageProps = {
   location?: {
+    search?: string
     state?: {
       previous: string
     }
@@ -188,13 +190,23 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     return
   }, [getEmailValidator])
 
-  // Check whether one.gov.sg login should be shown
+  // Check whether one.gov.sg login should be shown. If one.gov.sg launched
+  // us (initiate_login_uri), start the login from this, the local, browser.
   useEffect(() => {
     let cancelled = false
+    const iss = initiatedLoginIssuer(
+      location?.search ?? '',
+      window.location.search,
+    )
     get('/api/sso/enabled')
       .then((response) => (response.ok ? response.json() : { enabled: false }))
       .then((data) => {
-        if (!cancelled) setSsoEnabled(!!data.enabled)
+        if (cancelled) return
+        if (data.enabled && iss !== null) {
+          window.location.replace(initiatedLoginHref(iss))
+          return
+        }
+        setSsoEnabled(!!data.enabled)
       })
       .catch(() => {}) // optional feature: stay hidden if discovery fails
     return () => {

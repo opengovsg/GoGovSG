@@ -108,10 +108,11 @@ export class OneGovSgController {
   }
 
   /**
-   * Starts a one.gov.sg login. Also serves as the registered
-   * initiate_login_uri (guide step 9): an `iss` query param is validated
-   * against the configured issuer if present, then the same fresh flow
-   * runs regardless (no shortcuts for the app-launcher case).
+   * Starts a one.gov.sg login. Third-party initiated logins (guide step 9)
+   * arrive via the frontend initiate_login_uri `/#/login`, which forwards
+   * `iss` here: it is validated against the configured issuer if present,
+   * then the same fresh flow runs regardless (no shortcuts for the
+   * app-launcher case).
    */
   public login: (req: Express.Request, res: Express.Response) => Promise<void> =
     async (req, res) => {

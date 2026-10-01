@@ -20,8 +20,9 @@ router.get('/enabled', (_req, res) => {
 
 if (ffOneGovSgLogin) {
   /**
-   * Starts a one.gov.sg login (rate limited, guide step 2). Also registered
-   * as the initiate_login_uri.
+   * Starts a one.gov.sg login (rate limited, guide step 2). The registered
+   * initiate_login_uri is the frontend `/#/login`, which forwards `iss` here
+   * from the local browser (see src/client/login/sso.ts).
    */
   router.get('/login', ipRateLimiter('oneGovSgLogin'), oneGovSgController.login)
 
