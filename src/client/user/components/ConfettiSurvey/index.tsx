@@ -15,8 +15,11 @@ type ConfettiSurveyConfig = {
 }
 
 const ConfettiSurvey = () => {
-  const userId = useSelector((state: GoGovReduxState) => state.login.user.id)
-  const respondent = userId && String(userId)
+  const respondent = useSelector((state: GoGovReduxState) => {
+    const { user, email } = state.login
+    const respondentEmail = user.email ?? email
+    return respondentEmail ? respondentEmail.toLowerCase() : undefined
+  })
   const [survey, setSurvey] = useState<ConfettiSurveyConfig>({})
   const [isEligible, setIsEligible] = useState(false)
   const { isVisible } = useVisibleAfterDelay({ delay: SHOW_AFTER_MS })

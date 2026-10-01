@@ -6,6 +6,7 @@ export type LoginState = {
   emailValidator: EmailValidatorType
   user: {
     id?: string
+    email?: string
   }
   isLoggedIn: boolean
   formVariant: VariantType
