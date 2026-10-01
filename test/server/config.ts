@@ -56,4 +56,9 @@ jest.mock('../../src/server/config', () => ({
   userCount: 1,
   clickCount: 2,
   linkCount: 3,
+  ffOneGovSgLogin: true,
+  oneGovSgIssuer: 'https://one.gov.sg/api/auth',
+  oneGovSgClientId: 'test-client-id',
+  oneGovSgRedirectUri: 'https://go.gov.sg/api/sso/callback',
+  cookieSettings: { secure: false, maxAge: 86400000 },
 }))
