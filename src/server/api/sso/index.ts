@@ -23,11 +23,7 @@ if (ffOneGovSgLogin) {
    * Starts a one.gov.sg login (rate limited, guide step 2). Also registered
    * as the initiate_login_uri.
    */
-  router.get(
-    '/login',
-    ipRateLimiter('one.gov.sg login'),
-    oneGovSgController.login,
-  )
+  router.get('/login', ipRateLimiter('oneGovSgLogin'), oneGovSgController.login)
 
   /**
    * One.gov.sg redirects here after authentication.

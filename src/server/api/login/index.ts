@@ -17,7 +17,7 @@ const loginController = container.get<LoginController>(
 /**
  * Rate limiter for API generating OTP.
  */
-const apiOtpGeneratorLimiter = ipRateLimiter('generating OTP')
+const apiOtpGeneratorLimiter = ipRateLimiter('generatingOtp')
 
 /**
  * For the Login message banner.
