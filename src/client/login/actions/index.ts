@@ -92,9 +92,7 @@ const isResendOTPDisabled: (
 const isLoggedInSuccess: (user: {
   id: string
   email: string
-}) => IsLoggedInSuccessAction = (
-  user,
-) => ({
+}) => IsLoggedInSuccessAction = (user) => ({
   type: IS_LOGGED_IN_SUCCESS,
   payload: user,
 })
