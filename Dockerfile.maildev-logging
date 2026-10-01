@@ -1,6 +1,1 @@
-FROM maildev/maildev:2.2.1@sha256:180ef51f65eefebb0e7122d8308813c1fd7bff164bc440ce5a3c2feee167a810
-USER root
-WORKDIR /home/node
-RUN echo "maildev.on('new', ({ html }) => { if(html.includes('OTP')) { console.log('Login OTP: ' + html.match(/<b>([A-Z0-9]{6})<\\/b>/)[1]) } else { console.log(html) } } )" >> bin/maildev \
-    && chown node:node bin/maildev
-USER node
+FROM maildev/maildev:3.0.0@sha256:6e09695961f4aef9016a390ad391314a078220216601b15a35d389a7df2a3855

@@ -12,7 +12,7 @@ export const API_ADMIN_V1_URLS = 'http://localhost:8080/api/v1/admin/urls'
 export const API_LOGIN_OTP = 'http://localhost:8080/api/login/otp'
 export const API_LOGIN_VERIFY = 'http://localhost:8080/api/login/verify'
 
-export const LOCAL_EMAIL_URL = 'http://localhost:1080/email'
+export const LOCAL_EMAIL_URL = 'http://localhost:1080/api/email'
 
 export const LOCAL_BUCKET_URL = 'http://localhost:4566/local-bucket'
 
