@@ -40,7 +40,7 @@ export type SetEmailValidatorAction = ReduxPayloadAction<
 
 export type IsLoggedInSuccessAction = ReduxPayloadAction<
   typeof IS_LOGGED_IN_SUCCESS,
-  { id: string }
+  { id: string; email: string }
 >
 
 export type IsLoggedOutAction = ReduxAction<typeof IS_LOGGED_OUT>
