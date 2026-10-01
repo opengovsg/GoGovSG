@@ -152,7 +152,7 @@ jobs:
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
 
       - name: Deploy to EB
-        uses: opengovsg/beanstalk-deploy@097422c0fe0670b6a71713188ed51de637f29976 # v11
+        uses: opengovsg/beanstalk-deploy@af31173a6a0ffcbde0bd555ee228e34cd9bb63f8 # v18
         if: env.EB_ENV != ''
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
