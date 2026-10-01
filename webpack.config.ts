@@ -120,6 +120,13 @@ export default () => {
           },
         },
         {
+          // @opengovsg/confetti is strict ESM, but React 17 has no exports
+          // map, so `react/jsx-runtime` only resolves with the .js extension.
+          test: /\.js$/,
+          include: /node_modules[\\/]@opengovsg[\\/]confetti/,
+          resolve: { fullySpecified: false },
+        },
+        {
           test: /\.(png|woff|woff2|eot|ttf|svg)$/,
           type: 'asset/resource',
         },

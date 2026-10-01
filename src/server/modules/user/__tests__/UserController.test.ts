@@ -42,12 +42,17 @@ const userAnnouncement = {
   url: 'https://go.gov.sg',
   image: '/favicon.ico',
 }
+const confettiSurvey = {
+  surveyId: 'survey-id',
+  publishableKey: 'publishable-key',
+}
 
 describe('UserController', () => {
   const controller = new UserController(
     urlManagementService,
     userMessage,
     userAnnouncement,
+    confettiSurvey,
     tagManagementService,
     apiKeyAuthService,
   )
@@ -690,5 +695,14 @@ describe('UserController', () => {
 
     await controller.getUserAnnouncement(req, res)
     expect(send).toHaveBeenCalledWith(userAnnouncement)
+  })
+
+  it('sends confettiSurvey', async () => {
+    const req = createRequestWithUser(undefined)
+    const res = httpMocks.createResponse()
+    const send = jest.spyOn(res, 'send')
+
+    await controller.getConfettiSurvey(req, res)
+    expect(send).toHaveBeenCalledWith(confettiSurvey)
   })
 })

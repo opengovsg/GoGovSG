@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Drawer from './components/Drawer'
 import CreateUrlModal from './components/CreateUrlModal'
 import AnnouncementModal from './components/AnnouncementModal'
+import ConfettiSurvey from './components/ConfettiSurvey'
 import userActions from './actions'
 import BaseLayout from '../app/components/BaseLayout'
 import UserLinkTable from './components/UserLinkTable'
@@ -66,6 +67,7 @@ function UserPage() {
           )}
           <CreateUrlModal />
           <AnnouncementModal />
+          <ConfettiSurvey />
         </Drawer>
       </BaseLayout>
     )

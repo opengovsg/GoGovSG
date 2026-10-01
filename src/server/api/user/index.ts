@@ -188,4 +188,6 @@ router.get('/message', userController.getUserMessage)
 
 router.get('/announcement', userController.getUserAnnouncement)
 
+router.get('/confetti', userController.getConfettiSurvey)
+
 export default router

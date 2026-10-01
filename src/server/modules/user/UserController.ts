@@ -43,6 +43,11 @@ type AnnouncementResponse = {
   image?: string
 }
 
+type ConfettiSurveyResponse = {
+  surveyId?: string
+  publishableKey?: string
+}
+
 @injectable()
 export class UserController {
   private urlManagementService: UrlManagementService
@@ -50,6 +55,8 @@ export class UserController {
   private readonly userMessage: string
 
   private readonly userAnnouncement: AnnouncementResponse
+
+  private readonly confettiSurvey: ConfettiSurveyResponse
 
   private tagManagementService: TagManagementServiceInterface
 
@@ -62,6 +69,8 @@ export class UserController {
     userMessage: string,
     @inject(DependencyIds.userAnnouncement)
     userAnnouncement: AnnouncementResponse,
+    @inject(DependencyIds.confettiSurvey)
+    confettiSurvey: ConfettiSurveyResponse,
     @inject(DependencyIds.tagManagementService)
     tagManagementService: TagManagementServiceInterface,
     @inject(DependencyIds.apiKeyAuthService)
@@ -70,6 +79,7 @@ export class UserController {
     this.urlManagementService = urlManagementService
     this.userMessage = userMessage
     this.userAnnouncement = userAnnouncement
+    this.confettiSurvey = confettiSurvey
     this.tagManagementService = tagManagementService
     this.apiKeyAuthService = apiKeyAuthService
   }
@@ -346,6 +356,14 @@ export class UserController {
     res: Express.Response,
   ) => Promise<void> = async (_, res) => {
     res.send(this.userAnnouncement)
+    return
+  }
+
+  public getConfettiSurvey: (
+    req: Express.Request,
+    res: Express.Response,
+  ) => Promise<void> = async (_, res) => {
+    res.send(this.confettiSurvey)
     return
   }
 }

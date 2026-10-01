@@ -8,6 +8,7 @@ import {
   accessEndpoint,
   bucketEndpoint,
   cloudmersiveKey,
+  confettiSurvey,
   gaTrackingId,
   linksToRotate,
   ogUrl,
@@ -113,6 +114,7 @@ export default () => {
   container
     .bind(DependencyIds.userAnnouncement)
     .toConstantValue(userAnnouncement)
+  container.bind(DependencyIds.confettiSurvey).toConstantValue(confettiSurvey)
   container.bind(DependencyIds.linksToRotate).toConstantValue(linksToRotate)
   container.bind(DependencyIds.ogUrl).toConstantValue(ogUrl)
   container.bind(DependencyIds.gaTrackingId).toConstantValue(gaTrackingId)
