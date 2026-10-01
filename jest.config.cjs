@@ -16,12 +16,12 @@ module.exports = {
     '^zod/v4/core$': '<rootDir>/node_modules/zod/v4/core/index.cjs',
     '^zod/v4$': '<rootDir>/node_modules/zod/v4/index.cjs',
   },
-  // inversify 8, its @inversifyjs/* dependencies, and nanoid 6 are pure ESM
-  // (no CJS build); Jest's default ignores all of node_modules from
-  // transformation, so these need to be transformed to CJS like our own
-  // source.
+  // inversify 8, its @inversifyjs/* dependencies, nanoid 6, openid-client 6
+  // and its oauth4webapi and jose dependencies are pure ESM (no CJS build);
+  // Jest's default ignores all of node_modules from transformation, so
+  // these need to be transformed to CJS like our own source.
   transformIgnorePatterns: [
-    '/node_modules/(?!(inversify|@inversifyjs|nanoid)/)',
+    '/node_modules/(?!(inversify|@inversifyjs|nanoid|openid-client|oauth4webapi|jose)/)',
   ],
   coverageThreshold: {
     global: {

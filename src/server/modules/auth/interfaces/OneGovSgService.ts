@@ -1,4 +1,5 @@
-import { CallbackParamsType } from 'openid-client'
+/** Query params one.gov.sg appended to the redirect URI. */
+export type OneGovSgCallbackParams = Record<string, string>
 
 export type OneGovSgTransaction = {
   state: string
@@ -29,7 +30,7 @@ export interface OneGovSgService {
    * Throws if any check fails.
    */
   handleCallback(
-    callbackParams: CallbackParamsType,
+    callbackParams: OneGovSgCallbackParams,
     transaction: OneGovSgTransaction,
   ): Promise<string>
 }

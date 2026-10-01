@@ -1,6 +1,5 @@
 import Express from 'express'
 import { inject, injectable } from 'inversify'
-import { CallbackParamsType } from 'openid-client'
 import { DependencyIds } from '../../constants.js'
 import {
   cookieSettings,
@@ -12,6 +11,7 @@ import { isValidGovEmail } from '../../util/email.js'
 import assetVariant from '../../../shared/util/asset-variant.js'
 import {
   AuthService,
+  OneGovSgCallbackParams,
   OneGovSgService,
   OneGovSgTransaction,
 } from './interfaces/index.js'
@@ -153,7 +153,7 @@ export class OneGovSgController {
 
     // Guide step 3 ordering: error, iss, code. state/nonce/PKCE are checked
     // by openid-client inside handleCallback.
-    const params = req.query as CallbackParamsType
+    const params = req.query as OneGovSgCallbackParams
     if (params.error) {
       logger.error(
         `one.gov.sg callback returned an error:\t${params.error}\t${
