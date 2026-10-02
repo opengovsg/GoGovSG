@@ -284,10 +284,7 @@ export const apiAdmins: string[] = process.env.ADMIN_API_EMAILS
 
 export const oneGovSgIssuer = process.env.ONE_GOV_SG_ISSUER as string
 export const oneGovSgClientId = process.env.ONE_GOV_SG_CLIENT_ID as string
-// Normalised (e.g. trailing slash on a bare origin) so it matches the
-// redirect_uri openid-client derives for the token request.
-export const oneGovSgRedirectUri = (process.env.ONE_GOV_SG_REDIRECT_URI &&
-  new URL(process.env.ONE_GOV_SG_REDIRECT_URI).href) as string
+export const oneGovSgRedirectUri = process.env.ONE_GOV_SG_REDIRECT_URI as string
 // Unescape literal '\n' in case the PEM was stored as a single-line env value.
 export const oneGovSgPrivateKeyPem = (
   process.env.ONE_GOV_SG_PRIVATE_KEY as string

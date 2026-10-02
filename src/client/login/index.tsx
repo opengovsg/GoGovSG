@@ -29,11 +29,14 @@ import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
-import {
-  initiatedLoginHref,
-  initiatedLoginIssuer,
-  oneGovSgCallbackHref,
-} from './sso'
+import { initiatedLoginHref, initiatedLoginIssuer } from './sso'
+
+// Menlo's isolated browser also loads the launch page and runs this code. If
+// its copy starts a login, that login wins and the user's local browser is
+// left logged out. Waiting gives Menlo time to finish handing the page off
+// first. ponytail: timing only, not a guarantee; swap for a "Continue" button
+// if staging logs still show logins completing in Menlo's browser.
+const INITIATED_LOGIN_DELAY_MS = 2000
 
 type LoginPageProps = {
   location?: {
@@ -183,11 +186,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     location?.search ?? '',
     window.location.search,
   )
-  const callbackHref = oneGovSgCallbackHref(window.location.search)
-  // Hide the form while a one.gov.sg login is being handed off.
-  const [handingOff, setHandingOff] = useState(
-    callbackHref !== null || iss !== null,
-  )
+  // Hide the form while a one.gov.sg-initiated login is being handed off.
+  const [handingOff, setHandingOff] = useState(iss !== null)
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant,
   )
@@ -224,19 +224,17 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   // Check whether one.gov.sg login should be shown. If one.gov.sg launched
   // us (initiate_login_uri), start the login from this, the local, browser.
   useEffect(() => {
-    // Check first: the callback query also carries iss, and treating it as a
-    // launch would start a new login.
-    if (callbackHref !== null) {
-      window.location.replace(callbackHref)
-      return undefined
-    }
     let cancelled = false
+    let handoffTimer: number | undefined
     get('/api/sso/enabled')
       .then((response) => (response.ok ? response.json() : { enabled: false }))
       .then((data) => {
         if (cancelled) return
         if (data.enabled && iss !== null) {
-          window.location.replace(initiatedLoginHref(iss))
+          handoffTimer = window.setTimeout(
+            () => window.location.replace(initiatedLoginHref(iss)),
+            INITIATED_LOGIN_DELAY_MS,
+          )
           return
         }
         setSsoEnabled(!!data.enabled)
@@ -248,6 +246,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       })
     return () => {
       cancelled = true
+      window.clearTimeout(handoffTimer)
     }
   }, [])
 

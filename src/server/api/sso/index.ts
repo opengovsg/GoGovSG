@@ -27,8 +27,7 @@ if (ffOneGovSgLogin) {
   router.get('/login', ipRateLimiter('oneGovSgLogin'), oneGovSgController.login)
 
   /**
-   * The frontend redirect_uri page (/) forwards one.gov.sg's response here
-   * (see src/client/login/sso.ts).
+   * One.gov.sg redirects here after authentication.
    */
   router.get('/callback', oneGovSgController.callback)
 }
