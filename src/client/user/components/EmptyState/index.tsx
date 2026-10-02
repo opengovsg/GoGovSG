@@ -1,5 +1,7 @@
 import React from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import emptyStateGraphic from '@assets/components/user/empty-state/empty-state.svg'
 import CreateButton from './CreateButton'
 

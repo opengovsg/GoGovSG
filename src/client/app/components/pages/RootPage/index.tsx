@@ -1,7 +1,11 @@
 import React, { FunctionComponent } from 'react'
 import { Provider } from 'react-redux'
 import { Route, Router, Switch } from 'react-router-dom'
-import { MuiThemeProvider } from '@material-ui/core/styles'
+import {
+  ThemeProvider,
+  Theme,
+  StyledEngineProvider,
+} from '@mui/material/styles'
 
 import { Store } from 'redux'
 
@@ -34,6 +38,16 @@ import {
 } from '../../../util/types'
 import theme from '../../../theme'
 
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 type RootProps = {
   store: Store
   history: History
@@ -41,25 +55,27 @@ type RootProps = {
 
 const Root: FunctionComponent<RootProps> = ({ store, history }: RootProps) => (
   <Provider store={store}>
-    <MuiThemeProvider theme={theme}>
-      <Router history={history}>
-        <ScrollToTop>
-          <Switch>
-            <Route exact path={HOME_PAGE} component={HomePage} />
-            <Route path={LOGIN_PAGE} component={LoginPage} />
-            <PrivateRoute path={USER_PAGE} component={UserPage} />
-            <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
-            <PrivateRoute path={DIRECTORY_PAGE} component={DirectoryPage} />
-            <PrivateRoute
-              path={API_INTEGRATION_PAGE}
-              component={ApiIntegrationPage}
-            />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </ScrollToTop>
-      </Router>
-      <MessageSnackbar />
-    </MuiThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <Router history={history}>
+          <ScrollToTop>
+            <Switch>
+              <Route exact path={HOME_PAGE} component={HomePage} />
+              <Route path={LOGIN_PAGE} component={LoginPage} />
+              <PrivateRoute path={USER_PAGE} component={UserPage} />
+              <Route path={NOT_FOUND_PAGE} component={NotFoundPage} />
+              <PrivateRoute path={DIRECTORY_PAGE} component={DirectoryPage} />
+              <PrivateRoute
+                path={API_INTEGRATION_PAGE}
+                component={ApiIntegrationPage}
+              />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </ScrollToTop>
+        </Router>
+        <MessageSnackbar />
+      </ThemeProvider>
+    </StyledEngineProvider>
   </Provider>
 )
 

@@ -1,11 +1,8 @@
 import * as React from 'react'
-import {
-  Typography,
-  createStyles,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core'
+import { Typography, useMediaQuery, useTheme } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 export enum TrailingPosition {
   start,
@@ -80,7 +77,7 @@ export default function ConfigOption({
     wrapTrailing,
   })
   const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobileView = useMediaQuery(theme.breakpoints.down('lg'))
   const titleVariant = mobile ? 'h6' : 'body2'
   const titleClass = mobile && !isMobileView ? '' : classes.regularText
   return (

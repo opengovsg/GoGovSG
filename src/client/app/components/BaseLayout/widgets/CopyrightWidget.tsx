@@ -1,5 +1,7 @@
 import React from 'react'
-import { Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import classNames from 'classnames'
 import i18next from 'i18next'
 import { format } from 'date-fns-tz'
@@ -15,7 +17,7 @@ const useStyles = makeStyles((theme) =>
     },
     mobileFooter: {
       display: 'none',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'block',
       },
     },

@@ -1,5 +1,8 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react'
-import { Drawer, createStyles, makeStyles } from '@material-ui/core'
+import { Drawer } from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 const useStyles = makeStyles(() =>
   createStyles({

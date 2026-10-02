@@ -1,5 +1,6 @@
 import React from 'react'
-import { createStyles, makeStyles } from '@material-ui/core'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import Section from '../Section'
 import CopyrightWidget from './widgets/CopyrightWidget'
 import LinkedinWidget from './widgets/LinkedinWidget'
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme) =>
     footer: {
       display: 'flex',
       justifyContent: 'space-between',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'block',
       },
     },
@@ -23,14 +24,14 @@ const useStyles = makeStyles((theme) =>
     icons: {
       marginLeft: theme.spacing(3),
       marginRight: '0px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         marginLeft: '0px',
         marginRight: theme.spacing(3),
       },
     },
     displayGroup: {
       display: 'inline-grid',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'block',
       },
     },
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) =>
     copyRightGroup: {
       display: 'inline-grid',
       textAlign: 'right',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'block',
         textAlign: 'left',
       },

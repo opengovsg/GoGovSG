@@ -1,5 +1,7 @@
 import React from 'react'
-import { Link, createStyles, makeStyles } from '@material-ui/core'
+import { Link } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import i18next from 'i18next'
 import classNames from 'classnames'
 import BuiltByImgLight from '@assets/widgets/app/built-by-light.svg'
@@ -26,7 +28,7 @@ function BuiltByWidget({ className }: BuiltByWidgetProps) {
   return (
     <div className={classNames(className, classes.builtByLinkGroup)}>
       <Link
-        href={i18next.t('general.links.builtBy')}
+        href={i18next.t('general.links.builtBy') as string}
         target="_blank"
         style={{ height: '100%' }}
       >

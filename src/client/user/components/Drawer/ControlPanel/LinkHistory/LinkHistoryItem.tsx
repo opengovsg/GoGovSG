@@ -1,7 +1,9 @@
 import React from 'react'
 import moment from 'moment-timezone'
 
-import { Chip, Typography, createStyles, makeStyles } from '@material-ui/core'
+import { Chip, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import {
   TimelineConnector,
   TimelineContent,
@@ -9,7 +11,7 @@ import {
   TimelineItem,
   TimelineOppositeContent,
   TimelineSeparator,
-} from '@material-ui/lab/'
+} from '@mui/lab/'
 
 import { LinkChangeKey, LinkChangeSet } from '../../../../reducers/types'
 import { useDrawerState } from '../..'

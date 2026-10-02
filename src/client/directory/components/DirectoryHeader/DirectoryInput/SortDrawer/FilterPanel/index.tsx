@@ -5,7 +5,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core'
+} from '@mui/material'
 
 import FilterCheckbox from './FilterCheckbox'
 import useStyles from '../../styles'
@@ -33,7 +33,7 @@ export default function ({
 }: FilterPanelProps) {
   const classes = useStyles()
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
   return (
     <Grid container item direction="column">
       <Grid item className={classes.filterHeaderGrid}>

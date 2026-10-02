@@ -1,11 +1,7 @@
 import React, { FunctionComponent } from 'react'
-import {
-  TableCell,
-  TablePagination,
-  TableRow,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { TableCell, TablePagination, TableRow } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import useAppMargins from '../../../../../app/components/AppMargins/appMargins'
 import PaginationActionComponent from '../../../../../app/components/widgets/PaginationActionComponent'
 
@@ -59,20 +55,20 @@ const useStyles = makeStyles((theme) =>
     caption: {
       fontWeight: 400,
       marginRight: '4px',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
     select: {
       border: 'solid 1px #d8d8d8',
       zIndex: 2,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
     selectIcon: {
       zIndex: 2,
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down('lg')]: {
         display: 'none',
       },
     },
@@ -122,11 +118,12 @@ const DirectoryTablePagination: FunctionComponent<
             'aria-label': 'next page',
           }}
           onPageChange={changePageHandler}
-          onChangeRowsPerPage={changeRowsPerPageHandler}
+          onRowsPerPageChange={changeRowsPerPageHandler}
           classes={{
             spacer: classes.spacer,
             toolbar: classes.toolbar,
-            caption: classes.caption,
+            selectLabel: classes.caption,
+            displayedRows: classes.caption,
             select: classes.select,
             selectIcon: classes.selectIcon,
           }}

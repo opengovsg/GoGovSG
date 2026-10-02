@@ -3,14 +3,9 @@ import classNames from 'classnames'
 import i18next from 'i18next'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../app/hooks'
-import {
-  Hidden,
-  LinearProgress,
-  Link,
-  Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+import { Hidden, LinearProgress, Link, Typography } from '@mui/material'
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 import { Redirect } from 'react-router-dom'
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
@@ -215,7 +210,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
         <div className={classes.container}>
           <div>
-            <Hidden mdDown>
+            <Hidden xlDown>
               <div className={classes.graphicColorFill}>
                 <img
                   className={classes.loginGraphic}

@@ -191,7 +191,7 @@ test('User page test on filter search by tags', async ({ page }) => {
   // Click on tag 1 from url 1. Bound to this query: creating url 3 above
   // dispatches a refetch that may still be in flight.
   const tag1Search = userLinksRefetch(page, { tags: tagText1 })
-  await linkTableRow1.locator('span', { hasText: exactText(tagText1) }).click()
+  await linkTableRow1.getByRole('button', { name: exactText(tagText1) }).click()
   await tag1Search
   // Link table should show urls 2 and 1 on top
   await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl2}`)
@@ -203,7 +203,7 @@ test('User page test on filter search by tags', async ({ page }) => {
 
   // Click on tag 2 from url 2
   const tag2Search = userLinksRefetch(page)
-  await linkTableRow2.locator('span', { hasText: exactText(tagText2) }).click()
+  await linkTableRow2.getByRole('button', { name: exactText(tagText2) }).click()
   await tag2Search
   // Link table should show urls 3, 2, and 1 on top
   await expect.poll(() => urlTableRowUrlText(page, 0)).toBe(`/${generatedUrl3}`)

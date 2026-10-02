@@ -118,7 +118,7 @@ test('The URL based shortlink test.', async ({ page }) => {
   ).toBe(cssRgbChannels('rgb(249, 249, 249)'))
   // It should show the tag on the new short url
   await expect(
-    linkTableRow.locator('span', { hasText: exactText(tagText2) }),
+    linkTableRow.getByRole('button', { name: exactText(tagText2) }),
   ).toBeVisible()
 
   // It should show an autocomplete option for the previously created tag when creating a new link
@@ -162,7 +162,7 @@ test('The file based shortlink test.', async ({ page }) => {
   ).toBe(cssRgbChannels('rgb(249, 249, 249)')) // #f9f9f9 in rgb
   // It should show the tags on the new short url
   await expect(
-    fileTableRow.locator('span', { hasText: exactText(tagText1) }),
+    fileTableRow.getByRole('button', { name: exactText(tagText1) }),
   ).toBeVisible()
 
   // Delete 1mb file
@@ -264,7 +264,7 @@ test('The bulk based test.', async ({ page }) => {
     urlTable(page)
       .locator('xpath=./*')
       .nth(0)
-      .locator('span', { hasText: exactText(tagText3) }),
+      .getByRole('button', { name: exactText(tagText3) }),
   ).toBeVisible()
 
   // Delete valid file

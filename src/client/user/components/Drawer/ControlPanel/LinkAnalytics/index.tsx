@@ -6,9 +6,10 @@ import {
   Tab,
   Tabs,
   Typography,
-  createStyles,
-  makeStyles,
-} from '@material-ui/core'
+} from '@mui/material'
+
+import createStyles from '@mui/styles/createStyles'
+import makeStyles from '@mui/styles/makeStyles'
 
 import { useDrawerState } from '../..'
 import { useStatistics } from './util/statistics'
@@ -260,7 +261,7 @@ function Graphs({ data, shortUrl }: GraphsProps) {
                 }
               />
             </Tabs>
-            <Hidden smDown>
+            <Hidden lgDown>
               <div className={classes.totalClicks}>
                 <img
                   src={clicksLogo}
