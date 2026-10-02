@@ -29,6 +29,13 @@ import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
 import { initiatedLoginHref, initiatedLoginIssuer } from './sso'
 
+// Menlo's isolated browser also loads the launch page and runs this code. If
+// its copy starts a login, that login wins and the user's local browser is
+// left logged out. Waiting gives Menlo time to finish handing the page off
+// first. ponytail: timing only, not a guarantee; swap for a "Continue" button
+// if staging logs still show logins completing in Menlo's browser.
+const INITIATED_LOGIN_DELAY_MS = 2000
+
 type LoginPageProps = {
   location?: {
     search?: string
@@ -211,12 +218,16 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   // us (initiate_login_uri), start the login from this, the local, browser.
   useEffect(() => {
     let cancelled = false
+    let handoffTimer: number | undefined
     get('/api/sso/enabled')
       .then((response) => (response.ok ? response.json() : { enabled: false }))
       .then((data) => {
         if (cancelled) return
         if (data.enabled && iss !== null) {
-          window.location.replace(initiatedLoginHref(iss))
+          handoffTimer = window.setTimeout(
+            () => window.location.replace(initiatedLoginHref(iss)),
+            INITIATED_LOGIN_DELAY_MS,
+          )
           return
         }
         setSsoEnabled(!!data.enabled)
@@ -228,6 +239,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       })
     return () => {
       cancelled = true
+      window.clearTimeout(handoffTimer)
     }
   }, [])
 
