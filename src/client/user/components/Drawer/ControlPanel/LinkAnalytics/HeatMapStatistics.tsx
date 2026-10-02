@@ -1,4 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
+import {
+  Chart as ChartJS,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  ScatterController,
+} from 'chart.js'
 import { Scatter } from 'react-chartjs-2'
 import makeStyles from '@mui/styles/makeStyles'
 import { useMediaQuery, useTheme } from '@mui/material'
@@ -13,6 +20,8 @@ import BaseStatisticsLayout from './BaseStatisticsLayout'
 import { useWindowSize } from './util/window-size'
 import { HeatmapLegend } from './widgets/HeatMapStatistics/HeatmapLegend'
 import { WeekdayClicks } from '../../../../../../shared/interfaces/link-statistics'
+
+ChartJS.register(LinearScale, PointElement, Tooltip, ScatterController)
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -126,11 +135,12 @@ export default function HeatMapStatistics({
   // width and height can differ, points are drawn invisibly (radius 0)
   // and a plugin below paints a rect of these dimensions in their place.
   const drawRectPointsPlugin = {
+    id: 'drawRectPoints',
     afterDatasetsDraw: (chart: any) => {
       const meta = chart.getDatasetMeta(0)
       const { ctx } = chart
-      const xScale = chart.scales['x-axis-1']
-      const yScale = chart.scales['y-axis-1']
+      const xScale = chart.scales.x
+      const yScale = chart.scales.y
       if (!xScale || !yScale) return
       // Read spacing from the live scales (not chartArea / tick count) so
       // offset padding and breakpoint-driven axis changes stay in sync even
@@ -142,7 +152,7 @@ export default function HeatMapStatistics({
         yScale.getPixelForValue(1) - yScale.getPixelForValue(0),
       )
       meta.data.forEach((point: any) => {
-        const model = point._model
+        const model = point.options
         if (!model) return
         ctx.save()
         ctx.fillStyle = model.backgroundColor
@@ -154,8 +164,8 @@ export default function HeatMapStatistics({
         // fill's edge, lines up with the cell boundary.
         const rectWidth = cellWidth
         const rectHeight = cellHeight
-        const x = model.x - rectWidth / 2
-        const y = model.y - rectHeight / 2
+        const x = point.x - rectWidth / 2
+        const y = point.y - rectHeight / 2
         ctx.fillRect(x, y, rectWidth, rectHeight)
         ctx.strokeRect(x, y, rectWidth, rectHeight)
         ctx.restore()
@@ -203,52 +213,58 @@ export default function HeatMapStatistics({
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    legend: { display: false },
-    tooltips: { enabled: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false },
+    },
     scales: {
-      xAxes: [
-        {
-          type: 'linear',
-          position: 'top',
-          offset: true,
-          ticks: {
-            min: 0,
-            max: xDomain.length - 1,
-            stepSize: 1,
-            fontColor: theme.palette.primary.main,
-            fontSize: tickFontSize,
-            // Gap between the tick labels and the plot area.
-            padding: 12,
-            // Chart.js only centers a tick label on its tick when unrotated;
-            // once it auto-rotates to fit, it anchors from the label's start
-            // instead, which visibly shifts it off-center. Force no rotation
-            // so labels (e.g. '12am' on the first tick) stay centered.
-            minRotation: 0,
-            maxRotation: 0,
-            callback: categoryTick(xDomain, (label) =>
-              isMobileView || HOUR_TICKS_TO_SHOW.includes(label) ? label : '',
-            ),
+      x: {
+        type: 'linear' as const,
+        position: 'top' as const,
+        offset: true,
+        min: 0,
+        max: xDomain.length - 1,
+        ticks: {
+          stepSize: 1,
+          color: theme.palette.primary.main,
+          font: {
+            size: tickFontSize,
           },
-          gridLines: false,
+          // Gap between the tick labels and the plot area.
+          padding: 12,
+          // Chart.js only centers a tick label on its tick when unrotated;
+          // once it auto-rotates to fit, it anchors from the label's start
+          // instead, which visibly shifts it off-center. Force no rotation
+          // so labels (e.g. '12am' on the first tick) stay centered.
+          minRotation: 0,
+          maxRotation: 0,
+          callback: categoryTick(xDomain, (label) =>
+            isMobileView || HOUR_TICKS_TO_SHOW.includes(label) ? label : '',
+          ),
         },
-      ],
-      yAxes: [
-        {
-          type: 'linear',
-          offset: true,
-          ticks: {
-            min: 0,
-            max: yDomain.length - 1,
-            stepSize: 1,
-            fontColor: theme.palette.primary.main,
-            fontSize: tickFontSize,
-            // Gap between the tick labels and the plot area.
-            padding: 12,
-            callback: categoryTick(yDomain, (label) => label),
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        type: 'linear' as const,
+        offset: true,
+        min: 0,
+        max: yDomain.length - 1,
+        ticks: {
+          stepSize: 1,
+          color: theme.palette.primary.main,
+          font: {
+            size: tickFontSize,
           },
-          gridLines: false,
+          // Gap between the tick labels and the plot area.
+          padding: 12,
+          callback: categoryTick(yDomain, (label) => label),
         },
-      ],
+        grid: {
+          display: false,
+        },
+      },
     },
   }
 
