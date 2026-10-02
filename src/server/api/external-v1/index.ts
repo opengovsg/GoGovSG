@@ -1,5 +1,5 @@
 import Express from 'express'
-import { createValidator } from 'express-joi-validation'
+import { createValidator } from '../../util/zodValidator.js'
 import { container } from '../../util/inversify.js'
 import jsonMessage from '../../util/json.js'
 import { DependencyIds } from '../../constants.js'
@@ -23,7 +23,7 @@ const router = Express.Router()
 
 /**
  * Place short URL into the request body so that it can be
- * validated together with the other fields by Joi.
+ * validated together with the other fields by Zod.
  */
 function preprocessShortUrl(
   req: Express.Request,
