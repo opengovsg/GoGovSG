@@ -1,0 +1,159 @@
+import path from 'path'
+import { createRequire } from 'module'
+import type { StorybookConfig } from '@storybook/react-webpack5'
+import webpack from 'webpack'
+
+const require = createRequire(import.meta.url)
+
+const dirname = path.dirname(new URL(import.meta.url).pathname)
+const srcDirectory = path.join(dirname, '../src/client/app')
+
+const config: StorybookConfig = {
+  stories: ['../src/client/**/*.stories.@(ts|tsx)'],
+  staticDirs: [
+    // Mirrors production's app.use(express.static('public')) -- the
+    // server-rendered EJS pages (transition/error pages) reference
+    // /assets/... and /locales/... paths that only resolve if Storybook
+    // serves the same public/ directory at the same paths.
+    '../public',
+    // partial-masthead.ejs (included by 404.error.ejs and
+    // transition-page.ejs) references /assets/lion-head-symbol.svg, which
+    // isn't in public/ -- production only serves it because the CLIENT
+    // webpack build bundles it from here and flattens it to
+    // dist/assets/lion-head-symbol.svg (assetModuleFilename:
+    // 'assets/[name][ext]'), a build Storybook never runs. The other icons
+    // in this directory are unused by anything Storybook serves, but
+    // staticDirs only maps whole directories, and none of their filenames
+    // collide with anything under public/assets/.
+    {
+      from: '../src/client/app/assets/gov/components/app/base-layout',
+      to: '/assets',
+    },
+  ],
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
+  },
+  addons: ['@storybook/addon-mcp'],
+  typescript: {
+    // react-docgen-typescript spins up the TS compiler API, which this repo's
+    // TS 7 (tsgo, a native Go binary) does not expose -- react-docgen is a
+    // babel-based static analyzer and has no such dependency.
+    reactDocgen: 'react-docgen',
+  },
+  webpackFinal: async (config) => ({
+    ...config,
+    resolve: {
+      ...config.resolve,
+      // App code imports its own TS modules with a .js extension (Node16
+      // module resolution style, e.g. src/shared/util/asset-variant.js),
+      // which only resolves because production webpack declares this alias.
+      // Storybook's default webpack5 preset does not.
+      extensionAlias: {
+        ...config.resolve?.extensionAlias,
+        '.js': ['.js', '.ts', '.tsx'],
+      },
+      alias: {
+        ...config.resolve?.alias,
+        // Mirrors webpack.config.ts: stories only ever render the gov variant.
+        '@assets': path.resolve(srcDirectory, 'assets/gov'),
+        // Screens dispatch real thunks on mount (e.g. getUrlsForUser) that
+        // call cross-fetch under the hood. Its exported fetch is bound to
+        // its own XHR implementation at module-load time, not window.fetch,
+        // so stubbing window.fetch would not intercept it -- aliasing the
+        // module itself is the only reliable interception point.
+        'cross-fetch': path.resolve(
+          dirname,
+          '../src/client/storybook/mocks/cross-fetch.ts',
+        ),
+        // src/client/home/index.tsx calls initMonitoring() at module
+        // top-level, which calls datadogRum.init(...) with real production
+        // credentials and sessionReplaySampleRate: 100 -- without this,
+        // every story render would attempt to send real session-replay
+        // telemetry to production Datadog.
+        '@datadog/browser-rum': path.resolve(
+          dirname,
+          '../src/client/storybook/mocks/datadog-browser-rum.ts',
+        ),
+        // ejs's package.json "exports" map only has import/require
+        // conditions (no "browser" condition), so webpack resolves `import
+        // ejs from 'ejs'` to the Node-targeted build, which requires the
+        // `fs` module and fails to bundle. Its browser field points at
+        // ejs.min.js, but that subpath isn't itself listed in "exports"
+        // either, so require.resolve() would reject it the same way --
+        // a plain filesystem path sidesteps package export resolution.
+        ejs: path.resolve(dirname, '../node_modules/ejs/ejs.min.js'),
+      },
+      fallback: {
+        ...config.resolve?.fallback,
+        path: require.resolve('path-browserify'),
+        url: require.resolve('url/'),
+        querystring: require.resolve('querystring-es3'),
+        zlib: false,
+        http: false,
+        https: false,
+        stream: false,
+        crypto: false,
+      },
+    },
+    module: {
+      ...config.module,
+      rules: [
+        ...(config.module?.rules ?? []).filter(
+          (rule) =>
+            // Drop Storybook's default TS handling in favour of the same
+            // swc-loader rule the production webpack config uses, so stories
+            // are transpiled identically to the real app.
+            !(
+              rule &&
+              typeof rule === 'object' &&
+              'test' in rule &&
+              rule.test instanceof RegExp &&
+              rule.test.test('foo.tsx')
+            ),
+        ),
+        {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'swc-loader',
+            options: {
+              jsc: {
+                parser: {
+                  syntax: 'typescript',
+                  tsx: true,
+                },
+                transform: {
+                  react: {
+                    runtime: 'classic',
+                  },
+                },
+              },
+            },
+          },
+        },
+        // Raw source of the server's EJS view templates (transition/error
+        // pages), rendered client-side at story time via ejs.render() with a
+        // custom includer (see src/client/storybook/EjsPage.tsx) -- these
+        // pages are not React and have no other build pipeline in Storybook.
+        // Scoped to src/server/views only: Storybook's own build uses a
+        // .ejs template internally (builder-webpack5/templates/preview.ejs,
+        // processed by html-webpack-plugin), which a global `test: /\.ejs$/`
+        // would hijack into a raw string instead of a rendered HTML shell.
+        {
+          test: /\.ejs$/,
+          include: path.resolve(dirname, '../src/server/views'),
+          type: 'asset/source',
+        },
+      ],
+    },
+    plugins: [
+      ...(config.plugins ?? []),
+      new webpack.DefinePlugin({
+        'process.env.ASSET_VARIANT': JSON.stringify('gov'),
+      }),
+    ],
+  }),
+}
+
+export default config
