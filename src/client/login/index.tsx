@@ -2,6 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
+import { Dispatch } from 'redux'
 import {
   Button,
   CircularProgress,
@@ -17,6 +18,7 @@ import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import assetVariant from '../../shared/util/asset-variant'
 import { GoGovReduxState } from '../app/reducers/types'
+import { GetReduxState } from '../app/actions/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
 import { htmlSanitizer } from '../app/util/format'
@@ -161,8 +163,13 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const getEmailValidator = dispatch(
     loginActions.getEmailValidationGlobExpression(),
   )
+  // Don't clobber a toast already showing, e.g. the one.gov.sg logout notice.
   const setLoginInfoMessage = (message: string) =>
-    dispatch(rootActions.setInfoMessage(message))
+    dispatch((innerDispatch: Dispatch, getState: GetReduxState) => {
+      if (!getState().root.snackbarMessage.message) {
+        innerDispatch(rootActions.setInfoMessage(message))
+      }
+    })
   const emailValidator = useSelector(
     (state: GoGovReduxState) => state.login.emailValidator,
   )

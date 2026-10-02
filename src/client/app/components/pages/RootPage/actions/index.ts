@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import {
   CLOSE_SNACKBAR,
   CloseSnackbarAction,
@@ -19,8 +20,8 @@ const setErrorMessage: (message: string) => SetErrorMessageAction = (
   payload: message,
 })
 
-const setInfoMessage: (message: string) => SetInfoMessageAction = (
-  message: string,
+const setInfoMessage: (message: ReactNode) => SetInfoMessageAction = (
+  message,
 ) => ({
   type: SET_INFO_MESSAGE,
   payload: message,

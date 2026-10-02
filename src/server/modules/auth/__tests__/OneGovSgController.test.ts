@@ -230,6 +230,7 @@ describe('OneGovSgController', () => {
       )
       expect(req.session!.regenerate).toHaveBeenCalled()
       expect(req.session!.user).toStrictEqual(user)
+      expect(req.session!.oneGovSg).toBe(true)
       expect(res.redirect).toHaveBeenCalledWith('/')
     })
 

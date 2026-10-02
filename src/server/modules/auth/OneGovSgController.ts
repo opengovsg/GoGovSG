@@ -198,6 +198,7 @@ export class OneGovSgController {
       const user = await this.authService.genDBUserWithOfficerEmail(email)
       await regenerateSession(req)
       req.session.user = user
+      req.session.oneGovSg = true
       logger.info(`one.gov.sg login success for user:\t${user.email}`)
       res.redirect(transaction.next ? `/#${transaction.next}` : '/')
     } catch (error) {

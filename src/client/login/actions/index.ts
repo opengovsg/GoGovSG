@@ -1,3 +1,4 @@
+import { createElement } from 'react'
 import { datadogRum } from '@datadog/browser-rum'
 import { Minimatch } from 'minimatch'
 import { Dispatch } from 'redux'
@@ -38,8 +39,10 @@ import { GoGovReduxState } from '../../app/reducers/types'
 import {
   CloseSnackbarAction,
   SetErrorMessageAction,
+  SetInfoMessageAction,
   SetSuccessMessageAction,
 } from '../../app/components/pages/RootPage/actions/types'
+import OneGovSgLogoutMessage from '../components/OneGovSgLogoutMessage'
 
 const isGetOTPSuccess: (email: string) => GetOtpEmailSuccessAction = (
   email,
@@ -280,13 +283,26 @@ const verifyOTP =
   }
 
 const logout =
-  () => (dispatch: Dispatch<IsLoggedOutAction | WipeUserStateAction>) =>
-    get('/api/logout').then((response) => {
+  () =>
+  (
+    dispatch: Dispatch<
+      IsLoggedOutAction | WipeUserStateAction | SetInfoMessageAction
+    >,
+  ) =>
+    get('/api/logout').then(async (response) => {
       if (response.ok) {
         dispatch<IsLoggedOutAction>(isLoggedOut())
 
         // Wipe user data on log out.
         dispatch<WipeUserStateAction>(userActions.wipeUserState())
+
+        // Logging out here leaves the one.gov.sg session active.
+        const { oneGovSg } = await response.json().catch(() => ({}))
+        if (oneGovSg) {
+          dispatch<SetInfoMessageAction>(
+            rootActions.setInfoMessage(createElement(OneGovSgLogoutMessage)),
+          )
+        }
       } else {
         console.error(response)
       }
