@@ -16,9 +16,9 @@ import {
   OneGovSgTransaction,
 } from './interfaces/index.js'
 
-// Cross-site top-level navigations (the callback landing from one.gov.sg)
-// never carry a SameSite=Strict cookie, so the transaction is held in its
-// own short-lived, SameSite=Lax signed cookie instead of the main session.
+// The transaction is held in its own short-lived, SameSite=Lax signed cookie
+// instead of the main session, so it survives the trip through one.gov.sg
+// until the frontend redirect_uri page forwards the response to the callback.
 const TRANSACTION_COOKIE_NAME = 'oneGovSgTransaction'
 const TRANSACTION_COOKIE_MAX_AGE_MS = 5 * 60 * 1000
 
