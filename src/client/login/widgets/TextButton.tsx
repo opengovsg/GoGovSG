@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const TextButton: FunctionComponent<TextButtonProps> = ({
+const TextButton: FunctionComponent<PropsWithChildren<TextButtonProps>> = ({
   children,
   className,
   href,

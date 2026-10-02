@@ -46,7 +46,9 @@ const useStyles = makeStyles((theme) =>
   }),
 )
 
-const CollapsingPanel: FunctionComponent<CollapsingPanelProps> = ({
+const CollapsingPanel: FunctionComponent<
+  PropsWithChildren<CollapsingPanelProps>
+> = ({
   isOpen,
   onClose,
   children,

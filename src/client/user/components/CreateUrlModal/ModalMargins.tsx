@@ -22,7 +22,7 @@ type ModalMarginsProps = {
   applyRightMargin?: boolean
 }
 
-const ModalMargins: FunctionComponent<ModalMarginsProps> = ({
+const ModalMargins: FunctionComponent<PropsWithChildren<ModalMarginsProps>> = ({
   applyRightMargin,
   children,
 }: PropsWithChildren<ModalMarginsProps>) => {

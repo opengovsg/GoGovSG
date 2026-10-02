@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 
 import querystring, { ParsedUrlQueryInput } from 'querystring'
-import { History } from 'history'
+import { NavigateFunction } from 'react-router-dom'
 import { Dispatch } from 'redux'
 import { ThunkAction, ThunkDispatch } from 'redux-thunk'
 import { MAX_CSV_UPLOAD_SIZE } from '../../../shared/constants'
@@ -639,12 +639,12 @@ const urlCreated = (
  * API call to create URL
  * If user is not logged in, the createUrl call returns unauthorized,
  * get them to login, else create the url.
- * @param history
+ * @param navigate
  * @param tags
  * @returns Promise<bool> Whether creation succeeded.
  */
 const createUrlOrRedirect =
-  (history: History) =>
+  (navigate: NavigateFunction) =>
   async (
     dispatch: ThunkDispatch<
       GoGovReduxState,
@@ -711,7 +711,7 @@ const createUrlOrRedirect =
       GAEvent('modal page', 'create link from url', 'unsuccessful')
 
       if (response.status === 401) {
-        history.push(LOGIN_PAGE)
+        navigate(LOGIN_PAGE)
         dispatch<SetUrlUploadStateAction>(setUrlUploadState(false))
       } else {
         handleError(dispatch, response)

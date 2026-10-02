@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import useAppDispatch from '../../../app/hooks'
-import { useHistory } from 'react-router-dom'
-import { History } from 'history'
+import { NavigateFunction, useNavigate } from 'react-router-dom'
 import i18next from 'i18next'
 import {
   Button,
@@ -47,7 +46,7 @@ import Tooltip from '../../widgets/Tooltip'
 import TagsAutocomplete from '../../widgets/TagsAutocomplete'
 
 type CreateLinkFormProps = {
-  onSubmitLink: (history: History) => {}
+  onSubmitLink: (navigate: NavigateFunction) => {}
   onSubmitFile: (file: File | null) => {}
   onSubmitBulk: (file: File | null) => void // TODO: update with API integration
 }
@@ -88,7 +87,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
     dispatch(userActions.setCreateShortLinkError(error))
   const setTags = (tags: string[]) => dispatch(userActions.setTags(tags))
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const [createType, setCreateType] = useState<CreateType>(CreateType.LINK)
   const [file, setFile] = useState<File | null>(null)
@@ -160,7 +159,7 @@ const CreateLinkForm: FunctionComponent<CreateLinkFormProps> = ({
             e.preventDefault()
             switch (createType) {
               case CreateType.LINK:
-                onSubmitLink(history)
+                onSubmitLink(navigate)
                 break
               case CreateType.FILE:
                 onSubmitFile(file)
