@@ -16,6 +16,7 @@ import {
 import { Redirect } from 'react-router-dom'
 import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
+import OneGovLogo from './assets/one-gov-logo.png'
 import assetVariant from '../../shared/util/asset-variant'
 import { GoGovReduxState } from '../app/reducers/types'
 import { GetReduxState } from '../app/actions/types'
@@ -30,13 +31,6 @@ import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
 import { initiatedLoginHref, initiatedLoginIssuer } from './sso'
-
-// Menlo's isolated browser also loads the launch page and runs this code. If
-// its copy starts a login, that login wins and the user's local browser is
-// left logged out. Waiting gives Menlo time to finish handing the page off
-// first. ponytail: timing only, not a guarantee; swap for a "Continue" button
-// if staging logs still show logins completing in Menlo's browser.
-const INITIATED_LOGIN_DELAY_MS = 2000
 
 type LoginPageProps = {
   location?: {
@@ -137,6 +131,19 @@ const useStyles = makeStyles((theme) =>
     handingOffText: {
       marginTop: theme.spacing(2),
     },
+    handoffLogos: {
+      display: 'flex',
+      alignItems: 'center',
+      marginBottom: theme.spacing(3),
+      '& img': {
+        height: '32px',
+      },
+    },
+    handoffArrow: {
+      fontSize: '2rem',
+      color: '#767676',
+      margin: theme.spacing(0, 2),
+    },
     divider: {
       display: 'flex',
       alignItems: 'center',
@@ -188,6 +195,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   )
   // Hide the form while a one.gov.sg-initiated login is being handed off.
   const [handingOff, setHandingOff] = useState(iss !== null)
+  // Set once one.gov.sg login is confirmed enabled for an initiated login.
+  const [launchHref, setLaunchHref] = useState<string | null>(null)
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant,
   )
@@ -222,21 +231,16 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   }, [getEmailValidator])
 
   // Check whether one.gov.sg login should be shown. If one.gov.sg launched
-  // us (initiate_login_uri), start the login from this, the local, browser.
+  // us (initiate_login_uri), wait for a click to start the login: Menlo's
+  // isolated browser also runs this page, and only the local browser gets the
+  // user's gesture, so only it starts the login.
   useEffect(() => {
     let cancelled = false
-    let handoffTimer: number | undefined
     get('/api/sso/enabled')
       .then((response) => (response.ok ? response.json() : { enabled: false }))
       .then((data) => {
         if (cancelled) return
-        if (data.enabled && iss !== null) {
-          handoffTimer = window.setTimeout(
-            () => window.location.replace(initiatedLoginHref(iss)),
-            INITIATED_LOGIN_DELAY_MS,
-          )
-          return
-        }
+        if (data.enabled && iss !== null) setLaunchHref(initiatedLoginHref(iss))
         setSsoEnabled(!!data.enabled)
         setHandingOff(false)
       })
@@ -246,7 +250,6 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
       })
     return () => {
       cancelled = true
-      window.clearTimeout(handoffTimer)
     }
   }, [])
 
@@ -258,6 +261,30 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
           <Typography className={classes.handingOffText} variant="body1">
             Logging in with one.gov.sg
           </Typography>
+        </div>
+      </BaseLayout>
+    )
+  }
+
+  if (launchHref) {
+    return (
+      <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
+        <div className={classes.handingOff}>
+          <div className={classes.handoffLogos}>
+            <img src={OneGovLogo} alt="one.gov.sg" />
+            <span className={classes.handoffArrow} aria-hidden="true">
+              &rarr;
+            </span>
+            <img src={GoLogo} alt="go.gov.sg" />
+          </div>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            href={launchHref}
+          >
+            Continue with one.gov.sg
+          </Button>
         </div>
       </BaseLayout>
     )
