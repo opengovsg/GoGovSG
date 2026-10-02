@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import httpMocks from 'node-mocks-http'
-import redisMock from 'redis-mock'
+import { createRedisClientMock } from '../../../../../test/server/mocks/services/RedisClient'
 import SequelizeMock from 'sequelize-mock'
 
 import { DependencyIds } from '../../../constants'
@@ -23,7 +23,7 @@ import {
 } from '../services'
 import { RedirectDestination } from '../../../repositories/types'
 
-const redisMockClient = redisMock.createClient()
+const redisMockClient = createRedisClientMock()
 const sequelizeMock = new SequelizeMock()
 
 const urlModelMock = sequelizeMock.define(
@@ -233,13 +233,7 @@ const cookieArrayReducerMockVisited: jest.Mocked<CookieArrayReducerService> = {
 }
 
 function mockCacheDown() {
-  cacheGetSpy.mockImplementationOnce((_, callback) => {
-    if (!callback) {
-      return false
-    }
-    callback(new Error('Cache down'), 'Error')
-    return false
-  })
+  cacheGetSpy.mockRejectedValueOnce(new Error('Cache down'))
 }
 
 function mockDbDown() {
@@ -298,7 +292,7 @@ describe('redirect API tests', () => {
         changeOwnership: jest.fn(),
         getUrlsWithConditions: jest.fn(),
       })
-    redisMockClient.flushall()
+    redisMockClient.flushAll()
   })
   afterEach(() => {
     container.unbindAll()
