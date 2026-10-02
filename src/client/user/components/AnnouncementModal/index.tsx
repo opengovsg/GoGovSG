@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import useAppDispatch from '../../../app/hooks'
 import {
   Button,
   Dialog,
@@ -119,7 +120,7 @@ const useStyles = makeStyles((theme) =>
 )
 
 function AnnouncementModal() {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const isFullScreenDialog = useFullScreenDialog()
   const classes = useStyles({ isFullScreenDialog })
   const [showModal, setShowModal] = useState(false)

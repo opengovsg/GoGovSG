@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import useAppDispatch from '../../../../../app/hooks'
+
 import { Grid } from '@material-ui/core'
 import SortPanel from '../../../../../app/components/widgets/SortPanel'
 import userActions from '../../../../actions'
@@ -45,7 +46,7 @@ const FilterSortPanel: FunctionComponent<FilterSortPanelProps> = ({
   tableConfig,
 }: FilterSortPanelProps) => {
   const classes = useStyles()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const updateSortAndFilter = ({
     title,
     direction,
