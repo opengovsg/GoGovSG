@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import homeActions from './actions'
 import loginActions from '../login/actions'
-import { USER_PAGE } from '../app/util/types'
+import { LOGIN_PAGE, USER_PAGE } from '../app/util/types'
 import TrustedBySliver from './components/TrustedBySliver'
 import StatisticsSliver from './components/StatisticsSliver'
 import DescriptionSliver from './components/FeatureListSliver'
@@ -15,6 +15,7 @@ import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import { GoGovReduxState } from '../app/reducers/types'
 import initMonitoring from '../app/helpers/monitoring'
+import { oneGovSgCallbackHref } from '../login/sso'
 
 initMonitoring()
 const HomePage: FunctionComponent = () => {
@@ -35,6 +36,12 @@ const HomePage: FunctionComponent = () => {
     getLinksToRotate()
     getIsLoggedIn()
   }, [])
+
+  // one.gov.sg's redirect_uri is /; only the hash changes, so the query
+  // survives for LoginPage to forward.
+  if (oneGovSgCallbackHref(window.location.search) !== null) {
+    return <Redirect to={LOGIN_PAGE} />
+  }
 
   if (isLoggedIn) {
     return (

@@ -2,7 +2,10 @@ import React, { FunctionComponent, useEffect, useState } from 'react'
 import classNames from 'classnames'
 import i18next from 'i18next'
 import { useDispatch, useSelector } from 'react-redux'
+import { Dispatch } from 'redux'
 import {
+  Button,
+  CircularProgress,
   Hidden,
   LinearProgress,
   Link,
@@ -15,6 +18,7 @@ import GoLogo from '@assets/go-logo-graphics/go-main-logo.svg'
 import LoginGraphics from '@assets/login-page-graphics/login-page-graphics.svg'
 import assetVariant from '../../shared/util/asset-variant'
 import { GoGovReduxState } from '../app/reducers/types'
+import { GetReduxState } from '../app/actions/types'
 import loginActions from './actions'
 import rootActions from '../app/components/pages/RootPage/actions'
 import { htmlSanitizer } from '../app/util/format'
@@ -25,9 +29,15 @@ import Section from '../app/components/Section'
 import BaseLayout from '../app/components/BaseLayout'
 import { GAEvent, GAPageView } from '../app/util/ga'
 import TextButton from './widgets/TextButton'
+import {
+  initiatedLoginHref,
+  initiatedLoginIssuer,
+  oneGovSgCallbackHref,
+} from './sso'
 
 type LoginPageProps = {
   location?: {
+    search?: string
     state?: {
       previous: string
     }
@@ -111,6 +121,37 @@ const useStyles = makeStyles((theme) =>
         opacity: 0.5,
       },
     },
+    ssoButton: {
+      marginTop: theme.spacing(2),
+    },
+    handingOff: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexGrow: 1,
+    },
+    handingOffText: {
+      marginTop: theme.spacing(2),
+    },
+    divider: {
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: theme.spacing(3),
+      marginBottom: theme.spacing(1),
+      color: '#767676',
+      '&::before, &::after': {
+        content: '""',
+        flex: 1,
+        borderBottom: '1px solid #d8d8d8',
+      },
+      '&::before': {
+        marginRight: theme.spacing(1),
+      },
+      '&::after': {
+        marginLeft: theme.spacing(1),
+      },
+    },
   }),
 )
 
@@ -122,8 +163,13 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   const getEmailValidator = dispatch(
     loginActions.getEmailValidationGlobExpression(),
   )
+  // Don't clobber a toast already showing, e.g. the one.gov.sg logout notice.
   const setLoginInfoMessage = (message: string) =>
-    dispatch(rootActions.setInfoMessage(message))
+    dispatch((innerDispatch: Dispatch, getState: GetReduxState) => {
+      if (!getState().root.snackbarMessage.message) {
+        innerDispatch(rootActions.setInfoMessage(message))
+      }
+    })
   const emailValidator = useSelector(
     (state: GoGovReduxState) => state.login.emailValidator,
   )
@@ -132,6 +178,16 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
   )
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
+  const [ssoEnabled, setSsoEnabled] = useState(false)
+  const iss = initiatedLoginIssuer(
+    location?.search ?? '',
+    window.location.search,
+  )
+  const callbackHref = oneGovSgCallbackHref(window.location.search)
+  // Hide the form while a one.gov.sg login is being handed off.
+  const [handingOff, setHandingOff] = useState(
+    callbackHref !== null || iss !== null,
+  )
   const variant: VariantType = useSelector(
     (state: GoGovReduxState) => state.login.formVariant,
   )
@@ -164,6 +220,49 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     dispatch(loginActions.getEmailValidationGlobExpression())
     return
   }, [getEmailValidator])
+
+  // Check whether one.gov.sg login should be shown. If one.gov.sg launched
+  // us (initiate_login_uri), start the login from this, the local, browser.
+  useEffect(() => {
+    // Check first: the callback query also carries iss, and treating it as a
+    // launch would start a new login.
+    if (callbackHref !== null) {
+      window.location.replace(callbackHref)
+      return undefined
+    }
+    let cancelled = false
+    get('/api/sso/enabled')
+      .then((response) => (response.ok ? response.json() : { enabled: false }))
+      .then((data) => {
+        if (cancelled) return
+        if (data.enabled && iss !== null) {
+          window.location.replace(initiatedLoginHref(iss))
+          return
+        }
+        setSsoEnabled(!!data.enabled)
+        setHandingOff(false)
+      })
+      // optional feature: stay hidden if discovery fails
+      .catch(() => {
+        if (!cancelled) setHandingOff(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (handingOff) {
+    return (
+      <BaseLayout withHeader={false} withFooter={false} withLowFooter={false}>
+        <div className={classes.handingOff}>
+          <CircularProgress />
+          <Typography className={classes.handingOffText} variant="body1">
+            Logging in with one.gov.sg
+          </Typography>
+        </div>
+      </BaseLayout>
+    )
+  }
 
   if (!isLoggedIn) {
     const variantMap = loginFormVariants.map[variant]
@@ -298,6 +397,29 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
                         </TextButton>
                       )}
                     </LoginForm>
+                    {isEmailView && ssoEnabled ? (
+                      <>
+                        <Typography className={classes.divider} variant="body2">
+                          OR
+                        </Typography>
+                        <Button
+                          className={classes.ssoButton}
+                          variant="outlined"
+                          color="primary"
+                          size="large"
+                          fullWidth
+                          href={`/api/sso/login${
+                            location?.state?.previous
+                              ? `?next=${encodeURIComponent(
+                                  location.state.previous,
+                                )}`
+                              : ''
+                          }`}
+                        >
+                          Login with one.gov.sg
+                        </Button>
+                      </>
+                    ) : null}
                     {variantMap.progressBarShown ? <LinearProgress /> : null}
                   </span>
                 </section>
