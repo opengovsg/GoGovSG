@@ -230,6 +230,13 @@ const LoginPage: FunctionComponent<LoginPageProps> = ({
     return
   }, [getEmailValidator])
 
+  // Menlo keeps its remote-tab pairing in window.name. Left in place, the next
+  // one.gov.sg navigation from this tab re-attaches to the stale remote tab
+  // (parked on this page) instead of loading authorize, and bounces back here.
+  useEffect(() => {
+    window.name = ''
+  }, [])
+
   // Check whether one.gov.sg login should be shown. If one.gov.sg launched
   // us (initiate_login_uri), wait for a click to start the login: Menlo's
   // isolated browser also runs this page, and only the local browser gets the
