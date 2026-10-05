@@ -1,6 +1,8 @@
+import { ReactNode } from 'react'
+
 export type RootState = {
   snackbarMessage: {
-    message: string
+    message: ReactNode
     variant: number
   }
 }

@@ -12,7 +12,12 @@ export class LogoutController {
       res.serverError(jsonMessage('No session found'))
       return
     }
-    req.session.destroy(() => res.ok(jsonMessage('Logged out')))
+    // Read before destroy: the client tells one.gov.sg users that their
+    // one.gov.sg session is still active.
+    const oneGovSg = !!req.session.oneGovSg
+    req.session.destroy(() =>
+      res.ok({ ...jsonMessage('Logged out'), oneGovSg }),
+    )
   }
 }
 

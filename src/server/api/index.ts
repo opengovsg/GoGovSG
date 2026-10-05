@@ -11,6 +11,7 @@ import loginRouter from './login/index.js'
 import statisticsRouter from './statistics.js'
 import linksRouter from './links.js'
 import gaRouter from './ga.js'
+import ssoRouter from './sso/index.js'
 import userRouter from './user/index.js'
 import qrcodeRouter from './qrcode.js'
 import linkStatisticsRouter from './link-statistics.js'
@@ -33,6 +34,7 @@ router.use('/login', loginRouter)
 router.use('/stats', statisticsRouter)
 router.use('/links', linksRouter)
 router.use('/ga', gaRouter)
+router.use('/sso', ssoRouter)
 
 /**
  * To protect private user routes.

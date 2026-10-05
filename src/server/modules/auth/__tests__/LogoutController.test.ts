@@ -16,7 +16,25 @@ describe('LogoutController', () => {
     res.ok = okSpy
     controller.logOut(req, res)
     expect(destroySpy).toHaveBeenCalled()
-    expect(okSpy).toHaveBeenCalled()
+    expect(okSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ oneGovSg: false }),
+    )
+  })
+
+  it('should report a one.gov.sg session', () => {
+    const okSpy = jest.fn()
+    const req = httpMocks.createRequest({
+      session: {
+        oneGovSg: true,
+        destroy: (onDestroy: () => void) => onDestroy(),
+      },
+    })
+    const res: any = httpMocks.createResponse()
+    res.ok = okSpy
+    controller.logOut(req, res)
+    expect(okSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ oneGovSg: true }),
+    )
   })
 
   it('should send server error when no session', () => {
