@@ -1,6 +1,5 @@
 # GoGovSG
 
-[![Build Status](https://travis-ci.com/opengovsg/GoGovSG.svg?branch=develop)](https://travis-ci.com/opengovsg/GoGovSG)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/opengovsg/GoGovSG)
 
 The official Singapore government link shortener.
