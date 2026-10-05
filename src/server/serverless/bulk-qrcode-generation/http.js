@@ -1,8 +1,11 @@
 import fetch from 'cross-fetch'
 
-const { EB_CALLBACK_ENDPOINT, EB_CALLBACK_SECRET } = process.env
+const {
+  LAMBDA_EB_CALLBACK_ENDPOINT: EB_CALLBACK_ENDPOINT,
+  EB_CALLBACK_SECRET,
+} = process.env
 if (!EB_CALLBACK_ENDPOINT)
-  throw Error('Environment variable for EB_CALLBACK_ENDPOINT is missing')
+  throw Error('Environment variable for LAMBDA_EB_CALLBACK_ENDPOINT is missing')
 if (!EB_CALLBACK_SECRET)
   throw Error('Environment variable for EB_CALLBACK_SECRET is missing')
 

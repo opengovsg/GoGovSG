@@ -9,9 +9,9 @@ provider:
   region: ap-southeast-1
   memorySize: 256
   environment:
-    ASSET_VARIANT: ${env:ASSET_VARIANT}
-    DOMAIN: ${env:DOMAIN}
-    EB_CALLBACK_ENDPOINT: ${env:EB_CALLBACK_ENDPOINT}
+    LAMBDA_ASSET_VARIANT: ${env:LAMBDA_ASSET_VARIANT}
+    LAMBDA_DOMAIN: ${env:LAMBDA_DOMAIN}
+    LAMBDA_EB_CALLBACK_ENDPOINT: ${env:LAMBDA_EB_CALLBACK_ENDPOINT}
 
 plugins:
   - serverless-plugin-include-dependencies

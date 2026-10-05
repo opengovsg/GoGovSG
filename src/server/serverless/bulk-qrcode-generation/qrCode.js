@@ -26,11 +26,11 @@ const FileExtension = {
   JPEG: 'jpeg',
 }
 
-const { ASSET_VARIANT } = process.env
-const { DOMAIN } = process.env
+const { LAMBDA_ASSET_VARIANT: ASSET_VARIANT } = process.env
+const { LAMBDA_DOMAIN: DOMAIN } = process.env
 if (!ASSET_VARIANT)
-  throw Error('Environment variable for ASSET_VARIANT is missing')
-if (!DOMAIN) throw Error('Environment variable for DOMAIN is missing!')
+  throw Error('Environment variable for LAMBDA_ASSET_VARIANT is missing')
+if (!DOMAIN) throw Error('Environment variable for LAMBDA_DOMAIN is missing!')
 
 const ASSET_VARIANTS = ['gov', 'edu', 'health']
 if (!ASSET_VARIANTS.includes(ASSET_VARIANT))
