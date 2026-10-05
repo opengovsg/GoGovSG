@@ -5,8 +5,6 @@ configValidationMode: error
 
 provider:
   name: aws
-  # Framework v4 accepts nodejs24.x with configValidationMode error.
-  # Framework v3's checker stops at nodejs20.x.
   runtime: nodejs24.x
   region: ap-southeast-1
   memorySize: 256
