@@ -172,10 +172,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Serverless deploy
-        # osls 3.x accepts nodejs24.x. The upstream Framework v3 action fails
-        # config validation on that runtime.
-        run: pnpm exec osls deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
+        run: pnpm exec serverless deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # Framework v4 refuses to deploy until this is set. Create the key
+          # in the Serverless Framework dashboard (Settings > Access Keys).
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
