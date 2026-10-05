@@ -8,6 +8,10 @@ provider:
   runtime: nodejs24.x
   region: ap-southeast-1
   memorySize: 256
+  environment:
+    ASSET_VARIANT: ${env:ASSET_VARIANT}
+    DOMAIN: ${env:DOMAIN}
+    EB_CALLBACK_ENDPOINT: ${env:EB_CALLBACK_ENDPOINT}
 
 plugins:
   - serverless-plugin-include-dependencies
