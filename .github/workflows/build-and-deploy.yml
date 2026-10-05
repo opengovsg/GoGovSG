@@ -32,11 +32,15 @@ on:
         required: false
         type: boolean
         default: false
-      domain:
+      lambda_asset_variant:
+        description: 'Asset variant for bulk QR Lambda (gov, edu, health)'
+        required: true
+        type: string
+      lambda_domain:
         description: 'Short-link host for bulk QR Lambda (e.g. staging.go.gov.sg)'
         required: true
         type: string
-      eb_callback_endpoint:
+      lambda_eb_callback_endpoint:
         description: 'Bulk QR job callback URL on Elastic Beanstalk'
         required: true
         type: string
@@ -185,6 +189,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
-          LAMBDA_ASSET_VARIANT: ${{ inputs.asset_variant }}
-          LAMBDA_DOMAIN: ${{ inputs.domain }}
-          LAMBDA_EB_CALLBACK_ENDPOINT: ${{ inputs.eb_callback_endpoint }}
+          ASSET_VARIANT: ${{ inputs.lambda_asset_variant }}
+          DOMAIN: ${{ inputs.lambda_domain }}
+          EB_CALLBACK_ENDPOINT: ${{ inputs.lambda_eb_callback_endpoint }}
