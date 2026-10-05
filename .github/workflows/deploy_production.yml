@@ -23,18 +23,24 @@ jobs:
             dd_service: go-gov
             serverless_service: gogovsg
             eb_env: go-production
+            domain: go.gov.sg
+            eb_callback_endpoint: https://go.gov.sg/api/callback/qr
             use_existing_version: false
           - name: edu
             asset_variant: edu
             dd_service: go-edu
             serverless_service: edu
             eb_env: edu-production
+            domain: for.edu.sg
+            eb_callback_endpoint: https://for.edu.sg/api/callback/qr
             use_existing_version: true
           - name: health
             asset_variant: health
             dd_service: go-health
             serverless_service: health
             eb_env: health-production
+            domain: for.sg
+            eb_callback_endpoint: https://for.sg/api/callback/qr
             use_existing_version: true
     uses: ./.github/workflows/build-and-deploy.yml
     with:
@@ -45,6 +51,8 @@ jobs:
       eb_env: ${{ matrix.variant.eb_env }}
       branch_env: production
       use_existing_version: ${{ matrix.variant.use_existing_version }}
+      domain: ${{ matrix.variant.domain }}
+      eb_callback_endpoint: ${{ matrix.variant.eb_callback_endpoint }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
