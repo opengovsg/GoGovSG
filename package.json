@@ -135,7 +135,7 @@
     "@commitlint/config-conventional": "^21.2.0",
     "@datadog/datadog-ci": "5.24.1",
     "@playwright/test": "^1.62.1",
-    "@swc/core": "^1.16.2",
+    "@swc/core": "^1.16.13",
     "@swc/jest": "^0.2.39",
     "@types/bcrypt": "^6.0.0",
     "@types/body-parser": "^1.19.6",
