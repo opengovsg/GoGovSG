@@ -192,7 +192,7 @@
     "redis-mock": "^0.56.3",
     "sequelize-cli": "6.6.5",
     "sequelize-mock": "^0.10.2",
-    "serverless": "4.43.0",
+    "osls": "3.78.0",
     "serverless-plugin-include-dependencies": "^6.1.1",
     "supertest": "^7.3.0",
     "swc-loader": "^0.2.7",

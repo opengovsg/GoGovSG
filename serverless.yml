@@ -1,6 +1,6 @@
 useDotenv: true
 service: ${env:SERVERLESS_SERVICE}
-frameworkVersion: '4'
+frameworkVersion: '3'
 configValidationMode: error
 
 provider:
