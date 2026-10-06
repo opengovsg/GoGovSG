@@ -57,7 +57,7 @@ describe('POST /api/login/otp', () => {
 describe('POST /api/login/verify', () => {
   test('verify the OTP', async () => {
     // Prime cache
-    getOtpCache().setOtpForEmail('otpgo.gov@open.test.sg', '::ffff:127.0.0.1', {
+    getOtpCache().setOtpForEmail('otpgo.gov@open.test.sg', '127.0.0.1', {
       hashedOtp: '111111',
       retries: 100,
     })
