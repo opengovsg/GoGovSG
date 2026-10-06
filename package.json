@@ -194,7 +194,7 @@
     "sequelize-cli": "6.6.5",
     "sequelize-mock": "^0.10.2",
     "serverless-plugin-include-dependencies": "^6.1.1",
-    "supertest": "^7.3.0",
+    "supertest": "^7.3.1",
     "swc-loader": "^0.2.7",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
