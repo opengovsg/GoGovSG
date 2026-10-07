@@ -51,7 +51,8 @@ functions:
         - 'package.json'
   bulk-qrcode-generation:
     handler: src/server/serverless/bulk-qrcode-generation/index.handler
-    memorySize: 2048 # 2048 MB
+    # PNG phase uses Promise.all over the full batch (up to 1000); Sharp + embedded-font SVGs peak ~7GB.
+    memorySize: 8192 # 8192 MB
     ephemeralStorageSize: 512 # 512 MB
     timeout: 120 # 120 seconds
     description: Bulk generates QR codes in svg and png from shortUrl-longUrl mappings
