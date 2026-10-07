@@ -5,10 +5,7 @@ configValidationMode: error
 
 provider:
   name: aws
-  # AWS supports nodejs24.x, but Serverless Framework v3 (see deploy workflow) only
-  # validates through nodejs20.x with configValidationMode: error. Node 20 is enough
-  # for modern bundled deps (e.g. ??=) and matches AL2023 managed runtimes.
-  runtime: nodejs20.x
+  runtime: nodejs24.x
   region: ap-southeast-1
   memorySize: 256
 

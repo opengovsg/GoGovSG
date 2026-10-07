@@ -172,9 +172,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Serverless deploy
-        uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca # v3.2.0
-        with:
-          args: deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
+        run: pnpm exec osls deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
