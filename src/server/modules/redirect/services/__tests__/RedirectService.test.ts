@@ -16,7 +16,7 @@ jest.mock('../../../../config', () => {
   }
 })
 
-// eslint-disable-next-line global-require
+// eslint-disable-next-line node/global-require
 const { logger: mockLogger } = require('../../../../config')
 
 // Mock dependencies

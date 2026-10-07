@@ -114,6 +114,20 @@ describe('SafeBrowsingService', () => {
       expect(mockFetch).toHaveBeenCalled()
     })
 
+    it('throws when the response is ok but the body is not valid JSON', async () => {
+      const json = jest.fn()
+      json.mockRejectedValue(new SyntaxError('Unexpected token < in JSON'))
+      mockFetch.mockResolvedValue({
+        ok: true,
+        statusText: 'OK',
+        json,
+      })
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(set).not.toHaveBeenCalled()
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
     it('returns false even when fetchWebRiskData returns threat', async () => {
       const result = {
         threat: {
@@ -203,6 +217,20 @@ describe('SafeBrowsingService', () => {
       })
 
       await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(mockFetch).toHaveBeenCalled()
+    })
+
+    it('throws when the response is ok but the body is not valid JSON', async () => {
+      const json = jest.fn()
+      json.mockRejectedValue(new SyntaxError('Unexpected token < in JSON'))
+      mockFetch.mockResolvedValue({
+        ok: true,
+        statusText: 'OK',
+        json,
+      })
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(set).not.toHaveBeenCalled()
       expect(mockFetch).toHaveBeenCalled()
     })
 
