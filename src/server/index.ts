@@ -101,12 +101,19 @@ const morganOutputStream = {
 
 const confettiOrigin = 'https://confetti.gov.sg'
 
+// v5+ RUM uses the apex intake host (not rum.*); *. does not match the apex.
+const datadogIntakeOrigins = [
+  'https://browser-intake-datadoghq.com/',
+  'https://quota.browser-intake-datadoghq.com/',
+  'https://*.browser-intake-datadoghq.com/',
+]
+
 const connectSrc = [
   "'self'",
   confettiOrigin,
   'https://www.google-analytics.com/',
   'https://stats.g.doubleclick.net/',
-  'https://*.browser-intake-datadoghq.com/',
+  ...datadogIntakeOrigins,
 ]
 if (cspReportUri) {
   connectSrc.push(parseDomain(cspReportUri))
@@ -141,7 +148,7 @@ app.use(
           'https://www.google-analytics.com/',
           'https://ssl.google-analytics.com/',
           'https://www.googletagmanager.com/',
-          'https://*.browser-intake-datadoghq.com/',
+          ...datadogIntakeOrigins,
           'https://www.datadoghq-browser-agent.com/',
           confettiOrigin,
         ],
