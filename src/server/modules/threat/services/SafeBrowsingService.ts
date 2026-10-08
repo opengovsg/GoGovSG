@@ -65,10 +65,18 @@ export class SafeBrowsingService implements UrlThreatScanService {
       const endpoint = this.constructWebRiskEndpoint(url, WEB_RISK_THREAT_TYPES)
 
       const response = await fetch(endpoint, { method: 'GET' })
-      const body = await response.json()
+      // Gateway-level failures (e.g. a 502 from Google's front end) may return a
+      // non-JSON or errorless body. Only those non-OK responses may fall back;
+      // an HTTP 200 with unreadable JSON is still a scan failure, so it is not
+      // cached as a clean verdict.
+      const body = response.ok
+        ? await response.json()
+        : await response.json().catch(() => null)
       if (!response.ok) {
         const error = new Error(
-          `Safe Browsing failure:\tError: ${response.statusText}\t message: ${body.error.message}`,
+          `Safe Browsing failure:\tError: ${response.statusText}\t message: ${
+            body?.error?.message ?? 'unknown error'
+          }`,
         )
         if (safeBrowsingLogOnly) {
           logger.error(error.message)
