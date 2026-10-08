@@ -17,7 +17,9 @@ jest.mock('../../../../config', () => {
 })
 
 // eslint-disable-next-line node/global-require
-const { logger: mockLogger } = require('../../../../config')
+const { logger: mockLogger, safeBrowsingKey: mockSafeBrowsingKey } = require(
+  '../../../../config',
+)
 
 // Mock dependencies
 const mockUrlRepository = {
@@ -286,10 +288,9 @@ describe('RedirectService', () => {
           isFile: false,
           safeBrowsingExpiry: new Date(Date.now() - 1000).toISOString(),
         })
-        const apiKey = 'test-safe-browsing-api-key'
         mockUrlThreatScanService.isThreat.mockRejectedValue(
           new Error(
-            `request to https://webrisk.googleapis.com/v1/uris:search?key=${apiKey}&threatTypes=MALWARE failed, reason: getaddrinfo ENOTFOUND webrisk.googleapis.com`,
+            `request to https://webrisk.googleapis.com/v1/uris:search?key=${mockSafeBrowsingKey}&threatTypes=MALWARE failed, reason: getaddrinfo ENOTFOUND webrisk.googleapis.com`,
           ),
         )
 
@@ -302,7 +303,9 @@ describe('RedirectService', () => {
           ...mockLogger.warn.mock.calls,
         ].reduce((acc, call) => acc.concat(call), [])
         expect(
-          loggedMessages.some((message: string) => message.includes(apiKey)),
+          loggedMessages.some((message: string) =>
+            message.includes(mockSafeBrowsingKey),
+          ),
         ).toBe(false)
       })
 
