@@ -109,7 +109,7 @@ jobs:
         run: |
           pnpm exec datadog-ci sourcemaps upload ./build \
             --service=gogovsg \
-            --release-version=$(node -p "require('./package.json').version") \
+            --release-version="$(node -p "require('./package.json').version")" \
             --minified-path-prefix=/usr/src/gogovsg/build
         env:
           DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -138,10 +138,12 @@ jobs:
           EB_ENV_INPUT: ${{ inputs.eb_env }}
           BRANCH_ENV_INPUT: ${{ inputs.branch_env }}
         run: |
-          echo "SERVERLESS_SERVICE=${SERVERLESS_SERVICE_INPUT}" >> "$GITHUB_ENV"
-          echo "EB_APP=${EB_APP_INPUT}" >> "$GITHUB_ENV"
-          echo "EB_ENV=${EB_ENV_INPUT}" >> "$GITHUB_ENV"
-          echo "BRANCH_ENV=${BRANCH_ENV_INPUT}" >> "$GITHUB_ENV"
+          {
+            echo "SERVERLESS_SERVICE=${SERVERLESS_SERVICE_INPUT}"
+            echo "EB_APP=${EB_APP_INPUT}"
+            echo "EB_ENV=${EB_ENV_INPUT}"
+            echo "BRANCH_ENV=${BRANCH_ENV_INPUT}"
+          } >> "$GITHUB_ENV"
 
       - name: Package Dockerrun.aws.json
         run: |
@@ -159,7 +161,7 @@ jobs:
       - name: Get timestamp
         id: get_timestamp
         shell: bash
-        run: echo "timestamp=$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+        run: echo "timestamp=$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
 
       - name: Get Elastic Beanstalk label
         id: get_label
