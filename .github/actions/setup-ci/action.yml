@@ -1,5 +1,5 @@
-name: 'Setup and install'
-description: 'Common setup steps for CI jobs (Node.js + pnpm install)'
+name: 'Setup and install (CI)'
+description: 'Common setup steps for CI jobs with pnpm cache (not used on release deploy paths)'
 
 runs:
   using: composite
@@ -9,6 +9,7 @@ runs:
     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version-file: 'package.json'
+        cache: 'pnpm'
 
     - shell: bash
       run: pnpm install --frozen-lockfile
