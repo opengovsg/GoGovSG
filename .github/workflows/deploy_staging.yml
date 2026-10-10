@@ -1,5 +1,9 @@
 name: Deploy to staging
 
+concurrency:
+  group: deploy-staging-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 

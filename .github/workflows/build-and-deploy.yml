@@ -51,23 +51,29 @@ jobs:
   build:
     name: Build and push
     runs-on: ubuntu-22.04
+    timeout-minutes: 30
     outputs:
       tag: ${{ steps.extract_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Extract branch name
         id: extract_branch
         shell: bash
-        run: echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: echo "branch=${REF_NAME}" >> "$GITHUB_OUTPUT"
 
       - name: Extract ECR tag
         id: extract_tag
         shell: bash
-        run: echo "tag=ghactions-${BRANCH}-${SHA}-${{ inputs.asset_variant }}" >> $GITHUB_OUTPUT
+        run: echo "tag=ghactions-${BRANCH}-${SHA}-${ASSET_VARIANT}" >> "$GITHUB_OUTPUT"
         env:
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
           SHA: ${{ github.sha }}
+          ASSET_VARIANT: ${{ inputs.asset_variant }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
@@ -83,15 +89,19 @@ jobs:
         env:
           REPO: ${{ env.ECR_URL }}/${{ env.ECR_REPO }}
           TAG: ${{ steps.extract_tag.outputs.tag }}
+          ASSET_VARIANT: ${{ inputs.asset_variant }}
+          DD_SERVICE: ${{ inputs.dd_service }}
+          BRANCH_ENV: ${{ inputs.branch_env }}
+          DD_GIT_REPOSITORY_URL: ${{ github.event.repository.html_url }}
         run: |
           docker build --tag my-image \
-            --build-arg __ASSET_VARIANT=${{ inputs.asset_variant }} \
-            --build-arg __DD_SERVICE=${{ inputs.dd_service }} \
-            --build-arg DD_GIT_REPOSITORY_URL=${{ github.event.repository.html_url }} \
-            --build-arg DD_GIT_COMMIT_SHA=$(git rev-parse HEAD) \
-            --build-arg __DD_ENV=${{ inputs.branch_env }} .
-          docker tag my-image ${REPO}:${TAG}
-          docker push ${REPO}:${TAG}
+            --build-arg "__ASSET_VARIANT=${ASSET_VARIANT}" \
+            --build-arg "__DD_SERVICE=${DD_SERVICE}" \
+            --build-arg "DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL}" \
+            --build-arg "DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)" \
+            --build-arg "__DD_ENV=${BRANCH_ENV}" .
+          docker tag my-image "${REPO}:${TAG}"
+          docker push "${REPO}:${TAG}"
 
       - uses: ./.github/actions/setup
 
@@ -99,7 +109,7 @@ jobs:
         run: |
           pnpm exec datadog-ci sourcemaps upload ./build \
             --service=gogovsg \
-            --release-version=$(node -p "require('./package.json').version") \
+            --release-version="$(node -p "require('./package.json').version")" \
             --minified-path-prefix=/usr/src/gogovsg/build
         env:
           DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -107,9 +117,12 @@ jobs:
   deploy:
     name: Deploy to Elastic Beanstalk and AWS Lambda
     runs-on: ubuntu-22.04
+    timeout-minutes: 30
     needs: [build]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
 
@@ -117,14 +130,20 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24.x'
-          cache: 'pnpm'
 
       - name: Set environment variables
+        env:
+          SERVERLESS_SERVICE_INPUT: ${{ inputs.serverless_service }}
+          EB_APP_INPUT: ${{ inputs.eb_app }}
+          EB_ENV_INPUT: ${{ inputs.eb_env }}
+          BRANCH_ENV_INPUT: ${{ inputs.branch_env }}
         run: |
-          echo "SERVERLESS_SERVICE=${{ inputs.serverless_service }}" >> $GITHUB_ENV
-          echo "EB_APP=${{ inputs.eb_app }}" >> $GITHUB_ENV
-          echo "EB_ENV=${{ inputs.eb_env }}" >> $GITHUB_ENV
-          echo "BRANCH_ENV=${{ inputs.branch_env }}" >> $GITHUB_ENV
+          {
+            echo "SERVERLESS_SERVICE=${SERVERLESS_SERVICE_INPUT}"
+            echo "EB_APP=${EB_APP_INPUT}"
+            echo "EB_ENV=${EB_ENV_INPUT}"
+            echo "BRANCH_ENV=${BRANCH_ENV_INPUT}"
+          } >> "$GITHUB_ENV"
 
       - name: Package Dockerrun.aws.json
         run: |
@@ -142,13 +161,14 @@ jobs:
       - name: Get timestamp
         id: get_timestamp
         shell: bash
-        run: echo "timestamp=$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+        run: echo "timestamp=$(env TZ=Asia/Singapore date '+%Y%m%d%H%M%S')" >> "$GITHUB_OUTPUT"
 
       - name: Get Elastic Beanstalk label
         id: get_label
         shell: bash
-        run: echo "label=${{ needs.build.outputs.tag }}-${TIMESTAMP}" >> $GITHUB_OUTPUT
+        run: echo "label=${BUILD_TAG}-${TIMESTAMP}" >> "$GITHUB_OUTPUT"
         env:
+          BUILD_TAG: ${{ needs.build.outputs.tag }}
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
 
       - name: Deploy to EB
@@ -172,8 +192,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Serverless deploy
-        run: pnpm exec osls deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
+        run: pnpm exec osls deploy --stage="${BRANCH_ENV}" --conceal --verbose
         env:
+          BRANCH_ENV: ${{ env.BRANCH_ENV }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
