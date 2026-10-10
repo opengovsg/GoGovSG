@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - run: pnpm run lint
 
   format:
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - run: pnpm run format:check
 
   typecheck:
@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - run: pnpm run typecheck
 
   build:
@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - run: pnpm run build
         env:
           ASSET_VARIANT: gov
@@ -72,7 +72,7 @@ jobs:
           persist-credentials: false
       # lockfile-lint doesn't understand pnpm-lock.yaml's format (only npm/yarn) --
       # pnpm's own signature verification is the native equivalent.
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - name: Verify registry signatures
         run: pnpm audit signatures
       - name: Generate SBOM
@@ -90,7 +90,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - name: Configure Datadog Test Visibility
         # Non-blocking: this action installs dd-trace from the npm registry, so
         # a registry hiccup fails it for reasons unrelated to the code under test
@@ -117,7 +117,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       # Do not inject CLOUDMERSIVE_KEY here. Live virus scans flake
       # (rate limits / timeouts / allowInvalidFiles on NUL fixtures), which
       # leaves the create-link modal open and cascades into filter/directory
@@ -158,7 +158,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-ci
+      - uses: ./.github/actions/setup
       - name: Start the stack
         # server-only: this suite drives the API directly and never loads a
         # page, so the webpack dev server would only cost a compile and then
