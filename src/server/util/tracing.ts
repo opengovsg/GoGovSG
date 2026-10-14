@@ -1,5 +1,6 @@
 import tracer, { Span } from 'dd-trace'
-import { ClientRequest, IncomingMessage } from 'http'
+import type { Request } from 'express'
+import { ClientRequest, IncomingMessage, ServerResponse } from 'http'
 
 tracer.init({
   profiling: true,
@@ -16,6 +17,21 @@ tracer.use('http', {
       ) => {
         span?.setTag('resource.name', `${req?.method} ${req?.host}${req?.path}`)
       },
+    },
+  },
+})
+tracer.use('express', {
+  hooks: {
+    request: (
+      span: Span | undefined,
+      req: IncomingMessage | undefined,
+      _: ServerResponse | undefined,
+    ) => {
+      // Lets latency SLOs exclude file uploads, which wait on a multi-second virus scan
+      span?.setTag(
+        'go.is_file',
+        (req as Request | undefined)?.files?.file ? 'true' : 'false',
+      )
     },
   },
 })
