@@ -90,7 +90,7 @@
     "helmet": "^4.6.0",
     "history": "^4.10.1",
     "hot-shots": "^17.1.0",
-    "i18next": "^26.4.2",
+    "i18next": "^26.4.3",
     "i18next-http-backend": "^4.0.2",
     "inversify": "^8.2.3",
     "joi": "^18.2.3",
