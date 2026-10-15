@@ -250,6 +250,67 @@ describe('SafeBrowsingService', () => {
       expect(set).toHaveBeenCalledWith(url, result.threat)
       expect(mockFetch).toHaveBeenCalled()
     })
+
+    it('sends the API key in a header, not in the URL', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch.mockResolvedValue({ ok: true, json })
+
+      await service.isThreat(url)
+
+      const [endpoint, options] = mockFetch.mock.calls[0]
+      expect(endpoint).not.toContain('key=')
+      expect(options.headers['X-Goog-Api-Key']).toBe('key')
+    })
+
+    it('sets a timeout on the request', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch.mockResolvedValue({ ok: true, json })
+
+      await service.isThreat(url)
+
+      const [, options] = mockFetch.mock.calls[0]
+      expect(options.signal).toBeInstanceOf(AbortSignal)
+    })
+
+    it('retries once when the request fails', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch
+        .mockRejectedValueOnce(new Error('read ECONNRESET'))
+        .mockResolvedValue({ ok: true, json })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('retries once on a 5xx response', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch
+        .mockResolvedValueOnce({ ok: false, status: 502, json })
+        .mockResolvedValue({ ok: true, json })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('throws when the retry also fails', async () => {
+      mockFetch.mockRejectedValue(new Error('read ECONNRESET'))
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('does not retry a 4xx response', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({ error: { message: 'API key not valid' } })
+      mockFetch.mockResolvedValue({ ok: false, status: 400, json })
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('isThreatBulk, without safeBrowsingKey', () => {
@@ -426,6 +487,30 @@ describe('SafeBrowsingService', () => {
       expect(json).toHaveBeenCalledTimes(3)
       expect(mockFetch).toHaveBeenCalledTimes(urls.length)
       expect(spy).toHaveBeenCalledTimes(urls.length)
+    })
+
+    it('limits how many scans run at once', async () => {
+      const manyUrls = Array.from(
+        { length: 50 },
+        (_, i) => `https://example.com/${i}`,
+      )
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      let inFlight = 0
+      let maxInFlight = 0
+      mockFetch.mockImplementation(async () => {
+        inFlight += 1
+        maxInFlight = Math.max(maxInFlight, inFlight)
+        await new Promise((resolve) => {
+          setImmediate(resolve)
+        })
+        inFlight -= 1
+        return { ok: true, json }
+      })
+
+      await expect(service.isThreatBulk(manyUrls)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(manyUrls.length)
+      expect(maxInFlight).toBeLessThan(manyUrls.length)
     })
   })
 })
