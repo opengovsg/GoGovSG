@@ -19,9 +19,12 @@ const API_KEY_HEADER = 'X-Goog-Api-Key'
 // before Google returns a 502.
 const WEB_RISK_TIMEOUT_MS = 5000
 const HTTP_SERVER_ERROR_MIN = 500
-// Bulk uploads hold up to bulkUploadMaxNum links; scanning them all at once
-// slows every call.
-const BULK_SCAN_CONCURRENCY = 10
+
+interface WebRiskReply {
+  response: Response
+  body: any
+}
+
 const WEB_RISK_THREAT_TYPES = [
   'SOCIAL_ENGINEERING',
   'MALWARE',
@@ -70,27 +73,39 @@ export class SafeBrowsingService implements UrlThreatScanService {
     return `${ENDPOINT}?${threatTypesQuery}&uri=${encodedUrl}`
   }
 
-  private requestWebRisk: (endpoint: string) => Promise<Response> = (
+  // The body is read inside the attempt so the timeout and retry also cover
+  // failures while it streams in.
+  private requestWebRisk: (endpoint: string) => Promise<WebRiskReply> = async (
     endpoint,
-  ) =>
-    fetch(endpoint, {
+  ) => {
+    const response = await fetch(endpoint, {
       method: 'GET',
       headers: { [API_KEY_HEADER]: safeBrowsingKey as string },
       signal: AbortSignal.timeout(WEB_RISK_TIMEOUT_MS),
     })
+    // Gateway-level failures (e.g. a 502 from Google's front end) may return a
+    // non-JSON or errorless body. Only those non-OK responses may fall back;
+    // an HTTP 200 with unreadable JSON is still a scan failure, so it is not
+    // cached as a clean verdict.
+    const body = response.ok
+      ? await response.json()
+      : await response.json().catch(() => null)
+
+    return { response, body }
+  }
 
   // Web Risk stalls, connection resets and gateway errors are usually
   // transient, so retry once.
-  private requestWebRiskWithRetry: (endpoint: string) => Promise<Response> =
+  private requestWebRiskWithRetry: (endpoint: string) => Promise<WebRiskReply> =
     async (endpoint) => {
       try {
-        const response = await this.requestWebRisk(endpoint)
-        const isServerError = response.status >= HTTP_SERVER_ERROR_MIN
+        const reply = await this.requestWebRisk(endpoint)
+        const isServerError = reply.response.status >= HTTP_SERVER_ERROR_MIN
         if (!isServerError) {
-          return response
+          return reply
         }
 
-        logger.warn(`Web Risk returned ${response.status}, retrying`)
+        logger.warn(`Web Risk returned ${reply.response.status}, retrying`)
       } catch (error) {
         logger.warn(`Web Risk request failed, retrying: ${error}`)
       }
@@ -102,14 +117,7 @@ export class SafeBrowsingService implements UrlThreatScanService {
     async (url) => {
       const endpoint = this.constructWebRiskEndpoint(url, WEB_RISK_THREAT_TYPES)
 
-      const response = await this.requestWebRiskWithRetry(endpoint)
-      // Gateway-level failures (e.g. a 502 from Google's front end) may return a
-      // non-JSON or errorless body. Only those non-OK responses may fall back;
-      // an HTTP 200 with unreadable JSON is still a scan failure, so it is not
-      // cached as a clean verdict.
-      const body = response.ok
-        ? await response.json()
-        : await response.json().catch(() => null)
+      const { response, body } = await this.requestWebRiskWithRetry(endpoint)
       if (!response.ok) {
         const error = new Error(
           `Safe Browsing failure:\tError: ${response.statusText}\t message: ${
@@ -153,19 +161,11 @@ export class SafeBrowsingService implements UrlThreatScanService {
       return false
     }
 
-    // Each batch waits for its slowest scan; a worker pool would avoid that if
-    // bulk upload latency becomes a problem.
-    const results = await _.chunk(urls, BULK_SCAN_CONCURRENCY).reduce(
-      async (previous, batch) => {
-        const scanned = await previous
-        const batchResults = await Promise.all(
-          batch.map((url) => this.fetchWebRiskData(url)),
-        )
-        return [...scanned, ...batchResults]
-      },
-      Promise.resolve([] as (WebRiskThreat | null)[]),
+    // All at once: the timeout and single retry cap the whole scan at about
+    // two call timeouts, within the load balancer's idle timeout.
+    const results = await Promise.all(
+      urls.map((url) => this.fetchWebRiskData(url)),
     )
-
     const isThreat = results.some((result) => Boolean(result))
     if (!safeBrowsingLogOnly && isThreat) {
       return true

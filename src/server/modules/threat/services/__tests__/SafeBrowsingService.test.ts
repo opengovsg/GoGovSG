@@ -258,9 +258,10 @@ describe('SafeBrowsingService', () => {
 
       await service.isThreat(url)
 
+      const { safeBrowsingKey } = require('../../../../config')
       const [endpoint, options] = mockFetch.mock.calls[0]
       expect(endpoint).not.toContain('key=')
-      expect(options.headers['X-Goog-Api-Key']).toBe('key')
+      expect(options.headers['X-Goog-Api-Key']).toBe(safeBrowsingKey)
     })
 
     it('sets a timeout on the request', async () => {
@@ -291,6 +292,19 @@ describe('SafeBrowsingService', () => {
       mockFetch
         .mockResolvedValueOnce({ ok: false, status: 502, json })
         .mockResolvedValue({ ok: true, json })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('retries once when reading the response body fails', async () => {
+      const failedJson = jest.fn()
+      failedJson.mockRejectedValue(new Error('read ECONNRESET'))
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch
+        .mockResolvedValueOnce({ ok: true, status: 200, json: failedJson })
+        .mockResolvedValue({ ok: true, status: 200, json })
 
       await expect(service.isThreat(url)).resolves.toBeFalsy()
       expect(mockFetch).toHaveBeenCalledTimes(2)
@@ -489,28 +503,32 @@ describe('SafeBrowsingService', () => {
       expect(spy).toHaveBeenCalledTimes(urls.length)
     })
 
-    it('limits how many scans run at once', async () => {
+    it('scans a maximum-size upload within the load balancer timeout', async () => {
+      const LOAD_BALANCER_TIMEOUT_MS = 100_000
+      const SCAN_DELAY_MS = 2_000
+      const MAX_BULK_UPLOAD_SIZE = 1_000
       const manyUrls = Array.from(
-        { length: 50 },
+        { length: MAX_BULK_UPLOAD_SIZE },
         (_, i) => `https://example.com/${i}`,
       )
       const json = jest.fn()
       json.mockResolvedValue({})
-      let inFlight = 0
-      let maxInFlight = 0
-      mockFetch.mockImplementation(async () => {
-        inFlight += 1
-        maxInFlight = Math.max(maxInFlight, inFlight)
-        await new Promise((resolve) => {
-          setImmediate(resolve)
-        })
-        inFlight -= 1
-        return { ok: true, json }
-      })
+      mockFetch.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ ok: true, json }), SCAN_DELAY_MS)
+          }),
+      )
 
-      await expect(service.isThreatBulk(manyUrls)).resolves.toBeFalsy()
-      expect(mockFetch).toHaveBeenCalledTimes(manyUrls.length)
-      expect(maxInFlight).toBeLessThan(manyUrls.length)
+      jest.useFakeTimers()
+      let isDone = false
+      service.isThreatBulk(manyUrls).then(() => {
+        isDone = true
+      })
+      await jest.advanceTimersByTimeAsync(LOAD_BALANCER_TIMEOUT_MS)
+      jest.useRealTimers()
+
+      expect(isDone).toBe(true)
     })
   })
 })
