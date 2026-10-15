@@ -28,6 +28,13 @@ const errorHandler: express.ErrorRequestHandler = (err, req, res, _next) => {
     return
   }
 
+  // http-errors sets expose only for 4xx, e.g. express.static's 416 on an
+  // unsatisfiable Range header.
+  if (err.expose && err.status >= 400 && err.status < 500) {
+    res.sendStatus(err.status)
+    return
+  }
+
   res.status(500).render('500.error.ejs')
   return
 }
