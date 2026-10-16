@@ -11,6 +11,10 @@ import { UrlThreatScanService } from './interfaces/index.js'
 import { DependencyIds } from '../../constants.js'
 import { logger } from '../../config.js'
 
+// Scan errors are not echoed back: they can carry upstream request details.
+const SCAN_FAILED_MESSAGE =
+  'Unable to check this link for threats right now, please try again later'
+
 @injectable()
 export class UrlCheckController {
   private urlThreatScanService: UrlThreatScanService
@@ -50,7 +54,7 @@ export class UrlCheckController {
       } catch (error) {
         dogstatsd.increment(SCAN_FAILED_LINK, 1, 1)
         logger.error(error)
-        res.serverError(jsonMessage((error as Error).message))
+        res.serviceUnavailable(jsonMessage(SCAN_FAILED_MESSAGE))
         return
       }
     }
@@ -82,8 +86,9 @@ export class UrlCheckController {
           return
         }
       } catch (error) {
+        dogstatsd.increment(SCAN_FAILED_LINK, 1, 1)
         logger.error(error)
-        res.serverError(jsonMessage((error as Error).message))
+        res.serviceUnavailable(jsonMessage(SCAN_FAILED_MESSAGE))
         return
       }
     }
