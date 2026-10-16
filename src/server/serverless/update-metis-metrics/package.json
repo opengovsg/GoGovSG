@@ -1,0 +1,9 @@
+{
+  "type": "commonjs",
+  "scripts": {
+    "package": "rm -rf dist && mkdir dist && cp index.js package.json package-lock.json dist && cd dist && npm ci --omit=dev && zip -qr update-metis-metrics.zip index.js package.json node_modules"
+  },
+  "dependencies": {
+    "pg": "^8.22.0"
+  }
+}
