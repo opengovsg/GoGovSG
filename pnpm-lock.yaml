@@ -233,8 +233,8 @@ importers:
         specifier: ^26.5.2
         version: 26.5.2(typescript@7.0.2)
       i18next-http-backend:
-        specifier: ^4.0.3
-        version: 4.0.3
+        specifier: ^4.0.4
+        version: 4.0.4
       inversify:
         specifier: ^8.2.3
         version: 8.2.3(reflect-metadata@0.2.2)
@@ -5647,8 +5647,8 @@ packages:
   hyphenate-style-name@1.1.0:
     resolution: {integrity: sha512-WDC/ui2VVRrz3jOVi+XtjqkDjiVjTtFaAGiW37k6b+ohyQ5wYDOGkvCZa8+H0nx3gyvv0+BST9xuOgIyGQ00gw==}
 
-  i18next-http-backend@4.0.3:
-    resolution: {integrity: sha512-B5GJysCsJwqiDQRpUcikWsut82Vmekix58WIyiCpYtxaZ/wY8kwJCicMRvVcMoIa1x84siiRl5vBt6iCBVO6zg==}
+  i18next-http-backend@4.0.4:
+    resolution: {integrity: sha512-nG9OQKvUsPiTVUBg1rCGmvmWhzxC9GOxVbGdTYyejHVMSUjutt1hiBNVSzhB/ZE7keL9Xkb880kUfhDovV5T5g==}
     engines: {node: '>=18'}
 
   i18next@26.5.2:
@@ -14107,7 +14107,7 @@ snapshots:
 
   hyphenate-style-name@1.1.0: {}
 
-  i18next-http-backend@4.0.3: {}
+  i18next-http-backend@4.0.4: {}
 
   i18next@26.5.2(typescript@7.0.2):
     optionalDependencies:
