@@ -195,6 +195,19 @@ GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk an
 |                           ECR_REPO                            |   Yes    | Name of repository in AWS ECR containing images                                     |
 |                         API_KEY_SALT                          |   Yes    | Salt used for APIKey hashing, guide to salt generation [here](#salt-generation)     |
 
+Lambda environment variables and VPC settings are read from SSM Parameter Store at deploy time, under `/<service>-<stage>/` (e.g. `/gogovsg-production/`). Settings changed in the Lambda console are overwritten on the next deploy.
+
+|       SSM Parameter       |     Type     | Used by                                                         |
+| :-----------------------: | :----------: | :-------------------------------------------------------------- |
+|     LAMBDA_SUBNET_IDS     |  StringList  | migrate-url-to-user, migrate-user-links, bulk-qrcode-generation |
+| LAMBDA_SECURITY_GROUP_IDS |  StringList  | migrate-url-to-user, migrate-user-links, bulk-qrcode-generation |
+|       DATABASE_URL        | SecureString | migrate-url-to-user, migrate-user-links                         |
+|       ASSET_VARIANT       |    String    | bulk-qrcode-generation                                          |
+|          DOMAIN           |    String    | bulk-qrcode-generation                                          |
+|  BULK_GENERATION_BUCKET   |    String    | bulk-qrcode-generation                                          |
+|   EB_CALLBACK_ENDPOINT    |    String    | bulk-qrcode-generation                                          |
+|    EB_CALLBACK_SECRET     | SecureString | bulk-qrcode-generation                                          |
+
 ## Operations
 
 ### Transferring links to a new owner or email address

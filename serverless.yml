@@ -12,11 +12,22 @@ provider:
 plugins:
   - serverless-plugin-include-dependencies
 
+# Declared here, not in the console: CloudFormation drops any function config
+# the template omits on deploy. Values live in SSM under /<service>-<stage>/.
+custom:
+  ssmPrefix: /${self:service}-${sls:stage}
+  vpc:
+    subnetIds: ${ssm:${self:custom.ssmPrefix}/LAMBDA_SUBNET_IDS}
+    securityGroupIds: ${ssm:${self:custom.ssmPrefix}/LAMBDA_SECURITY_GROUP_IDS}
+
 package:
   individually: true
 
 functions:
   migrate-url-to-user:
+    vpc: ${self:custom.vpc}
+    environment:
+      DATABASE_URL: ${ssm:${self:custom.ssmPrefix}/DATABASE_URL}
     handler: src/server/serverless/lambda-migrate-url-to-user/index.handler
     memorySize: 128
     description: Postgresql user-defined function for migrating a url to an existing user
@@ -27,6 +38,9 @@ functions:
         - 'package-lock.json'
         - 'package.json'
   migrate-user-links:
+    vpc: ${self:custom.vpc}
+    environment:
+      DATABASE_URL: ${ssm:${self:custom.ssmPrefix}/DATABASE_URL}
     handler: src/server/serverless/lambda-migrate-user-links/index.handler
     memorySize: 128
     description: Postgresql user-defined function for migrating a user's links to another existing user
@@ -47,6 +61,13 @@ functions:
         - 'package-lock.json'
         - 'package.json'
   bulk-qrcode-generation:
+    vpc: ${self:custom.vpc}
+    environment:
+      ASSET_VARIANT: ${ssm:${self:custom.ssmPrefix}/ASSET_VARIANT}
+      DOMAIN: ${ssm:${self:custom.ssmPrefix}/DOMAIN}
+      BULK_GENERATION_BUCKET: ${ssm:${self:custom.ssmPrefix}/BULK_GENERATION_BUCKET}
+      EB_CALLBACK_ENDPOINT: ${ssm:${self:custom.ssmPrefix}/EB_CALLBACK_ENDPOINT}
+      EB_CALLBACK_SECRET: ${ssm:${self:custom.ssmPrefix}/EB_CALLBACK_SECRET}
     handler: src/server/serverless/bulk-qrcode-generation/index.handler
     # PNG phase uses Promise.all over the full batch (up to 1000); Sharp + embedded-font SVGs peak ~7GB.
     memorySize: 8192 # 8192 MB
