@@ -61,7 +61,6 @@ functions:
         - 'package-lock.json'
         - 'package.json'
   bulk-qrcode-generation:
-    vpc: ${self:custom.vpc}
     environment:
       ASSET_VARIANT: ${ssm:${self:custom.ssmPrefix}/ASSET_VARIANT}
       DOMAIN: ${ssm:${self:custom.ssmPrefix}/DOMAIN}
