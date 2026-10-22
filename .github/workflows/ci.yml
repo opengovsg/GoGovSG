@@ -1,4 +1,6 @@
 name: ci
+# GHA is free for public repos
+# jactionlint ignore=concurrency-limits
 on:
   workflow_dispatch:
   push:
@@ -10,10 +12,6 @@ on:
 
 permissions:
   contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/develop' && github.ref != 'refs/heads/staging' }}
 
 jobs:
   lint:

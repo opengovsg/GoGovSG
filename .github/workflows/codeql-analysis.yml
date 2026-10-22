@@ -5,6 +5,8 @@
 # or to provide custom queries or build logic.
 name: 'CodeQL'
 
+# GHA is free for public repos
+# jactionlint ignore=concurrency-limits
 on:
   push:
     branches: [develop, edge, master, release]
@@ -13,10 +15,6 @@ on:
     branches: [develop]
   schedule:
     - cron: '0 10 * * *'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/develop' }}
 
 jobs:
   analyze:

@@ -1,12 +1,10 @@
 name: Deploy to staging
 
-concurrency:
-  group: deploy-staging-${{ github.ref }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
 
+# GHA is free for public repos
+# jactionlint ignore=concurrency-limits
 on:
   push:
     branches:

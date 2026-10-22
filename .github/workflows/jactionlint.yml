@@ -1,6 +1,8 @@
 # Lint GitHub Actions workflows with jactionlint: https://github.com/jdx/jactionlint
 name: jactionlint
 
+# GHA is free for public repos
+# jactionlint ignore=concurrency-limits
 on:
   pull_request:
     branches: ['**']
@@ -10,10 +12,6 @@ on:
   merge_group:
 
 permissions: {}
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/develop' }}
 
 jobs:
   jactionlint:
