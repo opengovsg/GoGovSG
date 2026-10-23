@@ -45,3 +45,8 @@ response.created = function (content: Buffer | object | string | undefined) {
 ) {
   this.status(500).send(content)
 }
+;(response as any).serviceUnavailable = function (
+  content: Buffer | object | string | undefined,
+) {
+  this.status(503).send(content)
+}
