@@ -10,7 +10,6 @@ import session from 'express-session'
 import cookieSession from 'cookie-session'
 import cookieParser from 'cookie-parser'
 import connectRedis from 'connect-redis'
-import jsonMessage from './util/json.js'
 import bindInversifyDependencies from './inversify.config.js'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -67,7 +66,7 @@ import {
 } from './modules/redirect/index.js'
 import assetVariant from '../shared/util/asset-variant.js'
 import dogstatsd, { ERROR_UNHANDLED_REJECTION } from './util/dogstatsd.js'
-import handleUriError from './util/handleUriError.js'
+import errorHandler from './util/errorHandler.js'
 // Define our own token for client ip
 // req.headers['cf-connecting-ip'] : Cloudflare
 
@@ -256,38 +255,6 @@ Promise.all([
       return
     })
 
-    const errorHandler: express.ErrorRequestHandler = (
-      err,
-      req,
-      res,
-      _next,
-    ) => {
-      // Catch Joi validation errors and pass them as properly-formatted
-      // messages.
-      if (err?.error?.isJoi) {
-        res.badRequest(jsonMessage(err.error.toString()))
-        return
-      }
-
-      if (
-        err.statusCode === 400 &&
-        'body' in err &&
-        err.type === 'entity.parse.failed'
-      ) {
-        // This catches body-parser errors and returns a 400 error message
-        console.error(err)
-        res.badRequest(jsonMessage('Bad Request. JSON is malformed'))
-        return
-      }
-
-      if (err instanceof URIError) {
-        handleUriError(req, res)
-        return
-      }
-
-      res.status(500).render('500.error.ejs')
-      return
-    }
     app.use(errorHandler)
 
     const port = 8080
