@@ -10,6 +10,7 @@ declare global {
       unsupportedMediaType(content?: Buffer | object | string): void
       unprocessableEntity(content?: Buffer | object | string): void
       serverError(content?: Buffer | object | string): void
+      serviceUnavailable(content?: Buffer | object | string): void
     }
   }
 }

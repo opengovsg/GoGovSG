@@ -17,6 +17,11 @@ function createRequestWithUser(user: any): Request {
   })
 }
 
+// node-fetch puts the request URL in network error messages
+const scanError = new Error(
+  'request to https://webrisk.googleapis.com/v1/uris:search?key=secret-key failed, reason: read ECONNRESET',
+)
+
 const mockUrlThreatScanService = {
   isThreat: jest.fn(),
   isThreatBulk: jest.fn(),
@@ -45,19 +50,22 @@ describe('UrlCheckController test', () => {
       expect(next).toHaveBeenCalled()
     })
 
-    it('reports on server error', async () => {
+    it('responds 503 without the error message when the scan fails', async () => {
       const req = createRequestWithUser(undefined)
       req.body.longUrl = url
       const res = httpMocks.createResponse() as any
       const next = jest.fn()
 
-      mockUrlThreatScanService.isThreat.mockRejectedValue(false)
-      res.serverError = badRequest
+      mockUrlThreatScanService.isThreat.mockRejectedValue(scanError)
+      res.serviceUnavailable = badRequest
 
       await controller.singleUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreat).toHaveBeenCalled()
       expect(badRequest).toHaveBeenCalled()
+      expect(JSON.stringify(badRequest.mock.calls[0])).not.toContain(
+        'secret-key',
+      )
       expect(next).not.toHaveBeenCalled()
     })
 
@@ -117,19 +125,22 @@ describe('UrlCheckController test', () => {
       expect(next).toHaveBeenCalled()
     })
 
-    it('reports on server error', async () => {
+    it('responds 503 without the error message when the scan fails', async () => {
       const req = createRequestWithUser(undefined)
       req.body.longUrls = urls
       const res = httpMocks.createResponse() as any
       const next = jest.fn()
 
-      mockUrlThreatScanService.isThreatBulk.mockRejectedValue(false)
-      res.serverError = badRequest
+      mockUrlThreatScanService.isThreatBulk.mockRejectedValue(scanError)
+      res.serviceUnavailable = badRequest
 
       await controller.bulkUrlCheck(req, res, next)
 
       expect(mockUrlThreatScanService.isThreatBulk).toHaveBeenCalled()
       expect(badRequest).toHaveBeenCalled()
+      expect(JSON.stringify(badRequest.mock.calls[0])).not.toContain(
+        'secret-key',
+      )
       expect(next).not.toHaveBeenCalled()
     })
 

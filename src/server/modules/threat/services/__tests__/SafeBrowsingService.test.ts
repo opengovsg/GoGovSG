@@ -250,6 +250,81 @@ describe('SafeBrowsingService', () => {
       expect(set).toHaveBeenCalledWith(url, result.threat)
       expect(mockFetch).toHaveBeenCalled()
     })
+
+    it('sends the API key in a header, not in the URL', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch.mockResolvedValue({ ok: true, json })
+
+      await service.isThreat(url)
+
+      const { safeBrowsingKey } = require('../../../../config')
+      const [endpoint, options] = mockFetch.mock.calls[0]
+      expect(endpoint).not.toContain('key=')
+      expect(options.headers['X-Goog-Api-Key']).toBe(safeBrowsingKey)
+    })
+
+    it('sets a timeout on the request', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch.mockResolvedValue({ ok: true, json })
+
+      await service.isThreat(url)
+
+      const [, options] = mockFetch.mock.calls[0]
+      expect(options.signal).toBeInstanceOf(AbortSignal)
+    })
+
+    it('retries once when the request fails', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch
+        .mockRejectedValueOnce(new Error('read ECONNRESET'))
+        .mockResolvedValue({ ok: true, json })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('retries once on a 5xx response', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch
+        .mockResolvedValueOnce({ ok: false, status: 502, json })
+        .mockResolvedValue({ ok: true, json })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('retries once when reading the response body fails', async () => {
+      const failedJson = jest.fn()
+      failedJson.mockRejectedValue(new Error('read ECONNRESET'))
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch
+        .mockResolvedValueOnce({ ok: true, status: 200, json: failedJson })
+        .mockResolvedValue({ ok: true, status: 200, json })
+
+      await expect(service.isThreat(url)).resolves.toBeFalsy()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('throws when the retry also fails', async () => {
+      mockFetch.mockRejectedValue(new Error('read ECONNRESET'))
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(mockFetch).toHaveBeenCalledTimes(2)
+    })
+
+    it('does not retry a 4xx response', async () => {
+      const json = jest.fn()
+      json.mockResolvedValue({ error: { message: 'API key not valid' } })
+      mockFetch.mockResolvedValue({ ok: false, status: 400, json })
+
+      await expect(service.isThreat(url)).rejects.toBeDefined()
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('isThreatBulk, without safeBrowsingKey', () => {
@@ -426,6 +501,34 @@ describe('SafeBrowsingService', () => {
       expect(json).toHaveBeenCalledTimes(3)
       expect(mockFetch).toHaveBeenCalledTimes(urls.length)
       expect(spy).toHaveBeenCalledTimes(urls.length)
+    })
+
+    it('scans a maximum-size upload within the load balancer timeout', async () => {
+      const LOAD_BALANCER_TIMEOUT_MS = 100_000
+      const SCAN_DELAY_MS = 2_000
+      const MAX_BULK_UPLOAD_SIZE = 1_000
+      const manyUrls = Array.from(
+        { length: MAX_BULK_UPLOAD_SIZE },
+        (_, i) => `https://example.com/${i}`,
+      )
+      const json = jest.fn()
+      json.mockResolvedValue({})
+      mockFetch.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ ok: true, json }), SCAN_DELAY_MS)
+          }),
+      )
+
+      jest.useFakeTimers()
+      let isDone = false
+      service.isThreatBulk(manyUrls).then(() => {
+        isDone = true
+      })
+      await jest.advanceTimersByTimeAsync(LOAD_BALANCER_TIMEOUT_MS)
+      jest.useRealTimers()
+
+      expect(isDone).toBe(true)
     })
   })
 })

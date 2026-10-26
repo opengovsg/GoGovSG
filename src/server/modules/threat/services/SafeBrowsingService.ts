@@ -11,7 +11,20 @@ import { SafeBrowsingRepository } from '../interfaces/SafeBrowsingRepository.js'
 import { DependencyIds } from '../../../constants.js'
 import { WebRiskThreat } from '../../../repositories/types.js'
 
-const ENDPOINT = `https://webrisk.googleapis.com/v1/uris:search?key=${safeBrowsingKey}`
+// The key goes in a header: a URL carrying it leaks into fetch error messages
+// and trace span names.
+const ENDPOINT = 'https://webrisk.googleapis.com/v1/uris:search'
+const API_KEY_HEADER = 'X-Goog-Api-Key'
+// Successful calls have a p99 of 3-4.5s, while stalled ones hang for 20s+
+// before Google returns a 502.
+const WEB_RISK_TIMEOUT_MS = 5000
+const HTTP_SERVER_ERROR_MIN = 500
+
+interface WebRiskReply {
+  response: Response
+  body: any
+}
+
 const WEB_RISK_THREAT_TYPES = [
   'SOCIAL_ENGINEERING',
   'MALWARE',
@@ -57,21 +70,54 @@ export class SafeBrowsingService implements UrlThreatScanService {
       .map((type: string) => `threatTypes=${type}`)
       .join('&')
 
-    return `${ENDPOINT}&${threatTypesQuery}&uri=${encodedUrl}`
+    return `${ENDPOINT}?${threatTypesQuery}&uri=${encodedUrl}`
   }
+
+  // The body is read inside the attempt so the timeout and retry also cover
+  // failures while it streams in.
+  private requestWebRisk: (endpoint: string) => Promise<WebRiskReply> = async (
+    endpoint,
+  ) => {
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: { [API_KEY_HEADER]: safeBrowsingKey as string },
+      signal: AbortSignal.timeout(WEB_RISK_TIMEOUT_MS),
+    })
+    // Gateway-level failures (e.g. a 502 from Google's front end) may return a
+    // non-JSON or errorless body. Only those non-OK responses may fall back;
+    // an HTTP 200 with unreadable JSON is still a scan failure, so it is not
+    // cached as a clean verdict.
+    const body = response.ok
+      ? await response.json()
+      : await response.json().catch(() => null)
+
+    return { response, body }
+  }
+
+  // Web Risk stalls, connection resets and gateway errors are usually
+  // transient, so retry once.
+  private requestWebRiskWithRetry: (endpoint: string) => Promise<WebRiskReply> =
+    async (endpoint) => {
+      try {
+        const reply = await this.requestWebRisk(endpoint)
+        const isServerError = reply.response.status >= HTTP_SERVER_ERROR_MIN
+        if (!isServerError) {
+          return reply
+        }
+
+        logger.warn(`Web Risk returned ${reply.response.status}, retrying`)
+      } catch (error) {
+        logger.warn(`Web Risk request failed, retrying: ${error}`)
+      }
+
+      return this.requestWebRisk(endpoint)
+    }
 
   private fetchWebRiskData: (url: string) => Promise<WebRiskThreat | null> =
     async (url) => {
       const endpoint = this.constructWebRiskEndpoint(url, WEB_RISK_THREAT_TYPES)
 
-      const response = await fetch(endpoint, { method: 'GET' })
-      // Gateway-level failures (e.g. a 502 from Google's front end) may return a
-      // non-JSON or errorless body. Only those non-OK responses may fall back;
-      // an HTTP 200 with unreadable JSON is still a scan failure, so it is not
-      // cached as a clean verdict.
-      const body = response.ok
-        ? await response.json()
-        : await response.json().catch(() => null)
+      const { response, body } = await this.requestWebRiskWithRetry(endpoint)
       if (!response.ok) {
         const error = new Error(
           `Safe Browsing failure:\tError: ${response.statusText}\t message: ${
@@ -115,6 +161,8 @@ export class SafeBrowsingService implements UrlThreatScanService {
       return false
     }
 
+    // All at once: the timeout and single retry cap the whole scan at about
+    // two call timeouts, within the load balancer's idle timeout.
     const results = await Promise.all(
       urls.map((url) => this.fetchWebRiskData(url)),
     )
