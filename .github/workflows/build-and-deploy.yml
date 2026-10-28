@@ -32,11 +32,11 @@ on:
         required: false
         type: boolean
         default: false
+      aws_role_arn:
+        description: 'IAM role to assume through GitHub OIDC'
+        required: true
+        type: string
     secrets:
-      AWS_ACCESS_KEY_ID:
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        required: true
       DD_API_KEY:
         required: true
 
@@ -46,6 +46,7 @@ env:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   build:
@@ -70,10 +71,9 @@ jobs:
           SHA: ${{ github.sha }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ inputs.aws_role_arn }}
           aws-region: ap-southeast-1
 
       - name: Login to Amazon ECR
@@ -151,12 +151,19 @@ jobs:
         env:
           TIMESTAMP: ${{ steps.get_timestamp.outputs.timestamp }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ inputs.aws_role_arn }}
+          aws-region: ap-southeast-1
+
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@af31173a6a0ffcbde0bd555ee228e34cd9bb63f8 # v18
         if: env.EB_ENV != ''
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_access_key: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
           application_name: ${{ env.EB_APP }}
           environment_name: ${{ env.EB_ENV }}
           version_label: ${{ steps.get_label.outputs.label }}
@@ -174,6 +181,4 @@ jobs:
       - name: Serverless deploy
         run: pnpm exec osls deploy --stage=${{ env.BRANCH_ENV }} --conceal --verbose
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_SERVICE: ${{ env.SERVERLESS_SERVICE }}
