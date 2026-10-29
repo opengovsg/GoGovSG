@@ -3,6 +3,8 @@ name: Deploy to staging
 permissions:
   contents: read
 
+# GHA is free for public repos
+# jactionlint ignore=concurrency-limits
 on:
   push:
     branches:
