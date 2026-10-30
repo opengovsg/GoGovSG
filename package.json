@@ -73,7 +73,7 @@
     "cookie-parser": "^1.4.7",
     "cookie-session": "^2.1.1",
     "copy-to-clipboard": "^4.0.2",
-    "core-js": "^3.49.0",
+    "core-js": "^3.51.0",
     "cross-fetch": "^4.1.0",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
