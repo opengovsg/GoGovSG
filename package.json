@@ -134,7 +134,7 @@
     "@babel/preset-react": "^8.0.1",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "@datadog/datadog-ci": "5.25.0",
+    "@datadog/datadog-ci": "5.26.1",
     "@playwright/test": "^1.62.1",
     "@swc/core": "^1.16.20",
     "@swc/jest": "^0.2.39",
