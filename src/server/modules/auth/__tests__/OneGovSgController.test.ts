@@ -134,7 +134,11 @@ describe('OneGovSgController', () => {
       )
     })
 
-    // Values as Express sees them after one round of query-string decoding.
+    // Values as they reach the handler in req.query, i.e. after Express has
+    // decoded the query string once. The VDP payloads `/%2f%2fevil.example`
+    // and `/%5cevil.example` arrive as `///evil.example` and `/\evil.example`;
+    // the literal `%2f`/`%5c` forms below are what a double-encoded payload
+    // (`%252f`, `%255c`) looks like after that decoding.
     test.each([
       '//evil.example',
       '///evil.example',
