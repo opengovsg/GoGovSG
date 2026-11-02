@@ -134,6 +134,57 @@ describe('OneGovSgController', () => {
       )
     })
 
+    // Values as Express sees them after one round of query-string decoding.
+    test.each([
+      '//evil.example',
+      '///evil.example',
+      '/\\evil.example',
+      '/\\/evil.example',
+      '/%2f%2fevil.example',
+      '/%2F%2Fevil.example',
+      '/%5cevil.example',
+      '/%5Cevil.example',
+      '/\t/evil.example',
+      '/user/../\\evil.example',
+      '/user//evil.example',
+      '/user@evil.example',
+      'https://evil.example',
+      'evil.example',
+      '/',
+      '/not-a-private-route',
+      '/users',
+      ['/user'],
+    ])('drops a disallowed next value: %p', async (next) => {
+      oneGovSgService.createTransaction.mockReturnValue(transaction)
+      oneGovSgService.getAuthorizationUrl.mockResolvedValue('https://x')
+      const res = getMockResponse()
+
+      await controller.login(createRequest({ query: { next } }), res)
+
+      expect(res.cookie).toHaveBeenCalledWith(
+        'oneGovSgTransaction',
+        JSON.stringify(transaction),
+        expect.anything(),
+      )
+    })
+
+    test.each(['/user', '/user/links', '/directory', '/apiintegration'])(
+      'keeps an allowed next value: %p',
+      async (next) => {
+        oneGovSgService.createTransaction.mockReturnValue(transaction)
+        oneGovSgService.getAuthorizationUrl.mockResolvedValue('https://x')
+        const res = getMockResponse()
+
+        await controller.login(createRequest({ query: { next } }), res)
+
+        expect(res.cookie).toHaveBeenCalledWith(
+          'oneGovSgTransaction',
+          JSON.stringify({ ...transaction, next }),
+          expect.anything(),
+        )
+      },
+    )
+
     test('renders a 500 page when discovery fails', async () => {
       const req = createRequest({})
       const res = getMockResponse()
@@ -251,6 +302,25 @@ describe('OneGovSgController', () => {
       await controller.callback(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/#/user/links')
+    })
+
+    test('ignores an unsafe next value already stored in the transaction', async () => {
+      const req = createRequest({
+        query: { iss: issuer, code: 'abc' },
+        signedCookies: {
+          oneGovSgTransaction: JSON.stringify({
+            ...transaction,
+            next: '/\\evil.example',
+          }),
+        },
+      })
+      const res = getMockResponse()
+      oneGovSgService.handleCallback.mockResolvedValue('officer@agency.test.sg')
+      authService.genDBUserWithOfficerEmail.mockResolvedValue({ id: 1 })
+
+      await controller.callback(req, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/')
     })
 
     test('denies a malformed sub with 403, not 500', async () => {
