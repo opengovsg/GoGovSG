@@ -1,4 +1,4 @@
-import { isValidGovEmail } from '../email'
+import { assertWhitelistedEmail, isValidGovEmail } from '../email'
 
 /**
  * Unit tests for isValidGovEmail.
@@ -15,6 +15,15 @@ describe('isValidGovEmail', () => {
 
   it('rejects emails on a disallowed domain', () => {
     expect(isValidGovEmail('user@gmail.com')).toBe(false)
+  })
+
+  it('assertWhitelistedEmail rejects a disallowed domain', () => {
+    expect(() => assertWhitelistedEmail('user@gmail.com')).toThrow(
+      'Email domain is not whitelisted.',
+    )
+    expect(() => assertWhitelistedEmail('user@agency.test.sg')).not.toThrow()
+    expect(() => assertWhitelistedEmail(null)).not.toThrow()
+    expect(() => assertWhitelistedEmail(undefined)).not.toThrow()
   })
 
   it('rejects malformed strings', () => {

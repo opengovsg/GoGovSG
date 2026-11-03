@@ -10,7 +10,8 @@ import {
 } from '../../shared/util/validation.js'
 import { sequelize } from '../util/sequelize.js'
 import { IdType } from '../../types/server/models/index.js'
-import { DEV_ENV, emailValidator, ogHostname } from '../config.js'
+import { DEV_ENV, ogHostname } from '../config.js'
+import { assertWhitelistedEmail } from '../util/email.js'
 import { StorableUrlSource, StorableUrlState } from '../repositories/enums.js'
 import { urlSearchVector } from './search.js'
 import { TagType } from './tag.js'
@@ -224,7 +225,7 @@ export const Url = <UrlTypeStatic>sequelize.define(
       validate: {
         isEmail: true,
         isLowercase: true,
-        is: emailValidator.makeRe() as RegExp,
+        isWhitelistedEmail: assertWhitelistedEmail,
       },
     },
     description: {
