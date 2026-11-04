@@ -260,8 +260,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       nodemailer:
-        specifier: ^10.0.11
-        version: 10.0.11
+        specifier: ^10.1.4
+        version: 10.1.4
       openid-client:
         specifier: ^6.8.8
         version: 6.8.8
@@ -6699,8 +6699,8 @@ packages:
     resolution: {integrity: sha512-jn9vOIK/nfqoFCcpK89/VCVaLg1IHE6UVfDOzvqmANaJ/rWCTEdH8RZ1V278nv2jr36BJdyQXIAavBLXpzdlag==}
     engines: {node: '>=14'}
 
-  nodemailer@10.0.11:
-    resolution: {integrity: sha512-/c4P7U7aGpiNu2Rl08q525q2zECkUpSaf2zQPgIStCcAjHAkkQQKwD4sTyi3l91mGcLQrKzL1syXPHymo+Ogtw==}
+  nodemailer@10.1.4:
+    resolution: {integrity: sha512-EsMnOR2oRv4LGnWvHgcVYkkQ4O2j8KO4WTw6l+PHR4sOXo8SAgIraxtEnGDmotjbhv0hDsu3IuDIFZm8iXwO4A==}
     engines: {node: '>=20.0.0'}
 
   noms@0.0.0:
@@ -15376,7 +15376,7 @@ snapshots:
     dependencies:
       '@babel/parser': 7.29.8
 
-  nodemailer@10.0.11: {}
+  nodemailer@10.1.4: {}
 
   noms@0.0.0:
     dependencies:
