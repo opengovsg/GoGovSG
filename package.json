@@ -121,7 +121,7 @@
     "regenerator-runtime": "^0.14.1",
     "sanitize-html": "^2.17.6",
     "sequelize": "^6.37.8",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "ua-parser-js": "^2.0.10",
     "validator": "^13.15.35",
     "winston": "^3.19.0",
