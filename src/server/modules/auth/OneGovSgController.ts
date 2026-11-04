@@ -23,9 +23,26 @@ const TRANSACTION_COOKIE_NAME = 'oneGovSgTransaction'
 const TRANSACTION_COOKIE_MAX_AGE_MS = 5 * 60 * 1000
 
 // The client passes the hash route it was bounced from (e.g. /user/links)
-// so the callback can land there. Only a local absolute path is accepted.
-const localPath = (next: unknown): string | undefined =>
-  typeof next === 'string' && /^\/(?!\/)/.test(next) ? next : undefined
+// so the callback can land there. These are the client's PrivateRoute paths
+// (src/client/app/util/types.ts); anything else falls back to the home page.
+const NEXT_ROUTE_ALLOWLIST = ['/user', '/directory', '/apiintegration']
+
+// Single-slash-separated segments of unreserved characters only. This rules
+// out every form that could carry an authority component or be normalised
+// into one: `//host`, `/\host`, percent-encoded slashes or backslashes
+// (`%` is not allowed), `@`, `:`, whitespace and control characters.
+const SAFE_PATH = /^(\/[A-Za-z0-9_-]+)+$/
+
+const localPath = (next: unknown): string | undefined => {
+  if (typeof next !== 'string' || !SAFE_PATH.test(next)) {
+    return undefined
+  }
+  return NEXT_ROUTE_ALLOWLIST.some(
+    (route) => next === route || next.startsWith(`${route}/`),
+  )
+    ? next
+    : undefined
+}
 
 // Full detail goes to the server log; the browser only sees a generic page.
 const describeError = (error: unknown): string =>
@@ -200,7 +217,9 @@ export class OneGovSgController {
       req.session.user = user
       req.session.oneGovSg = true
       logger.info(`one.gov.sg login success for user:\t${user.email}`)
-      res.redirect(transaction.next ? `/#${transaction.next}` : '/')
+      // Re-validate: the cookie signature only proves we issued the value.
+      const next = localPath(transaction.next)
+      res.redirect(next ? `/#${next}` : '/')
     } catch (error) {
       logger.error(
         `one.gov.sg user provisioning failed:\t${describeError(error)}`,
