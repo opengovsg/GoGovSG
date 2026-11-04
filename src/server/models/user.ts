@@ -2,7 +2,7 @@ import Sequelize from 'sequelize'
 import { sequelize } from '../util/sequelize.js'
 import { IdType, Settable } from '../../types/server/models/index.js'
 import { Url, UrlType } from './url.js'
-import { emailValidator } from '../config.js'
+import { assertWhitelistedEmail } from '../util/email.js'
 
 // Users
 export interface UserType extends IdType, Sequelize.Model {
@@ -26,10 +26,7 @@ export const User = <UserTypeStatic>sequelize.define(
       validate: {
         isEmail: true,
         isLowercase: true,
-        is: {
-          args: emailValidator.makeRe() as RegExp,
-          msg: 'Email domain is not whitelisted.',
-        },
+        isWhitelistedEmail: assertWhitelistedEmail,
       },
       set(this: Settable, email: string) {
         // must save email as lowercase
