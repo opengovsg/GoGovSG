@@ -177,13 +177,13 @@ Finally, start the production server by running `pnpm start`.
 
 GoGovSG uses Github Actions and Serverless to deploy to AWS Elastic Beanstalk and AWS Lambda.
 
-|        Secrets        | Required | Description/Value                                                                |
-| :-------------------: | :------: | :------------------------------------------------------------------------------- |
-|   AWS_ACCESS_KEY_ID   |   Yes    | AWS credential ID used to deploy to Elastic and Modify files on S3               |
-| AWS_SECRET_ACCESS_KEY |   Yes    | AWS credential secret used to deploy to Elastic Beanstalk and Modify files on S3 |
-|      DD_API_KEY       |  Yes\*   | Datadog API Key used for integration with Datadog to Trace/Logs collection       |
-|      DD_SERVICE       |    No    | Datadog service name to be used for the application                              |
-|        DD_ENV         |    No    | Datadog application environment, e.g. `staging`, `production`                    |
+Deploys assume an IAM role through GitHub OIDC, so no AWS credentials are stored as secrets. The roles are defined in [opengovsg/go-infra](https://github.com/opengovsg/go-infra).
+
+|  Secrets   | Required | Description/Value                                                          |
+| :--------: | :------: | :------------------------------------------------------------------------- |
+| DD_API_KEY |  Yes\*   | Datadog API Key used for integration with Datadog to Trace/Logs collection |
+| DD_SERVICE |    No    | Datadog service name to be used for the application                        |
+|   DD_ENV   |    No    | Datadog application environment, e.g. `staging`, `production`              |
 
 |                     Environment Variable                      | Required | Description/Value                                                                   |
 | :-----------------------------------------------------------: | :------: | :---------------------------------------------------------------------------------- |

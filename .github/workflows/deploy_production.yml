@@ -6,6 +6,7 @@ concurrency:
 
 permissions:
   contents: read
+  id-token: write
 
 on:
   release:
@@ -45,7 +46,6 @@ jobs:
       eb_env: ${{ matrix.variant.eb_env }}
       branch_env: production
       use_existing_version: ${{ matrix.variant.use_existing_version }}
+      aws_role_arn: arn:aws:iam::116366738264:role/go-prod-github-oidc-deploy-role
     secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
