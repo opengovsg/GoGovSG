@@ -14,9 +14,9 @@ export const i18nInit = i18next
     backend: {
       loadPath: pathVariant,
     },
-    lng: 'en',
     fallbackLng: 'en',
-    supportedLngs: ['en'],
+    supportedLngs: ['en', 'ta'],
+    nonExplicitSupportedLngs: true, // Maps locales like 'ta-IN' or 'ta-SG' to 'ta'
     interpolation: {
       escapeValue: false, // React already safes from xss.
     },
