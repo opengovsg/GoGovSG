@@ -230,8 +230,8 @@ importers:
         specifier: ^17.1.0
         version: 17.1.0
       i18next:
-        specifier: ^26.7.2
-        version: 26.7.2(typescript@7.0.2)
+        specifier: ^27.0.1
+        version: 27.0.1(typescript@7.0.2)
       i18next-http-backend:
         specifier: ^4.0.10
         version: 4.0.10
@@ -290,8 +290,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1(prop-types@15.8.1)(react@17.0.2)
       react-i18next:
-        specifier: ^17.1.13
-        version: 17.1.13(i18next@26.7.2(typescript@7.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)(typescript@7.0.2)
+        specifier: ^18.0.1
+        version: 18.0.1(@types/react@17.0.93)(i18next@27.0.1(typescript@7.0.2))(react@17.0.2)(typescript@7.0.2)
       react-redux:
         specifier: ^7.2.9
         version: 7.2.9(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
@@ -5686,8 +5686,9 @@ packages:
     resolution: {integrity: sha512-CfdQuwIVijbrS/fmiTAQYcYyje4nMbH9aIjKYhhm5bgVmWKWLOM1F7qrA1o63Jl1JxQcRjdtWhKlvDzyqV9aPg==}
     engines: {node: '>=18'}
 
-  i18next@26.7.2:
-    resolution: {integrity: sha512-RsOY3BeaCDdkk52NeJSFAXELQ2rQXBO/tOub6L8ue2ICPfR/FRDWDOfEDg4xMPd1SqO5goVYQ6i72qWEUB/PPw==}
+  i18next@27.0.1:
+    resolution: {integrity: sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==}
+    engines: {node: '>=22'}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
     peerDependenciesMeta:
@@ -7260,18 +7261,16 @@ packages:
       prop-types: ^15.6.0
       react: ^15.6.2 || ^16.0 || ^17 || ^18
 
-  react-i18next@17.1.13:
-    resolution: {integrity: sha512-ZxhOSlyKSKPtbUNPLwYMmE3w3bhoc0jaZJZ6bc7wGOT6cLbrbs//6m01HxCLtFdSjHvFpwFwoPhxxzIlHSs9cw==}
+  react-i18next@18.0.1:
+    resolution: {integrity: sha512-kPWXI0E/lrPj3+/umcKNzYZVnWmEedLiamMzDIHfbs+5ANf6yzvlZsjKou8f7kaGkfMMDLIZBejV+4aSN1CyBw==}
+    engines: {node: '>=22'}
     peerDependencies:
-      i18next: '>= 26.2.0'
-      react: '>= 16.8.0'
-      react-dom: '*'
-      react-native: '*'
+      '@types/react': '*'
+      i18next: '>= 27.0.1'
+      react: '>= 18.0.0'
       typescript: ^5 || ^6 || ^7
     peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
+      '@types/react':
         optional: true
       typescript:
         optional: true
@@ -8203,11 +8202,6 @@ packages:
   url@0.11.4:
     resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
     engines: {node: '>= 0.4'}
-
-  use-sync-external-store@1.6.0:
-    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   usehooks-ts@3.1.1:
     resolution: {integrity: sha512-I4diPp9Cq6ieSUH2wu+fDAVQO43xwtulo+fKEidHUwZPnYImbtkTjzIJYcDcJqxgmX31GVqNFURodvcgHcW0pA==}
@@ -14230,7 +14224,7 @@ snapshots:
 
   i18next-http-backend@4.0.10: {}
 
-  i18next@26.7.2(typescript@7.0.2):
+  i18next@27.0.1(typescript@7.0.2):
     optionalDependencies:
       typescript: 7.0.2
 
@@ -16030,15 +16024,13 @@ snapshots:
       prop-types: 15.8.1
       react: 17.0.2
 
-  react-i18next@17.1.13(i18next@26.7.2(typescript@7.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)(typescript@7.0.2):
+  react-i18next@18.0.1(@types/react@17.0.93)(i18next@27.0.1(typescript@7.0.2))(react@17.0.2)(typescript@7.0.2):
     dependencies:
-      '@babel/runtime': 7.29.7
       html-parse-stringify: 4.0.1
-      i18next: 26.7.2(typescript@7.0.2)
+      i18next: 27.0.1(typescript@7.0.2)
       react: 17.0.2
-      use-sync-external-store: 1.6.0(react@17.0.2)
     optionalDependencies:
-      react-dom: 17.0.2(react@17.0.2)
+      '@types/react': 17.0.93
       typescript: 7.0.2
 
   react-is@16.13.1: {}
@@ -17184,10 +17176,6 @@ snapshots:
     dependencies:
       punycode: 1.4.1
       qs: 6.15.3
-
-  use-sync-external-store@1.6.0(react@17.0.2):
-    dependencies:
-      react: 17.0.2
 
   usehooks-ts@3.1.1(react@17.0.2):
     dependencies:
