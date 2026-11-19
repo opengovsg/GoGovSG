@@ -11,6 +11,9 @@ export const tagText2 = 'TAG-2'
 export const tagText3 = 'fooBAR123'
 export const rootLocation = 'http://localhost:3000'
 export const apiLocation = 'http://localhost:8080'
+/** Matches docker-compose `ROTATED_LINKS` for local e2e. */
+export const rotatedLandingLinks = ['whatsapp', 'passport', 'spsc', 'sppr']
+export const landingShortUrlPrefix = 'go.gov.sg/'
 export const otp = '111111'
 export const dummyMaliciousFilePath = './test/end-to-end/eicar.com.txt'
 export const dummyFilePath = './test/end-to-end/anotherDummy.txt'

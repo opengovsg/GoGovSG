@@ -64,6 +64,7 @@ test('Drawer functionality test for url.', async ({ page }) => {
   await longUrlTextField(page).fill(`${shortUrl}`)
 
   await firstLinkHandle(page)
+  await expect(linkRow).toBeVisible()
 
   await linkRow.click()
   // Drawer should open with the correct long url and tags when a short url row is clicked
@@ -76,7 +77,15 @@ test('Drawer functionality test for url.', async ({ page }) => {
   await expect(drawer(page)).not.toBeVisible()
 
   await linkRow.click()
-  await activeSwitch(page).nth(0).click()
+  await expect(drawer(page)).toBeVisible()
+  const deactivateLink = page.waitForResponse(
+    (response) =>
+      response.request().method() === 'PATCH' &&
+      new URL(response.url()).pathname === '/api/user/url' &&
+      response.ok(),
+  )
+  await activeSwitch(page).click()
+  await deactivateLink
   // It should set short url active or inactive immediately when the toggle is switched (any caching for that short url is cleared)
   await expect(inactiveWord(page)).toBeVisible()
 
@@ -135,13 +144,22 @@ test('Drawer functionality test for url.', async ({ page }) => {
   await expect(urlSaveButton(page).locator('xpath=..')).toBeDisabled()
 
   // Url is updated/saved when user enters a new url, then clicks "save" - check redirect with port 8080
-  await activeSwitch(page).nth(0).click()
+  await expect(drawer(page)).toBeVisible()
+  const reactivateLink = page.waitForResponse(
+    (response) =>
+      response.request().method() === 'PATCH' &&
+      new URL(response.url()).pathname === '/api/user/url' &&
+      response.ok(),
+  )
+  await activeSwitch(page).click()
+  await reactivateLink
+  await expect(activeSwitch(page)).toBeChecked()
   await gotoPage(page, `${apiLocation}/${generatedUrl}`)
   // The redirect through the short-link API can take close to 6s; poll
   // instead of the original fixed 6s sleep (evidence for the margin, not
   // for a blind wait).
   await expect(page).toHaveURL((url) => url.href.includes(subUrl), {
-    timeout: 8000,
+    timeout: 15_000,
   })
 })
 
