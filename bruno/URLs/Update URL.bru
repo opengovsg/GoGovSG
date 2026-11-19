@@ -1,0 +1,47 @@
+meta {
+  name: Update URL
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/v1/urls/:shortUrl
+  body: json
+  auth: inherit
+}
+
+params:path {
+  shortUrl: link
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "longUrl": "https://newlink.com",
+    "state": "ACTIVE"
+  }
+}
+
+docs {
+  Update an existing short URL. Substitute the `shortUrl` path
+  param with the actual short link code.
+  
+  Body:
+  - `longUrl` (string, optional): must begin with `https://`
+  - `state` (enum: ACTIVE, INACTIVE, optional)
+  
+  Response:
+  ```json
+  {
+    "shortUrl": "197abc",
+    "longUrl": "https://link.com",
+    "state": "ACTIVE",
+    "clicks": 0,
+    "createdAt": "2022-09-19T03:31:00.131Z",
+    "updatedAt": "2022-09-19T03:31:00.131Z"
+  }
+  ```
+}
