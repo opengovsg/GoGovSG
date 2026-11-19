@@ -152,7 +152,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/history": "^4.7.11",
     "@types/jest": "^30.0.0",
-    "@types/lodash": "^4.17.25",
+    "@types/lodash": "^4.17.27",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.0.0",
     "@types/qrcode": "^1.5.6",
