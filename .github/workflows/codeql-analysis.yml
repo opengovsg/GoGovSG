@@ -5,6 +5,8 @@
 # or to provide custom queries or build logic.
 name: 'CodeQL'
 
+# GHA is free for public repos
+# jactionlint ignore=concurrency-limits
 on:
   push:
     branches: [develop, edge, master, release]
@@ -39,6 +41,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
