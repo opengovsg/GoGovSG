@@ -293,7 +293,7 @@ devServer: {
 
 [ts-node-dev](https://github.com/whitecolor/ts-node-dev) will monitor for any changes in the server source code and automatically restart the server. This is used in development only. It watches changes to all files required from the entry point onwards, and will restart the node server whenever such files are modified.
 
-ts-node-dev also allows debugging via [Inspector](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients). The quickest way to debug the application will be to use Chrome DevTools via chrome://inspect. VSCode users may want to add the following to their launch.json to quickly attach VSCode to the application for debugging:
+ts-node-dev also allows debugging via [Inspector](https://nodejs.org/en/learn/getting-started/debugging#inspector-clients). The quickest way to debug the application will be to use Chrome DevTools via chrome://inspect. VSCode users may want to add the following to their launch.json to quickly attach VSCode to the application for debugging:
 
 ```json
 {
