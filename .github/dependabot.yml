@@ -10,6 +10,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     groups:
       # --- Build toolchains (tight coupling) ---
 
@@ -191,9 +193,13 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
 
   # Keeps the digest-pinned base image (see Dockerfile*) refreshed.
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: monthly
+    cooldown:
+      default-days: 7
