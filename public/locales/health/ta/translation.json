@@ -1,0 +1,77 @@
+{
+  "general": {
+    "emailDomain": "அங்கீகரிக்கப்பட்டது",
+    "shortUrlPrefix": "for.sg/",
+    "appTitle": "for.sg",
+    "officerType": "சுகாதாரத் துறைப் பணியாளர்கள்",
+    "appCatchphrase": {
+      "styled": "<strong><i>சுகாதாரத் துறைப் பணியாளர்களின்</i></strong> நம்பகமான குறுகிய பிணைப்புகள்",
+      "noStyle": "சுகாதாரத் துறைப் பணியாளர்களின் நம்பகமான குறுகிய பிணைப்புகள்"
+    },
+    "appDescription": {
+      "subtitle": "<strong>$t(general.appTitle)</strong> குறுகிய பிணைப்புகளைச் சுகாதாரத் துறைப் பணியாளர்கள் மட்டுமே உருவாக்க முடியும்; எனவே, இது நம்பகமான இடத்தில் இருந்து வருகிறது என்பதை நீங்கள் உறுதியாக நம்பலாம்."
+    },
+    "linkAdmins": "சுகாதார நிறுவனங்கள்",
+    "appSignInPrompt": "நீங்கள் ஒரு சுகாதாரத் துறைப் பணியாளரா?",
+    "copyright": "Open Government Products",
+    "copyrightTag": "சிங்கப்பூர் அரசு தொழில்நுட்ப முகமை (GovTech)",
+    "links": {
+      "contribute": "https://go.gov.sg/go-opensource",
+      "directory": "/directory",
+      "apiintegration": "/apiintegration",
+      "dashboard": "/user",
+      "feedback": "https://for.sg/forsg-support",
+      "faq": "https://guide.for.sg",
+      "privacy": "https://guide.for.sg/privacy",
+      "terms": "https://guide.for.sg/termsofuse",
+      "contact": "https://for.sg/forsg-user-support",
+      "builtBy": "https://open.gov.sg",
+      "linkedin": "https://sg.linkedin.com/company/open-government-products",
+      "facebook": "https://www.facebook.com/opengovsg",
+      "apiDoc": "https://guide.for.sg/developer-guide/api-documentation"
+    },
+    "builtBy": "Open Government Products அமைப்பால் உருவாக்கப்பட்டது"
+  },
+  "homePage": {
+    "targetUsersPhrase": "(<strong><a href='https://guide.for.sg/#who-can-use-forsg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #6D4559;'>தேர்ந்தெடுக்கப்பட்ட நிறுவனங்களிலிருந்து</a></strong>)",
+    "features": {
+      "antiPhishing": {
+        "description": "நம்பகமான $t(general.appTitle) வலைமுகவரி மூலம் உங்கள் பிணைப்புகளைக் குறுக்குங்கள்; இதனால் உங்கள் பயனர்கள் அவை ஒரு சுகாதாரத் துறைப் பணியாளரிடமிருந்து வருவதை அறிந்துகொள்வர்."
+      },
+      "customised": {
+        "description": "நீண்ட பிணைப்புகளை நினைவில் வைத்திருப்பது கடினம், இடத்தையும் அடைக்கும். அதற்குப் பதிலாகக் குறுகிய பிணைப்புகளை உருவாக்கிப் பகிருங்கள்."
+      },
+      "analytics": {
+        "description": "உங்கள் பிணைப்புகள் எந்தளவுக்குப் பரவலாகச் சென்றடைகின்றன என்பதை அறிய வேண்டுமா? எங்கள் வலைச் செயலாற்றும் திரை வழியாக ஒவ்வொரு பிணைப்பின் சொடுக்கு விகிதத்தையும் கண்காணிக்கவும்."
+      },
+      "fileSharing": {
+        "description": "விருப்பப்படியான மற்றும் நம்பகமான $t(general.appTitle) குறுகிய பிணைப்பைப் பயன்படுத்தி, உங்கள் கோப்பைப் பதிவேற்றி யாருடன் வேண்டுமானாலும் பகிருங்கள்."
+      }
+    },
+    "trustedBy": {
+      "1": "AIC",
+      "2": "NUHS",
+      "3": "NHG",
+      "4": "SingHealth",
+      "5": "IHiS"
+    }
+  },
+  "login": {
+    "whitelistPhrase": "<strong><a href='https://guide.for.sg/#who-can-use-forsg' target='_blank' rel='noreferrer' style='text-decoration:underline; color: #6D4559;'>இங்கே</a></strong> பட்டியலிடப்பட்டுள்ள சுகாதார நிறுவனங்கள் மட்டுமே பயன்படுத்த முடியும்.",
+    "referrals": {
+      "1": {
+        "officerPhrase": "தேர்ந்தெடுக்கப்பட்ட பள்ளிப் பணியாளர்கள்",
+        "emailDomain": "edu.sg",
+        "link": "for.edu.sg"
+      },
+      "2": {
+        "officerPhrase": "அரசு அலுவலர்கள்",
+        "emailDomain": "gov.sg",
+        "link": "go.gov.sg"
+      }
+    },
+    "placeholders": {
+      "email": "jane@aic.sg"
+    }
+  }
+}
